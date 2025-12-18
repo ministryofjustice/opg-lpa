@@ -18,6 +18,9 @@ data "aws_ecs_task_execution" "migrations" {
     assign_public_ip = false
   }
   tags = local.api_component_tag
+  depends_on = [
+    module.api_aurora
+  ]
 }
 
 //--------------------------------------
