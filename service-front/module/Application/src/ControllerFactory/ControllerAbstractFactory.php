@@ -7,6 +7,7 @@ use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
@@ -17,6 +18,7 @@ use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Service\DateCheckViewModelHelper;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -74,6 +76,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'
         ],
+        DateCheckController::class => [
+            'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,
+        ]
     ];
 
     /**
