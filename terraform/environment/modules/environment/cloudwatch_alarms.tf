@@ -43,7 +43,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_anomaly" {
   }
   metric_query {
     id          = "m1"
-    return_data = false
+    return_data = true
     metric {
       metric_name = "HTTPCode_Target_5XX_Count"
       namespace   = "AWS/ApplicationELB"
