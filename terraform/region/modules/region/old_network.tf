@@ -163,6 +163,7 @@ locals {
 
 module "vpc_endpoints_old_network" {
   source = "./modules/vpc_endpoints"
+  count  = var.account.old_network_vpc_endpoints_enabled ? 1 : 0
   interface_endpoint_names = [
     "secretsmanager",
   ]
