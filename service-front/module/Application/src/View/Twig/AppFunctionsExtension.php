@@ -111,17 +111,12 @@ class AppFunctionsExtension extends AbstractExtension
     private function flattenMessages(array $errors): array
     {
         $messages = [];
-        $stack = [$errors];
 
-        while ($stack !== []) {
-            $current = array_pop($stack);
-
-            foreach ($current as $error) {
-                if (is_array($error)) {
-                    $stack[] = $error;
-                } else {
-                    $messages[] = (string) $error;
-                }
+        foreach ($errors as $error) {
+            if (is_array($error)) {
+                $messages = array_merge($messages, $this->flattenMessages($error));
+            } else {
+                $messages[] = (string) $error;
             }
         }
 
