@@ -135,7 +135,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 # 4XX Metric Anomaly Alarm
 resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
   alarm_name        = "${var.environment_name} public front 4XX anomaly"
-  alarm_description = "Anomaly detection in 4XX Errors returned to usersfor ${var.environment_name}"
+  alarm_description = "Anomaly detection in 4XX Errors returned to users for ${var.environment_name}"
 
   evaluation_periods  = 2
   datapoints_to_alarm = 2
