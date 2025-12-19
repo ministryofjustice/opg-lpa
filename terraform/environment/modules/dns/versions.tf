@@ -6,12 +6,12 @@ terraform {
         aws.management,
         aws.us_east_1
       ]
-      version = "6.24.0"
+      version = "6.27.0"
     }
     pagerduty = {
       source  = "PagerDuty/pagerduty"
       version = "~> 3.0"
     }
   }
-  required_version = "1.14.1"
+  required_version = "1.14.3"
 }
