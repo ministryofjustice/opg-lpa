@@ -11,11 +11,13 @@ use Application\Handler\CookiesHandler;
 use Application\Handler\Factory\CookiesHandlerFactory;
 use Application\Handler\Factory\FeedbackHandlerFactory;
 use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\Factory\GuidanceHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
+use Application\Handler\GuidanceHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
@@ -328,6 +330,7 @@ class Module implements FormElementProviderInterface
                 FeedbackHandler::class       => FeedbackHandlerFactory::class,
                 FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
                 ContinuationSheets::class => InvokableFactory::class,
+                GuidanceHandler::class      => GuidanceHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

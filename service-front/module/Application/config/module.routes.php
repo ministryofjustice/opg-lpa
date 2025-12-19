@@ -145,8 +145,8 @@ return [
                 'options' => [
                     'route'    => '/guide[/:section]',
                     'defaults' => [
-                        'controller' => 'General\GuidanceController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\GuidanceHandler::class,
                         'section'    => '',
                     ],
                 ],
