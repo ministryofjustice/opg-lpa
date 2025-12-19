@@ -34,6 +34,8 @@ use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Service\Factory\SystemMessageFactory;
+use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Aws\DynamoDb\DynamoDbClient;
@@ -56,6 +58,7 @@ use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Redis;
@@ -322,6 +325,8 @@ class Module implements FormElementProviderInterface
                     return new AppFunctionsExtension(
                         $sm->get('config'),
                         $sm->get(FormLinkedErrors::class),
+                        $sm->get(TemplateRendererInterface::class),
+                        $sm->get(SystemMessage::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
@@ -329,6 +334,7 @@ class Module implements FormElementProviderInterface
                 DateService::class           => InvokableFactory::class,
                 FeedbackHandler::class       => FeedbackHandlerFactory::class,
                 FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
+                SystemMessage::class => SystemMessageFactory::class,
                 ContinuationSheets::class => InvokableFactory::class,
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
             ], // factories

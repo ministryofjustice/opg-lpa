@@ -14,7 +14,7 @@ resource "aws_db_proxy" "rds_proxy" {
     auth_scheme               = "SECRETS"
     description               = "Authentication for RDS Proxy"
     iam_auth                  = "DISABLED"
-    client_password_auth_type = "POSTGRES_SCRAM_SHA_256" # pragma: allowlist secret
+    client_password_auth_type = "POSTGRES_MD5" # pragma: allowlist secret
     secret_arn                = var.api_rds_credentials_secret_arn
   }
 }
@@ -91,7 +91,7 @@ resource "aws_security_group" "rds_proxy" {
   revoke_rules_on_delete = true
 }
 
-resource "aws_security_group_rule" "rds_proxy_ingress" {
+resource "aws_security_group_rule" "client_to_proxy_ingress" {
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
@@ -101,7 +101,7 @@ resource "aws_security_group_rule" "rds_proxy_ingress" {
   description              = "Ingress from rds client"
 }
 
-resource "aws_security_group_rule" "rds_proxy_egress" {
+resource "aws_security_group_rule" "proxy_to_cluster_egress" {
   type                     = "egress"
   from_port                = 5432
   to_port                  = 5432
@@ -111,12 +111,23 @@ resource "aws_security_group_rule" "rds_proxy_egress" {
   description              = "Egress To RDS"
 }
 
+resource "aws_security_group_rule" "cluster_from_proxy_ingress" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.rds_proxy.id
+  security_group_id        = var.rds_api_security_group_id
+  description              = "Egress To RDS"
+}
+
 resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "tcp"
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.rds_proxy.id
-  description       = "Egress For Secrets Manager"
+  for_each                 = data.aws_vpc_endpoint.secrets_manager.security_group_ids
+  type                     = "egress"
+  from_port                = 443
+  to_port                  = 443
+  protocol                 = "tcp"
+  source_security_group_id = each.value
+  security_group_id        = aws_security_group.rds_proxy.id
+  description              = "Egress For Secrets Manager"
 }
