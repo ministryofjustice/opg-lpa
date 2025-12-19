@@ -18,6 +18,8 @@ use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PingHandlerPingdomFactory;
+use Application\Listener\TermsAndConditionsListener;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Session\NativeSessionConfig;
@@ -114,6 +116,13 @@ class Module implements FormElementProviderInterface
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e, $path != '/session-state');
             }
+
+            $config = $application->getServiceManager()->get('config');
+            $authenticationService = $application->getServiceManager()->get('AuthenticationService');
+            $sessionUtility = $application->getServiceManager()->get(SessionUtility::class);
+
+            // Listeners that needs to run on every request
+            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager);
         }
     }
 
@@ -192,7 +201,7 @@ class Module implements FormElementProviderInterface
             ],
             'aliases' => [
                 'AddressLookup' => 'OrdnanceSurvey',
-                'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
+                AuthenticationService::class => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
                 IDateService::class => DateService::class,
             ],
