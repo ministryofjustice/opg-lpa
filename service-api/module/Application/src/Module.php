@@ -3,8 +3,8 @@
 namespace Application;
 
 use Alphagov\Notifications\Client as NotifyClient;
-use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\PingHandler;
+use Application\Handler\PingHandlerFactory;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Application\Library\ApiProblem\ApiProblemResponse;
