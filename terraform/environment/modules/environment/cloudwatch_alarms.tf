@@ -132,38 +132,42 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   }
 }
 
-# # 4XX Metric Anomaly Alarm
-# resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
-#   alarm_name                = "${var.environment_name} public front 4XX anomaly"
-#   comparison_operator       = "GreaterThanUpperThreshold"
-#   evaluation_periods        = 2
-#   threshold_metric_id       = "ad1"
-#   alarm_description         = "Anomaly detection in 4XX Errors for ${var.environment_name}"
-#   datapoints_to_alarm       = 2
-#   insufficient_data_actions = []
-#   treat_missing_data = "notBreaching"
-#   alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-#   ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+# 4XX Metric Anomaly Alarm
+resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
+  alarm_name        = "${var.environment_name} public front 4XX anomaly"
+  alarm_description = "Anomaly detection in 4XX Errors returned to usersfor ${var.environment_name}"
 
-#   metric_query {
-#     id          = "ad1"
-#     expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
-#     label       = "5XX anomaly detection band"
-#     return_data = true
-#   }
-#   metric_query {
-#     id = "m1"
-#     metric {
-#       metric_name = "HTTPCode_Target_5XX_Count"
-#       namespace   = "AWS/ApplicationELB"
-#       period      = 60
-#       stat        = "Average"
-#       dimensions = {
-#         LoadBalancer = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
-#       }
-#     }
-#   }
-# }
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+  comparison_operator = "GreaterThanUpperThreshold"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+
+  alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "4XX anomaly detection band"
+    return_data = true
+  }
+  metric_query {
+    id          = "m1"
+    return_data = true
+    metric {
+      metric_name = "HTTPCode_Target_4XX_Count"
+      namespace   = "AWS/ApplicationELB"
+      period      = 60
+      stat        = "Sum"
+      dimensions = {
+        LoadBalancer = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
+      }
+    }
+  }
+}
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   actions_enabled     = true
