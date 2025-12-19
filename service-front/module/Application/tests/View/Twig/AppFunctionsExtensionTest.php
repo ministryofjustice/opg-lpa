@@ -6,8 +6,10 @@ namespace ApplicationTest\View\Twig;
 
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
+use Application\Service\SystemMessage;
 use Application\View\Twig\AppFunctionsExtension;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\TestCase;
 
 final class AppFunctionsExtensionTest extends TestCase
@@ -17,9 +19,19 @@ final class AppFunctionsExtensionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $formLinkedErrors = $this->createMock(FormLinkedErrors::class);
-        $this->extension = new AppFunctionsExtension([], $formLinkedErrors);
+        $systemMessage    = $this->createMock(SystemMessage::class);
+        $renderer         = $this->createMock(TemplateRendererInterface::class);
+
+        $this->extension = new AppFunctionsExtension(
+            [],
+            $formLinkedErrors,
+            $renderer,
+            $systemMessage,
+        );
     }
+
 
     public function testRegistersApplicantNamesFunction(): void
     {
@@ -91,5 +103,53 @@ final class AppFunctionsExtensionTest extends TestCase
         $actual = $this->extension->finalCheckAccessible($lpa);
 
         $this->assertSame($expected, $actual);
+    }
+
+    public function testSystemMessageReturnsEmptyStringWhenNoMessage(): void
+    {
+        $systemMessage = $this->createMock(\Application\Service\SystemMessage::class);
+        $systemMessage->expects($this->once())
+            ->method('fetchSanitised')
+            ->willReturn(null);
+
+        $renderer = $this->createMock(TemplateRendererInterface::class);
+
+        $extension = new AppFunctionsExtension(
+            [],
+            $this->createMock(FormLinkedErrors::class),
+            $renderer,
+            $systemMessage,
+        );
+
+        $this->assertSame('', $extension->systemMessage());
+    }
+
+    public function testSystemMessageRendersPartialWhenMessageExists(): void
+    {
+        $systemMessage = $this->createMock(\Application\Service\SystemMessage::class);
+        $systemMessage->expects($this->once())
+            ->method('fetchSanitised')
+            ->willReturn('cleaned');
+
+        $renderer = $this->createMock(TemplateRendererInterface::class);
+        $renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/partials/system-message.twig',
+                ['message' => 'cleaned']
+            )
+            ->willReturn('<div class="notice"></div>');
+
+        $extension = new AppFunctionsExtension(
+            [],
+            $this->createMock(FormLinkedErrors::class),
+            $renderer,
+            $systemMessage,
+        );
+
+        $this->assertSame(
+            '<div class="notice"></div>',
+            $extension->systemMessage()
+        );
     }
 }
