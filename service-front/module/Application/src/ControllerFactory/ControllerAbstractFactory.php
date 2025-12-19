@@ -14,7 +14,6 @@ use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
 use Application\Controller\General\ForgotPasswordController;
-use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Session\SessionManagerSupport;
@@ -54,9 +53,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         ForgotPasswordController::class => [
             'setUserService' => 'UserService'
-        ],
-        GuidanceController::class => [
-            'setGuidanceService' => 'Guidance'
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
