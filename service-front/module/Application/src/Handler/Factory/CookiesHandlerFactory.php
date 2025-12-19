@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Handler;
+namespace Application\Handler\Factory;
 
+use Application\Handler\CookiesHandler;
 use Laminas\Http\Request as HttpRequest;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
