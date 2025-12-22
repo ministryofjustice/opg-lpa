@@ -41,33 +41,27 @@ class LongName extends AbstractData
     {
         $metadata->addPropertyConstraints('title', [
             new Assert\NotIdenticalTo(''),  // Not identical to en empty string
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::TITLE_MIN_LENGTH,
-                'max' => self::TITLE_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                min: self::TITLE_MIN_LENGTH,
+                max: self::TITLE_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('first', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::FIRST_NAME_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::FIRST_NAME_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('last', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::LAST_NAME_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::LAST_NAME_MAX_LENGTH,
+            ),
         ]);
     }
 

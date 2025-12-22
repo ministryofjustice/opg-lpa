@@ -58,13 +58,11 @@ class User extends AbstractData
     {
         $metadata->addPropertyConstraints('id', [
             new ValidatorConstraints\NotBlank(),
-            new ValidatorConstraints\Type([
-                'type' => 'xdigit'
-            ]),
-            new ValidatorConstraints\Length([
-                'min' => 32,
-                'max' => 32
-            ]),
+            new ValidatorConstraints\Type('xdigit'),
+            new ValidatorConstraints\Length(
+                min: 32,
+                max: 32
+            ),
         ]);
 
         $metadata->addPropertyConstraints('createdAt', [
@@ -79,30 +77,22 @@ class User extends AbstractData
 
         $metadata->addPropertyConstraints('name', [
             new ValidatorConstraints\NotBlank(),
-            new ValidatorConstraints\Type([
-                'type' => '\MakeShared\DataModel\Common\Name'
-            ]),
+            new ValidatorConstraints\Type('\MakeShared\DataModel\Common\Name'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('address', [
-            new ValidatorConstraints\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new ValidatorConstraints\Type('\MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('dob', [
-            new ValidatorConstraints\Type([
-                'type' => '\MakeShared\DataModel\Common\Dob'
-            ]),
+            new ValidatorConstraints\Type('\MakeShared\DataModel\Common\Dob'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new ValidatorConstraints\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
+            new ValidatorConstraints\Type('\MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
         ]);
     }

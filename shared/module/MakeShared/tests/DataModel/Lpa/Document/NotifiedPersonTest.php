@@ -18,10 +18,11 @@ class NotifiedPersonTest extends TestCase
 
         NotifiedPerson::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(3, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['id']);
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['address']);
+        $this->assertEquals(3, count($metadata->getConstrainedProperties()));
+
+        $this->assertContains('id', $metadata->getConstrainedProperties());
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('address', $metadata->getConstrainedProperties());
     }
 
     public function testMap()

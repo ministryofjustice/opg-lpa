@@ -25,12 +25,12 @@ class PhoneNumber extends AbstractData
         // Regex taken from: https://github.com/Respect/Validation/blob/master/library/Rules/Phone.php
         $metadata->addPropertyConstraints('number', [
             new SymfonyConstraints\NotBlank(),
-            new SymfonyConstraints\Regex([
+            new SymfonyConstraints\Regex(
                 // a fairly loose regex, it allows for country codes plus between
                 // 8 and 15 numbers/spaces
-                'pattern' => '/^[+|0]?[0-9 ]{8,15}$/',
-                'message' => 'invalid-phone-number',
-            ]),
+                pattern: '/^[+|0]?[0-9 ]{8,15}$/',
+                message: 'invalid-phone-number',
+            ),
         ]);
     }
 
