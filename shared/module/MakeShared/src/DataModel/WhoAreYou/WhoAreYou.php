@@ -30,9 +30,9 @@ class WhoAreYou extends AbstractData
     {
         $metadata->addPropertyConstraints('who', [
             new Assert\NotBlank(),
-            new Assert\Choice([
-                'choices' => array_keys(self::options())
-            ]),
+            new Assert\Choice(
+                choices: array_keys(self::options())
+            ),
         ]);
 
         $metadata->addPropertyConstraint(

@@ -18,9 +18,9 @@ class CertificateProviderTest extends TestCase
 
         CertificateProvider::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(2, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['address']);
+        $this->assertEquals(2, count($metadata->getConstrainedProperties()));
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('address', $metadata->getConstrainedProperties());
     }
 
     public function testMap()

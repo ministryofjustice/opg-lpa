@@ -23,19 +23,19 @@ class DocumentTest extends TestCase
 
         Document::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(12, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['type']);
-        $this->assertNotNull($metadata->properties['donor']);
-        $this->assertNotNull($metadata->properties['whoIsRegistering']);
-        $this->assertNotNull($metadata->properties['primaryAttorneyDecisions']);
-        $this->assertNotNull($metadata->properties['replacementAttorneyDecisions']);
-        $this->assertNotNull($metadata->properties['correspondent']);
-        $this->assertNotNull($metadata->properties['instruction']);
-        $this->assertNotNull($metadata->properties['preference']);
-        $this->assertNotNull($metadata->properties['certificateProvider']);
-        $this->assertNotNull($metadata->properties['primaryAttorneys']);
-        $this->assertNotNull($metadata->properties['replacementAttorneys']);
-        $this->assertNotNull($metadata->properties['peopleToNotify']);
+        $this->assertEquals(12, count($metadata->getConstrainedProperties()));
+        $this->assertContains('type', $metadata->getConstrainedProperties());
+        $this->assertContains('donor', $metadata->getConstrainedProperties());
+        $this->assertContains('whoIsRegistering', $metadata->getConstrainedProperties());
+        $this->assertContains('primaryAttorneyDecisions', $metadata->getConstrainedProperties());
+        $this->assertContains('replacementAttorneyDecisions', $metadata->getConstrainedProperties());
+        $this->assertContains('correspondent', $metadata->getConstrainedProperties());
+        $this->assertContains('instruction', $metadata->getConstrainedProperties());
+        $this->assertContains('preference', $metadata->getConstrainedProperties());
+        $this->assertContains('certificateProvider', $metadata->getConstrainedProperties());
+        $this->assertContains('primaryAttorneys', $metadata->getConstrainedProperties());
+        $this->assertContains('replacementAttorneys', $metadata->getConstrainedProperties());
+        $this->assertContains('peopleToNotify', $metadata->getConstrainedProperties());
     }
 
     public function testMap()
