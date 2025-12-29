@@ -131,13 +131,11 @@ class Lpa extends AbstractData
     {
         $metadata->addPropertyConstraints('id', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-            new Assert\Range([
-                'min' => 0,
-                'max' => 99999999999
-            ]),
+            new Assert\Type('int'),
+            new Assert\Range(
+                min: 0,
+                max: 99999999999
+            ),
         ]);
 
         $metadata->addPropertyConstraints('startedAt', [
@@ -164,64 +162,48 @@ class Lpa extends AbstractData
 
         $metadata->addPropertyConstraints('user', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'xdigit'
-            ]),
-            new Assert\Length([
-                'min' => 32,
-                'max' => 32
-            ]),
+            new Assert\Type('xdigit'),
+            new Assert\Length(
+                min: 32,
+                max: 32
+            ),
         ]);
 
         $metadata->addPropertyConstraints('payment', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Payment\Payment'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Payment\Payment'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('whoAreYouAnswered', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('locked', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('seed', [
-            new Assert\Type([
-                'type' => 'int'
-            ]),
-            new Assert\Range([
-                'min' => 0,
-                'max' => 99999999999
-            ]),
+            new Assert\Type('int'),
+            new Assert\Range(
+                min: 0,
+                max: 99999999999
+            ),
         ]);
 
         $metadata->addPropertyConstraints('repeatCaseNumber', [
-            new Assert\Type([
-                'type' => 'int'
-            ]),
+            new Assert\Type('int'),
         ]);
 
         $metadata->addPropertyConstraints('document', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Lpa\Document\Document'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Lpa\Document\Document'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('metadata', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'array'
-            ]),
+            new Assert\Type('array'),
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 // Max allowed size when JSON encoded in bytes.
                 $bytes = 1024 * 1024 * 1;
@@ -284,7 +266,8 @@ class Lpa extends AbstractData
 
         // Include these document level fields...
         $data['document'] = array_intersect_key($data['document'], array_flip([
-            'donor', 'type'
+            'donor',
+            'type'
         ]));
 
         return $data;
@@ -934,8 +917,8 @@ class Lpa extends AbstractData
     public function hasApplicant(): bool
     {
         return ($this->hasDocument() && ($this->getDocument()->getWhoIsRegistering() == 'donor'
-                || (is_array($this->getDocument()->getWhoIsRegistering())
-                    && count($this->getDocument()->getWhoIsRegistering()) > 0)));
+            || (is_array($this->getDocument()->getWhoIsRegistering())
+                && count($this->getDocument()->getWhoIsRegistering()) > 0)));
     }
 
     // For Generation Checks
@@ -1079,7 +1062,7 @@ class Lpa extends AbstractData
         }
 
         return (($this->getPayment()->isReducedFeeReceivesBenefits()
-                && $this->getPayment()->isReducedFeeAwardedDamages())
+            && $this->getPayment()->isReducedFeeAwardedDamages())
             || $this->getPayment()->isReducedFeeUniversalCredit()
             || $this->getPayment()->isReducedFeeLowIncome());
     }

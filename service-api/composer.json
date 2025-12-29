@@ -27,7 +27,7 @@
         "robmorgan/phinx": "^0.14.0",
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
-        "symfony/validator": "^5.4",
+        "symfony/validator": "^8.0",
         "egulias/email-validator": "^4.0",
         "laminas/laminas-mvc-middleware": "^2.5",
         "ministryofjustice/opg-laminas-db": "^1.0"

@@ -50,6 +50,7 @@ variable "accounts" {
         psql_parameter_group_family        = string
         rds_instance_type                  = string
         rds_proxy_enabled                  = bool
+        rds_proxy_routing_enabled          = bool
         skip_final_snapshot                = bool
       })
       regions = map(

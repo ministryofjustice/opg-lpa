@@ -7,18 +7,17 @@ use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
+use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
-use Application\Controller\General\FeedbackController;
 use Application\Controller\General\ForgotPasswordController;
-use Application\Controller\General\GuidanceController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Service\DateCheckViewModelHelper;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -52,16 +51,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
         ],
-        FeedbackController::class => [
-            'setFeedbackService' => 'Feedback',
-            'setSessionUtility'  => SessionUtility::class,
-            'setDateService'  => DateService::class,
-        ],
         ForgotPasswordController::class => [
             'setUserService' => 'UserService'
-        ],
-        GuidanceController::class => [
-            'setGuidanceService' => 'Guidance'
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
@@ -81,6 +72,9 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         VerifyEmailAddressController::class => [
             'setUserService' => 'UserService'
         ],
+        DateCheckController::class => [
+            'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,
+        ]
     ];
 
     /**
@@ -130,6 +124,7 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $sessionManagerSupport = $container->get(SessionManagerSupport::class);
         $authenticationService = $container->get('AuthenticationService');
         $config = $container->get('Config');
+        $sessionUtility = $container->get(SessionUtility::class);
 
         $route = $container->get('Application')->getMvcEvent()->getRouteMatch();
 
@@ -156,7 +151,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $lpaApplicationService,
                     $userService,
                     $container->get('ReplacementAttorneyCleanup'),
-                    $container->get('Metadata')
+                    $container->get('Metadata'),
+                    $sessionUtility,
                 );
             } else {
                 $controller = new $controllerName(
@@ -166,7 +162,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $config,
                     $userDetailsSession,
                     $lpaApplicationService,
-                    $userService
+                    $userService,
+                    $sessionUtility
                 );
             }
         } else {
@@ -174,7 +171,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                 $formElementManager,
                 $sessionManagerSupport,
                 $authenticationService,
-                $config
+                $config,
+                $sessionUtility
             );
         }
 

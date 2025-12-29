@@ -18,21 +18,17 @@ class PrimaryAttorneyDecisions extends AbstractDecisions
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('when', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Choice([
-                'choices' => [
+            new Assert\Type('string'),
+            new Assert\Choice(
+                choices: [
                     self::LPA_DECISION_WHEN_NOW,
                     self::LPA_DECISION_WHEN_NO_CAPACITY
                 ]
-            ]),
+            ),
         ]);
 
         $metadata->addPropertyConstraints('canSustainLife', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
     }
 

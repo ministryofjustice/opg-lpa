@@ -5,7 +5,7 @@ namespace Application\Model\Service\Redis;
 use MakeShared\Logging\LoggerTrait;
 use InvalidArgumentException;
 use Psr\Log\LoggerAwareInterface;
-use Redis;
+use Redis as BaseRedisClient;
 use RedisException;
 
 /**
@@ -15,30 +15,24 @@ class RedisClient implements LoggerAwareInterface
 {
     use LoggerTrait;
 
-    /** @var Redis */
-    private $redisClient;
-
-    /** @var string */
-    private $redisHost;
-
-    /** @var int */
-    private $redisPort = 6379;
+    private BaseRedisClient|null $redisClient = null;
+    private string $redisHost;
+    private int $redisPort = 6379;
 
     /**
      * TTL for Redis keys, in milliseconds
      */
-    /** @var int */
-    private $ttl;
+    private int $ttl;
 
     /**
      * Constructor
      *
      * @param string $redisUrl In format tcp://host:port or tls://host:port
      * @param int $ttlMs TTL for Redis keys, in milliseconds
-     * @param Redis $client Client for Redis access
+     * @param BaseRedisClient|null $baseRedisClient Client for Redis access
      * @throw InvalidArgumentException
      */
-    public function __construct(string $redisUrl, int $ttlMs, $redis = null)
+    public function __construct(string $redisUrl, int $ttlMs, ?BaseRedisClient $baseRedisClient = null)
     {
         $urlParts = parse_url($redisUrl);
 
@@ -58,10 +52,10 @@ class RedisClient implements LoggerAwareInterface
         # Redis' setEx expects TTL in seconds, but this is passed to the constructor in milliseconds
         $this->ttl = $ttlMs / 1000;
 
-        if (is_null($redis)) {
-            $redis = new Redis();
+        if (is_null($baseRedisClient)) {
+            $baseRedisClient = new BaseRedisClient();
         }
-        $this->redisClient = $redis;
+        $this->redisClient = $baseRedisClient;
     }
 
     public function open(): bool
@@ -91,7 +85,7 @@ class RedisClient implements LoggerAwareInterface
         return $this->redisClient->close();
     }
 
-    public function read(string $id): string
+    public function read(string $id): string|BaseRedisClient
     {
         $data = $this->redisClient->get($id);
 

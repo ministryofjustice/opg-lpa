@@ -33,22 +33,18 @@ class TrustCorporation extends AbstractAttorney
     {
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::NAME_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::NAME_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('number', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::NUMBER_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::NUMBER_MAX_LENGTH,
+            ),
         ]);
     }
 

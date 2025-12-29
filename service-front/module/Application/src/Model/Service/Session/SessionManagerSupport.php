@@ -2,24 +2,21 @@
 
 namespace Application\Model\Service\Session;
 
-use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 
 class SessionManagerSupport
 {
-    public function __construct(readonly private SessionManager $sessionManager)
-    {
+    public function __construct(
+        readonly private SessionManager $sessionManager,
+        private SessionUtility $sessionUtility
+    ) {
     }
 
     public function initialise(): void
     {
-
-
-        $container = new Container('initialised', $this->sessionManager);
-
-        if (!isset($container->init)) {
+        if (!$this->sessionUtility->hasInMvc('initialised', 'init')) {
             $this->sessionManager->regenerateId(true);
-            $container->init = true;
+            $this->sessionUtility->setInMvc('initialised', 'init', true);
         }
     }
 

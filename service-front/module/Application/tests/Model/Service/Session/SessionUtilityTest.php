@@ -7,11 +7,13 @@ namespace ApplicationTest\Model\Service\Session;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Session\Container as LaminasContainer;
 use Mezzio\Session\SessionInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class SessionUtilityTest extends TestCase
 {
     private const CONTAINER_NAME = 'test_session_utility';
+    private MockObject|SessionInterface $session;
 
     protected function setUp(): void
     {
@@ -19,6 +21,8 @@ class SessionUtilityTest extends TestCase
         foreach ($container as $key => $value) {
             unset($container->$key);
         }
+
+        $this->session = $this->createMock(SessionInterface::class);
 
         parent::setUp();
     }
@@ -42,33 +46,43 @@ class SessionUtilityTest extends TestCase
         self::assertFalse(isset($container->foo));
     }
 
+    public function testSetExpirationHopsInMvcUsesSetExpirationHops(): void
+    {
+        $util = new SessionUtility();
+        $util->setExpirationHopsInMvc(self::CONTAINER_NAME, 1);
+
+        $container = new LaminasContainer(self::CONTAINER_NAME);
+        $storage = $container->getManager()->getStorage();
+        $metadata = $storage->getMetadata(self::CONTAINER_NAME);
+
+        self::assertArrayHasKey('EXPIRE_HOPS', $metadata);
+        self::assertEquals(1, $metadata['EXPIRE_HOPS']['hops']);
+    }
+
     public function testSetInMezzio(): void
     {
         $util = new SessionUtility();
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
+        /** @var SessionInterface|MockObject $session */
         $session = $this->createMock(SessionInterface::class);
 
-        $session->expects(self::once())
+        $this->session->expects(self::once())
             ->method('set')
             ->with('foo', 'bar');
 
-        $util->setInMezzio($session, 'foo', 'bar');
+        $util->setInMezzio($this->session, 'foo', 'bar');
     }
 
     public function testGetFromMezzio(): void
     {
         $util = new SessionUtility();
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $session->expects(self::once())
+        $this->session->expects(self::once())
             ->method('get')
             ->with('foo', 'fallback')
             ->willReturn('value');
 
-        $value = $util->getFromMezzio($session, 'foo', 'fallback');
+        $value = $util->getFromMezzio($this->session, 'foo', 'fallback');
 
         self::assertSame('value', $value);
     }
@@ -77,28 +91,22 @@ class SessionUtilityTest extends TestCase
     {
         $util = new SessionUtility();
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $session->expects(self::once())
+        $this->session->expects(self::once())
             ->method('has')
             ->with('foo')
             ->willReturn(true);
 
-        self::assertTrue($util->hasInMezzio($session, 'foo'));
+        self::assertTrue($util->hasInMezzio($this->session, 'foo'));
     }
 
     public function testUnsetInMezzioUsesUnsetMethod(): void
     {
         $util = new SessionUtility();
 
-        /** @var SessionInterface|\PHPUnit\Framework\MockObject\MockObject $session */
-        $session = $this->createMock(SessionInterface::class);
-
-        $session->expects(self::once())
+        $this->session->expects(self::once())
             ->method('unset')
             ->with('foo');
 
-        $util->unsetInMezzio($session, 'foo');
+        $util->unsetInMezzio($this->session, 'foo');
     }
 }

@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\Session\SessionManager;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
@@ -17,43 +18,13 @@ abstract class AbstractBaseController extends AbstractActionController implement
 {
     use LoggerTrait;
 
-    /**
-     * @var AbstractPluginManager
-     */
-    private $formElementManager;
-
-    /**
-     * @var SessionManagerSupport
-     */
-    protected $sessionManagerSupport;
-
-    /**
-     * @var AuthenticationService
-     */
-    private $authenticationService;
-
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**§
-     * AbstractBaseController constructor.
-     * @param AbstractPluginManager $formElementManager
-     * @param SessionManagerSupport $sessionManagerSupport
-     * @param AuthenticationService $authenticationService
-     * @param array $config
-     */
     public function __construct(
-        AbstractPluginManager $formElementManager,
-        SessionManagerSupport $sessionManagerSupport,
-        AuthenticationService $authenticationService,
-        array $config
+        private AbstractPluginManager $formElementManager,
+        protected SessionManagerSupport $sessionManagerSupport,
+        private AuthenticationService $authenticationService,
+        private readonly array $config,
+        protected SessionUtility $sessionUtility
     ) {
-        $this->formElementManager = $formElementManager;
-        $this->sessionManagerSupport = $sessionManagerSupport;
-        $this->authenticationService = $authenticationService;
-        $this->config = $config;
     }
 
     /**
@@ -208,30 +179,5 @@ abstract class AbstractBaseController extends AbstractActionController implement
     protected function config(): array
     {
         return $this->config;
-    }
-
-    /**
-     * Set custom headers
-     * @return mixed
-     */
-    public function onDispatch(\Laminas\Mvc\MvcEvent $e)
-    {
-        /** @var HttpResponse */
-        $response = $this->getResponse();
-
-        $securityPolicy = "font-src 'self' data:; " .
-            "script-src 'self' *.googletagmanager.com *.google-analytics.com; default-src 'self'; " .
-            "connect-src 'self' *.google-analytics.com; " .
-            "img-src 'self' *.googletagmanager.com;";
-        $xsecurityPolicy = "default-src 'self'";
-
-        $response->getHeaders()->addHeaders([
-            'X-Content-Type-Options' => 'nosniff',
-            'Referrer-Policy' => 'strict-origin-when-cross-origin',
-            'Content-Security-Policy' => $securityPolicy,
-            'X-Content-Security-Policy' => $xsecurityPolicy,
-        ]);
-
-        return parent::onDispatch($e);
     }
 }
