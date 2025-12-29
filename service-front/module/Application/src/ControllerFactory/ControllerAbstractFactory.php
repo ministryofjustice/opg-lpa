@@ -5,7 +5,6 @@ namespace Application\ControllerFactory;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\AbstractLpaController;
-use Application\Controller\Authenticated\AboutYouController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
@@ -42,9 +41,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
      */
     /** @var array */
     private $additionalServices = [
-        AboutYouController::class => [
-            'setUserDetailsSession' => 'UserDetailsSession',
-        ],
         AuthController::class => [
             'setLpaApplicationService' => 'LpaApplicationService'
         ],
@@ -133,7 +129,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $route = $container->get('Application')->getMvcEvent()->getRouteMatch();
 
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
-            $userDetailsSession = $container->get('UserDetailsSession');
             $lpaApplicationService = $container->get('LpaApplicationService');
             $userService = $container->get('UserService');
 
@@ -151,7 +146,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $sessionManagerSupport,
                     $authenticationService,
                     $config,
-                    $userDetailsSession,
                     $lpaApplicationService,
                     $userService,
                     $container->get('ReplacementAttorneyCleanup'),
@@ -164,7 +158,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
                     $sessionManagerSupport,
                     $authenticationService,
                     $config,
-                    $userDetailsSession,
                     $lpaApplicationService,
                     $userService,
                     $sessionUtility
