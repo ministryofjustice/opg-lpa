@@ -219,11 +219,6 @@ class Module implements FormElementProviderInterface
                     return new LpaAuthAdapter($sm->get('ApiClient'));
                 },
 
-                // Generate the session container for a user's personal details
-                'UserDetailsSession' => function () {
-                    return new Container('UserDetails');
-                },
-
                 // Creates new container to store additional session information
                 'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
                     $route = $sm->get('Application')->getMvcEvent()->getRouteMatch();

@@ -3,7 +3,6 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -11,7 +10,6 @@ class AboutYouController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
 
-    protected Container $userDetailsSession;
 
     /**
      * Flag to indicate if complete user details are required when accessing this controller
@@ -53,7 +51,7 @@ class AboutYouController extends AbstractAuthenticatedController
                 $userService->updateAllDetails($form->getData());
 
                 // Clear the old details out the session.
-                unset($this->userDetailsSession->user);
+                $this->sessionUtility->unsetInMvc('UserDetails', 'user');
 
                 // Saved successful so return to dashboard with message if required
                 if (!$isNew) {
@@ -87,13 +85,5 @@ class AboutYouController extends AbstractAuthenticatedController
 
         $cancelUrl = '/user/dashboard';
         return new ViewModel(compact('form', 'isNew', 'cancelUrl'));
-    }
-
-    /**
-     * @param Container $userDetailsSession
-     */
-    public function setUserDetailsSession(Container $userDetailsSession)
-    {
-        $this->userDetailsSession = $userDetailsSession;
     }
 }
