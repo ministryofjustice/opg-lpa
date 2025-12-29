@@ -118,7 +118,10 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
@@ -155,7 +158,10 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',
@@ -199,7 +205,10 @@ final class ReuseDetailsControllerTest extends AbstractControllerTestCase
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->andReturn($queryParameters)->once();
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $this->formElementManager->shouldReceive('get')->withArgs([
             'Application\Form\Lpa\ReuseDetailsForm',

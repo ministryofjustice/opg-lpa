@@ -4,12 +4,12 @@ namespace Application\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\View\Http\ViewManager;
 use Laminas\Router\RouteMatch;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use Twig\Environment;
 
@@ -26,8 +26,8 @@ class AccountInfoFactory implements FactoryInterface
         /** @var AuthenticationService $authenticationService */
         $authenticationService = $container->get('AuthenticationService');
 
-        /** @var Container $userSessionDetails */
-        $userDetailsSession = $container->get('UserDetailsSession');
+        /** @var SessionUtility $sessionUtility */
+        $sessionUtility = $container->get(SessionUtility::class);
 
         /** @var ViewManager $viewManager */
         $viewManager = $container->get('ViewManager');
@@ -49,7 +49,7 @@ class AccountInfoFactory implements FactoryInterface
 
         return new AccountInfo(
             $authenticationService,
-            $userDetailsSession,
+            $sessionUtility,
             $viewModel,
             $routeMatch,
             $lpaApplicationService,

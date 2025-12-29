@@ -11,7 +11,6 @@ use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\User\User;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
@@ -42,7 +41,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         protected SessionManagerSupport $sessionManagerSupport,
         protected AuthenticationService $authenticationService,
         protected array $config,
-        protected Container $userDetailsSession,
         protected LpaApplicationService $lpaApplicationService,
         protected UserService $userService,
         protected SessionUtility $sessionUtility,
@@ -55,11 +53,11 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $this->identity = $authenticationService->getIdentity();
 
             //  Try to get the user details for this identity - look in the session first
-            $user = $userDetailsSession->user;
+            $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
 
             if (!$user instanceof User) {
                 $user = $this->userService->getUserDetails();
-                $userDetailsSession->user = $user;
+                $this->sessionUtility->setInMvc('UserDetails', 'user', $user);
             }
 
             $this->user = $user;

@@ -4,11 +4,11 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\SessionUtility;
 use MakeShared\DataModel\Lpa\Lpa;
 use DateTimeZone;
 use DateInterval;
 use Exception;
-use Laminas\Session\Container;
 use MakeShared\Logging\LoggerTrait;
 
 /**
@@ -21,8 +21,8 @@ class Communication extends AbstractEmailService
 {
     use LoggerTrait;
 
-    /** @var Container */
-    private $userDetailsSession;
+    /** @var SessionUtility */
+    private $sessionUtility;
     private $emailTemplateRef;
     private $data;
     private $lpaTypeTitleCase;
@@ -34,7 +34,8 @@ class Communication extends AbstractEmailService
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Get the signed in user's email address.
-        $userEmailAddress = $this->userDetailsSession->user->email->address;
+        $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
+        $userEmailAddress = $user->email->address;
         $to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
@@ -196,8 +197,8 @@ class Communication extends AbstractEmailService
         }
     }
 
-    public function setUserDetailsSession(Container $userDetailsSession)
+    public function setSessionUtility(SessionUtility $sessionUtility)
     {
-        $this->userDetailsSession = $userDetailsSession;
+        $this->sessionUtility = $sessionUtility;
     }
 }

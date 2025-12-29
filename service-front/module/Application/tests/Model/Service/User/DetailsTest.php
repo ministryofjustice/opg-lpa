@@ -6,7 +6,7 @@ namespace ApplicationTest\Model\Service\User;
 
 use Hamcrest\MatcherAssert;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
-use Laminas\Session\Container;
+use Application\Model\Service\Session\SessionUtility;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Application\Model\Service\ApiClient\Client;
@@ -409,8 +409,12 @@ final class DetailsTest extends AbstractEmailServiceTest
             ])->once()
             ->andReturn(['token' => 'test-token']);
 
-        $userDetailSession = new Container();
-        $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
+        $user = (object)['email' => (object)['address' => 'test@email.com']];
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($user)
+            ->byDefault();
 
         $expectedMailParameters = new MailParameters(
             'test@email.com',
@@ -418,7 +422,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             ['email' => 'test@email.com']
         );
 
-        $this->service->setUserDetailsSession($userDetailSession);
+        $this->service->setSessionUtility($sessionUtility);
 
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::equalTo($expectedMailParameters))
@@ -444,10 +448,14 @@ final class DetailsTest extends AbstractEmailServiceTest
             ])->once()
             ->andReturn(['token' => 'test-token']);
 
-        $userDetailSession = new Container();
-        $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
+        $user = (object)['email' => (object)['address' => 'test@email.com']];
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($user)
+            ->byDefault();
 
-        $this->service->setUserDetailsSession($userDetailSession);
+        $this->service->setSessionUtility($sessionUtility);
 
         $this->mailTransport->shouldReceive('send')
             ->with(Matchers::anInstanceOf(MailParameters::class))

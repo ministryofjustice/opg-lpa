@@ -141,7 +141,10 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
             'Request to ApplicationTest\Controller\TestableAbstractLpaController',
             ['userId' => $this->user->id],
         ])->once();
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
         $routeMatch->shouldReceive('getParam')
             ->withArgs(['action', 'not-found'])->andReturn('index')->once();
         $event->shouldReceive('setResult')->once();

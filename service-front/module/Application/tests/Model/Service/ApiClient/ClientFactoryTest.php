@@ -7,6 +7,7 @@ namespace ApplicationTest\Model\Service\ApiClient;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\ClientFactory;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\SessionUtility;
 use Http\Client\HttpClient;
 use Psr\Container\ContainerInterface;
 use MakeShared\Telemetry\Tracer;
@@ -42,10 +43,13 @@ final class ClientFactoryTest extends MockeryTestCase
         $userIdentity = Mockery::mock(UserIdentity::class);
         $userIdentity->shouldReceive('token')->once()->andReturn('Test Token');
 
-        $userDetailsSession = new MockUserDetailsSession();
-        $userDetailsSession->identity = $userIdentity;
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'identity'])
+            ->once()
+            ->andReturn($userIdentity);
 
-        $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
+        $this->container->expects('get')->withArgs([SessionUtility::class])->once()->andReturn($sessionUtility);
 
         /* @var $result Client */
         $result = ($this->factory)($this->container, [], null);
@@ -55,10 +59,13 @@ final class ClientFactoryTest extends MockeryTestCase
 
     public function testInstantiateNoIdentity(): void
     {
-        $userDetailsSession = new MockUserDetailsSession();
-        $userDetailsSession->identity = null;
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'identity'])
+            ->once()
+            ->andReturn(null);
 
-        $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
+        $this->container->expects('get')->withArgs([SessionUtility::class])->once()->andReturn($sessionUtility);
 
         /* @var $result Client */
         $result = ($this->factory)($this->container, [], null);
@@ -68,10 +75,13 @@ final class ClientFactoryTest extends MockeryTestCase
 
     public function testInstantiateRequestHasNoTraceIdHeader(): void
     {
-        $userDetailsSession = new MockUserDetailsSession();
-        $userDetailsSession->identity = null;
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'identity'])
+            ->once()
+            ->andReturn(null);
 
-        $this->container->expects('get')->withArgs(['UserDetailsSession'])->once()->andReturn($userDetailsSession);
+        $this->container->expects('get')->withArgs([SessionUtility::class])->once()->andReturn($sessionUtility);
 
         /* @var $result Client */
         $result = ($this->factory)($this->container, [], null);

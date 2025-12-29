@@ -16,7 +16,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
         $form = Mockery::mock(AbstractActorForm::class);
         $this->getHttpRouteMatch($controller);
         $this->request->shouldReceive('getPost')->withArgs(['reuse-details'])->andReturn(0)->once();
@@ -35,7 +38,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $seedLpa->document->correspondent->who = Correspondence::WHO_OTHER;
 
         $this->setSeedLpa($this->lpa, $seedLpa);
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $result = $controller->testGetActorReuseDetails();
         $reuseDetails = $this->getReuseDetailsByLabelContains($result, '(was the correspondent)');
@@ -52,7 +58,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $seedLpa = FixturesData::getHwLpa();
         $seedLpa->document->correspondent->who = Correspondence::WHO_OTHER;
         $this->setSeedLpa($this->lpa, $seedLpa);
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $result = $controller->testGetActorReuseDetails(true, true);
         $reuseDetails = $this->getReuseDetailsByLabelContains($result, '(was the correspondent)');
@@ -68,7 +77,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $trust = FixturesData::getAttorneyTrust();
         $seedLpa->document->primaryAttorneys[] = $trust;
         $this->setSeedLpa($this->lpa, $seedLpa);
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $result = $controller->testGetActorReuseDetails(false);
         $reuseDetails = $this->getReuseDetailsByLabelContains($result, $trust->name);
@@ -84,7 +96,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $trust = FixturesData::getAttorneyTrust();
         $seedLpa->document->primaryAttorneys[] = $trust;
         $this->setSeedLpa($this->lpa, $seedLpa);
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $result = $controller->testGetActorReuseDetails(true);
         $reuseDetails = $this->getReuseDetailsByLabelContains($result, $trust->name);
@@ -103,7 +118,10 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->lpa->document->donor->name->first = $this->user->name->first;
         $this->lpa->document->donor->name->last = $this->user->name->last;
         $this->setSeedLpa($this->lpa, $seedLpa);
-        $this->userDetailsSession->user = $this->user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         $result = $controller->testGetActorReuseDetails();
         $reuseDetails = $this->getReuseDetailsByLabelContains(

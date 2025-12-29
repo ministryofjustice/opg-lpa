@@ -7,6 +7,7 @@ namespace ApplicationTest\Model\Service\Lpa;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\SessionUtility;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use DateTime;
@@ -19,7 +20,6 @@ use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
-use Laminas\Session\Container;
 use Psr\Log\LoggerInterface;
 
 final class CommunicationTest extends AbstractEmailServiceTest
@@ -44,9 +44,13 @@ final class CommunicationTest extends AbstractEmailServiceTest
         )->makePartial();
         $logger = Mockery::spy(LoggerInterface::class);
 
-        $userDetailSession = new Container();
-        $userDetailSession["user"] = json_decode('{"email":{"address":"test@email.com"}}');
-        $this->service->setUserDetailsSession($userDetailSession);
+        $user = (object)['email' => (object)['address' => 'test@email.com']];
+        $sessionUtility = Mockery::mock(SessionUtility::class);
+        $sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($user)
+            ->byDefault();
+        $this->service->setSessionUtility($sessionUtility);
         $this->service->setLogger($logger);
     }
 
