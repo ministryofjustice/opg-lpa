@@ -150,7 +150,7 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 
   metric_query {
     id          = "ad1"
-    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 4)"
     label       = "4XX anomaly detection band"
     return_data = true
   }
