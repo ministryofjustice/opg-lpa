@@ -30,17 +30,13 @@ class Human extends AbstractAttorney
     {
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Name'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Name'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('dob', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Dob'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Dob'),
             new ValidConstraintSymfony(),
         ]);
     }

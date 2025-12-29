@@ -7,7 +7,7 @@ namespace Application\Model\Service\Session;
 use Laminas\Session\Container as LaminasContainer;
 use Mezzio\Session\SessionInterface as MezzioSession;
 
-final class SessionUtility
+class SessionUtility
 {
     private function getMvcContainer(string $containerName): LaminasContainer
     {
@@ -46,6 +46,14 @@ final class SessionUtility
     ): bool {
         $container = $this->getMvcContainer($containerName);
         return isset($container->$key);
+    }
+
+    public function setExpirationHopsInMvc(
+        string $containerName,
+        int $hops
+    ): void {
+        $container = $this->getMvcContainer($containerName);
+        $container->setExpirationHops($hops);
     }
 
     public function getFromMezzio(

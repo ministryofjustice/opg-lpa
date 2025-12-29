@@ -123,8 +123,8 @@ return [
                 'options' => [
                     'route'    => '/send-feedback',
                     'defaults' => [
-                        'controller' => 'General\FeedbackController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\FeedbackHandler::class,
                     ],
                 ],
             ], // send-feedback
@@ -134,8 +134,8 @@ return [
                 'options' => [
                     'route'    => '/feedback-thanks',
                     'defaults' => [
-                        'controller' => 'General\FeedbackController',
-                        'action'     => 'thanks',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\FeedbackThanksHandler::class,
                     ],
                 ],
             ], // feedback-thanks
@@ -145,8 +145,8 @@ return [
                 'options' => [
                     'route'    => '/guide[/:section]',
                     'defaults' => [
-                        'controller' => 'General\GuidanceController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\GuidanceHandler::class,
                         'section'    => '',
                     ],
                 ],

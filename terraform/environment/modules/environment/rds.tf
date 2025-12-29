@@ -124,6 +124,7 @@ resource "aws_security_group" "rds-api" {
 }
 
 resource "aws_security_group_rule" "rds-api" {
+  count                    = var.account.database.rds_proxy_routing_enabled ? 0 : 1
   type                     = "ingress"
   from_port                = 5432
   to_port                  = 5432
