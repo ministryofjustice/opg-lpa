@@ -1,12 +1,8 @@
 locals {
-
-  vpc_id = var.account.firewalled_networks_enabled ? data.aws_vpc.main.id : data.aws_vpc.default.id #tflint-ignore: terraform_unused_declarations
-  #tflint-ignore: terraform_unused_declarations
-  lb_subnet_ids = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.lb : subnet.id] : data.aws_subnets.public.ids
-  #tflint-ignore: terraform_unused_declarations
-  app_subnet_ids = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids
-  #tflint-ignore: terraform_unused_declarations
-  data_subnet_ids = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids
+  vpc_id          = var.account.firewalled_networks_enabled ? data.aws_vpc.main.id : data.aws_vpc.default.id                                         #tflint-ignore: terraform_unused_declarations
+  lb_subnet_ids   = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.lb : subnet.id] : data.aws_subnets.public.ids           #tflint-ignore: terraform_unused_declarations
+  app_subnet_ids  = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids #tflint-ignore: terraform_unused_declarations
+  data_subnet_ids = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids        #tflint-ignore: terraform_unused_declarations
 }
 
 
