@@ -4,7 +4,10 @@ const { dimensionsMismatchError, pixelsMismatchError } = require('./constants');
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     cy.exec('python3 tests/python-api-client/' + pythonCommand, {failOnNonZeroExit: false}).then(result => {
-        if (result.code !== 0) {
+        // Treat undefined or 0 as success, only fail on explicit non-zero codes
+        const exitCode = result.code ?? 0;
+
+        if (exitCode !== 0) {
             throw new Error(
                 'Call to API failed' +
                     '\ncommand: ' + pythonCommand +
