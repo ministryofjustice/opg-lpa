@@ -54,7 +54,7 @@ itsdangerous==2.2.0
     # via flask
 jinja2==3.1.6
     # via flask
-locust==2.42.6
+locust==2.43.0
     # via -r requirements.in
 locust-cloud==1.30.0
     # via locust
@@ -67,7 +67,7 @@ msgpack==1.1.2
     # via locust
 platformdirs==4.5.1
     # via locust-cloud
-psutil==7.2.0
+psutil==7.2.1
     # via locust
 python-dateutil==2.9.0.post0
     # via faker
