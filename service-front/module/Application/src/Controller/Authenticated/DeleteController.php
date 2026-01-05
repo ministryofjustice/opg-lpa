@@ -33,14 +33,4 @@ class DeleteController extends AbstractAuthenticatedController
 
         return $this->redirect()->toRoute('deleted');
     }
-
-    /**
-     * This is overridden to prevent people being (accidently?) directed to this controller post-auth.
-     *
-     * @return bool|\Laminas\Http\Response
-     */
-    protected function checkAuthenticated($allowRedirect = true)
-    {
-        return parent::checkAuthenticated(false);
-    }
 }

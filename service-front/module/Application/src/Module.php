@@ -21,6 +21,7 @@ use Application\Handler\GuidanceHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
+use Application\Listener\AuthenticationListener;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -30,6 +31,7 @@ use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Redis\RedisClient;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\PersistentSessionDetails;
@@ -100,7 +102,11 @@ class Module implements FormElementProviderInterface
             $logger->pushProcessor(function ($record) use ($request) {
                 $record['extra']['request_path'] = $request->getUri()->getPath();
                 $record['extra']['request_method'] = $request->getMethod();
-                $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $request->getHeader('X-Request-ID')?->getFieldValue() ?? '';
+
+                if ($request->getHeader('X-Request-ID')) {
+                    $record['extra'][Constants::TRACE_ID_FIELD_NAME] =  $request->getHeader('X-Request-ID')->getFieldValue() ?? '';
+                }
+
                 return $record;
             });
 
@@ -123,8 +129,9 @@ class Module implements FormElementProviderInterface
             $authenticationService = $application->getServiceManager()->get(AuthenticationService::class);
             $sessionUtility = $application->getServiceManager()->get(SessionUtility::class);
 
-            // Listeners that needs to run on every request
-            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager);
+            // Listeners that needs to run on every request (higher priority numbers run first)
+            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1001);
+            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
         }
     }
 
@@ -185,8 +192,8 @@ class Module implements FormElementProviderInterface
                     if ($info['failureCode'] >= 500) {
                         /** @var SessionUtility $sessionUtility */
                         $sessionUtility = $sm->get(SessionUtility::class);
-                        $sessionUtility->setInMvc('AuthFailureReason', 'reason', 'Internal system error');
-                        $sessionUtility->setInMvc('AuthFailureReason', 'code', $info['failureCode']);
+                        $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'reason', 'Internal system error');
+                        $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'code', $info['failureCode']);
                     }
                 }
             } catch (ApiException $ex) {

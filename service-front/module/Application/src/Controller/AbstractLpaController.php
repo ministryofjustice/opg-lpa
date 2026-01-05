@@ -65,11 +65,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
     public function onDispatch(MvcEvent $e)
     {
-        // Check we have a user set, thus ensuring an authenticated user
-        if (($authenticated = $this->checkAuthenticated()) !== true) {
-            return $authenticated;
-        }
-
         if ($this->lpa === null) {
             //404 error returned as either the LPA does not exist in the database, or is not associated with the user
             return $this->notFoundAction();
