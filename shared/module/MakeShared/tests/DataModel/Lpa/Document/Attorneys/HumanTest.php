@@ -21,9 +21,9 @@ class HumanTest extends TestCase
 
         Human::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(2, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['dob']);
+        $this->assertEquals(2, count($metadata->getConstrainedProperties()));
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('dob', $metadata->getConstrainedProperties());
     }
 
     public function testMap()

@@ -59,50 +59,38 @@ class Donor extends AbstractData
     {
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\LongName'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\LongName'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('otherNames', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::OTHER_NAMES_MIN_LENGTH,
-                'max' => self::OTHER_NAMES_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                min: self::OTHER_NAMES_MIN_LENGTH,
+                max: self::OTHER_NAMES_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('dob', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Dob'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Dob'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('canSign', [
             new Assert\NotNull(),
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
     }
 

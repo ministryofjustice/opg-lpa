@@ -76,49 +76,39 @@ class Payment extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('method', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Choice([
-                'choices' => [
+            new Assert\Type('string'),
+            new Assert\Choice(
+                choices: [
                     self::PAYMENT_TYPE_CARD,
                     self::PAYMENT_TYPE_CHEQUE
                 ]
-            ]),
+            ),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('amount', [
-            new Assert\Type([
-                'type' => 'float'
-            ]),
-            new Assert\Range([
-                'min' => 0
-            ]),
+            new Assert\Type('float'),
+            new Assert\Range(
+                min: 0
+            ),
         ]);
 
         $metadata->addPropertyConstraints('reference', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => 32
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: 32
+            ),
         ]);
 
         $metadata->addPropertyConstraints('gatewayReference', [
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => 64
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: 64
+            ),
         ]);
 
         $metadata->addPropertyConstraints('date', [
@@ -126,27 +116,19 @@ class Payment extends AbstractData
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeReceivesBenefits', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeAwardedDamages', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeLowIncome', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
 
         $metadata->addPropertyConstraints('reducedFeeUniversalCredit', [
-            new Assert\Type([
-                'type' => 'bool'
-            ]),
+            new Assert\Type('bool'),
         ]);
     }
 
