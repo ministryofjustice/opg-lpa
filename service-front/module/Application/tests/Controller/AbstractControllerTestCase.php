@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Controller;
 
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Exception;
@@ -709,10 +710,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         // We have what are effectively global variables to track status from Module.php into
         // controllers, as Module.php bootstraps identity via the API. Clear out the containers
         // so we can be sure there's nothing being carried between tests.
-        $preAuthRequest = new Container('PreAuthRequest');
+        $preAuthRequest = new Container(ContainerNamespace::PRE_AUTH_REQUEST);
         $preAuthRequest->url = null;
 
-        $authFailureReason = new Container('AuthFailureReason');
+        $authFailureReason = new Container(ContainerNamespace::AUTH_FAILURE_REASON);
         $authFailureReason->code = null;
         $authFailureReason->reason = null;
 

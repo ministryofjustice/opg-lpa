@@ -632,11 +632,6 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
 
             $expectedText = $testCase['expectedDonorText'];
 
-            if ($index == 0) {
-                echo "\n";
-            }
-            echo "Running tests for donor DateCheckViewModelHelper test case $index\n";
-
             $this->assertEquals(
                 $expectedText,
                 $matchesArray,
@@ -685,11 +680,6 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
             $matchesArray = $this->findHtmlMatches($html);
 
             $expectedText = $testCase['expectedAttorneyText'];
-
-            if ($index == 0) {
-                echo "\n";
-            }
-            echo "Running tests for attorney DateCheckViewModelHelper test case $index\n";
 
             $this->assertEquals(
                 $expectedText,

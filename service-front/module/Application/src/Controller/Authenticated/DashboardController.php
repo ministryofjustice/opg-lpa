@@ -213,16 +213,6 @@ class DashboardController extends AbstractAuthenticatedController
         return new ViewModel();
     }
 
-    /**
-     * This is overridden to prevent people being (accidentally?) directed to this controller post-auth.
-     *
-     * @return bool|\Laminas\Http\Response
-     */
-    protected function checkAuthenticated($allowRedirect = true)
-    {
-        return parent::checkAuthenticated(false);
-    }
-
     public function statusesAction()
     {
         $lpaIds = $this->getEvent()->getRouteMatch()->getParam('lpa-ids');
