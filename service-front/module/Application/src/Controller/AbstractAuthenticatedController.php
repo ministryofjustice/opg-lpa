@@ -47,7 +47,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     ) {
         parent::__construct($formElementManager, $sessionManagerSupport, $authenticationService, $config, $sessionUtility);
 
-        //  If there is a user identity set up the user - if this is missing the request
+        // If there is a user identity set up the user - if this is missing the request
         // will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $this->identity = $authenticationService->getIdentity();
@@ -73,23 +73,17 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
      */
     public function onDispatch(MvcEvent $e)
     {
-        // Before the user can access any actions that extend this controller...
-        // Check we have a user set, thus ensuring an authenticated user.
-        if (($authenticated = $this->checkAuthenticated()) !== true) {
-            return $authenticated;
-        }
-
         $this->getLogger()->info('Request to ' . get_class($this), [
             'userId' => $this->identity->id(),
         ]);
 
         //  If there are no user details set, or they are incomplete, then redirect to the about you new view
-        if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->name))) {
+        if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->getName()))) {
             return $this->redirect()->toUrl('/user/about-you/new');
         }
 
         //  We should have a fully formed user record at this point - bounce the request if that is not the case
-        //  To check this simply try to take the data from one array and populate it into another object
+        //  To check this, try to take the data from one array and populate it into another object
         try {
             $userDataArr = $this->user->toArray();
             $tempUser = new User($userDataArr);
@@ -134,40 +128,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    /**
-     * Check there is a user authenticated.
-     *
-     * @return bool|\Laminas\Http\Response
-     */
-    protected function checkAuthenticated($allowRedirect = true)
-    {
-        if (!$this->identity instanceof Identity) {
-            if ($allowRedirect) {
-                $this->sessionUtility->setInMvc(
-                    'PreAuthRequest',
-                    'url',
-                    (string) $this->convertRequest()->getUri()
-                );
-            }
-
-            // If the user's identity was cleared because of a genuine timeout,
-            // redirect to the login page with session timeout; otherwise,
-            // redirect to the login page and show the "service unavailable" message.
-            $authFailureCode = $this->sessionUtility->getFromMvc('AuthFailureReason', 'code');
-            if (is_null($authFailureCode)) {
-                return $this->redirect()->toRoute('login', [
-                    'state' => 'timeout'
-                ]);
-            }
-
-            return $this->redirect()->toRoute('login', [
-                'state' => 'internalSystemError'
-            ]);
-        }
-
-        return true;
     }
 
     /**

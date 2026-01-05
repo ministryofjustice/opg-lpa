@@ -16,7 +16,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
     public function testIndexAction(): void
     {
         /** @var StatusController $controller */
-        $controller = $this->getController(TestableStatusController::class);
+        $controller = $this->getController(StatusController::class);
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
@@ -32,7 +32,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
     public function testIndexActionWithReturnUnpaid(): void
     {
         /** @var StatusController $controller */
-        $controller = $this->getController(TestableStatusController::class);
+        $controller = $this->getController(StatusController::class);
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
@@ -48,7 +48,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
     public function testIndexActionInvalidStatus(): void
     {
         /** @var StatusController $controller */
-        $controller = $this->getController(TestableStatusController::class);
+        $controller = $this->getController(StatusController::class);
 
         $status = "InvalidStatus";
         $this->lpaApplicationService->shouldReceive('getStatuses')
@@ -70,7 +70,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
     public function testIndexActionWithValidStatuses(string $status): void
     {
         /** @var StatusController $controller */
-        $controller = $this->getController(TestableStatusController::class);
+        $controller = $this->getController(StatusController::class);
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()
@@ -94,7 +94,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
     public function testIndexActionResultContainsCanGenerateLPA120(): void
     {
         /** @var StatusController $controller */
-        $controller = $this->getController(TestableStatusController::class);
+        $controller = $this->getController(StatusController::class);
 
         $this->lpaApplicationService->shouldReceive('getStatuses')
             ->once()

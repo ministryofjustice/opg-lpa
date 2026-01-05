@@ -22,6 +22,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'redirect',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // index-redirect
@@ -33,6 +34,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'index',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // home
@@ -44,6 +46,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'terms',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // terms
@@ -55,6 +58,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'accessibility',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // terms
@@ -66,6 +70,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'privacy',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // privacy
@@ -77,6 +82,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'contact',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // contact
@@ -88,6 +94,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => Handler\CookiesHandler::class,
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // contact
@@ -99,6 +106,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\ForgotPasswordController',
                         'action'     => 'index',
+                        'unauthenticated_route' => true
                     ],
                 ],
                 'may_terminate' => true,
@@ -112,6 +120,7 @@ return [
                             ],
                             'defaults' => [
                                 'action'     => 'reset-password',
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -125,6 +134,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware'     => Handler\FeedbackHandler::class,
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // send-feedback
@@ -136,6 +146,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware'     => Handler\FeedbackThanksHandler::class,
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // feedback-thanks
@@ -148,6 +159,7 @@ return [
                         'controller' => PipeSpec::class,
                         'middleware'     => Handler\GuidanceHandler::class,
                         'section'    => '',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // guidance
@@ -159,6 +171,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\HomeController',
                         'action'     => 'enable-cookie',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // enable-cookie
@@ -170,6 +183,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'index',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // login
@@ -181,6 +195,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'logout',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // logout
@@ -192,6 +207,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action' => 'session-expiry',
+                        'unauthenticated_route' => true
                     ]
                 ],
             ], // session state
@@ -226,6 +242,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\AuthController',
                         'action'     => 'deleted',
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // deleted
@@ -237,6 +254,7 @@ return [
                     'defaults' => [
                         'controller' => 'General\RegisterController',
                         'action'     => 'index',
+                        'unauthenticated_route' => true
                     ],
                 ],
                 'may_terminate' => true,
@@ -250,6 +268,7 @@ return [
                             ],
                             'defaults' => [
                                 'action'     => 'confirm',
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -259,6 +278,7 @@ return [
                             'route'    => '/email-sent',
                             'defaults' => [
                                 'action' => 'email-sent',
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -268,6 +288,7 @@ return [
                             'route'    => '/resend-email',
                             'defaults' => [
                                 'action' => 'resend-email',
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -281,6 +302,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => Handler\StatsHandler::class,
+                        'unauthenticated_route' => true
                     ],
                 ],
             ], // stats
@@ -292,6 +314,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware'     => Handler\PingHandler::class,
+                        'unauthenticated_route' => true
                     ],
                 ],
                 'may_terminate' => true,
@@ -303,6 +326,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware'     => Handler\PingHandlerJson::class,
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -313,6 +337,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware'     => Handler\PingHandlerElb::class,
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
@@ -323,6 +348,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware'     => Handler\PingHandlerPingdom::class,
+                                'unauthenticated_route' => true
                             ],
                         ],
                     ],
