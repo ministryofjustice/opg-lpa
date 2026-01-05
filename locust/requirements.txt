@@ -14,7 +14,7 @@ brotli==1.2.0
     # via geventhttpclient
 bs4==0.0.2
     # via -r requirements.in
-certifi==2025.11.12
+certifi==2026.1.4
     # via
     #   geventhttpclient
     #   requests
