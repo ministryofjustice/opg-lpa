@@ -98,7 +98,6 @@ return [
         'factories' => [
             'accordion'             => 'Application\View\Helper\AccordionFactory',
             'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
-            'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsFactory',
             'routeName'             => 'Application\View\Helper\RouteNameFactory',
         ],
     ],

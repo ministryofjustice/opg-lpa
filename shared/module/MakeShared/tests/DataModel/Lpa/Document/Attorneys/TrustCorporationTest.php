@@ -20,9 +20,9 @@ class TrustCorporationTest extends TestCase
 
         TrustCorporation::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(2, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['number']);
+        $this->assertEquals(2, count($metadata->getConstrainedProperties()));
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('number', $metadata->getConstrainedProperties());
     }
 
     public function testToArray()
