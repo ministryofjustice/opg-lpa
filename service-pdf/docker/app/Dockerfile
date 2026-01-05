@@ -1,6 +1,6 @@
-FROM composer:2.9.2@sha256:c4f6b39889c396b86fd3603c047bb73929f05fcaa887e78f172d366e0891062b AS composer
+FROM composer:2.9.3@sha256:f746ca10fd351429e13a6fc9599ccd41d4fc413e036ae8b0dad9e2041adcffcd AS composer
 
-FROM pdftk/pdftk:3.3.3@sha256:f4634562abf5a1460d6c0c9a4893a32bfe845a892ad02574545dc145117199a3 AS pdftk
+FROM pdftk/pdftk:3.3.3@sha256:80d553d749d2e46904323b15bed7e4dbd08f17573bb8470e51285ae363cc4e3c AS pdftk
 
 FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
