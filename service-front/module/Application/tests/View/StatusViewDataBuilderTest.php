@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ApplicationTest\View;
 
-use Application\View\StatusViewModelHelper;
-use ApplicationTest\View\ViewModelRenderer;
+use Application\View\StatusViewDataBuilder;
 use DateTime;
 use DOMDocument;
 use DOMXpath;
+use Laminas\View\Model\ViewModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -24,7 +24,7 @@ use MakeShared\DataModel\Lpa\Document\Document;
  * at the top of the status detail page). They also don't check that the expected
  * receipt date is shown in the correct format in the HTML.
  */
-final class StatusViewModelHelperTest extends MockeryTestCase
+final class StatusViewDataBuilderTest extends MockeryTestCase
 {
     private DateTime $trackFromDate;
     private int $expectedWorkingDaysBeforeReceipt = 15;
@@ -52,6 +52,7 @@ final class StatusViewModelHelperTest extends MockeryTestCase
         $this->renderer = new ViewModelRenderer();
         $this->renderer->addFilter('format_lpa_id');
         $this->renderer->loadTemplate('application/authenticated/lpa/status/index.twig');
+        $this->builder = new StatusViewDataBuilder();
     }
 
     private array $testCases = [
@@ -389,12 +390,16 @@ final class StatusViewModelHelperTest extends MockeryTestCase
 
         $lpa->shouldReceive('getDocument')->andReturn($this->document);
 
-        // method we're testing
-        $viewModel = StatusViewModelHelper::build(
+        $viewData = $this->builder->build(
             $lpa,
             $lpaStatusDetails,
             $this->trackFromDate,
             $this->expectedWorkingDaysBeforeReceipt,
+        );
+
+        $this->assertNotNull(
+            $viewData,
+            "Builder returned null unexpectedly (test case $index / lpa ID $lpaId)"
         );
 
         /* For the purposes of the test, we extract the variables from the view
@@ -405,6 +410,9 @@ final class StatusViewModelHelperTest extends MockeryTestCase
          * but ignores the view itself, layout, most filters and functions, view helpers
          * etc. as far as possible.
          */
+        $viewModel = new ViewModel($viewData->toArray());
+
+        // Render
         $html = $this->renderer->render($viewModel, 'content');
 
         $dom = new DOMDocument();
