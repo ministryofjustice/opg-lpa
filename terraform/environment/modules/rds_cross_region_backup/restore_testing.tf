@@ -19,12 +19,13 @@ resource "aws_iam_role" "backup_restore_testing_role" {
 
 resource "aws_iam_role_policy_attachment" "backup_restore_testing_role" {
   role       = aws_iam_role.backup_restore_testing_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestoreTesting"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores"
 }
+
 
 # Restore testing plan
 resource "aws_backup_restore_testing_plan" "backup_restore_testing_plan" {
-  name = "${var.environment_name}_backup_restore_testing_plan"
+  name = aws_backup_restore_testing.plan.backup_restore_testing_plan.name
 
   schedule_expression          = "cron(0 12 ? * * *)" # Daily at 12:00
   schedule_expression_timezone = "UTC"
@@ -43,6 +44,12 @@ resource "aws_backup_restore_testing_selection" "backup_restore_testing_selectio
   name                      = "${var.environment_name}_backup_restore_selection"
   restore_testing_plan_name = "${var.environment_name}_backup_restore_testing_plan"
   iam_role_arn              = aws_iam_role.backup_restore_testing_role.arn
+  restore_metadata_overrides = {
+    DBClusterIdentifier = "${var.environment_name}_restored_testing_cluster"
+    DBSubnetGroupName   = "${var.environment_name}_restored_testing_subnet_group"
+    VpcSecurityGroupIds = [aws_security_group.restored_testing_sg.id]
+    # TODO - NEEDS TO BE discussed- restored clusters cannot be created in the same VPC as the source cluster
+  }
 
   protected_resource_type = "Aurora"
   protected_resource_arns = [var.source_cluster_arn]
