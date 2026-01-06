@@ -131,26 +131,3 @@ resource "aws_rds_cluster_instance" "serverless_instances" {
     ]
   }
 }
-
-resource "aws_backup_restore_testing_plan" "aurora_restore_testing_plan" {
-  name = "${var.cluster_identifier}-aurora-restore-testing-plan"
-
-  recovery_point_selection {
-    algorithm      = "LATEST_WITHIN_WINDOW"
-    include_vaults = ["*"]
-    # include_valuts = ["production_eu-west-1_aurora_backup_vault"]
-    recovery_point_types  = ["CONTINUOUS"]
-    selection_window_days = 7
-  }
-
-  schedule_expression = "cron(0 12 ? * * *)" # Daily at 12:00
-}
-
-resource "aws_backup_restore_testing_selection" "aurora_restore_selection" {
-  name                      = "${var.cluster_identifier}-aurora-restore-selection"
-  restore_testing_plan_name = aws_backup_restore_testing_plan.aurora_restore_testing_plan.name
-
-  protected_resource_type = "Aurora"
-  iam_role_arn            = "arn:aws:iam::${var.account_id}:role/BackupRestoreTestingRole"
-  # resource_arn = "arn:aws:rds:eu-west-1:123456789012:cluster:api2-production"
-}
