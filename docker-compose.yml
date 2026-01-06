@@ -454,11 +454,10 @@ services:
     build: 
       context: ./
       dockerfile: cypress/Dockerfile
-      # TODO currently testing with just applicant feature
     command: [ "run", "--spec", "cypress/e2e/StitchedCreateHWLpa.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    #command: [ "run","--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
     environment:
       CYPRESS_VIDEO: false
       SERVICE_API_ROOT: "http://api-web:8080"
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
-      CYPRESS_RUN_A11Y_TESTS: false
