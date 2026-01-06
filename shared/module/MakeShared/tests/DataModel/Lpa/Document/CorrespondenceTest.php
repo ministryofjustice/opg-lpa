@@ -20,15 +20,15 @@ class CorrespondenceTest extends TestCase
 
         Correspondence::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(8, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['who']);
-        $this->assertNotNull($metadata->properties['name']);
-        $this->assertNotNull($metadata->properties['company']);
-        $this->assertNotNull($metadata->properties['address']);
-        $this->assertNotNull($metadata->properties['email']);
-        $this->assertNotNull($metadata->properties['phone']);
-        $this->assertNotNull($metadata->properties['contactByPost']);
-        $this->assertNotNull($metadata->properties['contactInWelsh']);
+        $this->assertEquals(8, count($metadata->getConstrainedProperties()));
+        $this->assertContains('who', $metadata->getConstrainedProperties());
+        $this->assertContains('name', $metadata->getConstrainedProperties());
+        $this->assertContains('company', $metadata->getConstrainedProperties());
+        $this->assertContains('address', $metadata->getConstrainedProperties());
+        $this->assertContains('email', $metadata->getConstrainedProperties());
+        $this->assertContains('phone', $metadata->getConstrainedProperties());
+        $this->assertContains('contactByPost', $metadata->getConstrainedProperties());
+        $this->assertContains('contactInWelsh', $metadata->getConstrainedProperties());
     }
 
     public function testMap()
