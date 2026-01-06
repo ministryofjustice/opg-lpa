@@ -18,5 +18,5 @@ COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
 
 #CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress", "run", "--project", "/app", "-e", "stepDefinitions=\"/app/cypress/e2e/common/*.js\""]
-#CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress" ] 
-CMD [ "cypress" ] 
+CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress" ] 
+#CMD [ "cypress" ] 
