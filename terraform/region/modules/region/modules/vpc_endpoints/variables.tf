@@ -26,3 +26,15 @@ variable "public_subnets_cidr_blocks" {
 variable "application_route_tables" {
   type = any
 }
+
+variable "s3_endpoint_enabled" {
+  description = "Whether to create the S3 VPC endpoint"
+  type        = bool
+  default     = true
+}
+
+variable "dynamodb_endpoint_enabled" {
+  description = "Whether to create the DynamoDB VPC endpoint"
+  type        = bool
+  default     = true
+}

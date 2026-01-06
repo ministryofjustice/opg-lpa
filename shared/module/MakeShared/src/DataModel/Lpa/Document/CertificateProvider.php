@@ -31,17 +31,13 @@ class CertificateProvider extends AbstractData
     {
         $metadata->addPropertyConstraints('name', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Name'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Name'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new Assert\Type('\MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
     }

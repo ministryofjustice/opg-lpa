@@ -8,7 +8,7 @@ use Application\Controller\AbstractAuthenticatedController;
 
 class TestableAbstractAuthenticatedController extends AbstractAuthenticatedController
 {
-    public function testResetSessionCloneData($seedId)
+    public function testResetSessionCloneData(string $seedId)
     {
         return parent::resetSessionCloneData($seedId);
     }

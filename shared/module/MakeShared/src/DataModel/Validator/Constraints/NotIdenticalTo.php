@@ -8,5 +8,5 @@ class NotIdenticalTo extends SymfonyConstraints\NotIdenticalTo
 {
     use ValidatorPathTrait;
 
-    public $message = 'cannot-be-identical-to:{{ compared_value }}';
+    public string $message = 'cannot-be-identical-to:{{ compared_value }}';
 }

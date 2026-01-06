@@ -15,7 +15,6 @@ use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Document\Document;
-use Laminas\Session\Container;
 use Laminas\Router;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -474,19 +473,19 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     {
         $seedDetails = [];
         $lpa = $this->getLpa();
-        $seedId = $lpa->seed;
+        $seedId = (string) $lpa->seed;
 
-        if (!is_null($seedId)) {
-            $cloneContainer = new Container('clone');
+        if (!empty($seedId)) {
+            $sessionSeedData = $this->sessionUtility->getFromMvc('clone', $seedId);
 
-            if (!$cloneContainer->offsetExists($seedId)) {
+            if ($sessionSeedData === null) {
                 // The data isn't in the session - get it now
-                $seedActors = $this->getLpaApplicationService()->getSeedDetails($lpa->id);
-                $cloneContainer->$seedId = $seedActors;
+                $seedDetails = $this->getLpaApplicationService()->getSeedDetails($lpa->id);
+                $this->sessionUtility->setInMvc('clone', $seedId, $seedDetails);
             }
 
-            if (is_array($cloneContainer->$seedId)) {
-                $seedDetails = $cloneContainer->$seedId;
+            if (is_array($sessionSeedData)) {
+                $seedDetails = $sessionSeedData;
             }
         }
 

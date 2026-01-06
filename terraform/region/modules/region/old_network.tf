@@ -154,3 +154,27 @@ data "aws_subnets" "data_persistence" {
     aws_subnet.private
   ]
 }
+
+locals {
+  private_route_tables = {
+    ids = aws_route_table.private[*].id
+  }
+}
+
+module "vpc_endpoints_old_network" {
+  source = "./modules/vpc_endpoints"
+  count  = var.account.old_network_vpc_endpoints_enabled ? 1 : 0
+  interface_endpoint_names = [
+    "secretsmanager",
+  ]
+  vpc_id                          = aws_default_vpc.default.id
+  application_subnets_cidr_blocks = aws_subnet.private[*].cidr_block
+  application_subnets_id          = aws_subnet.private[*].id
+  public_subnets_cidr_blocks      = aws_default_subnet.public[*].cidr_block
+  application_route_tables        = local.private_route_tables
+  s3_endpoint_enabled             = false
+  dynamodb_endpoint_enabled       = false
+  providers = {
+    aws.region = aws
+  }
+}

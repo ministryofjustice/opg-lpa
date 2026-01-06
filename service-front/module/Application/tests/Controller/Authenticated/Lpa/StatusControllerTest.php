@@ -156,7 +156,8 @@ final class StatusControllerTest extends AbstractControllerTestCase
             $this->lpaApplicationService,
             $this->userDetails,
             $this->replacementAttorneyCleanup,
-            $this->metadata
+            $this->metadata,
+            $this->sessionUtility
         );
 
         $result = $controller->indexAction();

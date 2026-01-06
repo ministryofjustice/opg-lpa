@@ -52,36 +52,36 @@ data "aws_ecr_image" "lpa_seeding_app" {
 locals {
   seeding_app = jsonencode(
     {
-      "cpu" : 1,
-      "essential" : true,
-      "image" : "${data.aws_ecr_repository.lpa_seeding_app.repository_url}@${data.aws_ecr_image.lpa_seeding_app.image_digest}",
-      "mountPoints" : [],
-      "name" : "app",
-      "portMappings" : [
+      cpu         = 1,
+      essential   = true,
+      image       = "${data.aws_ecr_repository.lpa_seeding_app.repository_url}@${data.aws_ecr_image.lpa_seeding_app.image_digest}",
+      mountPoints = [],
+      name        = "app",
+      portMappings = [
         {
-          "containerPort" : 9000,
-          "hostPort" : 9000,
-          "protocol" : "tcp"
+          containerPort = 9000,
+          hostPort      = 9000,
+          protocol      = "tcp"
         }
       ],
-      "volumesFrom" : [],
-      "logConfiguration" : {
-        "logDriver" : "awslogs",
-        "options" : {
-          "awslogs-group" : aws_cloudwatch_log_group.application_logs.name,
-          "awslogs-region" : var.region_name,
-          "awslogs-stream-prefix" : "${var.environment_name}.seeding.online-lpa"
+      volumesFrom = [],
+      logConfiguration = {
+        logDriver = "awslogs",
+        options = {
+          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
+          awslogs-region        = var.region_name,
+          awslogs-stream-prefix = "${var.environment_name}.seeding.online-lpa"
         }
       },
-      "secrets" : [
-        { "name" : "OPG_LPA_POSTGRES_USERNAME", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-        { "name" : "OPG_LPA_POSTGRES_PASSWORD", "valueFrom" : "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
+      secrets = [
+        { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
+        { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
       ],
-      "environment" : [
-        { "name" : "OPG_LPA_POSTGRES_NAME", "value" : module.api_aurora[0].name },
-        { "name" : "OPG_LPA_POSTGRES_HOSTNAME", "value" : module.api_aurora[0].endpoint },
-        { "name" : "OPG_LPA_POSTGRES_PORT", "value" : tostring(module.api_aurora[0].port) },
-        { "name" : "OPG_LPA_STACK_ENVIRONMENT", "value" : var.account_name }
+      environment = [
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_routing_enabled ? module.rds_proxy[0].endpoint : module.api_aurora[0].endpoint },
+        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_routing_enabled ? "5432" : tostring(module.api_aurora[0].port) },
+        { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
+        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name }
       ]
   })
 }

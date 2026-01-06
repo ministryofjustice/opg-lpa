@@ -2,62 +2,70 @@
 
 namespace Application;
 
+use Alphagov\Pay\Client as GovPayClient;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\CookiesHandler;
-use Application\Handler\CookiesHandlerFactory;
+use Application\Handler\Factory\CookiesHandlerFactory;
 use Application\Handler\Factory\FeedbackHandlerFactory;
 use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\Factory\GuidanceHandlerFactory;
+use Application\Handler\Factory\PingHandlerFactory;
+use Application\Handler\Factory\PingHandlerJsonFactory;
+use Application\Handler\Factory\PingHandlerPingdomFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
+use Application\Handler\GuidanceHandler;
 use Application\Handler\PingHandler;
-use Application\Handler\PingHandlerFactory;
 use Application\Handler\PingHandlerJson;
-use Application\Handler\PingHandlerJsonFactory;
 use Application\Handler\PingHandlerPingdom;
-use Application\Handler\PingHandlerPingdomFactory;
+use Application\Model\Service\ApiClient\Exception\ApiException;
+use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use Application\Model\Service\Authentication\Identity\User as Identity;
+use Application\Listener\TermsAndConditionsListener;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Date\DateService;
+use Application\Model\Service\Date\IDateService;
+use Application\Model\Service\Lpa\ContinuationSheets;
+use Application\Model\Service\Redis\RedisClient;
+use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\NativeSessionConfig;
+use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
-use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Service\Factory\SystemMessageFactory;
+use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
+use Aws\DynamoDb\DynamoDbClient;
 use Laminas\Http\PhpEnvironment\Request as HttpRequest;
+use Laminas\ModuleManager\Feature\FormElementProviderInterface;
+use Laminas\Mvc\ModuleRouteListener;
+use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
+use Laminas\Stdlib\ArrayUtils;
+use Laminas\View\Model\ViewModel;
 use MakeShared\Constants;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
-use Application\Model\Service\ApiClient\Exception\ApiException;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Authentication\Identity\User as Identity;
-use Application\Model\Service\Redis\RedisClient;
-use Application\Model\Service\Session\FilteringSaveHandler;
-use Application\Model\Service\Session\PersistentSessionDetails;
-use Alphagov\Pay\Client as GovPayClient;
-use Aws\DynamoDb\DynamoDbClient;
-use Laminas\ModuleManager\Feature\FormElementProviderInterface;
-use Laminas\Mvc\ModuleRouteListener;
-use Laminas\Mvc\MvcEvent;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\ServiceManager\ServiceManager;
-use Laminas\Session\Container;
-use Laminas\Stdlib\ArrayUtils;
-use Laminas\View\Model\ViewModel;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Redis;
-use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class Module implements FormElementProviderInterface
 {
@@ -110,6 +118,13 @@ class Module implements FormElementProviderInterface
                 $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e, $path != '/session-state');
             }
+
+            $config = $application->getServiceManager()->get('config');
+            $authenticationService = $application->getServiceManager()->get(AuthenticationService::class);
+            $sessionUtility = $application->getServiceManager()->get(SessionUtility::class);
+
+            // Listeners that needs to run on every request
+            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager);
         }
     }
 
@@ -168,9 +183,10 @@ class Module implements FormElementProviderInterface
 
                     // Record that identity was cleared because of a 500 error (normally db-related)
                     if ($info['failureCode'] >= 500) {
-                        $authFailureReason = new Container('AuthFailureReason');
-                        $authFailureReason->reason = 'Internal system error';
-                        $authFailureReason->code = $info['failureCode'];
+                        /** @var SessionUtility $sessionUtility */
+                        $sessionUtility = $sm->get(SessionUtility::class);
+                        $sessionUtility->setInMvc('AuthFailureReason', 'reason', 'Internal system error');
+                        $sessionUtility->setInMvc('AuthFailureReason', 'code', $info['failureCode']);
                     }
                 }
             } catch (ApiException $ex) {
@@ -187,7 +203,7 @@ class Module implements FormElementProviderInterface
             ],
             'aliases' => [
                 'AddressLookup' => 'OrdnanceSurvey',
-                'Laminas\Authentication\AuthenticationService' => 'AuthenticationService',
+                AuthenticationService::class => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
                 IDateService::class => DateService::class,
             ],
@@ -202,7 +218,7 @@ class Module implements FormElementProviderInterface
                     return new SessionUtility();
                 },
                 SessionManagerSupport::class => function (ServiceLocatorInterface $sm) {
-                    return new SessionManagerSupport($sm->get('SessionManager'));
+                    return new SessionManagerSupport($sm->get('SessionManager'), $sm->get(SessionUtility::class));
                 },
                 SessionMiddleware::class => function () {
                     return new SessionMiddleware(new PhpSessionPersistence());
@@ -223,7 +239,7 @@ class Module implements FormElementProviderInterface
                 'PersistentSessionDetails' => function (ServiceLocatorInterface $sm) {
                     $route = $sm->get('Application')->getMvcEvent()->getRouteMatch();
 
-                    return new PersistentSessionDetails($route);
+                    return new PersistentSessionDetails($route, $sm->get(SessionUtility::class));
                 },
 
                 // PSR-7 HTTP Client
@@ -318,6 +334,8 @@ class Module implements FormElementProviderInterface
                     return new AppFunctionsExtension(
                         $sm->get('config'),
                         $sm->get(FormLinkedErrors::class),
+                        $sm->get(TemplateRendererInterface::class),
+                        $sm->get(SystemMessage::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
@@ -325,7 +343,9 @@ class Module implements FormElementProviderInterface
                 DateService::class           => InvokableFactory::class,
                 FeedbackHandler::class       => FeedbackHandlerFactory::class,
                 FeedbackThanksHandler::class => FeedbackThanksHandlerFactory::class,
-
+                SystemMessage::class => SystemMessageFactory::class,
+                ContinuationSheets::class => InvokableFactory::class,
+                GuidanceHandler::class      => GuidanceHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

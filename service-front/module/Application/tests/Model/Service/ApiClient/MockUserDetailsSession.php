@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\ApiClient;
 
-use Psr\Container\ContainerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use RuntimeException;
@@ -14,8 +13,9 @@ use RuntimeException;
  *
  * Class MockUserDetailsSession
  * @package ApplicationTest\Model\Service\ApiClient
+ * @internal This is a test mock and should not be used for type inference
  */
-class MockUserDetailsSession implements ContainerInterface
+class MockUserDetailsSession
 {
     public $identity;
 

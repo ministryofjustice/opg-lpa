@@ -35,28 +35,22 @@ abstract class AbstractAttorney extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('id', [
-            new Assert\NotBlank([
-                'groups' => [
+            new Assert\NotBlank(
+                groups: [
                     'required-at-api'
                 ]
-            ]),
-            new Assert\Type([
-                'type' => 'int'
-            ]),
+            ),
+            new Assert\Type('int'),
         ]);
 
         $metadata->addPropertyConstraints('address', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\Address'
-            ]),
+            new Assert\Type('MakeShared\DataModel\Common\Address'),
             new ValidConstraintSymfony(),
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type([
-                'type' => '\MakeShared\DataModel\Common\EmailAddress'
-            ]),
+            new Assert\Type('MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
         ]);
     }

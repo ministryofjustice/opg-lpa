@@ -8,6 +8,10 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Application\Model\Service\Lpa\ContinuationSheets;
+use Application\Service\DateCheckViewModelHelper;
+use Application\Service\Factory\DateCheckViewModelHelperFactory;
+use Laminas\ServiceManager\Factory\InvokableFactory;
 use Mezzio\Template\TemplateRendererInterface;
 use Mezzio\Twig\TwigRenderer;
 
@@ -28,6 +32,10 @@ return [
             'Application\Model\Service\ServiceAbstractFactory',
             'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
+        ],
+        'factories' => [
+            ContinuationSheets::class => InvokableFactory::class,
+            DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
         ],
         'aliases' => [
             'AdminService'                  => 'Application\Model\Service\Admin\Admin',
@@ -90,9 +98,7 @@ return [
         'factories' => [
             'accordion'             => 'Application\View\Helper\AccordionFactory',
             'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
-            'formElementErrorsV2'   => 'Application\View\Helper\FormElementErrorsFactory',
             'routeName'             => 'Application\View\Helper\RouteNameFactory',
-            'systemMessage'         => 'Application\View\Helper\SystemMessageFactory',
         ],
     ],
 
