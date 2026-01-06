@@ -1,7 +1,7 @@
 
 # Iam role policy
 resource "aws_iam_role" "backup_restore_testing_role" {
-  name = "${var.environment_name}-backup-restore-testing-role"
+  name = "${var.environment_name}_backup_restore_testing_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -24,7 +24,7 @@ resource "aws_iam_role_policy_attachment" "backup_restore_testing_role" {
 
 # Restore testing plan
 resource "aws_backup_restore_testing_plan" "backup_restore_testing_plan" {
-  name = "${var.environment_name}_backup-restore-testing-plan"
+  name = "${var.environment_name}_backup_restore_testing_plan"
 
   schedule_expression          = "cron(0 12 ? * * *)" # Daily at 12:00
   schedule_expression_timezone = "UTC"
@@ -40,8 +40,8 @@ resource "aws_backup_restore_testing_plan" "backup_restore_testing_plan" {
 
 # Restore testing selection
 resource "aws_backup_restore_testing_selection" "backup_restore_testing_selection" {
-  name                      = "${var.environment_name}_backup-restore-selection"
-  restore_testing_plan_name = "${var.environment_name}_backup-restore-testing-plan"
+  name                      = "${var.environment_name}_backup_restore_selection"
+  restore_testing_plan_name = "${var.environment_name}_backup_restore_testing_plan"
   iam_role_arn              = aws_iam_role.backup_restore_testing_role.arn
 
   protected_resource_type = "Aurora"
