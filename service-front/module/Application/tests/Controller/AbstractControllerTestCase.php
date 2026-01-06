@@ -145,10 +145,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     protected $authenticationAdapter;
     /**
-     * @var Container
-     */
-    protected $userDetailsSession;
-    /**
      * @var User
      */
     protected $user;
@@ -325,8 +321,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     {
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
-            $this->userDetailsSession = new Container();
-            $this->userDetailsSession->user = $this->user;
+            $this->sessionUtility->shouldReceive('getFromMvc')
+                ->withArgs(['UserDetails', 'user'])
+                ->andReturn($this->user)
+                ->byDefault();
 
             if (is_subclass_of($controllerName, AbstractLpaController::class)) {
                 $lpaId = ($this->lpa instanceof Lpa ? $this->lpa->id : null);
@@ -352,7 +350,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                     $this->sessionManagerSupport,
                     $this->authenticationService,
                     $this->config,
-                    $this->userDetailsSession,
                     $this->lpaApplicationService,
                     $this->userDetails,
                     $this->replacementAttorneyCleanup,
@@ -365,7 +362,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                     $this->sessionManagerSupport,
                     $this->authenticationService,
                     $this->config,
-                    $this->userDetailsSession,
                     $this->lpaApplicationService,
                     $this->userDetails,
                     $this->sessionUtility,
@@ -552,7 +548,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response): void
     {
-        $this->userDetailsSession->user = $user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($user)
+            ->byDefault();
 
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
@@ -609,7 +608,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     public function setReuseDetails($controller, $form, $user, $who)
     {
-        $this->userDetailsSession->user = $user;
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($user)
+            ->byDefault();
 
         $routeMatch = $this->getRouteMatch($controller);
 
