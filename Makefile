@@ -228,6 +228,7 @@ npm-install:
 #		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
 #		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
 #		--entrypoint ./cypress/cypress_start.sh cypress:local
+#
 
 .PHONY: cypress-open
 cypress-open: npm-install
@@ -236,16 +237,18 @@ cypress-open: npm-install
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
 # Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
-cypress-run-spec: npm-install
+cypress-old-run-spec: npm-install
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress run --spec ${SPEC} \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
+# Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
+cypress-run-spec: 
+	docker compose run --rm cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+
 # Provide full path for spec name e.g. cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
-cypress-run-spec-update-baseline: npm-install
-	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
-		CYPRESS_adminUrl="https://localhost:7003" CYPRESS_updateBaseline="1" ./node_modules/.bin/cypress run --spec ${SPEC} \
-		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+cypress-run-spec-update-baseline: 
+	docker compose run -e CYPRESS_updateBaseline="1" --rm cypress --spec cypress/e2e/${SPEC} 
 
 dc-phpcs-fix:
 	docker compose build phpcs

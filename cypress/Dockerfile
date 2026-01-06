@@ -11,11 +11,12 @@ COPY package-lock.json .
 RUN npm ci --ignore-scripts .
 
 ENV CYPRESS_VIDEO=false
-ENV CYPRESS_RUN_A11Y_TESTS=true
 
 COPY cypress.config.js .
 COPY cypress/cypress_start.sh .
 COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
 
-CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress" ]
+#CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress", "run", "--project", "/app", "-e", "stepDefinitions=\"/app/cypress/e2e/common/*.js\""]
+#CMD [ "CYPRESS_userNumber=`python3 cypress/user_number.py`", "cypress" ] 
+CMD [ "cypress" ] 
