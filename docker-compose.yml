@@ -336,7 +336,7 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: "test-secret"
+      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
@@ -455,9 +455,7 @@ services:
       context: ./
       dockerfile: cypress/Dockerfile
     command: [ "run", "--spec", "cypress/e2e/StitchedCreateHWLpa.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
-    #command: [ "run","--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
     environment:
-      CYPRESS_VIDEO: false
       SERVICE_API_ROOT: "http://api-web:8080"
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
