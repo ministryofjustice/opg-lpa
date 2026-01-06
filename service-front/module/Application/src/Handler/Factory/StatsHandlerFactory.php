@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Handler;
+namespace Application\Handler\Factory;
 
+use Application\Handler\StatsHandler;
 use Application\Model\Service\Stats\Stats as StatsService;
 use Mezzio\Twig\TwigRenderer;
 use Psr\Container\ContainerInterface;

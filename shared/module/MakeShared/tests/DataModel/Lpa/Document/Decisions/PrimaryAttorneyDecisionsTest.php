@@ -17,14 +17,15 @@ class PrimaryAttorneyDecisionsTest extends TestCase
 
         PrimaryAttorneyDecisions::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(2, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['when']);
-        $this->assertNotNull($metadata->properties['canSustainLife']);
+        $this->assertEquals(2, count($metadata->getConstrainedProperties()));
+        $this->assertContains('when', $metadata->getConstrainedProperties());
+        $this->assertContains('canSustainLife', $metadata->getConstrainedProperties());
+
         $whenMetadata = $metadata->getPropertyMetadata('when');
         $this->assertEquals([
             PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW,
             PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY
-        ], $whenMetadata[0]->constraints[1]->choices);
+        ], $whenMetadata[0]->getConstraints()[1]->choices);
     }
 
     public function testValidation()

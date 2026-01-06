@@ -83,26 +83,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             'userId' => $this->identity->id(),
         ]);
 
-        /*
-         * We check here if the terms have changed since the user last logged in.
-         * We also use a session to record whether the user has seen the 'Terms have changed' page since logging in.
-         *
-         * If the terms have changed and they haven't seen the 'Terms have changed' page
-         * in this session, we redirect them to it.
-         */
-        $termsUpdated = new DateTime($this->config()['terms']['lastUpdated']);
-
-        if ($this->identity->lastLogin() < $termsUpdated) {
-            $termsSeen = $this->sessionUtility->getFromMvc('TermsAndConditionsCheck', 'seen');
-
-            if (!isset($termsSeen)) {
-                // Flag that the 'Terms have changed' page will now have been seen...
-                $this->sessionUtility->setInMvc('TermsAndConditionsCheck', 'seen', true);
-
-                return $this->redirect()->toRoute('user/dashboard/terms-changed');
-            }
-        }
-
         //  If there are no user details set, or they are incomplete, then redirect to the about you new view
         if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->name))) {
             return $this->redirect()->toUrl('/user/about-you/new');

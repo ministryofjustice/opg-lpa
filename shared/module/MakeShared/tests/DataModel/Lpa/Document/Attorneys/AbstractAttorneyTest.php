@@ -62,10 +62,10 @@ class AbstractAttorneyTest extends TestCase
 
         AbstractAttorney::loadValidatorMetadata($metadata);
 
-        $this->assertEquals(3, count($metadata->properties));
-        $this->assertNotNull($metadata->properties['id']);
-        $this->assertNotNull($metadata->properties['address']);
-        $this->assertNotNull($metadata->properties['email']);
+        $this->assertEquals(3, count($metadata->getConstrainedProperties()));
+        $this->assertContains('id', $metadata->getConstrainedProperties());
+        $this->assertContains('address', $metadata->getConstrainedProperties());
+        $this->assertContains('email', $metadata->getConstrainedProperties());
     }
 
     public function testMap()

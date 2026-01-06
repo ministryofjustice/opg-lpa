@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Application\Handler;
+namespace Application\Handler\Factory;
 
+use Application\Handler\PingHandlerPingdom;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\System\Status;
 use Psr\Container\ContainerInterface;

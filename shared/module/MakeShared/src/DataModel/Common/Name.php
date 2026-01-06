@@ -19,7 +19,7 @@ class Name extends AbstractData
      */
     public const TITLE_MIN_LENGTH = 1;
     public const TITLE_MAX_LENGTH = 5;
-    public const FIRST_NAME_MAX_LENGTH = 50;//32;
+    public const FIRST_NAME_MAX_LENGTH = 50; //32;
     public const LAST_NAME_MAX_LENGTH = 50;//40;
 
     /**
@@ -41,33 +41,27 @@ class Name extends AbstractData
     {
         $metadata->addPropertyConstraints('title', [
             new Assert\NotIdenticalTo(''),  // Not identical to en empty string
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'min' => self::TITLE_MIN_LENGTH,
-                'max' => self::TITLE_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                min: self::TITLE_MIN_LENGTH,
+                max: self::TITLE_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('first', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::FIRST_NAME_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::FIRST_NAME_MAX_LENGTH,
+            ),
         ]);
 
         $metadata->addPropertyConstraints('last', [
             new Assert\NotBlank(),
-            new Assert\Type([
-                'type' => 'string'
-            ]),
-            new Assert\Length([
-                'max' => self::LAST_NAME_MAX_LENGTH,
-            ]),
+            new Assert\Type('string'),
+            new Assert\Length(
+                max: self::LAST_NAME_MAX_LENGTH,
+            ),
         ]);
     }
 

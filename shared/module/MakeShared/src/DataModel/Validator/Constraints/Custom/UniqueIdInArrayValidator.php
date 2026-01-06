@@ -13,7 +13,7 @@ use Symfony\Component\Validator\ConstraintValidator;
  */
 class UniqueIdInArrayValidator extends ConstraintValidator
 {
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
         if (null === $value || empty($value)) {
             return;
@@ -30,8 +30,8 @@ class UniqueIdInArrayValidator extends ConstraintValidator
             /** @var UniqueIdInArray $constraint */
             if (in_array($actor->id, $ids)) {
                 $this->context->buildViolation($constraint->notUnique)
-                     ->setInvalidValue("Duplicate value: {$actor->id}")
-                     ->addViolation();
+                    ->setInvalidValue("Duplicate value: {$actor->id}")
+                    ->addViolation();
 
                 return;
             }
