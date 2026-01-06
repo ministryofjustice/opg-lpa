@@ -13,7 +13,7 @@ class IndexController extends AbstractLpaController
     {
         $lpa = $this->getLpa();
 
-        $seedId = $lpa->seed;
+        $seedId = (string) $lpa->seed;
 
         if ($seedId) {
             $this->resetSessionCloneData($seedId);

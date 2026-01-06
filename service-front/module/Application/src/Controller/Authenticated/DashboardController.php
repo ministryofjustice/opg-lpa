@@ -120,7 +120,7 @@ class DashboardController extends AbstractAuthenticatedController
      */
     public function createAction()
     {
-        $seedId = $this->params()->fromRoute('lpa-id');
+        $seedId = (string) $this->params()->fromRoute('lpa-id');
 
         // If we're seeding the new LPA...
         if ($seedId != null) {
@@ -137,7 +137,7 @@ class DashboardController extends AbstractAuthenticatedController
                 return $this->redirect()->toRoute('user/dashboard');
             }
 
-            $result = $this->getLpaApplicationService()->setSeed($lpa, (int) $seedId);
+            $result = $this->getLpaApplicationService()->setSeed($lpa, $seedId);
 
             $this->resetSessionCloneData($seedId);
 

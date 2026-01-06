@@ -11,19 +11,6 @@ resource "aws_elasticache_subnet_group" "private_subnets" {
   subnet_ids = aws_subnet.private[*].id
 }
 
-#New Network
-#tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
-resource "aws_security_group" "new_front_cache" {
-  name   = "${local.account_name_short}-${local.region_name}-new-front-cache"
-  vpc_id = module.network.vpc.id
-  tags   = local.front_component_tag
-}
-
-resource "aws_elasticache_subnet_group" "application_subnets" {
-  name       = "${local.account_name_short}-${local.region_name}-elasticache-application-subnets"
-  subnet_ids = module.network.application_subnets[*].id
-}
-
 resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id       = "${local.account_name_short}-${local.region_name}-front-cache-rg"
   description                = "front cache replication group"
@@ -42,6 +29,19 @@ resource "aws_elasticache_replication_group" "front_cache" {
   security_group_ids         = [aws_security_group.front_cache.id]
 
   tags = local.front_component_tag
+}
+
+#New Network
+#tfsec:ignore:aws-ec2-add-description-to-security-group - adding a description is a destructive change.
+resource "aws_security_group" "new_front_cache" {
+  name   = "${local.account_name_short}-${local.region_name}-new-front-cache"
+  vpc_id = module.network.vpc.id
+  tags   = local.front_component_tag
+}
+
+resource "aws_elasticache_subnet_group" "application_subnets" {
+  name       = "${local.account_name_short}-${local.region_name}-elasticache-application-subnets"
+  subnet_ids = module.network.application_subnets[*].id
 }
 
 resource "aws_elasticache_replication_group" "new_front_cache" {
