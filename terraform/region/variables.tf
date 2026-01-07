@@ -32,6 +32,10 @@ variable "accounts" {
         domains_blocked = list(string)
       })
       old_network_vpc_endpoints_enabled = bool
+      firewalled_vpc_cidr_ranges = object({
+        eu_west_1 = string
+        eu_west_2 = string
+      })
       regions = map(
         object({
           region     = string
