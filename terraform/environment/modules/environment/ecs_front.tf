@@ -14,7 +14,7 @@ resource "aws_ecs_service" "front" {
   deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = local.app_subnet_ids
     assign_public_ip = false
   }
 
@@ -46,7 +46,7 @@ resource "aws_ecs_service" "front" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_ecs_service" {
   name_prefix = "${var.environment_name}-front-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.front_component_tag
 
 }
