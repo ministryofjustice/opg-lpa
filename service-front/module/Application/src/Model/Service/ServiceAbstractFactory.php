@@ -8,6 +8,7 @@ use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\System\Status;
 use Application\Model\Service\User\Details;
 use Exception;
@@ -28,10 +29,10 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setLpaApplicationService' => 'LpaApplicationService',
         ],
         Communication::class => [
-            'setUserDetailsSession' => 'UserDetailsSession'
+            'setSessionUtility' => SessionUtility::class
         ],
         Details::class => [
-            'setUserDetailsSession' => 'UserDetailsSession'
+            'setSessionUtility' => SessionUtility::class
         ],
         Metadata::class => [
             'setLpaApplicationService' => 'LpaApplicationService',

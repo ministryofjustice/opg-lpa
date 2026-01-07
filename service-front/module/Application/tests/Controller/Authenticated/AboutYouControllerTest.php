@@ -114,6 +114,10 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
 
+        $this->sessionUtility
+            ->shouldReceive('unsetInMvc')
+            ->with('UserDetails', 'user');
+
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(Response::class, $result);
@@ -180,6 +184,10 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you/new'])->once();
         $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($this->user));
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
+
+        $this->sessionUtility
+            ->shouldReceive('unsetInMvc')
+            ->with('UserDetails', 'user');
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

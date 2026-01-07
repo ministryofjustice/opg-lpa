@@ -7,9 +7,9 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\SessionUtility;
 use Laminas\Http\Response;
 use MakeShared\DataModel\User\User;
-use Laminas\Session\Container;
 use Exception;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
@@ -20,9 +20,9 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
     use LoggerTrait;
 
     /**
-     * @var Container
+     * @var SessionUtility
      */
-    private $userDetailsSession;
+    private $sessionUtility;
 
     /**
      * @return bool|User
@@ -232,7 +232,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (is_array($result) && isset($result['token'])) {
-                $email = $this->userDetailsSession->user->email->address;
+                $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
+                $email = $user->email->address;
 
                 $mailParameters = new MailParameters(
                     $email,
@@ -602,8 +603,8 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
         return false;
     }
 
-    public function setUserDetailsSession(#[\SensitiveParameter] Container $userDetailsSession): void
+    public function setSessionUtility(SessionUtility $sessionUtility): void
     {
-        $this->userDetailsSession = $userDetailsSession;
+        $this->sessionUtility = $sessionUtility;
     }
 }
