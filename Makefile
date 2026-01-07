@@ -219,9 +219,9 @@ npm-install:
 # reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
 .PHONY: cypress-local
 cypress-local: 
-	docker compose run --rm	cypress -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" 
-		--entrypoint ./cypress/cypress_start.sh 
-#		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
+	#docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" 
+	docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="@StitchedPF" --entrypoint="./cypress/cypress_start.sh" cypress 
+		#-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests 
 
 .PHONY: cypress-open
 cypress-open: npm-install
