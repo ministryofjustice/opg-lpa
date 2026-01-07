@@ -23,8 +23,8 @@ data "aws_db_snapshot" "api_snapshot" {
 
 # TODO: this should in region and referenced by name or datasource
 resource "aws_db_subnet_group" "main" {
-  name       = lower("main-${var.environment_name}")
-  subnet_ids = local.data_subnet_ids
+  name_prefix = lower("main-${var.environment_name}")
+  subnet_ids  = local.data_subnet_ids
 }
 
 resource "aws_db_instance" "api" {
@@ -90,7 +90,7 @@ module "api_aurora" {
   availability_zones         = data.aws_availability_zones.aws_zones.names
   apply_immediately          = !var.account.database.deletion_protection
   cluster_identifier         = var.account.database.cluster_identifier
-  db_subnet_group_name       = aws_db_subnet_group.main
+  db_subnet_group_name       = aws_db_subnet_group.main.name
   # db_subnet_group_name            = "data-persistence-subnet-default"
   deletion_protection             = var.account.database.deletion_protection
   engine_version                  = var.account.database.psql_engine_version
