@@ -93,7 +93,6 @@
       <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-platesrenderer" />
       <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-router" />
       <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-template" />
-      <path value="$PROJECT_DIR$/service-admin/vendor/mezzio/mezzio-tooling" />
       <path value="$PROJECT_DIR$/service-admin/vendor/monolog/monolog" />
       <path value="$PROJECT_DIR$/service-admin/vendor/mtdowling/jmespath.php" />
       <path value="$PROJECT_DIR$/service-admin/vendor/myclabs/deep-copy" />
