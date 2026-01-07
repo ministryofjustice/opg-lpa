@@ -13,7 +13,6 @@ use Application\Model\Service\User\Details as UserService;
 use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Laminas\Form\Element;
 use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
@@ -33,7 +32,6 @@ class FeeReductionController extends AbstractLpaController
         protected SessionManagerSupport $sessionManagerSupport,
         protected AuthenticationService $authenticationService,
         protected array $config,
-        protected Container $userDetailsSession,
         protected LpaApplicationService $lpaApplicationService,
         protected UserService $userService,
         protected ReplacementAttorneyCleanup $replacementAttorneyCleanup,
@@ -46,7 +44,6 @@ class FeeReductionController extends AbstractLpaController
             $sessionManagerSupport,
             $authenticationService,
             $config,
-            $userDetailsSession,
             $lpaApplicationService,
             $userService,
             $replacementAttorneyCleanup,

@@ -14,7 +14,6 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\Session\Container;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -35,7 +34,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         protected SessionManagerSupport $sessionManagerSupport,
         protected AuthenticationService $authenticationService,
         protected array $config,
-        protected Container $userDetailsSession,
         protected LpaApplicationService $lpaApplicationService,
         protected UserService $userService,
         protected ReplacementAttorneyCleanup $replacementAttorneyCleanup,
@@ -47,7 +45,6 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
             $sessionManagerSupport,
             $authenticationService,
             $config,
-            $userDetailsSession,
             $lpaApplicationService,
             $userService,
             $sessionUtility,
