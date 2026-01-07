@@ -11,7 +11,7 @@ resource "aws_backup_vault_notifications" "aws_backup_failures" {
 resource "aws_backup_vault_notifications" "restore_job_failures" {
   backup_vault_name   = aws_backup_vault.main.name
   sns_topic_arn       = data.aws_sns_topic.rds_events.arn
-  backup_vault_events = ["RESTORE_JOB_FAILED", "RESTORE_JOB_COMPLETED"]
+  backup_vault_events = ["RESTORE_JOB_FAILED"]
 }
 
 data "aws_iam_policy_document" "aws_rds_events_sns" {

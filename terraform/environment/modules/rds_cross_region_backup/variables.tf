@@ -29,9 +29,12 @@ variable "account_name" {
   description = "account name"
 }
 
-# needed for restore validation
+variable "account_name" {
+  type        = string
+  description = "account name"
+}
 
-# variable "restored_test_cluster" {
-#   type        = string
-#   description = "target cluster for restored testing"
-# }
+variable "iam_aurora_restore_testing_role_arn" {
+  type        = string
+  description = "The ARN of the IAM role for Aurora restore testing"
+}
