@@ -1,9 +1,3 @@
-
-resource "aws_iam_role_policy_attachment" "restore_testing_role" {
-  role       = aws_iam_role.restore_testing_role.name
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores"
-}
-
 resource "aws_backup_restore_testing_plan" "restore_testing_plan" {
   name = "${var.environment_name}_restore_testing_plan"
 
