@@ -19,7 +19,6 @@ final class AccordionService
         $flowChecker = new FormFlowChecker($lpa);
         $includeUpToRoute = $flowChecker->backToForm();
 
-        // If includeUpTo is earlier than current, include up to current
         if ($this->indexOf($includeUpToRoute) < $this->indexOf($currentRouteName)) {
             $includeUpToRoute = $currentRouteName;
         }

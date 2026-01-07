@@ -40,17 +40,13 @@ final class AccordionViewModelListener extends AbstractListenerAggregate
         $currentRouteName = $this->getMatchedRouteName($event);
         $previousRouteName = $this->sessionDetails->getPreviousRoute();
 
-        // Provide a stable template contract for both Laminas and Mezzio:
-        // route.current, route.previous
         $viewModel->setVariable('route', [
             'current'  => $currentRouteName,
             'previous' => $previousRouteName,
         ]);
 
-        // Find the LPA in the composed view models (layout/child/etc)
         $lpa = $this->findLpa($viewModel);
 
-        // Provide safe defaults to templates
         if (!$lpa instanceof Lpa || empty($currentRouteName)) {
             $viewModel->setVariable('accordionTopItems', []);
             $viewModel->setVariable('accordionBottomItems', []);
