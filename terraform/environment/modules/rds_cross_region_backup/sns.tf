@@ -1,4 +1,3 @@
-# BACKUP FAILURE NOTIFICATIONS
 data "aws_sns_topic" "rds_events" {
   name = "${var.account_name}-${data.aws_region.current.region}-rds-events"
 }
