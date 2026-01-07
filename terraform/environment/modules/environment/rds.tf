@@ -21,6 +21,12 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
+# TODO: this should in region and referenced by name or datasource
+resource "aws_db_subnet_group" "main" {
+  name       = lower("main-${var.environment_name}")
+  subnet_ids = local.data_subnet_ids
+}
+
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
@@ -76,15 +82,16 @@ module "aws_rds_api_alarms" {
 }
 
 module "api_aurora" {
-  auto_minor_version_upgrade      = true
-  source                          = "./modules/aurora"
-  count                           = var.account.database.aurora_enabled ? 1 : 0
-  aurora_serverless               = var.account.database.aurora_serverless
-  account_id                      = data.aws_caller_identity.current.account_id
-  availability_zones              = data.aws_availability_zones.aws_zones.names
-  apply_immediately               = !var.account.database.deletion_protection
-  cluster_identifier              = var.account.database.cluster_identifier
-  db_subnet_group_name            = "data-persistence-subnet-default"
+  auto_minor_version_upgrade = true
+  source                     = "./modules/aurora"
+  count                      = var.account.database.aurora_enabled ? 1 : 0
+  aurora_serverless          = var.account.database.aurora_serverless
+  account_id                 = data.aws_caller_identity.current.account_id
+  availability_zones         = data.aws_availability_zones.aws_zones.names
+  apply_immediately          = !var.account.database.deletion_protection
+  cluster_identifier         = var.account.database.cluster_identifier
+  db_subnet_group_name       = aws_db_subnet_group.main
+  # db_subnet_group_name            = "data-persistence-subnet-default"
   deletion_protection             = var.account.database.deletion_protection
   engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
@@ -102,17 +109,17 @@ module "api_aurora" {
 }
 
 resource "aws_security_group" "rds-client" {
-  name                   = "rds-client-${var.environment_name}"
+  name_prefix            = "rds-client-${var.environment_name}"
   description            = "rds access for ${var.environment_name}"
-  vpc_id                 = data.aws_vpc.default.id
+  vpc_id                 = local.vpc_id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 }
 
 resource "aws_security_group" "rds-api" {
-  name                   = "rds-api-${var.environment_name}"
+  name_prefix            = "rds-api-${var.environment_name}"
   description            = "api rds access"
-  vpc_id                 = data.aws_vpc.default.id
+  vpc_id                 = local.vpc_id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
 

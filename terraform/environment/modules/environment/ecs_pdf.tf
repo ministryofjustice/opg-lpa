@@ -13,7 +13,7 @@ resource "aws_ecs_service" "pdf" {
   force_new_deployment  = true
   network_configuration {
     security_groups  = [aws_security_group.pdf_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = local.app_subnet_ids
     assign_public_ip = false
   }
 
@@ -33,7 +33,7 @@ resource "aws_ecs_service" "pdf" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "pdf_ecs_service" {
   name_prefix = "${var.environment_name}-pdf-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.pdf_component_tag
 }
 

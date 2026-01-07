@@ -17,7 +17,7 @@ resource "aws_ecs_service" "api" {
       aws_security_group.api_ecs_service.id,
       aws_security_group.rds-client.id,
     ]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = local.app_subnet_ids
     assign_public_ip = false
   }
 
@@ -90,7 +90,7 @@ locals {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.api_component_tag
 }
 
