@@ -28,3 +28,10 @@ variable "account_name" {
   type        = string
   description = "account name"
 }
+
+# needed for restore validation
+
+# variable "restored_test_cluster" {
+#   type        = string
+#   description = "target cluster for restored testing"
+# }

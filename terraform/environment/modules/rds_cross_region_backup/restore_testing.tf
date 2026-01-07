@@ -1,4 +1,3 @@
-
 # Iam role policy
 resource "aws_iam_role" "restore_testing_role" {
   name = "${var.environment_name}_restore_testing_role"
@@ -45,15 +44,17 @@ resource "aws_backup_restore_testing_selection" "restore_testing_selection" {
   restore_testing_plan_name = aws_backup_restore_testing_plan.restore_testing_plan.name
   iam_role_arn              = aws_iam_role.restore_testing_role.arn
 
-  # restore_metadata_overrides = {
-  #   DBClusterIdentifier = "${var.environment_name}_restored_testing_cluster"
-  #   DBSubnetGroupName   = "${var.environment_name}_restored_testing_subnet_group"
-  #   VpcSecurityGroupIds = [aws_security_group.restored_testing_sg.id]
-  #   # TODO - NEEDS TO BE discussed- restored clusters shouldnt be created in the same VPC as the source cluster (according to docs and best practices)
-  # }
-
   protected_resource_type = "Aurora"
   protected_resource_arns = [var.source_cluster_arn]
   validation_window_hours = 2
+
+  # restore_metadata_overrides = {
+  #   DBClusterIdentifier = "${var.environment_name}-${var.restored_test_cluster}"
+  #   DBSubnetGroupName   = aws_db_subnet_group.restored_testing_subnet_group.name
+  #   VpcSecurityGroupIds = [aws_security_group.restored_testing_sg.id]
+  #   # TODO - NEEDS TO BE DISCUSSED FIRST- restored clusters shouldnt be created in the same VPC as the source cluster (according to docs and best practices)
+  # }
+
+
 
 }
