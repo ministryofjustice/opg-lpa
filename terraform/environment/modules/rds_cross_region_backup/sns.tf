@@ -34,6 +34,7 @@ data "aws_iam_policy_document" "aws_rds_events_sns" {
       type        = "Service"
       identifiers = ["events.amazonaws.com"]
     }
+    resources = [data.aws_sns_topic.rds_events.arn]
   }
 }
 resource "aws_sns_topic_policy" "rds_events_policy" {
