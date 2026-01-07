@@ -108,7 +108,7 @@ class StatusViewDataBuilder
         $i = 1;
         while ($i <= $workingDays) {
             $date = $date->add($interval);
-
+            // (0 = Sunday, 6 = Saturday)
             $dayOfWeek = $date->format('w');
             if ($dayOfWeek !== '0' && $dayOfWeek !== '6') {
                 $i++;
