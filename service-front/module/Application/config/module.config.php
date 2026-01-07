@@ -96,7 +96,6 @@ return [
             'formtext'              => 'Application\Form\View\Helper\FormText',
         ],
         'factories' => [
-            'accordion'             => 'Application\View\Helper\AccordionFactory',
             'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
             'routeName'             => 'Application\View\Helper\RouteNameFactory',
         ],
