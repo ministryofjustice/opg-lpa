@@ -217,18 +217,11 @@ npm-install:
 # all variables as CYPRESS_RUNNER_* env vars, picked up by the cypress_runner.py script,
 # we can apply any logic about how to set vars for cypress, as well as provide
 # reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
-#.PHONY: cypress-local
-# TODO: decide if we want to keep this and run cypress in Docker - https://opgtransform.atlassian.net/browse/LPAL-1510
-#cypress-local: npm-install
-#	docker rm -f cypress_tests || true
-#	docker build -f ./cypress/Dockerfile -t cypress:local .; \
-#	aws-vault exec moj-lpa-dev -- docker run -it -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY \
-#		-e AWS_SESSION_TOKEN -e CYPRESS_RUNNER_BASE_URL="https://localhost:7002" \
-#		-e CYPRESS_RUNNER_ADMIN_URL="https://localhost:7003" \
-#		-e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" \
+.PHONY: cypress-local
+cypress-local: 
+	docker compose run --rm	cypress -e CYPRESS_RUNNER_TAGS="@Signup,@StitchedPF or @StitchedHW" 
+		--entrypoint ./cypress/cypress_start.sh 
 #		-v `pwd`/cypress:/app/cypress --network="host" --name cypress_tests \
-#		--entrypoint ./cypress/cypress_start.sh cypress:local
-#
 
 .PHONY: cypress-open
 cypress-open: npm-install
@@ -237,12 +230,14 @@ cypress-open: npm-install
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
 # Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
+# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec: 
-	docker compose run --rm cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js" 
 
 # Provide full path for spec name e.g. cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
+# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec-update-baseline: 
-	docker compose run --rm cypress --spec cypress/e2e/${SPEC} -e CYPRESS_updateBaseline="1" -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	docker compose run --rm -e CYPRESS_updateBaseline="1" cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 dc-phpcs-fix:
 	docker compose build phpcs
