@@ -6,7 +6,7 @@ use Application\Model\FormFlowChecker;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 
-final class AccordionService
+class AccordionService
 {
     /** @param string[] $bars */
     public function __construct(private array $bars)
