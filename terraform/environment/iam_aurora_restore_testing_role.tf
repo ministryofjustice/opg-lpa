@@ -19,3 +19,8 @@ resource "aws_iam_role_policy_attachment" "restore_testing_role" {
   role       = aws_iam_role.restore_testing_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForRestores"
 }
+
+moved {
+  from = module.cross_region_backup.restore_testing.restore_testing_iam_role
+  to   = aws_iam_role.iam_aurora_restore_testing_role
+}
