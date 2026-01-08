@@ -49,7 +49,8 @@ class AccordionService
         $includeUpToRoute = $flowChecker->backToForm();
 
         $startAt = $this->indexOf($currentRouteName);
-        $bars = array_slice($this->bars, $startAt + 1);
+        $startAt = $startAt >= 0 ? $startAt : 0;
+        $bars = array_values(array_slice($this->bars, $startAt + 1));
 
         $items = [];
 
