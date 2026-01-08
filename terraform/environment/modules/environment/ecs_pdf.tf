@@ -35,6 +35,9 @@ resource "aws_security_group" "pdf_ecs_service" {
   name_prefix = "${var.environment_name}-pdf-ecs-service"
   vpc_id      = local.vpc_id
   tags        = local.pdf_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "pdf_ecs_service_egress" {

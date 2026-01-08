@@ -57,6 +57,9 @@ resource "aws_security_group" "front_loadbalancer_route53" {
   name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
   description = "Allow Route53 healthchecks"
   vpc_id      = local.vpc_id
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "actor_loadbalancer_ingress_route53_healthchecks" {
@@ -80,7 +83,9 @@ resource "aws_security_group" "front_loadbalancer" {
   description = "Allow inbound traffic"
   vpc_id      = local.vpc_id
   tags        = local.front_component_tag
-
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "front_loadbalancer_ingress" {

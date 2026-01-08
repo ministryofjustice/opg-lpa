@@ -92,6 +92,9 @@ resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
   vpc_id      = local.vpc_id
   tags        = local.api_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
