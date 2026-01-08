@@ -32,3 +32,8 @@ variable "iam_aurora_restore_testing_role_arn" {
   type        = string
   description = "The ARN of the IAM role for Aurora restore testing"
 }
+
+variable "aurora_restore_testing_enabled" {
+  type        = string
+  description = "Condition to switch on the aurora restore testing role"
+}

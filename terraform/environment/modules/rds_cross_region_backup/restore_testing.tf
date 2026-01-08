@@ -1,5 +1,6 @@
 resource "aws_backup_restore_testing_plan" "restore_testing_plan" {
-  name = "${var.environment_name}_restore_testing_plan"
+  name  = "${var.environment_name}_restore_testing_plan"
+  count = var.aurora_restore_testing_enabled ? 1 : 0
 
   schedule_expression          = "cron(0 12 ? * * *)" # Daily at 12:00
   schedule_expression_timezone = "UTC"
@@ -13,8 +14,10 @@ resource "aws_backup_restore_testing_plan" "restore_testing_plan" {
 }
 
 resource "aws_backup_restore_testing_selection" "restore_testing_selection" {
-  name                      = "${var.environment_name}_restore_testing_selection"
-  restore_testing_plan_name = aws_backup_restore_testing_plan.restore_testing_plan.name
+  count = var.aurora_restore_testing_enabled ? 1 : 0
+  name  = "${var.environment_name}_restore_testing_selection"
+
+  restore_testing_plan_name = aws_backup_restore_testing_plan.restore_testing_plan[0].name
   iam_role_arn              = var.iam_aurora_restore_testing_role_arn
 
   protected_resource_type = "Aurora"

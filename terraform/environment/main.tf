@@ -76,6 +76,7 @@ module "cross_region_backup" {
   key_alias                           = "mrk_db_snapshot_key-${local.account_name}"
   account_name                        = local.account_name
   iam_aurora_restore_testing_role_arn = aws_iam_role.restore_testing_role.arn
+  aurora_restore_testing_enabled      = local.account.database.aurora_restore_testing_enabled
 }
 
 output "admin_domain" {
