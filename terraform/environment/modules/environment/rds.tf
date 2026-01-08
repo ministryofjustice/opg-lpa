@@ -82,16 +82,15 @@ module "aws_rds_api_alarms" {
 }
 
 module "api_aurora" {
-  auto_minor_version_upgrade = true
-  source                     = "./modules/aurora"
-  count                      = var.account.database.aurora_enabled ? 1 : 0
-  aurora_serverless          = var.account.database.aurora_serverless
-  account_id                 = data.aws_caller_identity.current.account_id
-  availability_zones         = data.aws_availability_zones.aws_zones.names
-  apply_immediately          = !var.account.database.deletion_protection
-  cluster_identifier         = var.account.database.cluster_identifier
-  db_subnet_group_name       = aws_db_subnet_group.main.name
-  # db_subnet_group_name            = "data-persistence-subnet-default"
+  auto_minor_version_upgrade      = true
+  source                          = "./modules/aurora"
+  count                           = var.account.database.aurora_enabled ? 1 : 0
+  aurora_serverless               = var.account.database.aurora_serverless
+  account_id                      = data.aws_caller_identity.current.account_id
+  availability_zones              = data.aws_availability_zones.aws_zones.names
+  apply_immediately               = !var.account.database.deletion_protection
+  cluster_identifier              = var.account.database.cluster_identifier
+  db_subnet_group_name            = local.db_subnet_group_name
   deletion_protection             = var.account.database.deletion_protection
   engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
