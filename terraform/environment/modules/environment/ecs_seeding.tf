@@ -5,6 +5,9 @@ resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
   vpc_id      = local.vpc_id
   tags        = local.seeding_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {

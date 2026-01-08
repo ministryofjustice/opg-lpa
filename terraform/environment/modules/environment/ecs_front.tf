@@ -48,7 +48,9 @@ resource "aws_security_group" "front_ecs_service" {
   name_prefix = "${var.environment_name}-front-ecs-service"
   vpc_id      = local.vpc_id
   tags        = local.front_component_tag
-
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "front_ecs_service_ingress" {

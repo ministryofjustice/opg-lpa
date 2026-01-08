@@ -52,10 +52,13 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_loadbalancer" {
-  name        = "${var.environment_name}-admin-loadbalancer"
+  name_prefix = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
   vpc_id      = local.vpc_id
   tags        = local.admin_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {
