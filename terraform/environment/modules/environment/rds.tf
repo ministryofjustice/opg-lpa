@@ -115,6 +115,9 @@ resource "aws_security_group" "rds-client" {
   vpc_id                 = local.vpc_id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group" "rds-api" {
@@ -123,7 +126,6 @@ resource "aws_security_group" "rds-api" {
   vpc_id                 = local.vpc_id
   revoke_rules_on_delete = true
   tags                   = local.db_component_tag
-
   lifecycle {
     create_before_destroy = true
   }
