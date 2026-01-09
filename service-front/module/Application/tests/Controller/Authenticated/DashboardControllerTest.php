@@ -19,7 +19,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testIndexActionZeroLpas(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $response = new Response();
         $lpasSummary = [
@@ -43,7 +43,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testIndexAction(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $lpasSummary = [
             'applications' => [FixturesData::getHwLpa()->abbreviatedToArray()],
@@ -80,7 +80,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testIndexActionMultiplePages(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $lpasSummary = [
             'applications' => [],
@@ -122,7 +122,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testIndexActionLastPage(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $lpasSummary = [
             'applications' => [],
@@ -164,7 +164,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testCreateActionSeedLpaFailed(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $response = new Response();
 
@@ -182,7 +182,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testCreateActionSeedLpaPartialSuccess(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $response = new Response();
 
@@ -228,7 +228,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testDeleteActionLPAAlreadyDeleted(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
@@ -248,7 +248,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testDeleteActionSuccess(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
@@ -270,7 +270,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testConfirmDeleteLpaActionNonJs(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
@@ -293,7 +293,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testConfirmDeleteLpaActionJs(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
@@ -319,7 +319,7 @@ final class DashboardControllerTest extends AbstractControllerTestCase
     public function testTermsAction(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         /** @var ViewModel $result */
         $result = $controller->termsAction();
@@ -328,39 +328,10 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->assertEquals('', $result->getTemplate());
     }
 
-    public function testCheckAuthenticated(): void
-    {
-        $this->setIdentity(null);
-        /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
-
-        $response = new Response();
-
-        $this->request
-            ->shouldReceive('getUri')
-            ->never();
-
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['login', ['state' => 'timeout']])
-            ->andReturn($response)
-            ->once();
-
-        $this->sessionUtility
-            ->shouldReceive('getFromMvc')
-            ->with('AuthFailureReason', 'code')
-            ->andReturn(null)
-            ->once();
-
-        $result = $controller->testCheckAuthenticated(true);
-
-        $this->assertEquals($response, $result);
-    }
-
     public function testStatusesAction(): void
     {
         /** @var DashboardController $controller */
-        $controller = $this->getController(TestableDashboardController::class);
+        $controller = $this->getController(DashboardController::class);
 
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
