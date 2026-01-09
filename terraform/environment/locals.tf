@@ -6,7 +6,6 @@ locals {
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
-
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
