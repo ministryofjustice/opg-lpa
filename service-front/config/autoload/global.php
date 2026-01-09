@@ -160,4 +160,26 @@ return [
             Application\View\Twig\AppFunctionsExtension::class,
         ],
     ],
+
+    'accordion' => [
+        'bars' => [
+            'lpa/form-type',
+            'lpa/donor',
+            'lpa/when-lpa-starts',
+            'lpa/life-sustaining',
+            'lpa/primary-attorney',
+            'lpa/how-primary-attorneys-make-decision',
+            'lpa/replacement-attorney',
+            'lpa/when-replacement-attorney-step-in',
+            'lpa/how-replacement-attorneys-make-decision',
+            'lpa/certificate-provider',
+            'lpa/people-to-notify',
+            'lpa/instructions',
+            'lpa/applicant',
+            'lpa/correspondent',
+            'lpa/who-are-you',
+            'lpa/repeat-application',
+            'lpa/fee-reduction',
+        ],
+    ],
 ];

@@ -2,25 +2,42 @@
 
 declare(strict_types=1);
 
-namespace ApplicationTest\View\Helper;
+namespace ApplicationTest\Service;
 
+use Application\Service\AccordionService;
 use DateTime;
-use Application\View\Helper\Accordion;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
 use MakeShared\DataModel\Lpa\Lpa;
-use Mockery;
-use Laminas\Router\RouteMatch;
+use PHPUnit\Framework\TestCase;
 
-final class AccordionTest extends MockeryTestCase
+final class AccordionServiceTest extends TestCase
 {
+    /** @var string[] */
+    private array $bars = [
+        'lpa/form-type',
+        'lpa/donor',
+        'lpa/when-lpa-starts',
+        'lpa/life-sustaining',
+        'lpa/primary-attorney',
+        'lpa/how-primary-attorneys-make-decision',
+        'lpa/replacement-attorney',
+        'lpa/when-replacement-attorney-step-in',
+        'lpa/how-replacement-attorneys-make-decision',
+        'lpa/certificate-provider',
+        'lpa/people-to-notify',
+        'lpa/instructions',
+        'lpa/applicant',
+        'lpa/correspondent',
+        'lpa/who-are-you',
+        'lpa/repeat-application',
+        'lpa/fee-reduction',
+    ];
+
     public function testLpaType(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
+        $lpa = $this->loadLpa('hw.json');
         $lpa->id = 99999999;
 
-        $expectedTopRoutes = [
-            'review-link'
-        ];
+        $expectedTopRoutes = ['review-link'];
 
         $expectedBottomRoutes = [
             'lpa/donor',
@@ -44,12 +61,12 @@ final class AccordionTest extends MockeryTestCase
 
     public function testDonor(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
+        $lpa = $this->loadLpa('hw.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
             'lpa/form-type',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -73,13 +90,13 @@ final class AccordionTest extends MockeryTestCase
 
     public function testLifeSustaining(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/hw.json'));
+        $lpa = $this->loadLpa('hw.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
             'lpa/form-type',
             'lpa/donor',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -102,13 +119,13 @@ final class AccordionTest extends MockeryTestCase
 
     public function testWhenLpaStarts(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
             'lpa/form-type',
             'lpa/donor',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -131,14 +148,14 @@ final class AccordionTest extends MockeryTestCase
 
     public function testPrimaryAttorney(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
             'lpa/form-type',
             'lpa/donor',
             'lpa/when-lpa-starts',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -160,7 +177,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testPrimaryAttorneyDecision(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -168,7 +185,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/donor',
             'lpa/when-lpa-starts',
             'lpa/primary-attorney',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -189,7 +206,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testReplacementAttorney(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -198,7 +215,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/when-lpa-starts',
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -215,9 +232,9 @@ final class AccordionTest extends MockeryTestCase
 
         $this->assertAccordionRoutes($lpa, 'lpa/replacement-attorney', $expectedTopRoutes, $expectedBottomRoutes);
 
-        //  Change to one primary attorney
+        // Change to one primary attorney
         $lpa->document->primaryAttorneys = [
-            $lpa->document->primaryAttorneys[0]
+            $lpa->document->primaryAttorneys[0],
         ];
 
         $expectedTopRoutes = [
@@ -227,7 +244,8 @@ final class AccordionTest extends MockeryTestCase
             'lpa/primary-attorney',
         ];
 
-        //  Removing the primary attorney forces the user to confirm replacement attorneys and how they make decisions before they can continue so no bottom routes are accessible
+        // Removing the primary attorney forces the user to confirm replacement attorneys
+        // and how they make decisions before they can continue so no bottom routes are accessible
         $expectedBottomRoutes = [];
 
         $this->assertAccordionRoutes($lpa, 'lpa/replacement-attorney', $expectedTopRoutes, $expectedBottomRoutes);
@@ -235,7 +253,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testReplacementAttorneyStepIn(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -245,7 +263,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -262,11 +280,9 @@ final class AccordionTest extends MockeryTestCase
         $this->assertAccordionRoutes($lpa, 'lpa/when-replacement-attorney-step-in', $expectedTopRoutes, $expectedBottomRoutes);
     }
 
-
-
     public function testReplacementAttorneyMakeDecision(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -277,7 +293,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -296,7 +312,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testCertificateProvider(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -307,7 +323,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -322,33 +338,11 @@ final class AccordionTest extends MockeryTestCase
 
         $this->assertAccordionRoutes($lpa, 'lpa/certificate-provider', $expectedTopRoutes, $expectedBottomRoutes);
 
-        //  Change when decisions
+        // Change when decisions
         $lpa->document->replacementAttorneyDecisions->when = 'first';
-
-        $expectedTopRoutes = [
-            'lpa/form-type',
-            'lpa/donor',
-            'lpa/when-lpa-starts',
-            'lpa/primary-attorney',
-            'lpa/how-primary-attorneys-make-decision',
-            'lpa/replacement-attorney',
-            'lpa/when-replacement-attorney-step-in',
-            'review-link'
-        ];
-
-        $expectedBottomRoutes = [
-            'lpa/people-to-notify',
-            'lpa/instructions',
-            'lpa/applicant',
-            'lpa/correspondent',
-            'lpa/who-are-you',
-            'lpa/repeat-application',
-            'lpa/fee-reduction',
-        ];
-
         $this->assertAccordionRoutes($lpa, 'lpa/certificate-provider', $expectedTopRoutes, $expectedBottomRoutes);
 
-        //  Change when decisions
+        // Change how decisions
         $lpa->document->primaryAttorneyDecisions->how = 'depends';
 
         $expectedTopRoutes = [
@@ -358,17 +352,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/primary-attorney',
             'lpa/how-primary-attorneys-make-decision',
             'lpa/replacement-attorney',
-            'review-link'
-        ];
-
-        $expectedBottomRoutes = [
-            'lpa/people-to-notify',
-            'lpa/instructions',
-            'lpa/applicant',
-            'lpa/correspondent',
-            'lpa/who-are-you',
-            'lpa/repeat-application',
-            'lpa/fee-reduction',
+            'review-link',
         ];
 
         $this->assertAccordionRoutes($lpa, 'lpa/certificate-provider', $expectedTopRoutes, $expectedBottomRoutes);
@@ -376,7 +360,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testPeopleToNotify(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -388,7 +372,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/replacement-attorney',
             'lpa/when-replacement-attorney-step-in',
             'lpa/certificate-provider',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -405,7 +389,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testInstructions(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
 
         $expectedTopRoutes = [
@@ -418,7 +402,7 @@ final class AccordionTest extends MockeryTestCase
             'lpa/when-replacement-attorney-step-in',
             'lpa/certificate-provider',
             'lpa/people-to-notify',
-            'review-link'
+            'review-link',
         ];
 
         $expectedBottomRoutes = [
@@ -434,7 +418,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testApplicant(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
         $lpa->createdAt = new DateTime();
 
@@ -464,7 +448,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testCorrespondent(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
         $lpa->createdAt = new DateTime();
 
@@ -494,7 +478,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testWhoAreYou(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
         $lpa->createdAt = new DateTime();
 
@@ -524,7 +508,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testRepeatApplication(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
         $lpa->createdAt = new DateTime();
 
@@ -554,7 +538,7 @@ final class AccordionTest extends MockeryTestCase
 
     public function testFeeReduction(): void
     {
-        $lpa = new Lpa(file_get_contents(__DIR__ . '/../../fixtures/pf.json'));
+        $lpa = $this->loadLpa('pf.json');
         $lpa->id = 99999999;
         $lpa->createdAt = new DateTime();
 
@@ -581,36 +565,34 @@ final class AccordionTest extends MockeryTestCase
         $this->assertAccordionRoutes($lpa, 'lpa/fee-reduction', $expectedTopRoutes, $expectedBottomRoutes);
     }
 
-    private function assertAccordionRoutes(Lpa $lpa, string $currentRoute, array $expectedTopRoutes, array $expectedBottomRoutes): void
-    {
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')
-                   ->andReturn($currentRoute);
+    private function assertAccordionRoutes(
+        Lpa $lpa,
+        string $currentRoute,
+        array $expectedTopRoutes,
+        array $expectedBottomRoutes
+    ): void {
+        $service = new AccordionService($this->bars);
 
-        $accordion = new Accordion($routeMatch);
+        $expectedTopRoutesFormatted = array_map(
+            static fn (string $r): array => ['routeName' => $r],
+            $expectedTopRoutes
+        );
 
-        //  Create the expected top routes in the required format
-        $expectedTopRoutesFormatted = [];
+        $expectedBottomRoutesFormatted = array_map(
+            static fn (string $r): array => ['routeName' => $r],
+            $expectedBottomRoutes
+        );
 
-        foreach ($expectedTopRoutes as $expectedTopRoute) {
-            $expectedTopRoutesFormatted[] = [
-                'routeName' => $expectedTopRoute,
-            ];
-        }
-
-        $topRoutes = $accordion->__invoke($lpa)->top();
+        $topRoutes = $service->top($lpa, $currentRoute);
         $this->assertEquals($expectedTopRoutesFormatted, $topRoutes);
 
-        //  Create the expected bottom routes in the required format
-        $expectedBottomRoutesFormatted = [];
-
-        foreach ($expectedBottomRoutes as $expectedBottomRoute) {
-            $expectedBottomRoutesFormatted[] = [
-                'routeName' => $expectedBottomRoute,
-            ];
-        }
-
-        $bottomRoutes = $accordion->__invoke($lpa)->bottom();
+        $bottomRoutes = $service->bottom($lpa, $currentRoute);
         $this->assertEquals($expectedBottomRoutesFormatted, $bottomRoutes);
+    }
+
+    private function loadLpa(string $fixtureName): Lpa
+    {
+        $path = __DIR__ . '/../fixtures/' . $fixtureName;
+        return new Lpa(file_get_contents($path));
     }
 }
