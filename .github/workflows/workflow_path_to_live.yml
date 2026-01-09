@@ -274,6 +274,7 @@ jobs:
             echo "smoke_test_status=passed" >> $GITHUB_OUTPUT
           else
             echo "smoke_test_status=failed" >> $GITHUB_OUTPUT
+            exit 1
           fi
 
   slack_msg_production_deployed:
