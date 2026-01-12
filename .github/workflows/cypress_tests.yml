@@ -91,7 +91,7 @@ jobs:
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pushd cypress ; python3 stitch.py ; popd
-          docker compose run --rm cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+          docker compose run --rm cypress -e CYPRESS_baseUrl=${{ inputs.front_url }}  -e CYPRESS_adminURL=${{ inputs.admin_url }} --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
       - name: Upload Screenshot Artifact
         if: failure()
