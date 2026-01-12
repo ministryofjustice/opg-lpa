@@ -3,6 +3,7 @@
 namespace Application\Model\Service\ApiClient;
 
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Http\Client\HttpClient as HttpClientInterface;
 use Psr\Container\ContainerInterface;
@@ -31,7 +32,7 @@ class ClientFactory implements FactoryInterface
 
         /** @var SessionUtility $sessionUtility */
         $sessionUtility = $container->get(SessionUtility::class);
-        $identity = $sessionUtility->getFromMvc('UserDetails', 'identity');
+        $identity = $sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'identity');
 
         if ($identity instanceof UserIdentity) {
             $defaultHeaders['Token'] = $identity->token();
