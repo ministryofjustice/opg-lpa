@@ -3,10 +3,10 @@ variable "source_cluster_arn" {
   description = "The arn for the source Aurora cluster"
 }
 
-variable "retention_period" {
-  type        = number
-  description = "retention period of DB in days"
-}
+# variable "retention_period" {
+#   type        = number
+#   description = "retention period of DB in days"
+# }
 
 variable "destination_region_name" {
   type        = string
@@ -36,4 +36,14 @@ variable "iam_aurora_restore_testing_role_arn" {
 variable "aurora_restore_testing_enabled" {
   type        = string
   description = "Condition to switch on the aurora restore testing role"
+}
+
+variable "aurora_daily_backup_retention_in_days" {
+  type        = number
+  description = "Retention period for daily aws backups in days"
+}
+
+variable "aurora_monthly_backup_retention_in_days" {
+  type        = number
+  description = "Retention period for monthly aws backups in days"
 }

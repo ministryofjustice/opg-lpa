@@ -26,6 +26,7 @@ variable "backup_retention_period" {
   description = "The number of days for which automated backups are retained"
   type        = number
 }
+
 variable "cluster_identifier" {
   description = "The name of the DB cluster"
   type        = string

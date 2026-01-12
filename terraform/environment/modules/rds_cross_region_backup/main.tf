@@ -15,14 +15,31 @@ resource "aws_backup_plan" "main" {
     schedule          = "cron(0 06 * * ? *)" // Run at 6am UTC every day
 
     lifecycle {
-      delete_after = var.retention_period
+      delete_after = var.aurora_daily_backup_retention_in_days
     }
 
     copy_action {
       destination_vault_arn = aws_backup_vault.secondary.arn
 
       lifecycle {
-        delete_after = var.retention_period
+        delete_after = var.aurora_daily_backup_retention_in_days
+      }
+    }
+  }
+  rule {
+    rule_name         = "MonthlyBackups"
+    target_vault_name = aws_backup_vault.main.name
+    schedule          = "cron(0 61 * ? *)" // Run at 6am UTC first day of every month
+
+    lifecycle {
+      delete_after = var.aurora_daily_backup_retention_in_days
+    }
+
+    copy_action {
+      destination_vault_arn = aws_backup_vault.secondary.arn
+
+      lifecycle {
+        delete_after = var.aurora_monthly_backup_retention_in_days
       }
     }
   }
