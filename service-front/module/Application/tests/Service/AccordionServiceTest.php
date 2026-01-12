@@ -11,26 +11,25 @@ use PHPUnit\Framework\TestCase;
 
 final class AccordionServiceTest extends TestCase
 {
-    /** @var string[] */
-    private array $bars = [
-        'lpa/form-type',
-        'lpa/donor',
-        'lpa/when-lpa-starts',
-        'lpa/life-sustaining',
-        'lpa/primary-attorney',
-        'lpa/how-primary-attorneys-make-decision',
-        'lpa/replacement-attorney',
-        'lpa/when-replacement-attorney-step-in',
-        'lpa/how-replacement-attorneys-make-decision',
-        'lpa/certificate-provider',
-        'lpa/people-to-notify',
-        'lpa/instructions',
-        'lpa/applicant',
-        'lpa/correspondent',
-        'lpa/who-are-you',
-        'lpa/repeat-application',
-        'lpa/fee-reduction',
-    ];
+    public function testGetTopBarsReturnsEmptyArrayWhenLpaIsNull(): void
+    {
+        $service = new AccordionService();
+
+        $result = $service->getTopBars(null, 'lpa/donor');
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
+
+    public function testGetBottomBarsReturnsEmptyArrayWhenLpaIsNull(): void
+    {
+        $service = new AccordionService();
+
+        $result = $service->getBottomBars(null, 'lpa/donor');
+
+        $this->assertIsArray($result);
+        $this->assertEmpty($result);
+    }
 
     public function testLpaType(): void
     {
@@ -571,7 +570,7 @@ final class AccordionServiceTest extends TestCase
         array $expectedTopRoutes,
         array $expectedBottomRoutes
     ): void {
-        $service = new AccordionService($this->bars);
+        $service = new AccordionService();
 
         $expectedTopRoutesFormatted = array_map(
             static fn (string $r): array => ['routeName' => $r],
@@ -583,10 +582,10 @@ final class AccordionServiceTest extends TestCase
             $expectedBottomRoutes
         );
 
-        $topRoutes = $service->top($lpa, $currentRoute);
+        $topRoutes = $service->getTopBars($lpa, $currentRoute);
         $this->assertEquals($expectedTopRoutesFormatted, $topRoutes);
 
-        $bottomRoutes = $service->bottom($lpa, $currentRoute);
+        $bottomRoutes = $service->getBottomBars($lpa, $currentRoute);
         $this->assertEquals($expectedBottomRoutesFormatted, $bottomRoutes);
     }
 

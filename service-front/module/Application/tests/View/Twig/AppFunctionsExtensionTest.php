@@ -6,6 +6,7 @@ namespace ApplicationTest\View\Twig;
 
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
+use Application\Service\AccordionService;
 use Application\Service\SystemMessage;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Form\Element;
@@ -17,6 +18,7 @@ final class AppFunctionsExtensionTest extends TestCase
 {
     private AppFunctionsExtension $extension;
     private TemplateRendererInterface $renderer;
+    private AccordionService $accordion;
 
     protected function setUp(): void
     {
@@ -24,13 +26,15 @@ final class AppFunctionsExtensionTest extends TestCase
 
         $formLinkedErrors = $this->createMock(FormLinkedErrors::class);
         $systemMessage    = $this->createMock(SystemMessage::class);
-        $this->renderer         = $this->createMock(TemplateRendererInterface::class);
+        $this->renderer   = $this->createMock(TemplateRendererInterface::class);
+        $this->accordion        = $this->createMock(AccordionService::class);
 
         $this->extension = new AppFunctionsExtension(
             [],
             $formLinkedErrors,
             $this->renderer,
             $systemMessage,
+            $this->accordion
         );
     }
 
@@ -120,6 +124,7 @@ final class AppFunctionsExtensionTest extends TestCase
             $this->createMock(FormLinkedErrors::class),
             $renderer,
             $systemMessage,
+            $this->accordion
         );
 
         $this->assertSame('', $extension->systemMessage());
@@ -146,6 +151,7 @@ final class AppFunctionsExtensionTest extends TestCase
             $this->createMock(FormLinkedErrors::class),
             $renderer,
             $systemMessage,
+            $this->accordion
         );
 
         $this->assertSame(
