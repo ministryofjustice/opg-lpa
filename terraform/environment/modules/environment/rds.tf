@@ -21,12 +21,6 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
-# TODO: this should in region and referenced by name or datasource
-resource "aws_db_subnet_group" "main" {
-  name_prefix = lower("main-${var.environment_name}")
-  subnet_ids  = local.data_subnet_ids
-}
-
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
