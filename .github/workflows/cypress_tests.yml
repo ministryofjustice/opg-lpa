@@ -90,10 +90,8 @@ jobs:
           CYPRESS_VIDEO: false
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
-          pip install boto3
-          npm ci --ignore-scripts .
-          ./node_modules/.bin/cypress install
-          ./cypress/cypress_start.sh
+          pushd cypress ; python3 stitch.py ; popd
+          make cypress-run-spec SPEC=StitchedCreateHWLpa.feature
 
       - name: Upload Screenshot Artifact
         if: failure()
