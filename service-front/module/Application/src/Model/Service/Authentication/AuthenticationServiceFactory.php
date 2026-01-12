@@ -3,6 +3,7 @@
 namespace Application\Model\Service\Authentication;
 
 use Application\Model\Service\Authentication\Adapter\AdapterInterface;
+use Application\Model\Service\Session\ContainerNamespace;
 use Psr\Container\ContainerInterface;
 use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -26,7 +27,7 @@ class AuthenticationServiceFactory implements FactoryInterface
      */
     public function __invoke(ContainerInterface $container, $requestedName, ?array $options = null)
     {
-        $storage = new SessionStorage('UserDetails', 'identity');
+        $storage = new SessionStorage(ContainerNamespace::USER_DETAILS, 'identity');
 
         /** @var AdapterInterface $adapter */
         $adapter = $container->get('LpaAuthAdapter');

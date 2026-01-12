@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller;
 
 use Application\Model\FormFlowChecker;
+use Application\Model\Service\Session\ContainerNamespace;
 use Mockery;
 use RuntimeException;
 use Laminas\Http\Response;
@@ -94,24 +95,40 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
         $event = Mockery::mock(MvcEvent::class);
 
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
+
         $routeMatch = Mockery::mock(RouteMatch::class);
-        $event->shouldReceive('getRouteMatch')->andReturn($routeMatch)->times(3);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/download')->once();
-        $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn('lp1')->once();
+        $event
+            ->shouldReceive('getRouteMatch')
+            ->andReturn($routeMatch)->times(4);
+        $routeMatch
+            ->shouldReceive('getMatchedRouteName')
+            ->andReturn('lpa/download')
+            ->times(2);
+        $routeMatch
+            ->shouldReceive('getParam')
+            ->withArgs(['pdf-type'])
+            ->andReturn('lp1');
+        $routeMatch
+            ->shouldReceive('getParam')
+            ->withArgs(['action', 'not-found'])
+            ->andReturn('index')->once();
+
         $flowChecker = Mockery::mock(FormFlowChecker::class);
         $controller->injectedFlowChecker = $flowChecker;
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/download', 'lp1'])->andReturn('lpa/download')->once();
+
         $this->logger->shouldReceive('info')->withArgs([
             'Request to ApplicationTest\Controller\TestableAbstractLpaController',
             ['userId' => $this->user->id],
         ])->once();
+
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
-        $routeMatch->shouldReceive('getParam')
-            ->withArgs(['action', 'not-found'])->andReturn('index')->once();
+
+
         $event->shouldReceive('setResult')->once();
 
         /** @var ViewModel $result */

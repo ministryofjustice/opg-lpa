@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\User;
 
+use Application\Model\Service\Session\ContainerNamespace;
 use Hamcrest\MatcherAssert;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Application\Model\Service\Session\SessionUtility;
@@ -102,6 +103,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         [
             'createdAt' => '2017-01-30T13:11:32.695000+0000',
             'updatedAt' => '2017-01-30T13:11:35.580000+0000',
+            'lastLoginAt' => '2017-01-30T13:11:36.580000+0000',
             'dob' => ['date' => '2000-02-01T00:00:00.000000+0000'],
             'id' => 'e551d8b14c408f7efb7358fb258f1b13',
             'name' => [
@@ -131,6 +133,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $result = $this->service->updateAllDetails([
             'createdAt' => '2017-01-30T13:11:32.695000+0000',
             'updatedAt' => '2017-01-30T13:11:35.580000+0000',
+            'lastLoginAt' => '2017-01-30T13:11:36.580000+0000',
             'dob-date' => '2000-02-01T00:00:00.000000+0000',
             'id' => 'e551d8b14c408f7efb7358fb258f1b13',
             'name' => [
@@ -162,6 +165,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
         $updatedUserData['createdAt'] = '2017-06-30T13:11:32.695000+0000';
         $updatedUserData['updatedAt'] = '2017-06-30T13:11:35.580000+0000';
+        $updatedUserData['lastLoginAt'] = '2017-06-30T13:11:36.580000+0000';
         $updatedUserData['address'] = null;
         $updatedUserData['dob'] = null;
 
@@ -412,7 +416,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $user = (object)['email' => (object)['address' => 'test@email.com']];
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($user)
             ->byDefault();
 
@@ -451,7 +455,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $user = (object)['email' => (object)['address' => 'test@email.com']];
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($user)
             ->byDefault();
 
