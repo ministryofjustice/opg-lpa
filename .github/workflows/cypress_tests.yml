@@ -91,6 +91,8 @@ jobs:
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pushd cypress ; python3 stitch.py ; popd
+          echo "sed command is : "
+          echo '"s/https:\/\/front-ssl/${{ inputs.front_url }}/g"'
           sed -i -e "s/https:\/\/front-ssl/${{ inputs.front_url }}/g" docker-compose.yml
           sed -i -e "s/https:\/\/admin-ssl/${{ inputs.admin_url }}/g" docker-compose.yml
           cat docker-compose.yml
