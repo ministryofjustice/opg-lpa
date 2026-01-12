@@ -36,6 +36,8 @@ final class TypeControllerTest extends AbstractControllerTestCase
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
+
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
         /** @var ViewModel $result */
@@ -52,6 +54,8 @@ final class TypeControllerTest extends AbstractControllerTestCase
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
+
         $this->setPostInvalid($this->form, $this->postData);
 
         /** @var ViewModel $result */
@@ -67,6 +71,8 @@ final class TypeControllerTest extends AbstractControllerTestCase
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
+
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
 
         $response = new Response();
 
@@ -85,6 +91,8 @@ final class TypeControllerTest extends AbstractControllerTestCase
     {
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
+
+        $this->setMatchedRouteName($controller, 'lpa/form-type');
 
         $this->setPostValid($this->form, $this->postData);
         $lpa = FixturesData::getHwLpa();
@@ -118,7 +126,9 @@ final class TypeControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('setType')
             ->andReturn($lpa->getId(), $this->postData['type'])->andReturn(true)->once();
 
-        $this->setMatchedRouteName($controller, 'lpa/form-type');
+        $routeMatch = $this->getRouteMatch($controller);
+        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/form-type')->once();
+
         $this->setRedirectToRoute('lpa/donor', $lpa, $response);
 
         $result = $controller->indexAction();

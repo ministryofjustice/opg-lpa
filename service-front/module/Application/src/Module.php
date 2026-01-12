@@ -21,8 +21,6 @@ use Application\Handler\GuidanceHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
-use Application\Listener\AccordionViewModelListener;
-use Application\Listener\AccordionViewModelListenerFactory;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -38,8 +36,8 @@ use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
-use Application\Service\AccordionFactory;
 use Application\Service\AccordionService;
+use Application\Service\Factory\AccordionServiceFactory;
 use Application\Service\Factory\SystemMessageFactory;
 use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
@@ -127,8 +125,6 @@ class Module implements FormElementProviderInterface
             $authenticationService = $application->getServiceManager()->get(AuthenticationService::class);
             $sessionUtility = $application->getServiceManager()->get(SessionUtility::class);
 
-            $serviceManager->get(AccordionViewModelListener::class)->attach($eventManager);
-            // Listeners that needs to run on every request
             new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager);
         }
     }
@@ -336,6 +332,7 @@ class Module implements FormElementProviderInterface
                         $sm->get(FormLinkedErrors::class),
                         $sm->get(TemplateRendererInterface::class),
                         $sm->get(SystemMessage::class),
+                        $sm->get(AccordionService::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
@@ -346,8 +343,7 @@ class Module implements FormElementProviderInterface
                 SystemMessage::class => SystemMessageFactory::class,
                 ContinuationSheets::class => InvokableFactory::class,
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
-                AccordionService::class      => AccordionFactory::class,
-                AccordionViewModelListener::class => AccordionViewModelListenerFactory::class,
+                AccordionService::class      => AccordionServiceFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

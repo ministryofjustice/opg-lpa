@@ -89,6 +89,8 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         // check the requested route and redirect user to the correct one if the requested route is not available.
         $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
 
+        $layout->currentRouteName = $currentRoute;
+
         // get extra input query param from the request url.
         if ($currentRoute == 'lpa/download') {
             $param = $e->getRouteMatch()->getParam('pdf-type');
@@ -118,6 +120,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
 
         if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
             $view->setVariable('lpa', $this->lpa);
+            $view->setVariable('currentRouteName', $currentRoute);
         }
 
         return $view;
