@@ -106,8 +106,8 @@ class AccordionService
                 continue;
             }
 
-            if (isset($bars[(int)$key + 1])) {
-                foreach (array_slice($bars, (int)$key + 1) as $futureRoute) {
+            if (isset($bars[$key + 1])) {
+                foreach (array_slice($bars, $key + 1) as $futureRoute) {
                     if ($futureRoute === $flowChecker->getNearestAccessibleRoute($futureRoute)) {
                         $barsInPlay[] = ['routeName' => $route];
                         break;
