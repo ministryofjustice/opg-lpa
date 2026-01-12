@@ -12,47 +12,16 @@ use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
 
-/**
- * Represents a user of the LPA platform.
- *
- * Class User
- */
 class User extends AbstractData
 {
-    /**
-     * @var string The user's internal ID.
-     */
-    protected $id;
-
-    /**
-     * @var DateTime the user was created.
-     */
-    protected $createdAt;
-
-    /**
-     * @var DateTime the user was last updated.
-     */
-    protected $updatedAt;
-
-    /**
-     * @var Name Their name.
-     */
-    protected $name;
-
-    /**
-     * @var Address Their postal address.
-     */
-    protected $address;
-
-    /**
-     * @var Dob Their date of birth.
-     */
-    protected $dob;
-
-    /**
-     * @var EmailAddress Their email address.
-     */
-    protected $email;
+    protected ?string $id = null;
+    protected ?DateTime $createdAt = null;
+    protected ?DateTime $updatedAt = null;
+    protected ?Name $name = null;
+    protected ?Address $address = null;
+    protected ?Dob $dob = null;
+    protected ?EmailAddress $email = null;
+    protected ?DateTime $lastLoginAt = null;
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
@@ -72,6 +41,10 @@ class User extends AbstractData
 
         $metadata->addPropertyConstraints('updatedAt', [
             new ValidatorConstraints\NotBlank(),
+            new ValidatorConstraints\Custom\DateTimeUTC(),
+        ]);
+
+        $metadata->addPropertyConstraints('lastLoginAt', [
             new ValidatorConstraints\Custom\DateTimeUTC(),
         ]);
 
@@ -106,92 +79,57 @@ class User extends AbstractData
      */
     protected function map($property, $value)
     {
-        switch ($property) {
-            case 'updatedAt':
-            case 'createdAt':
-                return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
-            case 'name':
-                return (($value instanceof Name || is_null($value)) ? $value : new Name($value));
-            case 'address':
-                return (($value instanceof Address || is_null($value)) ? $value : new Address($value));
-            case 'dob':
-                return (($value instanceof Dob || is_null($value)) ? $value : new Dob($value));
-            case 'email':
-                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
-        }
-
-        return parent::map($property, $value);
+        return match ($property) {
+            'updatedAt', 'createdAt', 'lastLoginAt' => (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value)),
+            'name' => (($value instanceof Name || is_null($value)) ? $value : new Name($value)),
+            'address' => (($value instanceof Address || is_null($value)) ? $value : new Address($value)),
+            'dob' => (($value instanceof Dob || is_null($value)) ? $value : new Dob($value)),
+            'email' => (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value)),
+            default => parent::map($property, $value),
+        };
     }
 
-    /**
-     * @return string
-     */
-    public function getId(): string
+    public function getId(): ?string
     {
         return $this->id;
     }
 
-    /**
-     * @param string $id
-     * @return $this
-     */
-    public function setId(string $id): User
+    public function setId(?string $id): User
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getCreatedAt(): DateTime
+    public function getCreatedAt(): ?DateTime
     {
         return $this->createdAt;
     }
 
-    /**
-     * @param DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt(DateTime $createdAt): User
+    public function setCreatedAt(?DateTime $createdAt): User
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    /**
-     * @return DateTime
-     */
-    public function getUpdatedAt(): DateTime
+    public function getUpdatedAt(): ?DateTime
     {
         return $this->updatedAt;
     }
 
-    /**
-     * @param DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt(DateTime $updatedAt): User
+    public function setUpdatedAt(?DateTime $updatedAt): User
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
-    /**
-     * @return Name|null
-     */
-    public function getName(): Name|null
+    public function getName(): ?Name
     {
         return $this->name;
     }
 
-    /**
-     * @param Name $name
-     * @return $this
-     */
     public function setName(Name $name): User
     {
         $this->name = $name;
@@ -199,60 +137,50 @@ class User extends AbstractData
         return $this;
     }
 
-    /**
-     * @return Address
-     */
-    public function getAddress()
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
 
-    /**
-     * @param Address $address
-     * @return $this
-     */
-    public function setAddress($address): User
+    public function setAddress(?Address $address): User
     {
         $this->address = $address;
 
         return $this;
     }
 
-    /**
-     * @return Dob
-     */
-    public function getDob()
+    public function getDob(): ?Dob
     {
         return $this->dob;
     }
 
-    /**
-     * @param Dob $dob
-     * @return $this
-     */
-    public function setDob($dob): User
+    public function setDob(?Dob $dob): User
     {
         $this->dob = $dob;
 
         return $this;
     }
 
-    /**
-     * @return EmailAddress
-     */
-    public function getEmail()
+    public function getEmail(): ?EmailAddress
     {
         return $this->email;
     }
 
-    /**
-     * @param EmailAddress $email
-     * @return $this
-     */
-    public function setEmail($email): User
+    public function setEmail(?EmailAddress $email): User
     {
         $this->email = $email;
 
+        return $this;
+    }
+
+    public function getLastLoginAt(): ?DateTime
+    {
+        return $this->lastLoginAt;
+    }
+
+    public function setLastLoginAt(?DateTime $lastLoginAt): User
+    {
+        $this->lastLoginAt = $lastLoginAt;
         return $this;
     }
 }

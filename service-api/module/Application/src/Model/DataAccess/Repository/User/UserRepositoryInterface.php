@@ -109,7 +109,7 @@ interface UserRepositoryInterface
      * @param DateTime|null $since only include accounts activated $since
      * @return int Account count
      */
-    public function countActivatedAccounts(DateTime $since = null): int;
+    public function countActivatedAccounts(?DateTime $since = null): int;
 
     /**
      * Counts the number of accounts that have been deleted.

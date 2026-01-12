@@ -3,6 +3,7 @@
 namespace MakeSharedTest\DataModel;
 
 use InvalidArgumentException;
+use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use PHPUnit\Framework\TestCase;
 
@@ -105,25 +106,25 @@ class AbstractDataTest extends TestCase
 
     public function testFlatten()
     {
-        $user = new User();
-        $user->set('id', [1]);
-        $flattenedUser = $user->flatten('test');
-        $this->assertEquals(1, $flattenedUser['testid-0']);
+        $lpa = new Lpa();
+        $lpa->set('metadata', [1]);
+        $flattenedUser = $lpa->flatten('test');
+
+        $this->assertEquals(1, $flattenedUser['testmetadata-0']);
     }
 
     public function testPopulateWithFlatArray()
     {
-        $user = new User();
-        $user->set('id', [1]);
-        $flattenedUser = $user->flatten('test');
-        $unFlattenedUser = $user->populateWithFlatArray($flattenedUser);
-        $this->assertEquals([1], $unFlattenedUser->get('id'));
+        $lpa = new Lpa();
+        $lpa->set('metadata', [1]);
+        $flattenedUser = $lpa->flatten('test');
+        $unFlattenedUser = $lpa->populateWithFlatArray($flattenedUser);
+        $this->assertEquals([1], $unFlattenedUser->get('metadata'));
     }
 
     public function testUnflatten()
     {
         $user = new User();
-        $user->set('id', [1]);
         $testArray = [ "foo" => "bar" ,
             "name-title" => "Mr" ,
             "name-first" => "Test" ,
@@ -133,6 +134,7 @@ class AbstractDataTest extends TestCase
             "address-address2" => "EMBANKMENT HOUSE" ,
             "address-address3" => "ELECTRIC AVENUE, NOTTINGHAM" ,
             "address-postcode" => "NG2 1AR",
+            "id" => 1
         ];
         $unFlattenedUser = $user->populateWithFlatArray($testArray);
         $userName = $unFlattenedUser->getName();
@@ -145,6 +147,7 @@ class AbstractDataTest extends TestCase
         $this->assertEquals("EMBANKMENT HOUSE", $userAddress->getAddress2());
         $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $userAddress->getAddress3());
         $this->assertEquals("NG2 1AR", $userAddress->getPostcode());
+        $this->assertEquals(1, $unFlattenedUser->getId());
 
         // Test that original array is unchanged.  Original unflatten function used pass-by-reference with potential side effects,
         // so prove this is no longer the case.
@@ -157,5 +160,6 @@ class AbstractDataTest extends TestCase
         $this->assertEquals("EMBANKMENT HOUSE", $testArray["address-address2"]);
         $this->assertEquals("ELECTRIC AVENUE, NOTTINGHAM", $testArray["address-address3"]);
         $this->assertEquals("NG2 1AR", $testArray["address-postcode"]);
+        $this->assertEquals(1, $testArray["id"]);
     }
 }

@@ -7,18 +7,22 @@ namespace ApplicationTest\View\Twig;
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
 use Application\Service\AccordionService;
+use Application\Service\NavigationViewModelHelper;
 use Application\Service\SystemMessage;
+use Application\View\Model\NavigationViewModel;
 use Application\View\Twig\AppFunctionsExtension;
 use Laminas\Form\Element;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 final class AppFunctionsExtensionTest extends TestCase
 {
     private AppFunctionsExtension $extension;
-    private TemplateRendererInterface $renderer;
-    private AccordionService $accordion;
+    private TemplateRendererInterface|MockObject $renderer;
+    private AccordionService|MockObject $accordion;
+    private NavigationViewModelHelper|MockObject $navigationViewModelHelper;
 
     protected function setUp(): void
     {
@@ -28,13 +32,15 @@ final class AppFunctionsExtensionTest extends TestCase
         $systemMessage    = $this->createMock(SystemMessage::class);
         $this->renderer   = $this->createMock(TemplateRendererInterface::class);
         $this->accordion        = $this->createMock(AccordionService::class);
+        $this->navigationViewModelHelper        = $this->createMock(NavigationViewModelHelper::class);
 
         $this->extension = new AppFunctionsExtension(
             [],
             $formLinkedErrors,
             $this->renderer,
             $systemMessage,
-            $this->accordion
+            $this->accordion,
+            $this->navigationViewModelHelper,
         );
     }
 
@@ -124,7 +130,8 @@ final class AppFunctionsExtensionTest extends TestCase
             $this->createMock(FormLinkedErrors::class),
             $renderer,
             $systemMessage,
-            $this->accordion
+            $this->accordion,
+            $this->navigationViewModelHelper,
         );
 
         $this->assertSame('', $extension->systemMessage());
@@ -151,7 +158,8 @@ final class AppFunctionsExtensionTest extends TestCase
             $this->createMock(FormLinkedErrors::class),
             $renderer,
             $systemMessage,
-            $this->accordion
+            $this->accordion,
+            $this->navigationViewModelHelper,
         );
 
         $this->assertSame(
@@ -238,5 +246,32 @@ final class AppFunctionsExtensionTest extends TestCase
         $result = $this->extension->formElementErrorsV2($element);
 
         $this->assertSame('<span>rendered</span>', $result);
+    }
+
+    public function testRenderNavigation(): void
+    {
+        $viewModel = new NavigationViewModel(
+            true,
+            'A Name',
+            new \DateTime(),
+            '/some/route',
+            true,
+        );
+
+        $this->navigationViewModelHelper
+            ->expects($this->once())
+            ->method('build')
+            ->with('/some/route')
+            ->willReturn($viewModel);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/partials/nav.twig', ['nav' => $viewModel])
+            ->willReturn('<nav>navigation</nav>');
+
+        $result = $this->extension->renderNavigation('/some/route');
+
+        $this->assertSame('<nav>navigation</nav>', $result);
     }
 }
