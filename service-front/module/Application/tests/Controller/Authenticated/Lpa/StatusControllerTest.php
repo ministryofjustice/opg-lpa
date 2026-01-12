@@ -8,7 +8,6 @@ use Application\Controller\Authenticated\Lpa\StatusController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
 use Laminas\Http\Response;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -142,8 +141,11 @@ final class StatusControllerTest extends AbstractControllerTestCase
              ->withArgs([$testLpaId])
              ->andReturn(['found' => true, 'status' => 'Processed']);
 
-        $userDetailsSession = new Container();
-        $userDetailsSession->user = $this->user;
+        // Mock SessionUtility to return user when requested
+        $this->sessionUtility->shouldReceive('getFromMvc')
+            ->withArgs(['UserDetails', 'user'])
+            ->andReturn($this->user)
+            ->byDefault();
 
         // SUT
         $controller = new StatusController(
@@ -152,7 +154,6 @@ final class StatusControllerTest extends AbstractControllerTestCase
             $this->sessionManagerSupport,
             $this->authenticationService,
             $this->config,
-            $userDetailsSession,
             $this->lpaApplicationService,
             $this->userDetails,
             $this->replacementAttorneyCleanup,

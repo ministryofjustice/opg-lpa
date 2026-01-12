@@ -4,9 +4,9 @@ namespace Application\View\Helper;
 
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\SessionUtility;
 use MakeShared\DataModel\User\User;
 use Laminas\Router\RouteMatch;
-use Laminas\Session\Container;
 use Laminas\View\Helper\AbstractHelper;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -19,8 +19,8 @@ class AccountInfo extends AbstractHelper implements LoggerAwareInterface
     /** @var AuthenticationService */
     private $authenticationService;
 
-    /** @var Container */
-    private $userDetailsSession;
+    /** @var SessionUtility */
+    private $sessionUtility;
 
     /** @var ViewModel */
     private $viewModel;
@@ -36,21 +36,21 @@ class AccountInfo extends AbstractHelper implements LoggerAwareInterface
 
     /**
      * @param AuthenticationService $authenticationService
-     * @param Container $userDetailsSession
+     * @param SessionUtility $sessionUtility
      * @param ViewModel $viewModel
      * @param RouteMatch $routeMatch
      * @param LpaApplicationService $lpaApplicationService
      */
     public function __construct(
         AuthenticationService $authenticationService,
-        Container $userDetailsSession,
+        SessionUtility $sessionUtility,
         ViewModel $viewModel,
         ?RouteMatch $routeMatch,
         LpaApplicationService $lpaApplicationService,
         LocalViewRenderer $localViewRenderer
     ) {
         $this->authenticationService = $authenticationService;
-        $this->userDetailsSession = $userDetailsSession;
+        $this->sessionUtility = $sessionUtility;
         $this->viewModel = $viewModel;
         $this->routeMatch = $routeMatch;
         $this->lpaApplicationService = $lpaApplicationService;
@@ -70,8 +70,9 @@ class AccountInfo extends AbstractHelper implements LoggerAwareInterface
 
         //  Only include name (and user links) if the user has set their name - i.e. they've completed the
         //  first About You step
-        if ($this->userDetailsSession->user instanceof User) {
-            $sessionUserName = $this->userDetailsSession->user->getName();
+        $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
+        if ($user instanceof User) {
+            $sessionUserName = $user->getName();
             if ($sessionUserName !== null) {
                 $params['name'] = $sessionUserName->getFirst() . ' ' . $sessionUserName->getLast();
             } else {
@@ -99,15 +100,18 @@ class AccountInfo extends AbstractHelper implements LoggerAwareInterface
         // Check if the user has one or more LPAs
         // Once a user has more than one, we cache the result in the session to save a lookup for every page load.
         if (
-            !isset($this->userDetailsSession->hasOneOrMoreLPAs) ||
-            $this->userDetailsSession->hasOneOrMoreLPAs == false
+            !$this->sessionUtility->hasInMvc('UserDetails', 'hasOneOrMoreLPAs') ||
+            $this->sessionUtility->getFromMvc('UserDetails', 'hasOneOrMoreLPAs') == false
         ) {
             $lpasSummaries = $this->lpaApplicationService->getLpaSummaries();
-            $this->userDetailsSession->hasOneOrMoreLPAs =
-                (array_key_exists('total', $lpasSummaries) && $lpasSummaries['total'] > 0);
+            $this->sessionUtility->setInMvc(
+                'UserDetails',
+                'hasOneOrMoreLPAs',
+                (array_key_exists('total', $lpasSummaries) && $lpasSummaries['total'] > 0)
+            );
         }
 
-        $params['hasOneOrMoreLPAs'] = $this->userDetailsSession->hasOneOrMoreLPAs;
+        $params['hasOneOrMoreLPAs'] = $this->sessionUtility->getFromMvc('UserDetails', 'hasOneOrMoreLPAs');
 
         echo $this->localViewRenderer->renderTemplate('account-info/account-info.twig', $params);
     }

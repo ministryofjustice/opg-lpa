@@ -3,10 +3,10 @@
 namespace Application\Model\Service\ApiClient;
 
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\SessionUtility;
 use Http\Client\HttpClient as HttpClientInterface;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
-use Laminas\Session\Container;
 use MakeShared\Telemetry\Tracer;
 
 class ClientFactory implements FactoryInterface
@@ -29,9 +29,9 @@ class ClientFactory implements FactoryInterface
 
         $defaultHeaders = [];
 
-        /** @var Container $userDetailsSession */
-        $userDetailsSession = $container->get('UserDetailsSession');
-        $identity = $userDetailsSession->identity;
+        /** @var SessionUtility $sessionUtility */
+        $sessionUtility = $container->get(SessionUtility::class);
+        $identity = $sessionUtility->getFromMvc('UserDetails', 'identity');
 
         if ($identity instanceof UserIdentity) {
             $defaultHeaders['Token'] = $identity->token();
