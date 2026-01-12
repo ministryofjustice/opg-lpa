@@ -26,7 +26,7 @@ critical security alert for the slim-jwt-auth package)
 
 See https://github.com/tuupola/slim-jwt-auth/issues/217 for the bug this is
 working around
-*/
+ */
 
 declare(strict_types=1);
 
@@ -44,7 +44,6 @@ use InvalidArgumentException;
 use Exception;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
-use Laminas\Http\Response;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -88,9 +87,9 @@ final class JwtMiddleware implements MiddlewareInterface, LoggerAwareInterface
                 call_user_func([$this, $method], $value);
             } else {
                 /**
-                * Or fallback to setting option directly
-                * @psalm-suppress InvalidPropertyAssignmentValue
-                */
+                 * Or fallback to setting option directly
+                 * @psalm-suppress InvalidPropertyAssignmentValue
+                 */
                 $this->options[$key] = $value;
             }
         }
@@ -179,9 +178,7 @@ final class JwtMiddleware implements MiddlewareInterface, LoggerAwareInterface
         };
 
         /* If everything fails log and throw. */
-        $this->getLogger()->warning('Token not found', [
-            'status' => Response::STATUS_CODE_500
-        ]);
+        $this->getLogger()->warning('Token not found');
         throw new RuntimeException("Token not found.");
     }
 

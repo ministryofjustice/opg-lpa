@@ -3,8 +3,9 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaController;
-use Application\View\StatusViewModelHelper;
+use Application\View\StatusViewDataBuilder;
 use DateTime;
+use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
 /**
@@ -17,7 +18,7 @@ class StatusController extends AbstractLpaController
 
     public function indexAction()
     {
-        $viewModel = null;
+        $viewData = null;
 
         $lpa = $this->getLpa();
 
@@ -35,7 +36,9 @@ class StatusController extends AbstractLpaController
 
             $lpaStatusDetails = $this->getLpaApplicationService()->getStatuses($lpa->getId());
 
-            $viewModel = StatusViewModelHelper::build(
+            $builder = new StatusViewDataBuilder();
+
+            $viewData = $builder->build(
                 $lpa,
                 $lpaStatusDetails,
                 $trackFromDate,
@@ -43,10 +46,10 @@ class StatusController extends AbstractLpaController
             );
         }
 
-        if (is_null($viewModel)) {
+        if ($viewData === null) {
             return $this->redirect()->toRoute('user/dashboard');
         }
 
-        return $viewModel;
+        return new ViewModel($viewData->toArray());
     }
 }
