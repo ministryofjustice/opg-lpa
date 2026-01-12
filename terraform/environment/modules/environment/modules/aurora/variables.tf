@@ -22,7 +22,7 @@ variable "availability_zones" {
   type        = list(string)
 }
 variable "backup_retention_period" {
-  default     = 14
+  default     = 30
   description = "The number of days for which automated backups are retained"
   type        = number
 }
