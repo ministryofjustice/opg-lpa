@@ -219,8 +219,8 @@ npm-install:
 # reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
 .PHONY: cypress-local
 cypress-local: 
-	docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="@SignUp,@StitchedPF" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
-#	docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
+	#docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="@SignUp,@StitchedPF" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
+	docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
 
 .PHONY: cypress-open
 cypress-open: npm-install
@@ -232,6 +232,11 @@ cypress-open: npm-install
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec: 
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js" 
+
+# Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
+# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+cypress-run-tags: 
+	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py`,filterSpecs="true",TAGS="${TAGS}" cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
 
 # Provide full path for spec name e.g. cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
