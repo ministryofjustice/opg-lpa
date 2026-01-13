@@ -94,8 +94,7 @@ jobs:
           echo '"s|https://front-ssl|${{ inputs.front_url }}|g"'
           sed -i -e "s|https://front-ssl|${{ inputs.front_url }}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${{ inputs.admin_url }}|g" docker-compose.yml
-          cat docker-compose.yml
-          docker compose run --rm cypress -e CYPRESS_baseUrl=${{ inputs.front_url }}  -e CYPRESS_adminURL=${{ inputs.admin_url }} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+          docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="@Signup"
 
       - name: Upload Screenshot Artifact
         if: failure()
