@@ -91,12 +91,11 @@ jobs:
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pushd cypress ; python3 stitch.py ; popd
-          echo "sed command is : "
           echo '"s|https://front-ssl|${{ inputs.front_url }}|g"'
           sed -i -e "s|https://front-ssl|${{ inputs.front_url }}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${{ inputs.admin_url }}|g" docker-compose.yml
           cat docker-compose.yml
-          docker compose run --rm cypress -e CYPRESS_baseUrl=${{ inputs.front_url }}  -e CYPRESS_adminURL=${{ inputs.admin_url }} --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+          docker compose run --rm cypress -e CYPRESS_baseUrl=${{ inputs.front_url }}  -e CYPRESS_adminURL=${{ inputs.admin_url }} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
       - name: Upload Screenshot Artifact
         if: failure()
