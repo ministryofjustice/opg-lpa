@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Controller;
 
+use Application\Model\Service\Session\ContainerNamespace;
 use DateTime;
 use Mockery;
 use MakeShared\DataModel\User\User;
@@ -130,7 +131,7 @@ class AbstractAuthenticatedControllerTestCase extends AbstractControllerTestCase
     {
         // Simulate the database being unavailable, which results in a marker in the session;
         // see Module.php, where this marker is added before the session is handed over to the controller
-        $authFailureReason = new Container('AuthFailureReason');
+        $authFailureReason = new Container(ContainerNamespace::AUTH_FAILURE_REASON);
         $authFailureReason->reason = 'Internal system error';
         $authFailureReason->code = 500;
 

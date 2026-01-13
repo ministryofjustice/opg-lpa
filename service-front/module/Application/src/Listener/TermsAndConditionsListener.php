@@ -42,7 +42,8 @@ class TermsAndConditionsListener extends AbstractListenerAggregate implements Mi
     {
         $this->listeners[] = $events->attach(
             MvcEvent::EVENT_DISPATCH,
-            [$this, 'listen']
+            [$this, 'listen'],
+            $priority
         );
     }
 
