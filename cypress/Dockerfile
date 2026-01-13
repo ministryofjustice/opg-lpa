@@ -13,7 +13,6 @@ RUN npm ci --ignore-scripts .
 ENV CYPRESS_VIDEO=false
 
 COPY cypress.config.js .
-COPY cypress/cypress_start.sh .
 COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
 
