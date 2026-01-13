@@ -18,6 +18,10 @@ variable "account" {
       domains_blocked = list(string)
     })
     old_network_vpc_endpoints_enabled = bool
+    network_firewall_rules = object({
+      allowed_domains          = list(string)
+      allowed_prefixed_domains = list(string)
+    })
   })
 }
 

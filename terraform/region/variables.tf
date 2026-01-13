@@ -36,6 +36,10 @@ variable "accounts" {
         eu_west_1 = string
         eu_west_2 = string
       })
+      network_firewall_rules = object({
+        allowed_domains          = list(string)
+        allowed_prefixed_domains = list(string)
+      })
       regions = map(
         object({
           region     = string
