@@ -8,10 +8,6 @@ variable "destination_region_name" {
   description = "destination key name"
 }
 
-# variable "backup_retention_period" {
-#   type        = number
-#   description = "The number of days to retain backups"
-# }
 variable "key_alias" {
   type        = string
   description = "key alias"

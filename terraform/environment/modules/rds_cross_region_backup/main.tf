@@ -49,30 +49,6 @@ resource "aws_backup_plan" "main" {
     }
   }
 }
-
-
-# resource "aws_backup_plan" "main" {
-#   name = "${var.environment_name}_aurora_backup_plan"
-
-#   rule {
-#     rule_name         = "DailyBackups"
-#     target_vault_name = aws_backup_vault.main.name
-#     schedule          = "cron(0 06 * * ? *)" // Run at 6am UTC every day
-
-#     lifecycle {
-#       delete_after = var.retention_period
-#     }
-
-#     copy_action {
-#       destination_vault_arn = aws_backup_vault.secondary.arn
-
-#       lifecycle {
-#         delete_after = var.retention_period
-#       }
-#     }
-#   }
-# }
-
 resource "aws_backup_vault" "main" {
   name        = "${var.environment_name}_${data.aws_region.current.region}_aurora_backup_vault"
   kms_key_arn = data.aws_kms_key.source_rds_snapshot_key.arn
