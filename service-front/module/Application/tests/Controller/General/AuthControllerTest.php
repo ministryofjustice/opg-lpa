@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\AuthController;
 use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Mockery;
 use Mockery\MockInterface;
@@ -105,7 +106,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $this->sessionUtility
             ->shouldReceive('getFromMvc')
-            ->with('PreAuthRequest', 'url')
+            ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url')
             ->andReturn(null)
             ->once();
 
@@ -159,7 +160,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->once();
         $this->sessionUtility
             ->shouldReceive('getFromMvc')
-            ->with('PreAuthRequest', 'url')
+            ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url')
             ->andReturn(null)
             ->once();
 
@@ -353,12 +354,9 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
     private function setPreAuthRequestUrl(string $url): void
     {
-//        $this->sessionManager->shouldReceive('start')->once();
-//        $this->storage->offsetSet('PreAuthRequest', new ArrayObject(['url' => $url]));
-
         $this->sessionUtility
             ->shouldReceive('getFromMvc')
-            ->with('PreAuthRequest', 'url')
+            ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url')
             ->andReturn($url)
             ->once();
     }

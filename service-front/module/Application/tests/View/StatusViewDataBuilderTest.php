@@ -496,10 +496,6 @@ final class StatusViewDataBuilderTest extends MockeryTestCase
     public function testStatusViewModelHelperBuild(): void
     {
         foreach ($this->testCases as $index => $testCase) {
-            if ($index == 0) {
-                echo "\n";
-            }
-            echo "Running tests for StatusViewModelHelper test case $index\n";
             $this->buildAndTestViewModel($index, $testCase);
         }
     }

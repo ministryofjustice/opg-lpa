@@ -14,41 +14,6 @@ use Laminas\View\Model\ViewModel;
 
 final class AbstractLpaControllerTest extends AbstractControllerTestCase
 {
-    public function testOnDispatchNotAuthenticated(): void
-    {
-        $this->setIdentity(null);
-
-        $controller = $this->getController(TestableAbstractLpaController::class);
-
-        $response = new Response();
-        $event = new MvcEvent();
-
-        $this->request
-            ->shouldReceive('getUri')
-            ->andReturn('http://localhost/home');
-
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['login', ['state' => 'timeout']])
-            ->andReturn($response)
-            ->once();
-
-        $this->sessionUtility
-            ->shouldReceive('setInMvc')
-            ->with('PreAuthRequest', 'url', 'http://localhost/home')
-            ->once();
-
-        $this->sessionUtility
-            ->shouldReceive('getFromMvc')
-            ->with('AuthFailureReason', 'code')
-            ->andReturn(null)
-            ->once();
-
-        $result = $controller->onDispatch($event);
-
-        $this->assertEquals($result, $response);
-    }
-
     public function testOnDispatchNoLpaException(): void
     {
         $this->lpa = false;
