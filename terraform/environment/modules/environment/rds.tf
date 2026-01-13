@@ -22,27 +22,26 @@ data "aws_db_snapshot" "api_snapshot" {
 }
 
 resource "aws_db_instance" "api" {
-  count                      = var.account.always_on ? 1 : 0
-  identifier                 = lower("api-${var.environment_name}")
-  db_name                    = "api2"
-  allocated_storage          = 10
-  max_allocated_storage      = 100
-  storage_type               = "gp2"
-  storage_encrypted          = true
-  skip_final_snapshot        = var.account.database.skip_final_snapshot
-  engine                     = "postgres"
-  engine_version             = var.account.database.psql_engine_version
-  instance_class             = var.account.database.rds_instance_type
-  port                       = "5432"
-  kms_key_id                 = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
-  username                   = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
-  password                   = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
-  parameter_group_name       = data.aws_db_parameter_group.postgres_db_params[var.account.database.psql_parameter_group_family].name
-  vpc_security_group_ids     = [aws_security_group.rds-api.id]
-  auto_minor_version_upgrade = false
-  maintenance_window         = "wed:05:00-wed:09:00"
-  multi_az                   = true
-  # backup_retention_period             = var.account.database.daily_backup_deletion
+  count                               = var.account.always_on ? 1 : 0
+  identifier                          = lower("api-${var.environment_name}")
+  db_name                             = "api2"
+  allocated_storage                   = 10
+  max_allocated_storage               = 100
+  storage_type                        = "gp2"
+  storage_encrypted                   = true
+  skip_final_snapshot                 = var.account.database.skip_final_snapshot
+  engine                              = "postgres"
+  engine_version                      = var.account.database.psql_engine_version
+  instance_class                      = var.account.database.rds_instance_type
+  port                                = "5432"
+  kms_key_id                          = local.is_primary_region ? data.aws_kms_key.rds.arn : data.aws_kms_key.multi_region_db_snapshot_key.arn
+  username                            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string
+  password                            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
+  parameter_group_name                = data.aws_db_parameter_group.postgres_db_params[var.account.database.psql_parameter_group_family].name
+  vpc_security_group_ids              = [aws_security_group.rds-api.id]
+  auto_minor_version_upgrade          = false
+  maintenance_window                  = "wed:05:00-wed:09:00"
+  multi_az                            = true
   deletion_protection                 = var.account.database.deletion_protection
   tags                                = local.db_component_tag
   allow_major_version_upgrade         = true
@@ -55,7 +54,7 @@ resource "aws_db_instance" "api" {
   copy_tags_to_snapshot               = true
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
 }
-# TODO - verify the monthly and daily retention vars need to be added here
+# TODO - verify if the monthly and daily retention vars need to be added here
 
 // setup a bunch of alarms that are useful for our needs
 //see https://github.com/lorenzoaiello/terraform-aws-rds-alarms
