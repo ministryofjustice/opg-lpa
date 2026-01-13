@@ -460,3 +460,5 @@ services:
       SERVICE_API_ROOT: "http://api-web:8080"
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots
