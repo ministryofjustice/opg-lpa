@@ -210,18 +210,6 @@ dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-
 npm-install:
 	npm ci --ignore-scripts
 
-# CYPRESS_RUNNER_* environment variables are used to consolidate setting environment
-# variables detected by cypress (like CYPRESS_baseUrl) and variables which are
-# only present in the cypress "environment" (i.e. passed to cypress using the -e flag).
-# The runner knows which variables should be set using which mechanism. By passing
-# all variables as CYPRESS_RUNNER_* env vars, picked up by the cypress_runner.py script,
-# we can apply any logic about how to set vars for cypress, as well as provide
-# reasonable defaults (e.g. for CYPRESS_baseUrl), in one location.
-.PHONY: cypress-local
-cypress-local: 
-	#docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="@SignUp,@StitchedPF" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
-	docker compose run --rm	-e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_RUNNER_TAGS="" -e CYPRESS_RUNNER_BASE_URL="https://front-ssl" -e CYPRESS_RUNNER_ADMIN_URL="https://admin-ssl" --entrypoint="./cypress/cypress_start.sh" cypress 
-
 .PHONY: cypress-open
 cypress-open: npm-install
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
@@ -233,7 +221,7 @@ cypress-open: npm-install
 cypress-run-spec: 
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js" 
 
-# Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
+# This should be used in the form : make cypress-run-tags TAGS="@Signup". This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-tags: 
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
