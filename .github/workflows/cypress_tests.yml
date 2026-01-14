@@ -85,8 +85,6 @@ jobs:
           CYPRESS_numTestsKeptInMemory: 1
           CYPRESS_RUNNER_IN_CI: true
           CYPRESS_RUNNER_TAGS: ${{ inputs.cypress_tags }}
-          CYPRESS_RUNNER_BASE_URL: ${{ inputs.front_url }}
-          CYPRESS_RUNNER_ADMIN_URL: ${{ inputs.admin_url }}
           CYPRESS_VIDEO: false
           CYPRESS_RUN_A11Y_TESTS: true
         run: |
@@ -95,9 +93,8 @@ jobs:
           sed -i -e "s|https://front-ssl|${{ inputs.front_url }}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${{ inputs.admin_url }}|g" docker-compose.yml
           CYPRESS_userNumber=`python3 cypress/user_number.py`
-          cat cypress/e2e/StitchedCreateHWLpa.feature
           docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="@Signup"
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="@StitchedHW"
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber cypress -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${{ inputs.cypress_tags }}"
 
       - name: Upload Screenshot Artifact
         if: failure()

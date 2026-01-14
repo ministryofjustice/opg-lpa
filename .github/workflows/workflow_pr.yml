@@ -229,7 +229,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "@Signup,@StitchedPF"
+      cypress_tags: "@StitchedPF"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -243,7 +243,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "@Signup,@StitchedHW"
+      cypress_tags: "@StitchedHW"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -257,7 +257,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "@Signup,@StitchedClone"
+      cypress_tags: "@StitchedClone"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
