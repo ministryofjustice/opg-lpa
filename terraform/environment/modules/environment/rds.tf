@@ -42,7 +42,6 @@ resource "aws_db_instance" "api" {
   auto_minor_version_upgrade          = false
   maintenance_window                  = "wed:05:00-wed:09:00"
   multi_az                            = true
-  backup_retention_period             = var.account.database.backup_retention_period
   deletion_protection                 = var.account.database.deletion_protection
   tags                                = local.db_component_tag
   allow_major_version_upgrade         = true
@@ -55,7 +54,6 @@ resource "aws_db_instance" "api" {
   copy_tags_to_snapshot               = true
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
 }
-
 // setup a bunch of alarms that are useful for our needs
 //see https://github.com/lorenzoaiello/terraform-aws-rds-alarms
 // since aurora is not in use yet for pre and production,
