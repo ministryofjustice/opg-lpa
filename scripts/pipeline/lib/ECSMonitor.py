@@ -57,7 +57,6 @@ class ECSMonitor:
         )
 
         self.get_task_definition()
-        self.get_subnet_id()
 
     def read_parameters_from_file(self, config_file):
         with open(config_file) as json_file:
@@ -65,6 +64,7 @@ class ECSMonitor:
             self.aws_account_id = parameters["account_id"]
             self.aws_ecs_cluster = parameters["cluster_name"]
             self.environment = parameters["environment"]
+            self.aws_private_subnets = parameters["app_subnet_ids"]
             self.db_client_security_group = parameters["db_client_security_group_id"]
             self.security_group = parameters[f"{self.taskName}_security_group_id"]
             self.aws_region = parameters["region"]
@@ -119,32 +119,6 @@ class ECSMonitor:
                 DurationSeconds=900,
             )
             self.aws_iam_session = session
-
-    def get_subnet_id(self):
-        # get ids for private subnets
-        # returns a list of private subnet ids
-        subnets = self.aws_ec2_client.describe_subnets(
-            Filters=[
-                {
-                    "Name": "tag:Name",
-                    "Values": [
-                        "private",
-                        "application-eu-west-1a",
-                        "application-eu-west-1b",
-                        "application-eu-west-1c"
-                    ],
-                },
-                {
-                    "Name": "vpc-id",
-                    "Values": [
-                        self.vpc_id,
-                    ],
-                },
-            ],
-            MaxResults=5,
-        )
-        for subnet in subnets["Subnets"]:
-            self.aws_private_subnets.append(subnet["SubnetId"])
 
     def run_task(self):
         # run a task in ecs with a network configuration
