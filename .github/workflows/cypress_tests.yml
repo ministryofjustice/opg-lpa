@@ -65,7 +65,7 @@ jobs:
       - name: Add GitHub Actions runner Ingress Rule
         run: |
           python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
-          curl "${{ inputs.admin_url }}/ping.json"
+          curl "${{ inputs.front_url }}/ping.json"
 
       - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
