@@ -19,10 +19,13 @@ variable "account" {
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
       aurora_restore_testing_enabled     = bool
+      daily_backup_deletion              = number
+      daily_backup_cold_storage          = number
+      monthly_backup_deletion            = number
+      monthly_backup_cold_storage        = number
       aurora_enabled                     = bool
       aurora_instance_count              = number
       aurora_serverless                  = bool
-      backup_retention_period            = number
       deletion_protection                = bool
       psql_engine_version                = string
       psql_parameter_group_family        = string
