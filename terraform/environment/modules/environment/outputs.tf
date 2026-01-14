@@ -42,3 +42,7 @@ output "aws_aurora_cluster_arn" {
 output "aws_ecs_task_definition_api_arn" {
   value = aws_ecs_task_definition.api.arn
 }
+
+output "vpc_id" {
+  value = local.vpc_id
+}
