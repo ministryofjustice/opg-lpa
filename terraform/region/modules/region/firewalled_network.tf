@@ -58,15 +58,16 @@ module "vpc_endpoints" {
     "ec2",
     "ecr.api",
     "ecr.dkr",
-    "execute-api",
     "events",
+    "execute-api",
+    "kms",
     "logs",
+    "monitoring",
     "rum",
     "secretsmanager",
+    "sqs",
     "ssm",
     "xray",
-    "kms",
-    "monitoring",
   ]
   vpc_id                          = module.network.vpc.id
   application_subnets_cidr_blocks = module.network.application_subnets[*].cidr_block
