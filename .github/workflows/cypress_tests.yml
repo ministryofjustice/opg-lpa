@@ -83,10 +83,6 @@ jobs:
           CYPRESS_baseUrl: ${{ inputs.front_url }}
           CYPRESS_NO_COMMAND_LOG: 1
           CYPRESS_numTestsKeptInMemory: 1
-          CYPRESS_RUNNER_IN_CI: true
-          CYPRESS_RUNNER_TAGS: ${{ inputs.cypress_tags }}
-          CYPRESS_VIDEO: false
-          CYPRESS_RUN_A11Y_TESTS: true
         run: |
           pushd cypress ; python3 stitch.py ; popd
           echo '"s|https://front-ssl|${{ inputs.front_url }}|g"'
