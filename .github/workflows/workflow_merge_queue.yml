@@ -205,8 +205,8 @@ jobs:
         run: |
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
-  cypress_tests_Signup_StichedPF:
-    name: Run Cypress tests - @Signup,@StitchedPF
+  cypress_tests_Signup_StitchedPF:
+    name: Run Cypress tests - Signup,StitchedPF
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - preprod_terraform_outputs
@@ -215,12 +215,12 @@ jobs:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-      cypress_tags: "@Signup,@StitchedPF"
+      cypress_tags: "@StitchedPF"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
-  cypress_tests_Signup_StichedHW:
+  cypress_tests_Signup_StitchedHW:
     name: Run Cypress tests - @Signup,@StitchedHW
     uses: ./.github/workflows/cypress_tests.yml
     needs:
@@ -230,7 +230,7 @@ jobs:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-      cypress_tags: "@Signup,@StitchedHW"
+      cypress_tags: "@StitchedHW"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -262,7 +262,7 @@ jobs:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-      cypress_tags: "@Signup,not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -287,8 +287,8 @@ jobs:
       - terraform_environment_preproduction
       - preprod_terraform_outputs
       - set_variables
-      - cypress_tests_Signup_StichedPF
-      - cypress_tests_Signup_StichedHW
+      - cypress_tests_Signup_StitchedPF
+      - cypress_tests_Signup_StitchedHW
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
     environment:
@@ -301,8 +301,8 @@ jobs:
         run: |
           if ${{ contains(needs.terraform_environment_preproduction.result, 'success')}} &&
             ${{ contains(needs.preprod_terraform_outputs.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Signup_StichedPF.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Signup_StichedHW.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Signup_StitchedPF.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Signup_StitchedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
             echo "Preproduction environment tested, built and deployed"

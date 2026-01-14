@@ -132,7 +132,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -227,7 +227,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
@@ -317,7 +317,7 @@ services:
       args:
         # enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged.
         # Turn this on if you wish to debug the admin app
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
     volumes:
       - ./service-admin:/app
       - ./shared:/shared
@@ -336,7 +336,7 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: "test-secret"
+      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
@@ -392,7 +392,7 @@ services:
       args:
         # Other containers are built with debug on. Lines could be put here to build pdf with debug,
         # but not doing as default due to pdf being slow already
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: 0
         VISUAL_TESTS: true
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
@@ -449,3 +449,16 @@ services:
       - ./service-pdf:/app/service-pdf
       - ./shared:/app/shared
       - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
+
+  cypress:
+    build: 
+      context: ./
+      dockerfile: cypress/Dockerfile
+    # when spun up locally within docker compose, run just the HomePage test, but this is generally overriden from the Makefile 
+    command: [ "run", "--spec", "cypress/e2e/HomePage.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    environment:
+      SERVICE_API_ROOT: "http://api-web:8080"
+      CYPRESS_baseUrl: https://front-ssl
+      CYPRESS_adminUrl: https://admin-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots
