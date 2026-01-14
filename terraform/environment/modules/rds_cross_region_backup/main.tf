@@ -18,7 +18,7 @@ resource "aws_backup_plan" "main" {
 
     lifecycle {
       cold_storage_after = var.daily_backup_cold_storage
-      delete_after       = var.monthly_backup_deletion
+      delete_after       = var.daily_backup_deletion
     }
     copy_action {
       destination_vault_arn = aws_backup_vault.secondary.arn
