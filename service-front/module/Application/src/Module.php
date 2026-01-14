@@ -38,6 +38,8 @@ use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Service\AccordionService;
+use Application\Service\Factory\AccordionServiceFactory;
 use Application\Service\Factory\SystemMessageFactory;
 use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
@@ -338,6 +340,7 @@ class Module implements FormElementProviderInterface
                         $sm->get(FormLinkedErrors::class),
                         $sm->get(TemplateRendererInterface::class),
                         $sm->get(SystemMessage::class),
+                        $sm->get(AccordionService::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
@@ -348,6 +351,7 @@ class Module implements FormElementProviderInterface
                 SystemMessage::class => SystemMessageFactory::class,
                 ContinuationSheets::class => InvokableFactory::class,
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
+                AccordionService::class      => AccordionServiceFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

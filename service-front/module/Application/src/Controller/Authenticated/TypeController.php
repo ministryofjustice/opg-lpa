@@ -27,7 +27,7 @@ class TypeController extends AbstractAuthenticatedController
                      ->get('Application\Form\Lpa\TypeForm');
 
         $request = $this->convertRequest();
-
+        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
         if ($request->isPost()) {
             $form->setData($request->getPost());
 
@@ -51,7 +51,6 @@ class TypeController extends AbstractAuthenticatedController
                 }
 
                 $formFlowChecker = new FormFlowChecker();
-                $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
                 $nextRoute = $formFlowChecker->nextRoute($currentRouteName);
 
                 return $this->redirect()->toRoute(
@@ -65,6 +64,7 @@ class TypeController extends AbstractAuthenticatedController
         $view = new ViewModel([
             'form'                => $form,
             'isChangeAllowed'     => true,
+            'currentRouteName'    => $currentRouteName
         ]);
 
         $view->setTemplate('application/authenticated/lpa/type/index.twig');
