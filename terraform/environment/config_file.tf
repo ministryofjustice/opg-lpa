@@ -18,5 +18,6 @@ locals {
     front_load_balancer_security_group_id = !local.dr_enabled ? module.eu-west-1.front_sg_id : module.eu-west-2[0].front_sg_id
     admin_load_balancer_security_group_id = !local.dr_enabled ? module.eu-west-1.admin_sg_id : module.eu-west-2[0].admin_sg_id
     vpc_id                                = !local.dr_enabled ? module.eu-west-1.vpc_id : module.eu-west-2[0].vpc_id
+    app_subnet_ids                        = !local.dr_enabled ? module.eu-west-1.app_subnet_ids : module.eu-west-2[0].app_subnet_ids
   }
 }

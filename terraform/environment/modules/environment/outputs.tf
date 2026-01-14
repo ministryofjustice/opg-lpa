@@ -46,3 +46,7 @@ output "aws_ecs_task_definition_api_arn" {
 output "vpc_id" {
   value = local.vpc_id
 }
+
+output "app_subnet_ids" {
+  value = local.app_subnet_ids
+}
