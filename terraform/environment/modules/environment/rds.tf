@@ -54,8 +54,6 @@ resource "aws_db_instance" "api" {
   copy_tags_to_snapshot               = true
   snapshot_identifier                 = !local.is_primary_region ? data.aws_db_snapshot.api_snapshot[0].id : null
 }
-# TODO - verify if the monthly and daily retention vars need to be added here
-
 // setup a bunch of alarms that are useful for our needs
 //see https://github.com/lorenzoaiello/terraform-aws-rds-alarms
 // since aurora is not in use yet for pre and production,
