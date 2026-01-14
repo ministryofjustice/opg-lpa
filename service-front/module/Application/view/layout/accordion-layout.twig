@@ -23,18 +23,19 @@
 
 {% block accordionTop %}
     {%- set route = routeName() -%}
-    <ul class="accordion" data-cy="accordion">
-        {%- set accordionTop = accordion(lpa).top() -%}
+    {%- set accordionTopItems = accordionTop(lpa, currentRouteName) -%}
+<ul class="accordion" data-cy="accordion">
+    {%- include 'layout/partials/accordion/accordion.twig' with {'items': accordionTopItems, 'lpa': lpa} -%}
+    {%- if route.previous != 'user/about-you'
+        and route.previous != 'user/dashboard'
+        and (accordionTopItems|last).routeName is defined
+        and (accordionTopItems|last).routeName != 'review-link' -%}
+        <li aria-hidden="true"><a id="current" class="accordion-current">{{ route.previous }}</a></li>
+    {%- endif -%}
+    {% endblock %}
 
-        {%- include 'layout/partials/accordion/accordion.twig' with {'items': accordionTop, 'lpa': lpa} -%}
-
-        {%- if route['previous'] != 'user/about-you' and route['previous'] != 'user/dashboard' and (accordionTop|last).routeName != 'review-link' -%}
-            <li aria-hidden="true"><a id="current" class="accordion-current">{{ route['previous'] }}</a></li>
-        {%- endif -%}
-{% endblock %}
-
-{% block accordionBottom %}
-        {% set accordionBottom = accordion(lpa).bottom() %}
-        {% include 'layout/partials/accordion/accordion.twig' with {'items': accordionBottom, 'lpa': lpa} %}
-    </ul>
+    {% block accordionBottom %}
+    {%- set accordionBottomItems = accordionBottom(lpa, currentRouteName) -%}
+    {%- include 'layout/partials/accordion/accordion.twig' with {'items': accordionBottomItems, 'lpa': lpa} -%}
+</ul>
 {% endblock %}
