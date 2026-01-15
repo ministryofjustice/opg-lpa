@@ -95,7 +95,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         // call flow checker to get the nearest accessible route.
-        $calculatedRoute = $this->getFlowChecker()->getNearestAccessibleRoute($currentRoute, $param);
+        $calculatedRoute = $this->getFlowChecker()?->getNearestAccessibleRoute($currentRoute, $param);
 
         // if false, do not run action method.
         if ($calculatedRoute === false) {

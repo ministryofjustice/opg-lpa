@@ -9,7 +9,7 @@ use Application\Form\Lpa\DateCheckForm;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Service\DateCheckViewModelHelper;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Http\Response;
 use Mockery;
 use Laminas\View\Model\ViewModel;
 use Mockery\MockInterface;
@@ -136,9 +136,9 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEquals("lpa/{$this->lpa->id}/date-check/valid", $result->getHeaderLine('Location'));
+        $this->assertEquals("lpa/{$this->lpa->id}/date-check/valid", $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testValidActionNoReturnRoute(): void
