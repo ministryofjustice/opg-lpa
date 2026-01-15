@@ -4,11 +4,11 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Http\Message\ResponseInterface;
 
 class RegisterController extends AbstractBaseController
 {
@@ -29,7 +29,7 @@ class RegisterController extends AbstractBaseController
      * but it doesn't.) So we suppress this psalm error.
      *
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return ViewModel|RedirectResponse
+     * @return ViewModel|ResponseInterface|HttpResponse
      */
     public function indexAction()
     {

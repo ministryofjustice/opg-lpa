@@ -172,17 +172,16 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->blankMainFlowForm);
         $this->metadata->shouldReceive('setPeopleToNotifyConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/people-to-notify');
-        $this->setRedirectToRoute('lpa/instructions', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/instructions', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddActionGetReuseDetails(): void
@@ -215,15 +214,14 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/people-to-notify', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddActionGet(): void
@@ -294,8 +292,6 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setPostValid($this->peopleToNotifyForm, $this->postData, null, 2, 2);
         $this->setFormAction($this->peopleToNotifyForm, $this->lpa, 'lpa/people-to-notify/add');
@@ -308,11 +304,12 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
                     && $notifiedPerson->address == new Address($this->postData['address']);
             })->andReturn(true)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/people-to-notify');
-        $this->setRedirectToRoute('lpa/instructions', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/instructions', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddActionPostMetadata(): void
@@ -611,19 +608,18 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $response = new Response();
-
         $idx = 0;
 
         $routeMatch = $this->getHttpRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn($idx)->once();
         $this->lpaApplicationService->shouldReceive('deleteNotifiedPerson')
             ->withArgs([$this->lpa, $this->lpa->document->peopleToNotify[$idx]->id])->andReturn(true)->once();
-        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/people-to-notify', $result->getHeaders()->get('Location')->getUri());
     }
 
     private function getExpectedPeopleToNotifyParams(): array

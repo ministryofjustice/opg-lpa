@@ -95,7 +95,7 @@ abstract class AbstractBaseController extends AbstractActionController implement
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
      * @param $routeName string The route name for the current page for if a redirect is needed.
-     * @return RedirectResponse Iff bool true is returned,
+     * @return HttpResponse|bool Iff bool true is returned,
      *     all is good. Otherwise the calling controller should return the response.
      */
     protected function checkCookie($routeName)
@@ -148,7 +148,7 @@ abstract class AbstractBaseController extends AbstractActionController implement
      *
      * e.g. login, register, etc.
      *
-     * @return bool|RedirectResponse
+     * @return bool|HttpResponse
      */
     protected function preventAuthenticatedUser()
     {

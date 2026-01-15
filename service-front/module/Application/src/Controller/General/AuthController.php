@@ -24,7 +24,7 @@ class AuthController extends AbstractBaseController
      * indexAction() should only return ViewModel.
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return bool|RedirectResponse|ViewModel
+     * @return bool|RedirectResponse|ViewModel|HttpResponse
      */
     public function indexAction()
     {

@@ -23,7 +23,7 @@ class ForgotPasswordController extends AbstractBaseController
      * but Laminas doesn't mind if that's what is returned...
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return HttpResponse|ViewModel|false
+     * @return HttpResponse|ViewModel|false|RedirectResponse
      */
     public function indexAction()
     {
@@ -70,7 +70,7 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Displays the 'Enter new password' form.
      * POST: Sets the new password.
      *
-     * @return ViewModel|RedirectResponse
+     * @return ViewModel|HttpResponse
      *
      * Laminas HTTP responses have methods on which are not
      * defined on the interface they say they return

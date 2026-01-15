@@ -9,6 +9,7 @@ use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -17,7 +18,6 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
-use Psr\Http\Message\ResponseInterface;
 
 final class AuthControllerTest extends AbstractControllerTestCase
 {
@@ -128,7 +128,6 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(AuthController::class);
 
         $authenticationResult = new Result(1, null);
-        $response = new Response();
 
         $this->form
             ->shouldReceive('isValid')
@@ -170,15 +169,11 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->withArgs([true])
             ->once();
 
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['user/dashboard'])
-            ->andReturn($response)
-            ->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionFormAuthenticationSuccessfulRedirect(): void
@@ -222,7 +217,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals(
             'https://localhost/user/about-you',
@@ -237,7 +232,6 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $identity = new UserIdentity($this->user->id, 'ABC', 60 * 60, new DateTime('today midnight'));
 
         $authenticationResult = new Result(1, $identity);
-        $response = new Response();
 
         $this->setPreAuthRequestUrl('https://localhost/lpa/3503563157/when-lpa-starts');
 
@@ -280,12 +274,11 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $lpa->id = 3503563157;
         $this->lpaApplicationService->shouldReceive('getApplication')->withArgs([$lpa->id, 'ABC'])->andReturn($lpa);
 
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id], []])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/3503563157/form-type', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testSessionExpiryAction(): void
@@ -329,8 +322,7 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage' => true]])->once();
 
         $result = $controller->logoutAction();
-
-        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals(
             'https://www.gov.uk/done/lasting-power-of-attorney',

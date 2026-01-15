@@ -4,26 +4,42 @@ declare(strict_types=1);
 
 namespace Application\Handler\Traits;
 
-use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteStackInterface;
 
 trait RedirectTrait
 {
-    private ?RouteStackInterface $router = null;
+    private ?RouteStackInterface $redirectRouter = null;
+
     /**
      * @return MvcEvent
      */
     abstract public function getEvent();
-    protected function getRouter(): RouteStackInterface
+
+    protected function getRedirectRouter(): RouteStackInterface
     {
-        if ($this->router === null) {
-            $this->router = $this->getEvent()
-                ->getApplication()
+        if ($this->redirectRouter === null) {
+            $event = $this->getEvent();
+            $application = $event->getApplication();
+
+            if ($application === null) {
+                throw new \RuntimeException(
+                    'Application not available. In tests, call setRedirectRouter() on the controller.'
+                );
+            }
+
+            $this->redirectRouter = $application
                 ->getServiceManager()
                 ->get(RouteStackInterface::class);
         }
-        return $this->router;
+
+        return $this->redirectRouter;
+    }
+
+    public function setRedirectRouter(RouteStackInterface $router): void
+    {
+        $this->redirectRouter = $router;
     }
 
     protected function redirectToRoute(
@@ -31,18 +47,22 @@ trait RedirectTrait
         array $params = [],
         array $options = [],
         int $status = 302
-    ): RedirectResponse {
-        return new RedirectResponse($this->generateUrl($route, $params, $options), $status);
+    ): HttpResponse {
+        return $this->redirectToUrl($this->generateUrl($route, $params, $options), $status);
     }
 
-    protected function redirectToUrl(string $url, int $status = 302): RedirectResponse
+    protected function redirectToUrl(string $url, int $status = 302): HttpResponse
     {
-        return new RedirectResponse($url, $status);
+        $response = new HttpResponse();
+        $response->setStatusCode($status);
+        $response->getHeaders()->addHeaderLine('Location', $url);
+
+        return $response;
     }
 
     protected function generateUrl(string $route, array $params = [], array $options = []): string
     {
         $options['name'] = $route;
-        return $this->getRouter()->assemble($params, $options);
+        return $this->getRedirectRouter()->assemble($params, $options);
     }
 }
