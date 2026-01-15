@@ -215,13 +215,6 @@ locals {
         containerName = "app",
         condition     = "HEALTHY"
       }],
-      healthCheck = {
-        command     = ["CMD", "service", "nginx", "status"],
-        startPeriod = 10,
-        interval    = 30,
-        timeout     = 10,
-        retries     = 3
-      },
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",
