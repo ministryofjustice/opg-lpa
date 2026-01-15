@@ -47,9 +47,10 @@ locals {
 
   aws_otel_collector = jsonencode(
     {
-      cpu         = 0,
-      essential   = true,
-      image       = "311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.42.0",
+      cpu       = 0,
+      essential = true,
+      image     = "311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.23.1",
+      # image       = "311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.42.0",
       mountPoints = [],
       name        = "aws-otel-collector",
       command = [
