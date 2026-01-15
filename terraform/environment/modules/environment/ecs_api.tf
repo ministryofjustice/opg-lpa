@@ -35,6 +35,11 @@ resource "aws_ecs_service" "api" {
     data.aws_ecs_task_execution.migrations,
   ]
 
+  timeouts {
+    create = var.environment_name == "production" ? "20m" : "10m"
+    update = var.environment_name == "production" ? "20m" : "6m"
+  }
+
   tags = local.api_component_tag
 }
 
