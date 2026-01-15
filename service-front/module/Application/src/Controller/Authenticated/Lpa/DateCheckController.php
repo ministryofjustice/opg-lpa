@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\Service\DateCheckViewModelHelper;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -108,7 +109,7 @@ class DateCheckController extends AbstractLpaController
                         ['query' => $queryParams],
                     );
 
-                    return $this->redirect()->toUrl($validUrl);
+                    return new RedirectResponse($validUrl);
                 } else {
                     $form->setMessages($result);
                 }

@@ -4,8 +4,8 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
+use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
-use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
@@ -19,7 +19,7 @@ class TypeController extends AbstractAuthenticatedController
      * according to the Laminas API.
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return ViewModel|HttpResponse
+     * @return ViewModel|RedirectResponse
      */
     public function indexAction()
     {
@@ -40,8 +40,7 @@ class TypeController extends AbstractAuthenticatedController
                      * @psalm-suppress UndefinedMagicMethod
                      */
                     $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
-
-                    return $this->redirect()->toRoute('user/dashboard');
+                    return $this->redirectToRoute('user/dashboard');
                 }
 
                 $lpaType = $form->getData()['type'];
@@ -52,8 +51,7 @@ class TypeController extends AbstractAuthenticatedController
 
                 $formFlowChecker = new FormFlowChecker();
                 $nextRoute = $formFlowChecker->nextRoute($currentRouteName);
-
-                return $this->redirect()->toRoute(
+                return $this->redirectToRoute(
                     $nextRoute,
                     ['lpa-id' => $lpa->id],
                     $formFlowChecker->getRouteOptions($nextRoute)
