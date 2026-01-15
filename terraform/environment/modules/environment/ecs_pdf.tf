@@ -24,6 +24,12 @@ resource "aws_ecs_service" "pdf" {
     ]
   }
 
+  timeouts {
+    create = var.environment_name == "production" ? "20m" : "10m"
+    update = var.environment_name == "production" ? "20m" : "6m"
+  }
+
+
   tags = local.pdf_component_tag
 }
 
