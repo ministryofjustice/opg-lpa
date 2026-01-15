@@ -56,6 +56,13 @@ locals {
       command = [
         "--config=/etc/ecs/ecs-default-config.yaml"
       ],
+      healthCheck = {
+        command     = ["CMD", "/healthcheck"],
+        startPeriod = 5,
+        interval    = 10,
+        timeout     = 5,
+        retries     = 3
+      },
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",
