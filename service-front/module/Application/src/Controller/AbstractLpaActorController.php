@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Controller\Authenticated\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
+use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\AbstractData;
 use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\LongName;
@@ -18,6 +19,7 @@ use MakeShared\DataModel\Lpa\Document\Document;
 use Laminas\Router;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Http\Message\ResponseInterface;
 
 abstract class AbstractLpaActorController extends AbstractLpaController
 {
@@ -26,9 +28,10 @@ abstract class AbstractLpaActorController extends AbstractLpaController
     /**
      * Function to check if the reuse details options are available and if it is appropriate to redirect to them
      *
-     * @return \Laminas\Http\Response|null
+     * @param ViewModel $viewModel
+     * @return ResponseInterface|null
      */
-    protected function checkReuseDetailsOptions(ViewModel $viewModel)
+    protected function checkReuseDetailsOptions(ViewModel $viewModel): ?ResponseInterface
     {
         $request = $this->convertRequest();
 
@@ -62,14 +65,16 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                 // Generate the URL to redirect to reuse details
                 $reuseDetailsUrl = $this->getReuseDetailsUrl([
-                    'calling-url'    => $request->getUri()->getPath(),
+                    'calling-url' => $request->getUri()->getPath(),
                     'include-trusts' => $includeTrusts,
-                    'actor-name'     => $actorName,
+                    'actor-name' => $actorName,
                 ]);
 
-                return $this->redirect()->toUrl($reuseDetailsUrl);
+                return new RedirectResponse($reuseDetailsUrl);
             }
         }
+
+        return null;
     }
 
     /**

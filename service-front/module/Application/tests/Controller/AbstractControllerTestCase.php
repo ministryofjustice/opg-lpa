@@ -547,7 +547,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      * @param string $lpaRoute e.g. lpa/certificate-provider/edit
      * @param Response $response
      */
-    public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response): void
+    public function setRedirectToReuseDetails($user, $lpa, $lpaRoute): void
     {
         $this->sessionUtility->shouldReceive('getFromMvc')
             ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
@@ -597,7 +597,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 ['query' => $queryParams]
             ])->andReturn($reuseDetailsUrl)->once();
 
-        $this->redirect->shouldReceive('toUrl')->withArgs([$reuseDetailsUrl])->andReturn($response);
+        //$this->redirect->shouldReceive('toUrl')->withArgs([$reuseDetailsUrl])->andReturn($response);
     }
 
     /**
