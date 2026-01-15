@@ -16,26 +16,21 @@ final class IndexControllerTest extends AbstractControllerTestCase
         /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);
 
-        $response = new Response();
-
         $this->lpa->document->type = null;
 
         $this->metadata->shouldReceive('setAnalyticsReturnCount')
             ->withArgs([$this->lpa, 5])->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/form-type', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/form-type', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionSeed(): void
     {
         /** @var IndexController $controller */
         $controller = $this->getController(IndexController::class);
-
-        $response = new Response();
 
         $seedLpa = FixturesData::getHwLpa();
         $this->lpa->seed = $seedLpa->id;
@@ -49,10 +44,10 @@ final class IndexControllerTest extends AbstractControllerTestCase
             ->shouldReceive('unsetInMvc')
             ->with('clone', $seedLpa->id);
 
-        $this->setRedirectToRoute('lpa/view-docs', $this->lpa, $response);
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/view-docs', $result->getHeaders()->get('Location')->getUri());
     }
 }

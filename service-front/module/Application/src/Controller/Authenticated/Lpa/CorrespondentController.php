@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated\Lpa;
 
 use Application\Controller\AbstractLpaActorController;
 use Application\Form\Lpa\CorrespondentForm;
-use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Http\Response as HttpResponse;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Donor;
@@ -300,7 +300,7 @@ class CorrespondentController extends AbstractLpaActorController
      * Process the correspondent data and return an appropriate model
      *
      * @param   array   $correspondentData
-     * @return  RedirectResponse|JsonModel
+     * @return  HttpResponse|JsonModel
      * @throws  \RuntimeException
      */
     private function processCorrespondentData(array $correspondentData)
@@ -334,7 +334,7 @@ class CorrespondentController extends AbstractLpaActorController
         return $this->redirectToRoute(
             $nextRoute,
             ['lpa-id' => $lpa->id],
-            $this->getFlowChecker()->getRouteOptions($nextRoute)
+            $this->getFlowChecker()?->getRouteOptions($nextRoute)
         );
     }
 }

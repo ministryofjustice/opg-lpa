@@ -45,7 +45,7 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
     protected function redirectToRoute($route, $routeParams = [], $queryParams = []): Response\RedirectResponse
     {
         return new Response\RedirectResponse(
-            $this->getUrlHelper()->generate("{$route}", $routeParams, $queryParams)
+            $this->getUrlHelper()->generate((string)($route), $routeParams, $queryParams)
         );
     }
 

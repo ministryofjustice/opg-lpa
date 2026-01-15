@@ -84,8 +84,6 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
         /** @var LifeSustainingController $controller */
         $controller = $this->getController(LifeSustainingController::class);
 
-        $response = new Response();
-
         $this->lpa->document->primaryAttorneyDecisions = null;
 
         $this->setPostValid($this->form, $this->postData);
@@ -97,10 +95,11 @@ final class LifeSustainingControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/life-sustaining');
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 }
