@@ -14,6 +14,7 @@ use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\PhoneNumber;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeSharedTest\DataModel\FixturesData;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
@@ -483,15 +484,18 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(null)->once();
-        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent', $response);
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent');
 
         $result = $controller->editAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString(
+            'lpa/91333263035/reuse-details?',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testEditActionPostReuseDonorDetailsFormEditable(): void

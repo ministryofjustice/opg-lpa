@@ -4,6 +4,7 @@ namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
 use Application\Model\Service\User\Details as UserService;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 
@@ -69,7 +70,7 @@ class ForgotPasswordController extends AbstractBaseController
      * GET: Displays the 'Enter new password' form.
      * POST: Sets the new password.
      *
-     * @return ViewModel|HttpResponse
+     * @return ViewModel|RedirectResponse
      *
      * Laminas HTTP responses have methods on which are not
      * defined on the interface they say they return
@@ -94,7 +95,7 @@ class ForgotPasswordController extends AbstractBaseController
             $this->sessionManagerSupport->initialise();
 
             // Then redirect the user to the same page, now signed out, and with a new CSRF token.
-            return $this->redirect()->toRoute('forgot-password/callback', ['token' => $token]);
+            return $this->redirectToRoute('forgot-password/callback', ['token' => $token]);
         }
 
         // We have a valid reset token...
@@ -124,7 +125,7 @@ class ForgotPasswordController extends AbstractBaseController
                     $this->flashMessenger()->addSuccessMessage('Password successfully reset');
 
                     // Send them to login...
-                    return $this->redirect()->toRoute('login');
+                    return $this->redirectToRoute('login');
                 }
 
                 if ($result == 'invalid-token') {

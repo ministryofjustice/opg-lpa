@@ -44,7 +44,7 @@ class DownloadController extends AbstractLpaController
 
         if ($this->pdfIsReady($lpa->getId(), $pdfType)) {
             // Redirect to download action
-            return $this->redirect()->toRoute('lpa/download/check', [
+            return $this->redirectToRoute('lpa/download/check', [
                 'lpa-id'       => $lpa->getId(),
                 'pdf-type'     => $pdfType,
                 'pdf-filename' => $this->getFilename($pdfType)
@@ -62,7 +62,7 @@ class DownloadController extends AbstractLpaController
 
         if (!$this->pdfIsReady($lpa->getId(), $pdfType)) {
             // If the PDF is not ready, direct the user back to index.
-            return $this->redirect()->toRoute('lpa/download', [
+            return $this->redirectToRoute('lpa/download', [
                 'lpa-id'   => $lpa->getId(),
                 'pdf-type' => $pdfType
             ]);
@@ -86,7 +86,7 @@ class DownloadController extends AbstractLpaController
 
         if (!$this->pdfIsReady($lpa->getId(), $pdfType)) {
             // If the PDF is not ready, direct the user back to index.
-            return $this->redirect()->toRoute('lpa/download', [
+            return $this->redirectToRoute('lpa/download', [
                 'lpa-id'   => $lpa->getId(),
                 'pdf-type' => $pdfType
             ]);

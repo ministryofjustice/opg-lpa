@@ -16,6 +16,7 @@ use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -161,17 +162,20 @@ final class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         /** @var ReplacementAttorneyController $controller */
         $controller = $this->getController(TestableReplacementAttorneyController::class);
 
-        $response = new Response();
-
         $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
-        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/replacement-attorney/add', $response);
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/replacement-attorney/add');
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString(
+            'lpa/91333263035/reuse-details?',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testAddActionGet(): void

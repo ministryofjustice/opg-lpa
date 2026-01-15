@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\View\Model\ViewModel;
+use Psr\Http\Message\ResponseInterface;
 
 final class HomeControllerTest extends AbstractControllerTestCase
 {
@@ -30,13 +31,14 @@ final class HomeControllerTest extends AbstractControllerTestCase
         /** @var HomeController $controller */
         $controller = $this->getController(HomeController::class);
 
-        $this->redirect->shouldReceive('toUrl')
-            ->withArgs(['https://www.gov.uk/power-of-attorney/make-lasting-power'])
-            ->andReturn('https://www.gov.uk/power-of-attorney/make-lasting-power')->once();
-
         $result = $controller->redirectAction();
 
-        $this->assertEquals('https://www.gov.uk/power-of-attorney/make-lasting-power', $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals(
+            'https://www.gov.uk/power-of-attorney/make-lasting-power',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testCookieAction(): void

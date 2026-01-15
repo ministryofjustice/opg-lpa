@@ -17,6 +17,7 @@ use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 use DateTime;
+use Psr\Http\Message\ResponseInterface;
 
 final class AuthControllerTest extends AbstractControllerTestCase
 {
@@ -185,7 +186,6 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(AuthController::class);
 
         $authenticationResult = new Result(1, null);
-        $response = new Response();
 
         $this->setPreAuthRequestUrl('https://localhost/user/about-you');
 
@@ -220,15 +220,14 @@ final class AuthControllerTest extends AbstractControllerTestCase
             ->withArgs([true])
             ->once();
 
-        $this->redirect
-            ->shouldReceive('toUrl')
-            ->withArgs(['https://localhost/user/about-you'])
-            ->andReturn($response)
-            ->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals(
+            'https://localhost/user/about-you',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testIndexActionFormAuthenticationSuccessfulRedirectLpa(): void
@@ -326,16 +325,17 @@ final class AuthControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(AuthController::class);
 
-        $response = new Response();
-
         $this->authenticationService->shouldReceive('clearIdentity')->once();
         $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage' => true]])->once();
-        $this->redirect->shouldReceive('toUrl')
-            ->withArgs(['https://www.gov.uk/done/lasting-power-of-attorney'])->andReturn($response)->once();
 
         $result = $controller->logoutAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals(
+            'https://www.gov.uk/done/lasting-power-of-attorney',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testDeletedAction(): void

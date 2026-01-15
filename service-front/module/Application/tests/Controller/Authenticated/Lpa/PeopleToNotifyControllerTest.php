@@ -15,6 +15,7 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
+use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -189,17 +190,20 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $response = new Response();
-
         $this->setSeedLpa($this->lpa, FixturesData::getHwLpa());
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
 
-        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/certificate-provider/add', $response);
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/certificate-provider/add');
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString(
+            'lpa/91333263035/reuse-details?',
+            $result->getHeaderLine('Location')
+        );
     }
 
     public function testAddActionGetFivePeopleToNotify(): void
