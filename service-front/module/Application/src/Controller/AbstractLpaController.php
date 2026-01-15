@@ -103,7 +103,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
         }
 
         // redirect to the calculated route if it is not equal to the current route
-        if ($calculatedRoute != $currentRoute) {
+        if (is_string($calculatedRoute) && $calculatedRoute != $currentRoute) {
             $routeOptions = $this->getFlowChecker()?->getRouteOptions($calculatedRoute);
 
             return $this->redirectToRoute(
