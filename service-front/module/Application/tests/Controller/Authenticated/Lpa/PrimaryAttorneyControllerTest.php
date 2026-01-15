@@ -269,8 +269,6 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setPostValid($this->primaryAttorneyForm, $this->postDataHuman, null, 2, 2);
         $this->setFormAction($this->primaryAttorneyForm, $this->lpa, 'lpa/primary-attorney/add');
@@ -287,18 +285,17 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->setMatchedRouteNameHttp($controller, 'lpa/primary-attorney');
-        $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/how-primary-attorneys-make-decision', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddActionPostUpdateWhoIsRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
-
-        $response = new Response();
 
         $this->lpa->document->primaryAttorneyDecisions->how = PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY;
         $this->lpa->document->whoIsRegistering = [];
@@ -319,11 +316,12 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->setMatchedRouteNameHttp($controller, 'lpa/primary-attorney');
-        $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/how-primary-attorneys-make-decision', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddActionPostReuseDetails(): void
@@ -359,14 +357,13 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
 
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
-        $this->setRedirectToRoute('lpa/primary-attorney/add', $this->lpa, $response);
 
         $result = $controller->addTrustAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/5531003156/primary-attorney/add', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddTrustActionGet(): void
@@ -435,8 +432,6 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->setPostValid($this->trustCorporationForm, $this->postDataTrust, null, 1, 2);
         $this->setFormAction($this->trustCorporationForm, $this->lpa, 'lpa/primary-attorney/add-trust');
@@ -453,11 +448,11 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->setMatchedRouteNameHttp($controller, 'lpa/primary-attorney');
-        $this->setRedirectToRoute('lpa/how-primary-attorneys-make-decision', $this->lpa, $response);
-
         $result = $controller->addTrustAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/how-primary-attorneys-make-decision', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testAddTrustActionPostReuseDetails(): void
@@ -848,8 +843,6 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
 
-        $response = new Response();
-
         $idx = 0;
 
         $routeMatch = $this->getHttpRouteMatch($controller);
@@ -860,18 +853,16 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true);
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
 
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
-
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testDeleteActionOneAttorneyRemaining(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
-
-        $response = new Response();
 
         while (count($this->lpa->document->primaryAttorneys) > 2) {
             unset($this->lpa->document->primaryAttorneys[count($this->lpa->document->primaryAttorneys) - 1]);
@@ -894,18 +885,17 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->applicantService->shouldReceive('removeAttorney')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true);
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testDeleteActionAttorneyRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
-
-        $response = new Response();
 
         $this->lpa->document->whoIsRegistering = [1,2,3];
 
@@ -919,18 +909,16 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->applicantService->shouldReceive('removeAttorney')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true);
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
-
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testDeleteActionAllAttorneyRegistering(): void
     {
         $controller = $this->getController(TestablePrimaryAttorneyController::class);
-
-        $response = new Response();
 
         $this->lpa->document->whoIsRegistering = [1];
 
@@ -944,10 +932,11 @@ final class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
         $this->applicantService->shouldReceive('removeAttorney')
             ->withArgs([$this->lpa, $this->lpa->document->primaryAttorneys[$idx]->id])->andReturn(true);
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
 
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 }

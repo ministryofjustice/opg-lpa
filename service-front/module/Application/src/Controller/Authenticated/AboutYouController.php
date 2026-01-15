@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -19,7 +20,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return RedirectResponse|ViewModel
+     * @return HttpResponse|ViewModel|RedirectResponse
      */
     public function indexAction()
     {

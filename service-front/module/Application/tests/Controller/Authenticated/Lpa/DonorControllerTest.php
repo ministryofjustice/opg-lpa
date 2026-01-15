@@ -117,15 +117,16 @@ final class DonorControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($this->lpa->document->donor);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
-        $this->setRedirectToRoute('lpa/donor', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/donor', $location);
     }
 
     public function testAddActionGetNoDonor(): void

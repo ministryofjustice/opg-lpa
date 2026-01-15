@@ -299,6 +299,30 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->metadata = Mockery::mock(Metadata::class);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
+
+        $this->router->shouldReceive('assemble')
+            ->andReturnUsing(function ($params, $options) {
+                $route = $options['name'] ?? 'unknown';
+
+                if (isset($params['lpa-id'])) {
+                    $lpaId = $params['lpa-id'];
+                    unset($params['lpa-id']);
+                    $url = '/lpa/' . $lpaId . '/' . str_replace('lpa/', '', $route);
+                } else {
+                    $url = '/' . $route;
+                }
+
+                foreach ($params as $key => $value) {
+                    $url .= '/' . $value;
+                }
+
+                if (isset($options['query'])) {
+                    $url .= '?' . http_build_query($options['query']);
+                }
+
+                return $url;
+            })
+            ->byDefault();
     }
 
     /**
@@ -384,6 +408,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $controller->setEventManager($this->eventManager);
 
         $controller->setEvent(new MvcEvent());
+        if (method_exists($controller, 'setRedirectRouter')) {
+            $controller->setRedirectRouter($this->router);
+        }
 
         $controller->dispatch($this->request);
 

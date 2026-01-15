@@ -138,18 +138,17 @@ final class WhoAreYouControllerTest extends AbstractControllerTestCase
         /** @var WhoAreYouController $controller */
         $controller = $this->getController(WhoAreYouController::class);
 
-        $response = new Response();
-
         $this->setFormAction($this->form, $this->lpa, 'lpa/who-are-you');
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setWhoAreYou')->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/who-are-you', 2);
-        $this->setRedirectToRoute('lpa/repeat-application', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/repeat-application', $result->getHeaders()->get('Location')->getUri());
     }
 }

@@ -4,7 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\FormFlowChecker;
-use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Http\Response as HttpResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -19,7 +19,7 @@ class TypeController extends AbstractAuthenticatedController
      * according to the Laminas API.
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return ViewModel|RedirectResponse
+     * @return ViewModel|HttpResponse
      */
     public function indexAction()
     {

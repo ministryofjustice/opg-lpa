@@ -9,9 +9,9 @@ use Application\Form\User\ConfirmEmail;
 use Application\Form\User\SetPassword;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use Laminas\Stdlib\ResponseInterface;
 use Mockery;
 use Mockery\MockInterface;
-use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 
 final class ForgotPasswordControllerTest extends AbstractControllerTestCase
@@ -53,13 +53,11 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(ForgotPasswordController::class);
 
-        $response = new Response();
-
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionGet(): void
@@ -166,13 +164,6 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
             ->andReturn($this->postData['token'])
             ->once();
 
-        $response = new Response();
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['forgot-password/callback', ['token' => $this->postData['token']]])
-            ->andReturn($response)
-            ->once();
-
         $this->sessionUtility
             ->shouldReceive('hasInMvc')
             ->with('initialised', 'init')
@@ -182,7 +173,10 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(ForgotPasswordController::class);
 
         $result = $controller->resetPasswordAction();
-        $this->assertSame($response, $result);
+
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/forgot-password/callback', $result->getHeaders()->get('Location')->getUri());
     }
 
 
@@ -287,8 +281,6 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
         $this->setIdentity(null);
         $controller = $this->getController(ForgotPasswordController::class);
 
-        $response = new Response();
-
         $this->params->shouldReceive('fromRoute')->withArgs(['token'])->andReturn($this->postData['token'])->once();
         $url = 'forgot-password/callback?token=' . $this->postData['token'];
         $this->url->shouldReceive('fromRoute')
@@ -302,11 +294,12 @@ final class ForgotPasswordControllerTest extends AbstractControllerTestCase
 
         $this->userDetails->shouldReceive('setNewPassword')
             ->withArgs([$this->postData['token'], $this->postData['password']])->andReturn(true);
-        $this->redirect->shouldReceive('toRoute')->withArgs(['login'])->andReturn($response)->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs(['Password successfully reset'])->once();
 
         $result = $controller->resetPasswordAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('login', $result->getHeaders()->get('Location')->getUri());
     }
 }

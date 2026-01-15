@@ -19,13 +19,11 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
         /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
-        $response = new Response();
-
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionCheckCookieFails(): void
@@ -35,16 +33,15 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
         /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('getMethod')->andReturn('GET');
         $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(1)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['enable-cookie'])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/enable-cookie', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionCheckCookieRedirect(): void
@@ -54,17 +51,15 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
         /** @var AuthController $controller */
         $controller = $this->getController(AuthController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('getMethod')->andReturn('GET');
         $this->request->shouldReceive('getCookie')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', [], ['query' => ['cookie' => '1']]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('login', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionCheckCookieExistsFalse(): void
@@ -75,11 +70,8 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
         $controller = $this->getController(AuthController::class);
 
         $cookie = Mockery::mock(Cookie::class);
-        $response = new Response();
 
         $this->params->shouldReceive('fromQuery')->withArgs(['cookie'])->andReturn(null)->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['login', [], ['query' => ['cookie' => '1']]])->andReturn($response)->once();
 
         $cookie->shouldReceive('offsetExists')->withArgs(['lpa'])->andReturn(false)->once();
 
@@ -88,7 +80,9 @@ final class AuthControllerCookieTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('login', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionCheckCookieExists(): void

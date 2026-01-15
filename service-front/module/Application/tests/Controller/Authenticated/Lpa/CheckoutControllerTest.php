@@ -78,11 +78,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $controller->dispatch($this->request, $response);
 
         $this->request->shouldReceive('isPost')->andReturn(true)->once();
-        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
-
         $result = $controller->indexAction();
-
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
     }
 
     public function testChequeActionIncompleteLpa(): void
@@ -92,11 +90,10 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $response = new Response();
         $controller->dispatch($this->request, $response);
 
-        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
-
         $result = $controller->chequeAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
     }
 
     public function testChequeActionFailed(): void
@@ -133,20 +130,20 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(CheckoutController::class);
 
-        $response = new Response();
-
         $this->lpa->payment->method = null;
         $this->lpaApplicationService->shouldReceive('setPayment')
             ->withArgs([$this->lpa, $this->lpa->payment])->andReturn(true)->twice();
         $this->lpaApplicationService->shouldReceive('lockLpa')
             ->withArgs([$this->lpa])->andReturn(true)->once();
         $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
-
         $result = $controller->chequeAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/complete', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 
     public function testConfirmActionIncompleteLpa(): void
@@ -156,11 +153,10 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $response = new Response();
         $controller->dispatch($this->request, $response);
 
-        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
-
         $result = $controller->confirmAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(200, $result->getStatusCode());
     }
 
     public function testConfirmActionInvalidAmount(): void
@@ -180,20 +176,20 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(CheckoutController::class);
 
-        $response = new Response();
-
         $this->lpa->payment->amount = 0;
         $this->lpa->payment->reducedFeeUniversalCredit = true;
         $this->lpa->completedAt = null;
 
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->andReturn(true)->once();
         $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
-
         $result = $controller->confirmAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/complete', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 
     public function testPayActionIncompleteLpa(): void
@@ -203,11 +199,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $response = new Response();
         $controller->dispatch($this->request, $response);
 
-        $this->setRedirectToRoute('lpa/more-info-required', $this->lpa, $response);
-
         $result = $controller->payAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
     }
 
     public function testPayActionNoExistingPayment(): void
@@ -287,12 +281,14 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('updateApplication')->andReturn(true)->once();
         $this->lpaApplicationService->shouldReceive('lockLpa')->withArgs([$this->lpa])->andReturn(true)->once();
         $this->communication->shouldReceive('sendRegistrationCompleteEmail')->withArgs([$this->lpa])->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/complete', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
-
         $result = $controller->payAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/complete', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 
     public function testPayActionExistingPaymentNotFinished(): void

@@ -10,6 +10,7 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
+use Laminas\Http\Response as HttpResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
@@ -124,7 +125,7 @@ abstract class AbstractLpaController extends AbstractAuthenticatedController
     /**
      * Return an appropriate view model to move to the next route from the current route
      *
-     * @return \Laminas\Diactoros\Response\RedirectResponse
+     * @return HttpResponse
      */
     protected function moveToNextRoute()
     {
