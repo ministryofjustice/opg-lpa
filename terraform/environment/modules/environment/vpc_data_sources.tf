@@ -1,9 +1,9 @@
 locals {
-  vpc_id                        = var.account.firewalled_networks_enabled ? data.aws_vpc.main.id : data.aws_vpc.default.id                                         #tflint-ignore: terraform_unused_declarations
-  lb_subnet_ids                 = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.lb : subnet.id] : data.aws_subnets.public.ids           #tflint-ignore: terraform_unused_declarations
-  app_subnet_ids                = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids #tflint-ignore: terraform_unused_declarations
-  data_subnet_ids               = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids        #tflint-ignore: terraform_unused_declarations
-  db_subnet_group_name          = var.account.firewalled_networks_enabled ? aws_db_subnet_group.main.name : "data-persistence-subnet-default"                      #tflint-ignore: terraform_unused_declarations
+  vpc_id                        = var.account.firewalled_networks_enabled ? data.aws_vpc.main.id : data.aws_vpc.default.id
+  lb_subnet_ids                 = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.lb : subnet.id] : data.aws_subnets.public.ids
+  app_subnet_ids                = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids
+  data_subnet_ids               = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids
+  db_subnet_group_name          = var.account.firewalled_networks_enabled ? aws_db_subnet_group.main.name : "data-persistence-subnet-default"
   elasticache_security_group    = var.account.firewalled_networks_enabled ? data.aws_security_group.new_front_cache_region : data.aws_security_group.front_cache_region
   elasticache_replication_group = var.account.firewalled_networks_enabled ? data.aws_elasticache_replication_group.new_front_cache_region : data.aws_elasticache_replication_group.front_cache_region
 }
