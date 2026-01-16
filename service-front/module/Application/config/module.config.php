@@ -96,7 +96,6 @@ return [
             'formtext'              => 'Application\Form\View\Helper\FormText',
         ],
         'factories' => [
-            'accountInfo'           => 'Application\View\Helper\AccountInfoFactory',
             'routeName'             => 'Application\View\Helper\RouteNameFactory',
         ],
     ],

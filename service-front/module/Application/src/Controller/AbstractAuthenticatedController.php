@@ -21,12 +21,12 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     use LoggerTrait;
 
     /**
-     * Identity of the logged in user
+     * Identity of the logged-in user
      */
     private ?Identity $identity = null;
 
     /**
-     * User details of the logged in user
+     * User details of the logged-in user
      */
     private ?User $user = null;
 
@@ -51,16 +51,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         // will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $this->identity = $authenticationService->getIdentity();
-
-            //  Try to get the user details for this identity - look in the session first
-            $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
-
-            if (!$user instanceof User) {
-                $user = $this->userService->getUserDetails();
-                $this->sessionUtility->setInMvc('UserDetails', 'user', $user);
-            }
-
-            $this->user = $user;
+            $this->user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
         }
     }
 

@@ -102,26 +102,9 @@
 
     <main id="content" role="main">
         <a name="main-content"></a>
-        {% set account %}
-            {{ accountInfo() }}
-        {% endset %}
 
-        {% if account|striptags|trim %}
-            {{ account|raw }}
-        {% else %}
-            <section aria-label="Service information" class="govuk-service-navigation"
-                     data-module="govuk-service-navigation">
-                <div class="govuk-width-container">
-                    <div class="govuk-service-navigation__container">
-                      <span class="govuk-service-navigation__service-name">
-                        <a href="/home" class="govuk-service-navigation__link">
-                          Make a lasting power of attorney
-                        </a>
-                      </span>
-                    </div>
-                </div>
-            </section>
-        {% endif %}
+        {{ renderNavigation(currentRouteName|default('')) }}
+
         {% block errorSummary %}{% endblock %}
         {% block mainTitle %}
         <h1 class="heading-xlarge" data-cy="main-title">
@@ -169,8 +152,6 @@
             Your <a href="/send-feedback">feedback</a> will help us to improve
         </p>
         {% endif %}
-
-
     </main>
 
     <footer class="govuk-footer">

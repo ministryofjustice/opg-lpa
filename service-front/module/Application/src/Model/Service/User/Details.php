@@ -24,10 +24,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     private $sessionUtility;
 
-    /**
-     * @return bool|User
-     */
-    public function getUserDetails()
+    public function getUserDetails(): bool|User
     {
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));

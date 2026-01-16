@@ -1356,6 +1356,7 @@ class UserDataTest extends MockeryTestCase
             'created' => new DateTime(),
             'updated' => new DateTime(),
             'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
+            'last_login' => new DateTime(),
         ];
 
         // mocks
@@ -1373,6 +1374,7 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals($id, $userProfile->getId());
         $this->assertEquals($user['created'], $userProfile->getCreatedAt());
         $this->assertEquals($user['updated'], $userProfile->getUpdatedAt());
+        $this->assertEquals($user['last_login'], $userProfile->getLastLoginAt());
         $this->assertEquals('Prof', $name->getTitle());
         $this->assertEquals('Barr', $name->getFirst());
         $this->assertEquals('Rrrraaaaa', $name->getLast());
@@ -1400,7 +1402,7 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(
-            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"}}']
+            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"},"lastLoginAt":null}']
         );
 
         // test
