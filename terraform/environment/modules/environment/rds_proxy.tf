@@ -6,7 +6,7 @@ module "rds_proxy" {
   api_rds_credentials_secret_arn    = aws_secretsmanager_secret_version.api_rds_credentials[0].arn
   vpc_id                            = local.vpc_id
   vpc_subnet_ids                    = local.data_subnet_ids
-  rds_client_security_group_id      = aws_security_group.rds-client.id
-  rds_api_security_group_id         = aws_security_group.rds-api.id
+  rds_client_security_group_id      = local.rds_client_sg_id
+  rds_api_security_group_id         = local.rds_api_sg_id
   secretsmanager_encryption_key_arn = data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
 }

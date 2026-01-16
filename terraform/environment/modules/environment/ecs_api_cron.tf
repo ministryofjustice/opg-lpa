@@ -34,7 +34,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
     network_configuration {
       security_groups = [
         aws_security_group.api_ecs_service.id,
-        aws_security_group.rds-client.id,
+        local.rds_client_sg_id,
       ]
       subnets          = local.app_subnet_ids
       assign_public_ip = false
@@ -71,7 +71,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
     network_configuration {
       security_groups = [
         aws_security_group.api_ecs_service.id,
-        aws_security_group.rds-client.id,
+        local.rds_client_sg_id,
       ]
       subnets          = local.app_subnet_ids
       assign_public_ip = false

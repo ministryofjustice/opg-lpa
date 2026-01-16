@@ -24,7 +24,7 @@ output "admin_sg_id" {
 
 
 output "db_client_security_group_id" {
-  value = aws_security_group.rds-client.id
+  value = local.rds_client_sg_id
 }
 
 output "seeding_security_group_id" {
