@@ -119,6 +119,6 @@ data "aws_nat_gateway" "main" {
 
 # TODO: this should in region and referenced by name or datasource
 resource "aws_db_subnet_group" "main" {
-  name_prefix = lower("main-${var.environment_name}")
+  name_prefix = lower("aurora-${var.environment_name}")
   subnet_ids  = data.aws_subnet.data
 }
