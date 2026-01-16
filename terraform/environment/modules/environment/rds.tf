@@ -20,8 +20,6 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
-# TODO: control which cluster identifier to use with var.account.firewalled_networks_enabled
-
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
@@ -100,6 +98,7 @@ module "api_aurora" {
   vpc_security_group_ids          = [local.rds_api_sg_id]
   tags                            = local.db_component_tag
   copy_tags_to_snapshot           = true
+  firewalled_networks_enabled     = var.account.firewalled_networks_enabled
 }
 
 resource "aws_security_group" "rds-client-old" {

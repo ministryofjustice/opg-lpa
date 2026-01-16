@@ -146,3 +146,8 @@ variable "ca_cert_identifier" {
   description = "Specifies the identifier of the CA certificate for the DB instance"
   type        = string
 }
+
+variable "firewalled_networks_enabled" {
+  type        = bool
+  description = "temporary variable to manage network migration"
+}
