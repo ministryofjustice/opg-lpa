@@ -3,7 +3,7 @@ locals {
   lb_subnet_ids                 = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.lb : subnet.id] : data.aws_subnets.public.ids
   app_subnet_ids                = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids
   data_subnet_ids               = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids
-  db_subnet_group_name          = var.account.firewalled_networks_enabled ? aws_db_subnet_group.main.name : "data-persistence-subnet-default"
+  db_subnet_group_name          = var.account.firewalled_networks_enabled ? "data" : "data-persistence-subnet-default"
   rds_client_sg_id              = var.account.firewalled_networks_enabled ? aws_security_group.rds_client.id : aws_security_group.rds-client-old.id
   rds_api_sg_id                 = var.account.firewalled_networks_enabled ? aws_security_group.rds_api.id : aws_security_group.rds-api-old.id
   elasticache_security_group    = var.account.firewalled_networks_enabled ? data.aws_security_group.new_front_cache_region : data.aws_security_group.front_cache_region
@@ -115,10 +115,4 @@ data "aws_nat_gateways" "main" {
 data "aws_nat_gateway" "main" {
   count = length(data.aws_nat_gateways.main.ids)
   id    = tolist(data.aws_nat_gateways.main.ids)[count.index]
-}
-
-# TODO: this should in region and referenced by name or datasource
-resource "aws_db_subnet_group" "main" {
-  name_prefix = lower("aurora-${var.environment_name}")
-  subnet_ids  = data.aws_subnet.data[*].id
 }
