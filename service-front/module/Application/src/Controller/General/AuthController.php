@@ -7,7 +7,6 @@ use Application\Form\User\Login as LoginForm;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\ContainerNamespace;
-use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\JsonModel;
@@ -24,7 +23,7 @@ class AuthController extends AbstractBaseController
      * indexAction() should only return ViewModel.
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return bool|RedirectResponse|ViewModel|HttpResponse
+     * @return bool|ViewModel|HttpResponse
      */
     public function indexAction()
     {
@@ -84,7 +83,7 @@ class AuthController extends AbstractBaseController
                         if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             //  It does but check if the requested URL is the date check page
                             if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
-                                return new RedirectResponse($nextUrl);
+                                return $this->redirectToUrl($nextUrl);
                             }
 
                             //  Redirect to next page which needs filling out
@@ -107,7 +106,7 @@ class AuthController extends AbstractBaseController
                         }
 
                         //not an LPA url so redirect directly to it
-                        return new RedirectResponse($nextUrl);
+                        return $this->redirectToUrl($nextUrl);
                     }
 
                     //  If necessary set a flash message showing that the user account will now remain active
@@ -197,13 +196,13 @@ class AuthController extends AbstractBaseController
     /**
      * Logs the user out by clearing the identity from the session.
      *
-     * @return RedirectResponse
+     * @return HttpResponse
      */
     public function logoutAction()
     {
         $this->clearSession();
 
-        return new RedirectResponse($this->config()['redirects']['logout']);
+        return $this->redirectToUrl($this->config()['redirects']['logout']);
     }
 
     /**

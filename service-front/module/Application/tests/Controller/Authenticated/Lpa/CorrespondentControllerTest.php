@@ -14,7 +14,6 @@ use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\PhoneNumber;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeSharedTest\DataModel\FixturesData;
-use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\View\Model\JsonModel;
@@ -492,11 +491,11 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
 
         $result = $controller->editAction();
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertStringContainsString(
             'lpa/91333263035/reuse-details?',
-            $result->getHeaderLine('Location')
+            $result->getHeaders()->get('Location')->getUri()
         );
     }
 
