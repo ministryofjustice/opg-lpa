@@ -4,7 +4,6 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\Service\Session\ContainerNamespace;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
@@ -21,7 +20,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return HttpResponse|ViewModel|RedirectResponse
+     * @return HttpResponse|ViewModel
      */
     public function indexAction()
     {
@@ -70,7 +69,7 @@ class AboutYouController extends AbstractAuthenticatedController
         } else {
             // if the user is new then ensure they are accessing the new route only
             if (!$isNew && is_null($userDetails->name)) {
-                return new RedirectResponse('/user/about-you/new');
+                return $this->redirectToUrl('/user/about-you/new');
             }
 
             if (!is_null($userDetails->dob)) {

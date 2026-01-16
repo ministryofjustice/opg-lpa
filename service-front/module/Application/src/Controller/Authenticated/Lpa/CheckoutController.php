@@ -6,7 +6,6 @@ use Alphagov\Pay\Client as GovPayClient;
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
-use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -194,7 +193,7 @@ class CheckoutController extends AbstractLpaController
 
             // If this payment id is still in play, direct the user back...
             if (!$payment->isFinished()) {
-                return new RedirectResponse((string) $payment->getPaymentPageUrl());
+                return $this->redirectToUrl((string) $payment->getPaymentPageUrl());
             }
 
             // else carry on to start a new payment
@@ -226,7 +225,7 @@ class CheckoutController extends AbstractLpaController
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        return new RedirectResponse((string) $payment->getPaymentPageUrl());
+        return $this->redirectToUrl((string) $payment->getPaymentPageUrl());
     }
 
     /**

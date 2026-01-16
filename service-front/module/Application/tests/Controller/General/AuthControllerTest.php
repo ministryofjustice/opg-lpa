@@ -9,7 +9,6 @@ use Application\Form\User\Login;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -217,11 +216,11 @@ final class AuthControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals(
             'https://localhost/user/about-you',
-            $result->getHeaderLine('Location')
+            $result->getHeaders()->get('Location')->getUri()
         );
     }
 
@@ -322,11 +321,11 @@ final class AuthControllerTest extends AbstractControllerTestCase
         $this->sessionManager->shouldReceive('destroy')->withArgs([['clear_storage' => true]])->once();
 
         $result = $controller->logoutAction();
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals(
             'https://www.gov.uk/done/lasting-power-of-attorney',
-            $result->getHeaderLine('Location')
+            $result->getHeaders()->get('Location')->getUri()
         );
     }
 
