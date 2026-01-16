@@ -8,7 +8,6 @@ use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Form\Lpa\BlankMainFlowForm;
 use Application\Model\Service\Lpa\Communication;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -230,9 +229,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
         $payment->shouldReceive('getPaymentPageUrl')->andReturn($responseUrl)->once();
         $result = $controller->payAction();
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEquals($responseUrl, $result->getHeaderLine('Location'));
+        $this->assertEquals($responseUrl, $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testPayActionExistingPaymentNull(): void
@@ -314,9 +313,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
 
         $result = $controller->payAction();
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEquals('http://unit.test.com', $result->getHeaderLine('Location'));
+        $this->assertEquals('http://unit.test.com', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testPayActionExistingPaymentFinishedNotSuccessful(): void
@@ -350,9 +349,9 @@ final class CheckoutControllerTest extends AbstractControllerTestCase
 
         $result = $controller->payAction();
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEquals($responseUrl, $result->getHeaderLine('Location'));
+        $this->assertEquals($responseUrl, $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testPayResponseActionNoGatewayReference(): void

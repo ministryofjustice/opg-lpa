@@ -3,7 +3,6 @@
 namespace Application\Controller\General;
 
 use Application\Controller\AbstractBaseController;
-use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Laminas\View\Model\ViewModel;
 
@@ -21,7 +20,7 @@ class HomeController extends AbstractBaseController
 
     public function redirectAction()
     {
-        return new RedirectResponse($this->config()['redirects']['index']);
+        return $this->redirectToUrl($this->config()['redirects']['index']);
     }
 
     public function enableCookieAction()

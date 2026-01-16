@@ -15,7 +15,6 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
-use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -197,11 +196,11 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
 
         $result = $controller->addAction();
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertStringContainsString(
             'lpa/91333263035/reuse-details?',
-            $result->getHeaderLine('Location')
+            $result->getHeaders()->get('Location')->getUri()
         );
     }
 

@@ -6,8 +6,8 @@ namespace ApplicationTest\Controller\General;
 
 use Application\Controller\General\HomeController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
-use Psr\Http\Message\ResponseInterface;
 
 final class HomeControllerTest extends AbstractControllerTestCase
 {
@@ -33,11 +33,11 @@ final class HomeControllerTest extends AbstractControllerTestCase
 
         $result = $controller->redirectAction();
 
-        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals(
             'https://www.gov.uk/power-of-attorney/make-lasting-power',
-            $result->getHeaderLine('Location')
+            $result->getHeaders()->get('Location')->getUri()
         );
     }
 
