@@ -20,6 +20,8 @@ data "aws_db_snapshot" "api_snapshot" {
   most_recent            = true
 }
 
+# TODO: control which cluster identifier to use with var.account.firewalled_networks_enabled
+
 resource "aws_db_instance" "api" {
   count                               = var.account.always_on ? 1 : 0
   identifier                          = lower("api-${var.environment_name}")
