@@ -1,6 +1,6 @@
 FROM composer:2.9.3@sha256:f5e5bb7048c7b0182ea153fed4a63d021f3c77d4a654d6572da4a42aaff547e3 AS composer
 
-FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
+FROM php:php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
