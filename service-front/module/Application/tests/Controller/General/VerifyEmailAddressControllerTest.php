@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\General;
 use Application\Controller\General\VerifyEmailAddressController;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Laminas\Http\Response;
+use Laminas\Stdlib\ResponseInterface;
 use Laminas\View\Model\ViewModel;
 
 class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
@@ -34,8 +35,6 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(VerifyEmailAddressController::class);
 
-        $response = new Response();
-
         $this->sessionUtility
             ->shouldReceive('hasInMvc')
             ->andReturn(true);
@@ -57,22 +56,16 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
             ->withArgs(['There was an error updating your email address'])
             ->once();
 
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['login'])
-            ->andReturn($response)
-            ->once();
-
         $result = $controller->verifyAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('login', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testVerifyActionValidToken(): void
     {
         $controller = $this->getController(VerifyEmailAddressController::class);
-
-        $response = new Response();
 
         $this->sessionUtility
             ->shouldReceive('hasInMvc')
@@ -95,14 +88,10 @@ class VerifyEmailAddressControllerTest extends AbstractControllerTestCase
             ->withArgs(['Your email address was successfully updated. Please login with your new address.'])
             ->once();
 
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['login'])
-            ->andReturn($response)
-            ->once();
-
         $result = $controller->verifyAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('login', $result->getHeaders()->get('Location')->getUri());
     }
 }

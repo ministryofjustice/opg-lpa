@@ -20,7 +20,7 @@ class HomeController extends AbstractBaseController
 
     public function redirectAction()
     {
-        return $this->redirect()->toUrl($this->config()['redirects']['index']);
+        return $this->redirectToUrl($this->config()['redirects']['index']);
     }
 
     public function enableCookieAction()
