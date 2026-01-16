@@ -1,6 +1,6 @@
 FROM composer:2.9.3@sha256:f5e5bb7048c7b0182ea153fed4a63d021f3c77d4a654d6572da4a42aaff547e3 AS composer
 
-FROM php:php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
+FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
 
 COPY --from=mlocati/php-extension-installer:2@sha256:84950d61e2873817f814fd2c486d0143566a5b7aa36b9c926a138dafb9a07753 /usr/bin/install-php-extensions /usr/bin/
 
