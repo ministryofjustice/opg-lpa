@@ -3,7 +3,7 @@ resource "aws_rds_cluster" "cluster" {
   apply_immediately                   = var.apply_immediately
   availability_zones                  = var.availability_zones
   backup_retention_period             = var.backup_retention_period
-  cluster_identifier                  = "${var.cluster_identifier}-${var.environment}"
+  cluster_identifier                  = var.firewalled_networks_enabled ? "${var.cluster_identifier}-${var.environment}-cluster" : "${var.cluster_identifier}-${var.environment}"
   database_name                       = "api2"
   db_subnet_group_name                = var.db_subnet_group_name
   deletion_protection                 = var.deletion_protection
