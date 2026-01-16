@@ -4,6 +4,8 @@ locals {
   app_subnet_ids                = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.application : subnet.id] : data.aws_subnets.private.ids
   data_subnet_ids               = var.account.firewalled_networks_enabled ? [for subnet in data.aws_subnet.data : subnet.id] : data.aws_subnets.private.ids
   db_subnet_group_name          = var.account.firewalled_networks_enabled ? aws_db_subnet_group.main.name : "data-persistence-subnet-default"
+  rds_client_sg_id              = var.account.firewalled_networks_enabled ? aws_security_group.rds_client.id : aws_security_group.rds-client-old.id
+  rds_api_sg_id                 = var.account.firewalled_networks_enabled ? aws_security_group.rds_api.id : aws_security_group.rds-api-old.id
   elasticache_security_group    = var.account.firewalled_networks_enabled ? data.aws_security_group.new_front_cache_region : data.aws_security_group.front_cache_region
   elasticache_replication_group = var.account.firewalled_networks_enabled ? data.aws_elasticache_replication_group.new_front_cache_region : data.aws_elasticache_replication_group.front_cache_region
 }

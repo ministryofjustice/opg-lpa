@@ -12,7 +12,7 @@ data "aws_ecs_task_execution" "migrations" {
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
-      aws_security_group.rds-client.id,
+      local.rds_client_sg_id,
     ]
     subnets          = local.app_subnet_ids
     assign_public_ip = false
