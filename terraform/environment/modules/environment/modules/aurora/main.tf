@@ -38,7 +38,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster]
   ca_cert_identifier              = var.ca_cert_identifier
-  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  cluster_identifier              = var.firewalled_networks_enabled ? "${var.cluster_identifier}-${var.environment}-cluster" : "${var.cluster_identifier}-${var.environment}"
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot
   engine                          = var.engine
   engine_version                  = var.engine_version
@@ -67,7 +67,7 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
 
 resource "aws_rds_cluster" "cluster_serverless" {
   count                           = var.aurora_serverless ? 1 : 0
-  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  cluster_identifier              = var.firewalled_networks_enabled ? "${var.cluster_identifier}-${var.environment}-cluster" : "${var.cluster_identifier}-${var.environment}"
   apply_immediately               = var.apply_immediately
   availability_zones              = var.availability_zones
   backup_retention_period         = var.backup_retention_period
@@ -108,7 +108,7 @@ resource "aws_rds_cluster_instance" "serverless_instances" {
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster_serverless]
   ca_cert_identifier              = var.ca_cert_identifier
-  cluster_identifier              = "${var.cluster_identifier}-${var.environment}"
+  cluster_identifier              = var.firewalled_networks_enabled ? "${var.cluster_identifier}-${var.environment}-cluster" : "${var.cluster_identifier}-${var.environment}"
   engine                          = var.engine
   engine_version                  = var.engine_version
   identifier                      = "${var.cluster_identifier}-${var.environment}-${count.index}"
