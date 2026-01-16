@@ -36,6 +36,17 @@
   "prConcurrentLimit": 3,
   "packageRules": [
     {
+      "description":"Split GitHub minor and patch updates",
+      "automerge": true,
+      "groupName": "Github Patch & Minor Updates",
+      "groupSlug": "github-minor-patch-updates",
+      "matchUpdateTypes": ["minor", "patch"],
+      "prPriority": 2,
+      "minimumReleaseAge": "3 days",
+      "matchPackageNames": ["*"],
+      "matchFileNames": [".github/**"]
+    },
+      {
       "description": [
         "We are investigating replacing Grunt with esbuild (LPAL-1501) so ignore these major updates for now",
         "TODO: Review this decision from November 2025"
