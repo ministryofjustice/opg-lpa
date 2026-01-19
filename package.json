@@ -16,7 +16,7 @@
     "@bahmutov/cypress-esbuild-preprocessor": "^2.2.7",
     "axe-core": "^4.1.4",
     "cli-table": "^0.3.9",
-    "cypress": "15.8.2",
+    "cypress": "15.9.0",
     "cypress-plugin-tab": "^1.0.5",
     "eslint": "^8.23.0",
     "eslint-config-prettier": "^10.1.8",
