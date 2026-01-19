@@ -98,7 +98,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
             return $this->redirectToRoute(
                 $route,
                 ['lpa-id' => $lpaId],
-                $this->getFlowChecker()?->getRouteOptions($route)
+                $this->getFlowChecker()->getRouteOptions($route)
             );
         }
 
@@ -271,7 +271,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         return $this->redirectToRoute(
             $route,
             ['lpa-id' => $lpa->id],
-            $this->getFlowChecker()?->getRouteOptions($route)
+            $this->getFlowChecker()->getRouteOptions($route)
         );
     }
 }

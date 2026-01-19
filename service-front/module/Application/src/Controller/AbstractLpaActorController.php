@@ -24,12 +24,6 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 {
     use LoggerTrait;
 
-    /**
-     * Function to check if the reuse details options are available and if it is appropriate to redirect to them
-     *
-     * @param ViewModel $viewModel
-     * @return \Laminas\Http\Response|null
-     */
     protected function checkReuseDetailsOptions(ViewModel $viewModel): ?HttpResponse
     {
         $request = $this->convertRequest();
