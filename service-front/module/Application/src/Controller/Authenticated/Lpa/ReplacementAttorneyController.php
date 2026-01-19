@@ -287,7 +287,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
         return $this->redirectToRoute(
             $route,
             ['lpa-id' => $lpa->id],
-            $this->getFlowChecker()?->getRouteOptions($route)
+            $this->getFlowChecker()->getRouteOptions($route)
         );
     }
 
@@ -309,7 +309,7 @@ class ReplacementAttorneyController extends AbstractLpaActorController
             return $this->redirectToRoute(
                 $route,
                 ['lpa-id' => $lpa->id],
-                $this->getFlowChecker()?->getRouteOptions($route)
+                $this->getFlowChecker()->getRouteOptions($route)
             );
         }
 

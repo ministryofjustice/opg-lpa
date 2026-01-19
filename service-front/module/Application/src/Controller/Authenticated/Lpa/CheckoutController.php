@@ -77,7 +77,7 @@ class CheckoutController extends AbstractLpaController
         $this->redirectToRoute(
             $route,
             ['lpa-id' => $this->getLpa()->id],
-            $this->getFlowChecker()?->getRouteOptions($route)
+            $this->getFlowChecker()->getRouteOptions($route)
         );
 
         return $this->getResponse();

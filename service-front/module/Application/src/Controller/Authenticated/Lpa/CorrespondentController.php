@@ -334,7 +334,7 @@ class CorrespondentController extends AbstractLpaActorController
         return $this->redirectToRoute(
             $nextRoute,
             ['lpa-id' => $lpa->id],
-            $this->getFlowChecker()?->getRouteOptions($nextRoute)
+            $this->getFlowChecker()->getRouteOptions($nextRoute)
         );
     }
 }

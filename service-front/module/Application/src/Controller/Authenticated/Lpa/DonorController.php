@@ -64,7 +64,7 @@ class DonorController extends AbstractLpaActorController
             return $this->redirectToRoute(
                 $route,
                 ['lpa-id' => $lpaId],
-                $this->getFlowChecker()?->getRouteOptions($route)
+                $this->getFlowChecker()->getRouteOptions($route)
             );
         }
 

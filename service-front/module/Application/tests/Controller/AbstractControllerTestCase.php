@@ -623,8 +623,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 ['lpa-id' => $lpa->getId()],
                 ['query' => $queryParams]
             ])->andReturn($reuseDetailsUrl)->once();
-
-        //$this->redirect->shouldReceive('toUrl')->withArgs([$reuseDetailsUrl])->andReturn($response);
     }
 
     /**
