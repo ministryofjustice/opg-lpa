@@ -7,6 +7,7 @@ namespace ApplicationTest\Model\Service\ApiClient;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\ClientFactory;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Http\Client\HttpClient;
 use Psr\Container\ContainerInterface;
@@ -45,7 +46,7 @@ final class ClientFactoryTest extends MockeryTestCase
 
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'identity'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
             ->once()
             ->andReturn($userIdentity);
 
@@ -61,7 +62,7 @@ final class ClientFactoryTest extends MockeryTestCase
     {
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'identity'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
             ->once()
             ->andReturn(null);
 
@@ -77,7 +78,7 @@ final class ClientFactoryTest extends MockeryTestCase
     {
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'identity'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
             ->once()
             ->andReturn(null);
 

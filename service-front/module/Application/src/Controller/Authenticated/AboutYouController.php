@@ -3,6 +3,7 @@
 namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
+use Application\Model\Service\Session\ContainerNamespace;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -51,7 +52,7 @@ class AboutYouController extends AbstractAuthenticatedController
                 $userService->updateAllDetails($form->getData());
 
                 // Clear the old details out the session.
-                $this->sessionUtility->unsetInMvc('UserDetails', 'user');
+                $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
 
                 // Saved successful so return to dashboard with message if required
                 if (!$isNew) {

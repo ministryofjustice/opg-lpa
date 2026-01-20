@@ -22,6 +22,7 @@ use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
 use Application\Listener\AuthenticationListener;
+use Application\Listener\UserDetailsListener;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -40,6 +41,9 @@ use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Service\AccordionService;
 use Application\Service\Factory\AccordionServiceFactory;
+use Application\Model\Service\User\Details;
+use Application\Service\NavigationViewModelHelper;
+use Application\Service\Factory\NavigationViewModelHelperFactory;
 use Application\Service\Factory\SystemMessageFactory;
 use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
@@ -127,12 +131,14 @@ class Module implements FormElementProviderInterface
                 $this->bootstrapIdentity($e, $path != '/session-state');
             }
 
-            $config = $application->getServiceManager()->get('config');
-            $authenticationService = $application->getServiceManager()->get(AuthenticationService::class);
-            $sessionUtility = $application->getServiceManager()->get(SessionUtility::class);
+            $authenticationService = $serviceManager->get(AuthenticationService::class);
+            $sessionUtility = $serviceManager->get(SessionUtility::class);
+            $userService = $serviceManager->get(Details::class);
+            $config = $serviceManager->get('config');
 
             // Listeners that needs to run on every request (higher priority numbers run first)
-            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1001);
+            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1002);
+            new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1001);
             new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
         }
     }
@@ -174,10 +180,9 @@ class Module implements FormElementProviderInterface
     private function bootstrapIdentity(MvcEvent $e, bool $updateToken = true)
     {
         $sm = $e->getApplication()->getServiceManager();
-
-        $auth = $sm->get('AuthenticationService');
+        $authenticationService = $sm->get(AuthenticationService::class);
         /** @var Identity $identity */
-        $identity = $auth->getIdentity();
+        $identity = $authenticationService->getIdentity();
 
         //  If there is an identity (logged in user) then get the token details and check to see if it has expired
         if (!is_null($identity) && $updateToken) {
@@ -188,18 +193,17 @@ class Module implements FormElementProviderInterface
                     // update the time the token expires in the session
                     $identity->tokenExpiresIn($info['expiresIn']);
                 } else {
-                    $auth->clearIdentity();
+                    $authenticationService->clearIdentity();
 
                     // Record that identity was cleared because of a 500 error (normally db-related)
                     if ($info['failureCode'] >= 500) {
-                        /** @var SessionUtility $sessionUtility */
                         $sessionUtility = $sm->get(SessionUtility::class);
                         $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'reason', 'Internal system error');
                         $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'code', $info['failureCode']);
                     }
                 }
             } catch (ApiException $ex) {
-                $auth->clearIdentity();
+                $authenticationService->clearIdentity();
             }
         }
     }
@@ -341,6 +345,7 @@ class Module implements FormElementProviderInterface
                         $sm->get(TemplateRendererInterface::class),
                         $sm->get(SystemMessage::class),
                         $sm->get(AccordionService::class),
+                        $sm->get(NavigationViewModelHelper::class),
                     );
                 },
                 LoggerInterface::class => LoggerFactory::class,
@@ -352,6 +357,7 @@ class Module implements FormElementProviderInterface
                 ContinuationSheets::class => InvokableFactory::class,
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
+                NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

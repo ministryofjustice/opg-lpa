@@ -28,8 +28,6 @@ final class ValidationApiProblemTest extends MockeryTestCase
             $validationApiProblem->toArray()
         );
 
-        print_r($validationApiProblem->getAdditionalDetails());
-
         $this->assertEquals(['validation' => ['some error']], $validationApiProblem->getAdditionalDetails());
     }
 }
