@@ -35,11 +35,9 @@ data "aws_subnets" "public" {
   }
 }
 
-# TODO: Move this out to the root module and call it once. Pass allowlist in as a variable.
 module "allowed_ip_list" {
   source = "git@github.com:ministryofjustice/opg-terraform-aws-moj-ip-allow-list.git?ref=v3.4.5"
 }
-
 
 # Firewalled Network VPC Data Sources
 locals {
