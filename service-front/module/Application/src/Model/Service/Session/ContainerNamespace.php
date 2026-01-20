@@ -14,4 +14,7 @@ class ContainerNamespace
 
     // Used to record the context around an authentication failure
     public const string AUTH_FAILURE_REASON = 'AuthFailureReason';
+
+    // Used to store user and identity details after authentication
+    public const string USER_DETAILS = 'UserDetails';
 }

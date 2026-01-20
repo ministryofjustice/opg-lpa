@@ -4,6 +4,7 @@ namespace Application\Model\Service\Lpa;
 
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use MakeShared\DataModel\Lpa\Lpa;
 use DateTimeZone;
@@ -34,7 +35,7 @@ class Communication extends AbstractEmailService
     public function sendRegistrationCompleteEmail(Lpa $lpa)
     {
         // Get the signed in user's email address.
-        $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
+        $user = $this->sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'user');
         $userEmailAddress = $user->email->address;
         $to = [$userEmailAddress];
 

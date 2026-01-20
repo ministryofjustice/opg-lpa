@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
@@ -21,12 +22,12 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     use LoggerTrait;
 
     /**
-     * Identity of the logged in user
+     * Identity of the logged-in user
      */
     private ?Identity $identity = null;
 
     /**
-     * User details of the logged in user
+     * User details of the logged-in user
      */
     private ?User $user = null;
 
@@ -51,16 +52,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
         // will be bounced in the onDispatch function
         if ($authenticationService->hasIdentity()) {
             $this->identity = $authenticationService->getIdentity();
-
-            //  Try to get the user details for this identity - look in the session first
-            $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
-
-            if (!$user instanceof User) {
-                $user = $this->userService->getUserDetails();
-                $this->sessionUtility->setInMvc('UserDetails', 'user', $user);
-            }
-
-            $this->user = $user;
+            $this->user = $this->sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'user');
         }
     }
 

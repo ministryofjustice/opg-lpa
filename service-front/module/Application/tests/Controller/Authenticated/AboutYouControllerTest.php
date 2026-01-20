@@ -6,6 +6,7 @@ namespace ApplicationTest\Controller\Authenticated;
 
 use Application\Controller\Authenticated\AboutYouController;
 use Application\Form\User\AboutYou;
+use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use Hamcrest\MatcherAssert;
 use Hamcrest\Matchers;
@@ -116,7 +117,7 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
 
         $this->sessionUtility
             ->shouldReceive('unsetInMvc')
-            ->with('UserDetails', 'user');
+            ->with(ContainerNamespace::USER_DETAILS, 'user');
 
         $result = $controller->indexAction();
 
@@ -187,7 +188,7 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
 
         $this->sessionUtility
             ->shouldReceive('unsetInMvc')
-            ->with('UserDetails', 'user');
+            ->with(ContainerNamespace::USER_DETAILS, 'user');
 
         /** @var ViewModel $result */
         $result = $controller->indexAction();

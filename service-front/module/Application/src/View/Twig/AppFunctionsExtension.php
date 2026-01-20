@@ -7,6 +7,7 @@ namespace Application\View\Twig;
 use Application\Form\Error\FormLinkedErrors;
 use Application\Model\FormFlowChecker;
 use Application\Service\AccordionService;
+use Application\Service\NavigationViewModelHelper;
 use Application\Service\SystemMessage;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -25,6 +26,7 @@ class AppFunctionsExtension extends AbstractExtension
         private readonly TemplateRendererInterface $renderer,
         private readonly SystemMessage $systemMessage,
         private readonly AccordionService $accordionService,
+        private readonly NavigationViewModelHelper $navigationViewModelHelper,
     ) {
     }
 
@@ -38,6 +40,7 @@ class AppFunctionsExtension extends AbstractExtension
             new TwigFunction('formElementErrorsV2', [$this, 'formElementErrorsV2'], ['is_safe' => ['html']]),
             new TwigFunction('accordionTop', [$this, 'getTopBars']),
             new TwigFunction('accordionBottom', [$this, 'getBottomBars']),
+            new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html']]),
         ];
     }
 
@@ -135,5 +138,13 @@ class AppFunctionsExtension extends AbstractExtension
     public function getBottomBars(?Lpa $lpa, string $currentRoute): array
     {
         return $this->accordionService->getBottomBars($lpa, $currentRoute);
+    }
+
+    public function renderNavigation(string $currentRoute): string
+    {
+        return $this->renderer->render(
+            'application/partials/nav.twig',
+            ['nav' => $this->navigationViewModelHelper->build($currentRoute)]
+        );
     }
 }
