@@ -1,0 +1,48 @@
+services:
+
+  mezzio-test-web:
+    container_name: mezzio-test--web
+    image: mezzio-test-web
+    depends_on:
+      - mezzio-test-app
+    volumes:
+      - ./service-front/public:/web
+    build:
+      context: ./
+      dockerfile: service-front/docker/web/Dockerfile
+    environment:
+      APP_HOST: mezzio-test-app
+      APP_PORT: 9000
+
+  mezzio-test-app:
+    container_name: mezzio-test
+    image: mezzio-test
+    build:
+      context: ./
+      args:
+        ENABLE_XDEBUG: 0
+      dockerfile: front-mezzio-test/docker/app/Dockerfile
+    volumes:
+      - ./front-mezzio-test:/app
+      - ./shared:/shared
+    environment:
+      PHP_IDE_CONFIG: serverName=front-mezzio-test
+
+  mezzio-test-ssl:
+    container_name: lpa-front-ssl
+    image: lpa-front-ssl
+    depends_on:
+      - mezzio-test-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
+    ports:
+      - 7002:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7002"
+      SSL_PORT: "443"
+      TARGET_HOST: "mezzio-test-web"
+      TARGET_PORT: "8080"
