@@ -15,9 +15,9 @@ resource "aws_ecs_service" "api" {
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
-      aws_security_group.rds-client.id,
+      local.rds_client_sg_id,
     ]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = local.app_subnet_ids
     assign_public_ip = false
   }
 
@@ -34,6 +34,11 @@ resource "aws_ecs_service" "api" {
   depends_on = [
     data.aws_ecs_task_execution.migrations,
   ]
+
+  timeouts {
+    create = var.environment_name == "production" ? "20m" : "10m"
+    update = var.environment_name == "production" ? "20m" : "6m"
+  }
 
   tags = local.api_component_tag
 }
@@ -90,8 +95,11 @@ locals {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.api_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "api_ecs_service_front_ingress" {
