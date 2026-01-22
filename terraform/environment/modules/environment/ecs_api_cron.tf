@@ -18,14 +18,16 @@ resource "aws_ecs_task_definition" "api_cron" {
 
 resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
   name                = "${var.environment_name}-middle-of-the-night-cron"
-  schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
-  tags                = local.api_component_tag
+  schedule_expression = "cron(30 11 * * ? *)" // 3am UTC, every day.
+  # schedule_expression = "cron(0 3 * * ? *)" // 3am UTC, every day.
+  tags = local.api_component_tag
 }
 
 resource "aws_cloudwatch_event_rule" "mid_morning" {
   name                = "${var.environment_name}-mid-morning-cron"
-  schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
-  tags                = local.api_component_tag
+  schedule_expression = "cron(20 11 * * ? *)" // 10am UTC, every day.
+  # schedule_expression = "cron(0 10 * * ? *)" // 10am UTC, every day.
+  tags = local.api_component_tag
 }
 
 //------------------------------------------------
