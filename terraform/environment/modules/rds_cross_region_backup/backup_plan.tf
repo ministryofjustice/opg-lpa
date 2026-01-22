@@ -1,10 +1,6 @@
-# data "aws_region" "secondary" {
-#   provider = aws.destination
-# }
-
-# data "aws_region" "backup_account" {
-#   provider = aws.backup_account
-# }
+data "aws_region" "secondary" {
+  provider = aws.destination
+}
 
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
