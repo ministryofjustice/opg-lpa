@@ -2,15 +2,17 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
-class WhenLpaStartsController extends AbstractLpaController
+class WhenLpaStartsController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     public function indexAction()
     {

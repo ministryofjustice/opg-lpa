@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\StatusController;
+use Application\Listener\LpaLoaderListener;
+use Application\Model\FormFlowChecker;
 use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
 use Laminas\Http\Response;
+use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\ViewModel;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -125,21 +128,13 @@ final class StatusControllerTest extends AbstractControllerTestCase
         $testLpaId = $testLpa->id;
         $testLpa->setCompletedAt(new DateTime('2020-03-10'));
 
-        // Set one or more dates so we can check in the view that the correct
-        // "should receive by" date is given.
         $testLpa->setMetadata(array_merge($testLpa->getMetadata(), $dates));
-
-
-        $this->lpaApplicationService
-             ->shouldReceive('getApplication')
-             ->withArgs([$testLpaId])
-             ->andReturn($testLpa);
 
         // Return "Processed" as the status for the LPA
         $this->lpaApplicationService
-             ->shouldReceive('getStatuses')
-             ->withArgs([$testLpaId])
-             ->andReturn(['found' => true, 'status' => 'Processed']);
+            ->shouldReceive('getStatuses')
+            ->withArgs([$testLpaId])
+            ->andReturn(['found' => true, 'status' => 'Processed']);
 
         // Mock SessionUtility to return user when requested
         $this->sessionUtility->shouldReceive('getFromMvc')
@@ -149,23 +144,26 @@ final class StatusControllerTest extends AbstractControllerTestCase
 
         // SUT
         $controller = new StatusController(
-            $testLpaId,
             $this->formElementManager,
             $this->sessionManagerSupport,
             $this->authenticationService,
             $this->config,
             $this->lpaApplicationService,
             $this->userDetails,
-            $this->replacementAttorneyCleanup,
-            $this->metadata,
             $this->sessionUtility
         );
+
+        // Set up the event with the LPA
+        $event = new MvcEvent();
+        $flowChecker = new FormFlowChecker($testLpa);
+        $event->setParam(LpaLoaderListener::ATTR_LPA, $testLpa);
+        $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+        $controller->setEvent($event);
 
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(ViewModel::class, $result);
 
-        // Test the "should receive by date" has been calculated correctly
         $this->assertEquals($result->shouldReceiveByDate, $shouldReceiveByDate);
     }
 
