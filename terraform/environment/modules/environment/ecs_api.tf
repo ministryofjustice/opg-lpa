@@ -135,10 +135,6 @@ resource "aws_security_group_rule" "api_ecs_service_egress" {
 
 //--------------------------------------
 // Api ECS Service Task level config
-locals {
-  container_definitions_with_pg_bouncer = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}, ${local.pgbouncer}]"
-  container_definitions                 = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}]"
-}
 
 resource "aws_ecs_task_definition" "api" {
   family                   = "${terraform.workspace}-api"
@@ -146,7 +142,7 @@ resource "aws_ecs_task_definition" "api" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = var.account.database.rds_proxy_routing_enabled ? local.container_definitions : local.container_definitions_with_pg_bouncer
+  container_definitions    = "[${local.api_web}, ${local.api_app}, ${local.aws_otel_collector}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -176,17 +172,6 @@ data "aws_ecr_repository" "lpa_api_app" {
 
 data "aws_ecr_image" "lpa_api_app" {
   repository_name = data.aws_ecr_repository.lpa_api_app.name
-  image_tag       = var.container_version
-  provider        = aws.management
-}
-
-data "aws_ecr_repository" "lpa_pgbouncer" {
-  provider = aws.management
-  name     = "online-lpa/pgbouncer"
-}
-
-data "aws_ecr_image" "lpa_pgbouncer" {
-  repository_name = data.aws_ecr_repository.lpa_pgbouncer.name
   image_tag       = var.container_version
   provider        = aws.management
 }
@@ -235,49 +220,6 @@ locals {
         { name = "TIMEOUT", value = "60" },
         { name = "CONTAINER_VERSION", value = var.container_version }
       ]
-    }
-  )
-
-  pgbouncer = jsonencode(
-    {
-      cpu         = 1,
-      essential   = true,
-      image       = "${data.aws_ecr_repository.lpa_pgbouncer.repository_url}@${data.aws_ecr_image.lpa_pgbouncer.image_digest}",
-      name        = "pgbouncer",
-      mountPoints = [],
-      healthCheck = {
-        command     = ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
-        startPeriod = 90,
-        interval    = 10,
-        timeout     = 15,
-        retries     = 3
-      },
-      portMappings = [
-        {
-          containerPort = 6432,
-          hostPort      = 6432,
-          protocol      = "tcp"
-        }
-      ],
-      logConfiguration = {
-        logDriver = "awslogs",
-        options = {
-          awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.pgbouncer.online-lpa",
-        }
-      },
-      secrets = [
-        { name = "POSTGRESQL_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
-        { name = "POSTGRESQL_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
-      ],
-      environment = [
-        { name = "POSTGRESQL_DATABASE", value = module.api_aurora[0].database_name },
-        { name = "PGBOUNCER_DATABASE", value = module.api_aurora[0].database_name },
-        { name = "POSTGRESQL_HOST", value = module.api_aurora[0].endpoint },
-        { name = "PGBOUNCER_SERVER_TLS_SSLMODE", value = "verify-full" },
-        { name = "PGBOUNCER_AUTH_TYPE", value = "md5" },
-      ],
     }
   )
 
