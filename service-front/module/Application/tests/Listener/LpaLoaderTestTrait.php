@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Listener;
 
 use Application\Listener\LpaLoaderListener;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\FormFlowChecker;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
