@@ -62,3 +62,36 @@ resource "aws_cloudwatch_log_metric_filter" "application_40x_errors" {
     default_value = "0"
   }
 }
+
+resource "aws_cloudwatch_query_definition" "migrations" {
+  name            = "${var.environment_name}/migrations"
+  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
+
+  query_string = <<-EOF
+  fields @timestamp, @message
+  | filter @logStream like "migrations"
+  |limit 10000
+  EOF
+}
+
+resource "aws_cloudwatch_query_definition" "generate_stats" {
+  name            = "${var.environment_name}/generate-stats"
+  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
+
+  query_string = <<-EOF
+  fields @timestamp, @message
+  | filter @logStream like "generate-stats"
+  |limit 10000
+  EOF
+}
+
+resource "aws_cloudwatch_query_definition" "account_cleanup" {
+  name            = "${var.environment_name}/account-cleanup"
+  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
+
+  query_string = <<-EOF
+  fields @timestamp, @message
+  | filter @logStream like "account-cleanup"
+  |limit 10000
+  EOF
+}
