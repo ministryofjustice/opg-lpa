@@ -11,9 +11,6 @@ resource "aws_ecs_task_definition" "api_cron" {
   volume {
     name = "app_tmp"
   }
-  volume {
-    name = "web_etc"
-  }
 }
 
 //------------------------------------------------
