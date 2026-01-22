@@ -73,25 +73,3 @@ resource "aws_cloudwatch_query_definition" "migrations" {
   |limit 10000
   EOF
 }
-
-resource "aws_cloudwatch_query_definition" "generate_stats" {
-  name            = "${var.environment_name}/generate-stats"
-  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
-
-  query_string = <<-EOF
-  fields @timestamp, msg
-  | filter @logStream like "generate-stats"
-  |limit 10000
-  EOF
-}
-
-resource "aws_cloudwatch_query_definition" "account_cleanup" {
-  name            = "${var.environment_name}/account-cleanup"
-  log_group_names = [aws_cloudwatch_log_group.application_logs.name]
-
-  query_string = <<-EOF
-  fields @timestamp, @message
-  | filter @logStream like "account-cleanup"
-  |limit 10000
-  EOF
-}

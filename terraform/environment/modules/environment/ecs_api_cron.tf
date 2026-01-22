@@ -66,14 +66,6 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
         {
           name    = "app",
           command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"],
-          logConfiguration = {
-            logDriver = "awslogs",
-            options = {
-              awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-              awslogs-region        = var.region_name,
-              awslogs-stream-prefix = "${var.environment_name}.account-cleanup.online-lpa",
-            }
-          }
         }
       ]
   })
@@ -111,13 +103,6 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
         {
           name    = "app",
           command = ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"],
-          logConfiguration = {
-            options = {
-              awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-              awslogs-region        = var.region_name,
-              awslogs-stream-prefix = "${var.environment_name}.generate-stats.online-lpa",
-            }
-          }
         }
       ]
   })
