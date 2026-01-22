@@ -180,8 +180,12 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         if (in_array(LpaLoaderTrait::class, $traitsUsed)) {
-            $controller->setMetadata($container->get('Metadata'));
-            $controller->setReplacementAttorneyCleanup($container->get('ReplacementAttorneyCleanup'));
+            if (method_exists($controller, 'setMetadata')) {
+                $controller->setMetadata($container->get('Metadata'));
+            }
+            if (method_exists($controller, 'setReplacementAttorneyCleanup')) {
+                $controller->setReplacementAttorneyCleanup($container->get('ReplacementAttorneyCleanup'));
+            }
         }
 
         return $controller;
