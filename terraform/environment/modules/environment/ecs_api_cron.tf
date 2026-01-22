@@ -61,7 +61,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
       containerOverrides = [
         {
           name    = "app",
-          command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
+          command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"],
           logConfiguration = {
             options = {
               awslogs-stream-prefix = "${var.environment_name}.account-cleanup.online-lpa",
