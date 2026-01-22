@@ -25,17 +25,14 @@ data "aws_ecs_task_execution" "migrations" {
 
 //--------------------------------------
 // Api ECS Service Task level config
-locals {
-  migrations_container_definitions_with_pg_bouncer = "[${local.aws_otel_collector}, ${local.migrations}, ${local.pgbouncer}]"
-  migrations_container_definitions                 = "[${local.aws_otel_collector}, ${local.migrations}]"
-}
+
 resource "aws_ecs_task_definition" "migrations" {
   family                   = "${terraform.workspace}-migrations"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = var.account.database.rds_proxy_routing_enabled ? local.migrations_container_definitions : local.migrations_container_definitions_with_pg_bouncer
+  container_definitions    = "[${local.aws_otel_collector}, ${local.migrations}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -86,7 +83,7 @@ locals {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
+          awslogs-stream-prefix = "${var.environment_name}.migrations.online-lpa"
         }
       },
       dependsOn = var.account.database.rds_proxy_routing_enabled ? [] : [{ containerName = "pgbouncer", condition = "HEALTHY" }],
