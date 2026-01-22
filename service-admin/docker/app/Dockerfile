@@ -7,7 +7,6 @@ COPY --from=mlocati/php-extension-installer:2@sha256:84950d61e2873817f814fd2c486
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
-
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
@@ -27,9 +26,8 @@ RUN composer check-platform-reqs --no-dev -d /app \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
-
+COPY --chown=root:root service-admin/public/index.php /app/public/index.php
 COPY --chown=root:root service-admin/config /app/config
-COPY --chown=root:root service-admin/public /app/public
 COPY --chown=root:root service-admin/src /app/src
 
 COPY --chown=root:root shared /shared
