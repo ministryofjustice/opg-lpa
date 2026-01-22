@@ -62,6 +62,11 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
         {
           name    = "app",
           command = ["php", "/app/vendor/bin/laminas", "service-api:account-cleanup"]
+          logConfiguration = {
+            options = {
+              awslogs-stream-prefix = "${var.environment_name}.account-cleanup.online-lpa",
+            }
+          }
         }
       ]
   })
@@ -98,7 +103,12 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
       containerOverrides = [
         {
           name    = "app",
-          command = ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"]
+          command = ["php", "/app/vendor/bin/laminas", "service-api:generate-stats"],
+          logConfiguration = {
+            options = {
+              awslogs-stream-prefix = "${var.environment_name}.generate-stats.online-lpa",
+            }
+          }
         }
       ]
   })
