@@ -50,3 +50,17 @@ variable "monthly_backup_cold_storage" {
   description = "Number of days to retain monthly backups in cold storage"
 
 }
+# variable "cross_account_backup_enabled" {
+#   type        = bool
+#   description = "Condition to enable cross account backup"
+# }
+
+# variable "backup_account_id" {
+#   type        = string
+#   description = "The AWS Account ID for the backup account"
+# }
+
+# variable "backup_account_kms_key_arn" {
+#   type        = string
+#   description = "The KMS Key ARN for the backup account"
+# }
