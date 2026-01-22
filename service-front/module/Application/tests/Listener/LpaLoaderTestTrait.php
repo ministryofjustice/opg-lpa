@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ApplicationTest\Listener;
 
 use Application\Listener\LpaLoaderListener;
-use Application\Listener\LpaLoaderTrait;
 use Application\Model\FormFlowChecker;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -13,7 +12,6 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\View\Model\JsonModel;
 use MakeShared\DataModel\Lpa\Lpa;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
