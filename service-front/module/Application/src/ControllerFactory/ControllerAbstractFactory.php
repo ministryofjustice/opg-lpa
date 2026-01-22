@@ -4,7 +4,6 @@ namespace Application\ControllerFactory;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
-use Application\Controller\AbstractLpaController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
@@ -15,6 +14,7 @@ use Application\Controller\General\AuthController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Service\DateCheckViewModelHelper;
 use Application\Model\Service\Session\SessionUtility;
@@ -122,43 +122,19 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         $config = $container->get('Config');
         $sessionUtility = $container->get(SessionUtility::class);
 
-        $route = $container->get('Application')->getMvcEvent()->getRouteMatch();
-
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $lpaApplicationService = $container->get('LpaApplicationService');
             $userService = $container->get('UserService');
 
-            if (is_subclass_of($controllerName, AbstractLpaController::class)) {
-                //  Get the LPA ID from the route params
-                $lpaId = $route->getParam('lpa-id');
-
-                if (!is_numeric($lpaId)) {
-                    throw new RuntimeException('Invalid LPA ID passed');
-                }
-
-                $controller = new $controllerName(
-                    $lpaId,
-                    $formElementManager,
-                    $sessionManagerSupport,
-                    $authenticationService,
-                    $config,
-                    $lpaApplicationService,
-                    $userService,
-                    $container->get('ReplacementAttorneyCleanup'),
-                    $container->get('Metadata'),
-                    $sessionUtility,
-                );
-            } else {
-                $controller = new $controllerName(
-                    $formElementManager,
-                    $sessionManagerSupport,
-                    $authenticationService,
-                    $config,
-                    $lpaApplicationService,
-                    $userService,
-                    $sessionUtility
-                );
-            }
+            $controller = new $controllerName(
+                $formElementManager,
+                $sessionManagerSupport,
+                $authenticationService,
+                $config,
+                $lpaApplicationService,
+                $userService,
+                $sessionUtility
+            );
         } else {
             $controller = new $controllerName(
                 $formElementManager,
@@ -201,6 +177,11 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
              * @psalm-suppress UndefinedInterfaceMethod
              */
             $controller->setLogger($container->get('Logger'));
+        }
+
+        if (in_array(LpaLoaderTrait::class, $traitsUsed)) {
+            $controller->setMetadata($container->get('Metadata'));
+            $controller->setReplacementAttorneyCleanup($container->get('ReplacementAttorneyCleanup'));
         }
 
         return $controller;

@@ -7,11 +7,9 @@ namespace ApplicationTest\ControllerFactory;
 use Application\Controller\General\HomeController;
 use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
-use Laminas\Router\RouteMatch;
 use Laminas\Session\SessionManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -45,19 +43,6 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
 
     public function testCreateServiceWithName(): void
     {
-        $routeMatch = Mockery::mock(RouteMatch::class);
-        $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/applicant');
-
-        $mvcEvent = Mockery::mock(RouteMatch::class);
-        $mvcEvent->shouldReceive('getRouteMatch')->withArgs([])
-            ->andReturn($routeMatch)->once();
-
-        $application = Mockery::mock(Application::class);
-        $application->shouldReceive('getMvcEvent')->withArgs([])
-            ->andReturn($mvcEvent)->once();
-        $this->container->shouldReceive('get')->withArgs(['Application'])
-            ->andReturn($application)->once();
-
         $this->container->shouldReceive('get')->withArgs(['PersistentSessionDetails'])
             ->andReturn(Mockery::mock(ContainerInterface::class))->once();
 
