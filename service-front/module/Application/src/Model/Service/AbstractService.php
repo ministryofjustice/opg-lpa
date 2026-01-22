@@ -49,7 +49,7 @@ abstract class AbstractService implements LoggerAwareInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getUserId()
     {
