@@ -28,6 +28,7 @@ variable "accounts" {
       performance_platform_enabled           = bool
       pagerduty_service_name                 = string
       account_id                             = string
+      backup_account_id                      = string
       is_production                          = string
       sirius_api_gateway_endpoint            = string
       sirius_api_gateway_arn                 = string
