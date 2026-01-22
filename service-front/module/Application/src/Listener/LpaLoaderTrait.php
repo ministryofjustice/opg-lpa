@@ -25,6 +25,9 @@ trait LpaLoaderTrait
 
     protected function getMetadata(): Metadata
     {
+        if ($this->metadata === null) {
+            throw new RuntimeException('Metadata not set. Ensure controller is configured correctly.');
+        }
         return $this->metadata;
     }
 
@@ -35,6 +38,9 @@ trait LpaLoaderTrait
 
     protected function cleanUpReplacementAttorneyDecisions(): void
     {
+        if ($this->replacementAttorneyCleanup === null) {
+            throw new RuntimeException('ReplacementAttorneyCleanup not set. Ensure controller is configured correctly.');
+        }
         $this->replacementAttorneyCleanup->cleanUp($this->getLpa());
     }
 
