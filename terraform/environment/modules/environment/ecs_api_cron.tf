@@ -1,3 +1,21 @@
+resource "aws_ecs_task_definition" "api_cron" {
+  family                   = "${terraform.workspace}-api-cron"
+  requires_compatibilities = ["FARGATE"]
+  network_mode             = "awsvpc"
+  cpu                      = 512
+  memory                   = 1024
+  container_definitions    = "[${local.api_app}, ${local.aws_otel_collector}]"
+  task_role_arn            = var.ecs_iam_task_roles.api.arn
+  execution_role_arn       = var.ecs_execution_role.arn
+  tags                     = local.api_component_tag
+  volume {
+    name = "app_tmp"
+  }
+  volume {
+    name = "web_etc"
+  }
+}
+
 //------------------------------------------------
 // Trigger times
 
@@ -27,7 +45,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
 
   ecs_target {
     task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.api.arn
+    task_definition_arn = aws_ecs_task_definition.api_cron.arn
     launch_type         = "FARGATE"
     platform_version    = "1.4.0"
 
@@ -64,7 +82,7 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_generate_stats" {
 
   ecs_target {
     task_count          = 1
-    task_definition_arn = aws_ecs_task_definition.api.arn
+    task_definition_arn = aws_ecs_task_definition.api_cron.arn
     launch_type         = "FARGATE"
     platform_version    = "1.4.0"
 
