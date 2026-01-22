@@ -4,7 +4,7 @@ resource "aws_ecs_task_definition" "api_cron" {
   network_mode             = "awsvpc"
   cpu                      = 512
   memory                   = 1024
-  container_definitions    = "[${local.api_app}, ${local.aws_otel_collector}]"
+  container_definitions    = "[${local.api_app}]"
   task_role_arn            = var.ecs_iam_task_roles.api.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.api_component_tag
@@ -19,7 +19,7 @@ resource "aws_ecs_task_definition" "api_cron" {
 resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
   name                = "${var.environment_name}-middle-of-the-night-cron"
   description         = "3am UTC, every day. Used for Generate Stats"
-  schedule_expression = "cron(10 13 * * ? *)"
+  schedule_expression = "cron(25 13 * * ? *)"
   # schedule_expression = "cron(0 3 * * ? *)"
   tags = local.api_component_tag
 }
@@ -27,7 +27,7 @@ resource "aws_cloudwatch_event_rule" "middle_of_the_night" {
 resource "aws_cloudwatch_event_rule" "mid_morning" {
   name                = "${var.environment_name}-mid-morning-cron"
   description         = "10am UTC, every day. Used for Account Cleanup"
-  schedule_expression = "cron(15 13 * * ? *)"
+  schedule_expression = "cron(25 13 * * ? *)"
   # schedule_expression = "cron(0 10 * * ? *)"
   tags = local.api_component_tag
 }
