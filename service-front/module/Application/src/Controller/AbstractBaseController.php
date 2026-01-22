@@ -7,7 +7,6 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Session\SessionManager;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
