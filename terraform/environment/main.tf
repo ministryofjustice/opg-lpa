@@ -74,7 +74,6 @@ module "cross_region_backup" {
   environment_name                    = local.environment_name
   destination_region_name             = "eu-west-2"
   key_alias                           = "mrk_db_snapshot_key-${local.account_name}"
-  backup_account_id                   = local.account.backup_account_id
   account_name                        = local.account_name
   iam_aurora_restore_testing_role_arn = aws_iam_role.restore_testing_role.arn
   aurora_restore_testing_enabled      = local.account.database.aurora_restore_testing_enabled
