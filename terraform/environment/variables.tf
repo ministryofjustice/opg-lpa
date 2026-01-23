@@ -28,11 +28,11 @@ variable "accounts" {
       performance_platform_enabled           = bool
       pagerduty_service_name                 = string
       account_id                             = string
-      backup_account_id                      = string
       is_production                          = string
       sirius_api_gateway_endpoint            = string
       sirius_api_gateway_arn                 = string
       sirius_api_healthcheck_arn             = string
+      backup_account_key_arn                 = string
       telemetry_requests_sampled_fraction    = string
       auth_token_ttl_secs                    = number
       always_on                              = bool
@@ -44,6 +44,7 @@ variable "accounts" {
         cluster_identifier                 = string
         aurora_cross_region_backup_enabled = bool
         aurora_restore_testing_enabled     = bool
+        backup_account_id                  = string
         daily_backup_deletion              = number
         daily_backup_cold_storage          = number
         monthly_backup_deletion            = number
