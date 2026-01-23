@@ -48,8 +48,43 @@ data "aws_iam_policy_document" "backup_account_key" {
       "*",
     ]
   }
+  statement {
+    sid    = "Allow Key to be used for Encryption"
+    effect = "Allow"
+    resources = [
+      "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
+    ]
+    actions = [
+      "kms:Encrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.encryption_roles
+    }
+  }
+  statement {
+    sid    = "Allow Key to be used for Decryption"
+    effect = "Allow"
+    resources = [
+      "arn:aws:kms:*:${data.aws_caller_identity.current.account_id}:key/*"
+    ]
+    actions = [
+      "kms:Decrypt",
+      "kms:DescribeKey",
+    ]
+
+    principals {
+      type        = "AWS"
+      identifiers = var.decryption_roles
+    }
+  }
 }
 
+# TODO - LIMIT SCOPE TO PERMISSIONS. CONFIRM IF NEEDED
 data "aws_caller_identity" "backup_account" {
   provider = aws.backup_account
 }
