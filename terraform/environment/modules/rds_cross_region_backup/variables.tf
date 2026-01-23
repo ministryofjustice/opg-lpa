@@ -48,9 +48,13 @@ variable "daily_backup_cold_storage" {
 variable "monthly_backup_cold_storage" {
   type        = number
   description = "Number of days to retain monthly backups in cold storage"
-
 }
-# variable "backup_account_id" {
-#   type        = string
-#   description = "The account id of the backup account"
-# }
+
+variable "encryption_roles" {
+  description = "List of Role ARNs allowed to use the KMS Key for Encryption"
+  type        = list(string)
+}
+variable "decryption_roles" {
+  description = "List of Role ARNs allowed to use the KMS Key for Decryption"
+  type        = list(string)
+}
