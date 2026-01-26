@@ -20,9 +20,3 @@ resource "aws_iam_policy" "kms_aurora_backup_role" {
   description = "KMS policy for aurora backup role"
   policy      = data.aws_iam_policy_document.aurora_backup_role.json
 }
-
-resource "aws_iam_policy" "backup_account_key" {
-  name        = "backup_account_kms_key_policy"
-  description = "KMS policy for cross account backup"
-  policy      = data.aws_iam_policy_document.backup_account_key.json
-}
