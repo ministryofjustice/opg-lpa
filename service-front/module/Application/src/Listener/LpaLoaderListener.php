@@ -57,7 +57,7 @@ class LpaLoaderListener extends AbstractListenerAggregate implements MiddlewareI
         $currentRoute = $routeMatch->getMatchedRouteName();
 
         // Skip flow checking for dashboard routes that have lpa-id but aren't LPA form steps
-        if (str_starts_with($currentRoute, 'user/dashboard/')) {
+        if ($currentRoute === null || str_starts_with($currentRoute, 'user/dashboard/')) {
             return null;
         }
 
