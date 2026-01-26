@@ -5,11 +5,14 @@ resource "aws_backup_vault_lock_configuration" "backup_account" {
   backup_vault_name   = aws_backup_vault.backup_account
   changeable_for_days = 7
 }
+
 resource "aws_backup_vault" "backup_account" {
   provider    = aws.backup_account
-  name        = "cross-account-vault-${var.account_name}-${data.aws_region.backup.region}"
-  kms_key_arn = aws_kms_key.backup_multi_region_destination.arn
+  name        = "${var.environment_name}_${data.aws_region.current.region}_cross_account_backup_vault"
+  kms_key_arn = aws_kms_key.backup_account_key.arn
 }
+# TODO = Make name identifiable to make as others using account id
+
 
 resource "aws_backup_vault_policy" "backup_account" {
   provider          = aws.backup_account
