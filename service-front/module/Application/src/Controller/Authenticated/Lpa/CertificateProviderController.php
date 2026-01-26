@@ -66,7 +66,7 @@ class CertificateProviderController extends AbstractLpaActorController
         if ($lpa->document->certificateProvider instanceof CertificateProvider) {
             $route = 'lpa/certificate-provider';
 
-            return $this->redirect()->toRoute(
+            return $this->redirectToRoute(
                 $route,
                 ['lpa-id' => $lpaId],
                 $this->getFlowChecker()->getRouteOptions($route)
@@ -200,7 +200,7 @@ class CertificateProviderController extends AbstractLpaActorController
             throw new \RuntimeException('API client failed to delete certificate provider for id: ' . $lpa->id);
         }
 
-        return $this->redirect()->toRoute('lpa/certificate-provider', [
+        return $this->redirectToRoute('lpa/certificate-provider', [
             'lpa-id' => $lpa->id
         ]);
     }
