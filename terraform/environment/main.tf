@@ -67,6 +67,7 @@ module "cross_region_backup" {
   providers = {
     aws             = aws.eu_west_1
     aws.destination = aws.eu_west_2
+    aws.backup      = aws.backup
   }
 
   source_cluster_arn                  = module.eu-west-1.aws_aurora_cluster_arn
