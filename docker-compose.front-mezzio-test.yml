@@ -25,6 +25,7 @@ services:
     volumes:
       - ./front-mezzio-test:/app
       - ./shared:/shared
+      - ./cypress-mezzio-test:/app/cypress-mezzio-test
     environment:
       PHP_IDE_CONFIG: serverName=front-mezzio-test
 
@@ -46,3 +47,13 @@ services:
       SSL_PORT: "443"
       TARGET_HOST: "mezzio-test-web"
       TARGET_PORT: "8080"
+
+  cypress-mezzio-test:
+    build:
+      context: ./
+      dockerfile: cypress/Dockerfile
+    command: [ "run", "--spec", "cypress/e2e/FrontMezzioTest.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    environment:
+      CYPRESS_baseUrl: https://mezzio-test-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots
