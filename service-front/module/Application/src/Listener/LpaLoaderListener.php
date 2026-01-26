@@ -54,6 +54,13 @@ class LpaLoaderListener extends AbstractListenerAggregate implements MiddlewareI
             return null;
         }
 
+        $currentRoute = $routeMatch->getMatchedRouteName();
+
+        // Skip flow checking for dashboard routes that have lpa-id but aren't LPA form steps
+        if (str_starts_with($currentRoute, 'user/dashboard/')) {
+            return null;
+        }
+
         $lpaId = $routeMatch->getParam('lpa-id');
 
         if ($lpaId === null) {
@@ -79,7 +86,6 @@ class LpaLoaderListener extends AbstractListenerAggregate implements MiddlewareI
         }
 
         $flowChecker = new FormFlowChecker($lpa);
-        $currentRoute = $routeMatch->getMatchedRouteName();
 
         if ($currentRoute === 'lpa/download') {
             $param = $routeMatch->getParam('pdf-type');
