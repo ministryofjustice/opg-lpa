@@ -1,3 +1,4 @@
+data "aws_caller_identity" "backup_account" {}
 resource "aws_kms_key" "backup_account_key" {
   description             = "cross account backup encryption key"
   deletion_window_in_days = 7
