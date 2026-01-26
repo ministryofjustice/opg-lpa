@@ -179,9 +179,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             $controller->setLogger($container->get('Logger'));
         }
 
-        $replacementAttorneyCleanup = $container->get(ReplacementAttorneyCleanup::class);
         if (method_exists($controller, 'setReplacementAttorneyCleanup')) {
-            $controller->setReplacementAttorneyCleanup($replacementAttorneyCleanup);
+            $controller->setReplacementAttorneyCleanup($container->get(ReplacementAttorneyCleanup::class));
         }
 
         if (method_exists($controller, 'setMetadata')) {
