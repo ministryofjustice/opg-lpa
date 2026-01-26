@@ -128,7 +128,12 @@ class LpaLoaderListenerTest extends TestCase
 
     public function testListenThrowsExceptionWhenUserDoesNotOwnLpa(): void
     {
-        $routeMatch = new RouteMatch(['lpa-id' => '123']);
+        $routeMatch = $this->createMock(RouteMatch::class);
+        $routeMatch->method('getMatchedRouteName')->willReturn('lpa/form-type');
+        $routeMatch->method('getParam')->willReturnMap([
+            ['lpa-id', null, '123'],
+        ]);
+
         $event = new MvcEvent();
         $event->setRouteMatch($routeMatch);
 
