@@ -70,18 +70,17 @@ final class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractCo
         /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/how-replacement-attorneys-make-decision');
-        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostFailed(): void
@@ -117,8 +116,6 @@ final class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractCo
         /** @var HowReplacementAttorneysMakeDecisionController $controller */
         $controller = $this->getController(HowReplacementAttorneysMakeDecisionController::class);
 
-        $response = new Response();
-
         $postData = $this->postData;
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_DEPENDS;
         $postData['howDetails'] = 'Details';
@@ -134,10 +131,11 @@ final class HowReplacementAttorneysMakeDecisionControllerTest extends AbstractCo
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/how-replacement-attorneys-make-decision');
-        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $result->getHeaders()->get('Location')->getUri());
     }
 }

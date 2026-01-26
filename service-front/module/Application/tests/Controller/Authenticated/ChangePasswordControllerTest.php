@@ -77,8 +77,6 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         /** @var ChangePasswordController $controller */
         $controller = $this->getController(ChangePasswordController::class);
 
-        $response = new Response();
-
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/change-password'])->andReturn('user/change-password')->once();
         $this->form->shouldReceive('setAttribute')->withArgs(['action', 'user/change-password'])->once();
@@ -92,11 +90,11 @@ final class ChangePasswordControllerTest extends AbstractControllerTestCase
         $this->flashMessenger->shouldReceive('addSuccessMessage')->withArgs([
             'Your new password has been saved. Please remember to use this new password to sign in from now on.'
         ])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/about-you'])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('user/about-you', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionUpdateFails(): void

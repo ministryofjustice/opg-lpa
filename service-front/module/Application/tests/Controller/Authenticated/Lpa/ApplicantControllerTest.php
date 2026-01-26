@@ -109,8 +109,6 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
         /** @var ApplicantController $controller */
         $controller = $this->getController(ApplicantController::class);
 
-        $response = new Response();
-
         $postData = [
             'whoIsRegistering' => Correspondence::WHO_DONOR
         ];
@@ -119,14 +117,13 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
         $this->setPostValid($this->form, $postData);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
-        $this->redirect->shouldReceive('toRoute')->withArgs([
-            'lpa/correspondent',
-            ['lpa-id' => $this->lpa->id
-            ], $this->getExpectedRouteOptions('lpa/correspondent')])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/correspondent', $location);
     }
 
     public function testIndexActionPostDonorRegisteringValueChangedException(): void
@@ -157,8 +154,6 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
 
-        $response = new Response();
-
         $postData = [
             'whoIsRegistering' => '1',
             'attorneyList' => '1,2,3'
@@ -172,11 +167,14 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, [1]])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
-        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/correspondent', $location);
     }
 
     public function testIndexActionPostAttorneyRegisteringJointlyAndSeverallyChangedSuccessful(): void
@@ -186,8 +184,6 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
 
         //Verify there is more than one primary attorney
         $this->assertGreaterThan(1, count($this->lpa->document->primaryAttorneys));
-
-        $response = new Response();
 
         $postData = [
             'whoIsRegistering' => '1',
@@ -202,10 +198,13 @@ final class ApplicantControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, '1,2,3'])->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/applicant');
-        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/correspondent', $location);
     }
 }

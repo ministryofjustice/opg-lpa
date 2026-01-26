@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Controller\Authenticated\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
+use Laminas\Http\Response as HttpResponse;
 use MakeShared\DataModel\AbstractData;
 use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\LongName;
@@ -23,12 +24,7 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 {
     use LoggerTrait;
 
-    /**
-     * Function to check if the reuse details options are available and if it is appropriate to redirect to them
-     *
-     * @return \Laminas\Http\Response|null
-     */
-    protected function checkReuseDetailsOptions(ViewModel $viewModel)
+    protected function checkReuseDetailsOptions(ViewModel $viewModel): ?HttpResponse
     {
         $request = $this->convertRequest();
 
@@ -62,14 +58,16 @@ abstract class AbstractLpaActorController extends AbstractLpaController
 
                 // Generate the URL to redirect to reuse details
                 $reuseDetailsUrl = $this->getReuseDetailsUrl([
-                    'calling-url'    => $request->getUri()->getPath(),
+                    'calling-url' => $request->getUri()->getPath(),
                     'include-trusts' => $includeTrusts,
-                    'actor-name'     => $actorName,
+                    'actor-name' => $actorName,
                 ]);
 
-                return $this->redirect()->toUrl($reuseDetailsUrl);
+                return $this->redirectToUrl($reuseDetailsUrl);
             }
         }
+
+        return null;
     }
 
     /**

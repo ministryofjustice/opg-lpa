@@ -49,10 +49,10 @@ abstract class AbstractService implements LoggerAwareInterface
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     protected function getUserId()
     {
-        return $this->getAuthenticationService()->getIdentity()->id();
+        return $this->getAuthenticationService()->getIdentity()?->id();
     }
 }

@@ -133,8 +133,7 @@ class DashboardController extends AbstractAuthenticatedController
                  * @psalm-suppress UndefinedMagicMethod
                  */
                 $this->flashMessenger()->addErrorMessage('Error creating a new LPA. Please try again.');
-
-                return $this->redirect()->toRoute('user/dashboard');
+                return $this->redirectToRoute('user/dashboard');
             }
 
             $result = $this->getLpaApplicationService()->setSeed($lpa, $seedId);
@@ -150,11 +149,11 @@ class DashboardController extends AbstractAuthenticatedController
             }
 
             // Redirect them to the first page...
-            return $this->redirect()->toRoute('lpa/form-type', [ 'lpa-id' => $lpa->id ]);
+            return $this->redirectToRoute('lpa/form-type', [ 'lpa-id' => $lpa->id]);
         }
 
         // Redirect them to the first page, no LPA created
-        return $this->redirect()->toRoute('lpa-type-no-id');
+        return $this->redirectToRoute('lpa-type-no-id');
     }
 
     public function deleteLpaAction()
@@ -178,8 +177,7 @@ class DashboardController extends AbstractAuthenticatedController
                 'page' => $page,
             ];
         }
-
-        return $this->redirect()->toRoute($target, $params);
+        return $this->redirectToRoute($target, $params);
     }
 
     public function confirmDeleteLpaAction()

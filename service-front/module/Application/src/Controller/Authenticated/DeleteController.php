@@ -30,7 +30,6 @@ class DeleteController extends AbstractAuthenticatedController
 
             return $view;
         }
-
-        return $this->redirect()->toRoute('deleted');
+        return $this->redirectToRoute('deleted');
     }
 }

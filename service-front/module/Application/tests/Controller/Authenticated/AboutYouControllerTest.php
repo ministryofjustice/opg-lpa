@@ -98,8 +98,6 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
-        $response = new Response();
-
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn(null)->once();
 
@@ -108,8 +106,6 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         $this->userDetails->shouldReceive('updateAllDetails')->withArgs([$this->postData])->once();
         $this->flashMessenger->shouldReceive('addSuccessMessage')
             ->withArgs(['Your details have been updated.'])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         //  Set up form
         $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($this->user));
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you'])->once();
@@ -122,6 +118,8 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         $result = $controller->indexAction();
 
         $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testNewActionGet(): void
@@ -170,8 +168,6 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         /** @var AboutYouController $controller */
         $controller = $this->getController(AboutYouController::class);
 
-        $response = new Response();
-
         //  Set up any route or request parameters
         $this->params->shouldReceive('fromRoute')->withArgs(['new', null])->andReturn('new')->once();
 
@@ -179,8 +175,6 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         $this->url->shouldReceive('fromRoute')
             ->withArgs(['user/about-you', ['new' => 'new']])->andReturn('/user/about-you/new')->once();
         $this->userDetails->shouldReceive('updateAllDetails')->withArgs([$this->postData])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         //  Set up form
         $this->form->shouldReceive('setAttribute')->withArgs(['action', '/user/about-you/new'])->once();
         $this->setPostValid($this->form, $this->postData, $this->getExpectedDataToSet($this->user));
@@ -193,7 +187,9 @@ final class AboutYouControllerTest extends AbstractControllerTestCase
         /** @var ViewModel $result */
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     /**

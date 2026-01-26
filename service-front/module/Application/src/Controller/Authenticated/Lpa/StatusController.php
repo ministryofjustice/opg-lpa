@@ -47,7 +47,7 @@ class StatusController extends AbstractLpaController
         }
 
         if ($viewData === null) {
-            return $this->redirect()->toRoute('user/dashboard');
+            return $this->redirectToRoute('user/dashboard');
         }
 
         return new ViewModel($viewData->toArray());

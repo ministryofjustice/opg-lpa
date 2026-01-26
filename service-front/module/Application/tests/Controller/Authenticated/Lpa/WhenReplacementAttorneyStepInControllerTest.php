@@ -92,8 +92,6 @@ final class WhenReplacementAttorneyStepInControllerTest extends AbstractControll
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postDataLast);
         $this->form->shouldReceive('setValidationGroup')->withArgs([['when']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataLast)->once();
@@ -105,19 +103,17 @@ final class WhenReplacementAttorneyStepInControllerTest extends AbstractControll
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/when-replacement-attorney-step-in');
-        $this->setRedirectToRoute('lpa/how-replacement-attorneys-make-decision', $this->lpa, $response);
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/how-replacement-attorneys-make-decision', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostSuccessDepends(): void
     {
         /** @var WhenReplacementAttorneyStepInController $controller */
         $controller = $this->getController(WhenReplacementAttorneyStepInController::class);
-
-        $response = new Response();
 
         $this->lpa->document->replacementAttorneyDecisions = null;
         $this->setPostValid($this->form, $this->postDataDepends);
@@ -131,10 +127,10 @@ final class WhenReplacementAttorneyStepInControllerTest extends AbstractControll
         $this->replacementAttorneyCleanup->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/when-replacement-attorney-step-in');
-        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $result->getHeaders()->get('Location')->getUri());
     }
 }

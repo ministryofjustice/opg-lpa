@@ -8,6 +8,7 @@ use Laminas\Http\Header\Referer;
 use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
+use Psr\Http\Message\ResponseInterface;
 
 class RegisterController extends AbstractBaseController
 {
@@ -28,7 +29,7 @@ class RegisterController extends AbstractBaseController
      * but it doesn't.) So we suppress this psalm error.
      *
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return ViewModel|HttpResponse
+     * @return ViewModel|ResponseInterface|HttpResponse
      */
     public function indexAction()
     {
@@ -48,7 +49,11 @@ class RegisterController extends AbstractBaseController
             is_a($referer, Referer::class) &&
             (stripos($referer->uri()->getHost(), 'www.gov.uk') !== false)
         ) {
-            return $this->redirect()->toRoute('home', ['action' => 'index'], ['query' => ['_ga' => $ga]]);
+            return $this->redirectToRoute(
+                'home',
+                ['action' => 'index'],
+                ['query' => ['_ga' => $ga]]
+            );
         }
 
         $response = $this->preventAuthenticatedUser();

@@ -5,6 +5,7 @@ namespace Application\Controller\Authenticated\Lpa;
 use Application\Controller\AbstractLpaController;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\Service\DateCheckViewModelHelper;
+use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -15,7 +16,7 @@ class DateCheckController extends AbstractLpaController
     private DateCheckViewModelHelper $dateCheckViewModelHelper;
 
 
-    public function indexAction()
+    public function indexAction(): ViewModel|Response
     {
         $lpa = $this->getLpa();
 
@@ -108,7 +109,7 @@ class DateCheckController extends AbstractLpaController
                         ['query' => $queryParams],
                     );
 
-                    return $this->redirect()->toUrl($validUrl);
+                    return $this->redirectToUrl($validUrl);
                 } else {
                     $form->setMessages($result);
                 }

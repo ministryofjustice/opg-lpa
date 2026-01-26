@@ -2,6 +2,7 @@
 
 namespace Application\Controller;
 
+use Application\Handler\Traits\RedirectTrait;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -19,6 +20,7 @@ use Psr\Log\LoggerAwareInterface;
 abstract class AbstractBaseController extends AbstractActionController implements LoggerAwareInterface
 {
     use LoggerTrait;
+    use RedirectTrait;
 
     public function __construct(
         private AbstractPluginManager $formElementManager,
@@ -92,7 +94,7 @@ abstract class AbstractBaseController extends AbstractActionController implement
      * Thus is the session cookies doesn't exist AND cookie=1, we can assume the client is not sending cookies.
      *
      * @param $routeName string The route name for the current page for if a redirect is needed.
-     * @return bool|\Laminas\Http\Response Iff bool true is returned,
+     * @return HttpResponse|bool Iff bool true is returned,
      *     all is good. Otherwise the calling controller should return the response.
      */
     protected function checkCookie($routeName)
@@ -127,15 +129,11 @@ abstract class AbstractBaseController extends AbstractActionController implement
             if (!$cookieRedirect) {
                 // Cannot see a cookie, so redirect them back to this page
                 // (which will set one), ready to check again.
-                return $this->redirect()->toRoute(
-                    $routeName,
-                    [],
-                    ['query' => ['cookie' => '1']]
-                );
+                return $this->redirectToRoute($routeName, [], ['query' => ['cookie' => '1']]);
             } else {
                 // Cookie is not set even after we've done a redirect,
                 // so assume the client doesn't support cookies.
-                return $this->redirect()->toRoute('enable-cookie');
+                return $this->redirectToRoute('enable-cookie');
             }
         }
 
@@ -149,14 +147,14 @@ abstract class AbstractBaseController extends AbstractActionController implement
      *
      * e.g. login, register, etc.
      *
-     * @return bool|\Laminas\Http\Response
+     * @return bool|HttpResponse
      */
     protected function preventAuthenticatedUser()
     {
         $identity = $this->authenticationService->getIdentity();
 
         if (!is_null($identity)) {
-            return $this->redirect()->toRoute('user/dashboard');
+            return $this->redirectToRoute('user/dashboard');
         }
 
         return true;

@@ -48,8 +48,7 @@ class ChangePasswordController extends AbstractAuthenticatedController
                         'Your new password has been saved. ' .
                         'Please remember to use this new password to sign in from now on.'
                     );
-
-                    return $this->redirect()->toRoute('user/about-you');
+                    return $this->redirectToRoute('user/about-you');
                 } else {
                     $error = $result;
                 }

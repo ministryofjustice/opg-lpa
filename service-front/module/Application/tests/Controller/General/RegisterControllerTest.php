@@ -14,6 +14,7 @@ use Laminas\Http\Headers;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\RouteMatch;
+use Laminas\Stdlib\ResponseInterface;
 use Laminas\Uri\Uri;
 use Laminas\View\Model\ViewModel;
 use Mockery;
@@ -38,6 +39,7 @@ final class RegisterControllerTest extends AbstractControllerTestCase
         parent::setUp();
 
         $this->form = Mockery::mock(Registration::class);
+        $this->form->shouldReceive('setAttribute')->byDefault();
         $this->formElementManager
             ->shouldReceive('get')
             ->withArgs(['Application\Form\User\Registration'])
@@ -72,38 +74,29 @@ final class RegisterControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(RegisterController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
 
         $referer = $this->makeMockReferer('http://www.gov.uk');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
 
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['home', ['action' => 'index'], ['query' => ['_ga' => self::GA]]])
-            ->andReturn($response)
-            ->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(ResponseInterface::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('home', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionAlreadyLoggedIn(): void
     {
-        $controller = $this->getController(RegisterController::class);
+        // Make sure identity is set BEFORE getting controller
+        $this->setIdentity($this->userIdentity);
 
-        $response = new Response();
+        $controller = $this->getController(RegisterController::class);
 
         $this->request->shouldReceive('getQuery')->withArgs(['_ga'])->andReturn(self::GA)->once();
 
         $referer = $this->makeMockReferer('https://localhost/home');
         $this->request->shouldReceive('getHeader')->withArgs(['Referer'])->andReturn($referer)->once();
-
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['user/dashboard'])
-            ->andReturn($response)
-            ->once();
 
         $this->logger->shouldReceive('info')
             ->once()
@@ -121,7 +114,9 @@ final class RegisterControllerTest extends AbstractControllerTestCase
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
 
