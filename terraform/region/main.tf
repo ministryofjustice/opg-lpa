@@ -5,8 +5,9 @@ module "eu-west-1" {
   account_name              = local.account_name
   firewalled_vpc_cidr_range = local.account.firewalled_vpc_cidr_ranges.eu_west_1
   providers = {
-    aws            = aws
-    aws.management = aws.management
+    aws                = aws
+    aws.management     = aws.management
+    aws.backup_account = aws.backup_account
   }
 }
 
