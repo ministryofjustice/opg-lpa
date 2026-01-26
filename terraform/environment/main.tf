@@ -16,7 +16,8 @@ module "eu-west-1" {
   }
   providers = {
     aws            = aws.eu_west_1
-    aws.management = aws.management
+    aws.management = aws.management,
+    aws.backup     = aws.backup,
   }
 }
 
@@ -40,7 +41,8 @@ module "eu-west-2" {
 
   providers = {
     aws            = aws.eu_west_2
-    aws.management = aws.management
+    aws.management = aws.management,
+    aws.backup     = aws.backup
   }
 }
 
