@@ -14,7 +14,7 @@ use Application\Controller\General\AuthController;
 use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\RegisterController;
 use Application\Controller\General\VerifyEmailAddressController;
-use Application\Listener\LpaLoaderTrait;
+use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Service\DateCheckViewModelHelper;
 use Application\Model\Service\Session\SessionUtility;
@@ -179,13 +179,13 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             $controller->setLogger($container->get('Logger'));
         }
 
-        if (in_array(LpaLoaderTrait::class, $traitsUsed)) {
-            if (method_exists($controller, 'setMetadata')) {
-                $controller->setMetadata($container->get('Metadata'));
-            }
-            if (method_exists($controller, 'setReplacementAttorneyCleanup')) {
-                $controller->setReplacementAttorneyCleanup($container->get('ReplacementAttorneyCleanup'));
-            }
+        $replacementAttorneyCleanup = $container->get(ReplacementAttorneyCleanup::class);
+        if (method_exists($controller, 'setReplacementAttorneyCleanup')) {
+            $controller->setReplacementAttorneyCleanup($replacementAttorneyCleanup);
+        }
+
+        if (method_exists($controller, 'setMetadata')) {
+            $controller->setMetadata($container->get('Metadata'));
         }
 
         return $controller;
