@@ -5,7 +5,7 @@ resource "aws_kms_key" "backup_account_key" {
   enable_key_rotation     = true
   provider                = aws.backup_account
 
-  policy = data.aws_iam_policy_document.backup_account_key.policy
+  policy = data.aws_iam_policy_document.backup_account_key.json
 }
 
 resource "aws_kms_alias" "backup_account_key" {
