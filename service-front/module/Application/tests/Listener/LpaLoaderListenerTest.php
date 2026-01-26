@@ -512,6 +512,22 @@ class LpaLoaderListenerTest extends TestCase
         $this->assertInstanceOf(\Psr\Http\Message\ResponseInterface::class, $result);
     }
 
+    public function testListenReturnsNullForDashboardRoutes(): void
+    {
+        $routeMatch = $this->createMock(RouteMatch::class);
+        $routeMatch->method('getMatchedRouteName')->willReturn('user/dashboard/lpa');
+        $routeMatch->method('getParam')->willReturnMap([
+            ['lpa-id', null, '123'],
+        ]);
+
+        $event = new MvcEvent();
+        $event->setRouteMatch($routeMatch);
+
+        $result = $this->listener->listen($event);
+
+        $this->assertNull($result);
+    }
+
     public function testConstantsAreCorrectlyDefined(): void
     {
         $this->assertEquals(Lpa::class, LpaLoaderListener::ATTR_LPA);
