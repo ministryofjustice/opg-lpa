@@ -4,6 +4,7 @@ namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class UserServiceFactory
@@ -17,6 +18,12 @@ class UserServiceFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        return new UserService($container->get(ApiClient::class));
+        $service = new UserService($container->get(ApiClient::class));
+
+        if ($container->has(LoggerInterface::class)) {
+            $service->setLogger($container->get(LoggerInterface::class));
+        }
+
+        return $service;
     }
 }

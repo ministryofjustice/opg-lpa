@@ -1,40 +1,32 @@
 <?php $this->layout('layout::default', ['title' => 'System Message']); ?>
 
-<div class="grid-row">
-    <div class="column-full">
+<?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
 
-        <form method="post" class="form" action="<?= $this->url('system.message') ?>">
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
-            <fieldset>
+<form method="post" action="<?= $this->url('system.message') ?>">
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-                <legend>
-                    <h1 class="heading-xlarge">System Message</h1>
-                </legend>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    System Message
+                </h1>
+            </legend>
 
-                <?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
+            <p class="govuk-body">System messages will be seen by all visitors to the LPA service. They should be used to inform users of scheduled periods of maintenance or changes to the LPA service.</p>
 
-                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
-
-                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
-
-                <div class="text">
-                    <p>System messages will be seen by all visitors to the LPA service. They should be used to inform users of scheduled periods of maintenance or changes to the LPA service.</p>
-                </div>
-
-                <?php $this->insert('snippet::input-text', [
-                    'formElement'   => $form->get('message'),
-                    'formLabel'     => 'Message',
-                    'formType'      => 'textarea',
-                    'attrs' => ['data-cy' => 'message']
-                ]) ?>
-
-            </fieldset>
-
-            <div class="form-group">
-                <input class="button" type="submit" data-cy="submit-button" value="Set system message">
-            </div>
-
-        </form>
-
+            <?php $this->insert('snippet::input-text', [
+                'formElement'   => $form->get('message'),
+                'formLabel'     => 'Message',
+                'formType'      => 'textarea',
+                'attrs' => ['data-cy' => 'message']
+            ]) ?>
+        </fieldset>
     </div>
-</div>
+
+    <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="submit-button">
+        Set system message
+    </button>
+</form>
