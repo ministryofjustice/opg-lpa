@@ -79,6 +79,7 @@ jobs:
 
       - name: Run Cypress Front-Mezzio Tests
         run: |
+          docker compose -f docker-compose.front-mezzio-test.yml up
           make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
 
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
