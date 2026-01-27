@@ -90,11 +90,8 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   cypress_mezzio_tests:
+    uses: ./.github/workflows/front_mezzio_tests.yml
     name: Run Cypress Front-Mezzio Tests
-    run: |
-      docker compose -f docker-compose.front-mezzio-test.yml build
-      docker compose -f docker-compose.front-mezzio-test.yml up
-      make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
 
   terraform_account_development:
     name: TF Development - Account
