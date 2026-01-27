@@ -4,7 +4,10 @@ variable "default_role" {
   type        = string
 }
 
-
+variable "backup_default_role" {
+  default = "backup-ci"
+  type    = string
+}
 variable "pagerduty_token" {
   description = "pagerduty token"
   type        = string
