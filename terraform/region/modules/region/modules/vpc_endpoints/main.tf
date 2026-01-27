@@ -35,6 +35,7 @@ locals {
   interface_endpoint = toset(var.interface_endpoint_names)
 }
 
+# for cloudshell
 resource "aws_vpc_endpoint" "codecatalyst_global" {
   provider            = aws.region
   vpc_id              = var.vpc_id
