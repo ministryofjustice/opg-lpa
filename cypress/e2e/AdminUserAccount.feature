@@ -11,7 +11,7 @@ Feature: AdminUserAccount
     When I visit the admin sign-in page
     And I log in to admin
     And I find "SignupAndDeleteUser" on the admin site
-    Then there is "a single" ".user-search-result" element on the page
+    Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Activated"
 
     # Delete new user on user-facing site
@@ -35,6 +35,6 @@ Feature: AdminUserAccount
     # Check new user deleted on admin site
     When I visit the admin sign-in page
     And I find "SignupAndDeleteUser" on the admin site
-    Then there is "a single" ".user-search-result" element on the page
+    Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Deleted"
     And the first deletion reason is "User manually deleted their account"
