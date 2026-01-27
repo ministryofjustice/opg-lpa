@@ -5,7 +5,9 @@ namespace Application\Controller;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
+use Laminas\Mvc\MvcEvent;
 use Laminas\Session\SessionManager;
+use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as HttpResponse;
@@ -25,6 +27,19 @@ abstract class AbstractBaseController extends AbstractActionController implement
         private readonly array $config,
         protected SessionUtility $sessionUtility
     ) {
+    }
+
+    public function onDispatch(MvcEvent $e)
+    {
+        $currentRoute = $e->getRouteMatch()->getMatchedRouteName();
+
+        $view = parent::onDispatch($e);
+
+        if (($view instanceof ViewModel) && !($view instanceof JsonModel)) {
+            $view->setVariable('currentRouteName', $currentRoute);
+        }
+
+        return $view;
     }
 
     /**

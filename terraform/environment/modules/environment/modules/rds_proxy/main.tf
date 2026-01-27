@@ -85,10 +85,13 @@ resource "aws_iam_role_policy" "rds_proxy" {
 }
 
 resource "aws_security_group" "rds_proxy" {
-  name                   = "rds-proxy-${var.environment_name}"
+  name_prefix            = "rds-proxy-${var.environment_name}"
   description            = "RDS access from RDS Proxy"
   vpc_id                 = var.vpc_id
   revoke_rules_on_delete = true
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "client_to_proxy_ingress" {

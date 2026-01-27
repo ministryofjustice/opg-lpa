@@ -72,8 +72,8 @@ data "aws_iam_policy_document" "cloudwatch_events_role_policy" {
     effect  = "Allow"
     actions = ["ecs:RunTask"]
     resources = [
-      "arn:aws:ecs:eu-west-1:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api:*",
-      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api:*"
+      "arn:aws:ecs:eu-west-1:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api-cron:*",
+      "arn:aws:ecs:eu-west-2:${data.aws_caller_identity.current.account_id}:task-definition/${local.environment_name}-api-cron:*",
     ]
   }
   statement {

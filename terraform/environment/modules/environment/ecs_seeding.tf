@@ -3,8 +3,11 @@
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.seeding_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "seeding_ecs_service_egress" {
