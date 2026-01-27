@@ -36,130 +36,95 @@ $this->addErrorMap([
 ]);
 ?>
 
-<script type="text/javascript">
-    $(document).ready(function() {
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
-        $('#export-feedback').click(function () {
-            //  Append the export instruction and submit the form
-            var form = $('form');
-            var action = form.attr('action');
+<form method="post" action="<?= $this->url('feedback') ?>" novalidate>
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-            form.attr('action', action + '?export=true');
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    Feedback
+                </h1>
+            </legend>
+            <?php $this->insert('snippet::input-date', [
+                    'formLabel'     => 'Start date',
+                    'formElement'   => $form->get('start-date'),
+            ]) ?>
 
-            form.submit();
-
-            //  Replace the original action
-            form.attr('action', action);
-        });
-
-    });
-</script>
-
-<div class="grid-row">
-    <div class="column-full">
-
-        <form method="post" class="form" action="<?= $this->url('feedback') ?>">
-
-            <fieldset>
-
-                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
-
-                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
-
-                <div class="grid-row">
-                    <div class="column-one-fifth">
-
-                        <legend>
-                            <h1 class="heading-xlarge">Feedback</h1>
-                        </legend>
-
-                        <?php $this->insert('snippet::input-date', [
-                            'formLabel'     => 'Start date',
-                            'formElement'   => $form->get('start-date'),
-                            'formLabelBold' => true,
-                        ]) ?>
-
-                        <?php $this->insert('snippet::input-date', [
-                            'formLabel'     => 'End date',
-                            'formElement'   => $form->get('end-date'),
-                            'formLabelBold' => true,
-                            'attrs' => ['data-cy' => 'end-date']
-                        ]) ?>
-
-                        <div class="form-group">
-                            <input data-cy="submit-button" class="button" type="submit" value="Search" />
-                        </div>
-
-                    </div>
-                    <div class="column-four-fifths feedback-container">
-
-                        <?php if (is_array($feedback)) { ?>
-
-                            <div class="grid-row">
-                                <div class="column-full">
-
-                                    <div class="grid-row">
-                                        <div class="column-one-third">
-                                            <?php if (empty($feedback)) { ?>
-                                                <p>No results</p>
-                                            <?php } else { ?>
-                                                <a id="export-feedback" class="button">Export</a>
-                                            <?php } ?>
-                                        </div>
-
-                                        <div class="column-two-thirds">
-                                            <?php if ($earliestAvailableTime instanceof DateTime) { ?>
-                                                <p class="earliest-available">Feedback results are available from <?= $earliestAvailableTime->format('D jS M Y'); ?> onwards</p>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <?php
-                                if (!empty($feedback)) {
-                                    $feedbackFields = array_keys($feedback);
-
-                                    $largeFields = [
-                                        'Details',
-                                        'Browser',
-                                    ];
-                            ?>
-
-                                <div class="grid-row">
-                                    <div class="column-full">
-
-                                        <table id="feedback-table">
-                                            <tr>
-                                                <?php foreach ($feedbackFields as $feedbackField) { ?>
-                                                    <th class="<?= (in_array($feedbackField, $largeFields) ? 'feedback-field-wide' : ''); ?>"><?= $feedbackField; ?></th>
-                                                <?php } ?>
-                                            </tr>
-
-                                            <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
-                                                <tr>
-                                                    <?php foreach ($feedbackFields as $feedbackField) { ?>
-                                                        <td data-role="<?= strtolower(str_replace(' ', '-', $feedbackField)); ?>">
-                                                            <?= htmlentities($feedback[$feedbackField][$i]); ?>
-                                                        </td>
-                                                    <?php } ?>
-                                                </tr>
-                                            <?php } ?>
-                                        </table>
-
-                                    </div>
-                                </div>
-
-                            <?php }
-                        } ?>
-
-                    </div>
-                </div>
-
-            </fieldset>
-
-        </form>
-
+            <?php $this->insert('snippet::input-date', [
+                    'formLabel'     => 'End date',
+                    'formElement'   => $form->get('end-date'),
+                    'attrs' => ['data-cy' => 'end-date']
+            ]) ?>
+        </fieldset>
     </div>
-</div>
+
+    <div class="govuk-button-group">
+        <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="submit-button">
+            Search
+        </button>
+
+        <?php if (is_array($feedback) && !empty($feedback)) { ?>
+            <button type="submit"
+                    class="govuk-button govuk-button--secondary"
+                    data-module="govuk-button"
+                    formaction="<?= $this->url('feedback') ?>?export=true">
+                Export feedback
+            </button>
+        <?php } ?>
+    </div>
+
+</form>
+
+<?php if (is_array($feedback)) { ?>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-third">
+            <?php if (empty($feedback)) { ?>
+                <p class="govuk-body">No results</p>
+            <?php } ?>
+        </div>
+
+        <div class="govuk-grid-column-two-thirds">
+            <?php if ($earliestAvailableTime instanceof DateTime) { ?>
+                <p class="govuk-body">Feedback results are available from <?= $earliestAvailableTime->format('D jS M Y'); ?> onwards</p>
+            <?php } ?>
+        </div>
+    </div>
+<?php } ?>
+
+<?php if (is_array($feedback) && !empty($feedback)) {
+    $feedbackFields = array_keys($feedback);
+
+    $largeFields = [
+            'Details',
+            'Browser',
+    ];
+    ?>
+
+    <div class="app-full-width-container">
+        <table class="govuk-table" id="feedback-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <?php foreach ($feedbackFields as $feedbackField) { ?>
+                    <th scope="col" class="govuk-table__header <?= (in_array($feedbackField, $largeFields) ? 'govuk-!-width-one-quarter' : ''); ?>"><?= $feedbackField; ?></th>
+                <?php } ?>
+            </tr>
+            </thead>
+
+            <tbody class="govuk-table__body">
+            <?php for ($i = 0; $i < count($feedback[$feedbackFields[0]]); $i++) { ?>
+                <tr class="govuk-table__row">
+                    <?php foreach ($feedbackFields as $feedbackField) { ?>
+                        <td class="govuk-table__cell" data-role="<?= strtolower(str_replace(' ', '-', $feedbackField)); ?>">
+                            <span class="app-break-word"><?= htmlentities($feedback[$feedbackField][$i]); ?></span>
+                        </td>
+                    <?php } ?>
+                </tr>
+            <?php } ?>
+            </tbody>
+        </table>
+    </div>
+<?php } ?>
