@@ -29,14 +29,13 @@ resource "aws_kms_alias" "eu_west_2" {
 
 resource "aws_kms_key" "backup" {
   description         = var.description
-  enable_key_rotation = true
   provider            = aws.backup
-
-  policy = data.aws_iam_policy_document.backup_account_key.json
+  deletion_window_in_days = 7
+  policy = data.aws_iam_policy_document.kms_key.json
 }
 
 resource "aws_kms_alias" "backup" {
-  name          = "alias/mrk-rds-cross-account-backup-key"
-  target_key_id = aws_kms_key.backup_account_key.key_id
+  name          = "alias/${var.alias}"
+  target_key_id = aws_kms_key.backup.key_id
   provider      = aws.backup
 }
