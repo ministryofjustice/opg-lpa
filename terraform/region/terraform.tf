@@ -84,7 +84,7 @@ provider "aws" {
 
 provider "aws" {
   region = "eu-west-1"
-  alias  = "backup_account"
+  alias  = "backup"
   default_tags {
     tags = local.default_opg_tags
   }
