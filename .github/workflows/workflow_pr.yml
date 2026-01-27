@@ -308,6 +308,7 @@ jobs:
       - cypress_tests_Signup_StitchedClone
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
+      - cypress_mezzio_tests
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
@@ -323,6 +324,7 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
+            ${{ contains(needs.cypress_mezzio_tests.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
