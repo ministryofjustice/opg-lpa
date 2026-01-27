@@ -20,6 +20,12 @@ variable "management_role" {
   type        = string
   description = "The default role to use to create resources in the management account"
 }
+variable "backup_role" {
+  default     = "opg-lpa-ci"
+  type        = string
+  description = "The default role to use to create resources in the backup account"
+}
+
 
 variable "accounts" {
   type = map(
