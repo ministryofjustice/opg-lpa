@@ -3,7 +3,6 @@ locals {
   account_name     = lookup(var.account_mapping, terraform.workspace, "development")
   account          = var.accounts[local.account_name]
   environment_name = terraform.workspace
-  # backup_account_id = 238302996107
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
