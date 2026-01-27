@@ -105,7 +105,7 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	docker compose up -d
+	docker compose up -d --remove-orphans
 
 .PHONY: dc-build
 dc-build:
@@ -228,8 +228,8 @@ cypress-open-mezzio-test: npm-install
 
 # Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
-cypress-run-spec: 
-	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js" 
+cypress-run-spec:
+	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/FrontMezzioTest.feature
 cypress-run-spec-mezzio-test: 
@@ -237,12 +237,12 @@ cypress-run-spec-mezzio-test:
 
 # This should be used in the form : make cypress-run-tags TAGS="@Signup". This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
-cypress-run-tags: 
+cypress-run-tags:
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
 
 # Provide full path for spec name e.g. cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
-cypress-run-spec-update-baseline: 
+cypress-run-spec-update-baseline:
 	docker compose run --rm -e CYPRESS_updateBaseline="1" cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 dc-phpcs-fix:
@@ -259,3 +259,6 @@ dc-clear-cache:
 	docker compose exec front-app rm -rf /tmp/twig_cache
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
 	rm -fr service-front/twig-cache/*
+
+update-secrets-baseline:
+	detect-secrets scan --baseline .secrets.baseline
