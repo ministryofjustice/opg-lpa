@@ -43,10 +43,6 @@ jobs:
             dockerfile_path: ./service-api/docker/web
             service_path: ./service-api
 
-          - image_name: online-lpa/pgbouncer
-            dockerfile_path: ./service-api/docker/pgbouncer
-            service_path: ./service-api
-
           - image_name: online-lpa/admin_app
             dockerfile_path: ./service-admin/docker/app
             service_path: ./service-admin

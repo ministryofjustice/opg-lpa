@@ -32,15 +32,12 @@ $this->addErrorMap([
 ]);
 ?>
 
-<div class="grid-row">
-    <div class="column-full">
-
-        <form method="post" class="form" action="<?= $this->url('sign.in') ?>">
-
-            <fieldset>
-
-                <legend>
-                    <h1 class="heading-xlarge">Sign In</h1>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" action="<?= $this->url('sign.in') ?>" novalidate>
+            <fieldset class="govuk-fieldset" role="group" >
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    Sign in
                 </legend>
 
                 <?php $this->insert('snippet::flash-messages', ['messages' => $messages]) ?>
@@ -53,8 +50,6 @@ $this->addErrorMap([
                     'formElement'   => $form->get('email'),
                     'formLabel'     => 'Email address',
                     'formType'      => 'text',
-                    'formLabelBold' => false,
-                    'disableAutocomplete' => false,
                     'attrs'         => ['data-cy' => 'login-email'],
                 ]) ?>
 
@@ -62,18 +57,12 @@ $this->addErrorMap([
                     'formElement'         => $form->get('password'),
                     'formLabel'           => 'Password',
                     'formType'            => 'password',
-                    'formLabelBold'       => false,
-                    'disableAutocomplete' => true,
                     'attrs'               => ['data-cy' => 'login-password'],
                 ]) ?>
-
             </fieldset>
-
-            <div class="form-group">
-                <input class="button" type="submit" value="Continue" data-cy="login-submit-button">
-            </div>
-
+            <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="login-submit-button">
+                Continue
+            </button>
         </form>
-
     </div>
 </div>

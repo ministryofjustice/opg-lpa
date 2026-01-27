@@ -11,11 +11,7 @@ Optional: formSizeClass
 /**
  * @var \Laminas\Form\ElementInterface $formElement
  * @var string $formLabel
- * @var string $formHint
- * @var bool $formLabelBold
  * @var string $formType
- * @var string $formSizeClass
- * @var bool $disableAutocomplete
  * @var array $attrs
  */
 
@@ -43,38 +39,28 @@ if(isset($formSet)){
 $hasErrors = !empty($formElement->getMessages());
 $hasParentErrors = isset($hasParentErrors) && $hasParentErrors;
 
-$formGroup = 'form-group';
-$formGroup .= ($hasErrors && !$hasParentErrors) ? ' form-group-error' : '';
+$formGroup = 'govuk-form-group';
+$formGroup .= ($hasErrors && !$hasParentErrors) ? ' govuk-form-group--error' : '';
 $formGroup .= (isset($additionalFormGroupClasses)) ? " {$additionalFormGroupClasses}" : '';
 
-$formControlClasses = 'form-control';
-$formControlClasses .= ($hasErrors) ? " form-control-error" : '';
-$formControlClasses .= (isset($additionFormControlClass)) ? " {$additionFormControlClass}" : '';
-
+$formControlClasses = $formType === 'textarea' ? 'govuk-textarea' : 'govuk-input';
+$formControlClasses .= ($hasErrors) ? " govuk-input--error" : '';
 ?>
 
 <div class="<?= $this->e($formGroup) ?>">
-    <label class="form-label" for="<?= $formId ?>">
-
-        <?php if (isset($formLabelBold) && $formLabelBold): ?><span class="form-label-bold"><?php endif ?>
+    <label class="govuk-label govuk-label--m" for="<?= $formId ?>">
         <?= $this->e($formLabel) ?>
-        <?php if (isset($formLabelBold) && $formLabelBold): ?></span><?php endif ?>
-
-        <?php if (isset($formHint)): ?>
-            <span class="form-hint"><?= $this->e($formHint) ?></span>
-        <?php endif ?>
 
         <?php if (!$hasParentErrors): ?>
             <?php foreach($formElement->getMessages() as $message): ?>
-                <span class="error-message"><?=$this->e($this->fieldError($formElement->getName(), $message))?></span>
+                <span class="govuk-error-message"><?=$this->e($this->fieldError($formElement->getName(), $message))?></span>
             <?php endforeach ?>
         <?php endif ?>
-
     </label>
 
     <?php if ($formType === 'textarea') { ?>
-        <textarea <?= $this->e($attrsString) ?>class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e($formName)?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" rows="5"<?= isset($disableAutocomplete) && $disableAutocomplete === true ? ' autocomplete="off"' : '' ?>><?= $this->e($formValue) ?></textarea>
+        <textarea <?= $this->e($attrsString) ?>class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e($formName)?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" rows="5"><?= $this->e($formValue) ?></textarea>
     <?php } else { ?>
-        <input <?= $this->e($attrsString) ?>class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e($formName)?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" value="<?= (strtolower($formType) == 'password' ? '' : $this->e($formValue)) ?>"<?= isset($disableAutocomplete) && $disableAutocomplete === true ? ' autocomplete="off"' : '' ?>>
+        <input <?= $this->e($attrsString) ?>class="<?= $this->e($formControlClasses) ?>" name="<?=$this->e($formName)?>" type="<?= $this->e($formType) ?>" id="<?= $formId ?>" value="<?= (strtolower($formType) == 'password' ? '' : $this->e($formValue)) ?>">
     <?php } ?>
 </div>

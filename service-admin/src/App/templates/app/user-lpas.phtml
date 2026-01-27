@@ -1,0 +1,87 @@
+<?php $this->layout('layout::default', ['title' => 'LPAs']) ?>
+
+<?php if (empty($lpas)) { ?>
+    <p class="govuk-body">No LPAs found for this user.</p>
+<?php } else { ?>
+    <h1 class="govuk-heading-l">LPAs for <?php if (isset($lpaEmail)) { ?> <?= $lpaEmail; ?> <?php } ?></h1>
+
+    <?php foreach ($lpas as $lpa) { ?>
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    <?= $lpa['id']; ?>
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Started
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?= $this->dateFormat($lpa['createdAt']); ?>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Updated
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?= $this->dateFormat($lpa['updatedAt']); ?>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Completed
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?php if (array_key_exists('completedAt', $lpa)) { ?>
+                                <?= $this->dateFormat($lpa['completedAt']); ?>
+                            <?php } else { ?>
+                                Not created yet
+                            <?php } ?>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Created (when the LPA instrument is finished)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?php if (array_key_exists('createdAt', $lpa)) { ?>
+                                <?= $this->dateFormat($lpa['createdAt']); ?>
+                            <?php } else { ?>
+                                Not created yet
+                            <?php } ?>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Locked
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?php if (array_key_exists('lockedAt', $lpa)) { ?>
+                                <?= $this->dateFormat($lpa['lockedAt']); ?>
+                            <?php } else { ?>
+                                LPA is not locked
+                            <?php } ?>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Payment
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <?php if (array_key_exists('payment', $lpa) && $lpa['payment']['method'] === 'online') { ?>
+                                Paid online on <?= $lpa['payment']['date']; ?> under reference <?= $lpa['payment']['reference']; ?>
+                            <?php } else if (array_key_exists('payment', $lpa) && $lpa['payment']['method'] === 'cheque') { ?>
+                                Paid with cheque on <?= $lpa['payment']['date']; ?>
+                            <?php } else { ?>
+                                No payment information available
+                            <?php } ?>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+    <?php } ?>
+<?php } ?>

@@ -1,20 +1,12 @@
-<?php $this->layout('layout::default', ['title' => 'Home']) ?>
+<?php $this->layout('layout::default', ['title' => 'LPA Admin Home']) ?>
 
-<div class="grid-row">
-    <div class="column-full">
+<h1 class="govuk-heading-xl">LPA Admin Home</h1>
 
-        <h2 class="heading-medium">LPA Admin Home</h2>
-
-        <?php if (isset($user->name)) { ?>
-            <div class="text">
-                <p>Please select an option from the top of the screen.</p>
-            </div>
-        <?php } else {?>
-            <p>You need to complete your LPA account details first!</p>
-            <p>
-                You must <a href="https://www.lastingpowerofattorney.service.gov.uk/login">sign in using your account</a> on the LPA online service and fill in your details.
-            </p>
-
-        <?php } ?>
-    </div>
-</div>
+<?php if (isset($user->name)) { ?>
+    <p class="govuk-body">Please select an option from the top of the screen.</p>
+<?php } else {?>
+    <p class="govuk-body">You need to complete your LPA account details first!</p>
+    <p class="govuk-body">
+        You must <a class="govuk-link" href="https://www.lastingpowerofattorney.service.gov.uk/login">sign in using your account</a> on the LPA online service and fill in your details.
+    </p>
+<?php } ?>

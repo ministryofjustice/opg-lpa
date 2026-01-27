@@ -76,6 +76,7 @@ class ConfigProvider
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
                 Handler\UserSearchHandler::class => Handler\UserSearchHandlerFactory::class,
                 Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
+                Handler\UserLpasHandler::class => Handler\UserLpasHandlerFactory::class,
 
                 SessionMiddleware::class => function ($c) {
                     return new SessionMiddleware($c->get(SessionPersistenceInterface::class));

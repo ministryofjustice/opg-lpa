@@ -3,56 +3,45 @@
 $hasErrors = !empty($formElement->getMessages());
 
 ?>
-<div class="form-group<?= ($hasErrors)?' form-group-error':'' ?>">
-    <fieldset>
-        <legend class="form-label">
-
-            <?php if (isset($formLabelBold) && $formLabelBold): ?><span class="form-label-bold"><?php endif ?>
+<div class="govuk-form-group<?= ($hasErrors)?' govuk-form-group-error':'' ?>">
+    <fieldset class="govuk-fieldset" role="group" <?= ($hasErrors)? 'aria-describedby="date-error"':'' ?>>
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            <h2 class="govuk-fieldset__heading">
                 <?= $this->e($formLabel) ?>
-            <?php if (isset($formLabelBold) && $formLabelBold): ?></span><?php endif ?>
+            </h2>
 
             <?php foreach($formElement->getMessages() as $message): ?>
-                <span class="error-message"><?=$this->e($this->fieldError($formElement->getName(), $message))?></span>
+                <p id="date-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span><?=$this->e($this->fieldError($formElement->getName(), $message))?>
+                </p>
             <?php endforeach ?>
         </legend>
 
-        <div id="id-<?=  $this->e($formElement->getName()) ?>" class="form-date">
-            <div class="form-group form-group-day">
-                <?php $this->insert('snippet::input-text', [
-                    'formSet' => $this->e($formElement->getName()),
-                    'formElement' => $formElement->get('day'),
-                    'formLabel' => 'Day',
-                    'formType' => 'number',
-                    'formLabelBold' => false,
-                    'hasParentErrors' => $hasErrors,
-                    'additionalFormGroupClasses' => 'form-group-day',
-                ]) ?>
+        <div class="govuk-date-input" id="<?= $this->e($formElement->getName()) ?>">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="f-day">
+                        Day
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 <?= ($hasErrors)? 'aria-describedby="date-error"':'' ?>" id="day-<?= $this->e($formElement->getName()) ?>" name="<?= $this->e($formElement->getName()) ?>[day]" type="text" value="<?= $formElement->get('day')->getValue() ?>" inputmode="numeric">
+                </div>
             </div>
-
-            <div class="form-group form-group-month">
-                <?php $this->insert('snippet::input-text', [
-                    'formSet' => $this->e($formElement->getName()),
-                    'formElement' => $formElement->get('month'),
-                    'formLabel' => 'Month',
-                    'formType' => 'number',
-                    'formLabelBold' => false,
-                    'hasParentErrors' => $hasErrors,
-                    'additionalFormGroupClasses' => 'form-group-month',
-                ]) ?>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="f-month">
+                        Month
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 <?= ($hasErrors)? 'aria-describedby="date-error"':'' ?>" id="month-<?= $this->e($formElement->getName()) ?>" name="<?= $this->e($formElement->getName()) ?>[month]" type="text" value="<?= $formElement->get('month')->getValue() ?>" inputmode="numeric">
+                </div>
             </div>
-
-            <div class="form-group form-group-year">
-                <?php $this->insert('snippet::input-text', [
-                    'formSet' => $this->e($formElement->getName()),
-                    'formElement' => $formElement->get('year'),
-                    'formLabel' => 'Year',
-                    'formType' => 'number',
-                    'formLabelBold' => false,
-                    'hasParentErrors' => $hasErrors,
-                    'additionalFormGroupClasses' => 'form-group-year',
-                ]) ?>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="f-year">
+                        Year
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 <?= ($hasErrors)? 'aria-describedby="date-error"':'' ?>" id="year-<?= $this->e($formElement->getName()) ?>" name="<?= $this->e($formElement->getName()) ?>[year]" type="text" value="<?= $formElement->get('year')->getValue() ?>" inputmode="numeric">
+                </div>
             </div>
         </div>
-
     </fieldset>
 </div>

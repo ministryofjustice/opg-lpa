@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "admin" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = data.aws_vpc.default.id
+  vpc_id               = local.vpc_id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -22,7 +22,7 @@ resource "aws_lb" "admin" {
   #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = data.aws_subnets.public.ids
+  subnets                    = local.lb_subnet_ids
   tags                       = local.admin_component_tag
   drop_invalid_header_fields = true
   security_groups = [
@@ -52,10 +52,13 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_loadbalancer" {
-  name        = "${var.environment_name}-admin-loadbalancer"
+  name_prefix = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.admin_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "admin_loadbalancer_ingress" {

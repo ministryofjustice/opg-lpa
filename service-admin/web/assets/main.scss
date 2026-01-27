@@ -1,0 +1,40 @@
+$govuk-assets-path: "/assets/";
+
+@import "node_modules/govuk-frontend/dist/govuk/index";
+@import "node_modules/@ministryofjustice/frontend/moj/all";
+
+.app-break-word {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.app-full-width-container {
+  width: 95vw;
+  position: relative;
+  left: 50%;
+  margin-left: -47.5vw;
+  padding-left: 15px;
+  padding-right: 15px;
+  max-width: none;
+}
+
+.app-login-header {
+  padding-left: 0;
+  margin-top: 10px;
+
+  &__list {
+    display: inline;
+
+    &:after {
+      padding: 0 5px;
+      content: " | ";
+    }
+
+    &:last-child:after {
+      padding-right: 0;
+      content: none;
+    }
+  }
+}
