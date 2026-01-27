@@ -89,6 +89,13 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
+  cypress_mezzio_tests:
+    name: Run Cypress Front-Mezzio Tests
+    run: |
+      docker compose -f docker-compose.front-mezzio-test.yml build
+      docker compose -f docker-compose.front-mezzio-test.yml up
+      make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
+
   terraform_account_development:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
@@ -219,13 +226,6 @@ jobs:
         id: front_fqdn
         run: |
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
-
-  cypress_mezzio_tests:
-    name: Run Cypress Front-Mezzio Tests
-    run: |
-      docker compose -f docker-compose.front-mezzio-test.yml build
-      docker compose -f docker-compose.front-mezzio-test.yml up
-      make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
 
   cypress_tests_Signup_StitchedPF:
     name: Run Cypress tests - Signup,StitchedPF
