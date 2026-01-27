@@ -85,7 +85,7 @@ provider "aws" {
     tags = local.default_tags
   }
   assume_role {
-    role_arn     = "arn:aws:iam::${local.backup.account_id}:role/${var.backup_role}"
+    role_arn     = "arn:aws:iam::${local.backup_account_id}:role/${var.backup_role}"
     session_name = "terraform-session"
   }
 }
