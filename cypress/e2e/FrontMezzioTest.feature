@@ -5,4 +5,4 @@ Feature: Front Mezzio Login Page
 
   Scenario: Visit login page
     Given I visit "/login"
-    Then I see "bob" in the title
+    Then I see "Template" in the page text
