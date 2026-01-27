@@ -7,7 +7,6 @@ module "aws_backup_cross_account_key" {
   usage_services      = []
   description         = ""
   alias               = "opg-lpa-${local.account_name}-aws-backup-key"
-  deletion_window     = local.account.is_production ? 7 : 0
   providers = {
     aws = aws.backup
   }
