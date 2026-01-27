@@ -15,6 +15,7 @@ return [
             'feedback',
             'home',
             'user.find',
+            'user.lpas',
             'user.search',
             'sign.out',
             'system.message',

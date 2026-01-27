@@ -80,6 +80,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $userDataArr = $this->user->toArray();
             $tempUser = new User($userDataArr);
         } catch (\Exception $ex) {
+            $this->getLogger()->error('constructing User data from session failed', ['exception' => $ex->getMessage()]);
             // If seems there is a user associated with the session but it is not well formed
             // Therefore destroy the session and logout the user
             $this->getAuthenticationService()->clearIdentity();
