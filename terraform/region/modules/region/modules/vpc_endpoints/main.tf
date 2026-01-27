@@ -154,7 +154,7 @@ resource "aws_vpc_endpoint" "cloudshell" {
   private_dns_enabled = true
   security_group_ids  = aws_security_group.vpc_endpoints_private[*].id
   subnet_ids          = var.application_subnets_id
-  tags                = { Name = "${each.value}-private" }
+  tags                = { Name = "cloudshell-${each.value}-private" }
 }
 
 resource "aws_vpc_endpoint" "cloudshell_codecatalyst_global" {
@@ -165,5 +165,5 @@ resource "aws_vpc_endpoint" "cloudshell_codecatalyst_global" {
   private_dns_enabled = true
   security_group_ids  = aws_security_group.vpc_endpoints_private[*].id
   subnet_ids          = var.application_subnets_id
-  tags                = { Name = "aws.api.global.codecatalyst-private" }
+  tags                = { Name = "cloudshell-aws.api.global.codecatalyst-private" }
 }
