@@ -1,4 +1,4 @@
-<?php $this->layout('layout::default', ['title' => 'User Search']);
+<?php $this->layout('layout::default', ['title' => 'User Details']);
 
 $this->addErrorMap([
     'email' => [
@@ -14,48 +14,56 @@ $this->addErrorMap([
 ]);
 ?>
 
-<div class="grid-row">
-    <div class="column-full">
-        <form method="post" class="form" action="<?= $this->url('user.search') ?>">
-            <fieldset>
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
-                <legend>
-                    <h1 class="heading-xlarge">User Details</h1>
-                </legend>
+<form method="post" action="<?= $this->url('user.search') ?>">
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    User Details
+                </h1>
+            </legend>
 
-                <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+            <p class="govuk-body">Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
 
-                <div class="text">
-                    <p>Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
-                </div>
+            <?php $this->insert('snippet::input-text', [
+                'formLabel'     => 'Email address',
+                'formElement'   => $form->get('email'),
+                'formType'      => 'text',
+                'attrs'         => ['data-cy' => 'email-address-input'],
+            ]) ?>
+        </fieldset>
+    </div>
 
-                <?php $this->insert('snippet::input-text', [
-                    'formLabel'     => 'Email address',
-                    'formElement'   => $form->get('email'),
-                    'formType'      => 'text',
-                    'formLabelBold' => false,
-                    'attrs'         => ['data-cy' => 'email-address-input'],
-                ]) ?>
+    <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="submit-button">
+        Search
+    </button>
+</form>
 
-            </fieldset>
+<?php if (!is_null($user)) { ?>
 
-            <div class="form-group">
-                <input data-cy="submit-button" class="button" type="submit" value="Search">
-            </div>
+    <h2 class="govuk-heading-m">User details</h2>
 
-        </form>
-
-        <?php if (!is_null($user)) { ?>
-
-            <h2 class="heading-medium">User details</h2>
-
-            <div class="user-search-result">
-                <ul>
-                    <li>
-                        <strong class="bold-small">Account status: </strong>
-
+    <div class="govuk-summary-card" data-cy="user-summary-card">
+        <div class="govuk-summary-card__title-wrapper">
+            <h3 class="govuk-summary-card__title">
+                <?php if (array_key_exists('username', $user)) { ?>
+                    <?= htmlspecialchars($user['username']); ?>
+                <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                    Deleted user
+                <?php } ?>
+            </h3>
+        </div>
+        <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Account status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
                         <span data-role="user-account-status">
                             <?php if (array_key_exists('isActive', $user)) { ?>
                                 <?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?>
@@ -63,59 +71,89 @@ $this->addErrorMap([
                                 Deleted
                             <?php } ?>
                         </span>
-                    </li>
+                    </dd>
+                </div>
 
-                    <?php if (isset($user['activatedAt'])) { ?>
-                        <li>
-                            <strong class="bold-small">Date activated: </strong>
+                <?php if (isset($user['activatedAt'])) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Date activated
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
-                        </li>
-                    <?php } ?>
+                        </dd>
+                    </div>
+                <?php } ?>
 
-                    <?php if (array_key_exists('lastLoginAt', $user)) { ?>
-                        <li>
-                            <strong class="bold-small">Last login time: </strong>
+                <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Last login time
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             <span><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
-                        </li>
-                    <?php } ?>
+                        </dd>
+                    </div>
+                <?php } ?>
 
-                    <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
-                        <li>
-                            <strong class="bold-small">Number of failed login attempts: </strong>
+                <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Number of failed login attempts
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             <span><?= intval($user['failedLoginAttempts']); ?></span>
-                        </li>
-                    <?php } ?>
+                        </dd>
+                    </div>
+                <?php } ?>
 
-                    <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                        <li>
-                            <strong class="bold-small">Deleted on: </strong>
+                <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Deleted on
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             <span data-role="deletion-date"><?= $this->dateFormat($user['deletedAt'], 'Unknown') ?></span>
-                        </li>
-                        <li>
-                            <strong class="bold-small">Due to: </strong>
-
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Due to
+                        </dt>
+                        <dd class="govuk-summary-list__value">
                             <span data-role="deletion-reason">
-                            <?php if ($user['reason'] == 'expired') { ?>
-                                Account expired
-                            <?php } elseif ($user['reason'] == 'unactivated') { ?>
-                                User did not activate account
-                            <?php } elseif ($user['reason'] == 'user-initiated') { ?>
-                                User manually deleted their account
-                            <?php } ?>
+                                <?php if ($user['reason'] == 'expired') { ?>
+                                    Account expired
+                                <?php } elseif ($user['reason'] == 'unactivated') { ?>
+                                    User did not activate account
+                                <?php } elseif ($user['reason'] == 'user-initiated') { ?>
+                                    User manually deleted their account
+                                <?php } ?>
                             </span>
-                        </li>
-                    <?php } ?>
+                        </dd>
+                    </div>
+                <?php } ?>
 
-                    <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
-                        <li>
-                            <strong class="bold-small">Number of LPAs: </strong>
-                            <span><?= intval($user['numberOfLpas']); ?></span>
-                        </li>
-                    <?php } ?>
-                </ul>
-            </div>
-
-        <?php } ?>
-
+                <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Number of LPAs
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span>
+                                <?php if (intval($user['numberOfLpas']) > 0) { ?>
+                                    <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['id' => $user['userId']], ['email' => $user['username']]) ?>">
+                                        <?= intval($user['numberOfLpas']); ?>
+                                    </a>
+                                <?php } else { ?>
+                                    0
+                                <?php } ?>
+                            </span>
+                        </dd>
+                    </div>
+                <?php } ?>
+            </dl>
+        </div>
     </div>
-</div>
+
+<?php } ?>
