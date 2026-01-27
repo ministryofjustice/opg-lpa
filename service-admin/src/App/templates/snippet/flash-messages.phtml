@@ -6,14 +6,19 @@ $messages = array_map(
 foreach ($messages as $messageKey => $messageValues) { ?>
     <?php if ($messageKey === 'info') { ?>
 
-        <div class="flash" role="alert" aria-labelledby="flash-summary-heading-example-1" tabindex="-1">
-
-            <h2 class="heading-medium flash-heading" id="flash-heading-example-1">
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
                 <?php foreach ($messageValues as $messageValue) { ?>
-                    <?= $this->e($messageValue) ?>
+                    <p class="govuk-notification-banner__heading">
+                        <?= $this->e($messageValue) ?>
+                    </p>
                 <?php } ?>
-            </h2>
-
+            </div>
         </div>
 
     <?php } ?>

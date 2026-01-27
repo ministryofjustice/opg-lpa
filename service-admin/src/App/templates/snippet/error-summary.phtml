@@ -1,14 +1,16 @@
 <?php if(!empty($form->getMessages())) { ?>
-    <div class="error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
-        <h2 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h2>
-        <ul>
-            <?php foreach ($form->getMessages() as $elementName=>$messages) { ?>
-                <?php foreach ($messages as $message) { ?>
-                    <li>
-                        <a href="#id-<?= $this->e($elementName) ?>"><?=$this->e($this->summaryError($elementName, $message))?></a>
-                    </li>
+    <div class="govuk-error-summary" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-heading">There is a problem</h2>
+        <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                <?php foreach ($form->getMessages() as $elementName=>$messages) { ?>
+                    <?php foreach ($messages as $message) { ?>
+                        <li>
+                            <a href="#id-<?= $this->e($elementName) ?>"><?=$this->e($this->summaryError($elementName, $message))?></a>
+                        </li>
+                    <?php } ?>
                 <?php } ?>
-            <?php } ?>
-        </ul>
+            </ul>
+        </div>
     </div>
 <?php } ?>
