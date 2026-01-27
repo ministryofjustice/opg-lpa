@@ -77,6 +77,10 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
+      - name: Run Cypress Front-Mezzio Tests
+        run: |
+          make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
+
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
