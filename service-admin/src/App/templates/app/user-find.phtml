@@ -62,7 +62,7 @@
                             </dd>
                         </div>
 
-                        <?php if (isset($user['activatedAt'])) { ?>
+                        <?php if (isset($user['activatedAt']) && $user['activatedAt']) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Date activated
@@ -73,7 +73,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                        <?php if (array_key_exists('lastLoginAt', $user) && $user['lastLoginAt']) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Last login time
@@ -84,7 +84,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                        <?php if (array_key_exists('failedLoginAttempts', $user) && $user['failedLoginAttempts']) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Number of failed login attempts
@@ -95,7 +95,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('numberOfLpas', $user)) { ?>
+                        <?php if (array_key_exists('numberOfLpas', $user) && $user['numberOfLpas']) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Number of LPAs
