@@ -157,7 +157,7 @@ resource "aws_vpc_endpoint" "cloudshell" {
   tags                = { Name = "${each.value}-private" }
 }
 
-resource "aws_vpc_endpoint" "codecatalyst_global" {
+resource "aws_vpc_endpoint" "cloudshell_codecatalyst_global" {
   provider            = aws.region
   vpc_id              = var.vpc_id
   service_name        = "aws.api.global.codecatalyst"
