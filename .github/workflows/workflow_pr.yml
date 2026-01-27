@@ -220,6 +220,13 @@ jobs:
         run: |
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
+  cypress_mezzio_tests:
+    name: Run Cypress Front-Mezzio Tests
+    run: |
+      docker compose -f docker-compose.front-mezzio-test.yml build
+      docker compose -f docker-compose.front-mezzio-test.yml up
+      make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
+
   cypress_tests_Signup_StitchedPF:
     name: Run Cypress tests - Signup,StitchedPF
     uses: ./.github/workflows/cypress_tests.yml
