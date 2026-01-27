@@ -1,6 +1,5 @@
 
 data "aws_iam_policy_document" "kms_key" {
-  provider                  = aws.eu_west_1
   override_policy_documents = var.custom_addition_permissions != "" ? [var.custom_addition_permissions] : []
   statement {
     sid    = "Enable Root KMS Permissions"
@@ -122,48 +121,6 @@ data "aws_iam_policy_document" "kms_key" {
     principals {
       type        = "AWS"
       identifiers = var.administrator_roles
-    }
-  }
-
-  statement {
-    sid       = "Enable Root account permissions on Key"
-    effect    = "Allow"
-    actions   = ["kms:*"]
-    resources = ["*"]
-
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:root",
-      ]
-    }
-  }
-
-  statement {
-    sid       = "Key Administrator"
-    effect    = "Allow"
-    resources = ["*"]
-    actions = [
-      "kms:Create*",
-      "kms:Describe*",
-      "kms:Enable*",
-      "kms:List*",
-      "kms:Put*",
-      "kms:Update*",
-      "kms:Revoke*",
-      "kms:Disable*",
-      "kms:Get*",
-      "kms:Delete*",
-      "kms:TagResource",
-      "kms:UntagResource",
-      "kms:ScheduleKeyDeletion",
-      "kms:CancelKeyDeletion"
-    ]
-    principals {
-      type = "AWS"
-      identifiers = [
-        "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-      ]
     }
   }
 }

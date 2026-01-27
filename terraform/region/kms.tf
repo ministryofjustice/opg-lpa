@@ -1,3 +1,18 @@
+module "aws_backup_cross_account_key" {
+  source = "./modules/kms_key"
+
+  administrator_roles = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"]
+  decryption_roles    = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"]
+  encryption_roles    = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"]
+  usage_services      = []
+  description         = ""
+  alias               = "opg-lpa-${local.account_name}-aws-backup-key"
+  deletion_window     = local.account.is_production ? 7 : 0
+  providers = {
+    aws = aws.backup
+  }
+}
+
 data "aws_kms_key" "access_log_key" {
   key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
 }

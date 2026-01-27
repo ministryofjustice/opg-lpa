@@ -34,3 +34,9 @@ variable "usage_services" {
   default     = []
   type        = list(string)
 }
+
+variable "deletion_window" {
+  description = "KMS Key deletion window"
+  type        = number
+  default     = 7
+}
