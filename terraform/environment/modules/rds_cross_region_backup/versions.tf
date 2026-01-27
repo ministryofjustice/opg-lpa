@@ -4,7 +4,6 @@ terraform {
       source = "hashicorp/aws"
       configuration_aliases = [
         aws.destination,
-        aws.backup
       ]
       version = "6.28.0"
     }
