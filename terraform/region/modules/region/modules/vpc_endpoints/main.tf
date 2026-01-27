@@ -35,6 +35,17 @@ locals {
   interface_endpoint = toset(var.interface_endpoint_names)
 }
 
+resource "aws_vpc_endpoint" "codecatalyst_global" {
+  provider            = aws.region
+  vpc_id              = var.vpc_id
+  service_name        = "aws.api.global.codecatalyst"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = aws_security_group.vpc_endpoints_private[*].id
+  subnet_ids          = var.application_subnets_id
+  tags                = { Name = "aws.api.global.codecatalyst-private" }
+}
+
 resource "aws_vpc_endpoint" "private" {
   provider = aws.region
   for_each = local.interface_endpoint

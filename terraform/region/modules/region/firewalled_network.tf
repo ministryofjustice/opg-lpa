@@ -55,9 +55,13 @@ data "aws_route_tables" "firewalled_network_application" {
 module "vpc_endpoints" {
   source = "./modules/vpc_endpoints"
   interface_endpoint_names = [
+    "codecatalyst.git",
+    "codecatalyst.packages",
     "ec2",
     "ecr.api",
     "ecr.dkr",
+    "ecs-agent",
+    "ecs",
     "events",
     "execute-api",
     "kms",
@@ -67,6 +71,7 @@ module "vpc_endpoints" {
     "secretsmanager",
     "sqs",
     "ssm",
+    "ssmmessages",
     "xray",
   ]
   vpc_id                          = module.network.vpc.id
