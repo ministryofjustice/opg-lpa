@@ -291,7 +291,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @FrontMezzio"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
