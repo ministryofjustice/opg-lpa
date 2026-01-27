@@ -7,6 +7,7 @@ namespace ApplicationTest\Model\Service\Lpa;
 use Application\Model\Service\AbstractEmailService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
@@ -47,7 +48,7 @@ final class CommunicationTest extends AbstractEmailServiceTest
         $user = (object)['email' => (object)['address' => 'test@email.com']];
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($user)
             ->byDefault();
         $this->service->setSessionUtility($sessionUtility);

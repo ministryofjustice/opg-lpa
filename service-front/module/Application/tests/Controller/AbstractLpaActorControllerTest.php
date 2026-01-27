@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller;
 
 use Application\Form\Lpa\AbstractActorForm;
+use Application\Model\Service\Session\ContainerNamespace;
 use Mockery;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeSharedTest\DataModel\FixturesData;
@@ -17,7 +18,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $controller = $this->getController(TestableAbstractLpaActorController::class);
 
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
         $form = Mockery::mock(AbstractActorForm::class);
@@ -39,7 +40,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
 
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 
@@ -59,7 +60,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $seedLpa->document->correspondent->who = Correspondence::WHO_OTHER;
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 
@@ -78,7 +79,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $seedLpa->document->primaryAttorneys[] = $trust;
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 
@@ -97,7 +98,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $seedLpa->document->primaryAttorneys[] = $trust;
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 
@@ -119,7 +120,7 @@ final class AbstractLpaActorControllerTest extends AbstractControllerTestCase
         $this->lpa->document->donor->name->last = $this->user->name->last;
         $this->setSeedLpa($this->lpa, $seedLpa);
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 

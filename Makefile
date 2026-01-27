@@ -203,8 +203,12 @@ dc-api-unit-tests:
 dc-pdf-unit-tests:
 	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit
 
+.PHONY: dc-shared-unit-tests
+dc-shared-unit-tests:
+	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+
 .PHONY: dc-unit-tests
-dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests
+dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
 
 .PHONY: npm-install
 npm-install:

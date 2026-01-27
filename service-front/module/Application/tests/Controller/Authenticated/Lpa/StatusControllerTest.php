@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\StatusController;
+use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
 use DateTime;
 use Laminas\Http\Response;
@@ -143,7 +144,7 @@ final class StatusControllerTest extends AbstractControllerTestCase
 
         // Mock SessionUtility to return user when requested
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($this->user)
             ->byDefault();
 

@@ -671,7 +671,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $profile = array_merge(json_decode($user['profile'], true), [
             'id' => $id,
             'createdAt' => $user['created'],
-            'updatedAt' => $user['updated']
+            'updatedAt' => $user['updated'],
+            'lastLoginAt' => $user['last_login'],
         ]);
 
         return new ProfileUserModel($profile);

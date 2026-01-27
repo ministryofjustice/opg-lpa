@@ -7,6 +7,7 @@ use Application\Model\Service\ApiClient\ApiClientAwareInterface;
 use Application\Model\Service\ApiClient\ApiClientTrait;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Http\Response;
 use MakeShared\DataModel\User\User;
@@ -24,10 +25,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
      */
     private $sessionUtility;
 
-    /**
-     * @return bool|User
-     */
-    public function getUserDetails()
+    public function getUserDetails(): bool|User
     {
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));
@@ -232,7 +230,7 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             ]);
 
             if (is_array($result) && isset($result['token'])) {
-                $user = $this->sessionUtility->getFromMvc('UserDetails', 'user');
+                $user = $this->sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'user');
                 $email = $user->email->address;
 
                 $mailParameters = new MailParameters(

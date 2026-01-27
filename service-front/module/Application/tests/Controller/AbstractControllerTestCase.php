@@ -323,7 +323,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         /** @var AbstractBaseController $controller */
         if (is_subclass_of($controllerName, AbstractAuthenticatedController::class)) {
             $this->sessionUtility->shouldReceive('getFromMvc')
-                ->withArgs(['UserDetails', 'user'])
+                ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
                 ->andReturn($this->user)
                 ->byDefault();
 
@@ -550,7 +550,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     public function setRedirectToReuseDetails($user, $lpa, $lpaRoute, $response): void
     {
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($user)
             ->byDefault();
 
@@ -610,7 +610,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     public function setReuseDetails($controller, $form, $user, $who)
     {
         $this->sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs(['UserDetails', 'user'])
+            ->withArgs([ContainerNamespace::USER_DETAILS, 'user'])
             ->andReturn($user)
             ->byDefault();
 

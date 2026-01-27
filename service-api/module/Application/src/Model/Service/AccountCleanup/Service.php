@@ -137,9 +137,6 @@ class Service extends AbstractService
         $lastLoginBefore = new DateTime($warningConfig['dateShift']);
         $templateId = $warningConfig['templateId'];
 
-        echo "Sending {$warningType} warning notifications to accounts inactive since " .
-            $lastLoginBefore->format('r') . "\n";
-
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $warningType);
 
@@ -160,22 +157,16 @@ class Service extends AbstractService
 
                 $counter++;
             } catch (NotifyException $e) {
-                echo "NotifyException: " . $e->getMessage() . "\n";
-
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
                 $this->getLogger()->warning('Unable to send account expiry notification', [
                     'exception' => $e,
                 ]);
             } catch (Exception $e) {
-                echo "Exception: " . $e->getMessage() . "\n";
-
                 $this->getLogger()->alert('Unable to send account expiry notification', [
                     'exception' => $e,
                 ]);
             }
         }
-
-        echo "{$counter} notifications sent.\n";
 
         return $counter;
     }
@@ -188,8 +179,6 @@ class Service extends AbstractService
     private function deleteExpiredAccounts()
     {
         $lastLoginBefore = new DateTime('-9 months');
-
-        echo "Deleting accounts inactive since " . $lastLoginBefore->format('r') . "\n";
 
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore);
@@ -205,8 +194,6 @@ class Service extends AbstractService
             $counter++;
         }
 
-        echo "{$counter} accounts deleted.\n";
-
         return $counter;
     }
 
@@ -218,8 +205,6 @@ class Service extends AbstractService
     private function deleteUnactivatedAccounts()
     {
         $unactivatedSince = new DateTime('-24 hours');
-
-        echo "Deleting unactivated accounts created before " . $unactivatedSince->format('r') . "\n";
 
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsUnactivatedOlderThan($unactivatedSince);
@@ -234,8 +219,6 @@ class Service extends AbstractService
 
             $counter++;
         }
-
-        echo "{$counter} accounts deleted.\n";
 
         return $counter;
     }
