@@ -17,6 +17,6 @@ jobs:
       - name: Run Front Mezzio Tests 
         run: |
           docker compose -f docker-compose.front-mezzio-test.yml build
-          docker compose -f docker-compose.front-mezzio-test.yml up
+          docker compose -f docker-compose.front-mezzio-test.yml up --detach
           make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
           docker compose -f docker-compose.front-mezzio-test.yml down
