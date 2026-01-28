@@ -9,8 +9,8 @@ use Application\Form\Lpa\DateCheckForm;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Service\DateCheckViewModelHelper;
 use ApplicationTest\Controller\AbstractControllerTestCase;
-use Mockery;
 use Laminas\Http\Response;
+use Mockery;
 use Laminas\View\Model\ViewModel;
 use Mockery\MockInterface;
 
@@ -120,7 +120,6 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
             new DateCheckViewModelHelper(new ContinuationSheets())
         );
 
-        $response = new Response();
         $postData = $this->postData;
 
         $this->params->shouldReceive('fromPost')->withArgs(['return-route', null])->andReturn(null)->once();
@@ -134,12 +133,12 @@ final class DateCheckControllerTest extends AbstractControllerTestCase
             ['lpa-id' => $this->lpa->id],
             ['query' => ['return-route' => 'lpa/complete']]
         ])->andReturn("lpa/{$this->lpa->id}/date-check/valid")->once();
-        $this->redirect->shouldReceive('toUrl')
-            ->withArgs(["lpa/{$this->lpa->id}/date-check/valid"])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals("lpa/{$this->lpa->id}/date-check/valid", $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testValidActionNoReturnRoute(): void

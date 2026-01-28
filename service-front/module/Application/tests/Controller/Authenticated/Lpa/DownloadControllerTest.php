@@ -59,8 +59,6 @@ final class DownloadControllerTest extends AbstractControllerTestCase
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
-        $response = new Response();
-
         $pdfType = 'lp1';
         $this->setPdfType($controller, $this->lpa, $pdfType);
         $this->lpaApplicationService->shouldReceive('getPdf')
@@ -70,23 +68,23 @@ final class DownloadControllerTest extends AbstractControllerTestCase
             'lpaId' => $this->lpa->id,
             'pdfType' => $pdfType
             ]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
-            'lpa-id'       => $this->lpa->id,
-            'pdf-type'     => $pdfType,
-            'pdf-filename' => 'Lasting-Power-of-Attorney-LP1F.pdf',
-        ]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/download/check', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
+        $this->assertStringContainsString($pdfType, $location);
+        $this->assertStringContainsString('Lasting-Power-of-Attorney-LP1F.pdf', $location);
     }
 
     public function testIndexActionDraftLp1Ready(): void
     {
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
-
-        $response = new Response();
 
         // Remove payment so that the lpa is incomplete
         $this->lpa->setPayment(null);
@@ -100,15 +98,17 @@ final class DownloadControllerTest extends AbstractControllerTestCase
             'lpaId' => $this->lpa->id,
             'pdfType' => $pdfType
         ]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
-            'lpa-id'       => $this->lpa->id,
-            'pdf-type'     => $pdfType,
-            'pdf-filename' => 'Draft-Lasting-Power-of-Attorney-LP1F.pdf',
-        ]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/download/check', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
+        $this->assertStringContainsString($pdfType, $location);
+        $this->assertStringContainsString('Draft-Lasting-Power-of-Attorney-LP1F.pdf', $location);
     }
 
     public function testIndexActionLp3Ready(): void
@@ -120,8 +120,6 @@ final class DownloadControllerTest extends AbstractControllerTestCase
             new NotifiedPerson(),
         ];
 
-        $response = new Response();
-
         $pdfType = 'lp3';
         $this->setPdfType($controller, $this->lpa, $pdfType);
         $this->lpaApplicationService->shouldReceive('getPdf')
@@ -131,15 +129,17 @@ final class DownloadControllerTest extends AbstractControllerTestCase
             'lpaId' => $this->lpa->id,
             'pdfType' => $pdfType
         ]])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download/check', [
-            'lpa-id'       => $this->lpa->id,
-            'pdf-type'     => $pdfType,
-            'pdf-filename' => 'Lasting-Power-of-Attorney-LP3.pdf',
-        ]])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/download/check', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
+        $this->assertStringContainsString($pdfType, $location);
+        $this->assertStringContainsString('Lasting-Power-of-Attorney-LP3.pdf', $location);
     }
 
     public function testDownloadActionInQueue(): void
@@ -147,17 +147,11 @@ final class DownloadControllerTest extends AbstractControllerTestCase
         /** @var DownloadController $controller */
         $controller = $this->getController(DownloadController::class);
 
-        $response = new Response();
-
         $pdfType = 'lp1';
         $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getParam')->withArgs(['pdf-type'])->andReturn($pdfType)->once();
         $this->lpaApplicationService->shouldReceive('getPdf')
             ->withArgs([$this->lpa->id, $pdfType])->andReturn(['status' => 'in-queue'])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa/download', [
-            'lpa-id'   => $this->lpa->id,
-            'pdf-type' => $pdfType
-        ]])->andReturn($response)->once();
 
         $this->logger->shouldReceive('debug')
             ->withArgs(['PDF status is in-queue', [
@@ -167,7 +161,9 @@ final class DownloadControllerTest extends AbstractControllerTestCase
 
         $result = $controller->downloadAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/download', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testDownloadActionReady(): void

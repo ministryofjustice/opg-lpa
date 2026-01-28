@@ -74,7 +74,7 @@ class CheckoutController extends AbstractLpaController
     {
         $route = 'lpa/more-info-required';
 
-        $this->redirect()->toRoute(
+        $this->redirectToRoute(
             $route,
             ['lpa-id' => $this->getLpa()->id],
             $this->getFlowChecker()->getRouteOptions($route)
@@ -132,7 +132,7 @@ class CheckoutController extends AbstractLpaController
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         //  Don't use the next route function here - just go directly to the completed view
-        return $this->redirect()->toRoute(
+        return $this->redirectToRoute(
             'lpa/complete',
             ['lpa-id' => $this->getLpa()->id]
         );
@@ -163,7 +163,7 @@ class CheckoutController extends AbstractLpaController
             $form->setData($request->getPost());
 
             if (!$form->isValid()) {
-                return $this->redirect()->toRoute(
+                return $this->redirectToRoute(
                     'lpa/checkout',
                     ['lpa-id' => $this->getLpa()->id],
                     $this->getFlowChecker()->getRouteOptions('lpa/checkout')
@@ -193,8 +193,7 @@ class CheckoutController extends AbstractLpaController
 
             // If this payment id is still in play, direct the user back...
             if (!$payment->isFinished()) {
-                $this->redirect()->toUrl(strval($payment->getPaymentPageUrl()));
-                return $this->getResponse();
+                return $this->redirectToUrl((string) $payment->getPaymentPageUrl());
             }
 
             // else carry on to start a new payment
@@ -226,9 +225,7 @@ class CheckoutController extends AbstractLpaController
 
         $this->getLpaApplicationService()->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        $this->redirect()->toUrl(strval($payment->getPaymentPageUrl()));
-
-        return $this->getResponse();
+        return $this->redirectToUrl((string) $payment->getPaymentPageUrl());
     }
 
     /**
