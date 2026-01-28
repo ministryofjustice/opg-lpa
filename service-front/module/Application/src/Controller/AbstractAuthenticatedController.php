@@ -71,7 +71,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         //  If there are no user details set, or they are incomplete, then redirect to the about you new view
         if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->getName()))) {
-            return $this->redirect()->toUrl('/user/about-you/new');
+            return $this->redirectToRoute('user/about-you', ['new' => 'new']);
         }
 
         //  We should have a fully formed user record at this point - bounce the request if that is not the case
@@ -88,7 +88,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
                 'clear_storage' => true
             ]);
 
-            return $this->redirect()->toRoute('login', [
+            return $this->redirectToRoute('login', [
                 'state' => 'timeout'
             ]);
         }

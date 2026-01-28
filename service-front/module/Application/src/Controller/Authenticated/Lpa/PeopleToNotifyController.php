@@ -95,7 +95,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         if (count($lpa->document->peopleToNotify) >= 5) {
             $route = 'lpa/people-to-notify';
 
-            return $this->redirect()->toRoute(
+            return $this->redirectToRoute(
                 $route,
                 ['lpa-id' => $lpaId],
                 $this->getFlowChecker()->getRouteOptions($route)
@@ -268,8 +268,7 @@ class PeopleToNotifyController extends AbstractLpaActorController
         }
 
         $route = 'lpa/people-to-notify';
-
-        return $this->redirect()->toRoute(
+        return $this->redirectToRoute(
             $route,
             ['lpa-id' => $lpa->id],
             $this->getFlowChecker()->getRouteOptions($route)

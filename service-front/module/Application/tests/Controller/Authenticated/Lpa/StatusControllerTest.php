@@ -56,12 +56,11 @@ final class StatusControllerTest extends AbstractControllerTestCase
             ->once()
             ->andReturn(['91333263035' => ['found' => true, 'status' => $status]]);
 
-        $response = new Response();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     /**
