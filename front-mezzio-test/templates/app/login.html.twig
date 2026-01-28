@@ -1,1 +1,17 @@
-Template for App\Handler\LoginHandler
+{% block content %}
+<form action="{{ path('login') }}" method="post">
+    <fieldset>
+    <div class="form-group">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="_username" data-cy="login-email"/>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="_password" data-cy="login-password"/>
+     </div>
+
+    <div class="form-group">
+    <button type="submit">login</button>
+     </div>
+    </fieldset>
+</form>
+{% endblock content %}

@@ -5,4 +5,5 @@ Feature: Front Mezzio Login Page
 
   Scenario: Visit login page
     Given I visit "/login"
-    Then I see "Template" in the page text
+    Then I can find "login-email"
+    And I can find "login-password"
