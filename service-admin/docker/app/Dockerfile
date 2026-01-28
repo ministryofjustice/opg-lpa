@@ -1,13 +1,12 @@
-FROM composer:2.9.3@sha256:c404e6f07bdebf8a8c605be5b5fab88eef737f6e4acfba3651d39c824ce224d4 AS composer
+FROM composer:2.9.4@sha256:1872bdb4a2080390498e75e7eb55f9d7e70c689ab5ab072a01da80720a68c6da AS composer
 
 FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
 
-COPY --from=mlocati/php-extension-installer:2@sha256:84950d61e2873817f814fd2c486d0143566a5b7aa36b9c926a138dafb9a07753 /usr/bin/install-php-extensions /usr/bin/
+COPY --from=mlocati/php-extension-installer:2@sha256:e8a3393d79113a61e536d5fed30df4f15c0e4f67d30d0fce08c02d4507cad397 /usr/bin/install-php-extensions /usr/bin/
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
-
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
@@ -27,9 +26,8 @@ RUN composer check-platform-reqs --no-dev -d /app \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
-
+COPY --chown=root:root service-admin/public/index.php /app/public/index.php
 COPY --chown=root:root service-admin/config /app/config
-COPY --chown=root:root service-admin/public /app/public
 COPY --chown=root:root service-admin/src /app/src
 
 COPY --chown=root:root shared /shared

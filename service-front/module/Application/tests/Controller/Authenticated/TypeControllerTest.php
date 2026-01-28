@@ -74,17 +74,15 @@ final class TypeControllerTest extends AbstractControllerTestCase
 
         $this->setMatchedRouteName($controller, 'lpa/form-type');
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn(null)->once();
         $this->flashMessenger->shouldReceive('addErrorMessage')
             ->withArgs(['Error creating a new LPA. Please try again.'])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostSetTypeException(): void
@@ -112,8 +110,6 @@ final class TypeControllerTest extends AbstractControllerTestCase
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $lpa = new Lpa([
             'id' => 123,
@@ -129,10 +125,10 @@ final class TypeControllerTest extends AbstractControllerTestCase
         $routeMatch = $this->getRouteMatch($controller);
         $routeMatch->shouldReceive('getMatchedRouteName')->andReturn('lpa/form-type')->once();
 
-        $this->setRedirectToRoute('lpa/donor', $lpa, $response);
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/123/donor', $result->getHeaders()->get('Location')->getUri());
     }
 }

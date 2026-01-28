@@ -1,127 +1,146 @@
 <?php $this->layout('layout::default', ['title' => 'Find Users']); ?>
-<div class="grid-row">
-    <div class="column-full">
 
-        <form method="get" class="form" action="<?= $this->url('user.find') ?>">
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
-            <fieldset>
+<form method="get" action="<?= $this->url('user.find') ?>">
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
 
-                <legend>
-                    <h1 class="heading-xlarge">Find Users</h1>
-                </legend>
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    Find Users
+                </h1>
+            </legend>
 
-                <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+            <p class="govuk-body">Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.</p>
 
-                <div class="text">
-                    <p>
-                        Find users by full or partial email address. If found, a summary of the user with a link to their full details will be shown.
-                    </p>
+            <?php $this->insert('snippet::input-text', [
+                    'formLabel'     => 'Query',
+                    'formElement'   => $form->get('query'),
+                    'formType'      => 'text',
+                    'attrs'         => ['data-cy' => 'query-input'],
+            ]) ?>
 
-                    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
-
-                    <?php $this->insert('snippet::input-text', [
-                        'formLabel'     => 'Query',
-                        'formElement'   => $form->get('query'),
-                        'formType'      => 'text',
-                        'formLabelBold' => false,
-                        'attrs'         => ['data-cy' => 'query-input'],
-                    ]) ?>
-
-                    <?php $this->insert('snippet::input-hidden', [
-                        'formElement' => $form->get('offset')
-                    ]) ?>
-                </div>
-
-            </fieldset>
-
-            <div class="form-group">
-                <input data-cy="submit-button" class="button" type="submit" value="Find">
-            </div>
-
-        </form>
-
-        <?php if ($query !== '') { ?>
-            <h2 class="heading-medium">Matching users</h2>
-            <?php if (count($users) === 0) { ?>
-                <p>No users found</p>
-            <?php } else { ?>
-                <?php foreach ($users as $user) { ?>
-                    <div class="user-find-result">
-                        <ul>
-                            <li>
-                                <strong class="bold-small">Name: </strong>
-                                <a data-role="user-email" href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
-                                    <?= htmlspecialchars($user['username']); ?>
-                                </a>
-                            </li>
-                            <li>
-                                <strong class="bold-small">Account status: </strong>
-
-                                <?php if (array_key_exists('isActive', $user)) { ?>
-                                    <span><?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?></span>
-                                <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
-                                    <span>Deleted</span>
-                                <?php } ?>
-                            </li>
-
-                            <?php if (isset($user['activatedAt'])) { ?>
-                                <li>
-                                    <strong class="bold-small">Date activated: </strong>
-                                    <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
-                                </li>
-                            <?php } ?>
-
-                            <?php if (array_key_exists('lastLoginAt', $user)) { ?>
-                                <li>
-                                    <strong class="bold-small">Last login time: </strong>
-                                    <span data-role="user-last-login-time"><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
-                                </li>
-                            <?php } ?>
-
-                            <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
-                                <li>
-                                    <strong class="bold-small">Number of failed login attempts: </strong>
-                                    <span><?= intval($user['failedLoginAttempts']); ?></span>
-                                </li>
-                            <?php } ?>
-
-                            <?php if (array_key_exists('numberOfLpas', $user)) { ?>
-                                <li>
-                                    <strong class="bold-small">Number of LPAs: </strong>
-                                    <span><?= intval($user['numberOfLpas']); ?></span>
-                                </li>
-                            <?php } ?>
-                        </ul>
-                    </div>
-                <? } ?>
-            <?php } ?>
-        <?php } ?>
-
-        <?php if (!is_null($previousOffset)) { ?>
-            <?php
-            $options = [
-                'offset' => $previousOffset,
-                'query' => $query,
-                'secret' => $secret,
-            ];
-            $previousHref = $this->url('user.find', [], $options);
-            ?>
-            <a href="<?= $previousHref ?>">Previous</a>
-        <?php } ?>
-
-        <?php if (!is_null($nextOffset)) { ?>
-            <?php if (!is_null($previousOffset)) { # previous link present ?>
-            &nbsp;|&nbsp;
-            <?php } ?>
-            <?php
-            $options = [
-                'offset' => $nextOffset,
-                'query' => $query,
-                'secret' => $secret,
-            ];
-            $nextHref = $this->url('user.find', [], $options);
-            ?>
-            <a href="<?= $nextHref ?>">Next</a>
-        <?php } ?>
+            <?php $this->insert('snippet::input-hidden', [
+                    'formElement' => $form->get('offset')
+            ]) ?>
+        </fieldset>
     </div>
-</div>
+
+    <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="submit-button">
+        Find
+    </button>
+</form>
+
+<?php if ($query !== '') { ?>
+    <h2 class="govuk-heading-m">Matching users</h2>
+    <?php if (count($users) === 0) { ?>
+        <p class="govuk-body">No users found</p>
+    <?php } else { ?>
+        <?php foreach ($users as $user) { ?>
+            <div class="govuk-summary-card" data-cy="user-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">
+                        Name:  <a class="govuk-link" data-role="user-email" href="<?= $this->url('user.search', [], ['email' => htmlspecialchars($user['username'])]) ?>">
+                            <?= htmlspecialchars($user['username']); ?>
+                        </a>
+                    </h3>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Account status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <?php if (array_key_exists('isActive', $user)) { ?>
+                                    <?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?>
+                                <?php } elseif (!empty($user['isDeleted'])) { ?>
+                                    Deleted
+                                <?php } ?>
+                            </dd>
+                        </div>
+
+                        <?php if (!empty($user['activatedAt'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Date activated
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="user-activation-date"><?= $this->dateFormat($user['activatedAt']) ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (!empty($user['lastLoginAt'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Last login time
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="user-last-login-time"><?= $this->dateFormat($user['lastLoginAt'], 'Never logged in') ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (!empty($user['failedLoginAttempts'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of failed login attempts
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <?= intval($user['failedLoginAttempts']); ?>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (!empty($user['numberOfLpas'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of LPAs
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <?php if (intval($user['numberOfLpas']) > 0) { ?>
+                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['id' => $user['userId']], ['email' => $user['username']]) ?>">
+                                            <?= intval($user['numberOfLpas']); ?>
+                                        </a>
+                                    <?php } else { ?>
+                                        0
+                                    <?php } ?>
+                                </dd>
+                            </div>
+                        <?php } ?>
+                    </dl>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } ?>
+<?php } ?>
+
+<?php if (!is_null($previousOffset)) { ?>
+    <?php
+    $options = [
+        'offset' => $previousOffset,
+        'query' => $query,
+        'secret' => $secret,
+    ];
+    $previousHref = $this->url('user.find', [], $options);
+    ?>
+    <a class="govuk-link" href="<?= $previousHref ?>">Previous</a>
+<?php } ?>
+
+<?php if (!is_null($nextOffset)) { ?>
+    <?php if (!is_null($previousOffset)) { # previous link present ?>
+    &nbsp;|&nbsp;
+    <?php } ?>
+    <?php
+    $options = [
+        'offset' => $nextOffset,
+        'query' => $query,
+        'secret' => $secret,
+    ];
+    $nextHref = $this->url('user.find', [], $options);
+    ?>
+    <a class="govuk-link" href="<?= $nextHref ?>">Next</a>
+<?php } ?>

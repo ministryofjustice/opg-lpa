@@ -71,7 +71,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
 
         //  If there are no user details set, or they are incomplete, then redirect to the about you new view
         if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->getName()))) {
-            return $this->redirect()->toUrl('/user/about-you/new');
+            return $this->redirectToRoute('user/about-you', ['new' => 'new']);
         }
 
         //  We should have a fully formed user record at this point - bounce the request if that is not the case
@@ -80,6 +80,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             $userDataArr = $this->user->toArray();
             $tempUser = new User($userDataArr);
         } catch (\Exception $ex) {
+            $this->getLogger()->error('constructing User data from session failed', ['exception' => $ex->getMessage()]);
             // If seems there is a user associated with the session but it is not well formed
             // Therefore destroy the session and logout the user
             $this->getAuthenticationService()->clearIdentity();
@@ -87,7 +88,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
                 'clear_storage' => true
             ]);
 
-            return $this->redirect()->toRoute('login', [
+            return $this->redirectToRoute('login', [
                 'state' => 'timeout'
             ]);
         }

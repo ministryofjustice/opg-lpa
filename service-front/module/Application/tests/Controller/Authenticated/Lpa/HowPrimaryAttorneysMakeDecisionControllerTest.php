@@ -84,18 +84,17 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('setValidationGroup')->withArgs([['how']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
-        $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/replacement-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostFailed(): void
@@ -129,8 +128,6 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
     {
         $controller = $this->getController(HowPrimaryAttorneysMakeDecisionController::class);
 
-        $response = new Response();
-
         $postData = $this->postData;
         $postData['how'] = AbstractDecisions::LPA_DECISION_HOW_DEPENDS;
 
@@ -146,10 +143,11 @@ final class HowPrimaryAttorneysMakeDecisionControllerTest extends AbstractContro
         $this->applicantService->shouldReceive('cleanUp')->andReturn(true);
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/how-primary-attorneys-make-decision');
-        $this->setRedirectToRoute('lpa/replacement-attorney', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/replacement-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 }
