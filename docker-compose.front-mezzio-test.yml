@@ -28,6 +28,12 @@ services:
       - ./cypress-mezzio-test:/app/cypress-mezzio-test
     environment:
       PHP_IDE_CONFIG: serverName=front-mezzio-test
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   mezzio-test-ssl:
     container_name: lpa-front-ssl
@@ -49,6 +55,8 @@ services:
       TARGET_PORT: "8080"
 
   cypress-mezzio-test:
+    depends_on:
+      - mezzio-test-ssl
     build:
       context: ./
       dockerfile: cypress/Dockerfile
