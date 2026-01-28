@@ -49,12 +49,19 @@ locals {
     {
       cpu         = 0,
       essential   = true,
-      image       = "public.ecr.aws/aws-observability/aws-otel-collector:v0.23.1",
+      image       = "311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.42.0",
       mountPoints = [],
       name        = "aws-otel-collector",
       command = [
         "--config=/etc/ecs/ecs-default-config.yaml"
       ],
+      healthCheck = {
+        command     = ["CMD", "/healthcheck"],
+        startPeriod = 5,
+        interval    = 10,
+        timeout     = 5,
+        retries     = 3
+      },
       volumesFrom = [],
       logConfiguration = {
         logDriver = "awslogs",

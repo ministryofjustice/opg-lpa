@@ -77,15 +77,14 @@ server {
         root   /usr/share/nginx/html;
     }
 
-    location ~ "^/assets/" {
+    location ^~ /assets/ {
+        root /web;
         gzip_static on;
-
-        if ($uri ~* ^.+.(jpg|jpeg|gif|css|png|js|ico|htm|html|xml|txt|woff|eot|ttf)$ ){
-            expires           24h;
-        }
+        expires 24h;
+        access_log off;
 
         # Support static assets having a version ID in the path.
-        rewrite	^/assets/([0-9]+)/(.*) /assets/$2  break;
+        rewrite ^/assets/([0-9]+)/(.*) /assets/$2 break;
     }
 
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000

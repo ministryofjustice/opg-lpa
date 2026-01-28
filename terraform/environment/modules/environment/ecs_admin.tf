@@ -14,7 +14,7 @@ resource "aws_ecs_service" "admin" {
   deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.admin_ecs_service.id]
-    subnets          = data.aws_subnets.private.ids
+    subnets          = local.app_subnet_ids
     assign_public_ip = false
   }
 
@@ -46,8 +46,11 @@ resource "aws_ecs_service" "admin" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "admin_ecs_service" {
   name_prefix = "${var.environment_name}-admin-ecs-service"
-  vpc_id      = data.aws_vpc.default.id
+  vpc_id      = local.vpc_id
   tags        = local.admin_component_tag
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_security_group_rule" "admin_ecs_service_ingress" {

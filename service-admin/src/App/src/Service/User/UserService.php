@@ -7,29 +7,18 @@ use MakeShared\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerAwareInterface;
 
-class UserService
+class UserService implements LoggerAwareInterface
 {
-    /**
-     * @var ApiClient
-     */
-    private $client;
+    use LoggerTrait;
 
-    /**
-     * UserService constructor
-     *
-     * @param ApiClient $client
-     */
-    public function __construct(ApiClient $client)
+    public function __construct(private ApiClient $client)
     {
-        $this->client = $client;
     }
 
-    /**
-     * @param string $id
-     * @return null|User
-     */
-    public function fetch($id)
+    public function fetch(string $id): ?User
     {
         $userData = $this->client->httpGet('/v2/user/' . $id);
 
@@ -43,9 +32,6 @@ class UserService
     /**
      * Convert the date fields for a single user.
      * Returns the user with the modified dates.
-     *
-     * @param array<string, mixed> $user
-     * @return array<string, mixed>
      */
     private function convertDates(array $user): array
     {
@@ -70,10 +56,6 @@ class UserService
         return $user;
     }
 
-    /**
-     * @param string $email
-     * @return array<string, mixed>|bool
-     */
     public function search(#[\SensitiveParameter] string $email)
     {
         $userData = $this->client->httpGet('/v2/users/search', [
@@ -108,11 +90,28 @@ class UserService
         return false;
     }
 
-    /**
-     * @param array<string, mixed> $params
-     * @return array<string, mixed>
-     */
-    public function match(array $params)
+    public function userLpas(string $userId): array|bool
+    {
+        try {
+            $lpaData = $this->client->httpGet(sprintf('/v2/user/%s/applications', $userId), [
+                'page' => 1,
+                'perPage' => 20,
+            ]);
+
+            if (is_array($lpaData) && array_key_exists('applications', $lpaData)) {
+                $lpas = $lpaData['applications'];
+            } else {
+                return false;
+            }
+        } catch (Exception $e) {
+            $this->getLogger()->error($e->getMessage());
+            return false;
+        }
+
+        return $lpas;
+    }
+
+    public function match(array $params): array
     {
         $users = $this->client->httpGet('/v2/users/match', $params);
         return array_map(fn ($user) => $this->convertDates($user), $users);

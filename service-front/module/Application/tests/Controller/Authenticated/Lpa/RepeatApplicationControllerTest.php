@@ -165,8 +165,6 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postDataNoRepeat);
         $this->form->shouldReceive('setValidationGroup')->withArgs([['isRepeatApplication']])->once();
         $this->form->shouldReceive('getData')->andReturn($this->postDataNoRepeat)->once();
@@ -180,11 +178,12 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
-        $this->setRedirectToRoute('lpa/checkout', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostNoRepeatSuccessAfterGoLiveUsesBaseAfter()
@@ -194,7 +193,6 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         /** @var RepeatApplicationController $controller */
         $controller = $this->getController(RepeatApplicationController::class);
 
-        $response = new Response();
 
         $this->postDataNoRepeat = ['isRepeatApplication' => 'is-new'];
         $this->setPostValid($this->form, $this->postDataNoRepeat);
@@ -216,9 +214,11 @@ final class RepeatApplicationControllerTest extends AbstractControllerTestCase
         $this->metadata->shouldReceive('setRepeatApplicationConfirmed')->withArgs([$this->lpa])->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
-        $this->setRedirectToRoute('lpa/checkout', $this->lpa, $response);
 
         $result = $controller->indexAction();
-        $this->assertEquals($response, $result);
+
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $result->getHeaders()->get('Location')->getUri());
     }
 }
