@@ -71,7 +71,7 @@ trait LpaLoaderTrait
         $lpa = $this->getLpa();
         $nextRoute = $this->getFlowChecker()->nextRoute($routeMatch->getMatchedRouteName());
 
-        return $this->redirect()->toRoute(
+        return $this->redirectToRoute(
             $nextRoute,
             ['lpa-id' => $lpa->id],
             $this->getFlowChecker()->getRouteOptions($nextRoute)
