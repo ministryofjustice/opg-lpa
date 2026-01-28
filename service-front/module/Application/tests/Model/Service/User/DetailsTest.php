@@ -119,7 +119,8 @@ final class DetailsTest extends AbstractEmailServiceTest
             ],
             'email' => [
                 'address' => 'test@email.com'
-            ]
+            ],
+            'numberOfLpas' => 1
         ];
 
         $this->apiClient->shouldReceive('httpGet')->withArgs(['/v2/user/test-id'])->once()->andReturn($currentUserJson);
