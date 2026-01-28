@@ -57,6 +57,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
             $allowRedirect = false;
         }
 
+        $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
         $reason = $this->getUnauthorisedReason($allowRedirect, $route);
 
         $router = $event->getRouter();
@@ -86,6 +87,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
             $allowRedirect = false;
         }
 
+        $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
         $routePath = $route ? $route->getMatchedRoute()->getPath() : '';
         $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
 

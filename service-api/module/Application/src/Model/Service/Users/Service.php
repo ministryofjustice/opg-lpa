@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\Users;
 
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use ArrayObject;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
@@ -19,10 +20,11 @@ use Random\RandomException;
 
 class Service extends AbstractService
 {
+    use ApplicationRepositoryTrait;
     use LogRepositoryTrait;
-    use UserRepositoryTrait;
-    use TokenGenerationTrait;
     use PasswordValidatorTrait;
+    use TokenGenerationTrait;
+    use UserRepositoryTrait;
 
     /**
      * @var ApplicationService
@@ -107,6 +109,9 @@ class Service extends AbstractService
         // If there is no user create one now and ensure that the email address is correct
         if (!$user instanceof ProfileUserModel) {
             $user = $this->save($id);
+        } else {
+            $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
+            $user->setNumberOfLpas($lpaCount);
         }
 
         return new DataModelEntity($user);

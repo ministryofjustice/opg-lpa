@@ -22,6 +22,7 @@ class User extends AbstractData
     protected ?Dob $dob = null;
     protected ?EmailAddress $email = null;
     protected ?DateTime $lastLoginAt = null;
+    protected ?int $numberOfLpas = null;
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
@@ -67,6 +68,10 @@ class User extends AbstractData
         $metadata->addPropertyConstraints('email', [
             new ValidatorConstraints\Type('\MakeShared\DataModel\Common\EmailAddress'),
             new ValidConstraintSymfony(),
+        ]);
+
+        $metadata->addPropertyConstraints('numberOfLpas', [
+            new ValidatorConstraints\Type('integer'),
         ]);
     }
 
@@ -181,6 +186,17 @@ class User extends AbstractData
     public function setLastLoginAt(?DateTime $lastLoginAt): User
     {
         $this->lastLoginAt = $lastLoginAt;
+        return $this;
+    }
+
+    public function getNumberOfLpas(): ?int
+    {
+        return $this->numberOfLpas;
+    }
+
+    public function setNumberOfLpas(?int $numberOfLpas): User
+    {
+        $this->numberOfLpas = $numberOfLpas;
         return $this;
     }
 }

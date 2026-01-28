@@ -4,32 +4,26 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Service;
 
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Service\NavigationViewModelHelper;
 use Application\View\Model\NavigationViewModel;
 use DateTime;
-use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\User\User;
-use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class NavigationViewModelHelperTest extends TestCase
 {
     private SessionUtility|MockObject $sessionUtility;
-    private LpaApplicationService|MockObject $lpaApplicationService;
     private NavigationViewModelHelper $helper;
 
     public function setUp(): void
     {
         $this->sessionUtility = $this->createMock(SessionUtility::class);
-        $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
 
         $this->helper = new NavigationViewModelHelper(
             $this->sessionUtility,
-            $this->lpaApplicationService,
         );
     }
 
@@ -38,19 +32,10 @@ class NavigationViewModelHelperTest extends TestCase
         $currentRoute = 'home';
 
         $this->sessionUtility
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => null,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => false,
-                    default => null,
-                };
-            });
-
-        $this->lpaApplicationService
-            ->expects($this->never())
-            ->method('getLpaSummaries');
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn(null);
 
         $result = $this->helper->build($currentRoute);
 
@@ -65,28 +50,24 @@ class NavigationViewModelHelperTest extends TestCase
     public function testBuildWhenUserLoggedInWithFullDetails(): void
     {
         $currentRoute = 'user/dashboard';
-        $user = FixturesData::getUser();
-
-        $this->sessionUtility
-            ->expects($this->exactly(3))
-            ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => true,
-                    default => null,
-                };
-            });
+        $user = new User([
+            'id' => 'test-user-id',
+            'createdAt' => '2024-01-01T00:00:00.000Z',
+            'updatedAt' => '2024-01-01T00:00:00.000Z',
+            'lastLoginAt' => '2024-01-15T10:30:00.000Z',
+            'name' => [
+                'title' => 'Mr',
+                'first' => 'Chris',
+                'last' => 'Smith',
+            ],
+            'numberOfLpas' => 1,
+        ]);
 
         $this->sessionUtility
             ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(true);
-
-        $this->lpaApplicationService
-            ->expects($this->never())
-            ->method('getLpaSummaries');
+            ->method('getFromMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn($user);
 
         $result = $this->helper->build($currentRoute);
 
@@ -101,42 +82,18 @@ class NavigationViewModelHelperTest extends TestCase
     public function testBuildWhenUserLoggedInWithoutName(): void
     {
         $currentRoute = 'user/dashboard';
-        $user = $this->createMock(User::class);
-        $user
-            ->method('getName')
-            ->willReturn(null);
-        $user
-            ->method('getLastLoginAt')
-            ->willReturn(null);
-
-        $lpasSummaries = ['total' => 0, 'applications' => []];
+        $user = new User([
+            'id' => 'test-user-id',
+            'createdAt' => '2024-01-01T00:00:00.000Z',
+            'updatedAt' => '2024-01-01T00:00:00.000Z',
+            'numberOfLpas' => 0,
+        ]);
 
         $this->sessionUtility
-            ->expects($this->exactly(3))
+            ->expects($this->once())
             ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => false,
-                    default => null,
-                };
-            });
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(true);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getLpaSummaries')
-            ->willReturn($lpasSummaries);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('setInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs', false);
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn($user);
 
         $result = $this->helper->build($currentRoute);
 
@@ -148,38 +105,38 @@ class NavigationViewModelHelperTest extends TestCase
         $this->assertFalse($result->hasOneOrMoreLPAs);
     }
 
-    public function testBuildWhenUserLoggedInAndNeedsToCheckLpas(): void
+    public static function lpaCountProvider(): array
+    {
+        return [
+            'zero LPAs' => [0, false],
+            'one LPA' => [1, true],
+            'multiple LPAs' => [5, true],
+        ];
+    }
+
+    /**
+     * @dataProvider lpaCountProvider
+     */
+    public function testBuildWithDifferentLpaCounts(int $numberOfLpas, bool $expectedHasLpas): void
     {
         $currentRoute = 'user/dashboard';
-        $user = FixturesData::getUser();
-        $lpasSummaries = ['total' => 5, 'applications' => []];
+        $user = new User([
+            'id' => 'test-user-id',
+            'createdAt' => '2024-01-01T00:00:00.000Z',
+            'updatedAt' => '2024-01-01T00:00:00.000Z',
+            'name' => [
+                'title' => 'Mr',
+                'first' => 'Chris',
+                'last' => 'Smith',
+            ],
+            'numberOfLpas' => $numberOfLpas,
+        ]);
 
         $this->sessionUtility
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => null,
-                    default => null,
-                };
-            });
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(false);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getLpaSummaries')
-            ->willReturn($lpasSummaries);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('setInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs', true);
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn($user);
 
         $result = $this->helper->build($currentRoute);
 
@@ -187,127 +144,7 @@ class NavigationViewModelHelperTest extends TestCase
         $this->assertTrue($result->userLoggedIn);
         $this->assertEquals('Chris Smith', $result->name);
         $this->assertEquals($currentRoute, $result->route);
-    }
-
-    public function testBuildWhenUserLoggedInAndHasNoLpas(): void
-    {
-        $currentRoute = 'user/dashboard';
-        $user = FixturesData::getUser();
-        $lpasSummaries = ['total' => 0, 'applications' => []];
-
-        $this->sessionUtility
-            ->expects($this->exactly(2))
-            ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => null,
-                    default => null,
-                };
-            });
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(false);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getLpaSummaries')
-            ->willReturn($lpasSummaries);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('setInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs', false);
-
-        $result = $this->helper->build($currentRoute);
-
-        $this->assertInstanceOf(NavigationViewModel::class, $result);
-        $this->assertTrue($result->userLoggedIn);
-        $this->assertEquals('Chris Smith', $result->name);
-        $this->assertEquals($currentRoute, $result->route);
-        $this->assertFalse($result->hasOneOrMoreLPAs);
-    }
-
-    public function testBuildWhenUserLoggedInAndLpasSummariesMissingTotal(): void
-    {
-        $currentRoute = 'user/dashboard';
-        $user = FixturesData::getUser();
-        $lpasSummaries = ['applications' => []];
-
-        $this->sessionUtility
-            ->expects($this->exactly(2))
-            ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => null,
-                    default => null,
-                };
-            });
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(false);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getLpaSummaries')
-            ->willReturn($lpasSummaries);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('setInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs', false);
-
-        $result = $this->helper->build($currentRoute);
-
-        $this->assertInstanceOf(NavigationViewModel::class, $result);
-        $this->assertTrue($result->userLoggedIn);
-        $this->assertFalse($result->hasOneOrMoreLPAs);
-    }
-
-    public function testBuildWhenUserLoggedInAndHasOneOrMoreLpasCachedAsFalse(): void
-    {
-        $currentRoute = 'user/dashboard';
-        $user = FixturesData::getUser();
-        $lpasSummaries = ['total' => 3, 'applications' => []];
-
-        $this->sessionUtility
-            ->expects($this->exactly(3))
-            ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => false,
-                    default => null,
-                };
-            });
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(true);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getLpaSummaries')
-            ->willReturn($lpasSummaries);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('setInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs', true);
-
-        $result = $this->helper->build($currentRoute);
-
-        $this->assertInstanceOf(NavigationViewModel::class, $result);
-        $this->assertTrue($result->userLoggedIn);
+        $this->assertEquals($expectedHasLpas, $result->hasOneOrMoreLPAs);
     }
 
     public function testBuildWithDifferentRoutes(): void
@@ -321,18 +158,10 @@ class NavigationViewModelHelperTest extends TestCase
             $sessionUtility = $this->createMock(SessionUtility::class);
             $sessionUtility
                 ->method('getFromMvc')
-                ->willReturnCallback(function ($namespace, $key) {
-                    return match ([$namespace, $key]) {
-                        [ContainerNamespace::USER_DETAILS, 'user'] => null,
-                        [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => false,
-                        default => null,
-                    };
-                });
+                ->with(ContainerNamespace::USER_DETAILS, 'user')
+                ->willReturn(null);
 
-            $helper = new NavigationViewModelHelper(
-                $sessionUtility,
-                $this->lpaApplicationService,
-            );
+            $helper = new NavigationViewModelHelper($sessionUtility);
 
             $result = $helper->build($route);
 
@@ -344,36 +173,28 @@ class NavigationViewModelHelperTest extends TestCase
     public function testBuildPreservesLastLoginAtFromUser(): void
     {
         $currentRoute = 'user/dashboard';
-        $lastLoginAt = new DateTime('2024-01-15 10:30:00');
-
-        $user = $this->createMock(User::class);
-        $userName = new Name(['first' => 'John', 'last' => 'Doe']);
-        $user
-            ->method('getName')
-            ->willReturn($userName);
-        $user
-            ->method('getLastLoginAt')
-            ->willReturn($lastLoginAt);
-
-        $this->sessionUtility
-            ->expects($this->exactly(3))
-            ->method('getFromMvc')
-            ->willReturnCallback(function ($namespace, $key) use ($user) {
-                return match ([$namespace, $key]) {
-                    [ContainerNamespace::USER_DETAILS, 'user'] => $user,
-                    [ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs'] => true,
-                    default => null,
-                };
-            });
+        $lastLoginAt = new DateTime('2024-01-15T10:30:00.000Z');
+        $user = new User([
+            'id' => 'test-user-id',
+            'createdAt' => '2024-01-01T00:00:00.000Z',
+            'updatedAt' => '2024-01-01T00:00:00.000Z',
+            'lastLoginAt' => $lastLoginAt->format('Y-m-d\TH:i:s.v\Z'),
+            'name' => [
+                'title' => 'Mr',
+                'first' => 'John',
+                'last' => 'Doe',
+            ],
+            'numberOfLpas' => 1,
+        ]);
 
         $this->sessionUtility
             ->expects($this->once())
-            ->method('hasInMvc')
-            ->with(ContainerNamespace::USER_DETAILS, 'hasOneOrMoreLPAs')
-            ->willReturn(true);
+            ->method('getFromMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn($user);
 
         $result = $this->helper->build($currentRoute);
 
-        $this->assertSame($lastLoginAt, $result->lastLoginAt);
+        $this->assertEquals($lastLoginAt->format('Y-m-d H:i:s'), $result->lastLoginAt->format('Y-m-d H:i:s'));
     }
 }
