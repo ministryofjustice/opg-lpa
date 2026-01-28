@@ -23,7 +23,7 @@ class AuthController extends AbstractBaseController
      * indexAction() should only return ViewModel.
      * @psalm-suppress ImplementedReturnTypeMismatch
      *
-     * @return bool|HttpResponse|ViewModel
+     * @return bool|ViewModel|HttpResponse
      */
     public function indexAction()
     {
@@ -83,7 +83,7 @@ class AuthController extends AbstractBaseController
                         if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             //  It does but check if the requested URL is the date check page
                             if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
-                                return $this->redirect()->toUrl($nextUrl);
+                                return $this->redirectToUrl($nextUrl);
                             }
 
                             //  Redirect to next page which needs filling out
@@ -97,7 +97,7 @@ class AuthController extends AbstractBaseController
                                 $formFlowChecker = new FormFlowChecker($lpa);
                                 $destinationRoute = $formFlowChecker->backToForm();
 
-                                return $this->redirect()->toRoute(
+                                return $this->redirectToRoute(
                                     $destinationRoute,
                                     ['lpa-id' => $lpa->id],
                                     $formFlowChecker->getRouteOptions($destinationRoute)
@@ -106,7 +106,7 @@ class AuthController extends AbstractBaseController
                         }
 
                         //not an LPA url so redirect directly to it
-                        return $this->redirect()->toUrl($nextUrl);
+                        return $this->redirectToUrl($nextUrl);
                     }
 
                     //  If necessary set a flash message showing that the user account will now remain active
@@ -121,7 +121,7 @@ class AuthController extends AbstractBaseController
                     }
 
                     // Else Send them to the dashboard...
-                    return $this->redirect()->toRoute('user/dashboard');
+                    return $this->redirectToRoute('user/dashboard');
                 }
 
                 // else authentication failed...
@@ -202,7 +202,7 @@ class AuthController extends AbstractBaseController
     {
         $this->clearSession();
 
-        return $this->redirect()->toUrl($this->config()['redirects']['logout']);
+        return $this->redirectToUrl($this->config()['redirects']['logout']);
     }
 
     /**

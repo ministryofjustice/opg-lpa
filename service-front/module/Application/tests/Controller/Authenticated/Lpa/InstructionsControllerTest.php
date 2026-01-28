@@ -101,8 +101,6 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setInstructions')
@@ -111,19 +109,18 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/instructions');
-        $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/applicant', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionPostMetadata(): void
     {
         /** @var InstructionsController $controller */
         $controller = $this->getController(InstructionsController::class);
-
-        $response = new Response();
 
         $this->lpa->metadata['instruction-confirmed'] = false;
 
@@ -135,12 +132,13 @@ final class InstructionsControllerTest extends AbstractControllerTestCase
             ->withArgs([$this->lpa, $this->postData['preference']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/instructions');
-        $this->setRedirectToRoute('lpa/applicant', $this->lpa, $response);
         $this->metadata->shouldReceive('setInstructionConfirmed')
             ->withArgs([$this->lpa])->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/applicant', $result->getHeaders()->get('Location')->getUri());
     }
 }

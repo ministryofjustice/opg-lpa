@@ -82,16 +82,16 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
-        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
-
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $location);
     }
 
     public function testAddActionGetReuseDetails(): void
@@ -109,7 +109,8 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
     }
 
     public function testAddActionGetCertificateProviderJs(): void
@@ -117,16 +118,16 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->request->shouldReceive('isPost')->andReturn(false)->once();
 
-        $this->setRedirectToRoute('lpa/certificate-provider', $this->lpa, $response);
-
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $location);
     }
 
     public function testAddActionGetNoCertificateProvider(): void
@@ -209,8 +210,6 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
-        $response = new Response();
-
         $postData = [];
 
         $this->lpa->document->certificateProvider = null;
@@ -223,11 +222,14 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
         $this->setMatchedRouteNameHttp($controller, 'lpa/certificate-provider');
-        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $controller->addAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/people-to-notify', $location);
     }
 
     public function testAddActionPostReuseDetails(): void
@@ -335,8 +337,6 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
-        $response = new Response();
-
         $postData = [];
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
@@ -348,11 +348,14 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         $this->form->shouldReceive('getModelDataFromValidatedForm')->andReturn($postData)->once();
         $this->lpaApplicationService->shouldReceive('setCertificateProvider')->andReturn(true);
         $this->setMatchedRouteNameHttp($controller, 'lpa/certificate-provider');
-        $this->setRedirectToRoute('lpa/people-to-notify', $this->lpa, $response);
 
         $result = $controller->editAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/people-to-notify', $location);
     }
 
     public function testConfirmDeleteAction(): void
@@ -429,14 +432,15 @@ final class CertificateProviderControllerTest extends AbstractControllerTestCase
         /** @var CertificateProviderController $controller */
         $controller = $this->getController(TestableCertificateProviderController::class);
 
-        $response = new Response();
-
         $this->lpaApplicationService->shouldReceive('deleteCertificateProvider')->andReturn(true);
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/certificate-provider', ['lpa-id' => $this->lpa->id]])->andReturn($response)->once();
 
         $result = $controller->deleteAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/certificate-provider', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 }
