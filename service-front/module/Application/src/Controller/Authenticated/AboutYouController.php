@@ -4,6 +4,7 @@ namespace Application\Controller\Authenticated;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Model\Service\Session\ContainerNamespace;
+use Laminas\Http\Response as HttpResponse;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
@@ -19,7 +20,7 @@ class AboutYouController extends AbstractAuthenticatedController
 
     /**
      * @psalm-suppress ImplementedReturnTypeMismatch
-     * @return \Laminas\Http\Response|ViewModel
+     * @return HttpResponse|ViewModel
      */
     public function indexAction()
     {
@@ -63,12 +64,12 @@ class AboutYouController extends AbstractAuthenticatedController
                     $this->flashMessenger()->addSuccessMessage('Your details have been updated.');
                 }
 
-                return $this->redirect()->toRoute('user/dashboard');
+                return $this->redirectToRoute('user/dashboard');
             }
         } else {
             // if the user is new then ensure they are accessing the new route only
             if (!$isNew && is_null($userDetails->name)) {
-                return $this->redirect()->toUrl('/user/about-you/new');
+                return $this->redirectToUrl('/user/about-you/new');
             }
 
             if (!is_null($userDetails->dob)) {

@@ -87,8 +87,6 @@ final class WhenLpaStartsControllerTest extends AbstractControllerTestCase
         /** @var WhenLpaStartsController $controller */
         $controller = $this->getController(WhenLpaStartsController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setPrimaryAttorneyDecisions')
@@ -98,10 +96,10 @@ final class WhenLpaStartsControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/when-lpa-starts');
-        $this->setRedirectToRoute('lpa/primary-attorney', $this->lpa, $response);
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/primary-attorney', $result->getHeaders()->get('Location')->getUri());
     }
 }

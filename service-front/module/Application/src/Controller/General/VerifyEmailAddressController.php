@@ -40,7 +40,7 @@ class VerifyEmailAddressController extends AbstractBaseController
         }
 
         // will either go to the login page or the dashboard
-        return $this->redirect()->toRoute('login');
+        return $this->redirectToRoute('login');
     }
 
     public function setUserService(UserService $userService)

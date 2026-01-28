@@ -98,8 +98,6 @@ class UserService implements LoggerAwareInterface
                 'perPage' => 20,
             ]);
 
-            $this->getLogger()->debug("LPA data is:", ['data' => $lpaData]);
-
             if (is_array($lpaData) && array_key_exists('applications', $lpaData)) {
                 $lpas = $lpaData['applications'];
             } else {

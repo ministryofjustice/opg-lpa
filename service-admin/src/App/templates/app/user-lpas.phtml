@@ -9,7 +9,7 @@
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    <?= $lpa['id']; ?>
+                    <?= $lpa['id'] ?? 'Unknown ID'; ?>
                 </h2>
             </div>
             <div class="govuk-summary-card__content">
@@ -19,7 +19,7 @@
                             Started
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?= $this->dateFormat($lpa['createdAt']); ?>
+                            <?= isset($lpa['startedAt']) ? $this->dateFormat($lpa['startedAt']) : 'Not started yet'; ?>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -27,7 +27,7 @@
                             Updated
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?= $this->dateFormat($lpa['updatedAt']); ?>
+                            <?= isset($lpa['updatedAt']) ? $this->dateFormat($lpa['updatedAt']) : 'Not updated yet'; ?>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -35,7 +35,7 @@
                             Completed
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?php if (array_key_exists('completedAt', $lpa)) { ?>
+                            <?php if (isset($lpa['completedAt'])) { ?>
                                 <?= $this->dateFormat($lpa['completedAt']); ?>
                             <?php } else { ?>
                                 Not created yet
@@ -47,7 +47,7 @@
                             Created (when the LPA instrument is finished)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?php if (array_key_exists('createdAt', $lpa)) { ?>
+                            <?php if (isset($lpa['createdAt'])) { ?>
                                 <?= $this->dateFormat($lpa['createdAt']); ?>
                             <?php } else { ?>
                                 Not created yet
@@ -59,7 +59,7 @@
                             Locked
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?php if (array_key_exists('lockedAt', $lpa)) { ?>
+                            <?php if (isset($lpa['lockedAt'])) { ?>
                                 <?= $this->dateFormat($lpa['lockedAt']); ?>
                             <?php } else { ?>
                                 LPA is not locked
@@ -71,10 +71,10 @@
                             Payment
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?php if (array_key_exists('payment', $lpa) && $lpa['payment']['method'] === 'online') { ?>
-                                Paid online on <?= $lpa['payment']['date']; ?> under reference <?= $lpa['payment']['reference']; ?>
-                            <?php } else if (array_key_exists('payment', $lpa) && $lpa['payment']['method'] === 'cheque') { ?>
-                                Paid with cheque on <?= $lpa['payment']['date']; ?>
+                            <?php if (isset($lpa['payment']['method']) && $lpa['payment']['method'] === 'online') { ?>
+                                Paid online on <?= $this->dateFormat($lpa['payment']['date']) ?? 'unknown date'; ?> under reference <?= $lpa['payment']['reference'] ?? 'unknown'; ?>
+                            <?php } else if (isset($lpa['payment']['method']) && $lpa['payment']['method'] === 'cheque') { ?>
+                                Paid with cheque on <?= $this->dateFormat($lpa['payment']['date']) ?? 'unknown date'; ?>
                             <?php } else { ?>
                                 No payment information available
                             <?php } ?>
