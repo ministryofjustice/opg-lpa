@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Application\Handler;
 
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
-use Laminas\Session\SessionManager;
-use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,17 +24,14 @@ class ResetPasswordHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         private readonly UserService $userService,
         private readonly AuthenticationService $authenticationService,
-        private readonly SessionManager $sessionManager,
+        private readonly SessionManagerSupport $sessionManagerSupport,
         private readonly FlashMessenger $flashMessenger,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var RouteResult|null $routeResult */
-        $routeResult = $request->getAttribute(RouteResult::class);
-        $matchedParams = $routeResult?->getMatchedParams() ?? [];
-        $token = $matchedParams['token'] ?? null;
+        $token = $request->getAttribute('token');
 
         if (empty($token)) {
             $html = $this->renderer->render(
@@ -46,7 +42,8 @@ class ResetPasswordHandler implements RequestHandlerInterface
 
         $identity = $this->authenticationService->getIdentity();
         if ($identity !== null) {
-            $this->sessionManager->getStorage()->clear();
+            $this->sessionManagerSupport->getSessionManager()->getStorage()->clear();
+            $this->sessionManagerSupport->initialise();
             return new RedirectResponse('/forgot-password/reset/' . $token);
         }
 

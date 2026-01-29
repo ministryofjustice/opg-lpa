@@ -6,6 +6,7 @@ namespace ApplicationTest\Handler;
 
 use Application\Handler\ResetPasswordHandler;
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -26,6 +27,7 @@ class ResetPasswordHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private UserService&MockObject $userService;
     private AuthenticationService&MockObject $authenticationService;
+    private SessionManagerSupport&MockObject $sessionManagerSupport;
     private SessionManager&MockObject $sessionManager;
     private StorageInterface&MockObject $sessionStorage;
     private FlashMessenger&MockObject $flashMessenger;
@@ -38,11 +40,13 @@ class ResetPasswordHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
+        $this->sessionManagerSupport = $this->createMock(SessionManagerSupport::class);
         $this->sessionManager = $this->createMock(SessionManager::class);
         $this->sessionStorage = $this->createMock(StorageInterface::class);
         $this->flashMessenger = $this->createMock(FlashMessenger::class);
         $this->form = $this->createMock(FormInterface::class);
 
+        $this->sessionManagerSupport->method('getSessionManager')->willReturn($this->sessionManager);
         $this->sessionManager->method('getStorage')->willReturn($this->sessionStorage);
 
         $this->formElementManager
@@ -55,7 +59,7 @@ class ResetPasswordHandlerTest extends TestCase
             $this->formElementManager,
             $this->userService,
             $this->authenticationService,
-            $this->sessionManager,
+            $this->sessionManagerSupport,
             $this->flashMessenger,
         );
     }
@@ -148,6 +152,10 @@ class ResetPasswordHandlerTest extends TestCase
             ->expects($this->once())
             ->method('clear');
 
+        $this->sessionManagerSupport
+            ->expects($this->once())
+            ->method('initialise');
+
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -208,7 +216,7 @@ class ResetPasswordHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withMethod('POST')
-            ->withParsedBody(['password' => $newPass])
+            ->withParsedBody(['password' => $newPass])// pragma: allowlist secret
             ->withAttribute(RouteResult::class, $routeResult);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
@@ -283,14 +291,14 @@ class ResetPasswordHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withMethod('POST')
-            ->withParsedBody(['password' => 'weak'])// pragma: allowlist secret
+            ->withParsedBody(['password' => 'weak'])//pragma: allowlist secret
             ->withAttribute(RouteResult::class, $routeResult);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
         $this->form->expects($this->once())
             ->method('setData')
-            ->with(['password' => 'weak']);// pragma: allowlist secret
+            ->with(['password' => 'weak']);//pragma: allowlist secret
 
         $this->form->expects($this->once())
             ->method('isValid')
