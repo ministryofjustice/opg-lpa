@@ -9,7 +9,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,21 +20,19 @@ class ForgotPasswordHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly UserService $userService,
-        private readonly UrlHelper $urlHelper,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // Check if user is already authenticated - redirect if so
         $identity = $request->getAttribute('identity');
         if ($identity !== null) {
-            return new RedirectResponse($this->urlHelper->generate('user/dashboard'));
+            return new RedirectResponse('/user/dashboard');
         }
 
         /** @var FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
-        $form->setAttribute('action', $this->urlHelper->generate('forgot-password'));
+        $form->setAttribute('action', '/forgot-password');
 
         $error = null;
 

@@ -11,7 +11,6 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -21,7 +20,6 @@ class ForgotPasswordHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private UserService&MockObject $userService;
-    private UrlHelper&MockObject $urlHelper;
     private FormInterface&MockObject $form;
     private ForgotPasswordHandler $handler;
 
@@ -30,7 +28,6 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
-        $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->form = $this->createMock(FormInterface::class);
 
         $this->formElementManager
@@ -38,29 +35,16 @@ class ForgotPasswordHandlerTest extends TestCase
             ->with('Application\Form\User\ConfirmEmail')
             ->willReturn($this->form);
 
-        $this->urlHelper
-            ->method('generate')
-            ->willReturnCallback(fn(string $route, array $params = []) => match ($route) {
-                'forgot-password' => '/forgot-password',
-                'user/dashboard' => '/user/dashboard',
-                default => '/' . $route,
-            });
-
         $this->handler = new ForgotPasswordHandler(
             $this->renderer,
             $this->formElementManager,
             $this->userService,
-            $this->urlHelper,
         );
     }
 
-    /**
-     * Test: GET request displays the forgot password form
-     */
     public function testGetRequestDisplaysForm(): void
     {
-        $request = (new ServerRequest())
-            ->withMethod('GET');
+        $request = (new ServerRequest())->withMethod('GET');
 
         $this->form->expects($this->once())
             ->method('setAttribute')
@@ -150,7 +134,6 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn(['email' => $email]);
 
-        // Service returns false for non-existent user
         $this->userService
             ->expects($this->once())
             ->method('requestPasswordResetEmail')
@@ -163,7 +146,6 @@ class ForgotPasswordHandlerTest extends TestCase
             ->with(
                 'application/general/forgot-password/email-sent.twig',
                 $this->callback(function ($params) use ($email) {
-                    // Should still show email sent page, not reveal user doesn't exist
                     return $params['email'] === $email
                         && $params['accountNotActivated'] === false;
                 })

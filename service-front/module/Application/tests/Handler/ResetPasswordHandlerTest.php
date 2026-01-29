@@ -15,7 +15,6 @@ use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Session\SessionManager;
 use Laminas\Session\Storage\StorageInterface;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,7 +25,6 @@ class ResetPasswordHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private UserService&MockObject $userService;
-    private UrlHelper&MockObject $urlHelper;
     private AuthenticationService&MockObject $authenticationService;
     private SessionManager&MockObject $sessionManager;
     private StorageInterface&MockObject $sessionStorage;
@@ -39,7 +37,6 @@ class ResetPasswordHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
-        $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->sessionManager = $this->createMock(SessionManager::class);
         $this->sessionStorage = $this->createMock(StorageInterface::class);
@@ -53,19 +50,10 @@ class ResetPasswordHandlerTest extends TestCase
             ->with('Application\Form\User\SetPassword')
             ->willReturn($this->form);
 
-        $this->urlHelper
-            ->method('generate')
-            ->willReturnCallback(fn(string $route, array $params = []) => match ($route) {
-                'forgot-password/callback' => '/forgot-password/reset/' . ($params['token'] ?? ''),
-                'login' => '/login',
-                default => '/' . $route,
-            });
-
         $this->handler = new ResetPasswordHandler(
             $this->renderer,
             $this->formElementManager,
             $this->userService,
-            $this->urlHelper,
             $this->authenticationService,
             $this->sessionManager,
             $this->flashMessenger,
@@ -295,7 +283,7 @@ class ResetPasswordHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withMethod('POST')
-            ->withParsedBody(['password' => 'weak']) // pragma: allowlist secret
+            ->withParsedBody(['password' => 'weak'])// pragma: allowlist secret
             ->withAttribute(RouteResult::class, $routeResult);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
