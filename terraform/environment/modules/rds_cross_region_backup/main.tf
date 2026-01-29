@@ -13,7 +13,7 @@ resource "aws_backup_vault" "secondary" {
 
 resource "aws_backup_vault" "backup_account" {
   provider    = aws.backup
-  name        = "${var.environment_name}_${data.aws_region.current.region}_cross_account_backup_vault"
+  name        = "${var.environment_name}_${data.aws_region.current.region}_opg_lpa"
   kms_key_arn = data.aws_kms_key.backup.arn
 }
 
