@@ -141,10 +141,10 @@ class Module implements FormElementProviderInterface
             $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
             // Listeners that needs to run on every request (higher priority numbers run first)
-            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1002);
-            new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1001);
-            new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1000);
-            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 999);
+            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
+            new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1002);
+            new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
+            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
             new LpaViewInjectListener()->attach($eventManager);
         }
     }
