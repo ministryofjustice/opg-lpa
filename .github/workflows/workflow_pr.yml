@@ -89,6 +89,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
+  cypress_mezzio_tests:
+    uses: ./.github/workflows/front_mezzio_tests.yml
+    name: Run Cypress Front-Mezzio Tests
+
   terraform_account_development:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
@@ -287,7 +291,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @FrontMezzio"
     secrets:
       AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
       AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
@@ -304,6 +308,7 @@ jobs:
       - cypress_tests_Signup_StitchedClone
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
+      - cypress_mezzio_tests
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"
@@ -318,7 +323,8 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Signup_StitchedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
+            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}} &&
+            ${{ contains(needs.cypress_mezzio_tests.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
