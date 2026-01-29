@@ -74,16 +74,15 @@ provider "aws" {
 
 provider "aws" {
   region = "eu-west-1"
-  alias  = "backup_account"
+  alias  = "backup"
   default_tags {
     tags = local.default_tags
   }
   assume_role {
-    role_arn     = "arn:aws:iam::${local.account.backup_account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::238302996107:role/${var.default_role}"
     session_name = "terraform-session"
   }
 }
-
 provider "pagerduty" {
   token = var.pagerduty_token
 }

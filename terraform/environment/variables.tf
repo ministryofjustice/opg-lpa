@@ -32,7 +32,6 @@ variable "accounts" {
       sirius_api_gateway_endpoint            = string
       sirius_api_gateway_arn                 = string
       sirius_api_healthcheck_arn             = string
-      backup_account_key_arn                 = string
       telemetry_requests_sampled_fraction    = string
       auth_token_ttl_secs                    = number
       always_on                              = bool

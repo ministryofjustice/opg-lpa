@@ -12,6 +12,12 @@ resource "aws_backup_vault" "secondary" {
   kms_key_arn = data.aws_kms_key.destination_rds_snapshot_key.arn
 }
 
+resource "aws_backup_vault" "backup_account" {
+  provider    = aws.backup
+  name        = "${var.environment_name}_${data.aws_region.current.region}_cross_account_backup_vault"
+  kms_key_arn = var.backup_key.arn
+}
+
 resource "aws_backup_selection" "main" {
   plan_id      = aws_backup_plan.main.id
   name         = "${var.environment_name}_aurora_cluster_selection"
