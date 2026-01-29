@@ -12,6 +12,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Router\RouteMatch;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +32,8 @@ class ResetPasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $token = $request->getAttribute('token');
+        $routeMatch = $request->getAttribute(RouteMatch::class);
+        $token = $routeMatch?->getParam('token');
 
         if (empty($token)) {
             $html = $this->renderer->render(
