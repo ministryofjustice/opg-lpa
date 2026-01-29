@@ -1,4 +1,3 @@
-data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
 resource "aws_backup_vault" "main" {
@@ -15,7 +14,7 @@ resource "aws_backup_vault" "secondary" {
 resource "aws_backup_vault" "backup_account" {
   provider    = aws.backup
   name        = "${var.environment_name}_${data.aws_region.current.region}_cross_account_backup_vault"
-  kms_key_arn = var.backup_key.arn
+  kms_key_arn = data.aws_kms_key.backup.arn
 }
 
 resource "aws_backup_selection" "main" {

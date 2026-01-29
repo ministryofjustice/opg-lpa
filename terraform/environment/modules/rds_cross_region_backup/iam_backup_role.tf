@@ -1,5 +1,4 @@
 
-
 resource "aws_iam_role" "aurora_backup_role" {
   name               = "${var.environment_name}_aurora_cluster_backup_role"
   assume_role_policy = data.aws_iam_policy_document.aurora_cluster_backup_role.json
@@ -19,4 +18,26 @@ resource "aws_iam_policy" "kms_aurora_backup_role" {
   name        = "kms_aurora_backup_role"
   description = "KMS policy for aurora backup role"
   policy      = data.aws_iam_policy_document.aurora_backup_role.json
+}
+
+data "aws_iam_policy_document" "aurora_cluster_backup_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["backup.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "aurora_backup_role" {
+  statement {
+    actions = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
+
+    resources = [
+      data.aws_kms_key.source_rds_snapshot_key.arn,
+      data.aws_kms_key.destination_rds_snapshot_key.arn,
+    ]
+  }
 }

@@ -1,25 +1,12 @@
-data "aws_iam_policy_document" "aurora_cluster_backup_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
+data "aws_caller_identity" "current" {}
 
-    principals {
-      type        = "Service"
-      identifiers = ["backup.amazonaws.com"]
-    }
-  }
+data "aws_region" "secondary" {
+  provider = aws.destination
 }
 
-data "aws_iam_policy_document" "aurora_backup_role" {
-  statement {
-    actions = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
-
-    resources = [
-      data.aws_kms_key.source_rds_snapshot_key.arn,
-      data.aws_kms_key.destination_rds_snapshot_key.arn,
-    ]
-  }
+data "aws_caller_identity" "backup" {
+  provider = aws.backup
 }
-
 
 data "aws_kms_key" "destination_rds_snapshot_key" {
   provider = aws.destination
@@ -28,4 +15,9 @@ data "aws_kms_key" "destination_rds_snapshot_key" {
 
 data "aws_kms_key" "source_rds_snapshot_key" {
   key_id = "arn:aws:kms:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
+}
+
+data "aws_kms_key" "backup" {
+  provider = aws.backup
+  key_id   = "arn:aws:kms:${data.aws_region.current.region}:${data.aws_caller_identity.backup.account_id}:alias/opg-lpa-${var.account_name}-aws-backup-key"
 }
