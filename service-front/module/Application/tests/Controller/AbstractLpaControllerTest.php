@@ -67,7 +67,6 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController(TestableAbstractLpaController::class);
 
-        $response = new Response();
         $event = Mockery::mock(MvcEvent::class);
 
         $this->layout->shouldReceive('__invoke')->andReturn($this->layout)->once();
@@ -80,12 +79,15 @@ final class AbstractLpaControllerTest extends AbstractControllerTestCase
         $flowChecker->shouldReceive('getNearestAccessibleRoute')
             ->withArgs(['lpa/donor', null])->andReturn('lpa/checkout')->once();
         $flowChecker->shouldReceive('getRouteOptions')->withArgs(['lpa/checkout'])->andReturn([])->once();
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
 
         $result = $controller->onDispatch($event);
 
-        $this->assertEquals($result, $response);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 
     public function testOnDispatchDownload(): void

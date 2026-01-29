@@ -41,13 +41,13 @@ final class DeleteControllerTest extends AbstractControllerTestCase
         /** @var DeleteController $controller */
         $controller = $this->getController(DeleteController::class);
 
-        $response = new Response();
-
         $this->userDetails->shouldReceive('delete')->andReturn(true)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['deleted'])->andReturn($response)->once();
-
         $result = $controller->confirmAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/deleted', $location);
     }
 }

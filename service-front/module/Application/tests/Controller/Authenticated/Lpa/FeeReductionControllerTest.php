@@ -208,7 +208,6 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
-        $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeUniversalCredit'];
 
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
@@ -226,12 +225,11 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionSuccessReducedFeeLowIncome(): void
@@ -239,7 +237,6 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
-        $response = new Response();
         $postData = ['reductionOptions' => 'reducedFeeLowIncome'];
 
         $this->form->shouldReceive('bind')->withArgs([['reductionOptions' => 'notApply']])->once();
@@ -257,12 +254,11 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testIndexActionSuccessNotApply(): void
@@ -270,7 +266,6 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
         /** @var FeeReductionController $controller */
         $controller = $this->getController(FeeReductionController::class);
 
-        $response = new Response();
         $postData = ['reductionOptions' => 'notApply'];
 
         $this->lpa->payment = null;
@@ -288,11 +283,10 @@ final class FeeReductionControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/fee-reduction');
-        $this->redirect->shouldReceive('toRoute')
-            ->withArgs(['lpa/checkout', ['lpa-id' => $this->lpa->id], []])->andReturn($response)->once();
-
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/checkout', $result->getHeaders()->get('Location')->getUri());
     }
 }

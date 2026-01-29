@@ -85,7 +85,7 @@ $this->addErrorMap([
                     </div>
                 <?php } ?>
 
-                <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                <?php if (isset($user['lastLoginAt'])) { ?>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Last login time
@@ -96,7 +96,7 @@ $this->addErrorMap([
                     </div>
                 <?php } ?>
 
-                <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                <?php if (isset($user['failedLoginAttempts'])) { ?>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Number of failed login attempts
@@ -107,7 +107,7 @@ $this->addErrorMap([
                     </div>
                 <?php } ?>
 
-                <?php if (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                <?php if (isset($user['isDeleted']) && $user['isDeleted']) { ?>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Deleted on
@@ -134,7 +134,7 @@ $this->addErrorMap([
                     </div>
                 <?php } ?>
 
-                <?php if (array_key_exists('numberOfLpas', $user) && !is_null($user['numberOfLpas'])) { ?>
+                <?php if (isset($user['numberOfLpas'])) { ?>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Number of LPAs

@@ -56,13 +56,13 @@
                             <dd class="govuk-summary-list__value">
                                 <?php if (array_key_exists('isActive', $user)) { ?>
                                     <?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?>
-                                <?php } elseif (array_key_exists('isDeleted', $user) && $user['isDeleted']) { ?>
+                                <?php } elseif (!empty($user['isDeleted'])) { ?>
                                     Deleted
                                 <?php } ?>
                             </dd>
                         </div>
 
-                        <?php if (isset($user['activatedAt'])) { ?>
+                        <?php if (!empty($user['activatedAt'])) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Date activated
@@ -73,7 +73,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('lastLoginAt', $user)) { ?>
+                        <?php if (!empty($user['lastLoginAt'])) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Last login time
@@ -84,7 +84,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('failedLoginAttempts', $user)) { ?>
+                        <?php if (!empty($user['failedLoginAttempts'])) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Number of failed login attempts
@@ -95,7 +95,7 @@
                             </div>
                         <?php } ?>
 
-                        <?php if (array_key_exists('numberOfLpas', $user)) { ?>
+                        <?php if (!empty($user['numberOfLpas'])) { ?>
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Number of LPAs

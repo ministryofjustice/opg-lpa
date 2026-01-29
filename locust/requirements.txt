@@ -44,7 +44,7 @@ gevent==25.9.1
     #   locust-cloud
 geventhttpclient==2.3.7
     # via locust
-greenlet==3.3.0
+greenlet==3.3.1
     # via gevent
 h11==0.16.0
     # via wsproto

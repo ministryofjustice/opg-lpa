@@ -127,18 +127,17 @@ final class TypeControllerTest extends AbstractControllerTestCase
         /** @var TypeController $controller */
         $controller = $this->getController(TypeController::class);
 
-        $response = new Response();
-
         $this->setPostValid($this->form, $this->postData);
         $this->form->shouldReceive('getData')->andReturn($this->postData)->once();
         $this->lpaApplicationService->shouldReceive('setType')
             ->withArgs([$this->lpa, $this->postData['type']])->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/form-type');
-        $this->setRedirectToRoute('lpa/donor', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('/lpa/91333263035/donor', $result->getHeaders()->get('Location')->getUri());
     }
 }
