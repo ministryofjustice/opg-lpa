@@ -22,10 +22,6 @@ services:
       args:
         ENABLE_XDEBUG: 0
       dockerfile: front-mezzio-test/docker/app/Dockerfile
-    volumes:
-      - ./front-mezzio-test:/app
-      - ./shared:/shared
-      - ./cypress-mezzio-test:/app/cypress-mezzio-test
     environment:
       PHP_IDE_CONFIG: serverName=front-mezzio-test
     healthcheck:
