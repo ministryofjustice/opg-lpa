@@ -43,7 +43,6 @@ variable "accounts" {
         cluster_identifier                 = string
         aurora_cross_region_backup_enabled = bool
         aurora_restore_testing_enabled     = bool
-        backup_account_id                  = string
         daily_backup_deletion              = number
         daily_backup_cold_storage          = number
         monthly_backup_deletion            = number
