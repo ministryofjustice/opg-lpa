@@ -2,7 +2,8 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\View\StatusViewDataBuilder;
 use DateTime;
 use Laminas\View\Model\ViewModel;
@@ -12,9 +13,10 @@ use MakeShared\Logging\LoggerTrait;
  * Class StatusController
  * @package Application\Controller\Authenticated\Lpa
  */
-class StatusController extends AbstractLpaController
+class StatusController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     public function indexAction()
     {

@@ -3,7 +3,8 @@
 namespace Application\Controller\Authenticated\Lpa;
 
 use Alphagov\Pay\Client as GovPayClient;
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\Service\Lpa\Communication;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -25,9 +26,10 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutController extends AbstractLpaController
+class CheckoutController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     /** @var Communication */
     private $communicationService;

@@ -22,12 +22,15 @@ use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
 use Application\Listener\AuthenticationListener;
+use Application\Listener\LpaLoaderListener;
+use Application\Listener\LpaViewInjectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Lpa\ContinuationSheets;
@@ -135,11 +138,14 @@ class Module implements FormElementProviderInterface
             $sessionUtility = $serviceManager->get(SessionUtility::class);
             $userService = $serviceManager->get(Details::class);
             $config = $serviceManager->get('config');
+            $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
             // Listeners that needs to run on every request (higher priority numbers run first)
             new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1002);
             new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1001);
-            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
+            new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1000);
+            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 999);
+            new LpaViewInjectListener()->attach($eventManager);
         }
     }
 

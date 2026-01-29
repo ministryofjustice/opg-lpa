@@ -2,16 +2,18 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\Service\Lpa\Applicant as ApplicantService;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
-class HowPrimaryAttorneysMakeDecisionController extends AbstractLpaController
+class HowPrimaryAttorneysMakeDecisionController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     /** @var ApplicantService */
     private $applicantService;

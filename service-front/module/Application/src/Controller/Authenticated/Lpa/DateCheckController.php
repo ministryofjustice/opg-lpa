@@ -2,19 +2,20 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\Service\DateCheckViewModelHelper;
 use Laminas\Http\Response;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
-class DateCheckController extends AbstractLpaController
+class DateCheckController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     private DateCheckViewModelHelper $dateCheckViewModelHelper;
-
 
     public function indexAction(): ViewModel|Response
     {
@@ -126,7 +127,6 @@ class DateCheckController extends AbstractLpaController
         return $viewModel;
     }
 
-
     public function validAction()
     {
         // Generate the return target from the route
@@ -141,7 +141,6 @@ class DateCheckController extends AbstractLpaController
             'returnRoute' => $returnRoute,
         ]);
     }
-
 
     private function dateArrayToTime(array $dateArray)
     {

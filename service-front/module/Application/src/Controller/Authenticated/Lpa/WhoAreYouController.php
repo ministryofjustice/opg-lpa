@@ -2,15 +2,17 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use Laminas\Form\Element;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
-class WhoAreYouController extends AbstractLpaController
+class WhoAreYouController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     public function indexAction()
     {

@@ -17,7 +17,6 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use RuntimeException;
 use Laminas\Http\Response;
-use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
@@ -370,12 +369,10 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $event = new MvcEvent();
+        $event = $controller->getEvent();
         $routeMatch = $this->getRouteMatch($controller);
-        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
         $event->setResponse($response);
-        $controller->setEvent($event);
 
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(true)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
@@ -495,12 +492,10 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $event = new MvcEvent();
+        $event = $controller->getEvent();
         $routeMatch = $this->getRouteMatch($controller);
-        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
         $event->setResponse($response);
-        $controller->setEvent($event);
 
         $this->params->shouldReceive('fromRoute')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();
@@ -566,12 +561,10 @@ final class PeopleToNotifyControllerTest extends AbstractControllerTestCase
         /** @var PeopleToNotifyController $controller */
         $controller = $this->getController(TestablePeopleToNotifyController::class);
 
-        $event = new MvcEvent();
+        $event = $controller->getEvent();
         $routeMatch = $this->getRouteMatch($controller);
-        $event->setRouteMatch($routeMatch);
         $response = Mockery::mock(Response::class);
         $event->setResponse($response);
-        $controller->setEvent($event);
 
         $routeMatch->shouldReceive('getParam')->withArgs(['idx'])->andReturn(-1)->once();
         $routeMatch->shouldReceive('setParam')->withArgs(['action', 'not-found'])->once();

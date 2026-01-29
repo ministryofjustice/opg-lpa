@@ -2,55 +2,20 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Metadata;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionManagerSupport;
-use Application\Model\Service\Session\SessionUtility;
-use Application\Model\Service\User\Details as UserService;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\View\Helper\Traits\MoneyFormatterTrait;
 use Laminas\Form\Element;
-use Laminas\ServiceManager\AbstractPluginManager;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\Logging\LoggerTrait;
 
-class FeeReductionController extends AbstractLpaController
+class FeeReductionController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
     use MoneyFormatterTrait;
-
-    /**
-     * instance.
-     */
-    public function __construct(
-        protected $lpaId,
-        protected AbstractPluginManager $formElementManager,
-        protected SessionManagerSupport $sessionManagerSupport,
-        protected AuthenticationService $authenticationService,
-        protected array $config,
-        protected LpaApplicationService $lpaApplicationService,
-        protected UserService $userService,
-        protected ReplacementAttorneyCleanup $replacementAttorneyCleanup,
-        protected Metadata $metadata,
-        protected SessionUtility $sessionUtility,
-    ) {
-        parent::__construct(
-            $lpaId,
-            $formElementManager,
-            $sessionManagerSupport,
-            $authenticationService,
-            $config,
-            $lpaApplicationService,
-            $userService,
-            $replacementAttorneyCleanup,
-            $metadata,
-            $sessionUtility,
-        );
-    }
+    use LpaLoaderTrait;
 
     public function indexAction()
     {
