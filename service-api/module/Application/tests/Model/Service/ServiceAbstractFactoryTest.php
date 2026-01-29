@@ -52,7 +52,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
     public static function servicesProvider(): array
     {
         return [
-            [AccountCleanupService::class,
+            'AccountCleanupService' => [AccountCleanupService::class,
                 [
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
                     ApplicationRepositoryInterface::class =>  Mockery::mock(ApplicationRepositoryInterface::class),
@@ -62,14 +62,14 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
-            [PasswordService::class,
+            'PasswordService' => [PasswordService::class,
                 [
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
                     AuthenticationService::class => Mockery::mock(AuthenticationService::class),
                     'config' => ['authentication_tokens' => ['use_hash_tokens' => false]],
                 ]
             ],
-            [PdfsService::class,
+            'PdfsService' => [PdfsService::class,
                 [
                     ApplicationRepositoryInterface::class =>  Mockery::mock(ApplicationRepositoryInterface::class),
                     'config' => [],
@@ -78,22 +78,23 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
-            [SeedService::class,
+            'SeedService' => [SeedService::class,
                 [
                     ApplicationRepositoryInterface::class =>  Mockery::mock(ApplicationRepositoryInterface::class),
                     ApplicationsService::class => Mockery::mock(ApplicationsService::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
-            [UsersService::class,
+            'UsersService' => [UsersService::class,
                 [
                     LogRepositoryInterface::class => Mockery::mock(LogRepositoryInterface::class),
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
+                    ApplicationRepositoryInterface::class => Mockery::mock(ApplicationRepositoryInterface::class),
                     ApplicationsService::class => Mockery::mock(ApplicationsService::class),
                     'config' => ['authentication_tokens' => ['use_hash_tokens' => false]],
                 ]
             ],
-            [ProcessingStatusService::class,
+            'ProcessingStatusService' => [ProcessingStatusService::class,
                 [
                     GuzzleHttpClient::class => Mockery::mock(GuzzleHttpClient::class),
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
