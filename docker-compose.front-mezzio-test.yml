@@ -1,0 +1,63 @@
+services:
+
+  mezzio-test-web:
+    container_name: mezzio-test--web
+    image: mezzio-test-web
+    depends_on:
+      - mezzio-test-app
+    volumes:
+      - ./service-front/public:/web
+    build:
+      context: ./
+      dockerfile: service-front/docker/web/Dockerfile
+    environment:
+      APP_HOST: mezzio-test-app
+      APP_PORT: 9000
+
+  mezzio-test-app:
+    container_name: mezzio-test
+    image: mezzio-test
+    build:
+      context: ./
+      args:
+        ENABLE_XDEBUG: 0
+      dockerfile: front-mezzio-test/docker/app/Dockerfile
+    environment:
+      PHP_IDE_CONFIG: serverName=front-mezzio-test
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+
+  mezzio-test-ssl:
+    container_name: lpa-front-ssl
+    image: lpa-front-ssl
+    depends_on:
+      - mezzio-test-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
+    ports:
+      - 7005:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7005"
+      SSL_PORT: "443"
+      TARGET_HOST: "mezzio-test-web"
+      TARGET_PORT: "8080"
+
+  cypress-mezzio-test:
+    depends_on:
+      - mezzio-test-ssl
+    build:
+      context: ./
+      dockerfile: cypress/Dockerfile
+    command: [ "run", "--spec", "cypress/e2e/FrontMezzioTest.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    environment:
+      CYPRESS_baseUrl: https://mezzio-test-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots
