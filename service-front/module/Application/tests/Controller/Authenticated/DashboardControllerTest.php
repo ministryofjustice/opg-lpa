@@ -21,7 +21,6 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         /** @var DashboardController $controller */
         $controller = $this->getController(DashboardController::class);
 
-        $response = new Response();
         $lpasSummary = [
             'applications' => [],
             'total' => 0,
@@ -33,11 +32,14 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->lpaApplicationService->shouldReceive('getLpaSummaries')
             ->withArgs([null, 1, 50])->andReturn($lpasSummary)->once();
         $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(null)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['lpa-type-no-id'])->andReturn($response)->once();
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa-type-no-id', $location);
     }
 
     public function testIndexAction(): void
@@ -166,25 +168,23 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         /** @var DashboardController $controller */
         $controller = $this->getController(DashboardController::class);
 
-        $response = new Response();
-
         $this->params->shouldReceive('fromRoute')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('createApplication')->andReturn(null)->once();
         $this->flashMessenger->shouldReceive('addErrorMessage')
             ->withArgs(['Error creating a new LPA. Please try again.'])->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard'])->andReturn($response)->once();
-
         $result = $controller->createAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/user/dashboard', $location);
     }
 
     public function testCreateActionSeedLpaPartialSuccess(): void
     {
         /** @var DashboardController $controller */
         $controller = $this->getController(DashboardController::class);
-
-        $response = new Response();
 
         $this->params
             ->shouldReceive('fromRoute')
@@ -210,19 +210,18 @@ final class DashboardControllerTest extends AbstractControllerTestCase
             ->andReturn(false)
             ->once();
 
-        $this->redirect
-            ->shouldReceive('toRoute')
-            ->withArgs(['lpa/form-type', ['lpa-id' => $lpa->id]])
-            ->andReturn($response)
-            ->once();
-
         $this->sessionUtility
             ->shouldReceive('unsetInMvc')
             ->with('clone', '1');
 
         $result = $controller->createAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/form-type', $location);
+        $this->assertStringContainsString((string) $this->lpa->id, $location);
     }
 
     public function testDeleteActionLPAAlreadyDeleted(): void
@@ -239,10 +238,11 @@ final class DashboardControllerTest extends AbstractControllerTestCase
         $this->flashMessenger->shouldReceive('addErrorMessage')
             ->withArgs(['LPA could not be deleted'])->once();
 
-        $response = new Response();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard', []])->andReturn($response)->once();
+        $result = $controller->deleteLpaAction();
 
-        $controller->deleteLpaAction();
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString('user/dashboard', $result->getHeaders()->get('Location')->getUri());
     }
 
     public function testDeleteActionSuccess(): void
@@ -252,19 +252,19 @@ final class DashboardControllerTest extends AbstractControllerTestCase
 
         $this->params->shouldReceive('fromQuery')->withArgs(['page'])->andReturn(null)->once();
 
-        $response = new Response();
-
         $event = new MvcEvent();
         $routeMatch = Mockery::mock(RouteMatch::class);
         $event->setRouteMatch($routeMatch);
         $controller->setEvent($event);
         $routeMatch->shouldReceive('getParam')->withArgs(['lpa-id'])->andReturn(1)->once();
         $this->lpaApplicationService->shouldReceive('deleteApplication')->andReturn(true)->once();
-        $this->redirect->shouldReceive('toRoute')->withArgs(['user/dashboard', []])->andReturn($response)->once();
-
         $result = $controller->deleteLpaAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/user/dashboard', $location);
     }
 
     public function testConfirmDeleteLpaActionNonJs(): void

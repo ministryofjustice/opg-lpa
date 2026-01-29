@@ -29,7 +29,6 @@ class IndexController extends AbstractLpaController
         $this->getMetadata()->setAnalyticsReturnCount($lpa, $analyticsReturnCount);
 
         $destinationRoute = $this->getFlowChecker()->backToForm();
-
-        return $this->redirect()->toRoute($destinationRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($destinationRoute));
+        return $this->redirectToRoute($destinationRoute, ['lpa-id' => $lpa->id], $this->getFlowChecker()->getRouteOptions($destinationRoute));
     }
 }

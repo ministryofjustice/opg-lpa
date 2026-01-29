@@ -327,8 +327,6 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
-        $response = new Response();
-
         $this->lpa->document->correspondent = null;
         $this->lpa->document->whoIsRegistering = Correspondence::WHO_DONOR;
         $this->setFormAction($this->form, $this->lpa, 'lpa/correspondent');
@@ -344,11 +342,14 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
             })->andReturn(true)->once();
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->setMatchedRouteNameHttp($controller, 'lpa/correspondent');
-        $this->setRedirectToRoute('lpa/who-are-you', $this->lpa, $response);
 
         $result = $controller->indexAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/who-are-you', $location);
     }
 
     public function testEditActionGet(): void
@@ -456,8 +457,6 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->params->shouldReceive('fromQuery')
             ->withArgs(['reuse-details'])->andReturn('existing-correspondent')->once();
@@ -471,11 +470,14 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
             })->andReturn(true)->once();
-        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
 
         $result = $controller->editAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/correspondent', $location);
     }
 
     public function testEditActionGetReuseDetailsNull(): void
@@ -483,15 +485,18 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->once();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(null)->once();
-        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent', $response);
+        $this->setRedirectToReuseDetails($this->user, $this->lpa, 'lpa/correspondent');
 
         $result = $controller->editAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertStringContainsString(
+            'lpa/91333263035/reuse-details?',
+            $result->getHeaders()->get('Location')->getUri()
+        );
     }
 
     public function testEditActionPostReuseDonorDetailsFormEditable(): void
@@ -533,8 +538,6 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
         /** @var CorrespondentController $controller */
         $controller = $this->getController(TestableCorrespondentController::class);
 
-        $response = new Response();
-
         $this->request->shouldReceive('isXmlHttpRequest')->andReturn(false)->twice();
         $this->request->shouldReceive('isPost')->andReturn(true)->twice();
         $this->params->shouldReceive('fromQuery')->withArgs(['reuse-details'])->andReturn(1)->once();
@@ -551,10 +554,12 @@ final class CorrespondentControllerTest extends AbstractControllerTestCase
                     && $correspondent->email == new EmailAddress($this->postDataCorrespondence['email'])
                     && $correspondent->phone == new PhoneNumber($this->postDataCorrespondence['phone']);
             })->andReturn(true)->once();
-        $this->setRedirectToRoute('lpa/correspondent', $this->lpa, $response);
-
         $result = $controller->editAction();
 
-        $this->assertEquals($response, $result);
+        $this->assertInstanceOf(Response::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+
+        $location = $result->getHeaders()->get('Location')->getUri();
+        $this->assertStringContainsString('/lpa/91333263035/correspondent', $location);
     }
 }
