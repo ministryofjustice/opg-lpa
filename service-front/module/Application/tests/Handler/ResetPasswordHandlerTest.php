@@ -14,9 +14,9 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
+use Laminas\Router\RouteMatch;
 use Laminas\Session\SessionManager;
 use Laminas\Session\Storage\StorageInterface;
-use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -66,18 +66,20 @@ class ResetPasswordHandlerTest extends TestCase
 
     private function createRequestWithToken(?string $token, string $method = 'GET'): ServerRequest
     {
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')
-            ->willReturn($token !== null ? ['token' => $token] : []);
+        $routeMatch = new RouteMatch([
+            'token' => $token,
+        ]);
 
         return (new ServerRequest())
             ->withMethod($method)
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withAttribute(RouteMatch::class, $routeMatch);
     }
 
     public function testGetWithoutTokenShowsInvalidTokenPage(): void
     {
-        $request = $this->createRequestWithToken(null);
+        $request = (new ServerRequest())
+            ->withMethod('GET')
+            ->withAttribute(RouteMatch::class, new RouteMatch([]));
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -167,13 +169,12 @@ class ResetPasswordHandlerTest extends TestCase
         $token = 'valid-token';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')->willReturn(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
             ->withParsedBody(['password' => $newPass, 'password_confirm' => $newPass])
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -211,13 +212,12 @@ class ResetPasswordHandlerTest extends TestCase
         $token = 'expired-or-invalid-token';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')->willReturn(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
-            ->withParsedBody(['password' => $newPass])// pragma: allowlist secret
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withParsedBody(['password' => $newPass])
+            ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -247,13 +247,12 @@ class ResetPasswordHandlerTest extends TestCase
         $newPass = 'TestPass123'; // pragma: allowlist secret
         $errorMessage = 'Password does not meet requirements';
 
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')->willReturn(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
             ->withParsedBody(['password' => $newPass])
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -286,13 +285,12 @@ class ResetPasswordHandlerTest extends TestCase
     {
         $token = 'valid-token';
 
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')->willReturn(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
             ->withParsedBody(['password' => 'weak'])//pragma: allowlist secret
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -323,13 +321,12 @@ class ResetPasswordHandlerTest extends TestCase
     {
         $token = 'valid-token';
 
-        $routeResult = $this->createMock(RouteResult::class);
-        $routeResult->method('getMatchedParams')->willReturn(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
             ->withParsedBody(null)
-            ->withAttribute(RouteResult::class, $routeResult);
+            ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -349,11 +346,11 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testNoRouteResultHandledSafely(): void
+    public function testNoRouteMatchHandledSafely(): void
     {
         $request = (new ServerRequest())
             ->withMethod('GET')
-            ->withAttribute(RouteResult::class, null);
+            ->withAttribute(RouteMatch::class, null);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
