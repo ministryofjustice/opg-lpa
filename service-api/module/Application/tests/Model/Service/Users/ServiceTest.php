@@ -6,6 +6,7 @@ namespace ApplicationTest\Model\Service\Users;
 
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Postgres\UserModel;
@@ -24,6 +25,7 @@ use DateTime;
 final class ServiceTest extends AbstractServiceTestCase
 {
     private MockInterface|ApplicationsService $applicationsService;
+    private MockInterface|ApplicationRepositoryInterface $applicationRepository;
     private MockInterface|LogRepositoryInterface $authLogRepository;
     private MockInterface|UserRepositoryInterface $authUserRepository;
     private UsersService $service;
@@ -34,11 +36,13 @@ final class ServiceTest extends AbstractServiceTestCase
 
         //  Set up the services so they can be enhanced for each test
         $this->applicationsService = Mockery::mock(ApplicationsService::class);
+        $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
         $this->service = new UsersService();
         $this->service->setApplicationsService($this->applicationsService);
+        $this->service->setApplicationRepository($this->applicationRepository);
         $this->service->setLogRepository($this->authLogRepository);
         $this->service->setUserRepository($this->authUserRepository);
     }
@@ -175,10 +179,12 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->authUserRepository
             ->shouldReceive('getProfile')
+            ->with($user->getId())
             ->andReturn(null)
             ->twice();
         $this->authUserRepository
             ->shouldReceive('getById')
+            ->with($user->getId())
             ->andReturn($collectionUser)
             ->once();
         $this->authUserRepository
@@ -193,6 +199,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
+        $expectedUser->setNumberOfLpas(0);
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
     }
 
@@ -202,10 +209,16 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->authUserRepository
             ->shouldReceive('getProfile')
+            ->with($user->getId())
             ->andReturn($user)
             ->once();
         $this->authUserRepository
             ->shouldNotReceive('saveProfile');
+        $this->applicationRepository
+            ->shouldReceive('count')
+            ->with(['user' => $user->getId()])
+            ->andReturn(3)
+            ->once();
 
         $entity = $this->service->fetch($user->getId());
 
