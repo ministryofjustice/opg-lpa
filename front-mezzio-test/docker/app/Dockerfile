@@ -20,13 +20,14 @@ ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
 COPY --chown=root:root front-mezzio-test/composer.json /app/composer.json
 COPY --chown=root:root front-mezzio-test/composer.lock /app/composer.lock
 COPY --from=composer /usr/bin/composer /usr/bin/
-RUN composer check-platform-reqs --no-dev -d /app \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app
+RUN composer check-platform-reqs -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app
 
 # Core files for the application
 COPY --chown=root:root front-mezzio-test/config /app/config
 COPY --chown=root:root front-mezzio-test/src /app/src
 COPY --chown=root:root front-mezzio-test/public /app/public
+COPY --chown=root:root front-mezzio-test/templates /app/templates
 
 # Shared code
 COPY --chown=root:root shared /shared
