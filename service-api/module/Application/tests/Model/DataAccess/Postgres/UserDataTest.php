@@ -1402,7 +1402,7 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(
-            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"},"lastLoginAt":null}']
+            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"},"lastLoginAt":null,"numberOfLpas":null}']
         );
 
         // test

@@ -69,10 +69,12 @@ class AuthenticationListenerTest extends TestCase
     public function testListenWhenNoRouteMatch(): void
     {
         $this->authenticationService
+            ->expects($this->once())
             ->method('getIdentity')
             ->willReturn(null);
 
         $this->sessionUtility
+            ->expects($this->once())
             ->method('getFromMvc')
             ->with(ContainerNamespace::AUTH_FAILURE_REASON, 'code')
             ->willReturn('a reason code');
@@ -80,15 +82,18 @@ class AuthenticationListenerTest extends TestCase
         $expectedUrl = '/login?state=internalSystemError';
         $router = $this->createMock(RouteStackInterface::class);
         $router
+            ->expects($this->once())
             ->method('assemble')
             ->with(['state' => 'internalSystemError'], ['name' => 'login'])
             ->willReturn($expectedUrl);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn(null);
         $event
+            ->expects($this->once())
             ->method('getRouter')
             ->willReturn($router);
 
@@ -108,12 +113,14 @@ class AuthenticationListenerTest extends TestCase
     {
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch
+            ->expects($this->once())
             ->method('getParam')
             ->with('unauthenticated_route', false)
             ->willReturn(true);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
 
@@ -130,17 +137,20 @@ class AuthenticationListenerTest extends TestCase
         $identity = new User('1', 'testoken', 10000, new DateTime('2001-01-01'));
 
         $this->authenticationService
+            ->expects($this->once())
             ->method('getIdentity')
             ->willReturn($identity);
 
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch
+            ->expects($this->once())
             ->method('getParam')
             ->with('unauthenticated_route', false)
             ->willReturn(false);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
 
@@ -192,15 +202,18 @@ class AuthenticationListenerTest extends TestCase
         bool $shouldSetPreAuthUrl
     ): void {
         $this->authenticationService
+            ->expects($this->once())
             ->method('getIdentity')
             ->willReturn(null);
 
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch
+            ->expects($this->once())
             ->method('getParam')
             ->with('unauthenticated_route', false)
             ->willReturn(false);
         $routeMatch
+            ->expects($this->once())
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
@@ -216,22 +229,30 @@ class AuthenticationListenerTest extends TestCase
         }
 
         $this->sessionUtility
+            ->expects($this->once())
             ->method('getFromMvc')
             ->with(ContainerNamespace::AUTH_FAILURE_REASON, 'code')
             ->willReturn($authFailureCode);
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('unsetInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user');
 
         $expectedUrl = '/login?state=' . $expectedState;
         $router = $this->createMock(RouteStackInterface::class);
         $router
+            ->expects($this->once())
             ->method('assemble')
             ->with(['state' => $expectedState], ['name' => 'login'])
             ->willReturn($expectedUrl);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
         $event
+            ->expects($this->once())
             ->method('getRouter')
             ->willReturn($router);
 
@@ -250,7 +271,6 @@ class AuthenticationListenerTest extends TestCase
     public function testProcessWhenNoRoute(): void
     {
         $request = new ServerRequest();
-        $expectedResponse = new PSR7Response();
 
         $urlHelper = $this->createMock(UrlHelper::class);
         $urlHelper
@@ -276,11 +296,13 @@ class AuthenticationListenerTest extends TestCase
     {
         $route = $this->createMock(Route::class);
         $route
+            ->expects($this->once())
             ->method('getOptions')
             ->willReturn(['unauthenticated_route' => true]);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult
+            ->expects($this->once())
             ->method('getMatchedRoute')
             ->willReturn($route);
 
@@ -307,16 +329,19 @@ class AuthenticationListenerTest extends TestCase
         $identity = new User('1', 'testoken', 10000, new DateTime('2001-01-01'));
 
         $this->authenticationService
+            ->expects($this->once())
             ->method('getIdentity')
             ->willReturn($identity);
 
         $route = $this->createMock(Route::class);
         $route
+            ->expects($this->once())
             ->method('getOptions')
             ->willReturn(['requires_auth' => true]);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult
+            ->expects($this->once())
             ->method('getMatchedRoute')
             ->willReturn($route);
 
@@ -383,22 +408,27 @@ class AuthenticationListenerTest extends TestCase
         bool $shouldSetPreAuthUrl
     ): void {
         $this->authenticationService
+            ->expects($this->once())
             ->method('getIdentity')
             ->willReturn(null);
 
         $route = $this->createMock(Route::class);
         $route
+            ->expects($this->once())
             ->method('getOptions')
             ->willReturn([]);
         $route
+            ->expects($this->once())
             ->method('getPath')
             ->willReturn($routePath);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult
+            ->expects($this->exactly(2))
             ->method('getMatchedRoute')
             ->willReturn($route);
         $routeResult
+            ->expects($this->once())
             ->method('getMatchedRouteName')
             ->willReturn($routeName);
 
@@ -414,13 +444,19 @@ class AuthenticationListenerTest extends TestCase
         }
 
         $this->sessionUtility
+            ->expects($this->once())
             ->method('getFromMvc')
             ->with(ContainerNamespace::AUTH_FAILURE_REASON, 'code')
             ->willReturn($authFailureCode);
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('unsetInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user');
 
         $expectedUrl = '/login?state=' . $expectedState;
         $urlHelper = $this->createMock(UrlHelper::class);
         $urlHelper
+            ->expects($this->once())
             ->method('generate')
             ->with('login', [], ['state' => $expectedState])
             ->willReturn($expectedUrl);
