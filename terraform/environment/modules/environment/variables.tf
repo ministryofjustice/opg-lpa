@@ -17,13 +17,7 @@ variable "account" {
     associate_alb_with_waf_web_acl_enabled = bool
     firewalled_networks_enabled            = bool
     database = object({
-      cluster_identifier = string
-      # aurora_cross_region_backup_enabled = bool
-      # aurora_restore_testing_enabled     = bool
-      # daily_backup_deletion              = number
-      # daily_backup_cold_storage          = number
-      # monthly_backup_deletion            = number
-      # monthly_backup_cold_storage        = number
+      cluster_identifier          = string
       aurora_enabled              = bool
       aurora_instance_count       = number
       aurora_serverless           = bool
