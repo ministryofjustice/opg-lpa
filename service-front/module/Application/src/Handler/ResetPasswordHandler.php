@@ -12,7 +12,6 @@ use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Session\SessionManager;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -25,7 +24,6 @@ class ResetPasswordHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly UserService $userService,
-        private readonly UrlHelper $urlHelper,
         private readonly AuthenticationService $authenticationService,
         private readonly SessionManager $sessionManager,
         private readonly FlashMessenger $flashMessenger,
@@ -34,7 +32,6 @@ class ResetPasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // Get token from route
         /** @var RouteResult|null $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
         $matchedParams = $routeResult?->getMatchedParams() ?? [];
@@ -47,24 +44,15 @@ class ResetPasswordHandler implements RequestHandlerInterface
             return new HtmlResponse($html);
         }
 
-        // If there's currently a signed-in user, log them out and redirect
         $identity = $this->authenticationService->getIdentity();
         if ($identity !== null) {
-            // Clear session storage
             $this->sessionManager->getStorage()->clear();
-
-            // Redirect to the same page with a new CSRF token
-            return new RedirectResponse(
-                $this->urlHelper->generate('forgot-password/callback', ['token' => $token])
-            );
+            return new RedirectResponse('/forgot-password/reset/' . $token);
         }
 
         /** @var FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\User\SetPassword');
-        $form->setAttribute(
-            'action',
-            $this->urlHelper->generate('forgot-password/callback', ['token' => $token])
-        );
+        $form->setAttribute('action', '/forgot-password/reset/' . $token);
 
         $error = null;
 
@@ -82,11 +70,9 @@ class ResetPasswordHandler implements RequestHandlerInterface
 
                 $result = $this->userService->setNewPassword($token, $password);
 
-                // If successful, redirect to login with flash message
                 if ($result === true) {
                     $this->flashMessenger->addSuccessMessage('Password successfully reset');
-
-                    return new RedirectResponse($this->urlHelper->generate('login'));
+                    return new RedirectResponse('/login');
                 }
 
                 if ($result === 'invalid-token') {
@@ -96,7 +82,6 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     return new HtmlResponse($html);
                 }
 
-                // Otherwise there was an error
                 $error = $result;
             }
         }
