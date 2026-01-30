@@ -9,19 +9,21 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
 
-resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
-  role       = aws_iam_role.aurora_backup_role.name
-  policy_arn = aws_iam_policy.aurora_backup_role.arn
-}
 
-resource "aws_iam_policy" "aurora_backup_role" {
+resource "aws_iam_policy" "backup_resource_permissions" {
   name        = "aurora_backup_role"
   description = "Policies for aurora backup role"
   policy = concat(
-    data.aws_iam_policy_document.aurora_backup_role.json,
+    data.aws_iam_policy_document.kms_permissions.json,
     data.aws_iam_policy_document.cross_account_permissions.json
   )
 }
+
+resource "aws_iam_role_policy_attachment" "backup_resource_permissions" {
+  role       = aws_iam_role.aurora_backup_role.name
+  policy_arn = aws_iam_policy.backup_resource_permissions.arn
+}
+
 
 data "aws_iam_policy_document" "aurora_cluster_backup_role" {
   statement {
@@ -34,7 +36,7 @@ data "aws_iam_policy_document" "aurora_cluster_backup_role" {
   }
 }
 
-data "aws_iam_policy_document" "aurora_backup_role" {
+data "aws_iam_policy_document" "kms_permissions" {
   statement {
     actions = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
 
