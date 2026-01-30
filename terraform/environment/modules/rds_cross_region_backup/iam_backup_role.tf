@@ -9,15 +9,18 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
 
-resource "aws_iam_role_policy_attachment" "kms_aurora_backup_role" {
+resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
   role       = aws_iam_role.aurora_backup_role.name
-  policy_arn = aws_iam_policy.kms_aurora_backup_role.arn
+  policy_arn = aws_iam_policy.aurora_backup_role.arn
 }
 
-resource "aws_iam_policy" "kms_aurora_backup_role" {
-  name        = "kms_aurora_backup_role"
-  description = "KMS policy for aurora backup role"
-  policy      = data.aws_iam_policy_document.aurora_backup_role.json
+resource "aws_iam_policy" "aurora_backup_role" {
+  name        = "aurora_backup_role"
+  description = "Policies for aurora backup role"
+  policy = concat(
+    data.aws_iam_policy_document.aurora_backup_role.json,
+    data.aws_iam_policy_document.cross_account_permissions.json
+  )
 }
 
 data "aws_iam_policy_document" "aurora_cluster_backup_role" {
@@ -39,5 +42,20 @@ data "aws_iam_policy_document" "aurora_backup_role" {
       data.aws_kms_key.source_rds_snapshot_key.arn,
       data.aws_kms_key.destination_rds_snapshot_key.arn,
     ]
+  }
+}
+
+data "aws_iam_policy_document" "cross_account_permissions" {
+  provider = aws.backup
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.aurora_backup_role.arn]
+    }
+
+    actions   = ["backup:CopyIntoBackupVault"]
+    resources = [aws_backup_vault.backup_account.arn]
   }
 }
