@@ -10,16 +10,17 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
 }
 
 
-resource "aws_iam_policy" "backup_resource_permissions" {
+resource "aws_iam_policy" "aurora_backup_resource" {
   name        = "aurora_backup_role"
   description = "Policies for aurora backup role"
-  policy      = data.aws_iam_policy_document.backup_permissions.json
+  policy      = data.aws_iam_policy_document.aurora_backup_role.json
 }
 
-resource "aws_iam_role_policy_attachment" "backup_resource_permissions" {
+resource "aws_iam_role_policy_attachment" "aurora_backup_resources" {
   role       = aws_iam_role.aurora_backup_role.name
-  policy_arn = aws_iam_policy.backup_resource_permissions.arn
+  policy_arn = aws_iam_policy.aurora_backup_resources.arn
 }
+
 
 
 data "aws_iam_policy_document" "aurora_cluster_backup_role" {
@@ -33,25 +34,13 @@ data "aws_iam_policy_document" "aurora_cluster_backup_role" {
   }
 }
 
-data "aws_iam_policy_document" "backup_permissions" {
+data "aws_iam_policy_document" "aurora_backup_role" {
   statement {
-    effect  = "Allow"
     actions = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
 
     resources = [
       data.aws_kms_key.source_rds_snapshot_key.arn,
       data.aws_kms_key.destination_rds_snapshot_key.arn,
     ]
-  }
-  statement {
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = [aws_iam_role.aurora_backup_role.arn]
-    }
-
-    actions   = ["backup:CopyIntoBackupVault"]
-    resources = [aws_backup_vault.backup_account.arn]
   }
 }

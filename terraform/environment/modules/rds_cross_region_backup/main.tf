@@ -17,6 +17,27 @@ resource "aws_backup_vault" "backup_account" {
   kms_key_arn = data.aws_kms_key.backup.arn
 }
 
+resource "aws_backup_vault_policy" "backup_account" {
+  provider          = aws.backup
+  backup_vault_name = aws_backup_vault.backup_account.name
+  policy            = data.aws_iam_policy_document.cross_account_permissions.json
+}
+
+data "aws_iam_policy_document" "cross_account_permissions" {
+  provider = aws.backup
+  statement {
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_iam_role.aurora_backup_role.arn]
+    }
+
+    actions   = ["backup:CopyIntoBackupVault"]
+    resources = [aws_backup_vault.backup_account.arn]
+  }
+}
+
 resource "aws_backup_selection" "main" {
   plan_id      = aws_backup_plan.main.id
   name         = "${var.environment_name}_aurora_cluster_selection"
