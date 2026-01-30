@@ -10,7 +10,7 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
 }
 
 
-resource "aws_iam_policy" "aurora_backup_resource" {
+resource "aws_iam_policy" "aurora_backup_resources" {
   name        = "aurora_backup_role"
   description = "Policies for aurora backup role"
   policy      = data.aws_iam_policy_document.aurora_backup_role.json
