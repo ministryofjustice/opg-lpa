@@ -91,7 +91,6 @@ If the donor wants to write instructions, use words such as 'must', 'shall' and 
 
 Examples:
 
-* My attorneys must continue to make donations to charities that I have previously supported or for which I have set up standing order payments.
 * My attorneys must not make any gifts.
 * My attorneys must not sell my home unless, in my doctor's opinion, I can no longer live independently.
 * My attorneys must send annual accounts to my brother and sister.
