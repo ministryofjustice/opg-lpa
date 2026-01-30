@@ -13,10 +13,7 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
 resource "aws_iam_policy" "backup_resource_permissions" {
   name        = "aurora_backup_role"
   description = "Policies for aurora backup role"
-  policy = concat(
-    data.aws_iam_policy_document.kms_permissions.json,
-    data.aws_iam_policy_document.cross_account_permissions.json
-  )
+  policy      = data.aws_iam_policy_document.backup_permissions.json
 }
 
 resource "aws_iam_role_policy_attachment" "backup_resource_permissions" {
@@ -36,8 +33,9 @@ data "aws_iam_policy_document" "aurora_cluster_backup_role" {
   }
 }
 
-data "aws_iam_policy_document" "kms_permissions" {
+data "aws_iam_policy_document" "backup_permissions" {
   statement {
+    effect  = "Allow"
     actions = ["kms:Encrypt", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
 
     resources = [
@@ -45,10 +43,6 @@ data "aws_iam_policy_document" "kms_permissions" {
       data.aws_kms_key.destination_rds_snapshot_key.arn,
     ]
   }
-}
-
-data "aws_iam_policy_document" "cross_account_permissions" {
-  provider = aws.backup
   statement {
     effect = "Allow"
 
