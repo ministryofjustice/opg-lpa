@@ -30,7 +30,7 @@ resource "aws_iam_policy" "kms_aurora_backup_role" {
 }
 
 resource "aws_iam_role" "aurora_backup_role" {
-  name               = "aurora_cluster_backup_role"
+  name               = "${var.environment_name}_aurora_cluster_backup_role"
   assume_role_policy = data.aws_iam_policy_document.aurora_cluster_backup_role.json
 }
 
