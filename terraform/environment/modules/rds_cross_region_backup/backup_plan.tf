@@ -21,7 +21,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
+      destination_vault_arn = aws_backup_vault.backup.arn
       lifecycle {
         delete_after = var.daily_backup_deletion
       }
@@ -47,7 +47,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
+      destination_vault_arn = aws_backup_vault.backup.arn
       lifecycle {
         delete_after = var.daily_backup_deletion
       }
