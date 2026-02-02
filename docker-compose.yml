@@ -132,7 +132,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -178,6 +178,9 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      #XDEBUG_MODE: develop,debug,coverage # off # xdebug can be disable by replacing modes with "off"
+      XDEBUG_MODE: # xdebug can be disable by replacing modes with "off"
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
