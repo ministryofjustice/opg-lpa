@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Application\Controller\Authenticated\Lpa;
 use Application\Form\Lpa\AbstractActorForm;
+use Application\Listener\LpaLoaderTrait;
 use Laminas\Http\Response as HttpResponse;
 use MakeShared\DataModel\AbstractData;
 use MakeShared\DataModel\Common\Dob;
@@ -20,9 +21,10 @@ use Laminas\Router;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
-abstract class AbstractLpaActorController extends AbstractLpaController
+abstract class AbstractLpaActorController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     protected function checkReuseDetailsOptions(ViewModel $viewModel): ?HttpResponse
     {
