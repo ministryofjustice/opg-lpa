@@ -2,16 +2,18 @@
 
 namespace Application\Controller\Authenticated\Lpa;
 
-use Application\Controller\AbstractLpaController;
+use Application\Controller\AbstractAuthenticatedController;
+use Application\Listener\LpaLoaderTrait;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\DataModel\Common\LongName;
 use Laminas\View\Model\ViewModel;
 use MakeShared\Logging\LoggerTrait;
 
-class CompleteController extends AbstractLpaController
+class CompleteController extends AbstractAuthenticatedController
 {
     use LoggerTrait;
+    use LpaLoaderTrait;
 
     public function indexAction()
     {
