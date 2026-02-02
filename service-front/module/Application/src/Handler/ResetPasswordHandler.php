@@ -35,7 +35,7 @@ class ResetPasswordHandler implements RequestHandlerInterface
         $routeMatch = $request->getAttribute(RouteMatch::class);
         $token = $routeMatch?->getParam('token');
 
-        if (empty($token) || !$this->isValidTokenFormat($token)) {
+        if (!is_string($token) || $token === '' || !$this->isValidTokenFormat($token)) {
             $html = $this->renderer->render(
                 'application/general/forgot-password/invalid-reset-token.twig'
             );
