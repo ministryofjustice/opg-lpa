@@ -115,7 +115,7 @@ dc-up-debug: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	XDEBUG_MODE=develop,debug,coverage docker compose up -d --remove-orphans
+	docker compose up -d --remove-orphans
 
 .PHONY: dc-build
 dc-build:
