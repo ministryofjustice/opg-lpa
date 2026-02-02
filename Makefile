@@ -105,7 +105,17 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	docker compose up -d --remove-orphans
+	XDEBUG_MODE=off docker compose up -d --remove-orphans
+
+.PHONY: dc-up-debug
+dc-up-debug: run-composers
+	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
+	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
+	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
+	XDEBUG_MODE=develop,debug,coverage docker compose up -d --remove-orphans
 
 .PHONY: dc-build
 dc-build:
