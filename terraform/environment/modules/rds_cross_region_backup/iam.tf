@@ -1,3 +1,13 @@
+data "aws_iam_policy_document" "aurora_cluster_backup_role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["backup.amazonaws.com"]
+    }
+  }
+}
+
 data "aws_kms_key" "destination_rds_snapshot_key" {
   provider = aws.destination
   key_id   = "arn:aws:kms:${var.destination_region_name}:${data.aws_caller_identity.current.account_id}:alias/${var.key_alias}"
@@ -18,17 +28,6 @@ data "aws_iam_policy_document" "aurora_backup_role" {
   }
 }
 
-resource "aws_iam_role_policy_attachment" "kms_aurora_backup_role" {
-  role       = aws_iam_role.aurora_backup_role.name
-  policy_arn = aws_iam_policy.kms_aurora_backup_role.arn
-}
-
-resource "aws_iam_policy" "kms_aurora_backup_role" {
-  name        = "kms_aurora_backup_role"
-  description = "KMS policy for aurora backup role"
-  policy      = data.aws_iam_policy_document.aurora_backup_role.json
-}
-
 resource "aws_iam_role" "aurora_backup_role" {
   name               = "${var.environment_name}_aurora_cluster_backup_role"
   assume_role_policy = data.aws_iam_policy_document.aurora_cluster_backup_role.json
@@ -39,13 +38,13 @@ resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
 
-data "aws_iam_policy_document" "aurora_cluster_backup_role" {
-  statement {
-    actions = ["sts:AssumeRole"]
+resource "aws_iam_role_policy_attachment" "kms_aurora_backup_role" {
+  role       = aws_iam_role.aurora_backup_role.name
+  policy_arn = aws_iam_policy.kms_aurora_backup_role.arn
+}
 
-    principals {
-      type        = "Service"
-      identifiers = ["backup.amazonaws.com"]
-    }
-  }
+resource "aws_iam_policy" "kms_aurora_backup_role" {
+  name        = "kms_aurora_backup_role"
+  description = "KMS policy for aurora backup role"
+  policy      = data.aws_iam_policy_document.aurora_backup_role.json
 }
