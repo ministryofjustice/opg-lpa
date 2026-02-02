@@ -409,8 +409,9 @@ return [
                                         'token' => '[a-zA-Z0-9]+',
                                     ],
                                     'defaults' => [
-                                        'controller' => 'General\VerifyEmailAddressController',
-                                        'action'     => 'verify',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => Handler\VerifyEmailAddressHandler::class,
+                                        'unauthenticated_route' => true,
                                     ],
                                 ],
                             ],
