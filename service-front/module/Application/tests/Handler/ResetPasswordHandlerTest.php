@@ -48,7 +48,7 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->sessionManagerSupport->method('getSessionManager')->willReturn($this->sessionManager);
         $this->sessionManager->method('getStorage')->willReturn($this->sessionStorage);
-
+        $this->token = '553b15320ca9f345bda3ec4ffb8780d113da6a86'; // pragma: allowlist secret
         $this->formElementManager
             ->method('get')
             ->with('Application\Form\User\SetPassword')
@@ -114,14 +114,13 @@ class ResetPasswordHandlerTest extends TestCase
 
     public function testGetWithValidTokenDisplaysForm(): void
     {
-        $token = 'valid-reset-token-123';
-        $request = $this->createRequestWithToken($token);
+        $request = $this->createRequestWithToken($this->token);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
         $this->form->expects($this->once())
             ->method('setAttribute')
-            ->with('action', '/forgot-password/reset/' . $token);
+            ->with('action', '/forgot-password/reset/' . $this->token);
 
         $this->renderer
             ->expects($this->once())
@@ -142,8 +141,7 @@ class ResetPasswordHandlerTest extends TestCase
 
     public function testAuthenticatedUserIsLoggedOutAndRedirected(): void
     {
-        $token = 'valid-token';
-        $request = $this->createRequestWithToken($token);
+        $request = $this->createRequestWithToken($this->token);
 
         $this->authenticationService
             ->expects($this->once())
@@ -161,15 +159,14 @@ class ResetPasswordHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/forgot-password/reset/' . $token, $response->getHeaderLine('Location'));
+        $this->assertEquals('/forgot-password/reset/' . $this->token, $response->getHeaderLine('Location'));
     }
 
     public function testPostValidPasswordResetsSuccessfully(): void
     {
-        $token = 'valid-token';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $this->token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -193,7 +190,7 @@ class ResetPasswordHandlerTest extends TestCase
         $this->userService
             ->expects($this->once())
             ->method('setNewPassword')
-            ->with($token, $newPass)
+            ->with($this->token, $newPass)
             ->willReturn(true);
 
         $this->flashMessenger
@@ -209,7 +206,8 @@ class ResetPasswordHandlerTest extends TestCase
 
     public function testPostInvalidTokenShowsInvalidTokenPage(): void
     {
-        $token = 'expired-or-invalid-token';
+        // Valid format but expired/not found in database
+        $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
         $routeMatch = new RouteMatch(['token' => $token]);
@@ -241,13 +239,42 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    public function testPostMalformedTokenShowsInvalidTokenPage(): void
+    {
+        // Invalid format - rejected before reaching setNewPassword
+        $token = 'malformed-token!@#$';
+        $newPass = 'TestPass123'; // pragma: allowlist secret
+
+        $routeMatch = new RouteMatch(['token' => $token]);
+
+        $request = (new ServerRequest())
+            ->withMethod('POST')
+            ->withParsedBody(['password' => $newPass])
+            ->withAttribute(RouteMatch::class, $routeMatch);
+
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $this->userService
+            ->expects($this->never())
+            ->method('setNewPassword');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/invalid-reset-token.twig')
+            ->willReturn('<html>invalid token</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
     public function testPostServiceErrorDisplaysError(): void
     {
-        $token = 'valid-token';
         $newPass = 'TestPass123'; // pragma: allowlist secret
         $errorMessage = 'Password does not meet requirements';
 
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $this->token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -262,7 +289,7 @@ class ResetPasswordHandlerTest extends TestCase
         $this->userService
             ->expects($this->once())
             ->method('setNewPassword')
-            ->with($token, $newPass)
+            ->with($this->token, $newPass)
             ->willReturn($errorMessage);
 
         $this->renderer
@@ -283,9 +310,7 @@ class ResetPasswordHandlerTest extends TestCase
 
     public function testPostInvalidFormRedisplaysForm(): void
     {
-        $token = 'valid-token';
-
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $this->token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -319,9 +344,7 @@ class ResetPasswordHandlerTest extends TestCase
 
     public function testPostWithEmptyBodyHandledSafely(): void
     {
-        $token = 'valid-token';
-
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $this->token]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
