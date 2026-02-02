@@ -52,8 +52,8 @@ If you choose a professional, they may charge you a fee.
 The certificate provider cannot be:
 
 * any attorney or replacement attorney for this or any other LPA or enduring power of attorney that the donor has made
-* a member of the donor’s family or of any of the attorneys' families – including husbands, wives, civil partners, in-laws and step-relations
-* an unmarried partner, boyfriend or girlfriend of the donor or any of the attorneys
+* a member of the donor’s family or of any of the attorneys' families – including husbands, wives, civil partners, sons, daughters, fathers, mothers, brothers, sisters, grandparents, grandchildren, uncles, aunts nieces, nephews, in-laws and step-relations
+* an unmarried partner, boyfriend or girlfriend of the donor or any of the attorneys - whether or not they live at the same address
 * the donor’s business partner or any attorney’s business partner
 * the donor’s employee or any attorney’s employee
 * anyone running or working for a care home where the donor lives, or a member of their family

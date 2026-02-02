@@ -10,7 +10,6 @@ use Application\Model\Service\Session\SessionUtility;
 use Exception;
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
-use Application\Controller\AbstractLpaController;
 use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
@@ -25,6 +24,8 @@ use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
+use Application\Listener\LpaLoaderListener;
+use Application\Model\FormFlowChecker;
 use Laminas\Session\SessionManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -351,47 +352,15 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
                 ->andReturn($this->user)
                 ->byDefault();
 
-            if (is_subclass_of($controllerName, AbstractLpaController::class)) {
-                $lpaId = ($this->lpa instanceof Lpa ? $this->lpa->id : null);
-
-                //  If there is no identity then the getApplication call will not be made in the abstract contructor
-                if (!is_null($this->userIdentity)) {
-                    if ($this->lpa instanceof Lpa) {
-                        $this->lpaApplicationService->shouldReceive('getApplication')
-                            ->withArgs([$lpaId])
-                            ->andReturn($this->lpa)
-                            ->once();
-                    } else {
-                        $this->lpaApplicationService->shouldReceive('getApplication')
-                            ->withArgs([$lpaId])
-                            ->andReturn(false)
-                            ->once();
-                    }
-                }
-
-                $controller = new $controllerName(
-                    $lpaId,
-                    $this->formElementManager,
-                    $this->sessionManagerSupport,
-                    $this->authenticationService,
-                    $this->config,
-                    $this->lpaApplicationService,
-                    $this->userDetails,
-                    $this->replacementAttorneyCleanup,
-                    $this->metadata,
-                    $this->sessionUtility,
-                );
-            } else {
-                $controller = new $controllerName(
-                    $this->formElementManager,
-                    $this->sessionManagerSupport,
-                    $this->authenticationService,
-                    $this->config,
-                    $this->lpaApplicationService,
-                    $this->userDetails,
-                    $this->sessionUtility,
-                );
-            }
+            $controller = new $controllerName(
+                $this->formElementManager,
+                $this->sessionManagerSupport,
+                $this->authenticationService,
+                $this->config,
+                $this->lpaApplicationService,
+                $this->userDetails,
+                $this->sessionUtility,
+            );
         } else {
             $controller = new $controllerName(
                 $this->formElementManager,
@@ -407,12 +376,29 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $controller->setPluginManager($this->pluginManager);
         $controller->setEventManager($this->eventManager);
 
-        $controller->setEvent(new MvcEvent());
+        $event = new MvcEvent();
+
+        if ($this->lpa instanceof Lpa) {
+            $flowChecker = new FormFlowChecker($this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+        }
+
+        $controller->setEvent($event);
+
+        $controller->dispatch($this->request);
+
         if (method_exists($controller, 'setRedirectRouter')) {
             $controller->setRedirectRouter($this->router);
         }
 
-        $controller->dispatch($this->request);
+        if (method_exists($controller, 'setMetadata')) {
+            $controller->setMetadata($this->metadata);
+        }
+
+        if (method_exists($controller, 'setReplacementAttorneyCleanup')) {
+            $controller->setReplacementAttorneyCleanup($this->replacementAttorneyCleanup);
+        }
 
         return $controller;
     }
@@ -423,8 +409,29 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     public function getRouteMatch($controller)
     {
-        $controller->getEvent()->setRouteMatch($this->routeMatch);
+        $event = $controller->getEvent();
+        $event->setRouteMatch($this->routeMatch);
+
+        if ($this->lpa instanceof Lpa && $event->getParam(LpaLoaderListener::ATTR_LPA) === null) {
+            $flowChecker = new FormFlowChecker($this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+        }
+
         return $this->routeMatch;
+    }
+
+    public function setControllerEvent($controller, MvcEvent $event): MvcEvent
+    {
+        if ($this->lpa instanceof Lpa) {
+            $flowChecker = new FormFlowChecker($this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
+            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+        }
+
+        $controller->setEvent($event);
+
+        return $event;
     }
 
     /**
@@ -502,13 +509,13 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $document = $seedLpa->getDocument()->toArray();
 
         $result += array_intersect_key($document, array_flip([
-                'donor',
-                'correspondent',
-                'certificateProvider',
-                'primaryAttorneys',
-                'replacementAttorneys',
-                'peopleToNotify'
-            ]));
+            'donor',
+            'correspondent',
+            'certificateProvider',
+            'primaryAttorneys',
+            'replacementAttorneys',
+            'peopleToNotify'
+        ]));
 
         return array_filter($result, function ($v): bool {
             return !empty($v);
@@ -613,8 +620,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         ];
 
         $reuseDetailsUrl = "lpa/{$lpa->getId()}/reuse-details?" . implode('&', array_map(function ($value, $key): string {
-            $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
-            return "$key=$valueString";
+                $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
+                return "$key=$valueString";
         }, $queryParams, array_keys($queryParams)));
 
         $this->url->shouldReceive('fromRoute')
@@ -761,8 +768,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         }
         if (count($queryParams) > 0) {
             $url .= '?' . implode('&', array_map(function ($value, $key): string {
-                $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
-                return "$key=$valueString";
+                    $valueString = is_bool($value) ? $value === true ? '1' : '0' : $value;
+                    return "$key=$valueString";
             }, $queryParams, array_keys($queryParams)));
         }
         return $url;
