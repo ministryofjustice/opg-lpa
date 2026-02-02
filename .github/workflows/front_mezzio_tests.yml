@@ -1,0 +1,29 @@
+name: "[Workflow] Front Mezzio Tests"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+
+jobs:
+  front_mezzio_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - name: Run Front Mezzio Tests 
+        run: |
+          docker compose -f docker-compose.front-mezzio-test.yml up --detach
+          make cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
+          docker compose -f docker-compose.front-mezzio-test.yml down
+
+      - name: Upload Screenshot Artifact
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots/
+          overwrite: true
