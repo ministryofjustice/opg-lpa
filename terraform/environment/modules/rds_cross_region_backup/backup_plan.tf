@@ -5,7 +5,7 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(0 19 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(30 19 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
     # TODO - CHANGE BACK WHEN TEST COMPLETE
@@ -21,7 +21,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.backup.arn
+      destination_vault_arn = aws_backup_vault.backup_account.arn
       lifecycle {
         delete_after = var.daily_backup_deletion
       }
@@ -47,7 +47,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.backup.arn
+      destination_vault_arn = aws_backup_vault.backup_account.arn
       lifecycle {
         delete_after = var.daily_backup_deletion
       }
