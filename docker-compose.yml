@@ -132,7 +132,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -178,6 +178,8 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
 
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -227,7 +229,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
@@ -284,6 +286,8 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
       XDEBUG_TRIGGER: "true"
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -313,9 +317,7 @@ services:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
       args:
-        # enable debug is recommended to default to off for admin app to avoid slowness, as admin is rarely debugged.
-        # Turn this on if you wish to debug the admin app
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
     volumes:
       - ./service-admin:/app
       - ./shared:/shared
@@ -345,6 +347,8 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -388,9 +392,7 @@ services:
     build:
       context: ./
       args:
-        # Other containers are built with debug on. Lines could be put here to build pdf with debug,
-        # but not doing as default due to pdf being slow already
-        ENABLE_XDEBUG: 0
+        ENABLE_XDEBUG: 1
         VISUAL_TESTS: true
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
@@ -401,7 +403,8 @@ services:
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
 
       # XDEBUG mode and session need setting for this to run when xdebug mode above is enabled
-      XDEBUG_MODE: debug
+      XDEBUG_CONFIG: client_host=host.docker.internal
+      XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
       XDEBUG_SESSION: 1
 
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
