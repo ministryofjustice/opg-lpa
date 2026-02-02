@@ -6,11 +6,11 @@ module "aws_backup_cross_account_key" {
   ]
   decryption_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aurora_cluster_backup_role",
+    aws_iam_role.aurora_backup_role.arn,
   ]
   encryption_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aurora_cluster_backup_role",
+    aws_iam_role.aurora_backup_role.arn,
   ]
   usage_services = ["backup.*.amazonaws.com"]
   description    = "Encryption keys for Make an LPA backups copied into the backup account"
