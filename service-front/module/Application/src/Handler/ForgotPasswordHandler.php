@@ -45,13 +45,12 @@ class ForgotPasswordHandler implements RequestHandlerInterface
             $form->setData($data);
 
             if ($form->isValid()) {
-                $formData = $form->getData();
-                $email = is_array($formData) ? ($formData['email'] ?? '') : '';
+                $formData = $form->getData(FormInterface::VALUES_AS_ARRAY);
 
-                $result = $this->userService->requestPasswordResetEmail($email);
+                $result = $this->userService->requestPasswordResetEmail($formData['email']);
 
                 $viewParams = [
-                    'email' => $email,
+                    'email' => $formData['email'],
                     'accountNotActivated' => ($result === 'account-not-activated'),
                 ];
 
