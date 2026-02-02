@@ -15,9 +15,9 @@ module "aws_backup_cross_account_key" {
   usage_services = ["backup.*.amazonaws.com"]
   description    = "Encryption keys for Make an LPA backups copied into the backup account"
   alias          = "opg-lpa-${local.account_name}-aws-backup-key"
-  providers = {
-    aws = aws.backup
-  }
+  # providers = {
+  #   aws = aws.backup
+  # }
 }
 
 data "aws_kms_key" "access_log_key" {
