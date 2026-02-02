@@ -5,10 +5,10 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(30 15 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(0 19 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
-
+    # TODO - CHANGE BACK WHEN TEST COMPLETE
     lifecycle {
       cold_storage_after = var.daily_backup_cold_storage
       delete_after       = var.daily_backup_deletion
