@@ -9,7 +9,7 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(15 15 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(30 15 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
     # TODO - CHANGE BACK WHEN TEST COMPLETE
@@ -25,9 +25,9 @@ resource "aws_backup_plan" "main" {
       }
     }
     dynamic "copy_action" {
-      for_each = local.cross_account_backup
+      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
       content {
-        destination_vault_arn = copy_action.value["backup_vault_arn"]
+        destination_vault_arn = aws_backup_vault.backup_account.arn
       }
     }
   }
