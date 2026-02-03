@@ -5,7 +5,7 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(30 19 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(45 11 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
     # TODO - CHANGE BACK WHEN TEST COMPLETE
