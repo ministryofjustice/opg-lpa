@@ -11,7 +11,6 @@ locals {
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                 = var.account.regions[data.aws_region.current.region].region
-  # is_primary_region           = var.account.regions[data.aws_region.current.region].is_primary
 
   shared_component_tag = {
     component = "shared"
