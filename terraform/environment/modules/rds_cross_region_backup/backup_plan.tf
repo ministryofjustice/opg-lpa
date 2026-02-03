@@ -1,11 +1,15 @@
-
+locals {
+  cross_account_backup = var.cross_account_backup_enabled ? {
+    backup_vault_arn = aws_backup_vault.backup_account.arn
+  } : null
+}
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(45 11 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(15 15 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
     # TODO - CHANGE BACK WHEN TEST COMPLETE
@@ -20,19 +24,19 @@ resource "aws_backup_plan" "main" {
         delete_after = var.daily_backup_deletion
       }
     }
-    copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
-      lifecycle {
-        delete_after = var.daily_backup_deletion
+    dynamic "copy_action" {
+      for_each = local.cross_account_backup
+      content {
+        destination_vault_arn = copy_action.value["backup_vault_arn"]
       }
     }
   }
   rule {
-    completion_window   = 10080
+    completion_window   = 120
     recovery_point_tags = {}
     rule_name           = "Monthly"
     schedule            = "cron(0 6 1 * ? *)" // Run at 6am UTC on the first day of every month
-    start_window        = 480
+    start_window        = 60
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {

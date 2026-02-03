@@ -45,3 +45,9 @@ variable "monthly_backup_cold_storage" {
   type        = number
   description = "Number of days to retain monthly backups in cold storage"
 }
+
+variable "cross_account_backup_enabled" {
+  type        = bool
+  description = "Condition to enable cross account backup"
+  default     = false
+}
