@@ -9,10 +9,10 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(30 15 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(0 6 ? * * *)" // Run at 6am UTC every day
     start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
-    # TODO - CHANGE BACK WHEN TEST COMPLETE
+
     lifecycle {
       cold_storage_after = var.daily_backup_cold_storage
       delete_after       = var.daily_backup_deletion
@@ -32,11 +32,11 @@ resource "aws_backup_plan" "main" {
     }
   }
   rule {
-    completion_window   = 120
+    completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "Monthly"
     schedule            = "cron(0 6 1 * ? *)" // Run at 6am UTC on the first day of every month
-    start_window        = 60
+    start_window        = 480
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
@@ -50,10 +50,10 @@ resource "aws_backup_plan" "main" {
         delete_after = var.monthly_backup_deletion
       }
     }
-    copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
-      lifecycle {
-        delete_after = var.daily_backup_deletion
+    dynamic "copy_action" {
+      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
+      content {
+        destination_vault_arn = aws_backup_vault.backup_account.arn
       }
     }
   }
