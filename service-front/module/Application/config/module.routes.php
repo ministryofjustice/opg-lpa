@@ -104,8 +104,8 @@ return [
                 'options' => [
                     'route'    => '/forgot-password',
                     'defaults' => [
-                        'controller' => 'General\ForgotPasswordController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\ForgotPasswordHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -119,7 +119,8 @@ return [
                                 'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
-                                'action'     => 'reset-password',
+                                'controller' => PipeSpec::class,
+                                'middleware' => Handler\ResetPasswordHandler::class,
                                 'unauthenticated_route' => true
                             ],
                         ],
