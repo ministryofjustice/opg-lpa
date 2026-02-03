@@ -11,10 +11,11 @@
     "homepage": "https://github.com/ministryofjustice/opg-lpa",
     "require": {
         "php": "8.4.*",
+        "ext-redis": "*",
         "alphagov/notifications-php-client": "^6.0.0",
         "aws/aws-sdk-php": "^3.204.5",
         "egulias/email-validator": "^4",
-        "ext-redis": "*",
+        "fig/http-message-util": "^1.1",
         "guzzlehttp/guzzle": "^7.0",
         "guzzlehttp/psr7": "^2.4",
         "kokspflanze/zfc-twig": "^4.2.1",
