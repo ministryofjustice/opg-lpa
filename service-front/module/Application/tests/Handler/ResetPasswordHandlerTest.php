@@ -33,6 +33,7 @@ class ResetPasswordHandlerTest extends TestCase
     private FlashMessenger&MockObject $flashMessenger;
     private FormInterface&MockObject $form;
     private ResetPasswordHandler $handler;
+    private string $token;
 
     protected function setUp(): void
     {
@@ -48,7 +49,8 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->sessionManagerSupport->method('getSessionManager')->willReturn($this->sessionManager);
         $this->sessionManager->method('getStorage')->willReturn($this->sessionStorage);
-        $this->token = '553b15320ca9f345bda3ec4ffb8780d113da6a86'; // pragma: allowlist secret
+        $this->token = '37Bz2dUNqeDAjbUcDmtslc'; // pragma: allowlist secret
+
         $this->formElementManager
             ->method('get')
             ->with('Application\Form\User\SetPassword')
@@ -112,7 +114,7 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testGetWithValidTokenDisplaysForm(): void
+    public function testGetWithValidAlphanumericTokenDisplaysForm(): void
     {
         $request = $this->createRequestWithToken($this->token);
 
@@ -137,6 +139,70 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testTokenWithSpecialCharsIsRejected(): void
+    {
+        $request = $this->createRequestWithToken('token!@#$%');
+
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $this->userService
+            ->expects($this->never())
+            ->method('setNewPassword');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/invalid-reset-token.twig')
+            ->willReturn('<html>invalid token</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testTokenWithSpacesIsRejected(): void
+    {
+        $request = $this->createRequestWithToken('token with spaces');
+
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $this->userService
+            ->expects($this->never())
+            ->method('setNewPassword');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/invalid-reset-token.twig')
+            ->willReturn('<html>invalid token</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testShortAlphanumericTokenIsAccepted(): void
+    {
+        $shortToken = 'abc123';
+        $request = $this->createRequestWithToken($shortToken);
+
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $this->form->expects($this->once())
+            ->method('setAttribute')
+            ->with('action', '/forgot-password/reset/' . $shortToken);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/reset-password.twig', $this->anything())
+            ->willReturn('<html>reset form</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testAuthenticatedUserIsLoggedOutAndRedirected(): void
@@ -204,13 +270,12 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
     }
 
-    public function testPostInvalidTokenShowsInvalidTokenPage(): void
+    public function testPostExpiredTokenShowsInvalidTokenPage(): void
     {
-        // Valid format but expired/not found in database
-        $token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+        $expiredToken = 'validFormatButExpired123';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $expiredToken]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -225,7 +290,7 @@ class ResetPasswordHandlerTest extends TestCase
         $this->userService
             ->expects($this->once())
             ->method('setNewPassword')
-            ->with($token, $newPass)
+            ->with($expiredToken, $newPass)
             ->willReturn('invalid-token');
 
         $this->renderer
@@ -239,13 +304,12 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostMalformedTokenShowsInvalidTokenPage(): void
+    public function testPostMalformedTokenDoesNotCallService(): void
     {
-        // Invalid format - rejected before reaching setNewPassword
-        $token = 'malformed-token!@#$';
+        $malformedToken = 'invalid-token!@#$';
         $newPass = 'TestPass123'; // pragma: allowlist secret
 
-        $routeMatch = new RouteMatch(['token' => $token]);
+        $routeMatch = new RouteMatch(['token' => $malformedToken]);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -314,14 +378,14 @@ class ResetPasswordHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withMethod('POST')
-            ->withParsedBody(['password' => 'weak'])//pragma: allowlist secret
+            ->withParsedBody(['password' => 'weak']) // pragma: allowlist secret
             ->withAttribute(RouteMatch::class, $routeMatch);
 
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
         $this->form->expects($this->once())
             ->method('setData')
-            ->with(['password' => 'weak']);//pragma: allowlist secret
+            ->with(['password' => 'weak']); // pragma: allowlist secret
 
         $this->form->expects($this->once())
             ->method('isValid')
