@@ -1,7 +1,6 @@
 data "aws_iam_policy_document" "aurora_cluster_backup_role" {
   statement {
     actions = ["sts:AssumeRole"]
-
     principals {
       type        = "Service"
       identifiers = ["backup.amazonaws.com"]

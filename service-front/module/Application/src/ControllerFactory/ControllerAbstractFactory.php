@@ -11,7 +11,6 @@ use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
-use Application\Controller\General\ForgotPasswordController;
 use Application\Controller\General\RegisterController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
@@ -45,9 +44,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
-        ],
-        ForgotPasswordController::class => [
-            'setUserService' => 'UserService'
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
