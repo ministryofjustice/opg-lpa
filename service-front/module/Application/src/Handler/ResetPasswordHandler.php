@@ -98,6 +98,6 @@ class ResetPasswordHandler implements RequestHandlerInterface
 
     private function isValidTokenFormat(string $token): bool
     {
-        return strlen($token) === 40 && ctype_xdigit($token);
+        return ctype_alnum($token);
     }
 }
