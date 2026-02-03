@@ -34,7 +34,6 @@ variable "accounts" {
       sirius_api_healthcheck_arn             = string
       telemetry_requests_sampled_fraction    = string
       auth_token_ttl_secs                    = number
-      always_on                              = bool
       log_retention_in_days                  = number
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
@@ -47,7 +46,6 @@ variable "accounts" {
         daily_backup_cold_storage          = number
         monthly_backup_deletion            = number
         monthly_backup_cold_storage        = number
-        aurora_enabled                     = bool
         aurora_instance_count              = number
         aurora_serverless                  = bool
         deletion_protection                = bool
