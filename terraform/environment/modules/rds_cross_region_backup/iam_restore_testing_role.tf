@@ -1,5 +1,5 @@
 resource "aws_iam_role" "restore_testing_role" {
-  name = "${local.environment_name}_restore_testing_role"
+  name = "${var.environment_name}_restore_testing_role"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"

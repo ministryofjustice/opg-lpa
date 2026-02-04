@@ -18,7 +18,7 @@ resource "aws_backup_restore_testing_selection" "restore_testing_selection" {
   name  = "${var.environment_name}_restore_testing_selection"
 
   restore_testing_plan_name = aws_backup_restore_testing_plan.restore_testing_plan[0].name
-  iam_role_arn              = var.iam_aurora_restore_testing_role_arn
+  iam_role_arn              = aws_iam_role.restore_testing_role.arn
 
   protected_resource_type = "Aurora"
   protected_resource_arns = [var.source_cluster_arn]
