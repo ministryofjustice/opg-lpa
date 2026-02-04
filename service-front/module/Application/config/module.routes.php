@@ -20,8 +20,8 @@ return [
                 'options' => [
                     'route'    => '/',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'redirect',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\HomeRedirectHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -32,8 +32,8 @@ return [
                 'options' => [
                     'route'    => '/home',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\HomeHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -44,8 +44,8 @@ return [
                 'options' => [
                     'route'    => '/terms',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'terms',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\TermsHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -56,8 +56,8 @@ return [
                 'options' => [
                     'route'    => '/accessibility',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'accessibility',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\AccessibilityHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -68,8 +68,8 @@ return [
                 'options' => [
                     'route'    => '/privacy-notice',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'privacy',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\PrivacyHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -80,8 +80,8 @@ return [
                 'options' => [
                     'route'    => '/contact',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'contact',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\ContactHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -170,8 +170,8 @@ return [
                 'options' => [
                     'route'    => '/enable-cookie',
                     'defaults' => [
-                        'controller' => 'General\HomeController',
-                        'action'     => 'enable-cookie',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\EnableCookieHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
