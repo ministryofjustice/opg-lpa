@@ -3,7 +3,7 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
-use App\Handler\HomeHandler;
+use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
