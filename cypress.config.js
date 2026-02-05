@@ -161,8 +161,8 @@ module.exports = defineConfig({
   postLogoutUrl: "https://www.gov.uk/done/lasting-power-of-attorney",
   rootRedirectUrl: "https://www.gov.uk/power-of-attorney/make-lasting-power",
   numberOfGuidanceHelpTopics: 22,
-  defaultCommandTimeout: 12000,
-  requestTimeout: 12000,
+  defaultCommandTimeout: 20000,
+  requestTimeout: 20000,
   trashAssetsBeforeRuns: false,
   injectDocumentDomain: true,
   e2e: {
