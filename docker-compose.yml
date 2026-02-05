@@ -463,3 +463,4 @@ services:
       CYPRESS_adminUrl: https://admin-ssl
     volumes:
       - ./cypress/screenshots:/app/cypress/screenshots
+      - ./cypress/e2e:/app/cypress/e2e

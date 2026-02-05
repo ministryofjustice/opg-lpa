@@ -24,6 +24,22 @@ async function setupNodeEvents(on, config) {
     })
   );
 
+  // Enable browser network logging for debugging in CI
+  on('before:browser:launch', (browser, launchOptions) => {
+    if (browser.family === 'chromium' && browser.name !== 'electron') {
+      // Enable Chrome DevTools Protocol logging
+      launchOptions.args.push('--enable-logging=stderr');
+      launchOptions.args.push('--v=1');
+    }
+
+    if (browser.name === 'electron') {
+      // For Electron, enable more verbose network logging
+      launchOptions.preferences.devTools = true;
+    }
+
+    return launchOptions;
+  });
+
   on("task", {
     putValue({name, value}) {
       // prevent different tests using the same name or the same feature setting
@@ -54,6 +70,12 @@ async function setupNodeEvents(on, config) {
 
     table(message) {
       console.table(message);
+      return null;
+    },
+
+    logStalledRequest(message) {
+      // Write directly to stdout to ensure it appears in CI logs
+      process.stdout.write(`[STALLED REQUEST] ${message}\n`);
       return null;
     },
 
@@ -165,6 +187,7 @@ module.exports = defineConfig({
   requestTimeout: 20000,
   trashAssetsBeforeRuns: false,
   injectDocumentDomain: true,
+  screenshotOnRunFailure: true,
   e2e: {
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
