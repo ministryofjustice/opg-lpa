@@ -77,6 +77,31 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
+      - name: Warm up front and admin endpoints
+        env:
+          CYPRESS_adminUrl: ${{ inputs.admin_url }}
+          CYPRESS_baseUrl: ${{ inputs.front_url }}
+        run: |
+          check_url() {
+            name=$1
+            url=$2
+            start=$(date +%s)
+            while true; do
+              if curl -vk --max-time 5 --output /dev/null --silent "$url"; then
+                echo "$name reachable"
+                return 0
+              fi
+              if [ $(( $(date +%s) - start )) -ge 30 ]; then
+                echo "$name not reachable within 30s"
+                return 1
+              fi
+              sleep 2
+            done
+          }
+
+          check_url "front" "${CYPRESS_baseUrl}/login"
+          check_url "admin" "${CYPRESS_adminUrl}"
+
       - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
@@ -87,8 +112,8 @@ jobs:
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${CYPRESS_adminUrl}|g" docker-compose.yml
           CYPRESS_userNumber=`python3 cypress/user_number.py`
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup"
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${CYPRESS_TAGS}"
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --browser chrome --config video=false,retries=2 -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup"
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --browser chrome --config video=false,retries=2 -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${CYPRESS_TAGS}"
 
       - name: Upload Screenshot Artifact
         if: failure()
