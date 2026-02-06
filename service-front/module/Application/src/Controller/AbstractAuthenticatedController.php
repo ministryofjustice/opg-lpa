@@ -12,9 +12,6 @@ use Application\Model\Service\User\Details as UserService;
 use MakeShared\DataModel\User\User;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\AbstractPluginManager;
-use Laminas\View\Model\JsonModel;
-use Laminas\View\Model\ViewModel;
-use DateTime;
 use MakeShared\Logging\LoggerTrait;
 
 abstract class AbstractAuthenticatedController extends AbstractBaseController
@@ -59,7 +56,6 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
     /**
      * Do some pre-dispatch checks...
      *
-     * @param MvcEvent $e
      * @return bool|mixed|\Laminas\Http\Response
      * @throws \Exception
      */
@@ -69,42 +65,7 @@ abstract class AbstractAuthenticatedController extends AbstractBaseController
             'userId' => $this->identity->id(),
         ]);
 
-        //  If there are no user details set, or they are incomplete, then redirect to the about you new view
-        if ($this->requireCompleteUserDetails && (!($this->user instanceof User) || is_null($this->user->getName()))) {
-            return $this->redirectToRoute('user/about-you', ['new' => 'new']);
-        }
-
-        //  We should have a fully formed user record at this point - bounce the request if that is not the case
-        //  To check this, try to take the data from one array and populate it into another object
-        try {
-            $userDataArr = $this->user->toArray();
-            $tempUser = new User($userDataArr);
-        } catch (\Exception $ex) {
-            $this->getLogger()->error('constructing User data from session failed', ['exception' => $ex->getMessage()]);
-            // If seems there is a user associated with the session but it is not well formed
-            // Therefore destroy the session and logout the user
-            $this->getAuthenticationService()->clearIdentity();
-            $this->getSessionManager()->destroy([
-                'clear_storage' => true
-            ]);
-
-            return $this->redirectToRoute('login', [
-                'state' => 'timeout'
-            ]);
-        }
-
-        // Inject the user into the view parameters
-        $view = parent::onDispatch($e);
-
-        if ($view instanceof ViewModel && !$view instanceof JsonModel) {
-            $view->setVariable('signedInUser', $this->user);
-            $view->setVariable(
-                'secondsUntilSessionExpires',
-                $this->identity->tokenExpiresAt()->getTimestamp() - new DateTime()->getTimestamp()
-            );
-        }
-
-        return $view;
+        return parent::onDispatch($e);
     }
 
     /**

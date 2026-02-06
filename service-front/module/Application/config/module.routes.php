@@ -366,6 +366,7 @@ return [
                     'defaults' => [
                         'controller' => 'Authenticated\PostcodeController',
                         'action'     => 'index',
+                        'allowIncompleteUser' => true,
                     ],
                 ],
             ],
@@ -387,6 +388,7 @@ return [
                             'defaults' => [
                                 'controller' => 'Authenticated\AboutYouController',
                                 'action'     => 'index',
+                                'allowIncompleteUser' => true,
                             ],
                         ],
                     ], // about-you
