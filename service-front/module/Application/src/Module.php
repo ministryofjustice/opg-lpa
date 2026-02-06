@@ -372,27 +372,27 @@ class Module implements FormElementProviderInterface
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
                 NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
-                EnableCookieHandler::class => fn ($sm) => new EnableCookieHandler(
+                EnableCookieHandler::class => fn (ServiceLocatorInterface $sm) => new EnableCookieHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                TermsHandler::class => fn ($sm) => new TermsHandler(
+                TermsHandler::class => fn (ServiceLocatorInterface $sm) => new TermsHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                AccessibilityHandler::class => fn ($sm) => new AccessibilityHandler(
+                AccessibilityHandler::class => fn (ServiceLocatorInterface $sm) => new AccessibilityHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                PrivacyHandler::class => fn ($sm) => new PrivacyHandler(
+                PrivacyHandler::class => fn (ServiceLocatorInterface $sm) => new PrivacyHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                ContactHandler::class => fn ($sm) => new ContactHandler(
+                ContactHandler::class => fn (ServiceLocatorInterface $sm) => new ContactHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                HomeRedirectHandler::class => function ($sm) {
+                HomeRedirectHandler::class => function (ServiceLocatorInterface $sm) {
                     return new HomeRedirectHandler(
                         $sm->get('config'),
                     );
