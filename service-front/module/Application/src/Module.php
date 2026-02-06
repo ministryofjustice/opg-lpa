@@ -392,11 +392,7 @@ class Module implements FormElementProviderInterface
                     $sm->get(TemplateRendererInterface::class),
                 ),
 
-                HomeRedirectHandler::class => function (ServiceLocatorInterface $sm) {
-                    return new HomeRedirectHandler(
-                        $sm->get('config'),
-                    );
-                },
+                HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
                 HomeHandler::class => HomeHandlerFactory::class,
             ], // factories
             'initializers' => [
