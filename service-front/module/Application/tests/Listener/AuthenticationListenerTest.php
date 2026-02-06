@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Listener;
 
+use Application\Listener\Attribute;
 use Application\Listener\AuthenticationListener;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
@@ -68,34 +69,15 @@ class AuthenticationListenerTest extends TestCase
 
     public function testListenWhenNoRouteMatch(): void
     {
-        $this->authenticationService
-            ->expects($this->once())
-            ->method('getIdentity')
-            ->willReturn(null);
-
-        $this->sessionUtility
-            ->expects($this->once())
-            ->method('getFromMvc')
-            ->with(ContainerNamespace::AUTH_FAILURE_REASON, 'code')
-            ->willReturn('a reason code');
-
-        $expectedUrl = '/login?state=internalSystemError';
-        $router = $this->createMock(RouteStackInterface::class);
-        $router
-            ->expects($this->once())
-            ->method('assemble')
-            ->with(['state' => 'internalSystemError'], ['name' => 'login'])
-            ->willReturn($expectedUrl);
-
         $event = $this->createMock(MvcEvent::class);
         $event
             ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn(null);
-        $event
-            ->expects($this->once())
-            ->method('getRouter')
-            ->willReturn($router);
+
+        $this->authenticationService
+            ->expects($this->never())
+            ->method('getIdentity');
 
         $listener = new AuthenticationListener(
             $this->sessionUtility,
@@ -104,9 +86,7 @@ class AuthenticationListenerTest extends TestCase
 
         $result = $listener->listen($event);
 
-        $this->assertInstanceOf(MVCResponse::class, $result);
-        $this->assertEquals($expectedUrl, $result->getHeaders()->get('Location')->getFieldValue());
-        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertNull($result);
     }
 
     public function testListenWhenUnauthenticatedRoute(): void
@@ -153,6 +133,12 @@ class AuthenticationListenerTest extends TestCase
             ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
+
+        // Verify that identity is set as event param
+        $event
+            ->expects($this->once())
+            ->method('setParam')
+            ->with(Attribute::IDENTITY, $identity);
 
         $listener = new AuthenticationListener(
             $this->sessionUtility,
@@ -271,12 +257,9 @@ class AuthenticationListenerTest extends TestCase
     public function testProcessWhenNoRoute(): void
     {
         $request = new ServerRequest();
+        $expectedResponse = new PSR7Response();
 
         $urlHelper = $this->createMock(UrlHelper::class);
-        $urlHelper
-            ->method('generate')
-            ->with('login', [], ['state' => 'timeout'])
-            ->willReturn('/some/url');
 
         $listener = new AuthenticationListener(
             $this->sessionUtility,
@@ -285,11 +268,15 @@ class AuthenticationListenerTest extends TestCase
         );
 
         $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($expectedResponse);
 
         $result = $listener->process($request, $handler);
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals('/some/url', $result->getHeaderLine('Location'));
+        $this->assertSame($expectedResponse, $result);
     }
 
     public function testProcessWhenRouteDoesNotRequireAuth(): void

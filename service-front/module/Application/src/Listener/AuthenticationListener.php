@@ -47,11 +47,22 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         $allowRedirect = true;
         $routeMatch = $event->getRouteMatch();
 
-        if ($routeMatch && $routeMatch->getParam('unauthenticated_route', false) || $this->authenticationService->getIdentity() instanceof User) {
+        if ($routeMatch === null) {
             return null;
         }
 
-        $route = $routeMatch ? $routeMatch->getMatchedRouteName() : '';
+        $identity = $this->authenticationService->getIdentity();
+
+        // Identity is stored under ContainerNamespace::IDENTITY when a user successfully logs in
+        if ($routeMatch->getParam('unauthenticated_route', false) || $identity instanceof User) {
+            if ($identity instanceof User) {
+                $event->setParam(Attribute::IDENTITY, $identity);
+            }
+
+            return null;
+        }
+
+        $route = $routeMatch->getMatchedRouteName() ?: '';
 
         if ($route === 'user/delete' || str_starts_with($route, 'user/dashboard')) {
             $allowRedirect = false;
@@ -60,8 +71,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
         $reason = $this->getUnauthorisedReason($allowRedirect, $route);
 
-        $router = $event->getRouter();
-        $url = $router->assemble(['state' => $reason], ['name' => 'login']);
+        $url = $event->getRouter()->assemble(['state' => $reason], ['name' => 'login']);
 
         $response = new Response();
         $response->getHeaders()->addHeaderLine('Location', $url);
@@ -73,8 +83,12 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute(RouteResult::class);
-        $routeOptions = $route ? $route->getMatchedRoute()->getOptions() : [];
-        $isUnauthenticatedRoute = $route && isset($routeOptions['unauthenticated_route']) && $routeOptions['unauthenticated_route'] === true;
+        if (!$route instanceof RouteResult) {
+            return $handler->handle($request);
+        }
+
+        $routeOptions = $route->getMatchedRoute()->getOptions() ?: [];
+        $isUnauthenticatedRoute = isset($routeOptions['unauthenticated_route']) && $routeOptions['unauthenticated_route'] === true;
 
         if ($isUnauthenticatedRoute === true || $this->authenticationService->getIdentity() instanceof User) {
             return $handler->handle($request);
@@ -82,16 +96,16 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
 
         $allowRedirect = true;
 
-        $routeName = $route ? $route->getMatchedRouteName() : '';
+        $routeName = $route->getMatchedRouteName() ?: '';
         if ($routeName === 'user/delete' || str_starts_with($routeName, 'user/dashboard')) {
             $allowRedirect = false;
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $routePath = $route ? $route->getMatchedRoute()->getPath() : '';
+        $routePath = $route->getMatchedRoute()->getPath() ?: '';
         $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
 
-        // TODO update routeName when we setup Mezzio routes
+        // TODO(mezzio): update routeName when we setup Mezzio routes
         return new RedirectResponse(
             $this->urlHelper->generate('login', [], ['state' => $reason])
         );
