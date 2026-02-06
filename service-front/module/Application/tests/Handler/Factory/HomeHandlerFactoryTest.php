@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ApplicationTest\Handler;
+namespace ApplicationTest\Handler\Factory;
 
 use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\HomeHandler;
