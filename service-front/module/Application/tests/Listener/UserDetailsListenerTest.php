@@ -5,32 +5,45 @@ declare(strict_types=1);
 namespace ApplicationTest\Listener;
 
 use Application\Listener\UserDetailsListener;
+use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details;
 use Laminas\Diactoros\Response as PSR7Response;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\Http\Response as MVCResponse;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
+use Laminas\Router\RouteStackInterface;
+use Laminas\Session\SessionManager;
+use MakeShared\DataModel\User\User as UserDataModel;
 use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class UserDetailsListenerTest extends TestCase
 {
     private SessionUtility|MockObject $sessionUtility;
-    private Details $userService;
+    private Details|MockObject $userService;
+    private AuthenticationService|MockObject $authenticationService;
+    private SessionManager|MockObject $sessionManager;
     private EventManagerInterface|MockObject $eventManager;
+    private LoggerInterface|MockObject $logger;
 
     public function setUp(): void
     {
         $this->sessionUtility = $this->createMock(SessionUtility::class);
         $this->userService = $this->createMock(Details::class);
+        $this->authenticationService = $this->createMock(AuthenticationService::class);
+        $this->sessionManager = $this->createMock(SessionManager::class);
         $this->eventManager = $this->createMock(EventManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testAttach(): void
@@ -56,6 +69,10 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+            $this->logger,
         );
 
         $listener->attach($this->eventManager);
@@ -83,6 +100,10 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+            $this->logger,
         );
 
         $this->assertNull($listener->listen($event));
@@ -116,6 +137,9 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $this->assertNull($listener->listen($event));
@@ -132,12 +156,16 @@ class UserDetailsListenerTest extends TestCase
 
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch
+            ->expects($this->exactly(2))
             ->method('getParam')
-            ->with('unauthenticated_route', false)
-            ->willReturn(false);
+            ->willReturnMap([
+                ['unauthenticated_route', false, false],
+                ['allowIncompleteUser', false, false],
+            ]);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
 
@@ -154,6 +182,10 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+            $this->logger,
         );
 
         $this->assertNull($listener->listen($event));
@@ -168,12 +200,14 @@ class UserDetailsListenerTest extends TestCase
 
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch
+            ->expects($this->once())
             ->method('getParam')
             ->with('unauthenticated_route', false)
             ->willReturn(false);
 
         $event = $this->createMock(MvcEvent::class);
         $event
+            ->expects($this->once())
             ->method('getRouteMatch')
             ->willReturn($routeMatch);
 
@@ -188,9 +222,162 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $this->assertNull($listener->listen($event));
+    }
+
+    public function testListenWhenIncompleteUserAndRouteDoesNotAllowIt(): void
+    {
+        $userDetails = FixturesData::getUser();
+        $userDetails->name = null;
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
+
+        $router = $this->createMock(RouteStackInterface::class);
+        $router
+            ->expects($this->once())
+            ->method('assemble')
+            ->with(['new' => 'new'], ['name' => 'user/about-you'])
+            ->willReturn('/user/about-you/new');
+
+        $routeMatch = $this->createMock(RouteMatch::class);
+        $routeMatch
+            ->expects($this->exactly(2))
+            ->method('getParam')
+            ->willReturnMap([
+                ['unauthenticated_route', false, false],
+                ['allowIncompleteUser', false, false],
+            ]);
+
+        $event = $this->createMock(MvcEvent::class);
+        $event
+            ->expects($this->once())
+            ->method('getRouteMatch')
+            ->willReturn($routeMatch);
+        $event
+            ->expects($this->once())
+            ->method('getRouter')
+            ->willReturn($router);
+
+        $event
+            ->expects($this->once())
+            ->method('setParam')
+            ->with('userDetails', $userDetails);
+
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $result = $listener->listen($event);
+
+        $this->assertInstanceOf(MVCResponse::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals('/user/about-you/new', $result->getHeaders()->get('Location')->getFieldValue());
+    }
+
+    public function testListenWhenUserValidationFails(): void
+    {
+        // Create a partial mock of User that overrides toArray() to return invalid data
+        // This simulates data corruption that will cause User reconstruction to fail
+        $userDetails = $this->getMockBuilder(UserDataModel::class)
+            ->setConstructorArgs([[
+                'id' => str_repeat('a', 32),
+                'createdAt' => '2024-01-01 00:00:00',
+                'updatedAt' => '2024-01-01 00:00:00',
+            ]])
+            ->onlyMethods(['toArray'])
+            ->getMock();
+
+
+        $userDetails->method('toArray')->willReturn([
+            'id' => str_repeat('a', 32),
+            'name' => 'invalid-string-not-array',
+        ]);
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
+
+        $router = $this->createMock(RouteStackInterface::class);
+        $router
+            ->expects($this->once())
+            ->method('assemble')
+            ->with(['state' => 'timeout'], ['name' => 'login'])
+            ->willReturn('/login?state=timeout');
+
+        $routeMatch = $this->createMock(RouteMatch::class);
+        $routeMatch
+            ->method('getParam')
+            ->willReturnMap([
+                ['unauthenticated_route', false, false],
+                ['allowIncompleteUser', false, true],
+            ]);
+
+        $event = $this->createMock(MvcEvent::class);
+        $event
+            ->method('getRouteMatch')
+            ->willReturn($routeMatch);
+        $event
+            ->method('getRouter')
+            ->willReturn($router);
+
+        $event
+            ->expects($this->once())
+            ->method('setParam')
+            ->with('userDetails', $userDetails);
+
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+
+        $this->authenticationService
+            ->expects($this->once())
+            ->method('clearIdentity');
+
+        $this->sessionManager
+            ->expects($this->once())
+            ->method('destroy')
+            ->with(['clear_storage' => true]);
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                'constructing User data from session failed',
+                $this->callback(fn($context) => isset($context['exception']))
+            );
+
+        $result = $listener->listen($event);
+
+        $this->assertInstanceOf(MVCResponse::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals('/login?state=timeout', $result->getHeaders()->get('Location')->getFieldValue());
     }
 
     public function testProcessWhenNoRoute(): void
@@ -216,6 +403,9 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $result = $listener->process($request, $handler);
@@ -235,7 +425,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($route);
 
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
         $expectedResponse = new PSR7Response();
 
         $this->userService
@@ -256,6 +446,9 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $this->assertEquals($expectedResponse, $listener->process($request, $handler));
@@ -285,7 +478,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($route);
 
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
         $expectedResponse = new PSR7Response();
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -301,6 +494,9 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $this->assertEquals($expectedResponse, $listener->process($request, $handler));
@@ -327,7 +523,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('getMatchedRoute')
             ->willReturn($route);
 
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
         $expectedResponse = new PSR7Response();
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -343,8 +539,136 @@ class UserDetailsListenerTest extends TestCase
         $listener = new UserDetailsListener(
             $this->sessionUtility,
             $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
         );
 
         $this->assertEquals($expectedResponse, $listener->process($request, $handler));
+    }
+
+    public function testProcessWhenIncompleteUserAndRouteAllowsIt(): void
+    {
+        $userDetails = FixturesData::getUser();
+        $userDetails->name = null;
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
+
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+
+        $route = $this->createMock(Route::class);
+        $route
+            ->method('getOptions')
+            ->willReturn(['allowIncompleteUser' => true]);
+
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult
+            ->method('getMatchedRoute')
+            ->willReturn($route);
+
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects($this->never())
+            ->method('handle');
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $result = $listener->process($request, $handler);
+
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals('/user/about-you/new', $result->getHeaderLine('Location'));
+    }
+
+    public function testProcessWhenUserValidationFails(): void
+    {
+        // Create a partial mock of User that overrides toArray() to return invalid data
+        // This simulates data corruption that will cause User reconstruction to fail
+        $userDetails = $this->getMockBuilder(UserDataModel::class)
+            ->setConstructorArgs([[
+                'id' => str_repeat('a', 32),
+                'createdAt' => '2024-01-01 00:00:00',
+                'updatedAt' => '2024-01-01 00:00:00',
+            ]])
+            ->onlyMethods(['toArray'])
+            ->getMock();
+
+
+        $userDetails->method('toArray')->willReturn([
+            'id' => str_repeat('a', 32),
+            'name' => 'invalid-string-not-array',
+        ]);
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
+
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+
+        $this->authenticationService
+            ->expects($this->once())
+            ->method('clearIdentity');
+
+        $this->sessionManager
+            ->expects($this->once())
+            ->method('destroy')
+            ->with(['clear_storage' => true]);
+
+        $route = $this->createMock(Route::class);
+        $route
+            ->method('getOptions')
+            ->willReturn([]);
+
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult
+            ->method('getMatchedRoute')
+            ->willReturn($route);
+
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects($this->never())
+            ->method('handle');
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                'constructing User data from session failed',
+                $this->callback(fn($context) => isset($context['exception']))
+            );
+
+        $result = $listener->process($request, $handler);
+
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals(302, $result->getStatusCode());
+        $this->assertEquals('/login?state=timeout', $result->getHeaderLine('Location'));
     }
 }

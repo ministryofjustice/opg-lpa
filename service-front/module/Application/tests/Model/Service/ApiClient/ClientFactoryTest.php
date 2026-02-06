@@ -46,7 +46,7 @@ final class ClientFactoryTest extends MockeryTestCase
 
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
+            ->withArgs([ContainerNamespace::IDENTITY, 'identity'])
             ->once()
             ->andReturn($userIdentity);
 
@@ -62,7 +62,7 @@ final class ClientFactoryTest extends MockeryTestCase
     {
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
+            ->withArgs([ContainerNamespace::IDENTITY, 'identity'])
             ->once()
             ->andReturn(null);
 
@@ -78,7 +78,7 @@ final class ClientFactoryTest extends MockeryTestCase
     {
         $sessionUtility = Mockery::mock(SessionUtility::class);
         $sessionUtility->shouldReceive('getFromMvc')
-            ->withArgs([ContainerNamespace::USER_DETAILS, 'identity'])
+            ->withArgs([ContainerNamespace::IDENTITY, 'identity'])
             ->once()
             ->andReturn(null);
 
