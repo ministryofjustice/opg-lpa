@@ -34,6 +34,7 @@ use Application\Listener\AuthenticationListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
 use Application\Listener\UserDetailsListener;
+use Application\Listener\ViewVariablesListener;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -139,22 +140,26 @@ class Module implements FormElementProviderInterface
                     '/ping/json',
                 ])
             ) {
-                $this->bootstrapSession($e);
+                $sessionManager = $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e, $path != '/session-state');
+
+                $authenticationService = $serviceManager->get(AuthenticationService::class);
+                $sessionUtility = $serviceManager->get(SessionUtility::class);
+                $userService = $serviceManager->get(Details::class);
+                $config = $serviceManager->get('config');
+                $dateService = $serviceManager->get(DateService::class);
+                $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
+
+                // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
+                new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
+                new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
+                new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
+                new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
+
+                // Listeners that run on every request, just before view is rendered (higher priority numbers run first)
+                new ViewVariablesListener($dateService)->attach($eventManager, 1001);
+                new LpaViewInjectListener()->attach($eventManager, 1000);
             }
-
-            $authenticationService = $serviceManager->get(AuthenticationService::class);
-            $sessionUtility = $serviceManager->get(SessionUtility::class);
-            $userService = $serviceManager->get(Details::class);
-            $config = $serviceManager->get('config');
-            $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
-
-            // Listeners that needs to run on every request (higher priority numbers run first)
-            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
-            new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1002);
-            new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
-            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
-            new LpaViewInjectListener()->attach($eventManager);
         }
     }
 
@@ -163,7 +168,7 @@ class Module implements FormElementProviderInterface
      *
      * @param MvcEvent $e
      */
-    private function bootstrapSession(MvcEvent $e)
+    private function bootstrapSession(MvcEvent $e): SessionManager
     {
         $sm = $e->getApplication()->getServiceManager();
 
@@ -171,15 +176,17 @@ class Module implements FormElementProviderInterface
         $nativeSession->configure();
 
         /** @var SessionManager $session */
-        $session = $sm->get('SessionManager');
+        $sessionManager = $sm->get('SessionManager');
 
         // Always starts the session.
-        $session->start();
+        $sessionManager->start();
 
         // Ensures this SessionManager is used for all Session Containers.
-        Container::setDefaultManager($session);
+        Container::setDefaultManager($sessionManager);
 
         $sm->get(SessionManagerSupport::class)->initialise();
+
+        return $sessionManager;
     }
 
     /**
