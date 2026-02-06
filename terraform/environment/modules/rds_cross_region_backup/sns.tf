@@ -2,16 +2,10 @@ data "aws_sns_topic" "rds_events" {
   name = "${var.account_name}-${data.aws_region.current.region}-rds-events"
 }
 
-resource "aws_backup_vault_notifications" "aws_backup_failures" {
+resource "aws_backup_vault_notifications" "aws_backup_job_failures" {
   backup_vault_name   = aws_backup_vault.main.name
   sns_topic_arn       = data.aws_sns_topic.rds_events.arn
-  backup_vault_events = ["BACKUP_JOB_FAILED", "COPY_JOB_FAILED"]
-}
-
-resource "aws_backup_vault_notifications" "restore_job_failures" {
-  backup_vault_name   = aws_backup_vault.main.name
-  sns_topic_arn       = data.aws_sns_topic.rds_events.arn
-  backup_vault_events = ["RESTORE_JOB_FAILED"]
+  backup_vault_events = ["BACKUP_JOB_FAILED", "COPY_JOB_FAILED", "RESTORE_JOB_FAILED"]
 }
 
 data "aws_iam_policy_document" "aws_rds_events_sns" {
