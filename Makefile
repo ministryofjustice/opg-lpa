@@ -117,6 +117,15 @@ dc-up-debug: run-composers
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose up -d --remove-orphans
 
+
+.PHONY: front-mezzio-up
+front-mezzio-up:
+	docker compose -f docker-compose.front-mezzio-test.yml up
+
+.PHONY: front-mezzio-down
+front-mezzio-down:
+	docker compose -f docker-compose.front-mezzio-test.yml down
+
 .PHONY: dc-build
 dc-build:
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build
