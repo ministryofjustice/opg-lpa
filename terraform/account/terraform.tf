@@ -22,38 +22,42 @@ provider "aws" {
   }
 }
 
-# provider "aws" {
-#   alias  = "eu-west-1"
-#   region = "eu-west-1"
-#   default_tags {
-#     tags = local.default_tags
-#   }
-#   assume_role {
-#     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
-#     session_name = "terraform-session"
-#   }
-# }
+# tflint-ignore-file:terraform_unused_declarations
+# lines 25- 82 put under tfliint ignore to temporarily disable the rule for unused declarations.
+# This is because the providers are not used in this module but are used in other modules.
+# # This will be removed once the providers are moved to a separate module.
+provider "aws" {
+  alias  = "eu-west-1"
+  region = "eu-west-1"
+  default_tags {
+    tags = local.default_tags
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
 
-# provider "aws" {
-#   region = "eu-west-2"
-#   alias  = "eu-west-2"
-#   assume_role {
-#     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
-#     session_name = "terraform-session"
-#   }
-# }
+provider "aws" {
+  region = "eu-west-2"
+  alias  = "eu-west-2"
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
 
-# provider "aws" {
-#   alias  = "us_east_1"
-#   region = "us-east-1"
-#   default_tags {
-#     tags = local.default_tags
-#   }
-#   assume_role {
-#     role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
-#     session_name = "terraform-session"
-#   }
-# }
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+  default_tags {
+    tags = local.default_tags
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
 
 provider "aws" {
   region = "eu-west-1"
