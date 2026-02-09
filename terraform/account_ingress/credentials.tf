@@ -1,3 +1,4 @@
+# tflint-ignore-file: terraform_unused_declarations
 provider "aws" {
   region = "eu-west-1"
   assume_role {
@@ -18,7 +19,6 @@ variable "management_role" {
   description = "The role to assume when creating resources in the management account"
 }
 
-#tflint-ignore: terraform_unused_declarations
 
 provider "aws" {
   region = "eu-west-1"
