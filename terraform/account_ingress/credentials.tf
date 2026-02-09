@@ -12,17 +12,17 @@ variable "default_role" {
   description = "The role to assume when creating resources"
 }
 
-variable "management_role" {
-  default     = "opg-lpa-ci"
-  type        = string
-  description = "The role to assume when creating resources in the management account"
-}
+# variable "management_role" {
+#   default     = "opg-lpa-ci"
+#   type        = string
+#   description = "The role to assume when creating resources in the management account"
+# }
 
-provider "aws" {
-  region = "eu-west-1"
-  alias  = "management"
-  assume_role {
-    role_arn     = "arn:aws:iam::311462405659:role/${var.management_role}"
-    session_name = "terraform-session"
-  }
-}
+# provider "aws" {
+#   region = "eu-west-1"
+#   alias  = "management"
+#   assume_role {
+#     role_arn     = "arn:aws:iam::311462405659:role/${var.management_role}"
+#     session_name = "terraform-session"
+#   }
+# }
