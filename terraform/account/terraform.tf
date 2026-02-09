@@ -1,4 +1,4 @@
-# tflint-ignore-file: terraform terraform_unused_declarations
+# tflint-ignore-file: terraform_unused_declarations
 terraform {
   backend "s3" {
     bucket  = "opg.terraform.state"
