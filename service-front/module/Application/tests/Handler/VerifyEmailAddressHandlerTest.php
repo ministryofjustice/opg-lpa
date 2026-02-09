@@ -161,16 +161,4 @@ class VerifyEmailAddressHandlerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
     }
-
-    public function testAlwaysRedirectsToLogin(): void
-    {
-        $request = $this->createRequestWithToken('any-token');
-
-        $this->userService->method('updateEmailUsingToken')->willReturn(true);
-
-        $response = $this->handler->handle($request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
-    }
 }
