@@ -1,3 +1,4 @@
+# tflint-ignore-file: terraform terraform_unused_declarations
 terraform {
   backend "s3" {
     bucket  = "opg.terraform.state"
@@ -22,7 +23,7 @@ provider "aws" {
   }
 }
 
-#tflint-ignore: terraform_unused_declarations
+
 provider "aws" {
   alias  = "eu-west-1"
   region = "eu-west-1"
@@ -34,7 +35,7 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
-#tflint-ignore: terraform_unused_declarations
+
 provider "aws" {
   region = "eu-west-2"
   alias  = "eu-west-2"
@@ -43,7 +44,8 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
-#tflint-ignore: terraform_unused_declarations
+
+
 provider "aws" {
   alias  = "us_east_1"
   region = "us-east-1"
@@ -55,7 +57,8 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
-#tflint-ignore: terraform_unused_declarations
+
+
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
@@ -67,7 +70,8 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
-#tflint-ignore: terraform_unused_declarations
+
+
 provider "aws" {
   region = "eu-west-1"
   alias  = "legacy-lpa"
