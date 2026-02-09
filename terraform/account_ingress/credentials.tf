@@ -18,9 +18,8 @@ variable "management_role" {
   description = "The role to assume when creating resources in the management account"
 }
 
-# tflint-ignore-file:terraform_unused_declarations
-# lines 25- 32 put under tfliint ignore to temporarily disable the rule for unused declarations. TF Lint stage failing in pipeline due to new linting version contraints
-# # This will be removed once the providers are moved to a separate module.
+#tflint-ignore: terraform_unused_declarations
+
 provider "aws" {
   region = "eu-west-1"
   alias  = "management"
