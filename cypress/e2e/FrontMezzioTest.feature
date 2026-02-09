@@ -7,3 +7,6 @@ Feature: Front Mezzio Login Page
     Given I visit "/login"
     Then I can find "login-email"
     And I can find "login-password"
+
+  Scenario: Visit dashboard page
+    Given I visit "/dashboard"

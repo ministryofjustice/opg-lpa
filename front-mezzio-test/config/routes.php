@@ -43,4 +43,5 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/', HomePageHandler::class, 'home');
     $app->get('/api/ping', PingHandler::class, 'api.ping');
     $app->get('/login', App\Handler\LoginHandler::class, 'login');
+    $app->get('/dashboard', App\Handler\DashboardHandler::class, 'dashboard');
 };
