@@ -8,9 +8,10 @@ module "network" {
   default_security_group_ingress      = []
   enable_dns_hostnames                = true
   enable_dns_support                  = true
-  shared_firewall_configuration = var.account.shared_firewall_configuration.enabled != true ? null : {
-    account_id   = var.account.shared_firewall_configuration.account_id
-    account_name = var.account.shared_firewall_configuration.account_name
+  network_firewall_enabled            = var.account.network_firewall.enabled
+  shared_firewall_configuration = var.account.network_firewall.shared_firewall_configuration.enabled != true ? null : {
+    account_id   = var.account.network_firewall.shared_firewall_configuration.account_id
+    account_name = var.account.network_firewall.shared_firewall_configuration.account_name
   }
   providers = {
     aws = aws
@@ -39,8 +40,8 @@ resource "aws_networkfirewall_rule_group" "rule_file" {
   name     = "main-${replace(filebase64sha256("${path.module}/network_firewall_rules.rules.tpl"), "/[^[:alnum:]]/", "")}"
   type     = "STATEFUL"
   rules = templatefile("${path.module}/network_firewall_rules.rules.tpl", {
-    allowed_domains          = var.account.network_firewall_rules.allowed_domains
-    allowed_prefixed_domains = var.account.network_firewall_rules.allowed_prefixed_domains
+    allowed_domains          = var.account.network_firewall.allowed_domains
+    allowed_prefixed_domains = var.account.network_firewall.allowed_prefixed_domains
     }
   )
   lifecycle {
@@ -63,6 +64,7 @@ module "vpc_endpoints" {
   source = "./modules/vpc_endpoints"
   interface_endpoint_names = [
     "ec2",
+    "ec2messages",
     "ecr.api",
     "ecr.dkr",
     "events",
