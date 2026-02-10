@@ -64,6 +64,7 @@ module "vpc_endpoints" {
   source = "./modules/vpc_endpoints"
   interface_endpoint_names = [
     "ec2",
+    "ec2messages",
     "ecr.api",
     "ecr.dkr",
     "events",
