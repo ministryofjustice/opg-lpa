@@ -74,7 +74,6 @@ class LoginHandlerTest extends TestCase
             $this->sessionUtility,
             $this->lpaApplicationService,
             $this->flashMessenger,
-            $this->config,
         );
     }
 
