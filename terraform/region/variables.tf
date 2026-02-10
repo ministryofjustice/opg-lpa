@@ -40,6 +40,10 @@ variable "accounts" {
         allowed_domains          = list(string)
         allowed_prefixed_domains = list(string)
       })
+      shared_firewall_configuration = object({
+        account_id   = string
+        account_name = string
+      })
       regions = map(
         object({
           region     = string
