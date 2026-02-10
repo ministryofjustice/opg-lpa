@@ -18,14 +18,15 @@ variable "account" {
       domains_blocked = list(string)
     })
     old_network_vpc_endpoints_enabled = bool
-    network_firewall_rules = object({
+    network_firewall = object({
+      enabled                  = bool
       allowed_domains          = list(string)
       allowed_prefixed_domains = list(string)
-    })
-    shared_firewall_configuration = object({
-      enabled      = bool
-      account_id   = string
-      account_name = string
+      shared_firewall_configuration = object({
+        enabled      = bool
+        account_id   = string
+        account_name = string
+      })
     })
   })
 }

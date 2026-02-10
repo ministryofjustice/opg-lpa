@@ -36,15 +36,17 @@ variable "accounts" {
         eu_west_1 = string
         eu_west_2 = string
       })
-      network_firewall_rules = object({
+      network_firewall = object({
+        enabled                  = bool
         allowed_domains          = list(string)
         allowed_prefixed_domains = list(string)
+        shared_firewall_configuration = object({
+          enabled      = bool
+          account_id   = string
+          account_name = string
+        })
       })
-      shared_firewall_configuration = object({
-        enabled      = bool
-        account_id   = string
-        account_name = string
-      })
+
       regions = map(
         object({
           region     = string
