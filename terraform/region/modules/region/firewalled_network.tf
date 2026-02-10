@@ -1,3 +1,5 @@
+
+
 module "network" {
   source                              = "github.com/ministryofjustice/opg-terraform-aws-firewalled-network?ref=v1.1.0"
   aws_networkfirewall_firewall_policy = aws_networkfirewall_firewall_policy.main
@@ -6,8 +8,13 @@ module "network" {
   default_security_group_ingress      = []
   enable_dns_hostnames                = true
   enable_dns_support                  = true
+  shared_firewall_configuration = var.account.shared_firewall_configuration.enabled != true ? null : {
+    account_id   = var.account.shared_firewall_configuration.account_id
+    account_name = var.account.shared_firewall_configuration.account_name
+  }
   providers = {
-  aws = aws }
+    aws = aws
+  }
 }
 
 resource "aws_networkfirewall_firewall_policy" "main" {
