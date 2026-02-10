@@ -38,6 +38,10 @@ reset:
 run-front-composer:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
+.PHONY: run-front-mezzio-composer
+run-front-mezzio-composer:
+	@docker run --rm -v `pwd`/front-mezzio-test/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+
 .PHONY: run-pdf-composer
 run-pdf-composer:
 	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts

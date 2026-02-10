@@ -17,6 +17,9 @@ services:
   mezzio-test-app:
     container_name: mezzio-test
     image: mezzio-test
+    volumes:
+      - ./front-mezzio-test:/app:ro
+      - ./service-front:/service-front:ro
     build:
       context: ./
       args:
