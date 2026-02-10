@@ -37,6 +37,7 @@ variable "accounts" {
         eu_west_2 = string
       })
       network_firewall_rules = object({
+        enabled                  = bool
         allowed_domains          = list(string)
         allowed_prefixed_domains = list(string)
       })
