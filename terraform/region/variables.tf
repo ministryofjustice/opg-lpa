@@ -41,6 +41,7 @@ variable "accounts" {
         allowed_prefixed_domains = list(string)
       })
       shared_firewall_configuration = object({
+        enabled      = bool
         account_id   = string
         account_name = string
       })
