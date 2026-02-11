@@ -386,8 +386,8 @@ return [
                         'options' => [
                             'route'    => '/about-you[/:new]',
                             'defaults' => [
-                                'controller' => 'Authenticated\AboutYouController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware'     => Handler\AboutYouHandler::class,
                                 'allowIncompleteUser' => true,
                             ],
                         ],
