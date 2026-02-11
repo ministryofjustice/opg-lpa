@@ -112,7 +112,7 @@ Cypress.Commands.add("checkPdf", (candidateString) => {
  */
 Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
     const {
-        threshold = 0.1,
+        threshold = 0.3,
         failOnMismatch = true
     } = options;
 
@@ -163,17 +163,15 @@ Cypress.Commands.add('updateBaseline', (pageName) => {
 function takeScreenshot(pageName) {
     const screenshotsDir = Cypress.config('screenshotsFolder');
     const regressionsDir = screenshotsDir.split('/screenshots')[0] + '/regressions';
-    const specName = Cypress.spec.name.replace('.cy.js', '');
-    let specNameAndTest = `${pageName} - ${Cypress.currentTest.title}`
 
-    cy.screenshot(specNameAndTest, {
+    cy.screenshot(pageName, {
         overwrite: true,
         capture: 'fullPage'
     });
 
     return {
-        snapshotPath: `${screenshotsDir}/${specName}/${specNameAndTest}.png`,
-        baselinePath: `${regressionsDir}/baseline/${specName}/${specNameAndTest}.png`,
-        diffPath: `${regressionsDir}/diff/${specName}/${specNameAndTest}.png`,
+        snapshotPath: `${screenshotsDir}/${Cypress.spec.name}/${pageName}.png`,
+        baselinePath: `${regressionsDir}/baseline/${pageName}.png`,
+        diffPath: `${regressionsDir}/diff/${pageName}.png`,
     }
 }

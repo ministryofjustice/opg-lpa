@@ -19,3 +19,18 @@ Cypress.env("second_seeded_email", "seeded_test_user2@digital.justice.gov.uk");
 Cypress.env("seeded_password", "Pass1234");
 Cypress.env("a11yCheckedPages", new Set());
 Cypress.env("clonedLpa", false);
+
+beforeEach(() => {
+    // Only screenshot on HTML page requests (ignore assets)
+    cy.intercept('**/*.{html,htm,php}', (req) => {
+        req.continue((res) => {
+            // Only screenshot successful responses
+            if (res.statusCode >= 200 && res.statusCode < 400) {
+                const testName = Cypress.currentTest.title;
+                cy.screenshot(`${testName.replace(/\s+/g, '-')}-${Date.now()}`, {
+                    capture: 'fullPage'
+                });
+            }
+        });
+    });
+});
