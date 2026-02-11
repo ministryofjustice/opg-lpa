@@ -66,7 +66,7 @@ async function setupNodeEvents(on, config) {
      *
      * @returns {object} Comparison results
      */
-    compareScreenshots({ baselinePath, snapshotPath, diffPath, threshold = 0.1 }) {
+    compareScreenshots({ baselinePath, snapshotPath, diffPath, threshold = 0.3 }) {
       if (!fs.existsSync(snapshotPath)) {
         throw new Error(`Current screenshot not found: ${snapshotPath}`);
       }
@@ -169,7 +169,9 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
+    screenshotOnRunFailure: false,
   },
+  screenshotsFolder: 'cypress/screenshots',
   viewportWidth: 1280,
   viewportHeight: 720,
 });

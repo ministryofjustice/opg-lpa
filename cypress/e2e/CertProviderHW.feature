@@ -13,6 +13,7 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         And I visit the certificate provider page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then the page matches the "add-certificate-provider" baseline image
         When I click "add-certificate-provider"
         Then I can find "form-certificate-provider"
         And I can find "form-cancel"
@@ -27,12 +28,14 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
             | address-address2 | Cholsey |
             | address-address3 | Wallingford, Oxfordshire |
             | address-postcode | OX10 9NN |
+        Then the page matches the "add-certificate-provider-form" baseline image
         And I click "form-save"
         # check certificate provider is listed and save points to replacement attorney page
         Then I see "Mr Reece Richards" in the page text
         And I can find save pointing to people to notify page
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
         When I click "delete-certificate-provider"
+        Then the page matches the "delete-certificate-provider" baseline image
         And I click "cancel"
         And I click "view-change-certificate-provider"
         Then I can find "form-certificate-provider"

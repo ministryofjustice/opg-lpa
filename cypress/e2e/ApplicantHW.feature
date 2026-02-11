@@ -21,5 +21,6 @@ Feature: Add Applicant to a Health and Welfare LPA
         # select the attorney as applicant
         When I check occurrence 1 of checkbox
         When I check occurrence 0 of radio button
+        Then the page matches the "add-applicant" baseline image
         And I click "save"
         Then I am taken to the correspondent page
