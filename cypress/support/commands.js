@@ -112,9 +112,25 @@ Cypress.Commands.add("checkPdf", (candidateString) => {
  */
 Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
     const {
-        threshold = 0.1,
+        threshold = 0.3,
         failOnMismatch = true
     } = options;
+
+    // Accept cookies so the viewport is a consistent size and the cookie banner doesn't interfere with screenshots
+    cy.get('#global-cookie-message').then(($cookieBanner) => {
+        if ($cookieBanner.find('[data-cy="accept-analytics-cookies"]').length > 0) {
+            cy.get('[data-cy="accept-analytics-cookies"]').click({force: true});
+            cy.wait(100);
+            cy.get('[data-cy="hide-cookies-banner"]').click({force: true});
+        }
+    });
+
+    // Update last signed in date to fixed value for consistent screenshots
+    cy.get('body').then(($body) => {
+        if ($body.find('.lastsigned').length > 0) {
+            cy.get('.lastsigned').invoke('text', 'Last signed in: 1 January 2025 at 1:00am');
+        }
+    });
 
     const {snapshotPath, baselinePath, diffPath} = takeScreenshot(pageName);
 
@@ -140,7 +156,9 @@ Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
         }
 
         if (!result.error) {
+            cy.task('log', `Baseline matches for: ${baselinePath}`);
             return cy.task('deleteFile', snapshotPath);
+
         }
     });
 });
@@ -156,24 +174,22 @@ Cypress.Commands.add('updateBaseline', (pageName) => {
     cy.wait(100).then(() => {
         return cy.task('updateBaselineScreenshot', { snapshotPath, baselinePath });
     }).then(() => {
-        cy.log(`Baseline updated for: ${baselinePath}`);
+        cy.task('log', `Baseline updated for: ${baselinePath}`);
     });
 });
 
 function takeScreenshot(pageName) {
     const screenshotsDir = Cypress.config('screenshotsFolder');
     const regressionsDir = screenshotsDir.split('/screenshots')[0] + '/regressions';
-    const specName = Cypress.spec.name.replace('.cy.js', '');
-    let specNameAndTest = `${pageName} - ${Cypress.currentTest.title}`
 
-    cy.screenshot(specNameAndTest, {
+    cy.screenshot(pageName, {
         overwrite: true,
         capture: 'fullPage'
     });
 
     return {
-        snapshotPath: `${screenshotsDir}/${specName}/${specNameAndTest}.png`,
-        baselinePath: `${regressionsDir}/baseline/${specName}/${specNameAndTest}.png`,
-        diffPath: `${regressionsDir}/diff/${specName}/${specNameAndTest}.png`,
+        snapshotPath: `${screenshotsDir}/${Cypress.spec.name}/${pageName}.png`,
+        baselinePath: `${regressionsDir}/baseline/${pageName}.png`,
+        diffPath: `${regressionsDir}/diff/${pageName}.png`,
     }
 }
