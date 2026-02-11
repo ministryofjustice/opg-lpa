@@ -3,24 +3,33 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
+use Application\Handler\AccessibilityHandler;
+use Application\Handler\ContactHandler;
 use Application\Handler\CookiesHandler;
+use Application\Handler\EnableCookieHandler;
 use Application\Handler\Factory\CookiesHandlerFactory;
 use Application\Handler\Factory\FeedbackHandlerFactory;
 use Application\Handler\Factory\FeedbackThanksHandlerFactory;
 use Application\Handler\Factory\GuidanceHandlerFactory;
+use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\GuidanceHandler;
+use Application\Handler\HomeRedirectHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
+use Application\Handler\PrivacyHandler;
+use Application\Handler\TermsHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
@@ -371,6 +380,28 @@ class Module implements FormElementProviderInterface
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
                 NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
+                EnableCookieHandler::class => fn (ServiceLocatorInterface $sm) => new EnableCookieHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                TermsHandler::class => fn (ServiceLocatorInterface $sm) => new TermsHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                AccessibilityHandler::class => fn (ServiceLocatorInterface $sm) => new AccessibilityHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                PrivacyHandler::class => fn (ServiceLocatorInterface $sm) => new PrivacyHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                ContactHandler::class => fn (ServiceLocatorInterface $sm) => new ContactHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
+                HomeHandler::class => HomeHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

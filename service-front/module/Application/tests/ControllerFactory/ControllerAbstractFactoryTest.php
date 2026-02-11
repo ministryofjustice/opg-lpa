@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace ApplicationTest\ControllerFactory;
 
-use Application\Controller\General\HomeController;
+use Application\Controller\General\RegisterController;
 use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
+use Application\Model\Service\User\Details;
 use Psr\Container\ContainerInterface;
 use Laminas\Session\SessionManager;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\AbstractPluginManager;
+use Psr\Log\LoggerInterface;
 
 final class ControllerAbstractFactoryTest extends MockeryTestCase
 {
@@ -36,7 +38,7 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
 
     public function testCanCreateServiceWithName(): void
     {
-        $result = $this->factory->canCreate($this->container, 'General\HomeController');
+        $result = $this->factory->canCreate($this->container, 'General\RegisterController');
 
         $this->assertTrue($result);
     }
@@ -64,9 +66,15 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')->withArgs([SessionUtility::class])
             ->andReturn($sessionUtility)->once();
 
-        $controller = $this->factory->__invoke($this->container, 'General\HomeController');
+        $this->container->shouldReceive('get')->withArgs(['UserService'])
+            ->andReturn(Mockery::mock(Details::class))->once();
+
+        $this->container->shouldReceive('get')->withArgs(['Logger'])
+            ->andReturn(Mockery::mock(LoggerInterface::class))->once();
+
+        $controller = $this->factory->__invoke($this->container, 'General\RegisterController');
 
         $this->assertNotNull($controller);
-        $this->assertInstanceOf(HomeController::class, $controller);
+        $this->assertInstanceOf(RegisterController::class, $controller);
     }
 }
