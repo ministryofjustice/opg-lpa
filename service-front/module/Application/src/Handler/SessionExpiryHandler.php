@@ -24,7 +24,7 @@ class SessionExpiryHandler implements RequestHandlerInterface
     {
         $remainingSeconds = $this->authenticationService->getSessionExpiry();
 
-        if (!$remainingSeconds) {
+        if ($remainingSeconds === null || $remainingSeconds <= 0) {
             $this->clearSession();
 
             return new EmptyResponse(204);
