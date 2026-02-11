@@ -124,7 +124,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
 }
 
 
-#tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
+#tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer - egress is being managed by a network firewall.
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
   type              = "egress"
   from_port         = 0
