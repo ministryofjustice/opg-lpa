@@ -98,36 +98,38 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
   description       = "MoJ sites to Front ELB - HTTPS"
 }
 
+
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count     = var.environment_name == "production" ? 1 : 0
-  type      = "ingress"
-  from_port = 443
-  to_port   = 443
-  protocol  = "tcp"
-  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
+  count             = var.environment_name == "production" ? 1 : 0
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Anywhere to Production Front ELB - HTTPS"
 }
 
+#tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
 resource "aws_security_group_rule" "front_loadbalancer_ingress_http" {
-  type      = "ingress"
-  from_port = 80
-  to_port   = 80
-  protocol  = "tcp"
-  #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
+  type              = "ingress"
+  from_port         = 80
+  to_port           = 80
+  protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Anywhere to Front ELB - HTTP (redirects to HTTPS)"
 }
 
+
+#tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
 resource "aws_security_group_rule" "front_loadbalancer_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
-  #tfsec:ignore:aws-ec2-no-public-egress-sgr - public facing load balancer
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.front_loadbalancer.id
   description       = "Front ELB to Anywhere - All Traffic"
