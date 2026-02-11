@@ -18,6 +18,7 @@ Feature: Repeat Application for a Property and Finance LPA
         And I can find hidden "repeatCaseNumber"
 
         When I check "isRepeatApplication-is-repeat"
+        Then the page matches the "repeat-application-fee" baseline image
         And I click "save"
         When I click element marked "Confirm and continue"
         Then I see in the page text

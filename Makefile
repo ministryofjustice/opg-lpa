@@ -236,21 +236,21 @@ cypress-open-mezzio-test: npm-install
     ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
-# Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/Admin.feature
+# Provide name of the spec file (assuming it is in cypress/e2e/) e.g. cypress-run-spec SPEC=Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec:
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
-# Provide full path for spec name e.g. cypress-run-spec SPEC=cypress/e2e/FrontMezzioTest.feature
-cypress-run-spec-mezzio-test: 
+# Provide name of the spec file (assuming it is in cypress/e2e/) cypress-run-spec-mezzio-test SPEC=FrontMezzioTest.feature
+cypress-run-spec-mezzio-test:
 	docker compose -f docker-compose.front-mezzio-test.yml run --rm cypress-mezzio-test --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
-# This should be used in the form : make cypress-run-tags TAGS="@Signup". This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
+# This should be used in the form : make cypress-run-tags TAGS=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-tags:
 	docker compose run --rm -e CYPRESS_userNumber=`python3 cypress/user_number.py` cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
 
-# Provide full path for spec name e.g. cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
+# Provide name of the spec file (assuming it is in cypress/e2e/) cypress-run-spec-update-baseline SPEC=cypress/e2e/Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec-update-baseline:
 	docker compose run --rm -e CYPRESS_updateBaseline="1" cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"

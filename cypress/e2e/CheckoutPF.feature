@@ -64,6 +64,7 @@ Feature: Checkout for a Property and Finance LPA
         And I can find "confirm-and-pay-by-card"
         And I can find "confirm-and-pay-by-cheque"
 
+        Then the page matches the "checkout" baseline image
         When I click "confirm-and-pay-by-cheque"
         Then I am taken to the complete page
         And I can find link pointing to "/lp1"
@@ -71,6 +72,7 @@ Feature: Checkout for a Property and Finance LPA
         And I can find link pointing to "/lp3"
         # note that /lpa120 link only appears when fee reduction is requested
         And I can find link pointing to "/lpa120"
+        Then the page matches the "checkout-complete" baseline image
         # lines below will be uncommented once we fix issues with pdf generation unreliability
         #And I can get pdf from link containing "Download your print-ready LPA form"
         #And I can get pdf from link containing "Download the letter to send"
