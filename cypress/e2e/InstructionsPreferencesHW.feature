@@ -22,6 +22,7 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         And I fill out
             | instruction | Lorem Ipsum |
             | preferences | Neque porro quisquam |
+        Then the page matches the "instructions-preferences" baseline image
         When I click "save"
         Then I am taken to the applicant page
         When I click the last occurrence of "accordion-view-change"
