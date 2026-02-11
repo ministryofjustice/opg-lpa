@@ -74,7 +74,7 @@ class LoginHandler implements RequestHandlerInterface
                     $sessionManager->regenerateId(true);
 
                     if (isset($nextUrl)) {
-                        $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH));
+                        $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH) ?? '');
 
                         if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
                             if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
@@ -114,7 +114,7 @@ class LoginHandler implements RequestHandlerInterface
 
                 $authError = $result->getMessages();
 
-                if (is_array($authError) && count($authError) > 0) {
+                if (count($authError) > 0) {
                     $authError = array_pop($authError);
                 }
 
@@ -143,6 +143,7 @@ class LoginHandler implements RequestHandlerInterface
 
     private function getLoginForm(): FormInterface
     {
+        /** @var FormInterface $form */
         $form = $this->formElementManager->get('Application\Form\User\Login');
         $form->setAttribute('action', '/login');
 
