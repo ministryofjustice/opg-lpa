@@ -41,7 +41,6 @@ module "api_aurora" {
   vpc_security_group_ids          = [aws_security_group.rds_api.id]
   tags                            = local.db_component_tag
   copy_tags_to_snapshot           = true
-  firewalled_networks_enabled     = var.account.firewalled_networks_enabled
 }
 
 resource "aws_security_group" "rds_client" {
