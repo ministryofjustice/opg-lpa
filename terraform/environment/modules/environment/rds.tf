@@ -44,39 +44,6 @@ module "api_aurora" {
   firewalled_networks_enabled     = var.account.firewalled_networks_enabled
 }
 
-resource "aws_security_group" "rds-client-old" {
-  name_prefix            = "rds-client-${var.environment_name}"
-  description            = "rds access for ${var.environment_name}"
-  vpc_id                 = data.aws_vpc.default.id
-  revoke_rules_on_delete = true
-  tags                   = local.db_component_tag
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_security_group" "rds-api-old" {
-  name_prefix            = "rds-api-${var.environment_name}"
-  description            = "api rds access"
-  vpc_id                 = data.aws_vpc.default.id
-  revoke_rules_on_delete = true
-  tags                   = local.db_component_tag
-  lifecycle {
-    create_before_destroy = true
-  }
-}
-
-resource "aws_security_group_rule" "rds-api-old" {
-  count                    = var.account.database.rds_proxy_routing_enabled ? 0 : 1
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds-client-old.id
-  security_group_id        = aws_security_group.rds-api-old.id
-  description              = "RDS client to RDS - Postgres"
-}
-
 resource "aws_security_group" "rds_client" {
   name_prefix            = "rds-client-${var.environment_name}"
   description            = "rds access for ${var.environment_name}"
