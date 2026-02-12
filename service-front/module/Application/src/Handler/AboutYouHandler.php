@@ -48,8 +48,7 @@ class AboutYouHandler implements RequestHandlerInterface
         $actionTarget = $isNew ? '/user/about-you/new' : '/user/about-you';
         $form->setAttribute('action', $actionTarget);
 
-        // Get existing user details
-        $userDetails = $this->userService->getUserDetails();
+        $userDetails = $this->sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'user');
         $userDetailsArr = $userDetails->flatten();
 
         if (strtoupper($request->getMethod()) === 'POST') {
