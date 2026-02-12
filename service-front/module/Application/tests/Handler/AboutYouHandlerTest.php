@@ -98,6 +98,14 @@ class AboutYouHandlerTest extends TestCase
         return array_merge($postData, $existingData);
     }
 
+    private function setUpSessionWithUser(User $user): void
+    {
+        $this->sessionUtility
+            ->method('getFromMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user')
+            ->willReturn($user);
+    }
+
     public function testUnauthenticatedUserIsRedirectedToLogin(): void
     {
         $this->authenticationService->method('getIdentity')->willReturn(null);
@@ -115,7 +123,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $this->form->expects($this->once())
             ->method('setAttribute')
@@ -159,7 +167,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $postData = ['name' => ''];
 
@@ -201,7 +209,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $postData = ['name' => 'Updated Name'];
 
@@ -248,7 +256,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $routeMatch = new RouteMatch(['new' => 'new']);
         $request = (new ServerRequest())->withAttribute(RouteMatch::class, $routeMatch);
@@ -293,7 +301,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $postData = ['name' => 'New User Name'];
 
@@ -337,7 +345,7 @@ class AboutYouHandlerTest extends TestCase
             ->willReturn($this->createMock(UserIdentity::class));
 
         $userWithoutName = $this->createUserWithoutName();
-        $this->userService->method('getUserDetails')->willReturn($userWithoutName);
+        $this->setUpSessionWithUser($userWithoutName);
 
         $request = new ServerRequest();
         $response = $this->handler->handle($request);
@@ -353,7 +361,7 @@ class AboutYouHandlerTest extends TestCase
             ->willReturn($this->createMock(UserIdentity::class));
 
         $userWithoutName = $this->createUserWithoutName();
-        $this->userService->method('getUserDetails')->willReturn($userWithoutName);
+        $this->setUpSessionWithUser($userWithoutName);
 
         $routeMatch = new RouteMatch(['new' => 'new']);
         $request = (new ServerRequest())->withAttribute(RouteMatch::class, $routeMatch);
@@ -382,7 +390,7 @@ class AboutYouHandlerTest extends TestCase
         $userWithoutDob->updatedAt = new \DateTime('2020-01-02');
         $userWithoutDob->dob = null;
 
-        $this->userService->method('getUserDetails')->willReturn($userWithoutDob);
+        $this->setUpSessionWithUser($userWithoutDob);
 
         $this->form->expects($this->once())
             ->method('setData')
@@ -403,7 +411,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $this->form->expects($this->once())->method('setData');
         $this->form->method('isValid')->willReturn(false);
@@ -424,7 +432,7 @@ class AboutYouHandlerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($this->createMock(UserIdentity::class));
 
-        $this->userService->method('getUserDetails')->willReturn($this->user);
+        $this->setUpSessionWithUser($this->user);
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn(['name' => 'Test']);
