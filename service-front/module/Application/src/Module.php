@@ -3,6 +3,8 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Handler\AboutYouHandler;
+use Application\Handler\Factory\AboutYouHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -402,6 +404,7 @@ class Module implements FormElementProviderInterface
 
                 HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
                 HomeHandler::class => HomeHandlerFactory::class,
+                AboutYouHandler::class => AboutYouHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
