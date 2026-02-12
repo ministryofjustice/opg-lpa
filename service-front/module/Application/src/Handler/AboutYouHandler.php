@@ -89,7 +89,7 @@ class AboutYouHandler implements RequestHandlerInterface
                 ];
             }
 
-            $form->bind($userDetailsArr);
+            $form->setData($userDetailsArr);
         }
 
         $cancelUrl = '/user/dashboard';
