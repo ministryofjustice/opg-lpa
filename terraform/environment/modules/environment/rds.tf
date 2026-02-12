@@ -26,7 +26,7 @@ module "api_aurora" {
   availability_zones              = data.aws_availability_zones.aws_zones.names
   apply_immediately               = !var.account.database.deletion_protection
   cluster_identifier              = var.account.database.cluster_identifier
-  db_subnet_group_name            = local.db_subnet_group_name
+  db_subnet_group_name            = "data"
   deletion_protection             = var.account.database.deletion_protection
   engine_version                  = var.account.database.psql_engine_version
   environment                     = var.environment_name
@@ -38,7 +38,7 @@ module "api_aurora" {
   kms_key_id                      = data.aws_kms_key.rds.arn
   replication_source_identifier   = ""
   skip_final_snapshot             = !var.account.database.deletion_protection
-  vpc_security_group_ids          = [local.rds_api_sg_id]
+  vpc_security_group_ids          = [aws_security_group.rds_api.id]
   tags                            = local.db_component_tag
   copy_tags_to_snapshot           = true
   firewalled_networks_enabled     = var.account.firewalled_networks_enabled

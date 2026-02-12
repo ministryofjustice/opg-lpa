@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "front" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = local.vpc_id
+  vpc_id               = data.aws_vpc.main.id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -22,7 +22,7 @@ resource "aws_lb" "front" {
   #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = local.lb_subnet_ids
+  subnets                    = [for subnet in data.aws_subnet.lb : subnet.id]
   tags                       = local.front_component_tag
   drop_invalid_header_fields = true
 
@@ -56,7 +56,7 @@ resource "aws_lb_listener" "front_loadbalancer" {
 resource "aws_security_group" "front_loadbalancer_route53" {
   name_prefix = "${var.environment_name}-actor-loadbalancer-route53"
   description = "Allow Route53 healthchecks"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   lifecycle {
     create_before_destroy = true
   }
@@ -81,7 +81,7 @@ data "aws_ip_ranges" "route53_healthchecks" {
 resource "aws_security_group" "front_loadbalancer" {
   name        = "${var.environment_name}-front-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.front_component_tag
   lifecycle {
     create_before_destroy = true
