@@ -3,7 +3,7 @@ resource "aws_lb_target_group" "admin" {
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
-  vpc_id               = local.vpc_id
+  vpc_id               = data.aws_vpc.main.id
   deregistration_delay = 0
   health_check {
     enabled             = true
@@ -22,7 +22,7 @@ resource "aws_lb" "admin" {
   #tfsec:ignore:aws-elb-alb-not-public - public facing load balancer
   internal                   = false
   load_balancer_type         = "application"
-  subnets                    = local.lb_subnet_ids
+  subnets                    = [for subnet in data.aws_subnet.lb : subnet.id]
   tags                       = local.admin_component_tag
   drop_invalid_header_fields = true
   security_groups = [
@@ -54,7 +54,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
 resource "aws_security_group" "admin_loadbalancer" {
   name_prefix = "${var.environment_name}-admin-loadbalancer"
   description = "Allow inbound traffic"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.admin_component_tag
   lifecycle {
     create_before_destroy = true
