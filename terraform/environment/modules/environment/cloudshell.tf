@@ -6,7 +6,7 @@ resource "aws_security_group" "cloudshell" {
   }
 }
 
-resource "aws_security_group_rule" "api_ecs_service_egress" {
+resource "aws_security_group_rule" "cloudshell_egress" {
   type      = "egress"
   from_port = 0 #TODO: can we restrict this to postgres 5432
   to_port   = 0 #TODO: can we restrict this to postgres 5432
