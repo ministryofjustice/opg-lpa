@@ -8,8 +8,8 @@ resource "aws_security_group" "cloudshell" {
 
 resource "aws_security_group_rule" "cloudshell_egress" {
   type      = "egress"
-  from_port = 0 #TODO: can we restrict this to postgres 5432
-  to_port   = 0 #TODO: can we restrict this to postgres 5432
+  from_port = 5432 #TODO: can we restrict this to postgres 5432
+  to_port   = 5432 #TODO: can we restrict this to postgres 5432
   protocol  = "-1"
   #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
   cidr_blocks       = ["0.0.0.0/0"] #TODO: can we restrict this to postgres
