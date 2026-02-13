@@ -182,8 +182,8 @@ return [
                 'options' => [
                     'route'    => '/login[/:state]',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\LoginHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -194,8 +194,8 @@ return [
                 'options' => [
                     'route'    => '/logout',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'logout',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\LogoutHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -206,8 +206,8 @@ return [
                 'options' => [
                     'route' => '/session-state',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action' => 'session-expiry',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\SessionExpiryHandler::class,
                         'unauthenticated_route' => true
                     ]
                 ],
@@ -241,8 +241,8 @@ return [
                 'options' => [
                     'route'    => '/deleted',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'deleted',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\DeletedAccountHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
