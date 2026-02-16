@@ -11,7 +11,6 @@ use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
-use Application\Controller\General\RegisterController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Service\DateCheckViewModelHelper;
@@ -53,9 +52,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         PrimaryAttorneyController::class => [
             'setApplicantService' => 'ApplicantService',
-        ],
-        RegisterController::class => [
-            'setUserService' => 'UserService'
         ],
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
