@@ -3,7 +3,10 @@ data "aws_kms_key" "lpa_pdf_sqs" {
 }
 
 data "aws_security_group" "new_front_cache_region" {
-  name = "${local.account_name_short}-${local.region_name}-new-front-cache"
+  filter {
+    name   = "group-name"
+    values = ["${local.account_name_short}-${local.region_name}-new-front-cache*"]
+  }
 }
 
 data "aws_elasticache_replication_group" "new_front_cache_region" {
