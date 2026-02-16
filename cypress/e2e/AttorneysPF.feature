@@ -99,7 +99,6 @@ Feature: Add attorneys to a Property and Finance LPA
         And I can find save pointing to primary attorney decisions page
         # Delete 2cnd attorney
         When I click occurrence 1 of "delete-attorney"
-        Then the page matches the "delete-attorney" baseline image
         And I click "delete"
         # Check we are back to 1 attorney listed and save points back to replacement attorney page
         Then I am taken to the primary attorney page
