@@ -11,9 +11,11 @@ use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
+use Application\Handler\ConfirmRegistrationHandler;
 use Application\Handler\AccessibilityHandler;
 use Application\Handler\ContactHandler;
 use Application\Handler\CookiesHandler;
+use Application\Handler\Factory\ConfirmRegistrationHandlerFactory;
 use Application\Handler\EnableCookieHandler;
 use Application\Handler\Factory\CookiesHandlerFactory;
 use Application\Handler\Factory\FeedbackHandlerFactory;
@@ -23,6 +25,8 @@ use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
+use Application\Handler\Factory\RegisterHandlerFactory;
+use Application\Handler\Factory\ResendActivationEmailHandlerFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\GuidanceHandler;
@@ -30,6 +34,8 @@ use Application\Handler\HomeRedirectHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
+use Application\Handler\RegisterHandler;
+use Application\Handler\ResendActivationEmailHandler;
 use Application\Handler\PrivacyHandler;
 use Application\Handler\TermsHandler;
 use Application\Listener\AuthenticationListener;
@@ -431,6 +437,9 @@ class Module implements FormElementProviderInterface
                         null  // No UrlHelper for MVC
                     );
                 },
+                RegisterHandler::class => RegisterHandlerFactory::class,
+                ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
+                ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
