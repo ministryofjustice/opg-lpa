@@ -44,10 +44,3 @@ resource "aws_backup_selection" "main" {
   iam_role_arn = data.aws_iam_role.aurora_backup_role.arn
   resources    = [var.source_cluster_arn]
 }
-
-resource "aws_backup_vault" "backup_account" {
-  provider    = aws.backup_account
-  name        = "${var.environment_name}_${data.aws_region.current.region}_cross_account_backup_vault"
-  kms_key_arn = aws_kms_key.backup_account_key.arn
-}
-# TODO = Make name identifiable to make as others using account id
