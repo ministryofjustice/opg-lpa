@@ -26,14 +26,3 @@ resource "aws_kms_alias" "eu_west_2" {
   target_key_id = aws_kms_replica_key.eu_west_2.key_id
   region        = "eu-west-2"
 }
-resource "aws_kms_alias" "backup" {
-  name          = "alias/${var.alias}"
-  target_key_id = aws_kms_key.backup.key_id
-  region        = "eu-west-1"
-}
-
-resource "aws_kms_key" "backup" {
-  description = var.description
-  policy      = data.aws_iam_policy_document.kms_key.json
-  region      = "eu-west-1"
-}

@@ -51,7 +51,3 @@ variable "cross_account_backup_enabled" {
   description = "Condition to enable cross account backup"
   default     = false
 }
-# variable "backup_account_id" {
-#   type        = string
-#   description = "The account id of the backup account"
-# }
