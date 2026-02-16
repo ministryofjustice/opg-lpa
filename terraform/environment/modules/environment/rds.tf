@@ -75,3 +75,13 @@ resource "aws_security_group_rule" "rds_api" {
   security_group_id        = aws_security_group.rds_api.id
   description              = "RDS client to RDS - Postgres"
 }
+
+resource "aws_security_group_rule" "rds_cloudshell" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = aws_security_group.cloudshell.id
+  security_group_id        = aws_security_group.rds_api.id
+  description              = "Cloudshell to RDS - Postgres"
+}
