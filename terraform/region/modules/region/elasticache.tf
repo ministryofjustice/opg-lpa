@@ -3,6 +3,10 @@ resource "aws_security_group" "new_front_cache" {
   description = "Cache network access"
   vpc_id      = module.network.vpc.id
   tags        = local.front_component_tag
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_elasticache_subnet_group" "application_subnets" {
