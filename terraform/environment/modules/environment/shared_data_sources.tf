@@ -2,16 +2,11 @@ data "aws_kms_key" "lpa_pdf_sqs" {
   key_id = "alias/mrk_pdf_sqs_encryption_key-${var.account_name}"
 }
 
-data "aws_security_group" "front_cache_region" {
-  name = "${local.account_name_short}-${var.region_name}-front-cache"
-}
-
-data "aws_elasticache_replication_group" "front_cache_region" {
-  replication_group_id = "${local.account_name_short}-${var.region_name}-front-cache-rg"
-}
-
 data "aws_security_group" "new_front_cache_region" {
-  name = "${local.account_name_short}-${local.region_name}-new-front-cache"
+  filter {
+    name   = "group-name"
+    values = ["${local.account_name_short}-${local.region_name}-new-front-cache*"]
+  }
 }
 
 data "aws_elasticache_replication_group" "new_front_cache_region" {
