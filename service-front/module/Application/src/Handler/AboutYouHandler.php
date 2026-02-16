@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Handler;
 
+use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
@@ -21,6 +22,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AboutYouHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
@@ -91,15 +94,16 @@ class AboutYouHandler implements RequestHandlerInterface
             $form->setData($userDetailsArr);
         }
 
-        $cancelUrl = '/user/dashboard';
-
         $html = $this->renderer->render(
             'application/authenticated/about-you/index.twig',
-            [
-                'form' => $form,
-                'isNew' => $isNew,
-                'cancelUrl' => $cancelUrl,
-            ]
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                    'isNew' => $isNew,
+                    'cancelUrl' => '/user/dashboard',
+                ]
+            )
         );
 
         return new HtmlResponse($html);

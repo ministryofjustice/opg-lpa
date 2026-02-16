@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use Application\Handler;
+use Application\Handler\AboutYouHandler;
+use Application\Listener\AuthenticationListener;
+use Application\Listener\TermsAndConditionsListener;
+use Application\Listener\UserDetailsListener;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -384,10 +388,15 @@ return [
                     'about-you' => [
                         'type'    => Segment::class,
                         'options' => [
-                            'route'    => '/about-you[/:new]',
+                            'route' => '/about-you[/:new]',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware'     => Handler\AboutYouHandler::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    AboutYouHandler::class,
+                                ),
                                 'allowIncompleteUser' => true,
                             ],
                         ],
