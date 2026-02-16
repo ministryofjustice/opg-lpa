@@ -335,6 +335,7 @@ module.exports = function (grunt) {
     'copy:jsdev',
     'copy:jsdevdashboardstatuses',
     'copy:jsdevsessiontimeout',
+    'copy:jsdevgovukinit',
     'copy:jsdevinitpolyfill'
   ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'copy:cssdevfonts', 'cssmin']);

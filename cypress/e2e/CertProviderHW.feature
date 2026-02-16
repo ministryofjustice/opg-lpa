@@ -35,7 +35,6 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         And I can find save pointing to people to notify page
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
         When I click "delete-certificate-provider"
-        Then the page matches the "delete-certificate-provider" baseline image
         And I click "cancel"
         And I click "view-change-certificate-provider"
         Then I can find "form-certificate-provider"

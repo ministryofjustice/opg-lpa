@@ -61,7 +61,7 @@
 </div>
 
 {% if nav.lastLoginAt %}
-    <p class="lastsigned govuk-!-padding-bottom-2 govuk-!-padding-top-2 flush--ends">Last signed in: {{ nav.lastLoginAt|date('j F Y \\a\\t g:ia', "Europe/London") }}</p>
+    <p class="lastsigned govuk-!-padding-bottom-2 govuk-!-padding-top-2 flush--ends" data-cy="last-signed-in">Last signed in: {{ nav.lastLoginAt|date('j F Y \\a\\t g:ia', "Europe/London") }}</p>
 {% endif %}
 
 <hr class="flush--ends">

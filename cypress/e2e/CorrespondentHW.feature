@@ -14,6 +14,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         Then I am taken to the correspondent page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then the page matches the "add-correspondent" baseline image
         And I can find "contactInWelsh-0"
         And I can find "contactInWelsh-1"
         And I can find "contactByPhone"
@@ -29,7 +30,6 @@ Feature: Add a correspondent to a Health and Welfare LPA
         And I can find "email-address" and it is visible
         # choose donor as correspondent
         When I check "reuse-details-1"
-        Then the page matches the "add-correspondent" baseline image
         And I click "continue"
         # next line is essential, cypress needs the form not to be there before it can reliably find save button in CI
         Then I cannot find "form-reuse-details"

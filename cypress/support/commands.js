@@ -116,21 +116,7 @@ Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
         failOnMismatch = true
     } = options;
 
-    // Accept cookies so the viewport is a consistent size and the cookie banner doesn't interfere with screenshots
-    cy.get('#global-cookie-message').then(($cookieBanner) => {
-        if ($cookieBanner.find('[data-cy="accept-analytics-cookies"]').length > 0) {
-            cy.get('[data-cy="accept-analytics-cookies"]').click({force: true});
-            cy.wait(100);
-            cy.get('[data-cy="hide-cookies-banner"]').click({force: true});
-        }
-    });
-
-    // Update last signed in date to fixed value for consistent screenshots
-    cy.get('body').then(($body) => {
-        if ($body.find('.lastsigned').length > 0) {
-            cy.get('.lastsigned').invoke('text', 'Last signed in: 1 January 2025 at 1:00am');
-        }
-    });
+    normalizeViewport(cy);
 
     const {snapshotPath, baselinePath, diffPath} = takeScreenshot(pageName);
 
@@ -168,6 +154,7 @@ Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
  * Update baseline image for a specific test
  */
 Cypress.Commands.add('updateBaseline', (pageName) => {
+    normalizeViewport(cy);
     const {snapshotPath, baselinePath} = takeScreenshot(pageName);
 
     // Wait for screenshot to complete, then update baseline
@@ -192,4 +179,36 @@ function takeScreenshot(pageName) {
         baselinePath: `${regressionsDir}/baseline/${pageName}.png`,
         diffPath: `${regressionsDir}/diff/${pageName}.png`,
     }
+}
+
+function normalizeViewport(cy) {
+    // Accept cookies so the viewport is a consistent size and the cookie banner doesn't interfere with screenshots
+    cy.get('#global-cookie-message').then(($cookieBanner) => {
+        if ($cookieBanner.find('[data-cy="accept-analytics-cookies"]').length > 0) {
+            cy.get('[data-cy="accept-analytics-cookies"]').click({force: true});
+            cy.wait(100);
+            cy.get('[data-cy="hide-cookies-banner"]').click({force: true});
+        }
+    });
+
+    // Fix dynamic content to static values for consistent screenshots
+    cy.get('body').then(($body) => {
+        if ($body.find('[data-cy="last-signed-in"]').length > 0) {
+            cy.get('[data-cy="last-signed-in"]').invoke('text', 'Last signed in: 1 January 2025 at 1:00am');
+        }
+
+        if ($body.find('[data-cy="lpa-number"]').length > 0) {
+            cy.get('[data-cy="lpa-number"]').each(($el, index) => {
+                const baseNumber = 'A123 4567 89';
+                const incrementedNumber = String(parseInt('00') + index).padStart(2, '0');
+                cy.wrap($el).invoke('text', `${baseNumber}${incrementedNumber}`);
+            });
+        }
+
+        if ($body.find('[data-cy="last-saved"]').length > 0) {
+            cy.get('[data-cy="last-saved"]').each(($el) => {
+                cy.wrap($el).invoke('text', `01/01/25`);
+            });
+        }
+    });
 }
