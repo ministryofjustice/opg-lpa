@@ -11,10 +11,10 @@ locals {
 
 resource "aws_service_discovery_private_dns_namespace" "internal" {
   name = local.dns_namespace_internal_original
-  vpc  = local.vpc_id
+  vpc  = data.aws_vpc.main.id
 }
 
 resource "aws_service_discovery_private_dns_namespace" "internal_canonical" {
   name = local.dns_namespace_internal_canonical
-  vpc  = local.vpc_id
+  vpc  = data.aws_vpc.main.id
 }
