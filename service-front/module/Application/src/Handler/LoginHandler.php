@@ -46,7 +46,7 @@ class LoginHandler implements RequestHandlerInterface
 
         $authError = null;
 
-        if (strtoupper($request->getMethod()) === 'POST') {
+        if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
             if (!is_array($data)) {
                 $data = [];
