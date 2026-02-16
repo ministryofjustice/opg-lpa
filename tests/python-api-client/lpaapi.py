@@ -59,6 +59,7 @@ def deleteViaAPI(lpaId, jsonData, pathSuffix=""):
     r = s.delete(fullPath, headers=token)
     print(r, file=sys.stderr)
 
+
 def getStats():
     token, userId = authenticate()
     fullPath = f"{apiRoot}/stats/all"
@@ -514,12 +515,12 @@ def setPaymentLowIncomeNotClaimingReduction(lpaId):
     setPayment(lpaId, amount=41)
 
 
-def setInstruction(lpaId, instruction="Lorem Ipsum"):
+def setInstruction(lpaId, instruction="Some instructions"):
     instructionJson = {"instruction": instruction}
     putToAPI(lpaId, instructionJson, "instruction")
 
 
-def setPreference(lpaId, preference="Neque porro quisquam"):
+def setPreference(lpaId, preference="Some preferences"):
     preferenceJson = {"preference": preference}
     putToAPI(lpaId, preferenceJson, "preference")
 

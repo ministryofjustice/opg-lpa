@@ -52,8 +52,8 @@ Feature: Checkout for a Property and Finance LPA
             | Person to notify | | |
             | Name | Sir Anthony Webb | people-to-notify |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ BS18 6PL | |
-            | Preferences | Neque porro quisquam | instructions |
-            | Instructions | Lorem Ipsum | instructions |
+            | Preferences | Some preferences | instructions |
+            | Instructions | Some instructions | instructions |
             | Who is registering the LPA | Donor | applicant |
             | Correspondent | | |
             | Name | Mrs Nancy Garrison | correspondent |

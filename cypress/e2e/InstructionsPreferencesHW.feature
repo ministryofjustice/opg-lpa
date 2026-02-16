@@ -20,21 +20,21 @@ Feature: Specify Instructions and Preferences for a Health and Welfare LPA
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
         And I fill out
-            | instruction | Lorem Ipsum |
-            | preferences | Neque porro quisquam |
+            | instruction | Some instructions |
+            | preferences | Some preferences |
         Then the page matches the "instructions-preferences" baseline image
         When I click "save"
         Then I am taken to the applicant page
         When I click the last occurrence of "accordion-view-change"
         Then I see in the page text
-            | Lorem Ipsum |
-            | Neque porro quisquam |
+            | Some instructions |
+            | Some preferences |
         When I click "save"
         Then I am taken to the applicant page
         When I click the last occurrence of "accordion-view-change"
         Then I see in the page text
-            | Lorem Ipsum |
-            | Neque porro quisquam |
+            | Some instructions |
+            | Some preferences |
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"

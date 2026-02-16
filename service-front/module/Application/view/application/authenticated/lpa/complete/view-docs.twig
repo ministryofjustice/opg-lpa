@@ -24,7 +24,7 @@
 
 <div class="text">
 
-    <p>Your online LPA ID is <strong class="bold-small">{{ lpa.id | format_lpa_id }}</strong></p>
+    <p>Your online LPA ID is <strong class="bold-small" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</strong></p>
 
     <p>You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian – if you have not already done so.</p>
 
