@@ -253,8 +253,8 @@ return [
                 'options' => [
                     'route'    => '/signup',
                     'defaults' => [
-                        'controller' => 'General\RegisterController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\RegisterHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -268,17 +268,8 @@ return [
                                 'token' => '[a-zA-Z0-9]+',
                             ],
                             'defaults' => [
-                                'action'     => 'confirm',
-                                'unauthenticated_route' => true
-                            ],
-                        ],
-                    ],
-                    'email-sent' => [
-                        'type'    => Literal::class,
-                        'options' => [
-                            'route'    => '/email-sent',
-                            'defaults' => [
-                                'action' => 'email-sent',
+                                'controller' => PipeSpec::class,
+                                'middleware' => Handler\ConfirmRegistrationHandler::class,
                                 'unauthenticated_route' => true
                             ],
                         ],
@@ -288,7 +279,8 @@ return [
                         'options' => [
                             'route'    => '/resend-email',
                             'defaults' => [
-                                'action' => 'resend-email',
+                                'controller' => PipeSpec::class,
+                                'middleware' => Handler\ResendActivationEmailHandler::class,
                                 'unauthenticated_route' => true
                             ],
                         ],
