@@ -22,7 +22,7 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_cpu_utilization" {
   dimensions = {
     CacheClusterId = element(local.cache_member_clusters, count.index)
   }
-  depends_on = [aws_elasticache_replication_group.front_cache]
+  depends_on = [aws_elasticache_replication_group.new_front_cache]
 }
 
 resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
@@ -45,7 +45,7 @@ resource "aws_cloudwatch_metric_alarm" "elasticache_high_swap_utilization" {
   dimensions = {
     CacheClusterId = element(local.cache_member_clusters, count.index)
   }
-  depends_on = [aws_elasticache_replication_group.front_cache]
+  depends_on = [aws_elasticache_replication_group.new_front_cache]
 }
 
 resource "aws_cloudwatch_event_rule" "tasks_stopped" {
