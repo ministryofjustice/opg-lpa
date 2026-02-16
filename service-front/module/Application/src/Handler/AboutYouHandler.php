@@ -9,6 +9,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details as UserService;
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
@@ -54,7 +55,7 @@ class AboutYouHandler implements RequestHandlerInterface
         $userDetails = $this->sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'user');
         $userDetailsArr = $userDetails->flatten();
 
-        if (strtoupper($request->getMethod()) === 'POST') {
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
             if (!is_array($data)) {
                 $data = [];
