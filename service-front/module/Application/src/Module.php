@@ -3,6 +3,8 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Handler\AboutYouHandler;
+use Application\Handler\Factory\AboutYouHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -408,6 +410,33 @@ class Module implements FormElementProviderInterface
 
                 HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
                 HomeHandler::class => HomeHandlerFactory::class,
+                AboutYouHandler::class => AboutYouHandlerFactory::class,
+                AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
+                    return new AuthenticationListener(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                        null  // No UrlHelper for MVC
+                    );
+                },
+
+                UserDetailsListener::class => function (ServiceLocatorInterface $sm) {
+                    return new UserDetailsListener(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(Details::class),
+                        $sm->get(AuthenticationService::class),
+                        $sm->get('SessionManager'),
+                        $sm->get(LoggerInterface::class),
+                    );
+                },
+
+                TermsAndConditionsListener::class => function (ServiceLocatorInterface $sm) {
+                    return new TermsAndConditionsListener(
+                        $sm->get('config'),
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                        null  // No UrlHelper for MVC
+                    );
+                },
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
