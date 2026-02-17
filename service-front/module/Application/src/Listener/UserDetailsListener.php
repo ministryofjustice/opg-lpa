@@ -106,10 +106,24 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $route = $request->getAttribute(RouteResult::class);
-        $routeOptions = $route ? $route->getMatchedRoute()->getOptions() : [];
-        $isUnauthenticatedRoute = $route && isset($routeOptions['unauthenticated_route']) && $routeOptions['unauthenticated_route'] === true;
 
-        if ($route === null || $isUnauthenticatedRoute === true) {
+        // If no Mezzio RouteResult, we're in MVC hybrid mode - just fetch user details and continue
+        if ($route === null) {
+            $userDetails = $this->userService->getUserDetails();
+
+            if ($userDetails !== false) {
+                $request = $request->withAttribute(Attribute::USER_DETAILS, $userDetails);
+                $this->sessionUtility->setInMvc(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+            }
+
+            return $handler->handle($request);
+        }
+
+        // Mezzio routing logic below
+        $routeOptions = $route->getMatchedRoute()->getOptions();
+        $isUnauthenticatedRoute = isset($routeOptions['unauthenticated_route']) && $routeOptions['unauthenticated_route'] === true;
+
+        if ($isUnauthenticatedRoute === true) {
             return $handler->handle($request);
         }
 
@@ -123,8 +137,7 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
         $this->sessionUtility->setInMvc(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
 
         $allowIncompleteUser = isset($routeOptions['allowIncompleteUser']) && $routeOptions['allowIncompleteUser'] === true;
-        if ($allowIncompleteUser && $userDetails->getName() === null) {
-            // TODO(mezzio): update routeName when we setup Mezzio routes
+        if (!$allowIncompleteUser && $userDetails->getName() === null) {
             return new RedirectResponse('/user/about-you/new');
         }
 
@@ -139,7 +152,6 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
                 'clear_storage' => true
             ]);
 
-            // TODO(mezzio): update routeName when we setup Mezzio routes
             return new RedirectResponse('/login?state=timeout');
         }
 
