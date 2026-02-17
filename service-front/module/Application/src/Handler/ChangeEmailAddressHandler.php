@@ -16,6 +16,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Application\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
 
 class ChangeEmailAddressHandler implements RequestHandlerInterface
 {
@@ -36,6 +37,7 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
             return new RedirectResponse('/login');
         }
 
+        /** @var ChangeEmailAddressForm $form */
         $form = $this->formElementManager->get('Application\Form\User\ChangeEmailAddress');
         $form->setAttribute('action', '/user/change-email-address');
 
