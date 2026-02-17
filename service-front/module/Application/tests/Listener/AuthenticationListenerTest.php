@@ -339,7 +339,11 @@ class AuthenticationListenerTest extends TestCase
         $handler
             ->expects($this->once())
             ->method('handle')
-            ->with($request)
+            ->with($this->callback(function (ServerRequest $request) use ($routeResult) {
+                $this->assertSame($routeResult, $request->getAttribute(RouteResult::class));
+                $this->assertIsInt($request->getAttribute('secondsUntilSessionExpires'));
+                return true;
+            }))
             ->willReturn($expectedResponse);
 
         $listener = new AuthenticationListener(

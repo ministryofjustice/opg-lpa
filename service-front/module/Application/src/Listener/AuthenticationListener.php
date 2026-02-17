@@ -82,6 +82,19 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $identity = $this->authenticationService->getIdentity();
+
+        // Set session expiry attribute for authenticated users (before any routing checks)
+        if ($identity instanceof User) {
+            $tokenExpiresAt = $identity->tokenExpiresAt();
+            if ($tokenExpiresAt !== null) {
+                $request = $request->withAttribute(
+                    'secondsUntilSessionExpires',
+                    $tokenExpiresAt->getTimestamp() - time()
+                );
+            }
+        }
+
         $route = $request->getAttribute(RouteResult::class);
         if (!$route instanceof RouteResult) {
             return $handler->handle($request);
@@ -90,7 +103,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         $routeOptions = $route->getMatchedRoute()->getOptions() ?: [];
         $isUnauthenticatedRoute = isset($routeOptions['unauthenticated_route']) && $routeOptions['unauthenticated_route'] === true;
 
-        if ($isUnauthenticatedRoute === true || $this->authenticationService->getIdentity() instanceof User) {
+        if ($isUnauthenticatedRoute === true || $identity instanceof User) {
             return $handler->handle($request);
         }
 

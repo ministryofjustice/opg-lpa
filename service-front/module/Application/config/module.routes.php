@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use Application\Handler;
+use Application\Handler\AboutYouHandler;
+use Application\Listener\AuthenticationListener;
+use Application\Listener\TermsAndConditionsListener;
+use Application\Listener\UserDetailsListener;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -182,8 +186,8 @@ return [
                 'options' => [
                     'route'    => '/login[/:state]',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\LoginHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -194,8 +198,8 @@ return [
                 'options' => [
                     'route'    => '/logout',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'logout',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\LogoutHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -206,8 +210,8 @@ return [
                 'options' => [
                     'route' => '/session-state',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action' => 'session-expiry',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\SessionExpiryHandler::class,
                         'unauthenticated_route' => true
                     ]
                 ],
@@ -241,8 +245,8 @@ return [
                 'options' => [
                     'route'    => '/deleted',
                     'defaults' => [
-                        'controller' => 'General\AuthController',
-                        'action'     => 'deleted',
+                        'controller' => PipeSpec::class,
+                        'middleware'     => Handler\DeletedAccountHandler::class,
                         'unauthenticated_route' => true
                     ],
                 ],
@@ -376,10 +380,15 @@ return [
                     'about-you' => [
                         'type'    => Segment::class,
                         'options' => [
-                            'route'    => '/about-you[/:new]',
+                            'route' => '/about-you[/:new]',
                             'defaults' => [
-                                'controller' => 'Authenticated\AboutYouController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    AboutYouHandler::class,
+                                ),
                                 'allowIncompleteUser' => true,
                             ],
                         ],
