@@ -60,7 +60,12 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
             $form->setData($data);
 
             if ($form->isValid()) {
-                $newEmailAddress = $form->getData()['email'];
+                $validated = $form->getData();
+
+                $newEmailAddress = '';
+                if (is_array($validated) && isset($validated['email']) && is_string($validated['email'])) {
+                    $newEmailAddress = $validated['email'];
+                }
 
                 $result = $this->userService->requestEmailUpdate($newEmailAddress, $currentEmailAddress);
 
