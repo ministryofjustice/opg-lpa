@@ -19,7 +19,7 @@ module "aws_backup_cross_account_key" {
     aws = aws.backup
   }
 }
-
+#
 module "aurora_database_encryption_key" {
   source      = "git@github.com:ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5-lpal1923bkmske.2"
   description = "Customer managed encryption key for Aurora RDS database"
