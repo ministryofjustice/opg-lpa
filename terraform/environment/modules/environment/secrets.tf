@@ -62,14 +62,12 @@ data "aws_secretsmanager_secret" "performance_platform_db_password" {
 }
 
 resource "aws_secretsmanager_secret" "api_rds_credentials" {
-  count                   = 1
   name                    = "${var.environment_name}/api_rds_credentials"
   recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
-  count     = 1
-  secret_id = aws_secretsmanager_secret.api_rds_credentials[0].id
+  secret_id = aws_secretsmanager_secret.api_rds_credentials.id
   secret_string = jsonencode({
     username            = data.aws_secretsmanager_secret_version.api_rds_username.secret_string,
     password            = data.aws_secretsmanager_secret_version.api_rds_password.secret_string,

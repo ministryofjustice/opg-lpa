@@ -261,7 +261,6 @@ locals {
           awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
         }
       },
-      dependsOn = [],
       secrets = [
         { name = "OPG_LPA_API_NOTIFY_API_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
@@ -271,7 +270,7 @@ locals {
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy[0].endpoint },
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
         { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { name = "OPG_LPA_PROCESSING_STATUS_ENDPOINT", value = var.account.sirius_api_gateway_endpoint },
