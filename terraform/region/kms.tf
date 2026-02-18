@@ -20,6 +20,23 @@ module "aws_backup_cross_account_key" {
   }
 }
 
+module "aurora_database_encryption_key" {
+  source      = "git@github.com:ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5-lpal1923bkmske.2"
+  description = "Customer managed encryption key for Aurora RDS database"
+  alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  decryption_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  encryption_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  usage_services = ["rds.amazonaws.com"]
+}
+
 data "aws_kms_key" "access_log_key" {
   key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
 }
