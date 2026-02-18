@@ -65,17 +65,6 @@ resource "aws_security_group" "rds_api" {
   }
 }
 
-resource "aws_security_group_rule" "rds_api" {
-  count                    = var.account.database.rds_proxy_routing_enabled ? 0 : 1
-  type                     = "ingress"
-  from_port                = 5432
-  to_port                  = 5432
-  protocol                 = "tcp"
-  source_security_group_id = aws_security_group.rds_client.id
-  security_group_id        = aws_security_group.rds_api.id
-  description              = "RDS client to RDS - Postgres"
-}
-
 resource "aws_security_group_rule" "rds_cloudshell" {
   type                     = "ingress"
   from_port                = 5432

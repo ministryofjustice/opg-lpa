@@ -1,6 +1,6 @@
 module "rds_proxy" {
   source                            = "./modules/rds_proxy"
-  count                             = var.account.database.rds_proxy_enabled ? 1 : 0
+  count                             = 1
   environment_name                  = var.environment_name
   db_cluster_identifier             = module.api_aurora[0].cluster.id
   api_rds_credentials_secret_arn    = aws_secretsmanager_secret_version.api_rds_credentials[0].arn
