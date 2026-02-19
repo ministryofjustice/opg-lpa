@@ -30,47 +30,47 @@ jobs:
           - image_name: online-lpa/front_app
             dockerfile_path: ./service-front/docker/app
             service_path: ./service-front
-            trivyignores: ./service-front/.trivyignore.yml
+            trivyignores: ./service-front/docker/app/.trivyignore.yml
 
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             service_path: ./service-front
-            trivyignores: ./service-front/.trivyignore.yml
+            trivyignores: ./service-front/docker/web/.trivyignore.yml
 
           - image_name: online-lpa/api_app
             dockerfile_path: ./service-api/docker/app
             service_path: ./service-api
-            trivyignores: ./service-api/.trivyignore.yml
+            trivyignores: ./service-api/docker/app/.trivyignore.yml
 
           - image_name: online-lpa/api_web
             dockerfile_path: ./service-api/docker/web
             service_path: ./service-api
-            trivyignores: ./service-api/.trivyignore.yml
+            trivyignores: ./service-api/docker/web/.trivyignore.yml
 
           - image_name: online-lpa/admin_app
             dockerfile_path: ./service-admin/docker/app
             service_path: ./service-admin
-            trivyignores: ./service-admin/.trivyignore.yml
+            trivyignores: ./service-admin/docker/app/.trivyignore.yml
 
           - image_name: online-lpa/admin_web
             dockerfile_path: ./service-admin/docker/web
             service_path: ./service-admin
-            trivyignores: ./service-admin/.trivyignore.yml
+            trivyignores: ./service-admin/docker/web/.trivyignore.yml
 
           - image_name: online-lpa/pdf_app
             dockerfile_path: ./service-pdf/docker/app
             service_path: ./service-pdf
-            trivyignores: ./service-pdf/.trivyignore.yml
+            trivyignores: ./service-pdf/docker/app/.trivyignore.yml
 
           - image_name: online-lpa/seeding_app
             dockerfile_path: ./service-seeding/docker/app
             service_path: ./service-seeding
-            trivyignores: ./service-seeding/.trivyignore.yml
+            trivyignores: ./service-seeding/docker/app/.trivyignore.yml
 
           - image_name: lambda-aurora_scheduler
             dockerfile_path: ./aurora-scheduler/docker
             service_path: ./aurora-scheduler
-            trivyignores: ./aurora-scheduler/.trivyignore.yml
+            trivyignores: ./aurora-scheduler/docker/.trivyignore.yml
             override_tag: latest
 
     steps:
