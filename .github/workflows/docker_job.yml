@@ -24,7 +24,7 @@ jobs:
     name: "docker build"
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         include:
           - image_name: online-lpa/front_app
