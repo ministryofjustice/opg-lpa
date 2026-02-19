@@ -34,7 +34,12 @@ module "aurora_database_encryption_key" {
   encryption_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
-  usage_services = ["rds.amazonaws.com"]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  usage_services     = ["rds.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
 }
 
 data "aws_kms_key" "access_log_key" {
