@@ -13,6 +13,7 @@ declare(strict_types=1);
 return [
     'dependencies' => [
         'factories' => [
+            App\Handler\DashboardHandler::class => App\Handler\DashboardHandlerFactory::class,
             App\Handler\LoginHandler::class => App\Handler\LoginHandlerFactory::class,
         ],
     ],

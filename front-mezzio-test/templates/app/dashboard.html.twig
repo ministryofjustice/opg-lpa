@@ -1,0 +1,9 @@
+{% import "dashboard/macros.twig" as macros %}
+
+{%- set pageTitle = 'Your LPAs' -%}
+
+{% block content %}
+
+{{ macros.listLpas(lpas, 'all', null, trackingEnabled) }}
+
+{% endblock %}

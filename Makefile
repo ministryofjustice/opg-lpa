@@ -38,6 +38,10 @@ reset:
 run-front-composer:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
+.PHONY: run-front-mezzio-composer
+run-front-mezzio-composer:
+	@docker run --rm -v `pwd`/front-mezzio-test/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+
 .PHONY: run-pdf-composer
 run-pdf-composer:
 	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
@@ -116,6 +120,15 @@ dc-up-debug: run-composers
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose up -d --remove-orphans
+
+
+.PHONY: front-mezzio-up
+front-mezzio-up:
+	docker compose -f docker-compose.front-mezzio-test.yml up
+
+.PHONY: front-mezzio-down
+front-mezzio-down:
+	docker compose -f docker-compose.front-mezzio-test.yml down
 
 .PHONY: dc-build
 dc-build:
