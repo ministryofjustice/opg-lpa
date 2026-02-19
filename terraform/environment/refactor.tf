@@ -27,3 +27,19 @@ moved {
   from = aws_iam_role.restore_testing_role
   to   = module.cross_region_backup[0].aws_iam_role.restore_testing_role
 }
+
+
+moved {
+  from = module.eu-west-1.module.rds_proxy[0]
+  to   = module.eu-west-1.module.rds_proxy
+}
+
+moved {
+  from = module.eu-west-1.aws_secretsmanager_secret.api_rds_credentials[0]
+  to   = module.eu-west-1.aws_secretsmanager_secret.api_rds_credentials
+}
+
+moved {
+  from = module.eu-west-1.aws_secretsmanager_secret_version.api_rds_credentials[0]
+  to   = module.eu-west-1.aws_secretsmanager_secret_version.api_rds_credentials
+}
