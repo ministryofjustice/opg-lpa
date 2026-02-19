@@ -227,8 +227,8 @@ jobs:
           TRIVY_SKIP_VERSION_CHECK: true
 
         with:
-          scan-type: "image"
-          image-ref: ${{ matrix.image_name }}:latest
+          scan-type: "fs"
+          # image-ref: ${{ matrix.image_name }}:latest
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
