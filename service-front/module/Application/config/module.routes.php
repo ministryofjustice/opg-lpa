@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangePasswordHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
@@ -427,8 +428,13 @@ return [
                         'options' => [
                             'route'    => '/change-password',
                             'defaults' => [
-                                'controller' => 'Authenticated\ChangePasswordController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    ChangePasswordHandler::class,
+                                ),
                             ],
                         ],
                     ], // change-password
