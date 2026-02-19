@@ -29,9 +29,11 @@ module "aurora_database_encryption_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   decryption_roles = [
+    "*",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   encryption_roles = [
+    "*",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   grant_roles = [
@@ -40,6 +42,14 @@ module "aurora_database_encryption_key" {
   usage_services     = ["rds.amazonaws.com"]
   primary_region     = "eu-west-1"
   replicas_to_create = ["eu-west-2"]
+  encryption_role_patterns = [
+    "-seeding-task-role",
+    "-api-task-role",
+  ]
+  decryption_role_patterns = [
+    "-seeding-task-role",
+    "-api-task-role",
+  ]
 }
 
 data "aws_kms_key" "access_log_key" {
