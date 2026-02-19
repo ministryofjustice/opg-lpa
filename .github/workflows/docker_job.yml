@@ -216,7 +216,7 @@ jobs:
           TRIVY_SKIP_CHECK_UPDATE: true
         with:
           scan-type: "image"
-          image-ref: ${{ matrix.image_name }}:${{ inputs.tag }}
+          image-ref: ${{ matrix.image_name }}:latest
           format: "github"
           output: "${{ matrix.image_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
