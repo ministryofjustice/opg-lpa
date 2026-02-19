@@ -19,6 +19,39 @@ module "aws_backup_cross_account_key" {
     aws = aws.backup
   }
 }
+#
+module "aurora_database_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  description        = "Customer managed encryption key for Aurora RDS database"
+  alias              = "opg-lpa-${local.account_name}-rds-encryption-key"
+  usage_services     = ["rds.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  decryption_roles = [
+    "*",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  encryption_roles = [
+    "*",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/seeding-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/api-task-role",
+  ]
+  decryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*seeding-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/*api-task-role",
+  ]
+}
 
 data "aws_kms_key" "access_log_key" {
   key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
