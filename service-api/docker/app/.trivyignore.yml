@@ -1,0 +1,25 @@
+vulnerabilities:
+  - id: CVE-2026-2004
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2005
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2006
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2007
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2004
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2005
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2006
+    statement: not patched in source
+    expired_at: 2026-03-30
+  - id: CVE-2026-2007
+    statement: not patched in source
+    expired_at: 2026-03-30
