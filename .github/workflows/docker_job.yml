@@ -222,13 +222,13 @@ jobs:
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
           TRIVY_SKIP_DB_UPDATE: true
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
+          # TRIVY_SKIP_JAVA_DB_UPDATE: true
           TRIVY_SKIP_CHECK_UPDATE: true
           TRIVY_SKIP_VERSION_CHECK: true
 
         with:
-          scan-type: "fs"
-          # image-ref: ${{ matrix.image_name }}:latest
+          scan-type: "image"
+          image-ref: ${{ matrix.image_name }}:latest
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
