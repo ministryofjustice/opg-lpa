@@ -31,46 +31,55 @@ jobs:
             dockerfile_path: ./service-front/docker/app
             service_path: ./service-front
             trivyignores: ./service-front/docker/app/.trivyignore.yml
+            sbom_name: front-app
 
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             service_path: ./service-front
             trivyignores: ./service-front/docker/web/.trivyignore.yml
+            sbom_name: front-web
 
           - image_name: online-lpa/api_app
             dockerfile_path: ./service-api/docker/app
             service_path: ./service-api
             trivyignores: ./service-api/docker/app/.trivyignore.yml
+            sbom_name: api-app
 
           - image_name: online-lpa/api_web
             dockerfile_path: ./service-api/docker/web
             service_path: ./service-api
             trivyignores: ./service-api/docker/web/.trivyignore.yml
+            sbom_name: api-web
 
           - image_name: online-lpa/admin_app
             dockerfile_path: ./service-admin/docker/app
             service_path: ./service-admin
             trivyignores: ./service-admin/docker/app/.trivyignore.yml
+            sbom_name: admin-app
 
           - image_name: online-lpa/admin_web
             dockerfile_path: ./service-admin/docker/web
             service_path: ./service-admin
             trivyignores: ./service-admin/docker/web/.trivyignore.yml
+            sbom_name: admin-web
 
           - image_name: online-lpa/pdf_app
             dockerfile_path: ./service-pdf/docker/app
             service_path: ./service-pdf
             trivyignores: ./service-pdf/docker/app/.trivyignore.yml
+            sbom_name: pdf-app
 
           - image_name: online-lpa/seeding_app
             dockerfile_path: ./service-seeding/docker/app
             service_path: ./service-seeding
             trivyignores: ./service-seeding/docker/app/.trivyignore.yml
+            sbom_name: seeding-app
 
           - image_name: lambda-aurora_scheduler
             dockerfile_path: ./aurora-scheduler/docker
             service_path: ./aurora-scheduler
             trivyignores: ./aurora-scheduler/docker/.trivyignore.yml
+            sbom_name: lambda-aurora-scheduler
             override_tag: latest
 
     steps:
@@ -218,15 +227,15 @@ jobs:
           scan-type: "image"
           image-ref: ${{ matrix.image_name }}:latest
           format: "github"
-          output: "${{ matrix.image_name }}-${{ inputs.tag }}.sbom.json"
+          output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
           version: v0.65.0
 
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: trivy-sbom-report-${{ matrix.image_name }}-${{ inputs.tag }}
-          path: "${{ github.workspace }}/${{ matrix.image_name }}-${{ inputs.tag }}.sbom.json"
+          name: trivy-sbom-report-${{ matrix.sbom_name }}-${{ inputs.tag }}
+          path: "${{ github.workspace }}/${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           retention-days: 20 # 90 is the default
 
       - name: Tag and Push Container
