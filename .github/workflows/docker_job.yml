@@ -30,38 +30,56 @@ jobs:
           - image_name: online-lpa/front_app
             dockerfile_path: ./service-front/docker/app
             service_path: ./service-front
+            trivyignores: ""
+            # trivyignores: ./service-front/.trivyignore.yml
 
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             service_path: ./service-front
+            trivyignores: ""
+            # trivyignores: ./service-front/.trivyignore.yml
 
           - image_name: online-lpa/api_app
             dockerfile_path: ./service-api/docker/app
             service_path: ./service-api
+            trivyignores: ""
+            # trivyignores: ./service-api/.trivyignore.yml
 
           - image_name: online-lpa/api_web
             dockerfile_path: ./service-api/docker/web
             service_path: ./service-api
+            trivyignores: ""
+            # trivyignores: ./service-api/.trivyignore.yml
 
           - image_name: online-lpa/admin_app
             dockerfile_path: ./service-admin/docker/app
             service_path: ./service-admin
+            trivyignores: ""
+            # trivyignores: ./service-admin/.trivyignore.yml
 
           - image_name: online-lpa/admin_web
             dockerfile_path: ./service-admin/docker/web
             service_path: ./service-admin
+            trivyignores: ""
+            # trivyignores: ./service-admin/.trivyignore.yml
 
           - image_name: online-lpa/pdf_app
             dockerfile_path: ./service-pdf/docker/app
             service_path: ./service-pdf
+            trivyignores: ""
+            # trivyignores: ./service-pdf/.trivyignore.yml
 
           - image_name: online-lpa/seeding_app
             dockerfile_path: ./service-seeding/docker/app
             service_path: ./service-seeding
+            trivyignores: ""
+            # trivyignores: ./service-seeding/.trivyignore.yml
 
           - image_name: lambda-aurora_scheduler
             dockerfile_path: ./aurora-scheduler/docker
             service_path: ./aurora-scheduler
+            trivyignores: ""
+            # trivyignores: ./aurora-scheduler/.trivyignore.yml
             override_tag: latest
 
     steps:
@@ -117,6 +135,27 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
 
+      - name: ECR Login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        with:
+          registries: 311462405659
+
+      - name: Trivy Dockerfile Configuration Scanner for ${{ matrix.image_name }}
+        id: trivy_dockerfile_misconfiguration_scan
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        env:
+          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
+          TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
+          TRIVY_IGNOREFILE: ${{ matrix.trivyignores }}
+        with:
+          scan-type: fs
+          scan-ref: ${{ matrix.dockerfile_path }}/Dockerfile
+          severity: "HIGH,CRITICAL"
+          scanners: "misconfig"
+          version: v0.65.0
+          exit-code: 1
+
       - name: Build Image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
@@ -135,11 +174,69 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: ECR Login
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+      - name: Trivy Image Vulnerability Scanner
+        id: trivy_scan
+        run: |
+          sleep $((RANDOM % 12));
+          mkdir -p -m 0777 .trivy-cache ./test-results/
+          docker run \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume ./.trivy-cache:/root/.cache \
+            --volume ./test-results:/test-results \
+            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
+            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
+            --env TRIVY_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
+            --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            aquasec/trivy:0.65.0 image \
+            ${{ matrix.image_name }}:latest \
+            --format table \
+            --severity HIGH,CRITICAL
+
+          docker run \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume ./.trivy-cache:/root/.cache \
+            --volume ./test-results:/test-results \
+            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
+            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
+            --env TRIVY_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
+            --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            aquasec/trivy:0.65.0 image ${{ matrix.image_name }}:latest \
+            --severity HIGH,CRITICAL \
+            --exit-code 1 \
+            --format sarif --output ./test-results/trivy.sarif \
+
+      - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
+        id: trivy_upload_sarif
+        uses: github/codeql-action/upload-sarif@4bdb89f48054571735e3792627da6195c57459e2 # v3.31.10
+        if: always()
         with:
-          registries: 311462405659
+          sarif_file: "./test-results/trivy.sarif"
+
+      - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
+        id: trivy_sbom
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
+        env:
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_CHECK_UPDATE: true
+        with:
+          scan-type: "image"
+          image-ref: ${{ matrix.image_name }}:${{ inputs.tag }}
+          format: "github"
+          output: "${{ matrix.image_name }}-${{ inputs.tag }}.sbom.json"
+          github-pat: ${{ secrets.GITHUB_TOKEN }}
+          version: v0.65.0
+
+      - name: Upload trivy report as a Github artifact
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: trivy-sbom-report-${{ matrix.image_name }}-${{ inputs.tag }}
+          path: "${{ github.workspace }}/${{ matrix.image_name }}-${{ inputs.tag }}.sbom.json"
+          retention-days: 20 # 90 is the default
 
       - name: Tag and Push Container
         env:
