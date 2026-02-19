@@ -1,0 +1,4 @@
+misconfigurations:
+  - id: AVD-DS-0002
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-15
