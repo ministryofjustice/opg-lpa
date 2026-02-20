@@ -97,6 +97,7 @@ Feature: Add donor to Property and Finance LPA
             | There is a problem |
             | Choose when your LPA can be used |
         When I check "when-no-capacity"
+        Then the page matches the "when-lpa-starts" baseline image
         And I click "save"
         Then I am taken to the primary attorney page
         And I see "The LPA starts only if the donor does not have mental capacity" in the page text
