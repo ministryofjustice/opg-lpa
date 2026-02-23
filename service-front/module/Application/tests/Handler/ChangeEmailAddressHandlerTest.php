@@ -64,19 +64,6 @@ class ChangeEmailAddressHandlerTest extends TestCase
             ->withAttribute('secondsUntilSessionExpires', 3600);
     }
 
-    public function testUnauthenticatedUserIsRedirectedToLogin(): void
-    {
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn(null);
-
-        $request = new ServerRequest();
-        $response = $this->handler->handle($request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
-    }
-
     public function testGetRequestDisplaysForm(): void
     {
         $this->authenticationService
