@@ -29,7 +29,8 @@ jobs:
             image_name: online-lpa/seeding_app
           - name: lambda-aurora_scheduler
             image_name: lambda-aurora_scheduler
-
+    env:
+      TRIVY_VERSION: 0.69.1
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -69,13 +70,8 @@ jobs:
             --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
             --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
-            aquasec/trivy:0.69.1.0 image \
+            aquasec/trivy:$TRIVY_VERSION image \
             ${{ steps.login_ecr.outputs.registry }}/${{ matrix.image_uri }}:latest \
             --format table \
-            --severity HIGH,CRITICAL
-
-      - name: Upload Trivy scan results to GitHub Security tab
-        if: steps.filter.outputs.check == 'true'
-        uses: github/codeql-action/upload-sarif@014f16e7ab1402f30e7c3329d33797e7948572db # v4.31.3
-        with:
-          sarif_file: "./${{ matrix.scan.name }}"
+            --severity HIGH,CRITICAL \
+            --exit-code 1
