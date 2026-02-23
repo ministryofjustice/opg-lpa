@@ -180,7 +180,7 @@ jobs:
         id: trivy_scan
         if: false
         run: |
-          sleep $((RANDOM % 18));
+          sleep $((RANDOM % 10));
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
