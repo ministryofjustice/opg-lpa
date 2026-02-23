@@ -32,11 +32,6 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $identity = $this->authenticationService->getIdentity();
-        if ($identity === null) {
-            return new RedirectResponse('/login');
-        }
-
         /** @var ChangeEmailAddressForm $form */
         $form = $this->formElementManager->get('Application\Form\User\ChangeEmailAddress');
         $form->setAttribute('action', '/user/change-email-address');
