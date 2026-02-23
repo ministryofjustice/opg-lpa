@@ -30,16 +30,13 @@ module "aurora_database_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_roles = [
     "*",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    aws_iam_role.aurora_backup_role.arn,
   ]
   encryption_roles = [
     "*",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    aws_iam_role.aurora_backup_role.arn,
   ]
   grant_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
@@ -48,10 +45,14 @@ module "aurora_database_encryption_key" {
   encryption_role_patterns = [
     "-seeding-task-role",
     "-api-task-role",
+    aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   decryption_role_patterns = [
     "-seeding-task-role",
     "-api-task-role",
+    aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
 }
 
