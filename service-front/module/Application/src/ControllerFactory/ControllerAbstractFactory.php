@@ -11,9 +11,6 @@ use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
 use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
-use Application\Controller\General\ForgotPasswordController;
-use Application\Controller\General\RegisterController;
-use Application\Controller\General\VerifyEmailAddressController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Service\DateCheckViewModelHelper;
@@ -47,9 +44,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
         ],
-        ForgotPasswordController::class => [
-            'setUserService' => 'UserService'
-        ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
         ],
@@ -59,14 +53,8 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         PrimaryAttorneyController::class => [
             'setApplicantService' => 'ApplicantService',
         ],
-        RegisterController::class => [
-            'setUserService' => 'UserService'
-        ],
         ReuseDetailsController::class => [
             'setRouter' => 'Router'
-        ],
-        VerifyEmailAddressController::class => [
-            'setUserService' => 'UserService'
         ],
         DateCheckController::class => [
             'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,

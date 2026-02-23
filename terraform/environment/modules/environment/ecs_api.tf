@@ -15,9 +15,9 @@ resource "aws_ecs_service" "api" {
   network_configuration {
     security_groups = [
       aws_security_group.api_ecs_service.id,
-      local.rds_client_sg_id,
+      aws_security_group.rds_client.id,
     ]
-    subnets          = local.app_subnet_ids
+    subnets          = [for subnet in data.aws_subnet.application : subnet.id]
     assign_public_ip = false
   }
 
@@ -95,7 +95,7 @@ locals {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "api_ecs_service" {
   name_prefix = "${terraform.workspace}-api-ecs-service"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.api_component_tag
   lifecycle {
     create_before_destroy = true
@@ -261,7 +261,6 @@ locals {
           awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
         }
       },
-      dependsOn = var.account.database.rds_proxy_routing_enabled ? [] : [{ containerName = "pgbouncer", condition = "HEALTHY" }],
       secrets = [
         { name = "OPG_LPA_API_NOTIFY_API_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.name}" },
         { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
@@ -271,8 +270,8 @@ locals {
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
-        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_routing_enabled ? module.rds_proxy[0].endpoint : "127.0.0.1" },
-        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_routing_enabled ? "5432" : "6432" },
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
+        { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { name = "OPG_LPA_PROCESSING_STATUS_ENDPOINT", value = var.account.sirius_api_gateway_endpoint },
         { name = "OPG_LPA_API_TRACK_FROM_DATE", value = local.track_from_date },

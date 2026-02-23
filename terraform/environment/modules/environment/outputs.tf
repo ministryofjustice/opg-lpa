@@ -24,7 +24,7 @@ output "admin_sg_id" {
 
 
 output "db_client_security_group_id" {
-  value = local.rds_client_sg_id
+  value = aws_security_group.rds_client.id
 }
 
 output "seeding_security_group_id" {
@@ -44,9 +44,9 @@ output "aws_ecs_task_definition_api_arn" {
 }
 
 output "vpc_id" {
-  value = local.vpc_id
+  value = data.aws_vpc.main.id
 }
 
 output "app_subnet_ids" {
-  value = local.app_subnet_ids
+  value = [for subnet in data.aws_subnet.application : subnet.id]
 }

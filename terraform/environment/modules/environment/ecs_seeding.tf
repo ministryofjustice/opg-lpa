@@ -3,7 +3,7 @@
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "seeding_ecs_service" {
   name_prefix = "${terraform.workspace}-seeding-ecs-service"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.seeding_component_tag
   lifecycle {
     create_before_destroy = true
@@ -81,8 +81,8 @@ locals {
         { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" }
       ],
       environment = [
-        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = var.account.database.rds_proxy_routing_enabled ? module.rds_proxy[0].endpoint : module.api_aurora[0].endpoint },
-        { name = "OPG_LPA_POSTGRES_PORT", value = var.account.database.rds_proxy_routing_enabled ? "5432" : tostring(module.api_aurora[0].port) },
+        { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
+        { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name }
       ]

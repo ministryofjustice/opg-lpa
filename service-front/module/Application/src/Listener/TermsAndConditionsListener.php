@@ -73,7 +73,7 @@ class TermsAndConditionsListener extends AbstractListenerAggregate implements Mi
             return $handler->handle($request);
         }
 
-        // TODO update routeName when we setup Mezzio routes
+        // TODO(mezzio): update routeName when we setup Mezzio routes
         $uri = $this->urlHelper->generate('user/dashboard/terms-changed');
         return new RedirectResponse($uri);
     }

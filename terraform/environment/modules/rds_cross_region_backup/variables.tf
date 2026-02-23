@@ -22,10 +22,6 @@ variable "account_name" {
   type        = string
   description = "account name"
 }
-variable "iam_aurora_restore_testing_role_arn" {
-  type        = string
-  description = "The ARN of the IAM role for Aurora restore testing"
-}
 
 variable "aurora_restore_testing_enabled" {
   type        = string
@@ -48,5 +44,10 @@ variable "daily_backup_cold_storage" {
 variable "monthly_backup_cold_storage" {
   type        = number
   description = "Number of days to retain monthly backups in cold storage"
+}
 
+variable "cross_account_backup_enabled" {
+  type        = bool
+  description = "Condition to enable cross account backup"
+  default     = false
 }

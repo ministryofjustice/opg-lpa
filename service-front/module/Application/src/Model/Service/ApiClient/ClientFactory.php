@@ -32,7 +32,7 @@ class ClientFactory implements FactoryInterface
 
         /** @var SessionUtility $sessionUtility */
         $sessionUtility = $container->get(SessionUtility::class);
-        $identity = $sessionUtility->getFromMvc(ContainerNamespace::USER_DETAILS, 'identity');
+        $identity = $sessionUtility->getFromMvc(ContainerNamespace::IDENTITY, 'identity');
 
         if ($identity instanceof UserIdentity) {
             $defaultHeaders['Token'] = $identity->token();

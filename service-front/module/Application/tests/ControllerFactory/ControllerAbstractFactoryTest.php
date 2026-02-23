@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace ApplicationTest\ControllerFactory;
 
-use Application\Controller\General\HomeController;
+use Application\Controller\General\AuthController;
 use Application\ControllerFactory\ControllerAbstractFactory;
 use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Lpa\Application;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
@@ -34,13 +35,6 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->assertFalse($result);
     }
 
-    public function testCanCreateServiceWithName(): void
-    {
-        $result = $this->factory->canCreate($this->container, 'General\HomeController');
-
-        $this->assertTrue($result);
-    }
-
     public function testCreateServiceWithName(): void
     {
         $this->container->shouldReceive('get')->withArgs(['PersistentSessionDetails'])
@@ -64,9 +58,12 @@ final class ControllerAbstractFactoryTest extends MockeryTestCase
         $this->container->shouldReceive('get')->withArgs([SessionUtility::class])
             ->andReturn($sessionUtility)->once();
 
-        $controller = $this->factory->__invoke($this->container, 'General\HomeController');
+        $this->container->shouldReceive('get')->withArgs(['LpaApplicationService'])
+            ->andReturn(Mockery::mock(Application::class))->once();
+
+        $controller = $this->factory->__invoke($this->container, 'General\AuthController');
 
         $this->assertNotNull($controller);
-        $this->assertInstanceOf(HomeController::class, $controller);
+        $this->assertInstanceOf(AuthController::class, $controller);
     }
 }

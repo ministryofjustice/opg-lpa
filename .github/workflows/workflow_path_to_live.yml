@@ -203,6 +203,7 @@ jobs:
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
+      - terraform_account_production
     with:
       terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
       terraform_workspace: production
@@ -232,6 +233,7 @@ jobs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
       - set_variables
+      - terraform_region_production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
