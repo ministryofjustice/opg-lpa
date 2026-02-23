@@ -7,7 +7,6 @@ namespace Application\Handler;
 use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,11 +24,6 @@ class DeleteAccountHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $identity = $this->authenticationService->getIdentity();
-        if ($identity === null) {
-            return new RedirectResponse('/login');
-        }
-
         $html = $this->renderer->render(
             'application/authenticated/delete/index.twig',
             $this->getTemplateVariables($request)
