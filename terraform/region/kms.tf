@@ -44,8 +44,8 @@ module "aurora_database_encryption_key" {
   ]
 
   encryption_role_patterns = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/seeding-task-role",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/api-task-role",
+    "-seeding-task-role",
+    "-api-task-role",
   ]
   decryption_role_patterns = [
     "-seeding-task-role",
