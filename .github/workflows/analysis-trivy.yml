@@ -1,17 +1,8 @@
 name: trivy-scan
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    paths:
-      - "service-api/**"
-      - "service-admin/**"
-      - "service-front/**"
-      - "service-pdf/**"
-      - "shared/**"
-      - "tests/**"
-      - "cypress/**"
+  schedule:
+    # run at 6am on a Monday
+    - cron: "0 6 * * 1"
 
 jobs:
   filter-and-scan:
@@ -20,20 +11,25 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-api
-            path: "./service-api"
-          - name: service-admin
-            path: "./service-admin"
-          - name: service-front
-            path: "./service-front"
-          - name: service-pdf
-            path: "./service-pdf"
-          - name: shared
-            path: "./shared"
-          - name: tests
-            path: "./tests"
-          - name: cypress
-            path: "./cypress"
+          - name: front_app
+            image_name: online-lpa/front_app
+          - name: front_web
+            image_name: online-lpa/front_web
+          - name: api_app
+            image_name: online-lpa/api_app
+          - name: api_web
+            image_name: online-lpa/api_web
+          - name: admin_app
+            image_name: online-lpa/admin_app
+          - name: admin_web
+            image_name: online-lpa/admin_web
+          - name: pdf_app
+            image_name: online-lpa/pdf_app
+          - name: seeding_app
+            image_name: online-lpa/seeding_app
+          - name: lambda-aurora_scheduler
+            image_name: lambda-aurora_scheduler
+
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -60,21 +56,23 @@ jobs:
         with:
           registries: 311462405659
 
-      - name: Run Trivy vulnerability scanner for Code
-        if: steps.filter.outputs.check == 'true'
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
-          TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
-        with:
-          scan-type: "fs"
-          ignore-unfixed: true
-          hide-progress: false
-          format: "sarif"
-          severity: 'HIGH,CRITICAL'
-          output: "${{ matrix.scan.name }}/trivy-results-code.sarif"
-          scan-ref: ${{ matrix.scan.path }}
+      - name: Trivy Image Vulnerability Scanner
+        id: trivy_scan
+        run: |
+          sleep $((RANDOM % 18));
+          mkdir -p -m 0777 .trivy-cache ./test-results/
+          docker run \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume ./.trivy-cache:/root/.cache \
+            --volume ./test-results:/test-results \
+            --env TRIVY_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
+            --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            aquasec/trivy:0.69.1.0 image \
+            ${{ steps.login_ecr.outputs.registry }}/${{ matrix.image_uri }}:latest \
+            --format table \
+            --severity HIGH,CRITICAL
 
       - name: Upload Trivy scan results to GitHub Security tab
         if: steps.filter.outputs.check == 'true'
