@@ -1,0 +1,30 @@
+misconfigurations:
+  - id: AVD-DS-0002
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-15
+
+vulnerabilities:
+  - id: CVE-2026-2004
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2005
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2006
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2007
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2004
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2005
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2006
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
+  - id: CVE-2026-2007
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-20
