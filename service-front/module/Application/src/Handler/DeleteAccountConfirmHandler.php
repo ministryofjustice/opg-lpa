@@ -27,12 +27,6 @@ class DeleteAccountConfirmHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $identity = $this->authenticationService->getIdentity();
-        if ($identity === null) {
-            return new RedirectResponse('/login');
-        }
-
-        // Delete all v2 LPAs, their v2 Personal details, and their Auth account.
         if (!$this->userService->delete()) {
             $html = $this->renderer->render(
                 'error/500.twig',
