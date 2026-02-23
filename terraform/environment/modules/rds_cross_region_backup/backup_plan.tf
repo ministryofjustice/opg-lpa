@@ -9,7 +9,7 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(11 0 ? * * *)" // Run at 6am UTC every day - testing with 11:00 UTC to verify cross account backup
+    schedule            = "cron(11 15 ? * * *)" // Run at 6am UTC every day - testing with 11:15 UTC to verify cross account backup
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
@@ -24,7 +24,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     dynamic "copy_action" {
-      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [0] : []
+      for_each = var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
       }
