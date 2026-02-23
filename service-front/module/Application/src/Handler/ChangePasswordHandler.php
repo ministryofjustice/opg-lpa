@@ -34,10 +34,6 @@ class ChangePasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $identity = $this->authenticationService->getIdentity();
-        if ($identity === null) {
-            return new RedirectResponse('/login');
-        }
 
         $form = $this->formElementManager->get(ChangePasswordForm::class);
         assert($form instanceof ChangePasswordForm);
