@@ -155,7 +155,7 @@ jobs:
           scan-ref: ${{ matrix.dockerfile_path }}/Dockerfile
           severity: "HIGH,CRITICAL"
           scanners: "misconfig"
-          version: $TRIVY_VERSION
+          version: "v${{env.TRIVY_VERSION}}"
           exit-code: 1
 
       - name: Build Image
@@ -235,7 +235,7 @@ jobs:
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
-          version: $TRIVY_VERSION
+          version: "v${{env.TRIVY_VERSION}}"
 
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
