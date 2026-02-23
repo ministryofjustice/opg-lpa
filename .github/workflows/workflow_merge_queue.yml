@@ -145,6 +145,8 @@ jobs:
     needs:
       - docker_build_scan_push
       - set_variables
+      - terraform_region_preproduction
+      - terraform_account_preproduction
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}

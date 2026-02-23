@@ -14,7 +14,7 @@ resource "aws_ecs_service" "front" {
   deployment_maximum_percent         = 200
   network_configuration {
     security_groups  = [aws_security_group.front_ecs_service.id]
-    subnets          = local.app_subnet_ids
+    subnets          = [for subnet in data.aws_subnet.application : subnet.id]
     assign_public_ip = false
   }
 
@@ -46,7 +46,7 @@ resource "aws_ecs_service" "front" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 resource "aws_security_group" "front_ecs_service" {
   name_prefix = "${var.environment_name}-front-ecs-service"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.main.id
   tags        = local.front_component_tag
   lifecycle {
     create_before_destroy = true
@@ -68,7 +68,7 @@ resource "aws_security_group_rule" "front_ecs_service_elasticache_region_ingress
   from_port                = 0
   to_port                  = 6379
   protocol                 = "tcp"
-  security_group_id        = local.elasticache_security_group.id
+  security_group_id        = data.aws_security_group.new_front_cache_region.id
   source_security_group_id = aws_security_group.front_ecs_service.id
   description              = "Front ECS to regional Elasticache - Redis"
 }
@@ -242,7 +242,7 @@ locals {
         { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = aws_sqs_queue.pdf_fifo_queue.id },
         { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
         { name = "OPG_LPA_OS_PLACES_HUB_ENDPOINT", value = "https://api.os.uk/search/places/v1/postcode" },
-        { name = "OPG_LPA_COMMON_REDIS_CACHE_URL", value = "tls://${local.elasticache_replication_group.primary_endpoint_address}" },
+        { name = "OPG_LPA_COMMON_REDIS_CACHE_URL", value = "tls://${data.aws_elasticache_replication_group.new_front_cache_region.primary_endpoint_address}" },
         { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },

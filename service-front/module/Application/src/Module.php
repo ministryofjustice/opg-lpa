@@ -3,28 +3,46 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Handler\AboutYouHandler;
+use Application\Handler\Factory\AboutYouHandlerFactory;
+use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
 use Application\Form\Error\FormLinkedErrors;
+use Application\Handler\ConfirmRegistrationHandler;
+use Application\Handler\AccessibilityHandler;
+use Application\Handler\ContactHandler;
 use Application\Handler\CookiesHandler;
+use Application\Handler\Factory\ConfirmRegistrationHandlerFactory;
+use Application\Handler\EnableCookieHandler;
 use Application\Handler\Factory\CookiesHandlerFactory;
 use Application\Handler\Factory\FeedbackHandlerFactory;
 use Application\Handler\Factory\FeedbackThanksHandlerFactory;
 use Application\Handler\Factory\GuidanceHandlerFactory;
+use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
+use Application\Handler\Factory\RegisterHandlerFactory;
+use Application\Handler\Factory\ResendActivationEmailHandlerFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\GuidanceHandler;
+use Application\Handler\HomeRedirectHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
+use Application\Handler\RegisterHandler;
+use Application\Handler\ResendActivationEmailHandler;
+use Application\Handler\PrivacyHandler;
+use Application\Handler\TermsHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
 use Application\Listener\UserDetailsListener;
+use Application\Listener\ViewVariablesListener;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -130,22 +148,26 @@ class Module implements FormElementProviderInterface
                     '/ping/json',
                 ])
             ) {
-                $this->bootstrapSession($e);
+                $sessionManager = $this->bootstrapSession($e);
                 $this->bootstrapIdentity($e, $path != '/session-state');
+
+                $authenticationService = $serviceManager->get(AuthenticationService::class);
+                $sessionUtility = $serviceManager->get(SessionUtility::class);
+                $userService = $serviceManager->get(Details::class);
+                $config = $serviceManager->get('config');
+                $dateService = $serviceManager->get(DateService::class);
+                $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
+
+                // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
+                new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
+                new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
+                new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
+                new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
+
+                // Listeners that run on every request, just before view is rendered (higher priority numbers run first)
+                new ViewVariablesListener($dateService)->attach($eventManager, 1001);
+                new LpaViewInjectListener()->attach($eventManager, 1000);
             }
-
-            $authenticationService = $serviceManager->get(AuthenticationService::class);
-            $sessionUtility = $serviceManager->get(SessionUtility::class);
-            $userService = $serviceManager->get(Details::class);
-            $config = $serviceManager->get('config');
-            $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
-
-            // Listeners that needs to run on every request (higher priority numbers run first)
-            new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
-            new UserDetailsListener($sessionUtility, $userService)->attach($eventManager, 1002);
-            new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
-            new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
-            new LpaViewInjectListener()->attach($eventManager);
         }
     }
 
@@ -154,7 +176,7 @@ class Module implements FormElementProviderInterface
      *
      * @param MvcEvent $e
      */
-    private function bootstrapSession(MvcEvent $e)
+    private function bootstrapSession(MvcEvent $e): SessionManager
     {
         $sm = $e->getApplication()->getServiceManager();
 
@@ -162,15 +184,17 @@ class Module implements FormElementProviderInterface
         $nativeSession->configure();
 
         /** @var SessionManager $session */
-        $session = $sm->get('SessionManager');
+        $sessionManager = $sm->get('SessionManager');
 
         // Always starts the session.
-        $session->start();
+        $sessionManager->start();
 
         // Ensures this SessionManager is used for all Session Containers.
-        Container::setDefaultManager($session);
+        Container::setDefaultManager($sessionManager);
 
         $sm->get(SessionManagerSupport::class)->initialise();
+
+        return $sessionManager;
     }
 
     /**
@@ -364,6 +388,58 @@ class Module implements FormElementProviderInterface
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
                 NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
+                EnableCookieHandler::class => fn (ServiceLocatorInterface $sm) => new EnableCookieHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                TermsHandler::class => fn (ServiceLocatorInterface $sm) => new TermsHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                AccessibilityHandler::class => fn (ServiceLocatorInterface $sm) => new AccessibilityHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                PrivacyHandler::class => fn (ServiceLocatorInterface $sm) => new PrivacyHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                ContactHandler::class => fn (ServiceLocatorInterface $sm) => new ContactHandler(
+                    $sm->get(TemplateRendererInterface::class),
+                ),
+
+                HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
+                HomeHandler::class => HomeHandlerFactory::class,
+                AboutYouHandler::class => AboutYouHandlerFactory::class,
+                AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
+                    return new AuthenticationListener(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                        null  // No UrlHelper for MVC
+                    );
+                },
+
+                UserDetailsListener::class => function (ServiceLocatorInterface $sm) {
+                    return new UserDetailsListener(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(Details::class),
+                        $sm->get(AuthenticationService::class),
+                        $sm->get('SessionManager'),
+                        $sm->get(LoggerInterface::class),
+                    );
+                },
+
+                TermsAndConditionsListener::class => function (ServiceLocatorInterface $sm) {
+                    return new TermsAndConditionsListener(
+                        $sm->get('config'),
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                        null  // No UrlHelper for MVC
+                    );
+                },
+                RegisterHandler::class => RegisterHandlerFactory::class,
+                ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
+                ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

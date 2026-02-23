@@ -67,19 +67,19 @@ module "cross_region_backup" {
   providers = {
     aws             = aws.eu_west_1
     aws.destination = aws.eu_west_2
+    aws.backup      = aws.backup
   }
 
-  source_cluster_arn                  = module.eu-west-1.aws_aurora_cluster_arn
-  environment_name                    = local.environment_name
-  destination_region_name             = "eu-west-2"
-  key_alias                           = "mrk_db_snapshot_key-${local.account_name}"
-  account_name                        = local.account_name
-  iam_aurora_restore_testing_role_arn = aws_iam_role.restore_testing_role.arn
-  aurora_restore_testing_enabled      = local.account.database.aurora_restore_testing_enabled
-  daily_backup_deletion               = local.account.database.daily_backup_deletion
-  daily_backup_cold_storage           = local.account.database.daily_backup_cold_storage
-  monthly_backup_deletion             = local.account.database.monthly_backup_deletion
-  monthly_backup_cold_storage         = local.account.database.monthly_backup_cold_storage
+  source_cluster_arn             = module.eu-west-1.aws_aurora_cluster_arn
+  environment_name               = local.environment_name
+  destination_region_name        = "eu-west-2"
+  key_alias                      = "mrk_db_snapshot_key-${local.account_name}"
+  account_name                   = local.account_name
+  aurora_restore_testing_enabled = local.account.database.aurora_restore_testing_enabled
+  daily_backup_deletion          = local.account.database.daily_backup_deletion
+  daily_backup_cold_storage      = local.account.database.daily_backup_cold_storage
+  monthly_backup_deletion        = local.account.database.monthly_backup_deletion
+  monthly_backup_cold_storage    = local.account.database.monthly_backup_cold_storage
 
 }
 
