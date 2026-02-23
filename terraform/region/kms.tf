@@ -34,10 +34,12 @@ module "aurora_database_encryption_key" {
   decryption_roles = [
     "*",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    aws_iam_role.aurora_backup_role.arn,
   ]
   encryption_roles = [
     "*",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    aws_iam_role.aurora_backup_role.arn,
   ]
   grant_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
