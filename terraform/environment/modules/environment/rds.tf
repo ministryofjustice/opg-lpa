@@ -2,6 +2,13 @@ data "aws_kms_key" "rds" {
   key_id = "alias/aws/rds"
 }
 
+data "aws_kms_key" "aurora_new_key" {
+  key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
+}
+
+locals {
+  kms_key_id = var.account_name == "development" ? data.aws_kms_key.aurora_new_key.arn : data.aws_kms_key.rds.arn
+}
 locals {
   psql_parameter_group_family_list = [
     "postgres13",
@@ -35,7 +42,7 @@ module "api_aurora" {
   master_password                 = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   instance_count                  = var.account.database.aurora_instance_count
   instance_class                  = "db.t3.medium"
-  kms_key_id                      = data.aws_kms_key.rds.arn
+  kms_key_id                      = local.kms_key_id
   replication_source_identifier   = ""
   skip_final_snapshot             = !var.account.database.deletion_protection
   vpc_security_group_ids          = [aws_security_group.rds_api.id]
