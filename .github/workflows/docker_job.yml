@@ -147,8 +147,6 @@ jobs:
         id: trivy_dockerfile_misconfiguration_scan
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
-          # TRIVY_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-db:2
-          # TRIVY_JAVA_DB_REPOSITORY: ${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1
           TRIVY_IGNOREFILE: ${{ matrix.trivyignores }}
         with:
           scan-type: fs
