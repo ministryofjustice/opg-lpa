@@ -25,6 +25,7 @@ Feature: Fee Reduction for a Health and Welfare LPA
             | Select if the donor does or does not want to apply for a fee reduction |
 
         When I check "reducedFeeLowIncome"
+        Then the page matches the "fee-reduction" baseline image
         Then I see "The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year." in the page text
         And I should not see "Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis." in the page text
         And I should not see "To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits." in the page text

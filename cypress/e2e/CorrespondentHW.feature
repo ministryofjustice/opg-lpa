@@ -14,6 +14,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
         Then I am taken to the correspondent page
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then the page matches the "add-correspondent" baseline image
         And I can find "contactInWelsh-0"
         And I can find "contactInWelsh-1"
         And I can find "contactByPhone"

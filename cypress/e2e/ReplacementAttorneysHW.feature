@@ -13,6 +13,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         And I visit the replacement attorney page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then the page matches the "add-replacement-attorney" baseline image
         When I click "save"
         Then I am taken to the certificate provider page
         When I click occurrence 4 of "accordion-view-change"
@@ -33,6 +34,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | address-address2 | Staplehay |
             | address-address3 | Trull, Taunton, Somerset |
             | address-postcode | TA3 7HF |
+        Then the page matches the "add-replacement-attorney-form" baseline image
         And I click "form-save"
         Then I cannot find "form-attorney"
         And I see "Ms Isobel Ward" in the page text
@@ -138,6 +140,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         And I see "Error" in the title
         And I can find "when-details" wrapped with error highlighting
         When I click "when-first"
+        Then the page matches the "replacement-attorney-step-in" baseline image
         And I click "save"
         Then I am taken to the certificate provider page
         When I click occurrence 5 of "accordion-view-change"
@@ -162,5 +165,6 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
             | Tell us which decisions have to be made jointly, and which can be made jointly and severally |
         And I see "Error" in the title
         When I click "how-jointly-attorney-severally"
+        Then the page matches the "replacement-attorney-how-make-decisions" baseline image
         When I click "save"
         Then I am taken to the certificate provider page
