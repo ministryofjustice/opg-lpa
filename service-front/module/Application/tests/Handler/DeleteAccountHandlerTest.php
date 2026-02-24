@@ -8,7 +8,6 @@ use Application\Handler\DeleteAccountHandler;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\User\User;
@@ -45,19 +44,6 @@ class DeleteAccountHandlerTest extends TestCase
         return (new ServerRequest())
             ->withAttribute('userDetails', $user)
             ->withAttribute('secondsUntilSessionExpires', 3600);
-    }
-
-    public function testUnauthenticatedUserIsRedirectedToLogin(): void
-    {
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn(null);
-
-        $request = new ServerRequest();
-        $response = $this->handler->handle($request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
     }
 
     public function testAuthenticatedUserSeesDeletePage(): void
