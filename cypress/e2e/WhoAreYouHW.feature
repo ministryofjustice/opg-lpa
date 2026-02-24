@@ -28,6 +28,7 @@ Feature: Who Are You for a Health and Welfare LPA
         When I click "save"
         Then I see "There is a problem" in the page text
         When I check "who"
+        Then the page matches the "who-are-you" baseline image
         And I click "save"
         Then I am taken to the repeat application page
         When I click the last occurrence of "accordion-view-change"

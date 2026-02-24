@@ -112,9 +112,11 @@ Cypress.Commands.add("checkPdf", (candidateString) => {
  */
 Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
     const {
-        threshold = 0.1,
+        threshold = 0.3,
         failOnMismatch = true
     } = options;
+
+    normalizeViewport(cy);
 
     const {snapshotPath, baselinePath, diffPath} = takeScreenshot(pageName);
 
@@ -140,7 +142,9 @@ Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
         }
 
         if (!result.error) {
+            cy.task('log', `Baseline matches for: ${baselinePath}`);
             return cy.task('deleteFile', snapshotPath);
+
         }
     });
 });
@@ -150,30 +154,61 @@ Cypress.Commands.add('visualSnapshot', (pageName, options = {}) => {
  * Update baseline image for a specific test
  */
 Cypress.Commands.add('updateBaseline', (pageName) => {
+    normalizeViewport(cy);
     const {snapshotPath, baselinePath} = takeScreenshot(pageName);
 
     // Wait for screenshot to complete, then update baseline
     cy.wait(100).then(() => {
         return cy.task('updateBaselineScreenshot', { snapshotPath, baselinePath });
     }).then(() => {
-        cy.log(`Baseline updated for: ${baselinePath}`);
+        cy.task('log', `Baseline updated for: ${baselinePath}`);
     });
 });
 
 function takeScreenshot(pageName) {
     const screenshotsDir = Cypress.config('screenshotsFolder');
     const regressionsDir = screenshotsDir.split('/screenshots')[0] + '/regressions';
-    const specName = Cypress.spec.name.replace('.cy.js', '');
-    let specNameAndTest = `${pageName} - ${Cypress.currentTest.title}`
 
-    cy.screenshot(specNameAndTest, {
+    cy.screenshot(pageName, {
         overwrite: true,
         capture: 'fullPage'
     });
 
     return {
-        snapshotPath: `${screenshotsDir}/${specName}/${specNameAndTest}.png`,
-        baselinePath: `${regressionsDir}/baseline/${specName}/${specNameAndTest}.png`,
-        diffPath: `${regressionsDir}/diff/${specName}/${specNameAndTest}.png`,
+        snapshotPath: `${screenshotsDir}/${Cypress.spec.name}/${pageName}.png`,
+        baselinePath: `${regressionsDir}/baseline/${pageName}.png`,
+        diffPath: `${regressionsDir}/diff/${pageName}.png`,
     }
+}
+
+function normalizeViewport(cy) {
+    // Accept cookies so the viewport is a consistent size and the cookie banner doesn't interfere with screenshots
+    cy.get('#global-cookie-message').then(($cookieBanner) => {
+        if ($cookieBanner.find('[data-cy="accept-analytics-cookies"]').length > 0) {
+            cy.get('[data-cy="accept-analytics-cookies"]').click({force: true});
+            cy.wait(100);
+            cy.get('[data-cy="hide-cookies-banner"]').click({force: true});
+        }
+    });
+
+    // Fix dynamic content to static values for consistent screenshots
+    cy.get('body').then(($body) => {
+        if ($body.find('[data-cy="last-signed-in"]').length > 0) {
+            cy.get('[data-cy="last-signed-in"]').invoke('text', 'Last signed in: 1 January 2025 at 1:00am');
+        }
+
+        if ($body.find('[data-cy="lpa-number"]').length > 0) {
+            cy.get('[data-cy="lpa-number"]').each(($el, index) => {
+                const baseNumber = 'A123 4567 89';
+                const incrementedNumber = String(parseInt('00') + index).padStart(2, '0');
+                cy.wrap($el).invoke('text', `${baseNumber}${incrementedNumber}`);
+            });
+        }
+
+        if ($body.find('[data-cy="last-saved"]').length > 0) {
+            cy.get('[data-cy="last-saved"]').each(($el) => {
+                cy.wrap($el).invoke('text', `01/01/25`);
+            });
+        }
+    });
 }

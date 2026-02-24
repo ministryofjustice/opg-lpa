@@ -13,6 +13,7 @@ Feature: Add People to Notify to a Health and Welfare LPA
         And I visit the people to notify page for the test fixture lpa
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
 
+        Then the page matches the "add-people-to-notify" baseline image
         When I click "add"
         Then I can find "form-people-to-notify"
         And I can find "form-cancel"
@@ -28,6 +29,7 @@ Feature: Add People to Notify to a Health and Welfare LPA
             | address-address2 | Birch Cross |
             | address-address3 | Marchington, Uttoxeter, Staffordshire |
             | address-postcode | BS18 6PL |
+        Then the page matches the "add-people-to-notify-form" baseline image
         And I click "form-save"
         Then I see "Sir Anthony Webb" in the page text
         When I click "view-change"
