@@ -6,10 +6,9 @@ locals {
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
-    completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(15 0 ? * * *)" // Run at 6am UTC every day - testing with 12:00 UTC to verify cross account backup in dev
+    schedule            = "cron(16 15 ? * * *)" // Run at 6am UTC every day
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
