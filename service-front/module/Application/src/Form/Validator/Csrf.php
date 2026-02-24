@@ -31,7 +31,7 @@ class Csrf extends LaminasCsrfValidator implements LoggerAwareInterface
 {
     use LoggerTrait;
 
-    public function __construct(protected $options = [], private ?SessionUtility $sessionUtility = null, LoggerInterface $logger)
+    public function __construct(LoggerInterface $logger, protected $options = [], private ?SessionUtility $sessionUtility = null)
     {
         $this->setLogger($logger);
         parent::__construct($options);

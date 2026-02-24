@@ -29,7 +29,7 @@ class PingHandlerPingdom implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $start = round(floatval($this->dateService->getNow()->getTimestamp()) * 1000.0);
-        $xml = simplexml_load_string($this->xmlTemplate);
+        $xml = @simplexml_load_string($this->xmlTemplate);
 
         if ($xml === false) {
             throw new RuntimeException('could not marshal XML', 0);
