@@ -23,6 +23,8 @@ jobs:
   docker_build_scan_push:
     name: "docker build"
     runs-on: ubuntu-latest
+    env:
+      TRIVY_VERSION: 0.69.1
     strategy:
       fail-fast: false
       matrix:
@@ -153,7 +155,7 @@ jobs:
           scan-ref: ${{ matrix.dockerfile_path }}/Dockerfile
           severity: "HIGH,CRITICAL"
           scanners: "misconfig"
-          version: v0.65.0
+          version: "v${{env.TRIVY_VERSION}}"
           exit-code: 1
 
       - name: Build Image
@@ -177,7 +179,7 @@ jobs:
       - name: Trivy Image Vulnerability Scanner
         id: trivy_scan
         run: |
-          sleep $((RANDOM % 12));
+          sleep $((RANDOM % 18));
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
@@ -189,7 +191,7 @@ jobs:
             --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
             --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
-            aquasec/trivy:0.65.0 image \
+            aquasec/trivy:$TRIVY_VERSION image \
             ${{ matrix.image_name }}:latest \
             --format table \
             --severity HIGH,CRITICAL
@@ -204,7 +206,7 @@ jobs:
             --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
             --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
-            aquasec/trivy:0.65.0 image ${{ matrix.image_name }}:latest \
+            aquasec/trivy:$TRIVY_VERSION image ${{ matrix.image_name }}:latest \
             --severity HIGH,CRITICAL \
             --exit-code 1 \
             --format sarif --output ./test-results/trivy.sarif \
@@ -231,7 +233,7 @@ jobs:
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
-          version: v0.65.0
+          version: "v${{env.TRIVY_VERSION}}"
 
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
