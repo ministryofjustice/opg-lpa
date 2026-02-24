@@ -22,7 +22,7 @@
                                 No donor added
                             {%- endif -%}
                         </h3>
-                        <span class="lpa-number">{{ lpa.id | format_lpa_id }}</span>
+                        <span class="lpa-number" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</span>
                     </div>
 
                     <div class="list-item_status">
@@ -42,7 +42,7 @@
 
                     <div class="extra-info">
                         <p>Last saved:</p>
-                        <p class="main-text">{{ lpa.updatedAt|date('d/m/y') }}</p>
+                        <p class="main-text" data-cy="last-saved">{{ lpa.updatedAt|date('d/m/y') }}</p>
                     </div>
 
                 </div>
