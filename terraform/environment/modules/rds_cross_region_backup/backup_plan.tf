@@ -9,7 +9,7 @@ resource "aws_backup_plan" "main" {
     completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(10 0 ? * * *)" // Run at 6am UTC every day - testing with 11:15 UTC to verify cross account backup
+    schedule            = "cron(11 30 ? * * *)" // Run at 6am UTC every day - testing with 11:15 UTC to verify cross account backup
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
