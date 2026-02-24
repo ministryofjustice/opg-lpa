@@ -1,4 +1,5 @@
 locals {
+  is_dev = local.account_name == "development"
 
   account_name     = lookup(var.account_mapping, terraform.workspace, "development")
   account          = var.accounts[local.account_name]
@@ -6,6 +7,10 @@ locals {
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
+
+  # flag to enable usage of the aurora default key for non-dev environments, and the custom new key for dev - testing purposes
+  kms_key_id = local.is_dev ? data.aws_kms_key.aurora_new_key : data.aws_kms_key.aurora_default_key.arn
+
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
