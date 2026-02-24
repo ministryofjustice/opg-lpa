@@ -193,8 +193,8 @@ jobs:
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            --env TRIVY_DB_REPOSITORY=trivy-db-public-ecr/aquasecurity/trivy-db:2 \
-            --env TRIVY_JAVA_DB_REPOSITORY=trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
+            --env TRIVY_DB_REPOSITORY=aquasecurity/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=aquasecurity/trivy-java-db:1 \
             aquasec/trivy:$TRIVY_VERSION image \
             ${{ matrix.image_name }}:latest \
             --format table \
