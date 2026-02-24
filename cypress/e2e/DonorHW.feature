@@ -16,6 +16,7 @@ Feature: Add donor to Health and Welfare LPA
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
         # save button should be missing initially
         And I cannot find "save-and-continue"
+        Then the page matches the "donor" baseline image
         When I click "add-donor"
         Then I can find "form-donor"
         And accessibility checks should pass for "donorHW page with popup open"
@@ -51,6 +52,7 @@ Feature: Add donor to Health and Welfare LPA
             | address-address3| Ventnor, Isle of Wight |
             | address-postcode| PO38 1UL |
         And I check "cannot-sign"
+        Then the page matches the "donor-form" baseline image
         And I click "form-save"
         Then I can find "save-and-continue"
         And I cannot find "add-donor"
@@ -84,6 +86,7 @@ Feature: Add donor to Health and Welfare LPA
             | Select if the donor gives or does not give their attorneys authority to consent to life-sustaining treatment |
         And I see "Error" in the title
         When I check "canSustainLife-1"
+        Then the page matches the "life-sustaining-treatment" baseline image
         And I click "save"
         Then I am taken to the primary attorney page
         And I cannot find "save"

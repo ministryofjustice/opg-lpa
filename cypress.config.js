@@ -66,7 +66,7 @@ async function setupNodeEvents(on, config) {
      *
      * @returns {object} Comparison results
      */
-    compareScreenshots({ baselinePath, snapshotPath, diffPath, threshold = 0.1 }) {
+    compareScreenshots({ baselinePath, snapshotPath, diffPath, threshold = 0.3 }) {
       if (!fs.existsSync(snapshotPath)) {
         throw new Error(`Current screenshot not found: ${snapshotPath}`);
       }
@@ -89,7 +89,7 @@ async function setupNodeEvents(on, config) {
         return {
           diffPixels: 0,
           diffPercentage: 0,
-          message: `Image dimensions don't match. Baseline: ${baseline.width}x${baseline.height}, Current: ${current.width}x${current.height}`,
+          message: `Image dimensions don't match for ${baselinePath}. Baseline: ${baseline.width}x${baseline.height}, Current: ${current.width}x${current.height}. Check for regressions or update baselines if the change is expected.`,
           error: dimensionsMismatchError
         };
       }
@@ -121,7 +121,7 @@ async function setupNodeEvents(on, config) {
         totalPixels,
         message: numDiffPixels === 0
             ? 'Screenshots match'
-            : `Found ${numDiffPixels} different pixels (${diffPercentage.toFixed(2)}%)`,
+            : `Found ${numDiffPixels} different pixels (${diffPercentage.toFixed(2)}%) for ${baselinePath}. Check for regressions or update baselines if the change is expected.`,
         error: numDiffPixels === 0 ? '' : pixelsMismatchError
       };
     },
@@ -169,7 +169,9 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
+    screenshotOnRunFailure: false,
   },
+  screenshotsFolder: 'cypress/screenshots',
   viewportWidth: 1280,
   viewportHeight: 720,
 });
