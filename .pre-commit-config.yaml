@@ -49,8 +49,8 @@ repos:
       files: service-front/assets/js|cypress/e2e/common
       args: [--fix]
       additional_dependencies:
-      -   eslint@8.24.0
-      -   eslint-plugin-prettier@v4.2.1
+      -   eslint@9
+      -   eslint-plugin-prettier@v5
   - repo: https://github.com/renovatebot/pre-commit-hooks
     rev: 40.32.7
     hooks:
