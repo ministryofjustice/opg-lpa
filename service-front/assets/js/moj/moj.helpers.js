@@ -7,7 +7,7 @@
   moj.Helpers.hasHtml5Storage = function () {
     try {
       return 'sessionStorage' in window && window.sessionStorage !== null;
-    } catch (e) {
+    } catch (_e) {
       return false;
     }
   };
