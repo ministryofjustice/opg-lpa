@@ -362,8 +362,13 @@ return [
                 'options' => [
                     'route'    => '/address-lookup',
                     'defaults' => [
-                        'controller' => 'Authenticated\PostcodeController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => new PipeSpec(
+                            AuthenticationListener::class,
+                            UserDetailsListener::class,
+                            TermsAndConditionsListener::class,
+                            Handler\PostcodeHandler::class,
+                        ),
                         'allowIncompleteUser' => true,
                     ],
                 ],
