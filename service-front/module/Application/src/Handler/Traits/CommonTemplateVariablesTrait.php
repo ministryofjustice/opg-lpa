@@ -12,7 +12,6 @@ trait CommonTemplateVariablesTrait
     public function getTemplateVariables(ServerRequestInterface $request): array
     {
         return [
-            // Template expects 'signedInUser', request attribute is 'userDetails'
             'signedInUser' => $request->getAttribute(Attribute::USER_DETAILS),
             'secondsUntilSessionExpires' => $request->getAttribute('secondsUntilSessionExpires'),
         ];
