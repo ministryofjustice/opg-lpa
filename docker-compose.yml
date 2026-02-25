@@ -1,15 +1,31 @@
+volumes:
+  esbuild:
+
 services:
   # ---------------------------
   # Local Services
 
-  node-build-assets:
-    container_name: lpa-node-build-assets
-    image: lpa-node-build-assets
+# TODO this will go away once esbuild is working
+#  node-build-assets:
+#    container_name: lpa-node-build-assets
+#    image: lpa-node-build-assets
+#    volumes:
+#      - ./service-front:/service-front
+#    build:
+#      context: ./
+#      dockerfile: node-build-assets/docker/Dockerfile
+
+  esbuild-build-assets:
+    container_name: esbuild
+    image: lpa-esbuild-build-assets
+    build:
+      context: .
+      dockerfile: esbuild-build-assets/docker/Dockerfile
+    entrypoint: >
+      sh -c "npm ci --verbose --ignore-scripts && npm run build"
     volumes:
       - ./service-front:/service-front
-    build:
-      context: ./
-      dockerfile: node-build-assets/docker/Dockerfile
+      - esbuild:/web/dist
 
   pgbouncer:
     container_name: lpa-pgbouncer
