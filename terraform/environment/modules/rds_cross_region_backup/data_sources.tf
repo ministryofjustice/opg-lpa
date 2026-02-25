@@ -21,3 +21,7 @@ data "aws_kms_key" "backup" {
   provider = aws.backup
   key_id   = "arn:aws:kms:${data.aws_region.current.region}:${data.aws_caller_identity.backup.account_id}:alias/opg-lpa-${var.account_name}-aws-backup-key"
 }
+
+data "aws_kms_key" "rds_encryption_key" {
+  key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
+}
