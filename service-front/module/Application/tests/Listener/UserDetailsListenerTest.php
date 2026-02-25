@@ -9,6 +9,7 @@ use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\User\Details;
+use MakeShared\DataModel\Common\Name;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -382,22 +383,30 @@ class UserDetailsListenerTest extends TestCase
 
     public function testProcessWhenNoRoute(): void
     {
+        $userDetails = FixturesData::getUser();
+
         $request = new ServerRequest();
         $expectedResponse = new PSR7Response();
 
+        // Now we DO fetch user details in MVC hybrid mode
         $this->userService
-            ->expects($this->never())
-            ->method('getUserDetails');
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
 
         $this->sessionUtility
-            ->expects($this->never())
-            ->method('setInMvc');
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
             ->expects($this->once())
             ->method('handle')
-            ->with($request)
+            ->with($this->callback(function ($req) use ($userDetails) {
+                return $req instanceof ServerRequest
+                    && $req->getAttribute('userDetails') === $userDetails;
+            }))
             ->willReturn($expectedResponse);
 
         $listener = new UserDetailsListener(
@@ -573,11 +582,14 @@ class UserDetailsListenerTest extends TestCase
             ->willReturn($route);
 
         $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
+        $expectedResponse = new PSR7Response();
 
+        // With allowIncompleteUser => true, user should be allowed through
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
-            ->expects($this->never())
-            ->method('handle');
+            ->expects($this->once())
+            ->method('handle')
+            ->willReturn($expectedResponse);
 
         $listener = new UserDetailsListener(
             $this->sessionUtility,
@@ -589,25 +601,26 @@ class UserDetailsListenerTest extends TestCase
 
         $result = $listener->process($request, $handler);
 
-        $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals(302, $result->getStatusCode());
-        $this->assertEquals('/user/about-you/new', $result->getHeaderLine('Location'));
+        $this->assertEquals($expectedResponse, $result);
     }
 
     public function testProcessWhenUserValidationFails(): void
     {
         // Create a partial mock of User that overrides toArray() to return invalid data
-        // This simulates data corruption that will cause User reconstruction to fail
+        // User needs a valid name to pass the incomplete user check
         $userDetails = $this->getMockBuilder(UserDataModel::class)
             ->setConstructorArgs([[
                 'id' => str_repeat('a', 32),
                 'createdAt' => '2024-01-01 00:00:00',
                 'updatedAt' => '2024-01-01 00:00:00',
             ]])
-            ->onlyMethods(['toArray'])
+            ->onlyMethods(['toArray', 'getName'])
             ->getMock();
 
+        // Return a valid Name object so we pass the incomplete user check
+        $userDetails->method('getName')->willReturn(new Name(['first' => 'Test', 'last' => 'User']));
 
+        // But return invalid data for toArray() to trigger validation failure
         $userDetails->method('toArray')->willReturn([
             'id' => str_repeat('a', 32),
             'name' => 'invalid-string-not-array',
@@ -670,5 +683,79 @@ class UserDetailsListenerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertEquals(302, $result->getStatusCode());
         $this->assertEquals('/login?state=timeout', $result->getHeaderLine('Location'));
+    }
+
+    public function testProcessWhenNoRouteMvcHybridMode(): void
+    {
+        $userDetails = FixturesData::getUser();
+
+        $request = new ServerRequest();  // No RouteResult attribute = MVC hybrid mode
+        $expectedResponse = new PSR7Response();
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn($userDetails);
+
+        $this->sessionUtility
+            ->expects($this->once())
+            ->method('setInMvc')
+            ->with(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(function ($req) use ($userDetails) {
+                return $req instanceof ServerRequest
+                    && $req->getAttribute('userDetails') === $userDetails;
+            }))
+            ->willReturn($expectedResponse);
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $result = $listener->process($request, $handler);
+
+        $this->assertEquals($expectedResponse, $result);
+    }
+
+    public function testProcessWhenNoRouteMvcHybridModeUserDetailsFalse(): void
+    {
+        $request = new ServerRequest();  // No RouteResult attribute = MVC hybrid mode
+        $expectedResponse = new PSR7Response();
+
+        $this->userService
+            ->expects($this->once())
+            ->method('getUserDetails')
+            ->willReturn(false);
+
+        $this->sessionUtility
+            ->expects($this->never())
+            ->method('setInMvc');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler
+            ->expects($this->once())
+            ->method('handle')
+            ->with($request)
+            ->willReturn($expectedResponse);
+
+        $listener = new UserDetailsListener(
+            $this->sessionUtility,
+            $this->userService,
+            $this->authenticationService,
+            $this->sessionManager,
+            $this->logger,
+        );
+
+        $result = $listener->process($request, $handler);
+
+        $this->assertEquals($expectedResponse, $result);
     }
 }
