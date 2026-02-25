@@ -10,7 +10,9 @@ data "aws_iam_policy_document" "aurora_backup_role" {
     resources = [
       data.aws_kms_key.source_rds_snapshot_key.arn,
       data.aws_kms_key.destination_rds_snapshot_key.arn,
-      data.aws_kms_key.backup.arn
+      data.aws_kms_key.backup.arn,
+      data.aws_kms_key.rds_encryption_key.arn,
+
     ]
   }
 }
