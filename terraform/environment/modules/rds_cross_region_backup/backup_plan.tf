@@ -8,7 +8,7 @@ resource "aws_backup_plan" "main" {
   rule {
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(0 18 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(30 11 ? * * *)" // Run at 6am UTC every day
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
@@ -22,12 +22,19 @@ resource "aws_backup_plan" "main" {
         delete_after = var.daily_backup_deletion
       }
     }
-    dynamic "copy_action" {
-      for_each = var.cross_account_backup_enabled ? [1] : []
-      content {
-        destination_vault_arn = aws_backup_vault.backup_account.arn
+    copy_action {
+      destination_vault_arn = aws_backup_vault.backup_account
+
+      lifecycle {
+        delete_after = var.daily_backup_deletion
       }
     }
+    # dynamic "copy_action" {
+    #   for_each = var.cross_account_backup_enabled ? [1] : []
+    #   content {
+    #     destination_vault_arn = aws_backup_vault.backup_account.arn
+    #   }
+    # }
   }
   rule {
     completion_window   = 10080
