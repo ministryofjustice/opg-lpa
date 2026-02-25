@@ -1,0 +1,28 @@
+vulnerabilities:
+  - id: CVE-2026-2004
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2005
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2006
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2007
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2004
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2005
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2006
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2026-2007
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30
+  - id: CVE-2025-45769
+    statement: fix after introducing trivy scanning
+    expired_at: 2026-03-30

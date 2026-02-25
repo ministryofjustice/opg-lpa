@@ -4,7 +4,11 @@ namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Factory\AboutYouHandlerFactory;
+use Application\Handler\ChangeEmailAddressHandler;
+use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
+use Application\Handler\Factory\ChangePasswordHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -440,6 +444,8 @@ class Module implements FormElementProviderInterface
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
+                ChangeEmailAddressHandler::class => ChangeEmailAddressHandlerFactory::class,
+                ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

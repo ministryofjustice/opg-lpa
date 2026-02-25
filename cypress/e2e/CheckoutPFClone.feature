@@ -42,8 +42,8 @@ Feature: Checkout for a Property and Finance LPA
             | Name | Mr Reece Richards | certificate-provider |
             | Address | 11 Brookside $ Cholsey $ Wallingford, Oxfordshire $ OX10 9NN | |
             | Person to notify | No people to notify | people-to-notify |
-            | Preferences | Neque porro quisquam | instructions |
-            | Instructions | Lorem Ipsum | instructions |
+            | Preferences | Some preferences | instructions |
+            | Instructions | Some instructions | instructions |
             | Who is registering the LPA | Standard Trust | applicant |
             | Correspondent | | |
             | Company name | Standard Trust | correspondent |
