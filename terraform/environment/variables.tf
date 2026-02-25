@@ -38,21 +38,21 @@ variable "accounts" {
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
       database = object({
-        cluster_identifier                  = string
-        aurora_cross_region_backup_enabled  = bool
-        aurora_restore_testing_enabled      = bool
-        aurora_cross_account_backup_enabled = bool
-        daily_backup_deletion               = number
-        daily_backup_cold_storage           = number
-        monthly_backup_deletion             = number
-        monthly_backup_cold_storage         = number
-        aurora_instance_count               = number
-        aurora_serverless                   = bool
-        deletion_protection                 = bool
-        psql_engine_version                 = string
-        psql_parameter_group_family         = string
-        rds_instance_type                   = string
-        skip_final_snapshot                 = bool
+        cluster_identifier                 = string
+        aurora_cross_region_backup_enabled = bool
+        aurora_restore_testing_enabled     = bool
+        cross_account_backup_enabled       = bool
+        daily_backup_deletion              = number
+        daily_backup_cold_storage          = number
+        monthly_backup_deletion            = number
+        monthly_backup_cold_storage        = number
+        aurora_instance_count              = number
+        aurora_serverless                  = bool
+        deletion_protection                = bool
+        psql_engine_version                = string
+        psql_parameter_group_family        = string
+        rds_instance_type                  = string
+        skip_final_snapshot                = bool
       })
       regions = map(
         object({
