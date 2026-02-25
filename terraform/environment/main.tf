@@ -80,7 +80,7 @@ module "cross_region_backup" {
   daily_backup_cold_storage      = local.account.database.daily_backup_cold_storage
   monthly_backup_deletion        = local.account.database.monthly_backup_deletion
   monthly_backup_cold_storage    = local.account.database.monthly_backup_cold_storage
-  cross_account_backup_enabled   = local.account.database.aurora_cross_account_backup_enabled
+  cross_account_backup_enabled   = local.account.database.cross_account_backup_enabled
 
 }
 
