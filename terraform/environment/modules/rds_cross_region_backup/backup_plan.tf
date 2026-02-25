@@ -26,7 +26,7 @@ resource "aws_backup_plan" "main" {
       destination_vault_arn = aws_backup_vault.backup_account.arn
 
       lifecycle {
-        delete_after = var.monthly_backup_deletion
+        delete_after = var.daily_backup_deletion
       }
       # dynamic "copy_action" {
       #   for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
