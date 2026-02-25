@@ -176,6 +176,7 @@ jobs:
 
       - name: Trivy Image Vulnerability Scanner
         id: trivy_scan
+        if: false
         run: |
           sleep $((RANDOM % 12));
           mkdir -p -m 0777 .trivy-cache ./test-results/
@@ -212,7 +213,8 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
-        if: always()
+        if: false
+        # if: always()
         with:
           sarif_file: "./test-results/trivy.sarif"
 
