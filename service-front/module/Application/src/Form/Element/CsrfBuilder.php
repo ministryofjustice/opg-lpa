@@ -21,8 +21,8 @@ class CsrfBuilder
         $csrfSalt = $this->serviceManager->get('config')['csrf']['salt'];
 
         $csrfValidator = new CsrfValidator(
-            $this->serviceManager->get('Logger'),
             ['name' => $csrf->getName(), 'salt' => $csrfSalt],
+            $this->serviceManager->get('Logger'),
             $this->serviceManager->get(SessionUtility::class),
         );
 
