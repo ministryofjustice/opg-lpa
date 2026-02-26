@@ -75,14 +75,14 @@ module "aurora_database_encryption_key" {
     "-seeding-task-role",
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
-    aws.iam_role.make_cross_account_backup_role.arn,
+    aws_iam_role.make_cross_account_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   decryption_role_patterns = [
     "-seeding-task-role",
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
-    aws.iam_role.make_cross_account_backup_role.arn,
+    aws_iam_role.make_cross_account_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
 }
