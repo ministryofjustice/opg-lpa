@@ -15,8 +15,9 @@ use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 
-class DashboardHandler implements RequestHandlerInterface
+class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
     use PaginationTrait;
