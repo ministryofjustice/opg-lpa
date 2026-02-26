@@ -12,25 +12,19 @@ module "aws_backup_cross_account_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     aws_iam_role.aurora_backup_role.arn,
   ]
-  usage_services = [
-    "rds.*.amazonaws.com",
-    "backup.*.amazonaws.com",
-  ]
-  description = "Encryption keys for Make an LPA backups copied into the backup account"
-  alias       = "opg-lpa-${local.account_name}-aws-backup-key"
+  usage_services = ["backup.*.amazonaws.com"]
+  description    = "Encryption keys for Make an LPA backups copied into the backup account"
+  alias          = "opg-lpa-${local.account_name}-aws-backup-key"
   providers = {
     aws = aws.backup
   }
 }
 #
 module "aurora_database_encryption_key" {
-  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
-  description = "Customer managed encryption key for Aurora RDS database"
-  alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
-  usage_services = [
-    "rds.*.amazonaws.com",
-    "backup.*.amazonaws.com",
-  ]
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  description        = "Customer managed encryption key for Aurora RDS database"
+  alias              = "opg-lpa-${local.account_name}-rds-encryption-key"
+  usage_services     = ["rds.*.amazonaws.com"]
   primary_region     = "eu-west-1"
   replicas_to_create = ["eu-west-2"]
 
