@@ -18,6 +18,7 @@ Feature: Property and Finance LPA starting from the Type page
             | Choose a type of LPA |
         And I see "Error" in the title
         When I choose Property and Finance
+        Then the page matches the "lpa-type" baseline image
         And I click "save"
         Then I am taken to the donor page
         And I see "This LPA covers property and financial affairs" in the page text
