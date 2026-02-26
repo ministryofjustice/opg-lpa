@@ -51,7 +51,7 @@ class CreateLpaHandler implements RequestHandlerInterface
                 );
             }
 
-            return new RedirectResponse(sprintf('/lpa/%s/form-type', $lpa->id));
+            return new RedirectResponse(sprintf('/lpa/%s/type', $lpa->id));
         }
 
         return new RedirectResponse('/lpa/type');
