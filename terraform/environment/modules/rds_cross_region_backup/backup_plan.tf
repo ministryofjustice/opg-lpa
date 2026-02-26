@@ -1,14 +1,14 @@
-locals {
-  cross_account_backup = var.cross_account_backup_enabled ? {
-    backup_vault_arn = aws_backup_vault.backup_account.arn
-  } : null
-}
+# locals {
+#   cross_account_backup = var.cross_account_backup_enabled ? {
+#     backup_vault_arn = aws_backup_vault.backup_account.arn
+#   } : null
+# }
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(30 21 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(0 11 ? * * *)" // Run at 6am UTC every day
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
@@ -22,20 +22,20 @@ resource "aws_backup_plan" "main" {
         delete_after = var.daily_backup_deletion
       }
     }
-    copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
 
-      lifecycle {
-        delete_after = var.daily_backup_deletion
+    dynamic "copy_action" {
+      for_each = var.cross_account_backup_enabled ? [1] : []
+      content {
+        destination_vault_arn = aws_backup_vault.backup_account.arn
       }
-      # dynamic "copy_action" {
-      #   for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
-      #   content {
-      #     destination_vault_arn = aws_backup_vault.backup_account.arn
-      #   }
-      # }
     }
   }
+  # copy_action {
+  #   destination_vault_arn = aws_backup_vault.backup_account.arn
+
+  #   lifecycle {
+  #     delete_after = var.daily_backup_deletion
+  #   }
   rule {
     completion_window   = 10080
     recovery_point_tags = {}
@@ -55,19 +55,18 @@ resource "aws_backup_plan" "main" {
         delete_after = var.monthly_backup_deletion
       }
     }
-
-    copy_action {
-      destination_vault_arn = aws_backup_vault.backup_account.arn
-
-      lifecycle {
-        delete_after = var.monthly_backup_deletion
-      }
-    }
     dynamic "copy_action" {
-      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
+      for_each = var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
       }
     }
+    # copy_action {
+    #   destination_vault_arn = aws_backup_vault.backup_account.arn
+
+    #   lifecycle {
+    #     delete_after = var.monthly_backup_deletion
+    #   }
+    # }
   }
 }
