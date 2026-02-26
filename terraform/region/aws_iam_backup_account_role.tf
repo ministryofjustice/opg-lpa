@@ -5,6 +5,7 @@ resource "aws_iam_role" "make_cross_account_backup_role" {
 }
 
 resource "aws_iam_role_policy_attachment" "make_cross_account_backup_role" {
+  provider   = aws.backup
   role       = aws_iam_role.make_cross_account_backup_role.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBackupServiceRolePolicyForBackup"
 }
