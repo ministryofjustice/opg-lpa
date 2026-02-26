@@ -462,4 +462,5 @@ services:
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
     volumes:
-      - ./cypress/screenshots:/app/cypress/screenshots
+      - ./cypress:/app/cypress
+      - ./cypress.config.js:/app/cypress.config.js
