@@ -177,7 +177,7 @@
         "patch",
         "digest"
       ],
-      "minimumReleaseAge": "37days",
+      "minimumReleaseAge": "7 days",
       "matchManagers": [
         "github-actions"
       ]
