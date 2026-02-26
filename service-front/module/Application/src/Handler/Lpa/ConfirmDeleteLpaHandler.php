@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Handler\Lpa;
 
+use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Router\RouteMatch;
@@ -14,6 +15,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ConfirmDeleteLpaHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
@@ -45,7 +48,10 @@ class ConfirmDeleteLpaHandler implements RequestHandlerInterface
         return new HtmlResponse(
             $this->renderer->render(
                 'application/authenticated/dashboard/confirm-delete.twig',
-                $templateParams
+                array_merge(
+                    $this->getTemplateVariables($request),
+                    $templateParams
+                )
             )
         );
     }

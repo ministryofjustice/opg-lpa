@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Handler;
 
+use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Handler\Traits\PaginationTrait;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
@@ -21,6 +22,7 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
     use PaginationTrait;
+    use CommonTemplateVariablesTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -59,17 +61,20 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
         );
 
         return new HtmlResponse(
-            $this->renderer->render('application/authenticated/dashboard/index.twig', [
-                'lpas'                  => $lpas,
-                'lpaTotalCount'         => $lpasTotalCount,
-                'paginationControlData' => $paginationControlData,
-                'freeText'              => $search,
-                'isSearch'              => (is_string($search) && !empty($search)),
-                'user'                  => [
-                    'lastLogin' => $identity->lastLogin(),
-                ],
-                'trackingEnabled' => $lpasSummary['trackingEnabled'],
-            ])
+            $this->renderer->render('application/authenticated/dashboard/index.twig', array_merge(
+                $this->getTemplateVariables($request),
+                [
+                        'lpas'                  => $lpas,
+                        'lpaTotalCount'         => $lpasTotalCount,
+                        'paginationControlData' => $paginationControlData,
+                        'freeText'              => $search,
+                        'isSearch'              => (is_string($search) && !empty($search)),
+                        'user'                  => [
+                            'lastLogin' => $identity->lastLogin(),
+                        ],
+                        'trackingEnabled' => $lpasSummary['trackingEnabled'],
+                    ]
+            ))
         );
     }
 }
