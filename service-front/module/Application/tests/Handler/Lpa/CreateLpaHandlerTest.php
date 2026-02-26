@@ -96,7 +96,7 @@ class CreateLpaHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/lpa/456/form-type', $response->getHeaderLine('Location'));
+        $this->assertEquals('/lpa/456/type', $response->getHeaderLine('Location'));
     }
 
     public function testShowsErrorWhenCreateApplicationFails(): void
@@ -145,7 +145,7 @@ class CreateLpaHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/lpa/456/form-type', $response->getHeaderLine('Location'));
+        $this->assertEquals('/lpa/456/type', $response->getHeaderLine('Location'));
     }
 
     public function testSessionCloneDataIsReset(): void
