@@ -36,7 +36,7 @@
   "prConcurrentLimit": 3,
   "packageRules": [
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "We are investigating replacing Grunt with esbuild (LPAL-1501) so ignore these major updates for now",
         "TODO: Review this decision from November 2025"
@@ -55,7 +55,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "Lock versions of managed services",
         "Our local images need to match the managed services that we have in AWS"
@@ -73,7 +73,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "laminas-servicemanager network blockages (major)",
         "None of these packages can be (major) upgraded until everything supports laminas-servicemanager v4",
@@ -97,7 +97,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "laminas-servicemanager network blockages (minor)",
         "robmorgan/phinx has a nested dependency on psr/simple-cache:^2.0, which in turn requires laminas-cache v4 so is blocked by the v4 servicemanager blockage above"
@@ -114,7 +114,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "cypress: bundle updates to package.json and dockerfile",
         "allow major version updates"
@@ -138,7 +138,7 @@
       ]
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "dev tools: allow major updates only for dev tools and aws-sdk",
         "note: this may fail if other packages depend on existing versions"
@@ -161,7 +161,7 @@
       ]
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "Github Actions: bundle all updates together"
       ],
@@ -183,7 +183,7 @@
       ]
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "Terraform: bundle all updates together"
       ],
@@ -202,7 +202,7 @@
       ]
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "No updates to postgres, redis, php or python docker images",
         "postgres: keep in sync with live",
@@ -228,7 +228,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "No updates to PHP PDF libraries (too sensitive and risky)"
       ],
@@ -247,7 +247,7 @@
       "enabled": false
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "admin composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -275,7 +275,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "front composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -303,7 +303,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "api composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -331,7 +331,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "pdf composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -359,7 +359,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "shared composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -387,7 +387,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "npm minor and patch updates (stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
@@ -416,7 +416,7 @@
       "minimumReleaseAge": "7 days"
     },
     {
-      "schedule": ["* 6 * * 5,6"],
+      "schedule": ["* 6 1,15 * *"],
       "description": [
         "python minor and patch updates (stable for 3 days)"
       ],
