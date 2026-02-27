@@ -92,6 +92,10 @@ module "aurora_database_encryption_key" {
     aws_iam_role.make_cross_account_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+    data.aws_caller_identity.backup.account_id
+  ]
 }
 
 data "aws_kms_key" "access_log_key" {
