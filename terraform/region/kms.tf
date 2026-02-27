@@ -74,6 +74,8 @@ module "aurora_database_encryption_key" {
   ]
   grant_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    aws_iam_role.make_cross_account_backup_role.arn,
+    aws_iam_role.aurora_backup_role.arn,
   ]
 
   encryption_role_patterns = [
@@ -89,6 +91,10 @@ module "aurora_database_encryption_key" {
     aws_iam_role.aurora_backup_role.arn,
     aws_iam_role.make_cross_account_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+    data.aws_caller_identity.backup.account_id
   ]
 }
 
