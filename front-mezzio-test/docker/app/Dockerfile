@@ -1,6 +1,6 @@
-FROM composer:2.9.3@sha256:c404e6f07bdebf8a8c605be5b5fab88eef737f6e4acfba3651d39c824ce224d4 AS composer
+FROM composer:2.9@sha256:c404e6f07bdebf8a8c605be5b5fab88eef737f6e4acfba3651d39c824ce224d4 AS composer
 
-FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
+FROM php:8.4-fpm-alpine3.23@sha256:b7bad36533116d6360d00c3b12820be69bf7655af6057f6222b57befa5eee5c4
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -11,7 +11,7 @@ RUN apk upgrade --no-cache
 # The --virtual flag puts build dependencies into their own
 # directory to make them easier to remove en masse
 RUN apk add --no-cache icu fcgi \
-    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers 
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"

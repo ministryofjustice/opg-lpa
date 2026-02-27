@@ -1,8 +1,8 @@
-FROM composer:2.9.4@sha256:22a95bd2bc3cf6ff19550a246208138d35f0015602db3d67dc6841945324acc1 AS composer
+FROM composer:2.9@sha256:f0809732b2188154b3faa8e44ab900595acb0b09cd0aa6c34e798efe4ebc9021 AS composer
 
 FROM pdftk/pdftk:3.3.3@sha256:c203460ed9e1be3337a4095027c8728547915f34225a0c6b6a22476b0a2f257e AS pdftk
 
-FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
+FROM php:8.4-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
 
 RUN adduser -D -g '' appuser && \
   chown -R appuser:appuser /tmp
