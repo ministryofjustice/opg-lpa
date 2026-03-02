@@ -97,7 +97,7 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 1800
-          role-session-name: OPGMakeaLPAECRGithubAction
+          role-session-name: OPGMakeaLPAECRGithubAction${{ matrix.image_name }}
 
       - name: Apply override tag
         id: set_image_tag
@@ -142,7 +142,7 @@ jobs:
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
         with:
           registries: 311462405659
-          skip-logout: true
+          skip-logout: false
 
       - name: Trivy Dockerfile Configuration Scanner for ${{ matrix.image_name }}
         id: trivy_dockerfile_misconfiguration_scan
