@@ -87,7 +87,6 @@ module "aurora_database_encryption_key" {
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
     "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   decryption_role_patterns = [
@@ -95,7 +94,6 @@ module "aurora_database_encryption_key" {
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
     "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   caller_accounts = [
@@ -103,7 +101,7 @@ module "aurora_database_encryption_key" {
     data.aws_caller_identity.backup.account_id
   ]
 }
-# old aws backup kms keys - to be removed once all backups have been migrated to the new key created by the above modules
+# old aws backup kms keys - to be removed once all backup resources have been migrated to the new key
 resource "aws_kms_key" "multi_region_db_snapshot_key" {
   enable_key_rotation = true
   provider            = aws.eu-west-1
