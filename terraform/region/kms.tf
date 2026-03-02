@@ -103,6 +103,31 @@ module "aurora_database_encryption_key" {
     data.aws_caller_identity.backup.account_id
   ]
 }
+# old aws backup kms keys - to be removed once all backups have been migrated to the new key created by the above modules
+resource "aws_kms_key" "multi_region_db_snapshot_key" {
+  enable_key_rotation = true
+  provider            = aws.eu-west-1
+  multi_region        = true
+}
+
+resource "aws_kms_alias" "multi_region_db_snapshot_alias" {
+  name          = "alias/mrk_db_snapshot_key-${terraform.workspace}"
+  target_key_id = aws_kms_key.multi_region_db_snapshot_key.key_id
+}
+
+resource "aws_kms_replica_key" "multi_region_db_snapshot_key_replica" {
+  description             = "db snapshot replica key"
+  deletion_window_in_days = 7
+  primary_key_arn         = aws_kms_key.multi_region_db_snapshot_key.arn
+  provider                = aws.eu-west-2
+}
+
+resource "aws_kms_alias" "multi_region_db_snapshot_alias_replica" {
+  name          = "alias/mrk_db_snapshot_key-${terraform.workspace}"
+  target_key_id = aws_kms_replica_key.multi_region_db_snapshot_key_replica.key_id
+  provider      = aws.eu-west-2
+}
+
 
 data "aws_kms_key" "access_log_key" {
   key_id = "alias/mrk_access_logs_lb_encryption_key-${terraform.workspace}"
@@ -248,29 +273,5 @@ resource "aws_kms_replica_key" "multi_region_secrets_encryption_key_replica" {
 resource "aws_kms_alias" "multi_region_secrets_encryption_alias_replica" {
   name          = "alias/mrk_secrets_encryption_key-${terraform.workspace}"
   target_key_id = aws_kms_replica_key.multi_region_secrets_encryption_key_replica.key_id
-  provider      = aws.eu-west-2
-}
-
-resource "aws_kms_key" "multi_region_db_snapshot_key" {
-  enable_key_rotation = true
-  provider            = aws.eu-west-1
-  multi_region        = true
-}
-
-resource "aws_kms_alias" "multi_region_db_snapshot_alias" {
-  name          = "alias/mrk_db_snapshot_key-${terraform.workspace}"
-  target_key_id = aws_kms_key.multi_region_db_snapshot_key.key_id
-}
-
-resource "aws_kms_replica_key" "multi_region_db_snapshot_key_replica" {
-  description             = "db snapshot replica key"
-  deletion_window_in_days = 7
-  primary_key_arn         = aws_kms_key.multi_region_db_snapshot_key.arn
-  provider                = aws.eu-west-2
-}
-
-resource "aws_kms_alias" "multi_region_db_snapshot_alias_replica" {
-  name          = "alias/mrk_db_snapshot_key-${terraform.workspace}"
-  target_key_id = aws_kms_replica_key.multi_region_db_snapshot_key_replica.key_id
   provider      = aws.eu-west-2
 }
