@@ -142,7 +142,6 @@ jobs:
         uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
         with:
           registries: 311462405659
-          skip-logout: false
 
       - name: Trivy Dockerfile Configuration Scanner for ${{ matrix.image_name }}
         id: trivy_dockerfile_misconfiguration_scan
