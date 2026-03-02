@@ -97,7 +97,7 @@ jobs:
           aws-region: eu-west-1
           role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
           role-duration-seconds: 1800
-          role-session-name: OPGMakeaLPAECRGithubAction${{ matrix.image_name }}
+          role-session-name: OPGMakeaLPAECRGithubAction${{ matrix.sbom_name }}
 
       - name: Apply override tag
         id: set_image_tag
