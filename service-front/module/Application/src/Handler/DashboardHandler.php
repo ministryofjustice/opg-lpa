@@ -60,21 +60,23 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
             $pagesInRange
         );
 
+        $routeParams = array_merge(
+            $this->getTemplateVariables($request),
+            [
+                'lpas'                  => $lpas,
+                'lpaTotalCount'         => $lpasTotalCount,
+                'paginationControlData' => $paginationControlData,
+                'freeText'              => $search,
+                'isSearch'              => (is_string($search) && !empty($search)),
+                'user'                  => [
+                    'lastLogin' => $identity->lastLogin(),
+                ],
+                'trackingEnabled' => $lpasSummary['trackingEnabled'],
+            ]
+        );
+
         return new HtmlResponse(
-            $this->renderer->render('application/authenticated/dashboard/index.twig', array_merge(
-                $this->getTemplateVariables($request),
-                [
-                        'lpas'                  => $lpas,
-                        'lpaTotalCount'         => $lpasTotalCount,
-                        'paginationControlData' => $paginationControlData,
-                        'freeText'              => $search,
-                        'isSearch'              => (is_string($search) && !empty($search)),
-                        'user'                  => [
-                            'lastLogin' => $identity->lastLogin(),
-                        ],
-                        'trackingEnabled' => $lpasSummary['trackingEnabled'],
-                    ]
-            ))
+            $this->renderer->render('application/authenticated/dashboard/index.twig', $routeParams)
         );
     }
 }
