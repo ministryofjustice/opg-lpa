@@ -192,6 +192,7 @@ jobs:
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
+            --timeout 5m \
             --format table \
             --severity HIGH,CRITICAL
 
@@ -207,6 +208,7 @@ jobs:
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
             --severity HIGH,CRITICAL \
+            --timeout 5m \
             --exit-code 1 \
             --format sarif --output ./test-results/trivy.sarif
 
