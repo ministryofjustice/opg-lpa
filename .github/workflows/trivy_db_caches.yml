@@ -14,7 +14,7 @@ on:
 
 jobs:
   update_trivy_db_caches:
-    name: "docker build"
+    name: "update trivy db caches"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
