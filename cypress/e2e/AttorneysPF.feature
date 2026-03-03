@@ -13,6 +13,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I visit the primary attorney page for the test fixture lpa
 
         # ** CUT Above Here ** This comment line needed for stitching feature files. Please do not remove
+        Then the page matches the "add-attorney" baseline image
         When I click "add-attorney"
         And I opt not to re-use details if lpa is a clone
         Then I can find "form-attorney"
@@ -54,6 +55,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
+        Then the page matches the "add-attorney-form" baseline image
         And I click "form-save"
         # check attorney is listed and save points to replacement attorney page
         Then I see "Mrs Amy Wheeler" in the page text
