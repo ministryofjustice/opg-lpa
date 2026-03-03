@@ -34,7 +34,7 @@ final class CsrfTest extends MockeryTestCase
                 'status' => Response::STATUS_CODE_500,
             ]);
 
-        $validator = new Csrf([], $sessionUtility, $logger);
+        $validator = new Csrf([], $logger, $sessionUtility);
 
         $result = $validator->isValid($data);
 
