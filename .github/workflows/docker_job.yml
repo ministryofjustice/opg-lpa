@@ -201,8 +201,10 @@ jobs:
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            --skip-db-update \
-            --skip-java-db-update \
+            --env TRIVY_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1 \
+            --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
             --severity HIGH,CRITICAL \
             --timeout 7m \
