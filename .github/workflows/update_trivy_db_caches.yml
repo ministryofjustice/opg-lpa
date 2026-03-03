@@ -1,4 +1,4 @@
-name: "[Docker] Build and Push Images"
+name: "Update trivy caches"
 
 defaults:
   run:
@@ -6,8 +6,9 @@ defaults:
 
 on:
   schedule:
-    # run at 6am every day
-    - cron: "0 6 * * *"
+    # run at 6am, 12pm and 6pm every day
+    - cron: "0 6,12,18 * * *"
+  workflow_dispatch:
 
 jobs:
   update_trivy_db_caches:
@@ -54,6 +55,13 @@ jobs:
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/java-db
           rm javadb.tar.gz
+
+      - name: Download and extract the Misconfiguration Checks DB
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/.cache/trivy/checks
+          oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks:2
+          tar -xzf bundle.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/checks
+          rm bundle.tar.gz
 
       - name: Cache DBs
         uses: actions/cache/save@v4
