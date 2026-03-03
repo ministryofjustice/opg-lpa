@@ -37,8 +37,8 @@ class ViewVariablesListener extends AbstractListenerAggregate
             return null;
         }
 
-        $userDetails = $event->getParam(Attribute::USER_DETAILS);
-        $identity = $event->getParam(Attribute::IDENTITY);
+        $userDetails = $event->getParam(EventParameter::USER_DETAILS);
+        $identity = $event->getParam(EventParameter::IDENTITY);
 
         if ($userDetails && $identity) {
             $result->setVariable('signedInUser', $userDetails);
