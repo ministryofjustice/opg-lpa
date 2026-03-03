@@ -1,4 +1,4 @@
-name: "[Docker] Build and Push Images"
+name: "Update trivy caches"
 
 defaults:
   run:
