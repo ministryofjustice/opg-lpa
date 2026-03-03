@@ -89,7 +89,7 @@ jobs:
     uses: ./.github/workflows/docker_job.yml
     needs:
       - workflow_variables
-      - update_trivy_db_caches
+      # - update_trivy_db_caches
     with:
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
     secrets:
