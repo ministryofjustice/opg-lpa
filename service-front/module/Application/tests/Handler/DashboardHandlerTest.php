@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Handler;
 
 use Application\Handler\DashboardHandler;
-use Application\Listener\Attribute;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -44,7 +44,7 @@ class DashboardHandlerTest extends TestCase
         return (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RouteMatch::class, $routeMatch)
-            ->withAttribute(Attribute::IDENTITY, $this->identity)
+            ->withAttribute(RequestAttribute::IDENTITY, $this->identity)
             ->withQueryParams($queryParams);
     }
 

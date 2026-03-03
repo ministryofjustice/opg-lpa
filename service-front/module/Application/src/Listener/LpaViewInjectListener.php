@@ -23,13 +23,13 @@ class LpaViewInjectListener extends AbstractListenerAggregate
 
     public function injectLpaIntoView(MvcEvent $event): void
     {
-        $lpa = $event->getParam(LpaLoaderListener::ATTR_LPA);
+        $lpa = $event->getParam(EventParameter::LPA);
 
         if ($lpa === null) {
             return;
         }
 
-        $currentRoute = $event->getParam(LpaLoaderListener::ATTR_CURRENT_ROUTE);
+        $currentRoute = $event->getParam(EventParameter::CURRENT_ROUTE);
 
         $viewModel = $event->getViewModel();
 

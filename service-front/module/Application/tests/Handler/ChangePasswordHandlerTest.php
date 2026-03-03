@@ -6,6 +6,7 @@ namespace ApplicationTest\Handler;
 
 use Application\Form\User\ChangePassword as ChangePasswordForm;
 use Application\Handler\ChangePasswordHandler;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -62,7 +63,7 @@ class ChangePasswordHandlerTest extends TestCase
     private function createAuthenticatedRequest(User $user): ServerRequest
     {
         return (new ServerRequest())
-            ->withAttribute('userDetails', $user)
+            ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute('secondsUntilSessionExpires', 3600);
     }
 

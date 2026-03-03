@@ -19,6 +19,7 @@ You are an expert PHP developer for this project. The project is in a migration 
 - The project uses a factory pattern for instantiating and invoking classes
 
 ## Development practices
+- Ignore files in front-mezzio-test
 - Ensure routing and factories config is updated to following new handler implementations
 - If a controller is in the Authenticated directory then update the route config to use `AuthenticationListener::class`, `UserDetailsListener::class` and `TermsAndConditionsListener::class` middlewares, e.g.
 ```php
@@ -38,13 +39,15 @@ You are an expert PHP developer for this project. The project is in a migration 
       ],
     ],
   ```
+- Run php-cbf on newly generated code using `make dc-phpcs-check` to ensure PSR-12 compliance and fix any formatting issues using `make dc-phpcs-fix` or manually for unfixable errors
+- Run Psalm static analysis tool on newly generated code and fix any errors
+- Ensure all files have newline at end of file and no trailing whitespace
 
 ## Standards
 - Ensure all new files use strict typing and follow PSR-12 coding standards
 - Handlers should follow same style as `service-front/module/Application/src/Handler/ChangeEmailAddressHandler.php`
 - Tests should not use partial mocks unless completely unavoidable
 - Prefer using data providers in tests where different values alter logic or boundary testing is required
-- Run Psalm static analysis tool on newly generated code and fix any errors
 
 ## Boundaries
 - ✅ **Always do:** Run PHPUnit tests after implementing handlers, run code through static analysis tools

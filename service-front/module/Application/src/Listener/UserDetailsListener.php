@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Listener;
 
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
@@ -67,7 +68,7 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
             return null;
         }
 
-        $event->setParam(Attribute::USER_DETAILS, $userDetails);
+        $event->setParam(EventParameter::USER_DETAILS, $userDetails);
         $this->sessionUtility->setInMvc(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
 
         if (!$routeMatch->getParam('allowIncompleteUser', false) && $userDetails->getName() === null) {
@@ -112,7 +113,7 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
             $userDetails = $this->userService->getUserDetails();
 
             if ($userDetails !== false) {
-                $request = $request->withAttribute(Attribute::USER_DETAILS, $userDetails);
+                $request = $request->withAttribute(RequestAttribute::USER_DETAILS, $userDetails);
                 $this->sessionUtility->setInMvc(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
             }
 
@@ -133,7 +134,7 @@ class UserDetailsListener extends AbstractListenerAggregate implements Middlewar
             return $handler->handle($request);
         }
 
-        $request = $request->withAttribute(Attribute::USER_DETAILS, $userDetails);
+        $request = $request->withAttribute(RequestAttribute::USER_DETAILS, $userDetails);
         $this->sessionUtility->setInMvc(ContainerNamespace::USER_DETAILS, 'user', $userDetails);
 
         $allowIncompleteUser = isset($routeOptions['allowIncompleteUser']) && $routeOptions['allowIncompleteUser'] === true;

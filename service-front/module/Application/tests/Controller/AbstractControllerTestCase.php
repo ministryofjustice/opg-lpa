@@ -24,7 +24,7 @@ use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
-use Application\Listener\LpaLoaderListener;
+use Application\Listener\EventParameter;
 use Application\Model\FormFlowChecker;
 use Laminas\Session\SessionManager;
 use Mockery;
@@ -380,8 +380,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
         if ($this->lpa instanceof Lpa) {
             $flowChecker = new FormFlowChecker($this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+            $event->setParam(EventParameter::LPA, $this->lpa);
+            $event->setParam(EventParameter::FLOW_CHECKER, $flowChecker);
         }
 
         $controller->setEvent($event);
@@ -412,10 +412,10 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $event = $controller->getEvent();
         $event->setRouteMatch($this->routeMatch);
 
-        if ($this->lpa instanceof Lpa && $event->getParam(LpaLoaderListener::ATTR_LPA) === null) {
+        if ($this->lpa instanceof Lpa && $event->getParam(EventParameter::LPA) === null) {
             $flowChecker = new FormFlowChecker($this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+            $event->setParam(EventParameter::LPA, $this->lpa);
+            $event->setParam(EventParameter::FLOW_CHECKER, $flowChecker);
         }
 
         return $this->routeMatch;
@@ -425,8 +425,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     {
         if ($this->lpa instanceof Lpa) {
             $flowChecker = new FormFlowChecker($this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_LPA, $this->lpa);
-            $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+            $event->setParam(EventParameter::LPA, $this->lpa);
+            $event->setParam(EventParameter::FLOW_CHECKER, $flowChecker);
         }
 
         $controller->setEvent($event);
