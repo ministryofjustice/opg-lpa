@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Library\ApiProblem;
 
+use MakeShared\DataModel\Validator\ValidatorResponse;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use MakeShared\DataModel\Validator\ValidatorResponseInterface;
 
 final class ValidationApiProblemTest extends MockeryTestCase
 {
     public function testConstructor(): void
     {
-        $validatorResponse = Mockery::mock(ValidatorResponseInterface::class);
+        $validatorResponse = Mockery::mock(ValidatorResponse::class);
         $validatorResponse->shouldReceive('getArrayCopy')->andReturn(['some error'])->once();
 
         $validationApiProblem = new TestableValidationApiProblem($validatorResponse);
