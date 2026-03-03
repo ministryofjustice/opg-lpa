@@ -34,6 +34,7 @@ final class StatusViewDataBuilderTest extends MockeryTestCase
     private const PROGRESS_BAR_STEPS = ['waiting', 'received', 'checking', 'processed'];
 
     private ViewModelRenderer $renderer;
+    private StatusViewDataBuilder $builder;
 
     public function setUp(): void
     {
