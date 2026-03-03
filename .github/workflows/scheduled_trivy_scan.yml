@@ -30,7 +30,7 @@ jobs:
           - name: lambda-aurora_scheduler
             image_name: lambda-aurora_scheduler
     env:
-      TRIVY_VERSION: 0.69.1
+      TRIVY_VERSION: 0.69.2
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -70,7 +70,7 @@ jobs:
             --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/trivy-db-public-ecr/aquasecurity/trivy-java-db:1 \
             --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
-            aquasec/trivy:$TRIVY_VERSION image \
+            aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ steps.login_ecr.outputs.registry }}/${{ matrix.image_uri }}:latest \
             --format table \
             --severity HIGH,CRITICAL \

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Service;
 
-use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Service\DateCheckViewModelHelper;
 use ApplicationTest\View\ViewModelRenderer;
 use DOMDocument;
@@ -26,10 +25,6 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
         $this->renderer->addFunction('form');
         $this->renderer->addFunction('formErrorTextExchange');
         $this->renderer->addFunction('formElement');
-
-        $this->dateCheckViewModelHelper = new DateCheckViewModelHelper(
-            new ContinuationSheets()
-        );
     }
 
     /* The keys correspond to the tests that check specific twig blocks in the given template */
