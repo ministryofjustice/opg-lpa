@@ -1,4 +1,4 @@
-name: "[Docker] Build and Push Images"
+name: "Update trivy caches"
 
 defaults:
   run:
@@ -6,8 +6,9 @@ defaults:
 
 on:
   schedule:
-    # run at 6am every day
-    - cron: "0 6 * * *"
+    # run at 6am, 12pm and 6pm every day
+    - cron: "0 6,12,18 * * *"
+  workflow_dispatch:
 
 jobs:
   update_trivy_db_caches:
@@ -35,7 +36,7 @@ jobs:
           registries: 311462405659
 
       - name: Setup oras
-        uses: oras-project/setup-oras@v1
+        uses: oras-project/setup-oras@22ce207df3b08e061f537244349aac6ae1d214f6 # v1
 
       - name: Get current date
         id: date
@@ -55,8 +56,15 @@ jobs:
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/java-db
           rm javadb.tar.gz
 
+      - name: Download and extract the Misconfiguration Checks DB
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/.cache/trivy/checks
+          oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks:2
+          tar -xzf bundle.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/checks
+          rm bundle.tar.gz
+
       - name: Cache DBs
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ${{ github.workspace }}/.cache/trivy
           key: cache-trivy-${{ steps.date.outputs.date }}
