@@ -77,6 +77,10 @@ jobs:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
 
+  update_trivy_db_caches:
+    name: Update trivy caches
+    uses: ./.github/workflows/trivy-db-caches.yml
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
