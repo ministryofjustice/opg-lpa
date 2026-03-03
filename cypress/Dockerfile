@@ -16,4 +16,4 @@ COPY cypress.config.js .
 COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
 
-CMD [ "cypress" ] 
+CMD [ "cypress" ]
