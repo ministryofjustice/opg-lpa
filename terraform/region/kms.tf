@@ -16,17 +16,17 @@ module "aws_backup_cross_account_key" {
   decryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   encryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   grant_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
 }
 
@@ -90,14 +90,14 @@ module "aurora_database_encryption_key" {
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   decryption_role_patterns = [
     "-seeding-task-role",
     "-api-task-role",
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
