@@ -187,7 +187,7 @@ jobs:
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             --env TRIVY_DB_REPOSITORY=docker-hub/aquasec/trivy-db:2 \
             --env TRIVY_JAVA_DB_REPOSITORY=docker-hub/aquasec/trivy-java-db:1 \
-            aquasec/trivy:0.65.0 image \
+            aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
             --timeout 7m \
             --format table \
@@ -201,7 +201,7 @@ jobs:
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             --env TRIVY_DB_REPOSITORY=docker-hub/aquasec/trivy-db:2 \
             --env TRIVY_JAVA_DB_REPOSITORY=docker-hub/aquasec/trivy-java-db:1 \
-            aquasec/trivy:0.65.0 image ${{ matrix.image_name }}:latest \
+            aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
