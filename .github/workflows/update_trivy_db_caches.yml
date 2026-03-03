@@ -9,9 +9,7 @@ on:
     # run at 6am, 12pm and 6pm every day
     - cron: "0 6,12,18 * * *"
   workflow_dispatch:
-  pull_request:
-    branches:
-      - main
+
 jobs:
   update_trivy_db_caches:
     name: "update trivy db caches"
