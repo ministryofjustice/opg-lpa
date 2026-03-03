@@ -184,12 +184,14 @@ jobs:
             --volume ./.trivy-cache:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
+            --env TRIVY_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-db:2 \
+            --env TRIVY_JAVA_DB_REPOSITORY=${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1 \
+            --env TRIVY_USERNAME=${{ steps.login_ecr.outputs.docker_username_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
+            --env TRIVY_PASSWORD=${{ steps.login_ecr.outputs.docker_password_311462405659_dkr_ecr_eu_west_1_amazonaws_com }} \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
             --timeout 7m \
-            --skip-db-update \
-            --skip-java-db-update \
             --format table \
             --severity HIGH,CRITICAL
 
@@ -219,8 +221,8 @@ jobs:
         id: trivy_sbom
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
-          # TRIVY_SKIP_DB_UPDATE: true
-          # TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
           TRIVY_SKIP_CHECK_UPDATE: true
           TRIVY_SKIP_VERSION_CHECK: true
 
