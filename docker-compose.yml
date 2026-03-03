@@ -5,27 +5,26 @@ services:
   # ---------------------------
   # Local Services
 
-# TODO this will go away once esbuild is working
-#  node-build-assets:
-#    container_name: lpa-node-build-assets
-#    image: lpa-node-build-assets
-#    volumes:
-#      - ./service-front:/service-front
-#    build:
-#      context: ./
-#      dockerfile: node-build-assets/docker/Dockerfile
-
-  esbuild-build-assets:
-    container_name: esbuild
-    image: lpa-esbuild-build-assets
-    build:
-      context: .
-      dockerfile: esbuild-build-assets/docker/Dockerfile
-    entrypoint: >
-      sh -c "npm ci --verbose --ignore-scripts && npm run build"
+  node-build-assets:
+    container_name: lpa-node-build-assets
+    image: lpa-node-build-assets
     volumes:
       - ./service-front:/service-front
-      - esbuild:/web/dist
+    build:
+      context: ./
+      dockerfile: node-build-assets/docker/Dockerfile
+
+#  esbuild-build-assets:
+#    container_name: esbuild
+#    image: lpa-esbuild-build-assets
+#    build:
+#      context: .
+#      dockerfile: esbuild-build-assets/docker/Dockerfile
+#    entrypoint: >
+#      sh -c "npm ci --verbose --ignore-scripts && npm run build"
+#    volumes:
+#      - ./service-front:/service-front
+#      - esbuild:/web/dist
 
   pgbouncer:
     container_name: lpa-pgbouncer
@@ -159,8 +158,8 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      node-build-assets:
-        condition: service_started
+      #node-build-assets:
+      #  condition: service_started
       govpaystub:
         condition: service_started
     environment:
