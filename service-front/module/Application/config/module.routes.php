@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangePasswordHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
+use Application\Handler\ChangeEmailAddressHandler;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -360,8 +362,13 @@ return [
                 'options' => [
                     'route'    => '/address-lookup',
                     'defaults' => [
-                        'controller' => 'Authenticated\PostcodeController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => new PipeSpec(
+                            AuthenticationListener::class,
+                            UserDetailsListener::class,
+                            TermsAndConditionsListener::class,
+                            Handler\PostcodeHandler::class,
+                        ),
                         'allowIncompleteUser' => true,
                     ],
                 ],
@@ -395,12 +402,17 @@ return [
                     ], // about-you
 
                     'change-email-address' => [
-                        'type'    => Literal::class,
+                        'type' => Literal::class,
                         'options' => [
-                            'route'    => '/change-email-address',
+                            'route' => '/change-email-address',
                             'defaults' => [
-                                'controller' => 'Authenticated\ChangeEmailAddressController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    ChangeEmailAddressHandler::class,
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -427,8 +439,13 @@ return [
                         'options' => [
                             'route'    => '/change-password',
                             'defaults' => [
-                                'controller' => 'Authenticated\ChangePasswordController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    ChangePasswordHandler::class,
+                                ),
                             ],
                         ],
                     ], // change-password

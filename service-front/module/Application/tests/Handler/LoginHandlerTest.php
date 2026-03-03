@@ -48,7 +48,7 @@ class LoginHandlerTest extends TestCase
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->sessionManagerSupport = $this->createMock(SessionManagerSupport::class);
         $this->sessionManager = $this->createMock(SessionManager::class);
-        $this->sessionStorage = $this->createMock(StorageInterface::class);
+        $this->sessionStorage = @$this->createMock(StorageInterface::class);
         $this->sessionUtility = $this->createMock(SessionUtility::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->flashMessenger = $this->createMock(FlashMessenger::class);

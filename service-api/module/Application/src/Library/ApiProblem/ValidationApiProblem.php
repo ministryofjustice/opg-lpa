@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Application\Library\ApiProblem;
 
-use MakeShared\DataModel\Validator\ValidatorResponseInterface;
+use MakeShared\DataModel\Validator\ValidatorResponse;
 
 /**
  * Special case API problem for LPA Data Model validation errors.
  */
 class ValidationApiProblem extends ApiProblem
 {
-    public function __construct(ValidatorResponseInterface $response)
+    public function __construct(ValidatorResponse $response)
     {
         parent::__construct(
             400,

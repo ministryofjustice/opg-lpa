@@ -50,7 +50,7 @@ class RedisClient implements LoggerAwareInterface
         }
 
         # Redis' setEx expects TTL in seconds, but this is passed to the constructor in milliseconds
-        $this->ttl = $ttlMs / 1000;
+        $this->ttl = (int) ($ttlMs / 1000);
 
         if (is_null($baseRedisClient)) {
             $baseRedisClient = new BaseRedisClient();
