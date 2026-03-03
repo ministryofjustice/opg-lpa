@@ -58,10 +58,10 @@ jobs:
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/java-db
           rm javadb.tar.gz
 
-      - name: Download and extract the Java DB
+      - name: Download and extract the Misconfiguration Checks DB
         run: |
           mkdir -p $GITHUB_WORKSPACE/.cache/trivy/java-db
-          oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks
+          oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks:2
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/checks
           rm javadb.tar.gz
 
