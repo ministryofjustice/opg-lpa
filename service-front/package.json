@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "test": "npm run build:scsslint && npm run build:jshint)",
+    "test": "npm run build:scsslint && npm run build:jshint",
     "build": "npm run build:js && npm run build:css && npm run build:fonts",
-    "build_js": "npm run build:copy:jsenv && npm run build:handlebars && npm run build:concat && npm run build:uglify && npm run build:copy:jsdevgovuk && npm run build:copy:jsdevgovukinit",
+    "build:js": "npm run build:copy:jsenv && npm run build:handlebars && npm run build:concat && npm run build:uglify && npm run build:copy:jsdevgovuk && npm run build:copy:jsdevgovukinit",
     "build_js_dev": "copy:jsenv && handlebars && concat && copy:jsdev && copy:jsdevdashboardstatuses && copy:jsdevsessiontimeout && copy:jsdevinitpolyfill",
     "build:esbuild_of_js": "node_modules/.bin/esbuild --bundle web/assets/main.js --minify --outdir=public/assets/javascript --sourcemap --resolve-extensions=.mjs,.js",
     "build:css": "npm run build:sass && npm run build:replace && npm run build:copy:css && npm run build:copy:cssdevfonts && npm run build:cssmin",
