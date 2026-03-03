@@ -1,0 +1,174 @@
+#!/bin/bash
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Make build scripts executable
+chmod +x "$SCRIPT_DIR/build-css.sh"
+chmod +x "$SCRIPT_DIR/build-js.sh"
+
+# Color output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Function to print colored output
+print_status() {
+  echo -e "${GREEN}$1${NC}"
+}
+
+print_error() {
+  echo -e "${RED}$1${NC}"
+}
+
+print_warning() {
+  echo -e "${YELLOW}$1${NC}"
+}
+
+# Parse command line arguments
+TASK="${1:-build}"
+WATCH_MODE=false
+
+case "$TASK" in
+  build)
+    print_status "Running full build..."
+    "$SCRIPT_DIR/build-js.sh"
+    "$SCRIPT_DIR/build-css.sh"
+    print_status "Build complete"
+    ;;
+
+  build:js|js)
+    print_status "Building JavaScript only..."
+    "$SCRIPT_DIR/build-js.sh"
+    ;;
+
+  build:css|css)
+    print_status "Building CSS only..."
+    "$SCRIPT_DIR/build-css.sh"
+    ;;
+
+  watch)
+    print_status "Starting watch mode..."
+    print_warning "Note: Watch mode requires fswatch or inotifywait"
+
+    # Check if fswatch is available (macOS)
+    if command -v fswatch &> /dev/null; then
+      print_status "Using fswatch for file watching..."
+
+      # Watch JS files
+      fswatch -o assets/js | while read; do
+        print_status "JavaScript files changed, rebuilding..."
+        "$SCRIPT_DIR/build-js.sh" &
+      done &
+
+      # Watch Sass files
+      fswatch -o assets/sass | while read; do
+        print_status "Sass files changed, rebuilding..."
+        "$SCRIPT_DIR/build-css.sh" &
+      done &
+
+      print_status "Watching for changes... Press Ctrl+C to stop."
+      wait
+
+    # Check if inotifywait is available (Linux)
+    elif command -v inotifywait &> /dev/null; then
+      print_status "Using inotifywait for file watching..."
+
+      while true; do
+        inotifywait -r -e modify,create,delete assets/js assets/sass 2>/dev/null
+        print_status "Files changed, rebuilding..."
+        "$SCRIPT_DIR/build-js.sh" &
+        "$SCRIPT_DIR/build-css.sh" &
+        wait
+      done
+
+    else
+      print_error "Error: Neither fswatch nor inotifywait found."
+      print_warning "Install fswatch: brew install fswatch (macOS)"
+      print_warning "Or run: npm run watch:poll (slower, but works without additional tools)"
+      exit 1
+    fi
+    ;;
+
+  watch:poll)
+    print_status "Starting watch mode (polling)..."
+    print_warning "This uses polling and may be slower than native watch."
+
+    # Simple polling-based watch
+    while true; do
+      # Use find to check for modified files in the last 2 seconds
+      CHANGED_JS=$(find assets/js -type f -mtime -2s 2>/dev/null | wc -l)
+      CHANGED_SASS=$(find assets/sass -type f -mtime -2s 2>/dev/null | wc -l)
+
+      if [[ $CHANGED_JS -gt 0 ]]; then
+        print_status "JavaScript files changed, rebuilding..."
+        "$SCRIPT_DIR/build-js.sh"
+      fi
+
+      if [[ $CHANGED_SASS -gt 0 ]]; then
+        print_status "Sass files changed, rebuilding..."
+        "$SCRIPT_DIR/build-css.sh"
+      fi
+
+      sleep 2
+    done
+    ;;
+
+  test|lint)
+    print_status "Running linters..."
+
+    # Lint JavaScript
+    if [[ -f ".jshintrc" ]]; then
+      print_status "Running JSHint..."
+      npx jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js Gruntfile.js || true
+    fi
+
+    # Lint Sass
+    if [[ -f ".scss-lint.yml" ]]; then
+      print_status "Running SCSS lint..."
+      if command -v scss-lint &> /dev/null; then
+        scss-lint assets/sass/**/*.scss || true
+      else
+        print_warning "scss-lint not found, skipping SCSS linting"
+      fi
+    fi
+
+    print_status "✓ Linting complete"
+    ;;
+
+  clean)
+    print_status "Cleaning build artifacts..."
+    rm -rf public/assets/v2/css/*
+    rm -rf public/assets/v2/js/*
+    rm -rf public/assets/v2/fonts/*
+    print_status "Clean complete"
+    ;;
+
+  help|--help|-h)
+    echo "Build script for service-front"
+    echo ""
+    echo "Usage: ./build.sh [task]"
+    echo ""
+    echo "Tasks:"
+    echo "  build       - Build all assets (default)"
+    echo "  js          - Build JavaScript only"
+    echo "  css         - Build CSS only"
+    echo "  watch       - Watch for changes and rebuild (requires fswatch/inotifywait)"
+    echo "  watch:poll  - Watch for changes using polling (slower, no deps)"
+    echo "  test        - Run linters"
+    echo "  clean       - Remove build artifacts"
+    echo "  help        - Show this help message"
+    echo ""
+    echo "Environment variables:"
+    echo "  NODE_ENV       - Set to 'production' for minified builds"
+    echo "  REVISION       - Git commit hash for cache busting"
+    ;;
+
+  *)
+    print_error "Unknown task: $TASK"
+    echo "Run './build.sh help' for usage information"
+    exit 1
+    ;;
+esac
