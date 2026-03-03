@@ -5,12 +5,9 @@ defaults:
     shell: bash
 
 on:
-  workflow_call:
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS:
-        required: true
-      AWS_SECRET_ACCESS_KEY_ACTIONS:
-        required: true
+  schedule:
+    # run at 6am every day
+    - cron: "0 6 * * *"
 
 jobs:
   update_trivy_db_caches:

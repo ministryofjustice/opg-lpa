@@ -185,11 +185,11 @@ jobs:
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            --skip-db-update \
-            --skip-java-db-update \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
             --timeout 7m \
+            --skip-db-update \
+            --skip-java-db-update \
             --format table \
             --severity HIGH,CRITICAL
 

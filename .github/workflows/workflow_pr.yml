@@ -77,12 +77,12 @@ jobs:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit.yml
 
-  update_trivy_db_caches:
-    name: Update trivy caches
-    uses: ./.github/workflows/trivy_db_caches.yml
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+  # update_trivy_db_caches:
+  #   name: Update trivy caches
+  #   uses: ./.github/workflows/trivy_db_caches.yml
+  #   secrets:
+  #     AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
+  #     AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
