@@ -187,6 +187,9 @@ jobs:
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
             --timeout 7m \
             --format table \
             --severity HIGH,CRITICAL
@@ -198,6 +201,9 @@ jobs:
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
