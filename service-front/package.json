@@ -10,7 +10,7 @@
     "build:esbuild_of_js": "node_modules/.bin/esbuild --bundle web/assets/main.js --minify --outdir=public/assets/javascript --sourcemap --resolve-extensions=.mjs,.js",
     "build:css": "npm run build:sass && npm run build:replace && npm run build:copy:css && npm run build:copy:cssdevfonts && npm run build:cssmin",
     "build:cssmin": "echo 'TODO - no exact equivalent can test without'",
-    "build:handlebars": "echo 'TODO - no exact equivalent can test without'",
+    "build:handlebars": "echo 'TODO - no exact equivalent can test without for now' && cat assets/js/lpa/templates/*.html > assets/js/lpa/lpa.templates.js",
     "build:copy:css": "cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css public/assets/v2/css && cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css public/assets/v2/css && cp node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css public/assets/v2/css && sed -i -e 's|ffbf47|ffdd00|g' public/assets/v2/css/govuk-template.css",
     "build:concat": "./node-build-scripts/concat",
     "build:uglify": "./node_modules/.bin/uglifyjs public/assets/v2/js/application.js --output public/assets/v2/js/application.min.js && /node_modules/.bin/uglifyjs assets/js/opg/session-timeout-init.js --output public/assets/v2/js/opg/session-timeout-init.min.js && /node_modules/.bin/uglifyjs assets/js/opg/dashboard-statuses.js --output public/assets/v2/js/opg/dashboard-statuses.min.js && /node_modules/.bin/uglifyjs assets/js/opg/init-polyfill.js --output public/assets/v2/js/opg/init-polyfill.min.js",
