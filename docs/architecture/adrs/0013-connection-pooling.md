@@ -4,7 +4,7 @@ Date: 2023-04-13
 
 ## Status
 
-* Proposed (2023-04-13)
+* Superceded (2023-04-13)
 
 ## Context
 

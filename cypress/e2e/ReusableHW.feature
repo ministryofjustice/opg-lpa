@@ -18,6 +18,7 @@ Feature: Reusable HW LPA details
     And I click "skip-certificate-provider"
 
     When I visit the dashboard
+    Then the page matches the "dashboard" baseline image
     Then I cannot see a "Reuse LPA details" link for the test fixture lpa
 
     Given I visit the people to notify page for the test fixture lpa

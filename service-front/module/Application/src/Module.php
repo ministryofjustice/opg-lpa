@@ -8,6 +8,8 @@ use Application\Handler\ChangePasswordHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\Factory\AboutYouHandlerFactory;
+use Application\Handler\ChangeEmailAddressHandler;
+use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
 use Application\Handler\Factory\ChangePasswordHandlerFactory;
 use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
@@ -446,6 +448,7 @@ class Module implements FormElementProviderInterface
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
+                ChangeEmailAddressHandler::class => ChangeEmailAddressHandlerFactory::class,
                 ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
                 DeleteAccountHandler::class => DeleteAccountHandlerFactory::class,
                 DeleteAccountConfirmHandler::class => DeleteAccountConfirmHandlerFactory::class,

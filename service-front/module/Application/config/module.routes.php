@@ -10,6 +10,7 @@ use Application\Handler\DeleteAccountHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
+use Application\Handler\ChangeEmailAddressHandler;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -398,12 +399,17 @@ return [
                     ], // about-you
 
                     'change-email-address' => [
-                        'type'    => Literal::class,
+                        'type' => Literal::class,
                         'options' => [
-                            'route'    => '/change-email-address',
+                            'route' => '/change-email-address',
                             'defaults' => [
-                                'controller' => 'Authenticated\ChangeEmailAddressController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    ChangeEmailAddressHandler::class,
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
