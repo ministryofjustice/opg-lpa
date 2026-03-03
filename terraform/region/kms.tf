@@ -7,21 +7,24 @@ module "aws_backup_cross_account_key" {
   providers = {
     aws = aws.backup
   }
-  usage_services = ["backup.*.amazonaws.com"]
+  usage_services = ["backup.amazonaws.com"]
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_roles = [
+    aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   encryption_roles = [
+    aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   grant_roles = [
+    aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
