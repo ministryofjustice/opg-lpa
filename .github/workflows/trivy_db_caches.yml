@@ -8,6 +8,9 @@ on:
   schedule:
     # run at 6am every day
     - cron: "0 6 * * *"
+  pull_request:
+    branches:
+      - main
 
 jobs:
   update_trivy_db_caches:
@@ -53,6 +56,13 @@ jobs:
           mkdir -p $GITHUB_WORKSPACE/.cache/trivy/java-db
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1
           tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/java-db
+          rm javadb.tar.gz
+
+      - name: Download and extract the Java DB
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/.cache/trivy/java-db
+          oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks
+          tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/.cache/trivy/checks
           rm javadb.tar.gz
 
       - name: Cache DBs
