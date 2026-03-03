@@ -79,7 +79,7 @@ jobs:
 
   update_trivy_db_caches:
     name: Update trivy caches
-    uses: ./.github/workflows/trivy-db-caches.yml
+    uses: ./.github/workflows/trivy_db_caches.yml
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
