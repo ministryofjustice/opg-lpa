@@ -65,7 +65,7 @@
     if (consentCookie) {
       try {
         consentCookieObj = JSON.parse(consentCookie);
-      } catch (err) {
+      } catch (_err) {
         return null;
       }
 

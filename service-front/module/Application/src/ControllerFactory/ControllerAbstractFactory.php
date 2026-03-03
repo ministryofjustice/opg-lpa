@@ -9,7 +9,6 @@ use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController;
 use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\Authenticated\Lpa\ReuseDetailsController;
-use Application\Controller\Authenticated\PostcodeController;
 use Application\Controller\General\AuthController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
@@ -46,9 +45,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         ],
         HowPrimaryAttorneysMakeDecisionController::class => [
             'setApplicantService' => 'ApplicantService',
-        ],
-        PostcodeController::class => [
-            'setAddressLookup' => 'AddressLookup'
         ],
         PrimaryAttorneyController::class => [
             'setApplicantService' => 'ApplicantService',

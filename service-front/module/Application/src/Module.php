@@ -4,7 +4,11 @@ namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Factory\AboutYouHandlerFactory;
+use Application\Handler\ChangeEmailAddressHandler;
+use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
+use Application\Handler\Factory\ChangePasswordHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -25,6 +29,7 @@ use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
+use Application\Handler\Factory\PostcodeHandlerFactory;
 use Application\Handler\Factory\RegisterHandlerFactory;
 use Application\Handler\Factory\ResendActivationEmailHandlerFactory;
 use Application\Handler\FeedbackHandler;
@@ -34,6 +39,7 @@ use Application\Handler\HomeRedirectHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
+use Application\Handler\PostcodeHandler;
 use Application\Handler\RegisterHandler;
 use Application\Handler\ResendActivationEmailHandler;
 use Application\Handler\PrivacyHandler;
@@ -49,6 +55,8 @@ use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\AddressLookup\OrdnanceSurvey;
+use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Lpa\ContinuationSheets;
@@ -245,7 +253,7 @@ class Module implements FormElementProviderInterface
                 'HttpClient' => false,
             ],
             'aliases' => [
-                'AddressLookup' => 'OrdnanceSurvey',
+                OrdnanceSurvey::class => 'OrdnanceSurvey',
                 AuthenticationService::class => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
                 IDateService::class => DateService::class,
@@ -253,7 +261,7 @@ class Module implements FormElementProviderInterface
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
                 'AuthenticationService' => 'Application\Model\Service\Authentication\AuthenticationServiceFactory',
-                'OrdnanceSurvey'        => 'Application\Model\Service\AddressLookup\OrdnanceSurveyFactory',
+                'OrdnanceSurvey'        => OrdnanceSurveyFactory::class,
                 'SessionManager'        => 'Application\Model\Service\Session\SessionFactory',
                 'MailTransport'         => 'Application\Model\Service\Mail\Transport\MailTransportFactory',
                 'Logger'                => 'MakeShared\Logging\LoggerFactory',
@@ -364,6 +372,7 @@ class Module implements FormElementProviderInterface
                 PingHandler::class => PingHandlerFactory::class,
                 PingHandlerJson::class => PingHandlerJsonFactory::class,
                 PingHandlerPingdom::class => PingHandlerPingdomFactory::class,
+                PostcodeHandler::class => PostcodeHandlerFactory::class,
                 FormLinkedErrors::class => fn () => new FormLinkedErrors(),
                 AppFiltersExtension::class => function (ServiceLocatorInterface $sm) {
                     return new AppFiltersExtension($sm->get('config'));
@@ -440,6 +449,8 @@ class Module implements FormElementProviderInterface
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
+                ChangeEmailAddressHandler::class => ChangeEmailAddressHandlerFactory::class,
+                ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

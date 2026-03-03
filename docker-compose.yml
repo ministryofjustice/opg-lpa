@@ -66,7 +66,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.4-alpine@sha256:0804c395e634e624243387d3c3a9c45fcaca876d313c2c8b52c3fdf9a912dded
+    image: library/redis:8.4-alpine@sha256:4a08b3d3a06b844117ead1cc4a267085169864151290d1f286eee9ad121a04fc
   #    ports:
   #      - 6379:6379
 
@@ -477,4 +477,5 @@ services:
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
     volumes:
-      - ./cypress/screenshots:/app/cypress/screenshots
+      - ./cypress:/app/cypress
+      - ./cypress.config.js:/app/cypress.config.js
