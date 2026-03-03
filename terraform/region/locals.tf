@@ -1,7 +1,8 @@
 locals {
-  account_name = lookup(var.account_mapping, terraform.workspace, "development")
-  account      = var.accounts[local.account_name]
-  account_id   = local.account.account_id
+  account_name     = lookup(var.account_mapping, terraform.workspace, "development")
+  account          = var.accounts[local.account_name]
+  account_id       = local.account.account_id
+  environment_name = terraform.workspace
 
   mandatory_moj_tags = {
     business-unit = "OPG"
