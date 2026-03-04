@@ -65,14 +65,14 @@ module "cross_region_backup" {
   count  = local.account.database.aurora_cross_region_backup_enabled ? 1 : 0
   source = "./modules/rds_cross_region_backup"
   providers = {
-    aws             = aws.eu_west_1
-    aws.destination = aws.eu_west_2
-    aws.backup      = aws.backup
+    aws         = aws
+    aws.replica = aws.replica
+    aws.backup  = aws.backup
   }
 
   source_cluster_arn             = module.eu-west-1.aws_aurora_cluster_arn
+  replica_region                 = "eu-west-2"
   environment_name               = local.environment_name
-  destination_region_name        = "eu-west-2"
   key_alias                      = "mrk_db_snapshot_key-${local.account_name}"
   account_name                   = local.account_name
   aurora_restore_testing_enabled = local.account.database.aurora_restore_testing_enabled

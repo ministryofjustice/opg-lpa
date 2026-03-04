@@ -3,16 +3,6 @@ variable "source_cluster_arn" {
   description = "The arn for the source Aurora cluster"
 }
 
-variable "destination_region_name" {
-  type        = string
-  description = "destination key name"
-}
-
-variable "key_alias" {
-  type        = string
-  description = "key alias"
-}
-
 variable "environment_name" {
   type        = string
   description = "environment name"

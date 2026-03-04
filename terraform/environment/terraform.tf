@@ -83,6 +83,18 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
+provider "aws" {
+  region = "eu-west-2"
+  alias  = "replica"
+  default_tags {
+    tags = local.default_tags
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::${local.account.account_id}:role/${var.default_role}"
+    session_name = "terraform-session"
+  }
+}
+
 provider "pagerduty" {
   token = var.pagerduty_token
 }
