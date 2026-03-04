@@ -24,11 +24,14 @@ class SessionSetExpiryHandler implements RequestHandlerInterface
             return new TextResponse('Method not allowed', 405);
         }
 
-        $body = $request->getBody()->getContents();
+        $body = $request->getBody();
+        $body->rewind();
+        $content = $body->getContents();
+
         $expireInSeconds = null;
 
-        if ($body !== '') {
-            $decodedContent = json_decode($body, true);
+        if ($content !== '') {
+            $decodedContent = json_decode($content, true);
 
             if (is_array($decodedContent) && array_key_exists('expireInSeconds', $decodedContent)) {
                 $expireInSeconds = $decodedContent['expireInSeconds'];
