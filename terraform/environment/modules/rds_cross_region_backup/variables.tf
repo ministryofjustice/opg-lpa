@@ -42,11 +42,6 @@ variable "cross_account_backup_enabled" {
   default     = false
 }
 
-# variable "replica_region" {
-#   type        = string
-#   description = "The region for the Aurora cluster replica and cross region backup"
-# }
-
 variable "key_alias" {
   type        = string
   description = "The alias for the KMS key used to encrypt RDS snapshots and backups"
