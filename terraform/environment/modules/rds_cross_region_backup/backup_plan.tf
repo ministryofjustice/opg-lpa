@@ -1,8 +1,3 @@
-locals {
-  cross_account_backup = var.cross_account_backup_enabled ? {
-    backup_vault_arn = aws_backup_vault.backup_account.arn
-  } : null
-}
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
@@ -23,7 +18,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     dynamic "copy_action" {
-      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
+      for_each = var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
         lifecycle {
@@ -52,7 +47,7 @@ resource "aws_backup_plan" "main" {
       }
     }
     dynamic "copy_action" {
-      for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
+      for_each = var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
         lifecycle {
