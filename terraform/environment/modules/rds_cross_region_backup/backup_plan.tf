@@ -6,11 +6,9 @@ locals {
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
-    completion_window   = 10080
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(0 6 ? * * *)" // Run at 6am UTC every day
-    start_window        = 480
+    schedule            = "cron(45 14? * * *)" // Run at 6am UTC every day
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
@@ -18,7 +16,7 @@ resource "aws_backup_plan" "main" {
       delete_after       = var.daily_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.secondary.arn
+      destination_vault_arn = aws_backup_vault.replica.arn
 
       lifecycle {
         delete_after = var.daily_backup_deletion
@@ -28,6 +26,9 @@ resource "aws_backup_plan" "main" {
       for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
+        lifecycle {
+          delete_after = var.daily_backup_deletion
+        }
       }
     }
   }
@@ -44,7 +45,7 @@ resource "aws_backup_plan" "main" {
       delete_after       = var.monthly_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.secondary.arn
+      destination_vault_arn = aws_backup_vault.replica.arn
 
       lifecycle {
         delete_after = var.monthly_backup_deletion
@@ -54,6 +55,9 @@ resource "aws_backup_plan" "main" {
       for_each = local.cross_account_backup == var.cross_account_backup_enabled ? [1] : []
       content {
         destination_vault_arn = aws_backup_vault.backup_account.arn
+        lifecycle {
+          delete_after = var.monthly_backup_deletion
+        }
       }
     }
   }
