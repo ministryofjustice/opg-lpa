@@ -39,7 +39,6 @@ variable "monthly_backup_cold_storage" {
 variable "cross_account_backup_enabled" {
   type        = bool
   description = "Condition to enable cross account backup"
-  default     = false
 }
 
 variable "key_alias" {
