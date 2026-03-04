@@ -177,6 +177,7 @@ jobs:
       - name: Get current date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+
       - name: Cache DBs
         uses: actions/cache/restore
         with:
