@@ -7,7 +7,7 @@ resource "aws_backup_vault" "main" {
 
 resource "aws_backup_vault" "replica" {
   provider    = aws.replica
-  name        = "${var.environment_name}_${data.aws_region.replica.region}_aurora_backup_vault"
+  name        = "${var.environment_name}_${data.aws_region.replica_region.region}_aurora_backup_vault"
   kms_key_arn = data.aws_kms_key.rds_encryption_key_replica.arn
 }
 

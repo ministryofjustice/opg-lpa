@@ -71,7 +71,6 @@ module "cross_region_backup" {
   }
 
   source_cluster_arn             = module.eu-west-1.aws_aurora_cluster_arn
-  replica_region_name            = "eu-west-2"
   environment_name               = local.environment_name
   key_alias                      = "alias/opg-lpa-${local.account_name}-rds-encryption-key"
   account_name                   = local.account_name
