@@ -173,6 +173,7 @@ jobs:
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         run: |
           pushd service-front/
+          npm ci --ignore-scripts
           NODE_ENV=production npm run build
           popd
 
