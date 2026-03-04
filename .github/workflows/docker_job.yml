@@ -174,6 +174,15 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
+      - name: Cache DBs
+        uses: actions/cache/restore
+        with:
+          path: ${{ github.workspace }}/.cache/trivy
+          key: cache-trivy-${{ steps.date.outputs.date }}
+
       - name: Trivy Image Vulnerability Scanner
         id: trivy_scan
         if: true
@@ -181,7 +190,7 @@ jobs:
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
+            --volume ./.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
@@ -190,13 +199,14 @@ jobs:
             --db-repository aquasec/trivy-db \
             --java-db-repository aquasec/trivy-java-db \
             --checks-bundle-repository aquasec/trivy-checks \
+            --cache-dir /root/.cache \
             --timeout 7m \
             --format table \
             --severity HIGH,CRITICAL
 
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
+            --volume ./.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
@@ -204,6 +214,7 @@ jobs:
             --db-repository aquasec/trivy-db \
             --java-db-repository aquasec/trivy-java-db \
             --checks-bundle-repository aquasec/trivy-checks \
+            --cache-dir /root/.cache \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
