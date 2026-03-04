@@ -119,8 +119,7 @@ jobs:
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         run: |
           pushd service-front/
-          npm ci --ignore-scripts && npm install -g --ignore-scripts sass
-          ./build.sh
+          NODE_ENV=production npm run build
           popd
 
       - name: Setup Docker Buildx
