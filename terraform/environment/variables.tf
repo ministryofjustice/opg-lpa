@@ -42,6 +42,7 @@ variable "accounts" {
         aurora_cross_region_backup_enabled = bool
         aurora_restore_testing_enabled     = bool
         daily_backup_deletion              = number
+        key_alias                          = string
         daily_backup_cold_storage          = number
         monthly_backup_deletion            = number
         monthly_backup_cold_storage        = number
@@ -51,6 +52,7 @@ variable "accounts" {
         psql_engine_version                = string
         psql_parameter_group_family        = string
         rds_instance_type                  = string
+        replica_region                     = string
         skip_final_snapshot                = bool
       })
       regions = map(

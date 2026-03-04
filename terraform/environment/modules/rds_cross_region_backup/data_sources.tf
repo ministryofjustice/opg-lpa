@@ -1,9 +1,6 @@
 data "aws_kms_key" "rds_encryption_key_primary" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
 }
-data "aws_region" "replica" {
-  provider = aws.replica
-}
 data "aws_kms_key" "rds_encryption_key_replica" {
   provider = aws.replica
   key_id   = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
