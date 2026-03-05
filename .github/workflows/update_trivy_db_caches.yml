@@ -14,6 +14,7 @@ on:
       - main
 env:
   trivy_cache_path: .cache/trivy
+
 jobs:
   update_trivy_db_caches:
     name: "update trivy db caches"
@@ -44,30 +45,31 @@ jobs:
 
       - name: Download and extract the vulnerability DB
         run: |
-          mkdir -p $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/db
+          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/db
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-db:2
-          tar -xzf db.tar.gz -C $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/db
+          tar -xzf db.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/db
           rm db.tar.gz
-          ls -al $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/
+          ls -al ${{ github.workspace }}/${{ env.trivy_cache_path }}/
 
       - name: Download and extract the Java DB
         run: |
-          mkdir -p $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/java-db
+          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/java-db
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1
-          tar -xzf javadb.tar.gz -C $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/java-db
+          tar -xzf javadb.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/java-db
           rm javadb.tar.gz
-          ls -al $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/
+          ls -al ${{ github.workspace }}/${{ env.trivy_cache_path }}/
 
       - name: Download and extract the Misconfiguration Checks DB
         run: |
-          mkdir -p $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/checks
+          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/checks
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks:2
-          tar -xzf bundle.tar.gz -C $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/checks
+          tar -xzf bundle.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/checks
           rm bundle.tar.gz
-          ls -al $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}/
+          ls -al ${{ github.workspace }}/${{ env.trivy_cache_path }}/
 
       - name: Cache DBs
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
-          path: $GITHUB_WORKSPACE/${{ env.trivy_cache_path }}
+          path: |
+            ${{ github.workspace }}/${{ env.trivy_cache_path }}
           key: cache-trivy-${{ steps.date.outputs.date }}
