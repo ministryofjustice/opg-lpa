@@ -154,6 +154,7 @@ jobs:
           severity: "HIGH,CRITICAL"
           scanners: "misconfig"
           version: "v${{env.TRIVY_VERSION}}"
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           exit-code: 1
 
       - name: Build Image
@@ -231,9 +232,9 @@ jobs:
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
-          cache-dir: $GITHUB_WORKSPACE/.cache/trivy
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           version: "v${{env.TRIVY_VERSION}}"
-          skip-setup-trivy: true
+          # skip-setup-trivy: true
 
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
