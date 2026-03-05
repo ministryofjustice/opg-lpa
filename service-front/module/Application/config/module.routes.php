@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\DeleteAccountConfirmHandler;
+use Application\Handler\DeleteAccountHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
@@ -534,15 +536,35 @@ return [
                     ], // dashboard
 
                     'delete' => [
-                        'type'    => Segment::class,
+                        'type' => Literal::class,
                         'options' => [
-                            'route'    => '/delete[/:action]',
+                            'route' => '/delete',
                             'defaults' => [
-                                'controller' => 'Authenticated\DeleteController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    DeleteAccountHandler::class,
+                                ),
                             ],
                         ],
                     ], // delete
+                    'delete-confirm' => [
+                        'type' => Literal::class,
+                        'options' => [
+                            'route' => '/delete/confirm',
+                            'defaults' => [
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    DeleteAccountConfirmHandler::class,
+                                ),
+                            ],
+                        ],
+                    ], // delete-confirm
                 ],
             ], // user
 
