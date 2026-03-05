@@ -75,7 +75,7 @@ module "cross_region_backup" {
   account_id                     = local.account.account_id
   environment_name               = local.environment_name
   destination_region_name        = "eu-west-2"
-  key_alias                      = "opg-lpa-${local.account_name}-rds-encryption-key"
+  key_alias                      = "mrk_db_snapshot_key-${local.account_name}"
   account_name                   = local.account_name
   aurora_restore_testing_enabled = local.account.database.aurora_restore_testing_enabled
   cross_account_backup_enabled   = local.account.database.cross_account_backup_enabled

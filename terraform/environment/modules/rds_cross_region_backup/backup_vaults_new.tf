@@ -2,13 +2,13 @@
 
 resource "aws_backup_vault" "backup_primary" {
   name        = "${var.environment_name}_${data.aws_region.current.region}_backup_vault_primary"
-  kms_key_arn = data.aws_kms_key.rds_encryption_key_primary.arn
+  kms_key_arn = data.aws_kms_key.backup_source_encryption_key.arn
 }
 
 resource "aws_backup_vault" "backup_replica" {
   provider    = aws.replica
   name        = "${var.environment_name}_${data.aws_region.replica_region.region}_backup_vault_replica"
-  kms_key_arn = data.aws_kms_key.rds_encryption_key_replica.arn
+  kms_key_arn = data.aws_kms_key.backup_destination_encryption_key.arn
 }
 
 resource "aws_backup_vault" "backup_cross_account" {
