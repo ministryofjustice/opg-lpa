@@ -8,9 +8,9 @@ data "aws_iam_policy_document" "aurora_backup_role" {
     actions = ["kms:Encrypt", "kms:CreateGrant", "kms:Decrypt", "kms:ReEncrypt*", "kms:GenerateDataKey*", "kms:DescribeKey"]
 
     resources = [
-      data.aws_kms_key.source_rds_snapshot_key.arn,
-      data.aws_kms_key.destination_rds_snapshot_key.arn,
-      data.aws_kms_key.backup.arn
+      data.aws_kms_key.rds_encryption_key_primary.arn,
+      data.aws_kms_key.rds_encryption_key_replica.arn,
+      data.aws_kms_key.cross_account_backup_key.arn,
     ]
   }
 }

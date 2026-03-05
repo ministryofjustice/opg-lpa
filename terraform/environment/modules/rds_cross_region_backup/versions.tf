@@ -3,7 +3,7 @@ terraform {
     aws = {
       source = "hashicorp/aws"
       configuration_aliases = [
-        aws.destination,
+        aws.replica,
         aws.backup,
       ]
       version = "6.28.0"
