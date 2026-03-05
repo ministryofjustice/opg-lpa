@@ -10,6 +10,8 @@ use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
 use Application\Handler\Factory\ChangePasswordHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
+use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
@@ -43,6 +45,8 @@ use Application\Handler\PostcodeHandler;
 use Application\Handler\RegisterHandler;
 use Application\Handler\ResendActivationEmailHandler;
 use Application\Handler\PrivacyHandler;
+use Application\Handler\SessionKeepAliveHandler;
+use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\TermsHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\LpaLoaderListener;
@@ -451,6 +455,8 @@ class Module implements FormElementProviderInterface
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
                 ChangeEmailAddressHandler::class => ChangeEmailAddressHandlerFactory::class,
                 ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
+                SessionSetExpiryHandler::class => SessionSetExpiryHandlerFactory::class,
+                SessionKeepAliveHandler::class => SessionKeepAliveHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
