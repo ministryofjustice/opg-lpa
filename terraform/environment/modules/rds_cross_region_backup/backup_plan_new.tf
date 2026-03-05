@@ -17,14 +17,14 @@ resource "aws_backup_plan" "new" {
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
     schedule            = "cron(0 6 ? * * *)" // Run at 6am UTC every day
-    target_vault_name   = aws_backup_vault.main.name
+    target_vault_name   = aws_backup_vault.backup_primary.name
 
     lifecycle {
       cold_storage_after = var.daily_backup_cold_storage
       delete_after       = var.daily_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.replica.arn
+      destination_vault_arn = aws_backup_vault.backup_replica.arn
 
       lifecycle {
         delete_after = var.daily_backup_deletion
@@ -33,7 +33,7 @@ resource "aws_backup_plan" "new" {
     dynamic "copy_action" {
       for_each = var.cross_account_backup_enabled ? [1] : []
       content {
-        destination_vault_arn = aws_backup_vault.backup_account.arn
+        destination_vault_arn = aws_backup_vault.backup_cross_account.arn
         lifecycle {
           delete_after = var.daily_backup_deletion
         }
@@ -47,14 +47,14 @@ resource "aws_backup_plan" "new" {
     rule_name           = "Monthly"
     schedule            = "cron(0 6 1 * ? *)" // Run at 6am UTC on the first day of every month
     start_window        = 480
-    target_vault_name   = aws_backup_vault.main.name
+    target_vault_name   = aws_backup_vault.backup_primary.name
 
     lifecycle {
       cold_storage_after = var.monthly_backup_cold_storage
       delete_after       = var.monthly_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.replica.arn
+      destination_vault_arn = aws_backup_vault.backup_replica.arn
 
       lifecycle {
         delete_after = var.monthly_backup_deletion
@@ -63,7 +63,7 @@ resource "aws_backup_plan" "new" {
     dynamic "copy_action" {
       for_each = var.cross_account_backup_enabled ? [1] : []
       content {
-        destination_vault_arn = aws_backup_vault.backup_account.arn
+        destination_vault_arn = aws_backup_vault.backup_cross_account.arn
         lifecycle {
           delete_after = var.monthly_backup_deletion
         }
