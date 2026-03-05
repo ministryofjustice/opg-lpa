@@ -217,6 +217,7 @@ jobs:
         if: always()
         run: |
           ls -al ${{ github.workspace }}
+          cat ${{ github.workspace }}/trivy.sarif
 
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
