@@ -7,10 +7,8 @@ $DYNAMO_DB_CONFIG = [
 ];
 
 // Twig cache directory - set to 'false' in env to disable caching for development
-$twigCacheDir = match (getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR')) {
-    'false', false => false,
-    default => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache',
-};
+$twigCacheEnv = getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR');
+$twigCacheDir = ($twigCacheEnv === 'false') ? false : ($twigCacheEnv ?: '/tmp/twig_cache');
 
 return [
 
