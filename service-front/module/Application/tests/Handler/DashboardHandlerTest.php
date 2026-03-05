@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Handler;
 
 use Application\Handler\DashboardHandler;
-use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Listener\Attribute;
 use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -20,7 +20,6 @@ class DashboardHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private LpaApplicationService&MockObject $lpaApplicationService;
-    private AuthenticationService&MockObject $authenticationService;
     private Identity&MockObject $identity;
     private DashboardHandler $handler;
 
@@ -28,16 +27,13 @@ class DashboardHandlerTest extends TestCase
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->identity = $this->createMock(Identity::class);
 
-        $this->authenticationService->method('getIdentity')->willReturn($this->identity);
         $this->identity->method('lastLogin')->willReturn('2024-01-01 12:00:00');
 
         $this->handler = new DashboardHandler(
             $this->renderer,
             $this->lpaApplicationService,
-            $this->authenticationService,
         );
     }
 
@@ -48,6 +44,7 @@ class DashboardHandlerTest extends TestCase
         return (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RouteMatch::class, $routeMatch)
+            ->withAttribute(Attribute::IDENTITY, $this->identity)
             ->withQueryParams($queryParams);
     }
 

@@ -6,7 +6,8 @@ namespace Application\Handler;
 
 use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Handler\Traits\PaginationTrait;
-use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Listener\Attribute;
+use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -27,7 +28,6 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly AuthenticationService $authenticationService,
     ) {
     }
 
@@ -35,7 +35,8 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
     {
         $routeMatch = $request->getAttribute(RouteMatch::class);
 
-        $identity = $this->authenticationService->getIdentity();
+        /** @var User $identity */
+        $identity = $request->getAttribute(Attribute::IDENTITY);
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;
