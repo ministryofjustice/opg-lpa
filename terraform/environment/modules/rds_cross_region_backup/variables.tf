@@ -50,3 +50,9 @@ variable "account_id" {
   type        = string
   description = "AWS account ID of the primary account where the Aurora cluster is located. Required if cross_account_backup_enabled is true."
 }
+
+# to be deleted once backup module ahs been migrated to preprod and prod and new vaults/keys being used
+variable "destination_region_name" {
+  type        = string
+  description = "destination key name"
+}

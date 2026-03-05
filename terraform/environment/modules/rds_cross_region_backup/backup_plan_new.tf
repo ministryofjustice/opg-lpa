@@ -1,5 +1,16 @@
-resource "aws_backup_plan" "main" {
-  name = "${var.environment_name}_aurora_backup_plan"
+#  Backup plan to be used once database migration has happened on preprod and prod for cross account backup.
+# created to ensure that current vaults are not deleted when new kms keys are added to them
+
+resource "aws_backup_selection" "new" {
+  plan_id      = aws_backup_plan.new.id
+  name         = "${var.environment_name}_aurora_cluster_selection_new"
+  iam_role_arn = data.aws_iam_role.aurora_backup_role.arn
+  resources    = [var.source_cluster_arn]
+}
+
+resource "aws_backup_plan" "new" {
+  name = "${var.environment_name}_aurora_backup_plan_new"
+
   rule {
     completion_window   = 10080
     start_window        = 480
@@ -13,7 +24,7 @@ resource "aws_backup_plan" "main" {
       delete_after       = var.daily_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.secondary.arn
+      destination_vault_arn = aws_backup_vault.replica.arn
 
       lifecycle {
         delete_after = var.daily_backup_deletion
@@ -29,6 +40,7 @@ resource "aws_backup_plan" "main" {
       }
     }
   }
+
   rule {
     completion_window   = 10080
     recovery_point_tags = {}
@@ -42,7 +54,7 @@ resource "aws_backup_plan" "main" {
       delete_after       = var.monthly_backup_deletion
     }
     copy_action {
-      destination_vault_arn = aws_backup_vault.secondary.arn
+      destination_vault_arn = aws_backup_vault.replica.arn
 
       lifecycle {
         delete_after = var.monthly_backup_deletion

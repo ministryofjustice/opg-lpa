@@ -1,22 +1,19 @@
-
 data "aws_region" "current" {}
-
 
 resource "aws_backup_vault" "main" {
   name        = "${var.environment_name}_${data.aws_region.current.region}_aurora_backup_vault"
-  kms_key_arn = data.aws_kms_key.rds_encryption_key_primary.arn
+  kms_key_arn = data.aws_kms_key.source_rds_snapshot_key.arn
 }
 
-resource "aws_backup_vault" "replica" {
-  provider    = aws.replica
-  name        = "${var.environment_name}_${data.aws_region.replica_region.region}_aurora_backup_vault"
-  kms_key_arn = data.aws_kms_key.rds_encryption_key_replica.arn
+resource "aws_backup_vault" "secondary" {
+  provider    = aws.destination
+  name        = "${var.environment_name}_${data.aws_region.secondary.region}_aurora_backup_vault"
+  kms_key_arn = data.aws_kms_key.destination_rds_snapshot_key.arn
 }
-
 resource "aws_backup_vault" "backup_account" {
   provider    = aws.backup
   name        = "${var.environment_name}_${data.aws_region.current.region}_opg_lpa"
-  kms_key_arn = data.aws_kms_key.cross_account_backup_key.arn
+  kms_key_arn = data.aws_kms_key.backup.arn
 }
 
 resource "aws_backup_vault_policy" "backup_account" {
