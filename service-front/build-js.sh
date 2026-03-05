@@ -33,53 +33,64 @@ fi
 echo "→ Compiling Handlebars templates..."
 
 if [[ -d "assets/js/lpa/templates" ]]; then
-  # For now, create a namespace and concatenate templates
-  echo "window.lpa = window.lpa || {};" > assets/js/lpa/lpa.templates.js
-  echo "window.lpa.templates = {};" >> assets/js/lpa/lpa.templates.js
+  # Always write the namespace preamble first so lpa is defined on window
+  # before the compiled Handlebars IIFE tries to reference it
+  {
+    echo "window.lpa = window.lpa || {};"
+    echo "window.lpa.templates = window.lpa.templates || {};"
+  } > assets/js/lpa/lpa.templates.js
 
   if command -v handlebars &> /dev/null; then
+    # Compile to a temp file then append so the preamble is never overwritten
     npx handlebars assets/js/lpa/templates/*.html \
-      -f assets/js/lpa/lpa.templates.js \
-      -n "lpa.templates" 2>/dev/null || echo "Note: Handlebars compilation skipped"
+      -n "lpa.templates" 2>/dev/null >> assets/js/lpa/lpa.templates.js \
+      || echo "Note: Handlebars compilation skipped"
   fi
 else
   echo "Warning: No templates directory found"
-  echo "window.lpa = window.lpa || {}; window.lpa.templates = {};" > assets/js/lpa/lpa.templates.js
+  echo "window.lpa = window.lpa || {}; window.lpa.templates = window.lpa.templates || {};" > assets/js/lpa/lpa.templates.js
 fi
 
 echo "Concatenating JavaScript files..."
-cat \
-  node_modules/handlebars/dist/handlebars.js \
-  node_modules/lodash/lodash.js \
-  node_modules/urijs/src/URI.min.js \
-  node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js \
-  assets/js/opg/jquery-plugin-opg-spinner.js \
-  assets/js/opg/session-timeout-dialog.js \
-  assets/js/opg/env-vars.js \
-  assets/js/opg/cache-busting.js \
-  assets/js/moj/moj.js \
-  assets/js/moj/moj.helpers.js \
-  assets/js/moj/moj.cookie-functions.js \
-  assets/js/lpa/lpa.templates.js \
-  assets/js/moj/moj.modules/moj.password.js \
-  assets/js/moj/moj.modules/moj.popup.js \
-  assets/js/moj/moj.modules/moj.help-system.js \
-  assets/js/moj/moj.modules/moj.form-popup.js \
-  assets/js/moj/moj.modules/moj.title-switch.js \
-  assets/js/moj/moj.modules/moj.postcode-lookup.js \
-  assets/js/moj/moj.modules/moj.print-link.js \
-  assets/js/moj/moj.modules/moj.person-form.js \
-  assets/js/moj/moj.modules/moj.validation.js \
-  assets/js/moj/moj.modules/moj.repeat-application.js \
-  assets/js/moj/moj.modules/moj.dashboard.js \
-  assets/js/moj/moj.modules/moj.ui-behaviour.js \
-  assets/js/moj/moj.modules/moj.applicant.js \
-  assets/js/moj/moj.modules/moj.polyfill.js \
-  assets/js/moj/moj.modules/moj.single-use.js \
-  assets/js/moj/moj.modules/moj.analytics.js \
-  assets/js/moj/moj.modules/moj.cookie-consent.js \
-  assets/js/main.js \
-  > public/assets/v2/js/application.js
+# Use a semicolon separator between files (matching the old Grunt concat separator: ';\n')
+# to prevent adjacent IIFEs from being parsed as function calls.
+JS_FILES=(
+  node_modules/handlebars/dist/handlebars.js
+  node_modules/lodash/lodash.js
+  node_modules/urijs/src/URI.min.js
+  node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
+  assets/js/opg/jquery-plugin-opg-spinner.js
+  assets/js/opg/session-timeout-dialog.js
+  assets/js/opg/env-vars.js
+  assets/js/opg/cache-busting.js
+  assets/js/moj/moj.js
+  assets/js/moj/moj.helpers.js
+  assets/js/moj/moj.cookie-functions.js
+  assets/js/lpa/lpa.templates.js
+  assets/js/moj/moj.modules/moj.password.js
+  assets/js/moj/moj.modules/moj.popup.js
+  assets/js/moj/moj.modules/moj.help-system.js
+  assets/js/moj/moj.modules/moj.form-popup.js
+  assets/js/moj/moj.modules/moj.title-switch.js
+  assets/js/moj/moj.modules/moj.postcode-lookup.js
+  assets/js/moj/moj.modules/moj.print-link.js
+  assets/js/moj/moj.modules/moj.person-form.js
+  assets/js/moj/moj.modules/moj.validation.js
+  assets/js/moj/moj.modules/moj.repeat-application.js
+  assets/js/moj/moj.modules/moj.dashboard.js
+  assets/js/moj/moj.modules/moj.ui-behaviour.js
+  assets/js/moj/moj.modules/moj.applicant.js
+  assets/js/moj/moj.modules/moj.polyfill.js
+  assets/js/moj/moj.modules/moj.single-use.js
+  assets/js/moj/moj.modules/moj.analytics.js
+  assets/js/moj/moj.modules/moj.cookie-consent.js
+  assets/js/main.js
+)
+> public/assets/v2/js/application.js
+for f in "${JS_FILES[@]}"; do
+  cat "$f" >> public/assets/v2/js/application.js
+  printf ';\n' >> public/assets/v2/js/application.js
+done
 
 # Check if we're in production mode
 if [[ "${NODE_ENV}" == "production" ]] || [[ "${BUILD_ENV}" == "production" ]]; then
