@@ -3,16 +3,6 @@ variable "source_cluster_arn" {
   description = "The arn for the source Aurora cluster"
 }
 
-variable "destination_region_name" {
-  type        = string
-  description = "destination key name"
-}
-
-variable "key_alias" {
-  type        = string
-  description = "key alias"
-}
-
 variable "environment_name" {
   type        = string
   description = "environment name"
@@ -49,5 +39,20 @@ variable "monthly_backup_cold_storage" {
 variable "cross_account_backup_enabled" {
   type        = bool
   description = "Condition to enable cross account backup"
-  default     = false
+}
+
+variable "key_alias" {
+  type        = string
+  description = "The alias for the KMS key used to encrypt RDS snapshots and backups"
+}
+
+variable "account_id" {
+  type        = string
+  description = "AWS account ID of the primary account where the Aurora cluster is located. Required if cross_account_backup_enabled is true."
+}
+
+# to be deleted once backup module ahs been migrated to preprod and prod and new vaults/keys being used
+variable "destination_region_name" {
+  type        = string
+  description = "destination key name"
 }
