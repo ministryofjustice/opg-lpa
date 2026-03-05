@@ -175,52 +175,45 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: Run Trivy vulnerability scanner table
-        id: trivy_vuln_table
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
-        env:
-          TRIVY_SKIP_DB_UPDATE: true
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
-          TRIVY_SKIP_CHECK_UPDATE: true
-          TRIVY_SKIP_VERSION_CHECK: true
-        with:
-          image-ref: "${{ matrix.image_name }}:latest"
-          format: "table"
-          exit-code: "1"
-          vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
-          trivyignores: ${{ matrix.trivyignores }}
-          timeout: "7m"
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          version: "v${{env.TRIVY_VERSION}}"
+      - name: Trivy Image Vulnerability Scanner
+        id: trivy_scan
+        if: true
+        run: |
+          mkdir -p -m 0777 .trivy-cache ./test-results/
+          docker run \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume ./test-results:/test-results \
+            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
+            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
+            aquasec/trivy:${{ env.TRIVY_VERSION }} image \
+            ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
+            --timeout 7m \
+            --format table \
+            --severity HIGH,CRITICAL
 
-      - name: Run Trivy vulnerability scanner sarif
-        id: trivy_vuln_sarif
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
-        if: steps.trivy_vuln_table.outcome == 'failure'
-        env:
-          TRIVY_SKIP_DB_UPDATE: true
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
-          TRIVY_SKIP_CHECK_UPDATE: true
-          TRIVY_SKIP_VERSION_CHECK: true
-        with:
-          image-ref: "${{ matrix.image_name }}:latest"
-          format: "sarif"
-          exit-code: "1"
-          vuln-type: "os,library"
-          severity: "CRITICAL,HIGH"
-          trivyignores: ${{ matrix.trivyignores }}
-          timeout: "7m"
-          output: ${{ github.workspace }}/trivy.sarif
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          version: "v${{env.TRIVY_VERSION}}"
+          docker run \
+            --volume /var/run/docker.sock:/var/run/docker.sock \
+            --volume ./test-results:/test-results \
+            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
+            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
+            aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
+            --severity HIGH,CRITICAL \
+            --timeout 7m \
+            --exit-code 1 \
+            --format sarif --output ./test-results/trivy.sarif
 
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
         if: always()
         with:
-          sarif_file: "${{ github.workspace }}/trivy.sarif"
+          sarif_file: "./test-results/trivy.sarif"
 
       - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
         id: trivy_sbom
