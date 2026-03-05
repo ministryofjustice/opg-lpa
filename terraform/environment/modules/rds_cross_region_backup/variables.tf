@@ -45,3 +45,8 @@ variable "key_alias" {
   type        = string
   description = "The alias for the KMS key used to encrypt RDS snapshots and backups"
 }
+
+variable "account_id" {
+  type        = string
+  description = "AWS account ID of the primary account where the Aurora cluster is located. Required if cross_account_backup_enabled is true."
+}
