@@ -12,8 +12,6 @@ on:
   pull_request:
     branches:
       - main
-env:
-  trivy_cache_path: .cache/trivy
 
 jobs:
   update_trivy_db_caches:
@@ -45,28 +43,28 @@ jobs:
 
       - name: Download and extract the vulnerability DB
         run: |
-          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/db
+          mkdir -p ${{ github.workspace }}/.cache/trivy/db
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-db:2
-          tar -xzf db.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/db
+          tar -xzf db.tar.gz -C ${{ github.workspace }}/.cache/trivy/db
           rm db.tar.gz
 
       - name: Download and extract the Java DB
         run: |
-          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/java-db
+          mkdir -p ${{ github.workspace }}/.cache/trivy/java-db
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-java-db:1
-          tar -xzf javadb.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/java-db
+          tar -xzf javadb.tar.gz -C ${{ github.workspace }}/.cache/trivy/java-db
           rm javadb.tar.gz
 
       - name: Download and extract the Misconfiguration Checks DB
         run: |
-          mkdir -p ${{ github.workspace }}/${{ env.trivy_cache_path }}/checks
+          mkdir -p ${{ github.workspace }}/.cache/trivy/checks
           oras pull ${{ steps.login_ecr.outputs.registry }}/docker-hub/aquasec/trivy-checks:2
-          tar -xzf bundle.tar.gz -C ${{ github.workspace }}/${{ env.trivy_cache_path }}/checks
+          tar -xzf bundle.tar.gz -C ${{ github.workspace }}/.cache/trivy/checks
           rm bundle.tar.gz
 
       - name: Cache DBs
         uses: actions/cache/save@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: |
-            ${{ github.workspace }}/${{ env.trivy_cache_path }}
+            ${{ github.workspace }}/.cache/trivy
           key: cache-trivy-${{ steps.date.outputs.date }}
