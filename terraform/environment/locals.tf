@@ -3,6 +3,7 @@ locals {
   account_name     = lookup(var.account_mapping, terraform.workspace, "development")
   account          = var.accounts[local.account_name]
   environment_name = terraform.workspace
+  # prevent_destroy_enabled = local.account_name == (["production", "preproduction"]) && local.account.prevent_destroy_enabled == true
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
