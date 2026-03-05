@@ -208,49 +208,16 @@ jobs:
           severity: "CRITICAL,HIGH"
           trivyignores: "./${{ matrix.trivyignores }}"
           timeout: "7m"
-          output: "./test-results/trivy.sarif"
+          output: ${{ github.workspace }}/test-results/trivy.sarif
           cache-dir: ${{ github.workspace }}/.cache/trivy
           version: "v${{env.TRIVY_VERSION}}"
-
-      - name: Trivy Image Vulnerability Scanner
-        id: trivy_scan
-        if: true
-        run: |
-          mkdir -p -m 0777 .trivy-cache ./test-results/
-          docker run \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./test-results:/test-results \
-            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
-            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            aquasec/trivy:${{ env.TRIVY_VERSION }} image \
-            ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
-            --checks-bundle-repository aquasec/trivy-checks \
-            --timeout 7m \
-            --format table \
-            --severity HIGH,CRITICAL
-
-          docker run \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./test-results:/test-results \
-            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
-            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
-            --checks-bundle-repository aquasec/trivy-checks \
-            --severity HIGH,CRITICAL \
-            --timeout 7m \
-            --exit-code 1 \
-            --format sarif --output ./test-results/trivy.sarif
 
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
         if: always()
         with:
-          sarif_file: "./test-results/trivy.sarif"
+          sarif_file: "${{ github.workspace }}/test-results/trivy.sarif"
 
       - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
         id: trivy_sbom
