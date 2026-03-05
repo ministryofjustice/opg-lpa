@@ -159,6 +159,9 @@ services:
 
       OPG_LPA_FRONT_CSRF_SALT: "test"
 
+      # Disable Twig caching for local development
+      OPG_LPA_FRONT_TWIG_CACHE_DIR: "false"
+
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
