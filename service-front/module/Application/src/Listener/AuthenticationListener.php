@@ -56,7 +56,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         // Identity is stored under ContainerNamespace::IDENTITY when a user successfully logs in
         if ($routeMatch->getParam('unauthenticated_route', false) || $identity instanceof User) {
             if ($identity instanceof User) {
-                $event->setParam(Attribute::IDENTITY, $identity);
+                $event->setParam(EventParameter::IDENTITY, $identity);
             }
 
             return null;
