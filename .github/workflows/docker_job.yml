@@ -182,15 +182,13 @@ jobs:
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ${{ github.workspace }}/.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
-            --cache-dir /root/.cache \
-            --skip-db-update \
-            --skip-java-db-update \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
             --checks-bundle-repository aquasec/trivy-checks \
             --timeout 7m \
             --format table \
@@ -198,14 +196,13 @@ jobs:
 
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ${{ github.workspace }}/.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
-            --cache-dir /root/.cache \
-            --skip-db-update \
-            --skip-java-db-update \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
@@ -214,14 +211,9 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
-        if: false
-        # if: always()
+        if: always()
         with:
           sarif_file: "./test-results/trivy.sarif"
-
-      - name: Delete scan cache
-        run: |
-          rm -rf ${{ github.workspace }}.cache/trivy/fanal/fanal.db
 
       - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
         id: trivy_sbom
