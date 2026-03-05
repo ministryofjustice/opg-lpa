@@ -5,3 +5,4 @@ misconfigurations:
 vulnerabilities:
   - id: CVE-2025-68121
     statement: fix after introducing trivy scanning
+    expired_at: 2026-03-10
