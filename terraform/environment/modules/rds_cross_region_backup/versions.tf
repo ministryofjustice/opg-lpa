@@ -5,6 +5,7 @@ terraform {
       configuration_aliases = [
         aws.replica,
         aws.backup,
+        aws.destination,
       ]
       version = "6.28.0"
     }
