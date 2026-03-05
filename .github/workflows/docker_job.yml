@@ -177,6 +177,11 @@ jobs:
 
       - name: Run Trivy vulnerability scanner table
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        env:
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_CHECK_UPDATE: true
+          TRIVY_SKIP_VERSION_CHECK: true
         with:
           image-ref: "${{ matrix.image_name }}:latest"
           format: "table"
@@ -190,6 +195,11 @@ jobs:
 
       - name: Run Trivy vulnerability scanner sarif
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        env:
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_CHECK_UPDATE: true
+          TRIVY_SKIP_VERSION_CHECK: true
         with:
           image-ref: "${{ matrix.image_name }}:latest"
           format: "sarif"
