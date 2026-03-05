@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Application\Handler\Factory;
 
 use Application\Handler\DashboardHandler;
-use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mezzio\Template\TemplateRendererInterface;
@@ -18,7 +17,6 @@ class DashboardHandlerFactory implements FactoryInterface
         return new DashboardHandler(
             $container->get(TemplateRendererInterface::class),
             $container->get(LpaApplicationService::class),
-            $container->get(AuthenticationService::class),
         );
     }
 }
