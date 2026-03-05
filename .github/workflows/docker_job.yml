@@ -175,6 +175,33 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
+      - name: Run Trivy vulnerability scanner table
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        with:
+          image-ref: "${{ matrix.image_name }}:latest"
+          format: "table"
+          # exit-code: "1"
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          trivyignores: "./${{ matrix.trivyignores }}"
+          timeout: "7m"
+          cache-dir: ${{ github.workspace }}/.cache/trivy
+          version: "v${{env.TRIVY_VERSION}}"
+
+      - name: Run Trivy vulnerability scanner sarif
+        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8
+        with:
+          image-ref: "${{ matrix.image_name }}:latest"
+          format: "sarif"
+          exit-code: "1"
+          vuln-type: "os,library"
+          severity: "CRITICAL,HIGH"
+          trivyignores: "./${{ matrix.trivyignores }}"
+          timeout: "7m"
+          output: "./test-results/trivy.sarif"
+          cache-dir: ${{ github.workspace }}/.cache/trivy
+          version: "v${{env.TRIVY_VERSION}}"
+
       - name: Trivy Image Vulnerability Scanner
         id: trivy_scan
         if: true
