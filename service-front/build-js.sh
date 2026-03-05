@@ -16,8 +16,14 @@ echo "→ Processing environment variables..."
 # Inject environment variables into template
 if [[ -f "assets/js/opg/env-vars.template.js" ]]; then
   # Create env-vars.js from template, injecting REVISION if set
+  # Also remove Handlebars template syntax that isn't needed
   cat assets/js/opg/env-vars.template.js | \
-    sed "s/window.BUILD_ENV = {};/window.BUILD_ENV = {revision: '${REVISION:-dev}'};/" \
+    sed "s/window.BUILD_ENV = {};/window.BUILD_ENV = {revision: '${REVISION:-dev}'};/" | \
+    sed '/{{#if ENV_VARS}}/d' | \
+    sed '/{{#each ENV_VARS}}/d' | \
+    sed '/window.BUILD_ENV.{{@key}}/d' | \
+    sed '/{{\/each}}/d' | \
+    sed '/{{\/if}}/d' \
     > assets/js/opg/env-vars.js
   echo "✓ Environment variables injected (REVISION=${REVISION:-dev})"
 else
