@@ -233,6 +233,7 @@ jobs:
           github-pat: ${{ secrets.GITHUB_TOKEN }}
           cache-dir: $GITHUB_WORKSPACE/.cache/trivy
           version: "v${{env.TRIVY_VERSION}}"
+          skip-setup-trivy: true
 
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
