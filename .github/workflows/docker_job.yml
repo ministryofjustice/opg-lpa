@@ -182,14 +182,15 @@ jobs:
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
+            --volume ${{ github.workspace }}/.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
+            --cache-dir /root/.cache \
+            --skip-db-update \
+            --skip-java-db-update \
             --checks-bundle-repository aquasec/trivy-checks \
             --timeout 7m \
             --format table \
@@ -197,14 +198,14 @@ jobs:
 
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
+            --volume ${{ github.workspace }}/.cache/trivy:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
-            --checks-bundle-repository aquasec/trivy-checks \
+            --cache-dir /root/.cache \
+            --skip-db-update \
+            --skip-java-db-update \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
