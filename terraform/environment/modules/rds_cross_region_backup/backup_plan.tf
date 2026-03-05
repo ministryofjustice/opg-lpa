@@ -1,9 +1,11 @@
 resource "aws_backup_plan" "main" {
   name = "${var.environment_name}_aurora_backup_plan"
   rule {
+    completion_window   = 10080
+    start_window        = 480
     recovery_point_tags = {}
     rule_name           = "DailyBackups"
-    schedule            = "cron(30 18 ? * * *)" // Run at 6am UTC every day
+    schedule            = "cron(0 6 ? * * *)" // Run at 6am UTC every day
     target_vault_name   = aws_backup_vault.main.name
 
     lifecycle {
