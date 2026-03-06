@@ -75,7 +75,8 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/App/"
+            "App\\": "src/App/",
+            "Front\\": "../service-front/module/Application/src"
         }
     },
     "autoload-dev": {
