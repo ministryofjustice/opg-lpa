@@ -37,6 +37,6 @@ data "aws_iam_policy_document" "backup_cross_account_permissions" {
     }
 
     actions   = ["backup:CopyIntoBackupVault"]
-    resources = [aws_backup_vault.backup_account.arn]
+    resources = [aws_backup_vault.backup_cross_account.arn]
   }
 }
