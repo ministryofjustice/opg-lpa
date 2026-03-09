@@ -120,7 +120,6 @@ jobs:
         run: |
           pushd service-front/
           npm ci --ignore-scripts && npm install -g --ignore-scripts sass
-          node_modules/grunt-cli/bin/grunt build
           NODE_ENV=CI npm run build:css
           popd
 
