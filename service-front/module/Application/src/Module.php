@@ -7,13 +7,20 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
+use Application\Handler\DashboardHandler;
 use Application\Handler\Factory\AboutYouHandlerFactory;
 use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
 use Application\Handler\Factory\ChangePasswordHandlerFactory;
 use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
+use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
+use Application\Handler\Factory\StatusesHandlerFactory;
+use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
@@ -40,6 +47,9 @@ use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\GuidanceHandler;
 use Application\Handler\HomeRedirectHandler;
+use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
+use Application\Handler\Lpa\CreateLpaHandler;
+use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
@@ -47,6 +57,8 @@ use Application\Handler\PostcodeHandler;
 use Application\Handler\RegisterHandler;
 use Application\Handler\ResendActivationEmailHandler;
 use Application\Handler\PrivacyHandler;
+use Application\Handler\StatusesHandler;
+use Application\Handler\TermsChangedHandler;
 use Application\Handler\TermsHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\LpaLoaderListener;
@@ -457,6 +469,12 @@ class Module implements FormElementProviderInterface
                 ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
                 DeleteAccountHandler::class => DeleteAccountHandlerFactory::class,
                 DeleteAccountConfirmHandler::class => DeleteAccountConfirmHandlerFactory::class,
+                DashboardHandler::class        => DashboardHandlerFactory::class,
+                CreateLpaHandler::class        => CreateLpaHandlerFactory::class,
+                DeleteLpaHandler::class        => DeleteLpaHandlerFactory::class,
+                ConfirmDeleteLpaHandler::class => ConfirmDeleteLpaHandlerFactory::class,
+                StatusesHandler::class         => StatusesHandlerFactory::class,
+                TermsChangedHandler::class     => TermsChangedHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

@@ -7,6 +7,12 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
+use Application\Handler\DashboardHandler;
+use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
+use Application\Handler\Lpa\CreateLpaHandler;
+use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\StatusesHandler;
+use Application\Handler\TermsChangedHandler;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
@@ -457,8 +463,13 @@ return [
                         'options' => [
                             'route'    => '/dashboard',
                             'defaults' => [
-                                'controller' => 'Authenticated\DashboardController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    DashboardHandler::class,
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -471,7 +482,14 @@ return [
                                         'page' => '[1-9]+[0-9]*',
                                     ],
                                     'defaults' => [
-                                        'page' => 1
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            DashboardHandler::class,
+                                        ),
+                                        'page' => 1,
                                     ],
                                 ],
                             ],
@@ -483,7 +501,13 @@ return [
                                         'lpa-id' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'create',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            CreateLpaHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -495,28 +519,13 @@ return [
                                         'lpa-id' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'delete-lpa',
-                                    ],
-                                ],
-                            ],
-                            'statuses' => [
-                                'type'    => Segment::class,
-                                'options' => [
-                                    'route'    => '/statuses/:lpa-ids',
-                                    'constraints' => [
-                                        'lpa-id' => '[0-9,]+',
-                                    ],
-                                    'defaults' => [
-                                        'action'     => 'statuses',
-                                    ],
-                                ],
-                            ],
-                            'terms-changed' => [
-                                'type'    => Segment::class,
-                                'options' => [
-                                    'route'    => '/new-terms',
-                                    'defaults' => [
-                                        'action'     => 'terms',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            DeleteLpaHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -528,7 +537,46 @@ return [
                                         'lpa-id' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete-lpa',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            ConfirmDeleteLpaHandler::class,
+                                        ),
+                                    ],
+                                ],
+                            ],
+                            'statuses' => [
+                                'type'    => Segment::class,
+                                'options' => [
+                                    'route'    => '/statuses/:lpa-ids',
+                                    'constraints' => [
+                                        'lpa-ids' => '[0-9,]+',
+                                    ],
+                                    'defaults' => [
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            StatusesHandler::class,
+                                        ),
+                                    ],
+                                ],
+                            ],
+                            'terms-changed' => [
+                                'type'    => Segment::class,
+                                'options' => [
+                                    'route'    => '/new-terms',
+                                    'defaults' => [
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            TermsChangedHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
