@@ -2,37 +2,29 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
-# Make build scripts executable
-chmod +x "$SCRIPT_DIR/build-css.sh"
-chmod +x "$SCRIPT_DIR/build-js.sh"
-
-# Parse command line arguments
 TASK="${1:-build}"
 WATCH_MODE=false
 
 case "$TASK" in
   build)
     echo "Running full build..."
-    "$SCRIPT_DIR/build-js.sh"
-    "$SCRIPT_DIR/build-css.sh"
+    ./build-js.sh
+    ./build-css.sh
     echo "Build complete"
     ;;
 
   build:js|js)
     echo "Building JavaScript only..."
-    "$SCRIPT_DIR/build-js.sh"
+    ./build-js.sh
     ;;
 
   build:css|css)
     echo "Building CSS only..."
-    "$SCRIPT_DIR/build-css.sh"
+    ./build-css.sh
     ;;
 
   watch)
     echo "Starting watch mode..."
-    echo "Note: Watch mode requires fswatch or inotifywait"
 
     # Check if fswatch is available (macOS)
     if command -v fswatch &> /dev/null; then
@@ -41,13 +33,13 @@ case "$TASK" in
       # Watch JS files
       fswatch -o assets/js | while read; do
         echo "JavaScript files changed, rebuilding..."
-        "$SCRIPT_DIR/build-js.sh" &
+        ./build-js.sh &
       done &
 
       # Watch Sass files
       fswatch -o assets/sass | while read; do
         echo "Sass files changed, rebuilding..."
-        "$SCRIPT_DIR/build-css.sh" &
+        ./build-css.sh &
       done &
 
       echo "Watching for changes... Press Ctrl+C to stop."
@@ -60,8 +52,8 @@ case "$TASK" in
       while true; do
         inotifywait -r -e modify,create,delete assets/js assets/sass 2>/dev/null
         echo "Files changed, rebuilding..."
-        "$SCRIPT_DIR/build-js.sh" &
-        "$SCRIPT_DIR/build-css.sh" &
+        ./build-js.sh &
+        ./build-css.sh &
         wait
       done
 
@@ -85,12 +77,12 @@ case "$TASK" in
 
       if [[ $CHANGED_JS -gt 0 ]]; then
         echo "JavaScript files changed, rebuilding..."
-        "$SCRIPT_DIR/build-js.sh"
+        ./build-js.sh
       fi
 
       if [[ $CHANGED_SASS -gt 0 ]]; then
         echo "Sass files changed, rebuilding..."
-        "$SCRIPT_DIR/build-css.sh"
+        ./build-css.sh
       fi
 
       sleep 2
