@@ -93,6 +93,8 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
                     $tokenExpiresAt->getTimestamp() - time()
                 );
             }
+
+            $request = $request->withAttribute(Attribute::IDENTITY, $identity);
         }
 
         $route = $request->getAttribute(RouteResult::class);
