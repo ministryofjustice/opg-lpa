@@ -27,6 +27,10 @@ output "db_client_security_group_id" {
   value = aws_security_group.rds_client.id
 }
 
+output "db_api_security_group_id" {
+  value = aws_security_group.rds_api.id
+}
+
 output "seeding_security_group_id" {
   value = aws_security_group.seeding_ecs_service.id
 }
