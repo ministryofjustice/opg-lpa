@@ -120,7 +120,7 @@ jobs:
         run: |
           pushd service-front/
           npm ci --ignore-scripts
-          NODE_ENV=production npm run build
+          NODE_ENV=CI npm run build
           popd
 
       - name: Setup Docker Buildx
