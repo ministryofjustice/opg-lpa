@@ -88,7 +88,7 @@ module "cross_region_backup" {
 
 module "aws_database_migration" {
   count  = local.database_migration_enabled ? 1 : 0
-  source = "./modules/environment/aws_database_migration"
+  source = "./modules/aws_database_migration"
 
   providers = {
     aws = aws.eu_west_1
