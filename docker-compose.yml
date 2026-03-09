@@ -73,7 +73,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:4.12.0@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
+    image: localstack/localstack:4.14.0@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
     depends_on:
       dynamodb:
         condition: service_started
