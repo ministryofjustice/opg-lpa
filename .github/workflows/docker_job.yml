@@ -154,6 +154,7 @@ jobs:
           severity: "HIGH,CRITICAL"
           scanners: "misconfig"
           version: "v${{env.TRIVY_VERSION}}"
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           exit-code: 1
 
       - name: Build Image
@@ -181,7 +182,6 @@ jobs:
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
@@ -196,7 +196,6 @@ jobs:
 
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
@@ -212,8 +211,7 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
-        if: false
-        # if: always()
+        if: always()
         with:
           sarif_file: "./test-results/trivy.sarif"
 
@@ -221,17 +219,17 @@ jobs:
         id: trivy_sbom
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
-          # TRIVY_SKIP_DB_UPDATE: true
-          # TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
           TRIVY_SKIP_CHECK_UPDATE: true
           TRIVY_SKIP_VERSION_CHECK: true
-
         with:
           scan-type: "image"
           image-ref: ${{ matrix.image_name }}:latest
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           version: "v${{env.TRIVY_VERSION}}"
 
       - name: Upload trivy report as a Github artifact
