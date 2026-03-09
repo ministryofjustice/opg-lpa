@@ -48,4 +48,86 @@ locals {
     component = "seeding"
   }
 
+  database_migration_enabled = local.account.database.database_migration_enabled
+
+  dms_source = {
+    cluster_identifier   = replace(element(split(":", module.eu-west-1.aws_aurora_cluster_arn), 6), "cluster:", "")
+    username_secret_name = "${local.account_name}/api_rds_username"
+    password_secret_name = "${local.account_name}/api_rds_password"
+    ssl_mode             = "require"
+  }
+
+  dms_target = {
+    cluster_identifier   = "api2-3191lpal1951testwh-cluster-target"
+    username_secret_name = "${local.account_name}/api_rds_username"
+    password_secret_name = "${local.account_name}/api_rds_password"
+    ssl_mode             = "require"
+  }
+
+  dms_network = {
+    vpc_id                   = module.eu-west-1.vpc_id
+    subnet_ids               = module.eu-west-1.app_subnet_ids
+    source_security_group_id = module.eu-west-1.db_api_security_group_id
+    target_security_group_id = module.eu-west-1.db_api_security_group_id
+    allow_all_egress         = false
+  }
+
+  dms_replication_instance = {
+    class               = "dms.t3.medium"
+    allocated_storage   = 100
+    multi_az            = false
+    publicly_accessible = false
+    apply_immediately   = true
+    kms_key_arn         = "arn:aws:kms:eu-west-1:${local.account.account_id}:alias/opg-lpa-${local.account_name}-rds-encryption-key"
+  }
+
+  dms_task = {
+    id             = "dms-${local.environment_name}-aurora-migration"
+    migration_type = "full-load-and-cdc"
+    table_mappings = <<EOF
+{
+  "rules": [
+    {
+      "rule-type": "selection",
+      "rule-id": "1",
+      "rule-name": "1",
+      "object-locator": {
+        "schema-name": "%",
+        "table-name": "%"
+      },
+      "rule-action": "include"
+    }
+  ]
+}
+EOF
+    settings       = <<EOF
+{
+  "TargetMetadata": {
+    "SupportLobs": true,
+    "FullLobMode": false,
+    "LobChunkSize": 0,
+    "LimitedSizeLobMode": true,
+    "LobMaxSize": 32,
+    "InlineLobMaxSize": 0,
+    "LoadMaxFileSize": 0,
+    "ParallelLoadThreads": 0,
+    "ParallelLoadBufferSize": 0,
+    "BatchApplyEnabled": true
+  },
+  "FullLoadSettings": {
+    "TargetTablePrepMode": "DO_NOTHING",
+    "CreatePkAfterFullLoad": false,
+    "StopTaskCachedChangesApplied": false,
+    "StopTaskCachedChangesNotApplied": false,
+    "MaxFullLoadSubTasks": 8,
+    "TransactionConsistencyTimeout": 600,
+    "CommitRate": 10000
+  },
+  "Logging": {
+    "EnableLogging": true
+  }
+}
+EOF
+  }
+
 }
