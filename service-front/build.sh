@@ -95,7 +95,7 @@ case "$TASK" in
     # Lint JavaScript
     if [[ -f ".jshintrc" ]]; then
       echo "Running JSHint..."
-      npx jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js Gruntfile.js || true
+      npx jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js || true
     fi
 
     # Lint Sass
