@@ -45,6 +45,12 @@ if [[ -d "assets/js/lpa/templates" ]]; then
     npx handlebars assets/js/lpa/templates/*.html \
       -n "lpa.templates" 2>/dev/null >> assets/js/lpa/lpa.templates.js \
       || echo "Note: Handlebars compilation skipped"
+    # Strip the .html extension from template keys to match the old Grunt
+    # processName behaviour - e.g. templates['popup.mask.html'] -> templates['popup.mask']
+    # Use a portable tmp-file approach (BSD sed -i '' vs GNU sed -i differ)
+    sed "s/templates\['\([^']*\)\.html'\]/templates['\1']/g" \
+      assets/js/lpa/lpa.templates.js > assets/js/lpa/lpa.templates.js.tmp \
+      && mv assets/js/lpa/lpa.templates.js.tmp assets/js/lpa/lpa.templates.js
   fi
 else
   echo "Warning: No templates directory found"
@@ -92,9 +98,9 @@ for f in "${JS_FILES[@]}"; do
   printf ';\n' >> public/assets/v2/js/application.js
 done
 
-# Check if we're in production mode
-if [[ "${NODE_ENV}" == "production" ]] || [[ "${BUILD_ENV}" == "production" ]]; then
-  echo "→ Minifying JavaScript files (production mode)..."
+# Check if we're in CI mode
+if [[ "${NODE_ENV}" == "CI" ]] || [[ "${BUILD_ENV}" == "CI" ]]; then
+  echo "→ Minifying JavaScript files (CI mode)..."
 
   # Minify main application bundle
   npx esbuild public/assets/v2/js/application.js \

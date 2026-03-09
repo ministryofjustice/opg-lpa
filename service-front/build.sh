@@ -90,6 +90,7 @@ case "$TASK" in
     ;;
 
   test|lint)
+    # TODO probably take this out because as it stands it won't do anything
     echo "Running linters..."
 
     # Lint JavaScript
@@ -132,7 +133,7 @@ case "$TASK" in
     echo "  help        - Show this help message"
     echo ""
     echo "Environment variables:"
-    echo "  NODE_ENV       - Set to 'production' for minified builds"
+    echo "  NODE_ENV       - Set to 'CI' for minified builds"
     ;;
 
   *)
