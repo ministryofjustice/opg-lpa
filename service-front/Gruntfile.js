@@ -83,18 +83,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // lint scss files
-    scsslint: {
-      allFiles: [
-        'assets/sass/**/*.scss'
-      ],
-      options: {
-        config: '.scss-lint.yml',
-        reporterOutput: null,
-        colorizeOutput: true
-      }
-    },
-
     replace: {
       // replacing a compass depended helper within govuk template css
       image_url: {
@@ -247,22 +235,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // lint js files
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        ignores: []
-      },
-      files: [
-        'Gruntfile.js',
-        'assets/js/moj/**/*.js',
-        'assets/js/lpa/**/*.js',
-        'assets/js/main.js',
-        // ignore compiled handlebars templates
-        '!assets/js/lpa/lpa.templates.js'
-      ]
-    },
-
     // minify for production
     uglify: {
       options: {
@@ -307,17 +279,14 @@ module.exports = function (grunt) {
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
-  grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
   grunt.registerTask('build_js_dev', [
     'copy:jsenv',
