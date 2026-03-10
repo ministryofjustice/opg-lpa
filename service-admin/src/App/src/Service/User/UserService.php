@@ -90,6 +90,22 @@ class UserService implements LoggerAwareInterface
         return false;
     }
 
+    public function searchById(string $id): array|false
+    {
+        try {
+            $userData = $this->client->httpGet('/v2/user/' . $id);
+        } catch (Exception $e) {
+            $this->getLogger()->error($e->getMessage());
+            return false;
+        }
+
+        if (!is_array($userData) || !isset($userData['email']['address'])) {
+            return false;
+        }
+
+        return $this->search($userData['email']['address']);
+    }
+
     public function userLpas(string $userId): array|bool
     {
         try {

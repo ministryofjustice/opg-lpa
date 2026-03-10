@@ -50,7 +50,13 @@ class UserSearchHandler extends AbstractHandler
             $email = $form->get('email')->getValue();
 
             if ($email !== null && $form->isValid()) {
-                $result = $this->userService->search($email);
+                $input = trim($email);
+
+                if (str_contains($input, '@')) {
+                    $result = $this->userService->search($input);
+                } else {
+                    $result = $this->userService->searchById($input);
+                }
 
                 if ($result === false) {
                     $formMessages = $form->getMessages();

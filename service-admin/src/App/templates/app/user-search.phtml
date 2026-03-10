@@ -1,16 +1,16 @@
 <?php $this->layout('layout::default', ['title' => 'User Details']);
 
 $this->addErrorMap([
-    'email' => [
-        'required' => [
-            'summary'   => 'Enter a valid email address',
-            'field'     => 'Enter a valid email address',
+        'email' => [
+                'required' => [
+                        'summary'   => 'Enter a valid email address or user ID',
+                        'field'     => 'Enter a valid email address or user ID',
+                ],
+                'invalid' => [
+                        'summary'   => 'Enter a valid email address or user ID',
+                        'field'     => 'Enter a valid email address or user ID',
+                ],
         ],
-        'invalid-email' => [
-            'summary'   => 'Enter a valid email address',
-            'field'     => 'Enter a valid email address',
-        ],
-    ],
 ]);
 ?>
 
@@ -27,10 +27,10 @@ $this->addErrorMap([
                 </h1>
             </legend>
 
-            <p class="govuk-body">Search for a user by email address. If found, the user's account status and other details will be displayed.</p>
+            <p class="govuk-body">Search for a user by email address or user ID. If found, the user's account status and other details will be displayed.</p>
 
             <?php $this->insert('snippet::input-text', [
-                'formLabel'     => 'Email address',
+                'formLabel' => 'Email address or user ID',
                 'formElement'   => $form->get('email'),
                 'formType'      => 'text',
                 'attrs'         => ['data-cy' => 'email-address-input'],
@@ -73,6 +73,17 @@ $this->addErrorMap([
                         </span>
                     </dd>
                 </div>
+
+                <?php if (isset($user['userId'])) { ?>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            User ID
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span data-role="user-id"><?= htmlspecialchars($user['userId']); ?></span>
+                        </dd>
+                    </div>
+                <?php } ?>
 
                 <?php if (isset($user['activatedAt'])) { ?>
                     <div class="govuk-summary-list__row">
