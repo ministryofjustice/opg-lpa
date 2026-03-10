@@ -89,27 +89,6 @@ case "$TASK" in
     done
     ;;
 
-  test|lint)
-    # TODO probably take this out because as it stands it won't do anything
-    echo "Running linters..."
-
-    # Lint JavaScript
-    if [[ -f ".jshintrc" ]]; then
-      echo "Running JSHint..."
-      npx jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js || true
-    fi
-
-    # Lint Sass
-    if [[ -f ".scss-lint.yml" ]]; then
-      echo "Running SCSS lint..."
-      if command -v scss-lint &> /dev/null; then
-        scss-lint assets/sass/**/*.scss || true
-      else
-        echo "scss-lint not found, skipping SCSS linting"
-      fi
-    fi
-    ;;
-
   clean)
     echo "Cleaning build artifacts..."
     rm -rf public/assets/v2/css/*
@@ -128,7 +107,6 @@ case "$TASK" in
     echo "  css         - Build CSS only"
     echo "  watch       - Watch for changes and rebuild (requires fswatch/inotifywait)"
     echo "  watch:poll  - Watch for changes using polling (slower, no deps)"
-    echo "  test        - Run linters"
     echo "  clean       - Remove build artifacts"
     echo "  help        - Show this help message"
     echo ""
