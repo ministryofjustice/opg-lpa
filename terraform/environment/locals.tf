@@ -6,6 +6,9 @@ locals {
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.account.dr_enabled
+
+  # this flag enables DMS resources. currently prevented from leaving development, and controlled in tfvars.json.
+  database_migration_enabled = local.account.database.database_migration_enabled
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
@@ -48,40 +51,39 @@ locals {
     component = "seeding"
   }
 
-  database_migration_enabled = local.account.database.database_migration_enabled
-
-  dms_source = {
+  # inputs only to be used when the DMS module is enabled
+  dms_source = local.database_migration_enabled ? {
     cluster_identifier   = replace(element(split(":", module.eu-west-1.aws_aurora_cluster_arn), 6), "cluster:", "")
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     ssl_mode             = "require"
-  }
+  } : null
 
-  dms_target = {
+  dms_target = local.database_migration_enabled ? {
     cluster_identifier   = "api2-3191lpal1951testwh-cluster-target"
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     ssl_mode             = "require"
-  }
+  } : null
 
-  dms_network = {
+  dms_network = local.database_migration_enabled ? {
     vpc_id                   = module.eu-west-1.vpc_id
     subnet_ids               = module.eu-west-1.app_subnet_ids
     source_security_group_id = module.eu-west-1.db_api_security_group_id
     target_security_group_id = module.eu-west-1.db_api_security_group_id
     allow_all_egress         = false
-  }
+  } : null
 
-  dms_replication_instance = {
+  dms_replication_instance = local.database_migration_enabled ? {
     class               = "dms.t3.medium"
     allocated_storage   = 100
     multi_az            = false
     publicly_accessible = false
     apply_immediately   = true
-    kms_key_arn         = "arn:aws:kms:eu-west-1:${local.account.account_id}:alias/opg-lpa-${local.account_name}-rds-encryption-key"
-  }
+    kms_key_arn         = data.aws_kms_key.rds_encryption.arn
+  } : null
 
-  dms_task = {
+  dms_task = local.database_migration_enabled ? {
     id             = "dms-${local.environment_name}-aurora-migration"
     migration_type = "full-load-and-cdc"
     table_mappings = <<EOF
@@ -128,6 +130,6 @@ EOF
   }
 }
 EOF
-  }
+  } : null
 
 }

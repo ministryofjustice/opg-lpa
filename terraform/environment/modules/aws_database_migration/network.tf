@@ -10,17 +10,6 @@ resource "aws_security_group" "aurora_migration_replication" {
   }
 }
 
-resource "aws_vpc_security_group_egress_rule" "aurora_migration_all_tcp_egress" {
-  count = var.network.allow_all_egress ? 1 : 0
-
-  security_group_id = aws_security_group.aurora_migration_replication.id
-  cidr_ipv4         = "0.0.0.0/0"
-  ip_protocol       = "tcp"
-  from_port         = 0
-  to_port           = 65535
-  description       = "Allow Aurora DMS replication instance outbound TCP"
-}
-
 resource "aws_vpc_security_group_egress_rule" "aurora_migration_db_egress" {
   for_each = !var.network.allow_all_egress ? toset(compact([
     try(var.network.source_security_group_id, null),

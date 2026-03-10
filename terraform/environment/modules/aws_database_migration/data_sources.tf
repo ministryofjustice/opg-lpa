@@ -1,25 +1,3 @@
-data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
-
-data "aws_iam_policy_document" "dms_assume_role" {
-  statement {
-    sid     = "AllowDMSServiceAssumeRole"
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["dms.amazonaws.com"]
-    }
-
-    condition {
-      test     = "StringEquals"
-      variable = "aws:SourceAccount"
-      values   = [data.aws_caller_identity.current.account_id]
-    }
-  }
-}
 
 data "aws_rds_cluster" "source" {
   cluster_identifier = var.source_config.cluster_identifier
