@@ -46,15 +46,19 @@ module "aws_backup_source_account_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_roles = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   encryption_roles = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   grant_roles = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"
+    aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
 }
 
