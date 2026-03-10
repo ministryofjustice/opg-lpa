@@ -9,7 +9,7 @@ resource "aws_dms_replication_instance" "aurora_migration" {
   publicly_accessible         = var.replication_instance.publicly_accessible
   auto_minor_version_upgrade  = true
   apply_immediately           = var.replication_instance.apply_immediately
-  kms_key_arn                 = var.replication_instance.kms_key_arn
+  kms_key_arn                 = data.aws_kms_key.replication.arn
   replication_subnet_group_id = aws_dms_replication_subnet_group.aurora_migration.id
   vpc_security_group_ids      = [aws_security_group.aurora_migration_replication.id]
 
@@ -20,6 +20,7 @@ resource "aws_dms_replication_instance" "aurora_migration" {
     }
   )
 
+  # Ensure IAM policy attachments exist before creating the replication instance
   depends_on = [
     aws_iam_role_policy_attachment.dms_vpc_management,
     aws_iam_role_policy_attachment.dms_cloudwatch_logs,
@@ -28,13 +29,13 @@ resource "aws_dms_replication_instance" "aurora_migration" {
 }
 
 resource "aws_dms_replication_task" "aurora_migration" {
-  replication_task_id       = var.task.id
-  migration_type            = var.task.migration_type
+  replication_task_id       = local.replication_task_id
+  migration_type            = local.replication_migration_type
   replication_instance_arn  = aws_dms_replication_instance.aurora_migration.replication_instance_arn
   source_endpoint_arn       = aws_dms_endpoint.source.endpoint_arn
   target_endpoint_arn       = aws_dms_endpoint.target.endpoint_arn
-  table_mappings            = var.task.table_mappings
-  replication_task_settings = var.task.settings
+  table_mappings            = local.replication_table_mappings
+  replication_task_settings = local.replication_task_settings
   cdc_start_position        = try(var.task.cdc_start_position, null)
   cdc_start_time            = try(var.task.cdc_start_time, null)
   tags = merge(

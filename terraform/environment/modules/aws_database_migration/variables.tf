@@ -18,15 +18,6 @@ variable "network" {
     target_security_group_id = optional(string)
     allow_all_egress         = optional(bool, true)
   })
-
-  validation {
-    condition = (
-      var.network.allow_all_egress ||
-      try(var.network.source_security_group_id, null) != null ||
-      try(var.network.target_security_group_id, null) != null
-    )
-    error_message = "When network.allow_all_egress is false, set source_security_group_id and/or target_security_group_id to allow required DB egress."
-  }
 }
 
 variable "source_config" {
@@ -68,31 +59,19 @@ variable "replication_instance" {
     kms_key_arn         = optional(string)
   })
   default = {}
-
-  validation {
-    condition = (
-      !can(trim(var.replication_instance.kms_key_arn)) ||
-      trim(var.replication_instance.kms_key_arn) != ""
-    )
-    error_message = "replication_instance.kms_key_arn must be set to a customer-managed KMS key ARN for DMS encryption."
-  }
-
-  validation {
-    condition     = try(var.replication_instance.publicly_accessible, false) == false
-    error_message = "replication_instance.publicly_accessible must be false in shared VPC environments."
-  }
 }
 
 variable "task" {
   description = "DMS replication task configuration."
   type = object({
-    id                 = string
+    id                 = optional(string)
     migration_type     = optional(string, "full-load-and-cdc")
-    table_mappings     = string
-    settings           = string
+    table_mappings     = optional(string)
+    settings           = optional(string)
     cdc_start_position = optional(string)
     cdc_start_time     = optional(string)
   })
+  default = {}
 }
 
 variable "tags" {
