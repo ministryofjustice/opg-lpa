@@ -6,14 +6,12 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js || true",
     "build": "./build.sh build",
     "build:js": "./build-js.sh",
     "build:css": "./build-css.sh",
     "watch": "./build.sh watch",
     "watch:poll": "./build.sh watch:poll",
     "clean": "./build.sh clean",
-    "lint": "./build.sh test",
     "help": "./build.sh help"
   },
   "dependencies": {
@@ -28,14 +26,11 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-cssmin": "^2.2.1",
     "grunt-contrib-handlebars": "^2.0.0",
-    "grunt-contrib-jshint": "^3.2.0",
     "grunt-contrib-sass": "^2.0.0",
     "grunt-contrib-uglify": "^5.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-scss-lint": "^0.5.0",
     "grunt-text-replace": "^0.4.0",
     "handlebars": "^4.7.6",
-    "jshint": "^2.13.6",
     "lodash": "^4.17.21",
     "sass": "^1.35.1",
     "urijs": "^1.19.11"
