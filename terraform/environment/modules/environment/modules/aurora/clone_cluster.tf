@@ -1,11 +1,14 @@
 #  enable cluster cloning for data transfer or migration purposes. Default set to false
+locals {
+  clone_instance_count = var.enable_aurora_clone ? max(var.instance_count, 1) : 0
+}
 resource "aws_rds_cluster" "cluster_clone" {
   count                               = var.enable_aurora_clone && !var.aurora_serverless ? 1 : 0
   apply_immediately                   = var.apply_immediately
   availability_zones                  = var.availability_zones
   backup_retention_period             = var.backup_retention_period
   cluster_identifier                  = "${var.cluster_identifier}-${var.environment}-cluster-clone"
-  database_name                       = "api2-clone"
+  database_name                       = "api2clone"
   db_subnet_group_name                = var.db_subnet_group_name
   deletion_protection                 = var.deletion_protection
   engine                              = var.engine
@@ -33,7 +36,7 @@ resource "aws_rds_cluster" "cluster_clone" {
   }
 }
 resource "aws_rds_cluster_instance" "cluster_instance_clone" {
-  count                           = var.enable_aurora_clone && !var.aurora_serverless ? var.instance_count : 0
+  count                           = var.enable_aurora_clone && !var.aurora_serverless ? local.clone_instance_count : 0
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   db_subnet_group_name            = var.db_subnet_group_name
   depends_on                      = [aws_rds_cluster.cluster_clone]
@@ -72,7 +75,7 @@ resource "aws_rds_cluster" "cluster_clone_serverless" {
   availability_zones              = var.availability_zones
   backup_retention_period         = var.backup_retention_period
   copy_tags_to_snapshot           = var.copy_tags_to_snapshot
-  database_name                   = "api2-clone"
+  database_name                   = "api2clone"
   db_subnet_group_name            = var.db_subnet_group_name
   deletion_protection             = var.deletion_protection
   engine                          = var.engine
@@ -104,7 +107,7 @@ resource "aws_rds_cluster" "cluster_clone_serverless" {
 }
 
 resource "aws_rds_cluster_instance" "cluster_instance_clone_serverless" {
-  count                           = var.enable_aurora_clone && var.aurora_serverless ? var.instance_count : 0
+  count                           = var.enable_aurora_clone && var.aurora_serverless ? local.clone_instance_count : 0
   apply_immediately               = var.apply_immediately
   auto_minor_version_upgrade      = var.auto_minor_version_upgrade
   db_subnet_group_name            = var.db_subnet_group_name
