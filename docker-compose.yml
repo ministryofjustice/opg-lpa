@@ -63,7 +63,7 @@ services:
 
   govpaystub:
     container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:054aefd743cb43677236ad83f42d54a7e7a4e7bdb2714ecde335ff4b69dff000
+    image: bbyars/mountebank@sha256:59d0f9f14d1a5df5690a10707241e3ffa8c259ca7f1fcea3e36223287bd82b80
     ports:
       - 2527:2525
       - 4547:4545
