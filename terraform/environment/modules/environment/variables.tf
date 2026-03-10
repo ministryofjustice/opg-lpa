@@ -17,6 +17,7 @@ variable "account" {
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
+      aurora_enabled                     = bool
       aurora_restore_testing_enabled     = bool
       daily_backup_deletion              = number
       daily_backup_cold_storage          = number
@@ -24,6 +25,7 @@ variable "account" {
       monthly_backup_cold_storage        = number
       aurora_instance_count              = number
       aurora_serverless                  = bool
+      enable_aurora_clone                = bool
       deletion_protection                = bool
       psql_engine_version                = string
       psql_parameter_group_family        = string
@@ -117,10 +119,4 @@ variable "ecs_execution_role" {
 variable "container_version" {
   type    = string
   default = "latest"
-}
-
-variable "enable_cluster_clone" {
-  description = "Clone the Aurora cluster for testing purposes; requires a cluster snapshot to be available"
-  type        = bool
-  default     = false
 }

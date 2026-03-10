@@ -46,7 +46,7 @@ module "api_aurora" {
   instance_class                  = "db.t3.medium"
   kms_key_id                      = local.kms_key_id
   kms_key_id_clone                = local.clone_kms_key_id
-  enable_cluster_clone            = var.account_name == "development" && var.enable_cluster_clone
+  enable_aurora_clone             = var.account_name == "development" && var.account.database.enable_aurora_clone
   replication_source_identifier   = ""
   skip_final_snapshot             = !var.account.database.deletion_protection
   vpc_security_group_ids          = [aws_security_group.rds_api.id]

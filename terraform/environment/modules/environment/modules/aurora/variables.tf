@@ -152,7 +152,7 @@ variable "ca_cert_identifier" {
   type        = string
 }
 
-variable "enable_cluster_clone" {
+variable "enable_aurora_clone" {
   description = "Create a dev-only cloned Aurora cluster with the new CMK"
   type        = bool
   default     = false
