@@ -13,11 +13,6 @@ const colourPatching = [
     'from': /ffbf47/g,
     'to': 'ffdd00'
   },
-  // button-colour
-  {
-    'from': /00823b/g,
-    'to': '00703c'
-  }
 ];
 
 const colourPatch = function (content) {
