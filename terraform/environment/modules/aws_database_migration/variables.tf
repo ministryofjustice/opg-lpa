@@ -3,6 +3,11 @@ variable "environment_name" {
   type        = string
 }
 
+variable "account_name" {
+  description = "Account name used for DMS resource naming and secrets."
+  type        = string
+}
+
 variable "create_iam_roles" {
   description = "Create DMS service-linked IAM roles if they do not exist in the account."
   type        = bool
