@@ -64,6 +64,7 @@ variable "environment_name" {
   type = string
 }
 
+
 variable "region_name" {
   type = string
 }
@@ -116,4 +117,10 @@ variable "ecs_execution_role" {
 variable "container_version" {
   type    = string
   default = "latest"
+}
+
+variable "enable_cluster_clone" {
+  description = "Clone the Aurora cluster for testing purposes; requires a cluster snapshot to be available"
+  type        = bool
+  default     = false
 }

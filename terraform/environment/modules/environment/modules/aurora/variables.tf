@@ -59,6 +59,11 @@ variable "kms_key_id" {
   type        = string
 
 }
+variable "kms_key_id_clone" {
+  description = "Optional CMK ARN specifically for the clone; defaults to kms_key_id when unset"
+  type        = string
+  default     = ""
+}
 variable "master_username" {
   description = "The master username for the DB instance"
   type        = string
@@ -145,4 +150,10 @@ variable "ca_cert_identifier" {
   default     = "rds-ca-rsa2048-g1"
   description = "Specifies the identifier of the CA certificate for the DB instance"
   type        = string
+}
+
+variable "enable_cluster_clone" {
+  description = "Create a dev-only cloned Aurora cluster with the new CMK"
+  type        = bool
+  default     = false
 }
