@@ -80,7 +80,7 @@ locals {
     multi_az            = false
     publicly_accessible = false
     apply_immediately   = true
-    kms_key_arn         = data.aws_kms_key.rds_encryption.arn
+    kms_key_alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
   } : null
 
   dms_task = local.database_migration_enabled ? {
