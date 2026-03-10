@@ -20,7 +20,6 @@ resource "aws_dms_replication_instance" "aurora_migration" {
     }
   )
 
-  # Ensure IAM policy attachments exist before creating the replication instance
   depends_on = [
     aws_iam_role_policy_attachment.dms_vpc_management,
     aws_iam_role_policy_attachment.dms_cloudwatch_logs,

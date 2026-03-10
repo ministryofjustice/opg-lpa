@@ -1,5 +1,4 @@
 
-# Resolve the KMS key used by the DMS replication instance (can be an alias or ARN)
 data "aws_kms_key" "replication" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
 }
