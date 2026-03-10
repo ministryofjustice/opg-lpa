@@ -29,8 +29,10 @@ data "aws_iam_policy_document" "cross_account_permissions" {
     effect = "Allow"
 
     principals {
-      type        = "AWS"
-      identifiers = [data.aws_iam_role.aurora_backup_role.arn]
+      type = "AWS"
+      identifiers = [
+        "arn:aws:iam::${var.account_id}:root",
+      ]
     }
 
     actions   = ["backup:CopyIntoBackupVault"]
