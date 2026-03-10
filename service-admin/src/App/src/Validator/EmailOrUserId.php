@@ -6,7 +6,7 @@ use Laminas\Validator\AbstractValidator;
 
 class EmailOrUserId extends AbstractValidator
 {
-    public const INVALID = 'invalid';
+    public const string INVALID = 'invalid';
 
     protected array $messageTemplates = [
         self::INVALID => 'Enter a valid email address or user ID',
