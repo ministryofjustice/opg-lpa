@@ -3,28 +3,6 @@ import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
 // Environment variable injection plugin
-const envVarsPlugin = {
-  name: 'env-vars',
-  setup(build) {
-    build.onLoad({ filter: /env-vars\.js$/ }, async (args) => {
-      const template = readFileSync('assets/js/opg/env-vars.template.js', 'utf8');
-
-      // Inject REVISION if available
-      let envVarsContent = template.replace(
-        'window.BUILD_ENV = {};',
-        `window.BUILD_ENV = ${JSON.stringify({
-          revision: process.env.REVISION || 'dev'
-        })};`
-      );
-
-      return {
-        contents: envVarsContent,
-        loader: 'js',
-      };
-    });
-  },
-};
-
 // Handlebars template compiler plugin 
 const handlebarsPlugin = {
   name: 'handlebars-templates',
@@ -63,7 +41,7 @@ async function buildApplication() {
     sourcemap: process.env.NODE_ENV !== 'production',
     target: ['es2015'],
     platform: 'browser',
-    plugins: [envVarsPlugin, handlebarsPlugin],
+    plugins: [handlebarsPlugin],
     // Inject dependencies in order
     inject: ['assets/js/shim.js'].filter(path => {
       try {
