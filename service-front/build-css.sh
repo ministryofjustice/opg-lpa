@@ -33,6 +33,10 @@ for file in public/assets/v2/css/*.css; do
     # Replace deprecated focus colour (ffbf47 -> ffdd00)
     sed -i.bak 's/ffbf47/ffdd00/g' "$file" && rm "${file}.bak" || true
     sed -i.bak 's/FFBF47/FFDD00/g' "$file" && rm "${file}.bak" || true
+
+    # Replace deprecated button colour (00823b -> 00703c)
+    sed -i.bak 's/00823b/00703c/g' "$file" && rm "${file}.bak" || true
+    sed -i.bak 's/00823B/00703C/g' "$file" && rm "${file}.bak" || true
   fi
 done
 
