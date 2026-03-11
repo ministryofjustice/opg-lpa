@@ -13,7 +13,6 @@ variable "account_name" {
   description = "account name"
 }
 
-# tflint-ignore: terraform_unused_declarations Keeps feature flag available should restore testing be re-enabled
 variable "aurora_restore_testing_enabled" {
   type        = string
   description = "Condition to switch on the aurora restore testing role"
