@@ -83,10 +83,9 @@ jobs:
     needs:
       - workflow_variables
     with:
+      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   cypress_mezzio_tests:
