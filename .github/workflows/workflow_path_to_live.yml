@@ -75,10 +75,9 @@ jobs:
     needs:
       - set_variables
     with:
+      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   terraform_account_development:
