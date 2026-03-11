@@ -83,7 +83,7 @@ module "cross_region_backup" {
   daily_backup_cold_storage            = local.account.database.daily_backup_cold_storage
   monthly_backup_deletion              = local.account.database.monthly_backup_deletion
   monthly_backup_cold_storage          = local.account.database.monthly_backup_cold_storage
-  enable_backup_vault_lock             = local.account_name == "development" && terraform.workspace == "dev"
+  enable_backup_vault_lock             = local.account_name == "development" && local.environment_name == "dev"
   backup_vault_lock_min_retention_days = local.account.database.daily_backup_deletion
   backup_vault_lock_max_retention_days = 0
 }
