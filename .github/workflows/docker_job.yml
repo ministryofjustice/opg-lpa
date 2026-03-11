@@ -18,6 +18,18 @@ on:
     secrets:
       SLACK_BOT_TOKEN:
         required: true
+permissions:
+  contents: write
+  security-events: write
+  id-token: write
+  pull-requests: read
+  actions: none
+  checks: none
+  deployments: none
+  issues: none
+  packages: none
+  repository-projects: none
+  statuses: none
 
 jobs:
   docker_build_scan_push:
