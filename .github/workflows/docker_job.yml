@@ -120,8 +120,8 @@ jobs:
         run: |
           pushd service-front/
           npm ci --ignore-scripts && npm install 
-          node_modules/grunt-cli/bin/grunt build
-          #NODE_ENV=CI npm run build:js
+          node_modules/grunt-cli/bin/grunt --gruntfile Gruntfile.cjs build_css 
+          NODE_ENV=CI npm run build:js
           popd
 
       - name: Setup Docker Buildx
