@@ -51,16 +51,17 @@ locals {
     component = "seeding"
   }
 
-  # inputs only to be used when the DMS module is enabled
+
   dms_source = local.database_migration_enabled ? {
-    cluster_identifier   = replace(element(split(":", module.eu-west-1.aws_aurora_cluster_arn), 6), "cluster:", "")
+    cluster_identifier   = "arn:aws:rds:eu-west-1:050256574573:cluster:api2-3196lpal1952create-cluster"
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
+    engine_name          = "aurora-postgresql"
     ssl_mode             = "require"
   } : null
 
   dms_target = local.database_migration_enabled ? {
-    cluster_identifier   = "api2-3191lpal1951testwh-cluster-target"
+    cluster_identifier   = "arn:aws:rds:eu-west-1:050256574573:cluster:api2-3196lpal1952create-cluster-clone"
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     ssl_mode             = "require"
@@ -80,7 +81,7 @@ locals {
     multi_az            = false
     publicly_accessible = false
     apply_immediately   = true
-    kms_key_alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
+    kms_key_arn         = "alias/opg-lpa-${local.account_name}-rds-encryption-key"
   } : null
 
   dms_task = local.database_migration_enabled ? {
