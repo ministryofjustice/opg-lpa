@@ -13,11 +13,6 @@ const colourPatching = [
     'from': /ffbf47/g,
     'to': 'ffdd00'
   },
-  // button-colour
-  {
-    'from': /00823b/g,
-    'to': '00703c'
-  }
 ];
 
 const colourPatch = function (content) {
@@ -39,15 +34,6 @@ const injectEnvVars = function (content) {
   // from the nodejs runtime environment variables; these will be from the
   // pipeline env and similar
   let envVars = {};
-
-  // The following variables are set and passed to the template:
-  //   revision: set from the REVISION env var; in CircleCI, this is set
-  //   from a build-unique string in the pipeline;
-  //   this is then used as a cacheBust parameter on JS ajax calls
-  //   (see cache-busting.js)
-  if ('REVISION' in process.env) {
-    envVars.revision = process.env.REVISION;
-  }
 
   // render the template
   return template({ENV_VARS: envVars});
@@ -89,18 +75,6 @@ module.exports = function (grunt) {
           'public/assets/v2/css/download-message.css': 'assets/sass/download-message.scss',
           'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
-      }
-    },
-
-    // lint scss files
-    scsslint: {
-      allFiles: [
-        'assets/sass/**/*.scss'
-      ],
-      options: {
-        config: '.scss-lint.yml',
-        reporterOutput: null,
-        colorizeOutput: true
       }
     },
 
@@ -256,22 +230,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // lint js files
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        ignores: []
-      },
-      files: [
-        'Gruntfile.js',
-        'assets/js/moj/**/*.js',
-        'assets/js/lpa/**/*.js',
-        'assets/js/main.js',
-        // ignore compiled handlebars templates
-        '!assets/js/lpa/lpa.templates.js'
-      ]
-    },
-
     // minify for production
     uglify: {
       options: {
@@ -316,17 +274,14 @@ module.exports = function (grunt) {
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
-  grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
   grunt.registerTask('build_js_dev', [
     'copy:jsenv',
