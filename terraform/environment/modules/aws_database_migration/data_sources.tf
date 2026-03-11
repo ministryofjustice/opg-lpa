@@ -1,6 +1,9 @@
 
 data "aws_kms_key" "replication" {
-  key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
+  key_id = coalesce(
+    try(var.replication_instance.kms_key_arn, null),
+    "alias/opg-lpa-${var.account_name}-rds-encryption-key"
+  )
 }
 
 data "aws_rds_cluster" "source" {
