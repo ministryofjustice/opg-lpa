@@ -7,7 +7,7 @@ resource "aws_backup_restore_testing_plan" "restore_testing_plan" {
   start_window_hours           = 4
   recovery_point_selection {
     algorithm             = "LATEST_WITHIN_WINDOW"
-    include_vaults        = [aws_backup_vault.primary.arn]
+    include_vaults        = [aws_backup_vault.backup_primary.arn]
     recovery_point_types  = ["CONTINUOUS", "SNAPSHOT"]
     selection_window_days = 7
   }
