@@ -32,7 +32,7 @@ class UserSearch extends AbstractForm
 
         $input->getValidatorChain()
             ->attach(new Validator\NotEmpty(), true)
-            ->attach(new Validator\Email());
+            ->attach(new Validator\EmailOrUserId());
 
         $input->setRequired(true);
 
