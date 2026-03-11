@@ -12,15 +12,16 @@ on:
     types: [checks_requested]
 
 permissions:
-  contents: write
-  security-events: write
-  pull-requests: read
   actions: none
   checks: none
+  contents: write
   deployments: none
+  id-token: write
   issues: none
   packages: none
+  pull-requests: read
   repository-projects: none
+  security-events: write
   statuses: none
 
 jobs:
