@@ -6,7 +6,6 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build": "./build.sh build",
     "build:js": "./build-js.sh",
     "build:css": "./build-css.sh",
     "watch": "./build.sh watch",
