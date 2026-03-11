@@ -44,8 +44,7 @@ variable "cross_account_backup_enabled" {
 
 variable "enable_backup_vault_lock" {
   type        = bool
-  description = "Enable backup vault lock (used for dev testing on primary vault)"
-  default     = true
+  description = "Enable backup vault lock for the cross account backup vault"
 }
 
 variable "backup_vault_lock_min_retention_days" {
