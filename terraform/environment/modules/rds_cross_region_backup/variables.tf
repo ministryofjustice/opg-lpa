@@ -13,6 +13,7 @@ variable "account_name" {
   description = "account name"
 }
 
+# tflint-ignore: terraform_unused_declarations Keeps feature flag available should restore testing be re-enabled
 variable "aurora_restore_testing_enabled" {
   type        = string
   description = "Condition to switch on the aurora restore testing role"
@@ -39,6 +40,22 @@ variable "monthly_backup_cold_storage" {
 variable "cross_account_backup_enabled" {
   type        = bool
   description = "Condition to enable cross account backup"
+}
+
+variable "enable_backup_vault_lock" {
+  type        = bool
+  description = "Enable backup vault lock (used for dev testing on primary vault)"
+  default     = true
+}
+
+variable "backup_vault_lock_min_retention_days" {
+  type        = number
+  description = "Minimum retention days for backup vault lock"
+}
+
+variable "backup_vault_lock_max_retention_days" {
+  type        = number
+  description = "Maximum retention days for backup vault lock (0 means no maximum)"
 }
 
 variable "key_alias" {

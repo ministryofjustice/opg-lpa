@@ -5,6 +5,12 @@ resource "aws_backup_vault" "backup_primary" {
   kms_key_arn = data.aws_kms_key.backup_source_encryption_key.arn
 }
 
+resource "aws_backup_vault_lock_configuration" "test_dev_backup_vault_lock" {
+  count              = var.enable_backup_vault_lock ? 1 : 0
+  backup_vault_name  = aws_backup_vault.backup_primary.name
+  max_retention_days = var.backup_vault_lock_max_retention_days
+  min_retention_days = var.backup_vault_lock_min_retention_days
+}
 resource "aws_backup_vault" "backup_replica" {
   provider    = aws.replica
   name        = "${var.environment_name}_${data.aws_region.replica_region.region}_backup_vault_replica"
