@@ -60,7 +60,6 @@ module "environment_dns" {
 
 }
 
-
 module "cross_region_backup" {
   count  = local.account.database.aurora_cross_region_backup_enabled ? 1 : 0
   source = "./modules/rds_cross_region_backup"
@@ -87,7 +86,6 @@ module "cross_region_backup" {
   backup_vault_lock_min_retention_days = local.account.database.daily_backup_deletion
   backup_vault_lock_max_retention_days = local.account.database.monthly_backup_deletion
 }
-
 output "admin_domain" {
   value = module.environment_dns.admin_domain
 }
