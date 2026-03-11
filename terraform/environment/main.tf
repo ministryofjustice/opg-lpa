@@ -71,19 +71,21 @@ module "cross_region_backup" {
     aws.destination = aws.destination
   }
 
-  source_cluster_arn             = module.eu-west-1.aws_aurora_cluster_arn
-  account_id                     = local.account.account_id
-  environment_name               = local.environment_name
-  destination_region_name        = "eu-west-2"
-  key_alias                      = "mrk_db_snapshot_key-${local.account_name}"
-  account_name                   = local.account_name
-  aurora_restore_testing_enabled = local.account.database.aurora_restore_testing_enabled
-  cross_account_backup_enabled   = local.account.database.cross_account_backup_enabled
-  daily_backup_deletion          = local.account.database.daily_backup_deletion
-  daily_backup_cold_storage      = local.account.database.daily_backup_cold_storage
-  monthly_backup_deletion        = local.account.database.monthly_backup_deletion
-  monthly_backup_cold_storage    = local.account.database.monthly_backup_cold_storage
-
+  source_cluster_arn                   = module.eu-west-1.aws_aurora_cluster_arn
+  account_id                           = local.account.account_id
+  environment_name                     = local.environment_name
+  destination_region_name              = "eu-west-2"
+  key_alias                            = "mrk_db_snapshot_key-${local.account_name}"
+  account_name                         = local.account_name
+  aurora_restore_testing_enabled       = local.account.database.aurora_restore_testing_enabled
+  cross_account_backup_enabled         = local.account.database.cross_account_backup_enabled
+  daily_backup_deletion                = local.account.database.daily_backup_deletion
+  daily_backup_cold_storage            = local.account.database.daily_backup_cold_storage
+  monthly_backup_deletion              = local.account.database.monthly_backup_deletion
+  monthly_backup_cold_storage          = local.account.database.monthly_backup_cold_storage
+  enable_backup_vault_lock             = local.account_name == "development" && terraform.workspace == "dev"
+  backup_vault_lock_min_retention_days = local.account.database.daily_backup_deletion
+  backup_vault_lock_max_retention_days = 0
 }
 
 output "admin_domain" {

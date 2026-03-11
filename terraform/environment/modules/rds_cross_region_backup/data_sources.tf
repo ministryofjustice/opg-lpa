@@ -2,9 +2,11 @@
 
 data "aws_caller_identity" "current" {}
 
-data "aws_region" "secondary" {
-  provider = aws.destination
-}
+data "aws_region" "current" {}
+# tflint-ignore: terraform_unused_declarations Retained for potential re-enable of secondary vault resources
+# data "aws_region" "secondary" {
+#   provider = aws.destination
+# }
 
 data "aws_caller_identity" "backup" {
   provider = aws.backup
