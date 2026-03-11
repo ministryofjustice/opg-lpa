@@ -13,7 +13,7 @@ resource "aws_backup_vault" "backup_replica" {
 
 resource "aws_backup_vault" "backup_cross_account" {
   provider    = aws.backup
-  name        = "${var.environment_name}_${data.aws_region.current.region}_opg_lpa_backup_vault"
+  name        = "opg_lpa_${data.aws_region.current.region}_${var.environment_name}_backup"
   kms_key_arn = data.aws_kms_key.cross_account_backup_key.arn
 
 }
