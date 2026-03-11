@@ -1,3 +1,10 @@
+locals {
+  aurora_migration_network_sg_ids = {
+    source = var.network.source_security_group_id
+    target = var.network.target_security_group_id
+  }
+}
+
 resource "aws_security_group" "aurora_migration_replication" {
   name                   = "aurora-${var.environment_name}-dms-replication"
   description            = "Aurora DMS replication instance access for ${var.environment_name}"
@@ -11,10 +18,7 @@ resource "aws_security_group" "aurora_migration_replication" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "aurora_migration_db_egress" {
-  for_each = !var.network.allow_all_egress ? toset(compact([
-    try(var.network.source_security_group_id, null),
-    try(var.network.target_security_group_id, null)
-  ])) : toset([])
+  for_each = !var.network.allow_all_egress ? local.aurora_migration_network_sg_ids : {}
 
   security_group_id            = aws_security_group.aurora_migration_replication.id
   referenced_security_group_id = each.value
@@ -25,10 +29,7 @@ resource "aws_vpc_security_group_egress_rule" "aurora_migration_db_egress" {
 }
 
 resource "aws_vpc_security_group_ingress_rule" "database_from_aurora_migration_ingress" {
-  for_each = toset(compact([
-    try(var.network.source_security_group_id, null),
-    try(var.network.target_security_group_id, null)
-  ]))
+  for_each = local.aurora_migration_network_sg_ids
 
   security_group_id            = each.value
   referenced_security_group_id = aws_security_group.aurora_migration_replication.id
