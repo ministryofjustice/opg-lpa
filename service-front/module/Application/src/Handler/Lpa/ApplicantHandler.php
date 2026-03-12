@@ -98,19 +98,19 @@ class ApplicantHandler implements RequestHandlerInterface
                     count($lpaDocument->primaryAttorneys) > 1 &&
                     $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
                 ) {
-                    $bindingData = [
+                    $dataToSet = [
                         'whoIsRegistering' => implode(',', array_map(function ($attorney) {
                             return $attorney->id;
                         }, $lpaDocument->primaryAttorneys)),
                         'attorneyList' => $lpaDocument->whoIsRegistering,
                     ];
                 } else {
-                    $bindingData = ['whoIsRegistering' => implode(',', $lpaDocument->whoIsRegistering)];
+                    $dataToSet = ['whoIsRegistering' => implode(',', $lpaDocument->whoIsRegistering)];
                 }
 
-                $form->bind($bindingData);
+                $form->setData($dataToSet);
             } else {
-                $form->bind(['whoIsRegistering' => $lpaDocument->whoIsRegistering]);
+                $form->setData(['whoIsRegistering' => $lpaDocument->whoIsRegistering]);
             }
         }
 
