@@ -103,7 +103,6 @@ class LpaLoaderListener extends AbstractListenerAggregate
 
         $event->setParam(EventParameter::LPA, $lpa);
         $event->setParam(EventParameter::FLOW_CHECKER, $flowChecker);
-        $event->setParam(EventParameter::CURRENT_ROUTE, $currentRoute);
 
         return null;
     }

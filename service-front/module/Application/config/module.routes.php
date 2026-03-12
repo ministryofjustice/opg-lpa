@@ -480,6 +480,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
                                     AuthenticationListener::class,
                                     UserDetailsListener::class,
                                     TermsAndConditionsListener::class,
@@ -499,6 +500,7 @@ return [
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
                                         'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
                                             AuthenticationListener::class,
                                             UserDetailsListener::class,
                                             TermsAndConditionsListener::class,

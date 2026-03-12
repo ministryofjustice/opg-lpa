@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Middleware;
 
 use Application\Middleware\RouteMatchMiddleware;
+use Application\Middleware\RequestAttribute;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Router\RouteMatch;
@@ -40,8 +41,9 @@ class RouteMatchMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $handler);
 
-        // No RouteResult should have been added
+        // No RouteResult or CURRENT_ROUTE should have been added
         $this->assertNull($captured->getAttribute(RouteResult::class));
+        $this->assertNull($captured->getAttribute(RequestAttribute::CURRENT_ROUTE));
     }
 
     public function testSkipsWhenRouteResultAlreadyPresent(): void
@@ -77,6 +79,7 @@ class RouteMatchMiddlewareTest extends TestCase
         $this->assertTrue($routeResult->isSuccess());
         $this->assertSame('lpa/form-type', $routeResult->getMatchedRouteName());
         $this->assertSame(['lpa-id' => '42', 'action' => 'index'], $routeResult->getMatchedParams());
+        $this->assertSame('lpa/form-type', $captured->getAttribute(RequestAttribute::CURRENT_ROUTE));
     }
 
     public function testCarriesOverOptionKeys(): void

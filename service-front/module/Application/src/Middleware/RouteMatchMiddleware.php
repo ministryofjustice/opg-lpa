@@ -58,7 +58,9 @@ class RouteMatchMiddleware implements MiddlewareInterface
 
         $routeResult = RouteResult::fromRoute($route, $params);
 
-        $request = $request->withAttribute(RouteResult::class, $routeResult);
+        $request = $request
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE, $routeName);
 
         return $handler->handle($request);
     }

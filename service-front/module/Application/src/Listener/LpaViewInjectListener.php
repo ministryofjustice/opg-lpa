@@ -29,18 +29,14 @@ class LpaViewInjectListener extends AbstractListenerAggregate
             return;
         }
 
-        $currentRoute = $event->getParam(EventParameter::CURRENT_ROUTE);
-
         $viewModel = $event->getViewModel();
 
         if ($viewModel instanceof ViewModel) {
             $viewModel->setVariable('lpa', $lpa);
-            $viewModel->setVariable('currentRouteName', $currentRoute);
 
             foreach ($viewModel->getChildren() as $child) {
                 if ($child instanceof ViewModel && !$child instanceof JsonModel) {
                     $child->setVariable('lpa', $lpa);
-                    $child->setVariable('currentRouteName', $currentRoute);
                 }
             }
         }
