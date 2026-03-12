@@ -47,6 +47,7 @@ class ApplicantHandler implements RequestHandlerInterface
         $lpaId = $lpa->id;
         $lpaDocument = $lpa->document;
 
+        /** @var \Application\Form\Lpa\ApplicantForm $form */
         $form = $this->formElementManager->get(
             'Application\Form\Lpa\ApplicantForm',
             ['lpa' => $lpa]
