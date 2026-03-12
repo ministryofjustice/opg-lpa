@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Handler;
 
-use Application\Model\FormFlowChecker;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\ContainerNamespace;
@@ -17,7 +15,6 @@ use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\RouteMatch;
-use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +28,6 @@ class LoginHandler implements RequestHandlerInterface
         private readonly AuthenticationService $authenticationService,
         private readonly SessionManagerSupport $sessionManagerSupport,
         private readonly SessionUtility $sessionUtility,
-        private readonly LpaApplicationService $lpaApplicationService,
         private readonly FlashMessenger $flashMessenger,
     ) {
     }
@@ -75,29 +71,6 @@ class LoginHandler implements RequestHandlerInterface
                     $sessionManager->regenerateId(true);
 
                     if (isset($nextUrl)) {
-                        $pathArray = explode("/", parse_url($nextUrl, PHP_URL_PATH) ?? '');
-
-                        if (count($pathArray) > 2 && $pathArray[1] == "lpa" && is_numeric($pathArray[2])) {
-                            if (isset($pathArray[3]) && $pathArray[3] == 'date-check') {
-                                return new RedirectResponse($nextUrl);
-                            }
-
-                            $lpaId = $pathArray[2];
-                            $lpa = $this->lpaApplicationService->getApplication(
-                                (int)$lpaId,
-                                $result->getIdentity()->token()
-                            );
-
-                            if ($lpa instanceof Lpa) {
-                                $formFlowChecker = new FormFlowChecker($lpa);
-                                $destinationRoute = $formFlowChecker->backToForm();
-
-                                return new RedirectResponse(
-                                    '/lpa/' . $lpa->id . '/' . $destinationRoute
-                                );
-                            }
-                        }
-
                         return new RedirectResponse($nextUrl);
                     }
 
