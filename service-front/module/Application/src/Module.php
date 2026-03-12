@@ -451,11 +451,12 @@ class Module implements FormElementProviderInterface
                 HomeHandler::class => HomeHandlerFactory::class,
                 AboutYouHandler::class => AboutYouHandlerFactory::class,
                 AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
-                    return new AuthenticationListener(
+                    $instance = new AuthenticationListener(
                         $sm->get(SessionUtility::class),
                         $sm->get(AuthenticationService::class),
-                        null  // No UrlHelper for MVC
+                        null
                     );
+                    return $instance;
                 },
 
                 UserDetailsListener::class => function (ServiceLocatorInterface $sm) {

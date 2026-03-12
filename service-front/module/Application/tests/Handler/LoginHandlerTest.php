@@ -7,7 +7,6 @@ namespace ApplicationTest\Handler;
 use Application\Handler\LoginHandler;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
@@ -21,7 +20,6 @@ use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\Router\RouteMatch;
 use Laminas\Session\SessionManager;
 use Laminas\Session\Storage\StorageInterface;
-use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -35,11 +33,9 @@ class LoginHandlerTest extends TestCase
     private SessionManager&MockObject $sessionManager;
     private StorageInterface&MockObject $sessionStorage;
     private SessionUtility&MockObject $sessionUtility;
-    private LpaApplicationService&MockObject $lpaApplicationService;
     private FlashMessenger&MockObject $flashMessenger;
     private FormInterface&MockObject $form;
     private LoginHandler $handler;
-    private array $config;
 
     protected function setUp(): void
     {
@@ -50,7 +46,6 @@ class LoginHandlerTest extends TestCase
         $this->sessionManager = $this->createMock(SessionManager::class);
         $this->sessionStorage = @$this->createMock(StorageInterface::class);
         $this->sessionUtility = $this->createMock(SessionUtility::class);
-        $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->flashMessenger = $this->createMock(FlashMessenger::class);
         $this->form = $this->createMock(FormInterface::class);
 
@@ -62,19 +57,13 @@ class LoginHandlerTest extends TestCase
             ->with('Application\Form\User\Login')
             ->willReturn($this->form);
 
-        $this->config = [
-            'redirects' => ['logout' => '/'],
-        ];
-
         $this->handler = new LoginHandler(
             $this->renderer,
             $this->formElementManager,
             $this->authenticationService,
             $this->sessionManagerSupport,
             $this->sessionUtility,
-            $this->lpaApplicationService,
             $this->flashMessenger,
-            $this->config,
         );
     }
 
@@ -330,7 +319,7 @@ class LoginHandlerTest extends TestCase
         $this->assertEquals('/lpa/12345/date-check', $response->getHeaderLine('Location'));
     }
 
-    public function testSuccessfulLoginRedirectsToLpaFormFlowRoute(): void
+    public function testSuccessfulLoginRedirectsToLpaUrl(): void
     {
         $this->authenticationService->method('getIdentity')->willReturn(null);
 
@@ -352,16 +341,7 @@ class LoginHandlerTest extends TestCase
         $this->sessionUtility
             ->method('getFromMvc')
             ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url')
-            ->willReturn('/lpa/12345/some-page');
-
-        $lpa = new Lpa();
-        $lpa->id = 12345;
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getApplication')
-            ->with(12345, 'test-token')
-            ->willReturn($lpa);
+            ->willReturn('/lpa/91155453023/view-docs');
 
         $request = (new ServerRequest())
             ->withMethod('POST')
@@ -373,50 +353,7 @@ class LoginHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringStartsWith('/lpa/12345/', $response->getHeaderLine('Location'));
-    }
-
-    public function testSuccessfulLoginWithLpaUrlButNoLpaFoundRedirectsToStoredUrl(): void
-    {
-        $this->authenticationService->method('getIdentity')->willReturn(null);
-
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('getData')->willReturn([
-            'email' => 'test@example.com',
-            'password' => 'password123', // pragma: allowlist secret
-        ]);
-
-        $identity = $this->createMock(UserIdentity::class);
-        $identity->method('token')->willReturn('test-token');
-
-        $result = new Result(Result::SUCCESS, $identity, []);
-
-        $this->authenticationService->method('setEmail')->willReturnSelf();
-        $this->authenticationService->method('setPassword')->willReturnSelf();
-        $this->authenticationService->method('authenticate')->willReturn($result);
-
-        $this->sessionUtility
-            ->method('getFromMvc')
-            ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url')
-            ->willReturn('/lpa/99999/some-page');
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('getApplication')
-            ->with(99999, 'test-token')
-            ->willReturn(false);
-
-        $request = (new ServerRequest())
-            ->withMethod('POST')
-            ->withParsedBody([
-                'email' => 'test@example.com',
-                'password' => 'password123', // pragma: allowlist secret
-            ]);
-
-        $response = $this->handler->handle($request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/lpa/99999/some-page', $response->getHeaderLine('Location'));
+        $this->assertEquals('/lpa/91155453023/view-docs', $response->getHeaderLine('Location'));
     }
 
     public function testSessionIsClearedBeforeAuthentication(): void
