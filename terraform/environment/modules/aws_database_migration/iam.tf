@@ -64,7 +64,7 @@ resource "aws_iam_policy" "dms_kms_access" {
           "kms:GenerateDataKey*",
           "kms:DescribeKey"
         ],
-        Resource = [var.replication_instance.kms_key_arn]
+        Resource = [data.aws_kms_key.replication.arn]
       }
     ]
   })
