@@ -115,7 +115,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@v3.17.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -135,7 +135,7 @@ jobs:
 
   terraform_environment_development:
     name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@v3.17.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
