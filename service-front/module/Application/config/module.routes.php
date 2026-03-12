@@ -5,6 +5,8 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\SessionKeepAliveHandler;
+use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\DashboardHandler;
@@ -232,10 +234,13 @@ return [
                 'options' => [
                     'route'    => '/session-keep-alive',
                     'defaults' => [
-                        'controller' => 'Authenticated\SessionKeepAliveController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => new PipeSpec(
+                            AuthenticationListener::class,
+                            SessionKeepAliveHandler::class,
+                        ),
                     ],
-                ]
+                ],
             ],
 
             'session-set-expiry' => [
@@ -243,12 +248,14 @@ return [
                 'options' => [
                     'route'    => '/session-set-expiry',
                     'defaults' => [
-                        'controller' => 'Authenticated\SessionKeepAliveController',
-                        'action'     => 'setExpiry',
+                        'controller' => PipeSpec::class,
+                        'middleware' => new PipeSpec(
+                            AuthenticationListener::class,
+                            SessionSetExpiryHandler::class,
+                        ),
                     ],
-                ]
+                ],
             ],
-
 
             'deleted' => [
                 'type'    => Literal::class,
