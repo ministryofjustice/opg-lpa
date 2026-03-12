@@ -48,28 +48,31 @@ resource "aws_iam_role_policy_attachment" "dms_cloudwatch_logs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonDMSCloudWatchLogsRole"
 }
 
-resource "aws_iam_policy" "dms_kms_access" {
-  count = var.create_iam_roles ? 1 : 0
-
-  name        = "aurora-${var.environment_name}-dms-kms"
-  description = "Allow DMS to use the replication CMK"
-  policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Action = [
-          "kms:Encrypt",
-          "kms:Decrypt",
-          "kms:GenerateDataKey*",
-          "kms:DescribeKey"
-        ],
-        Resource = [data.aws_kms_key.replication.arn]
-      }
+data "aws_iam_policy_document" "dms_kms_access" {
+  statement {
+    actions = [
+      "kms:Encrypt",
+      "kms:CreateGrant",
+      "kms:Decrypt",
+      "kms:ReEncryptFrom",
+      "kms:ReEncryptTo",
+      "kms:GenerateDataKey",
+      "kms:GenerateDataKeyWithoutPlaintext",
+      "kms:DescribeKey",
     ]
-  })
+
+    resources = [
+      data.aws_kms_key.replication.arn,
+    ]
+  }
 }
 
+resource "aws_iam_policy" "dms_kms_access" {
+  count       = var.create_iam_roles ? 1 : 0
+  name        = "aurora-${var.environment_name}-dms-kms"
+  description = "Allow DMS to use the replication CMK"
+  policy      = data.aws_iam_policy_document.dms_kms_access.json
+}
 resource "aws_iam_role_policy_attachment" "dms_kms_access" {
   count = var.create_iam_roles ? 1 : 0
 
