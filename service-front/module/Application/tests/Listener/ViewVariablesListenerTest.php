@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Listener;
 
-use Application\Listener\Attribute;
+use Application\Listener\EventParameter;
 use Application\Listener\ViewVariablesListener;
 use Application\Model\Service\Authentication\Identity\User as IdentityUser;
 use Application\Model\Service\Date\DateService;
@@ -105,8 +105,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, null],
-                [Attribute::IDENTITY, null, null],
+                [EventParameter::USER_DETAILS, null, null],
+                [EventParameter::IDENTITY, null, null],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -133,8 +133,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, null],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, null],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -172,8 +172,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, $identity],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, $identity],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -214,8 +214,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, $identity],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, $identity],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -255,8 +255,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, $identity],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, $identity],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -294,8 +294,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, $identity],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, $identity],
             ]);
 
         $listener = new ViewVariablesListener(
@@ -337,8 +337,8 @@ class ViewVariablesListenerTest extends TestCase
         $event
             ->method('getParam')
             ->willReturnMap([
-                [Attribute::USER_DETAILS, null, $userDetails],
-                [Attribute::IDENTITY, null, $identity],
+                [EventParameter::USER_DETAILS, null, $userDetails],
+                [EventParameter::IDENTITY, null, $identity],
             ]);
 
         $listener = new ViewVariablesListener(
