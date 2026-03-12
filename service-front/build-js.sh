@@ -50,7 +50,6 @@ JS_FILES=(
   node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
   assets/js/opg/jquery-plugin-opg-spinner.js
   assets/js/opg/session-timeout-dialog.js
-  assets/js/opg/env-vars.js
   assets/js/opg/cache-busting.js
   assets/js/moj/moj.js
   assets/js/moj/moj.helpers.js
