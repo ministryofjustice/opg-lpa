@@ -16,6 +16,8 @@ use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
+use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
 use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
@@ -57,6 +59,8 @@ use Application\Handler\PostcodeHandler;
 use Application\Handler\RegisterHandler;
 use Application\Handler\ResendActivationEmailHandler;
 use Application\Handler\PrivacyHandler;
+use Application\Handler\SessionKeepAliveHandler;
+use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Handler\TermsHandler;
@@ -467,6 +471,8 @@ class Module implements FormElementProviderInterface
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
                 ChangeEmailAddressHandler::class => ChangeEmailAddressHandlerFactory::class,
                 ChangePasswordHandler::class => ChangePasswordHandlerFactory::class,
+                SessionSetExpiryHandler::class => SessionSetExpiryHandlerFactory::class,
+                SessionKeepAliveHandler::class => SessionKeepAliveHandlerFactory::class,
                 DeleteAccountHandler::class => DeleteAccountHandlerFactory::class,
                 DeleteAccountConfirmHandler::class => DeleteAccountConfirmHandlerFactory::class,
                 DashboardHandler::class        => DashboardHandlerFactory::class,
