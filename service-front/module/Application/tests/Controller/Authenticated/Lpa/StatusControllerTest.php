@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Controller\Authenticated\Lpa;
 
 use Application\Controller\Authenticated\Lpa\StatusController;
-use Application\Listener\LpaLoaderListener;
+use Application\Listener\EventParameter;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Session\ContainerNamespace;
 use ApplicationTest\Controller\AbstractControllerTestCase;
@@ -156,8 +156,8 @@ final class StatusControllerTest extends AbstractControllerTestCase
         // Set up the event with the LPA
         $event = new MvcEvent();
         $flowChecker = new FormFlowChecker($testLpa);
-        $event->setParam(LpaLoaderListener::ATTR_LPA, $testLpa);
-        $event->setParam(LpaLoaderListener::ATTR_FLOW_CHECKER, $flowChecker);
+        $event->setParam(EventParameter::LPA, $testLpa);
+        $event->setParam(EventParameter::FLOW_CHECKER, $flowChecker);
         $controller->setEvent($event);
 
         $result = $controller->indexAction();

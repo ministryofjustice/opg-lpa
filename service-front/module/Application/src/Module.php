@@ -16,6 +16,8 @@ use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\LpaTypeHandlerFactory;
+use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
 use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
 use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
@@ -24,6 +26,8 @@ use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
 use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
+use Application\Handler\LpaTypeHandler;
+use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
 use Application\Form\AbstractCsrfForm;
 use Application\Form\Element\CsrfBuilder;
@@ -64,11 +68,15 @@ use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Handler\TermsHandler;
+use Application\Helper\MvcUrlHelper;
 use Application\Listener\AuthenticationListener;
+use Application\Listener\CurrentRouteListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
+use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\RouteMatchMiddleware;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\Identity\User as Identity;
@@ -102,6 +110,7 @@ use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
+use Laminas\Router\RouteStackInterface;
 use Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -134,9 +143,9 @@ class Module implements FormElementProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         // Register error handler for dispatch and render errors
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError']);
-        $eventManager->attach(\Laminas\Mvc\MvcEvent::EVENT_RENDER, [$this, 'preRender']);
+        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError']);
+        $eventManager->attach(MvcEvent::EVENT_RENDER, [$this, 'preRender']);
 
         register_shutdown_function(function () {
             $error = error_get_last();
@@ -187,6 +196,7 @@ class Module implements FormElementProviderInterface
                 $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
                 // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
+                new CurrentRouteListener()->attach($eventManager, 1004);
                 new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
                 new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
                 new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
@@ -466,6 +476,23 @@ class Module implements FormElementProviderInterface
                         null  // No UrlHelper for MVC
                     );
                 },
+
+                LpaLoaderListener::class => function (ServiceLocatorInterface $sm) {
+                    return new LpaLoaderListener(
+                        $sm->get(AuthenticationService::class),
+                        $sm->get(LpaApplicationService::class),
+                    );
+                },
+
+                LpaLoaderMiddleware::class => function (ServiceLocatorInterface $sm) {
+                    return new LpaLoaderMiddleware(
+                        $sm->get(LpaApplicationService::class),
+                        new MvcUrlHelper($sm->get(RouteStackInterface::class)),
+                    );
+                },
+
+                RouteMatchMiddleware::class => InvokableFactory::class,
+
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
@@ -481,6 +508,8 @@ class Module implements FormElementProviderInterface
                 ConfirmDeleteLpaHandler::class => ConfirmDeleteLpaHandlerFactory::class,
                 StatusesHandler::class         => StatusesHandlerFactory::class,
                 TermsChangedHandler::class     => TermsChangedHandlerFactory::class,
+                TypeHandler::class => TypeHandlerFactory::class,
+                LpaTypeHandler::class => LpaTypeHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
