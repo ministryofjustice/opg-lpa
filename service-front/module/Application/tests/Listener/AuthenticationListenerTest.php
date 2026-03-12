@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Listener;
 
-use Application\Listener\Attribute;
+use Application\Listener\EventParameter;
 use Application\Listener\AuthenticationListener;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
@@ -138,7 +138,7 @@ class AuthenticationListenerTest extends TestCase
         $event
             ->expects($this->once())
             ->method('setParam')
-            ->with(Attribute::IDENTITY, $identity);
+            ->with(EventParameter::IDENTITY, $identity);
 
         $listener = new AuthenticationListener(
             $this->sessionUtility,

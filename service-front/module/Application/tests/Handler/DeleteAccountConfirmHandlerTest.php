@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Handler;
 
 use Application\Handler\DeleteAccountConfirmHandler;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\User\Details as UserService;
@@ -46,8 +47,8 @@ class DeleteAccountConfirmHandlerTest extends TestCase
 
     private function createAuthenticatedRequest(User $user): ServerRequest
     {
-        return (new ServerRequest())
-            ->withAttribute('userDetails', $user)
+        return new ServerRequest()
+            ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute('secondsUntilSessionExpires', 3600);
     }
 

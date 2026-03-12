@@ -5,8 +5,10 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
+use Application\Handler\TypeHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\DashboardHandler;
@@ -19,6 +21,8 @@ use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
 use Application\Handler\ChangeEmailAddressHandler;
+use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\RouteMatchMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -379,6 +383,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => new PipeSpec(
+                            RouteMatchMiddleware::class,
                             AuthenticationListener::class,
                             UserDetailsListener::class,
                             TermsAndConditionsListener::class,
@@ -406,6 +411,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
                                     AuthenticationListener::class,
                                     UserDetailsListener::class,
                                     TermsAndConditionsListener::class,
@@ -423,6 +429,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
                                     AuthenticationListener::class,
                                     UserDetailsListener::class,
                                     TermsAndConditionsListener::class,
@@ -456,6 +463,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
                                     AuthenticationListener::class,
                                     UserDetailsListener::class,
                                     TermsAndConditionsListener::class,
@@ -472,6 +480,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
                                     AuthenticationListener::class,
                                     UserDetailsListener::class,
                                     TermsAndConditionsListener::class,
@@ -491,6 +500,7 @@ return [
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
                                         'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
                                             AuthenticationListener::class,
                                             UserDetailsListener::class,
                                             TermsAndConditionsListener::class,
@@ -631,8 +641,14 @@ return [
                 'options' => [
                     'route'    => '/lpa/type',
                     'defaults' => [
-                        'controller' => 'Authenticated\TypeController',
-                        'action'     => 'index',
+                        'controller' => PipeSpec::class,
+                        'middleware' => new PipeSpec(
+                            RouteMatchMiddleware::class,
+                            AuthenticationListener::class,
+                            UserDetailsListener::class,
+                            TermsAndConditionsListener::class,
+                            LpaTypeHandler::class,
+                        ),
                     ],
                 ],
             ],
@@ -875,8 +891,15 @@ return [
                         'options' => [
                             'route'    => '/type',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\TypeController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    TypeHandler::class,
+                                ),
                             ],
                         ],
                     ],
