@@ -70,6 +70,7 @@ use Application\Handler\TermsChangedHandler;
 use Application\Handler\TermsHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Listener\AuthenticationListener;
+use Application\Listener\CurrentRouteListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
 use Application\Listener\UserDetailsListener;
@@ -195,6 +196,7 @@ class Module implements FormElementProviderInterface
                 $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
                 // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
+                new CurrentRouteListener()->attach($eventManager, 1004);
                 new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
                 new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
                 new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);

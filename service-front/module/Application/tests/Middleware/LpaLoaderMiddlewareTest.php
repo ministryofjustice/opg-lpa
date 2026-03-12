@@ -170,7 +170,7 @@ class LpaLoaderMiddlewareTest extends TestCase
             ->willReturnCallback(function (ServerRequest $req) use ($expected, $lpa) {
                 $this->assertSame($lpa, $req->getAttribute(RequestAttribute::LPA));
                 $this->assertInstanceOf(FormFlowChecker::class, $req->getAttribute(RequestAttribute::FLOW_CHECKER));
-                $this->assertEquals('lpa/form-type', $req->getAttribute(RequestAttribute::CURRENT_ROUTE));
+                // CURRENT_ROUTE is set by RouteMatchMiddleware earlier in the pipeline
                 return $expected;
             });
 

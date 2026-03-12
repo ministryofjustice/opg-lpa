@@ -93,8 +93,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface
 
         $request = $request
             ->withAttribute(RequestAttribute::LPA, $lpa)
-            ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, $currentRoute);
+            ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker);
 
         return $handler->handle($request);
     }

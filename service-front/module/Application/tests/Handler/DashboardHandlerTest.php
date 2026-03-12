@@ -37,15 +37,21 @@ class DashboardHandlerTest extends TestCase
         );
     }
 
-    private function createRequest(array $routeParams = [], array $queryParams = []): ServerRequest
+    private function createRequest(array $routeParams = [], array $queryParams = [], ?string $currentRouteName = null): ServerRequest
     {
         $routeMatch = new RouteMatch($routeParams);
 
-        return (new ServerRequest())
+        $request = (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RouteMatch::class, $routeMatch)
             ->withAttribute(RequestAttribute::IDENTITY, $this->identity)
             ->withQueryParams($queryParams);
+
+        if ($currentRouteName !== null) {
+            $request = $request->withAttribute(RequestAttribute::CURRENT_ROUTE, $currentRouteName);
+        }
+
+        return $request;
     }
 
     public function testRedirectsToCreateWhenNoLpasAndNoSearch(): void
@@ -103,6 +109,32 @@ class DashboardHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testCurrentRouteNameRequestAttributeIsPassedToTemplate(): void
+    {
+        $request = $this->createRequest([], [], 'user/dashboard');
+
+        $this->lpaApplicationService
+            ->method('getLpaSummaries')
+            ->willReturn([
+                'applications' => [['id' => 1]],
+                'total' => 1,
+                'trackingEnabled' => false,
+            ]);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/dashboard/index.twig',
+                $this->callback(function (array $params) {
+                    return $params['currentRouteName'] === 'user/dashboard';
+                })
+            )
+            ->willReturn('rendered-html');
+
+        $this->handler->handle($request);
     }
 
     public function testRendersEmptyResultsForSearchWithNoResults(): void
