@@ -62,6 +62,9 @@ class ApplicantHandler implements RequestHandlerInterface
             $form->setData($postData);
 
             if ($form->isValid()) {
+                /** @var array $formData */
+                $formData = $form->getData();
+
                 if (($postData['whoIsRegistering'] ?? '') == Correspondence::WHO_DONOR) {
                     $applicants = Correspondence::WHO_DONOR;
                 } else {
@@ -70,9 +73,9 @@ class ApplicantHandler implements RequestHandlerInterface
                         $lpaDocument->primaryAttorneyDecisions->how !=
                         PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
                     ) {
-                        $applicants = $form->getData()['attorneyList'];
+                        $applicants = $formData['attorneyList'];
                     } else {
-                        $applicants = explode(',', $form->getData()['whoIsRegistering']);
+                        $applicants = explode(',', $formData['whoIsRegistering']);
                     }
                 }
 
