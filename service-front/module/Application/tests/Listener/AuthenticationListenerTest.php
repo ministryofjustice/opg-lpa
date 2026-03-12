@@ -15,6 +15,7 @@ use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response as MVCResponse;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
@@ -25,18 +26,21 @@ use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class AuthenticationListenerTest extends TestCase
 {
     private SessionUtility|MockObject $sessionUtility;
     private AuthenticationService|MockObject $authenticationService;
     private EventManagerInterface|MockObject $eventManager;
+    private LoggerInterface|MockObject $logger;
 
     public function setUp(): void
     {
         $this->sessionUtility = $this->createMock(SessionUtility::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->eventManager = $this->createMock(EventManagerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
     }
 
     public function testAttach(): void
@@ -83,6 +87,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $result = $listener->listen($event);
 
@@ -108,6 +113,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $this->assertNull($listener->listen($event));
     }
@@ -144,6 +150,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $this->assertNull($listener->listen($event));
     }
@@ -153,24 +160,28 @@ class AuthenticationListenerTest extends TestCase
         return [
             'timeout reason' => [
                 'routeName' => 'some/route',
+                'requestUri' => '/lpa/91155453023/view-docs',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => true,
             ],
             'internal system error' => [
                 'routeName' => 'some/route',
+                'requestUri' => '/lpa/91155453023/view-docs',
                 'authFailureCode' => 500,
                 'expectedState' => 'internalSystemError',
                 'shouldSetPreAuthUrl' => true,
             ],
             'user delete route' => [
                 'routeName' => 'user/delete',
+                'requestUri' => '/user/delete',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => false,
             ],
             'user dashboard route' => [
                 'routeName' => 'user/dashboard/settings',
+                'requestUri' => '/user/dashboard/settings',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => false,
@@ -183,6 +194,7 @@ class AuthenticationListenerTest extends TestCase
      */
     public function testListenWhenUnauthenticated(
         string $routeName,
+        string $requestUri,
         ?int $authFailureCode,
         string $expectedState,
         bool $shouldSetPreAuthUrl
@@ -207,7 +219,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility
                 ->expects($this->once())
                 ->method('setInMvc')
-                ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url', $routeName);
+                ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url', $requestUri);
         } else {
             $this->sessionUtility
                 ->expects($this->never())
@@ -232,6 +244,12 @@ class AuthenticationListenerTest extends TestCase
             ->with(['state' => $expectedState], ['name' => 'login'])
             ->willReturn($expectedUrl);
 
+        $request = $this->createMock(HttpRequest::class);
+        $request
+            ->expects($this->once())
+            ->method('getUriString')
+            ->willReturn($requestUri);
+
         $event = $this->createMock(MvcEvent::class);
         $event
             ->expects($this->once())
@@ -241,11 +259,16 @@ class AuthenticationListenerTest extends TestCase
             ->expects($this->once())
             ->method('getRouter')
             ->willReturn($router);
+        $event
+            ->expects($this->once())
+            ->method('getRequest')
+            ->willReturn($request);
 
         $listener = new AuthenticationListener(
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $result = $listener->listen($event);
 
@@ -266,6 +289,7 @@ class AuthenticationListenerTest extends TestCase
             $this->authenticationService,
             $urlHelper,
         );
+        $listener->setLogger($this->logger);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler
@@ -307,6 +331,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $this->assertEquals($expectedResponse, $listener->process($request, $handler));
     }
@@ -350,6 +375,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility,
             $this->authenticationService,
         );
+        $listener->setLogger($this->logger);
 
         $this->assertEquals($expectedResponse, $listener->process($request, $handler));
     }
@@ -359,28 +385,28 @@ class AuthenticationListenerTest extends TestCase
         return [
             'timeout reason' => [
                 'routeName' => 'some/route',
-                'routePath' => '/some/path',
+                'requestPath' => '/lpa/12345678/view-docs',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => true,
             ],
             'internal system error' => [
                 'routeName' => 'some/route',
-                'routePath' => '/some/path',
+                'requestPath' => '/lpa/12345678/view-docs',
                 'authFailureCode' => 500,
                 'expectedState' => 'internalSystemError',
                 'shouldSetPreAuthUrl' => true,
             ],
             'user delete route' => [
                 'routeName' => 'user/delete',
-                'routePath' => '/some/path',
+                'requestPath' => '/user/delete',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => false,
             ],
             'user dashboard route' => [
                 'routeName' => 'user/dashboard/settings',
-                'routePath' => '/user/dashboard/settings',
+                'requestPath' => '/user/dashboard/settings',
                 'authFailureCode' => null,
                 'expectedState' => 'timeout',
                 'shouldSetPreAuthUrl' => false,
@@ -393,7 +419,7 @@ class AuthenticationListenerTest extends TestCase
      */
     public function testProcessWhenUnauthenticated(
         string $routeName,
-        string $routePath,
+        string $requestPath,
         ?int $authFailureCode,
         string $expectedState,
         bool $shouldSetPreAuthUrl
@@ -408,14 +434,10 @@ class AuthenticationListenerTest extends TestCase
             ->expects($this->once())
             ->method('getOptions')
             ->willReturn([]);
-        $route
-            ->expects($this->once())
-            ->method('getPath')
-            ->willReturn($routePath);
 
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getMatchedRoute')
             ->willReturn($route);
         $routeResult
@@ -427,7 +449,7 @@ class AuthenticationListenerTest extends TestCase
             $this->sessionUtility
                 ->expects($this->once())
                 ->method('setInMvc')
-                ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url', $routePath);
+                ->with(ContainerNamespace::PRE_AUTH_REQUEST, 'url', $requestPath);
         } else {
             $this->sessionUtility
                 ->expects($this->never())
@@ -452,7 +474,7 @@ class AuthenticationListenerTest extends TestCase
             ->with('login', [], ['state' => $expectedState])
             ->willReturn($expectedUrl);
 
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = (new ServerRequest(uri: $requestPath))->withAttribute(RouteResult::class, $routeResult);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
 
@@ -461,6 +483,7 @@ class AuthenticationListenerTest extends TestCase
             $this->authenticationService,
             $urlHelper,
         );
+        $listener->setLogger($this->logger);
 
         $result = $listener->process($request, $handler);
 

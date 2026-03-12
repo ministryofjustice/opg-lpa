@@ -187,7 +187,9 @@ class Module implements FormElementProviderInterface
                 $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
                 // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
-                new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
+                $authListener = new AuthenticationListener($sessionUtility, $authenticationService);
+                $authListener->setLogger($logger);
+                $authListener->attach($eventManager, 1003);
                 new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
                 new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
                 new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
@@ -441,11 +443,13 @@ class Module implements FormElementProviderInterface
                 HomeHandler::class => HomeHandlerFactory::class,
                 AboutYouHandler::class => AboutYouHandlerFactory::class,
                 AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
-                    return new AuthenticationListener(
+                    $instance = new AuthenticationListener(
                         $sm->get(SessionUtility::class),
                         $sm->get(AuthenticationService::class),
-                        null  // No UrlHelper for MVC
+                        null
                     );
+                    $instance->setLogger($sm->get('Logger'));
+                    return $instance;
                 },
 
                 UserDetailsListener::class => function (ServiceLocatorInterface $sm) {

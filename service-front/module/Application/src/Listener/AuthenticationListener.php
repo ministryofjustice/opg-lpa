@@ -14,6 +14,7 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
@@ -23,6 +24,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AuthenticationListener extends AbstractListenerAggregate implements MiddlewareInterface
 {
+    use LoggerTrait;
+
     private const string REASON_TIMEOUT = 'timeout';
     private const string REASON_INTERNAL_SYSTEM_ERROR = 'internalSystemError';
 
@@ -69,7 +72,13 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $reason = $this->getUnauthorisedReason($allowRedirect, $route);
+        $uriString = $event->getRequest()->getUriString();
+        $this->getLogger()->debug('AuthenticationListener::listen - saving pre-auth URL', [
+            'routeName' => $route,
+            'uriString' => $uriString,
+            'allowRedirect' => $allowRedirect,
+        ]);
+        $reason = $this->getUnauthorisedReason($allowRedirect, $uriString);
 
         $url = $event->getRouter()->assemble(['state' => $reason], ['name' => 'login']);
 
@@ -117,8 +126,13 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $routePath = $route->getMatchedRoute()->getPath() ?: '';
-        $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
+        $requestPath = $request->getUri()->getPath() ?: '';
+        $this->getLogger()->debug('AuthenticationListener::process - saving pre-auth URL', [
+            'routeName' => $routeName,
+            'requestPath' => $requestPath,
+            'allowRedirect' => $allowRedirect,
+        ]);
+        $reason = $this->getUnauthorisedReason($allowRedirect, $requestPath);
 
         // TODO(mezzio): update routeName when we setup Mezzio routes
         return new RedirectResponse(
