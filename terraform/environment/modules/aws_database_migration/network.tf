@@ -1,8 +1,10 @@
 locals {
-  aurora_migration_network_sg_ids = {
-    source = var.network.source_security_group_id
-    target = var.network.target_security_group_id
-  }
+  aurora_migration_network_sg_ids = toset(
+    compact([
+      var.network.source_security_group_id,
+      var.network.target_security_group_id
+    ])
+  )
 }
 
 resource "aws_security_group" "aurora_migration_replication" {
@@ -18,7 +20,7 @@ resource "aws_security_group" "aurora_migration_replication" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "aurora_migration_db_egress" {
-  for_each = !var.network.allow_all_egress ? local.aurora_migration_network_sg_ids : {}
+  for_each = var.network.allow_all_egress ? toset([]) : local.aurora_migration_network_sg_ids
 
   security_group_id            = aws_security_group.aurora_migration_replication.id
   referenced_security_group_id = each.value
