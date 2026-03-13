@@ -46,12 +46,12 @@ trait LpaLoaderTrait
 
     protected function getLpa(): Lpa
     {
-        return $this->getEvent()->getParam(LpaLoaderListener::ATTR_LPA);
+        return $this->getEvent()->getParam(EventParameter::LPA);
     }
 
     protected function getFlowChecker(): FormFlowChecker
     {
-        return $this->getEvent()->getParam(LpaLoaderListener::ATTR_FLOW_CHECKER);
+        return $this->getEvent()->getParam(EventParameter::FLOW_CHECKER);
     }
 
     protected function moveToNextRoute()

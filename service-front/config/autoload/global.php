@@ -6,6 +6,10 @@ $DYNAMO_DB_CONFIG = [
     'region' => getenv('AWS_REGION') ?: 'eu-west-1',
 ];
 
+// Twig cache directory - set to 'false' in env to disable caching for development
+$twigCacheEnv = getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR');
+$twigCacheDir = ($twigCacheEnv === 'false') ? false : ($twigCacheEnv ?: '/tmp/twig_cache');
+
 return [
 
     'version' => [
@@ -150,11 +154,11 @@ return [
     ],
 
     'twig' => [
-        'cache_dir' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache',
+        'cache_dir' => $twigCacheDir,
     ],
 
     'zfctwig' => [
-        'environment_options' => ['cache' => getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR') ?: '/tmp/twig_cache'],
+        'environment_options' => ['cache' => $twigCacheDir],
         'extensions' => [
             Application\View\Twig\AppFiltersExtension::class,
             Application\View\Twig\AppFunctionsExtension::class,

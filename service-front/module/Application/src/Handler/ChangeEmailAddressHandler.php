@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Application\Handler;
 
 use Application\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Listener\Attribute;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\User\Details as UserService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -38,7 +38,7 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
         $error = null;
 
         // Get current email from user details (set by UserDetailsListener middleware)
-        $userDetails = $request->getAttribute(Attribute::USER_DETAILS);
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
         $currentEmailAddress = (string) $userDetails->email;
 
         // This form needs to check the user's current password, thus we pass it the Authentication Service

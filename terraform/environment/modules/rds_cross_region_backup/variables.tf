@@ -41,6 +41,21 @@ variable "cross_account_backup_enabled" {
   description = "Condition to enable cross account backup"
 }
 
+variable "enable_backup_vault_lock" {
+  type        = bool
+  description = "Enable backup vault lock for the cross account backup vault"
+}
+
+variable "backup_vault_lock_min_retention_days" {
+  type        = number
+  description = "Minimum retention days for backup vault lock"
+}
+
+variable "backup_vault_lock_max_retention_days" {
+  type        = number
+  description = "Maximum retention days for backup vault lock (0 means no maximum)"
+}
+
 variable "key_alias" {
   type        = string
   description = "The alias for the KMS key used to encrypt RDS snapshots and backups"

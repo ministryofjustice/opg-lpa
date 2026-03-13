@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Listener;
 
+use Application\Listener\EventParameter;
 use Application\Listener\UserDetailsListener;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\SessionUtility;
@@ -173,7 +175,7 @@ class UserDetailsListenerTest extends TestCase
         $event
             ->expects($this->once())
             ->method('setParam')
-            ->with('userDetails', $userDetails);
+            ->with(EventParameter::USER_DETAILS, $userDetails);
 
         $this->sessionUtility
             ->expects($this->once())
@@ -270,7 +272,7 @@ class UserDetailsListenerTest extends TestCase
         $event
             ->expects($this->once())
             ->method('setParam')
-            ->with('userDetails', $userDetails);
+            ->with(EventParameter::USER_DETAILS, $userDetails);
 
         $this->sessionUtility
             ->expects($this->once())
@@ -342,7 +344,7 @@ class UserDetailsListenerTest extends TestCase
         $event
             ->expects($this->once())
             ->method('setParam')
-            ->with('userDetails', $userDetails);
+            ->with(EventParameter::USER_DETAILS, $userDetails);
 
         $this->sessionUtility
             ->expects($this->once())
@@ -405,7 +407,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('handle')
             ->with($this->callback(function ($req) use ($userDetails) {
                 return $req instanceof ServerRequest
-                    && $req->getAttribute('userDetails') === $userDetails;
+                    && $req->getAttribute(RequestAttribute::USER_DETAILS) === $userDetails;
             }))
             ->willReturn($expectedResponse);
 
@@ -496,7 +498,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('handle')
             ->with($this->callback(function ($req) use ($userDetails) {
                 return $req instanceof ServerRequest
-                    && $req->getAttribute('userDetails') === $userDetails;
+                    && $req->getAttribute(RequestAttribute::USER_DETAILS) === $userDetails;
             }))
             ->willReturn($expectedResponse);
 
@@ -541,7 +543,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('handle')
             ->with($this->callback(function ($req) {
                 return $req instanceof ServerRequest
-                    && $req->getAttribute('userDetails') === null;
+                    && $req->getAttribute(RequestAttribute::USER_DETAILS) === null;
             }))
             ->willReturn($expectedResponse);
 
@@ -708,7 +710,7 @@ class UserDetailsListenerTest extends TestCase
             ->method('handle')
             ->with($this->callback(function ($req) use ($userDetails) {
                 return $req instanceof ServerRequest
-                    && $req->getAttribute('userDetails') === $userDetails;
+                    && $req->getAttribute(RequestAttribute::USER_DETAILS) === $userDetails;
             }))
             ->willReturn($expectedResponse);
 
