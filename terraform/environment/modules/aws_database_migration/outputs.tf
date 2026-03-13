@@ -30,10 +30,10 @@ output "dms_replication_task_arn" {
 
 output "dms_vpc_role_arn" {
   description = "ARN of the DMS VPC management role if created."
-  value       = var.create_iam_roles ? aws_iam_role.dms_vpc_management[0].arn : null
+  value       = var.create_iam_roles ? aws_iam_role.dms_vpc_role[0].arn : null
 }
 
-output "dms_cloudwatch_logs_role_arn" {
+output "dms_cloudwatch_role_arn" {
   description = "ARN of the DMS CloudWatch logs role if created."
-  value       = var.create_iam_roles ? aws_iam_role.dms_cloudwatch_logs[0].arn : null
+  value       = var.create_iam_roles ? aws_iam_role.dms_cloudwatch_role[0].arn : null
 }

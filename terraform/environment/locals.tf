@@ -53,7 +53,7 @@ locals {
 
 
   dms_source = local.database_migration_enabled ? {
-    cluster_identifier   = "arn:aws:rds:eu-west-1:050256574573:cluster:api2-3196lpal1952create-cluster"
+    cluster_identifier   = "api2-3191lpal1951testwh-cluster"
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     engine_name          = "aurora-postgresql"
@@ -61,7 +61,7 @@ locals {
   } : null
 
   dms_target = local.database_migration_enabled ? {
-    cluster_identifier   = "arn:aws:rds:eu-west-1:050256574573:cluster:api2-3196lpal1952create-cluster-clone"
+    cluster_identifier   = "api2-3196lpal1952create-cluster-clone"
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     ssl_mode             = "require"
