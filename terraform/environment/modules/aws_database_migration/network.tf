@@ -1,5 +1,4 @@
-# Network inputs are provided by terraform/environment/main.tf -> module "aws_database_migration"
-# where `network = local.dms_network` (assembled from module.eu-west-1 outputs in locals.tf).
+
 locals {
   network = var.network
 
