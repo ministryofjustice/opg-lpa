@@ -9,6 +9,9 @@ locals {
   kms_key_id = var.account_name == "development" ? data.aws_kms_key.aurora_new_key.arn : data.aws_kms_key.rds.arn
 }
 locals {
+  clone_kms_key_id = var.account_name == "development" ? data.aws_kms_key.aurora_new_key.arn : local.kms_key_id
+}
+locals {
   psql_parameter_group_family_list = [
     "postgres13",
     "postgres14",
@@ -42,6 +45,8 @@ module "api_aurora" {
   instance_count                  = var.account.database.aurora_instance_count
   instance_class                  = "db.t3.medium"
   kms_key_id                      = local.kms_key_id
+  kms_key_id_clone                = local.clone_kms_key_id
+  enable_aurora_clone             = var.account_name == "development" && var.account.database.enable_aurora_clone
   replication_source_identifier   = ""
   skip_final_snapshot             = !var.account.database.deletion_protection
   vpc_security_group_ids          = [aws_security_group.rds_api.id]
