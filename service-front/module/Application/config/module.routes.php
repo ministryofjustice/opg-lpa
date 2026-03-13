@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
