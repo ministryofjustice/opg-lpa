@@ -938,8 +938,15 @@ return [
                         'options' => [
                             'route'    => '/life-sustaining',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\LifeSustainingController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    LifeSustainingHandler::class,
+                                ),
                             ],
                         ],
                     ],
