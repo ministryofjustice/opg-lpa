@@ -14,16 +14,20 @@ variable "create_iam_roles" {
   default     = false
 }
 
-variable "network" {
+variable "dms_network" {
   description = "Network configuration for DMS resources."
   type = object({
-    vpc_id                   = string
-    subnet_ids               = list(string)
-    source_security_group_id = optional(string)
-    target_security_group_id = optional(string)
-    allow_all_egress         = optional(bool, true)
+    vpc_id           = string
+    subnet_ids       = list(string)
+    allow_all_egress = optional(bool, false)
+    security_group_ids = object({
+      source = string
+      target = string
+    })
   })
+  default = null
 }
+
 
 variable "source_config" {
   description = "Source database lookup and endpoint settings."
