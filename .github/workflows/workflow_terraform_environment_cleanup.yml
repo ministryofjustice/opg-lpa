@@ -6,15 +6,16 @@ on:
     - cron: "0 6,18 * * 0-6"
 
 permissions:
-  contents: read
-  security-events: none
-  pull-requests: none
   actions: none
   checks: none
+  contents: read
   deployments: none
+  id-token: write
   issues: none
   packages: none
+  pull-requests: none
   repository-projects: none
+  security-events: none
   statuses: none
 
 jobs:
