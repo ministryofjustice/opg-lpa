@@ -87,12 +87,12 @@ jobs:
       - set_variables
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: development
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: development
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -105,12 +105,12 @@ jobs:
       - set_variables
       - terraform_account_development
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: development
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: development
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -183,12 +183,12 @@ jobs:
       - slack_msg_production_deploy_begin
       - set_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -202,12 +202,12 @@ jobs:
       - set_variables
       - terraform_account_production
     with:
-      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
+      terraform_workspace: production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -217,15 +217,15 @@ jobs:
     name: TF Production - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      persist_artifacts: true
       terraform_apply: true
       terraform_directory: ./terraform/environment
-      use_ssh_private_key: true
-      persist_artifacts: true
       terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: production
+      use_ssh_private_key: true
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin

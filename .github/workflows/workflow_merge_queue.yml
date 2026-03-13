@@ -100,16 +100,15 @@ jobs:
       - set_variables
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: preproduction
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_region_preproduction:
@@ -118,12 +117,12 @@ jobs:
     needs:
       - set_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
@@ -133,15 +132,15 @@ jobs:
     name: TF Preproduction - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
+      persist_artifacts: true
       terraform_apply: true
-      use_ssh_private_key: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=integration-${{ needs.set_variables.outputs.semver_tag }}"
-      persist_artifacts: true
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
+      use_ssh_private_key: true
     needs:
       - docker_build_scan_push
       - set_variables
