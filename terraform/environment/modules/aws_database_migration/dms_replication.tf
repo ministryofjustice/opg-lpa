@@ -21,9 +21,8 @@ resource "aws_dms_replication_instance" "aurora_migration" {
   )
 
   depends_on = [
-    aws_iam_role_policy_attachment.dms_vpc_management,
-    aws_iam_role_policy_attachment.dms_cloudwatch_logs,
-    aws_iam_role_policy_attachment.dms_kms_access
+    aws_iam_role_policy_attachment.dms_vpc_role,
+    aws_iam_role_policy_attachment.dms_cloudwatch_role,
   ]
 }
 

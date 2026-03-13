@@ -91,7 +91,8 @@ module "aws_database_migration" {
   source = "./modules/aws_database_migration"
 
   providers = {
-    aws = aws.eu_west_1
+    aws           = aws.eu_west_1
+    aws.eu_west_1 = aws.eu_west_1
   }
   account_name         = local.account_name
   environment_name     = local.environment_name
