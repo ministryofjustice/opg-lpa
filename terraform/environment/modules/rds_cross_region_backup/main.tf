@@ -1,5 +1,3 @@
-
-data "aws_region" "current" {}
 resource "aws_backup_vault" "main" {
   name        = "${var.environment_name}_${data.aws_region.current.region}_aurora_backup_vault"
   kms_key_arn = data.aws_kms_key.source_rds_snapshot_key.arn

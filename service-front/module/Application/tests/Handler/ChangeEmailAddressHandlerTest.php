@@ -6,7 +6,7 @@ namespace ApplicationTest\Handler;
 
 use Application\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
 use Application\Handler\ChangeEmailAddressHandler;
-use Application\Listener\Attribute;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use Application\Model\Service\User\Details as UserService;
@@ -59,7 +59,7 @@ class ChangeEmailAddressHandlerTest extends TestCase
     private function createAuthenticatedRequest(User $user): ServerRequest
     {
         return (new ServerRequest())
-            ->withAttribute(Attribute::USER_DETAILS, $user)
+            ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute('secondsUntilSessionExpires', 3600);
     }
 
