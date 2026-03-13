@@ -18,6 +18,7 @@ on:
     secrets:
       SLACK_BOT_TOKEN:
         required: true
+
 permissions:
   actions: none
   checks: none
