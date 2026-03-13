@@ -1,4 +1,12 @@
 locals {
+
+  # network values taken from terraform/environment/modules/environment/outputs.t
+  network = var.dms_network
+  aurora_migration_network_sg_ids = var.dms_network == null ? [] : toset(distinct([
+    local.network.security_group_ids.source,
+    local.network.security_group_ids.target,
+  ]))
+
   common_tags = merge(
     {
       Name      = "aurora-${var.environment_name}-dms"

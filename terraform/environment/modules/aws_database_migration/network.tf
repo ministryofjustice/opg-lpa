@@ -1,15 +1,3 @@
-
-locals {
-  network = var.network
-
-  aurora_migration_network_sg_ids = toset(
-    compact([
-      local.network.source_security_group_id,
-      local.network.target_security_group_id
-    ])
-  )
-}
-
 resource "aws_security_group" "aurora_migration_replication" {
   name                   = "aurora-${var.environment_name}-dms-replication"
   description            = "Aurora DMS replication instance access for ${var.environment_name}"

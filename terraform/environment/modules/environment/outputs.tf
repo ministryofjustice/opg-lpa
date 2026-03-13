@@ -54,3 +54,7 @@ output "vpc_id" {
 output "app_subnet_ids" {
   value = [for subnet in data.aws_subnet.application : subnet.id]
 }
+
+output "data_subnet_ids" {
+  value = [for subnet in data.aws_subnet.data : subnet.id]
+}
