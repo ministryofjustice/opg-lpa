@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fb3d6f5480907a4bc9e916825fe79a02",
+    "content-hash": "a2e5bc930055b40c47befecab2f1d9cc",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -3273,100 +3273,6 @@
             "time": "2025-11-25T00:00:42+00:00"
         },
         {
-            "name": "ministryofjustice/opg-laminas-db",
-            "version": "1.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ministryofjustice/opg-laminas-db",
-                "reference": "f3f65379b4a4ceb01b45c60fe4d5cb076656eab3"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ministryofjustice/opg-laminas-db/zipball/f3f65379b4a4ceb01b45c60fe4d5cb076656eab3",
-                "reference": "f3f65379b4a4ceb01b45c60fe4d5cb076656eab3",
-                "shasum": ""
-            },
-            "require": {
-                "laminas/laminas-stdlib": "^3.7.1",
-                "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.0"
-            },
-            "conflict": {
-                "zendframework/zend-db": "*"
-            },
-            "require-dev": {
-                "laminas/laminas-coding-standard": "^2.4.0",
-                "laminas/laminas-eventmanager": "^3.6.0",
-                "laminas/laminas-hydrator": "^4.7",
-                "laminas/laminas-servicemanager": "^3.19.0",
-                "phpunit/phpunit": "^9.5.25"
-            },
-            "suggest": {
-                "laminas/laminas-eventmanager": "Laminas\\EventManager component",
-                "laminas/laminas-hydrator": "(^3.2 || ^4.3) Laminas\\Hydrator component for using HydratingResultSets",
-                "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
-            },
-            "type": "library",
-            "extra": {
-                "laminas": {
-                    "component": "Laminas\\Db",
-                    "config-provider": "Laminas\\Db\\ConfigProvider"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Laminas\\Db\\": "src/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "LaminasTest\\Db\\": "test/unit/",
-                    "LaminasIntegrationTest\\Db\\": "test/integration/"
-                }
-            },
-            "scripts": {
-                "check": [
-                    "@cs-check",
-                    "@test"
-                ],
-                "cs-check": [
-                    "phpcs"
-                ],
-                "cs-fix": [
-                    "phpcbf"
-                ],
-                "test": [
-                    "phpunit --colors=always --testsuite \"unit test\""
-                ],
-                "test-coverage": [
-                    "phpunit --colors=always --coverage-clover clover.xml"
-                ],
-                "test-integration": [
-                    "phpunit --colors=always --testsuite \"integration test\""
-                ],
-                "upload-coverage": [
-                    "coveralls -v"
-                ]
-            },
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
-            "homepage": "https://laminas.dev",
-            "keywords": [
-                "db",
-                "laminas"
-            ],
-            "support": {
-                "docs": "https://docs.laminas.dev/laminas-db/",
-                "issues": "https://github.com/laminas/laminas-db/issues",
-                "source": "https://github.com/laminas/laminas-db",
-                "rss": "https://github.com/laminas/laminas-db/releases.atom",
-                "chat": "https://laminas.dev/chat",
-                "forum": "https://discourse.laminas.dev"
-            },
-            "time": "2025-10-17T09:50:18+00:00"
-        },
-        {
             "name": "monolog/monolog",
             "version": "3.10.0",
             "source": {
@@ -3537,16 +3443,16 @@
         },
         {
             "name": "nikic/php-parser",
-            "version": "v5.6.2",
+            "version": "v5.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "3a454ca033b9e06b63282ce19562e892747449bb"
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/3a454ca033b9e06b63282ce19562e892747449bb",
-                "reference": "3a454ca033b9e06b63282ce19562e892747449bb",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/dca41cd15c2ac9d055ad70dbfd011130757d1f82",
+                "reference": "dca41cd15c2ac9d055ad70dbfd011130757d1f82",
                 "shasum": ""
             },
             "require": {
@@ -3589,9 +3495,139 @@
             ],
             "support": {
                 "issues": "https://github.com/nikic/PHP-Parser/issues",
-                "source": "https://github.com/nikic/PHP-Parser/tree/v5.6.2"
+                "source": "https://github.com/nikic/PHP-Parser/tree/v5.7.0"
             },
-            "time": "2025-10-21T19:32:17+00:00"
+            "time": "2025-12-06T11:56:16+00:00"
+        },
+        {
+            "name": "php-db/phpdb",
+            "version": "0.6.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-db/phpdb.git",
+                "reference": "669f93fdbb4638a5d623c60bb76fd8327aca41d4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-db/phpdb/zipball/669f93fdbb4638a5d623c60bb76fd8327aca41d4",
+                "reference": "669f93fdbb4638a5d623c60bb76fd8327aca41d4",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-servicemanager": "^3.0.0 || ^4.0.0",
+                "laminas/laminas-stdlib": "^3.20.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0"
+            },
+            "conflict": {
+                "laminas/laminas-db": "*",
+                "zendframework/zend-db": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "^3.0.1",
+                "laminas/laminas-eventmanager": "^3.14.0",
+                "laminas/laminas-hydrator": "^4.6.0",
+                "phpbench/phpbench": "^1.4",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^11.5.42",
+                "rector/rector": "^2.0"
+            },
+            "suggest": {
+                "laminas/laminas-eventmanager": "Laminas\\EventManager component",
+                "laminas/laminas-hydrator": "(^5.0.0) Laminas\\Hydrator component for using HydratingResultSets"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "config-provider": "PhpDb\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpDb\\": "src/",
+                    "CustomRule\\PHPUnit\\": "rector/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Database abstraction layer, SQL abstraction, result set abstraction, and RowDataGateway and TableDataGateway implementations",
+            "homepage": "https://php-db.dev",
+            "keywords": [
+                "db",
+                "laminas",
+                "mezzio",
+                "php-db"
+            ],
+            "support": {
+                "docs": "https://docs.php-db.dev/",
+                "issues": "https://github.com/php-db/phpdb/issues",
+                "source": "https://github.com/php-db/phpdb"
+            },
+            "time": "2026-02-28T03:16:34+00:00"
+        },
+        {
+            "name": "php-db/phpdb-pgsql",
+            "version": "0.1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-db/phpdb-pgsql.git",
+                "reference": "890b6bd3288dd9d7cf49ca18a4cd7bc9c9530f98"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-db/phpdb-pgsql/zipball/890b6bd3288dd9d7cf49ca18a4cd7bc9c9530f98",
+                "reference": "890b6bd3288dd9d7cf49ca18a4cd7bc9c9530f98",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "php-db/phpdb": "^0.6.0"
+            },
+            "require-dev": {
+                "ext-pdo_pgsql": "*",
+                "ext-pgsql": "*",
+                "laminas/laminas-coding-standard": "^3.0.1",
+                "phpstan/phpstan": "^2.1",
+                "phpstan/phpstan-phpunit": "^2.0",
+                "phpunit/phpunit": "^11.5.42"
+            },
+            "suggest": {
+                "ext-pdo_pgsql": "*",
+                "ext-pgsql": "*",
+                "laminas/laminas-servicemanager": "Laminas\\ServiceManager component"
+            },
+            "default-branch": true,
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "config-provider": "PhpDb\\Pgsql\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpDb\\Pgsql\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "PostgreSQL support for php-db",
+            "homepage": "https://php-db.dev",
+            "keywords": [
+                "db",
+                "pgsql",
+                "php-db"
+            ],
+            "support": {
+                "forum": "https://github.com/php-db/phpdb-pgsql/discussions",
+                "issues": "https://github.com/php-db/phpdb-pgsql/issues",
+                "source": "https://github.com/php-db/phpdb-pgsql"
+            },
+            "time": "2026-02-26T03:00:29+00:00"
         },
         {
             "name": "php-http/guzzle7-adapter",
@@ -9739,7 +9775,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "php-db/phpdb-pgsql": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
@@ -9750,5 +9788,5 @@
         "php": "8.4.13",
         "ext-intl": "1"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.6.0"
 }
