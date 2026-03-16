@@ -12,6 +12,7 @@ use Application\Handler\TypeHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\DashboardHandler;
+use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
@@ -675,8 +676,15 @@ return [
                         'options' => [
                             'route'    => '/applicant',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\ApplicantController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    ApplicantHandler::class,
+                                ),
                             ],
                         ],
                     ],
