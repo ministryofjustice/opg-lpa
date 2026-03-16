@@ -30,7 +30,8 @@
         "symfony/validator": "^8.0",
         "egulias/email-validator": "^4.0",
         "laminas/laminas-mvc-middleware": "^2.5",
-        "ministryofjustice/opg-laminas-db": "^1.0"
+        "php-db/phpdb": "^0.6.0",
+        "php-db/phpdb-pgsql": "0.1.x-dev"
     },
     "replace": {
         "laminas/laminas-cache-storage-adapter-apc": "*",

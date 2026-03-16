@@ -3,7 +3,6 @@
 return [
     // This should be an array of module namespaces used in the application.
     'modules' => [
-        'Laminas\Db',
         'Laminas\Mvc\Middleware',
         'Laminas\Cache',
         'Laminas\Filter',

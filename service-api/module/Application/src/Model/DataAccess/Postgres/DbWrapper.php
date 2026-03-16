@@ -2,7 +2,6 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use Laminas\Db\Adapter\Adapter;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use Laminas\Db\Metadata\Object\TableObject;
@@ -11,6 +10,7 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\ExpressionInterface;
 use Laminas\Db\Sql\Sql;
 use MakeShared\Telemetry\TelemetryEventManager;
+use PhpDb\Adapter\Adapter;
 
 /**
  * Long term plan is to move all subclasses of AbstractBase to instead

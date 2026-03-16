@@ -24,7 +24,6 @@ use Http\Adapter\Guzzle7\Client as Guzzle7Client;
 use Http\Client\HttpClient;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
-use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
 use Laminas\Http\Header\Accept;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response;
@@ -36,6 +35,12 @@ use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use PDO;
+use PhpDb\Adapter\Adapter;
+use PhpDb\Pgsql\AdapterPlatform;
+use PhpDb\Pgsql\Connection;
+use PhpDb\Pgsql\Driver;
+use PhpDb\Pgsql\Result;
+use PhpDb\Pgsql\Statement;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
@@ -119,7 +124,7 @@ class Module
                     $dsn = "{$dbconf['adapter']}:host={$dbconf['host']};" .
                         "port={$dbconf['port']};dbname={$dbconf['dbname']}";
 
-                    return new ZendDbAdapter([
+                    $config = [
                         'dsn' => $dsn,
                         'driver' => 'pdo',
                         'username' => $dbconf['username'],
@@ -129,7 +134,15 @@ class Module
                             PDO::ATTR_PERSISTENT => false,
                             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                         ],
-                    ]);
+                    ];
+
+                    $driver = new Driver(
+                        new Connection($config),
+                        new Statement(),
+                        new Result()
+                    );
+
+                    return new Adapter($driver, new AdapterPlatform($driver));
                 },
 
                 'Laminas\Authentication\AuthenticationService' => function () {
