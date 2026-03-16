@@ -59,8 +59,8 @@ async function buildApplication() {
     ],
     bundle: true,
     outfile: 'public/assets/v2/js/application.min.js',
-    minify: process.env.NODE_ENV === 'production',
-    sourcemap: process.env.NODE_ENV !== 'production',
+    minify: true,
+    sourcemap: false,
     target: ['es2015'],
     platform: 'browser',
     plugins: [envVarsPlugin, handlebarsPlugin],
@@ -86,8 +86,6 @@ async function buildIndividualScripts() {
 
   const scripts = [
     { in: 'assets/js/opg/session-timeout-init.js', out: 'public/assets/v2/js/opg/session-timeout-init.min.js' },
-    { in: 'assets/js/opg/dashboard-statuses.js', out: 'public/assets/v2/js/opg/dashboard-statuses.min.js' },
-    { in: 'assets/js/opg/init-polyfill.js', out: 'public/assets/v2/js/opg/init-polyfill.min.js' },
     { in: 'assets/js/opg/govuk-init.js', out: 'public/assets/v2/js/govuk-init.js' },
   ];
 
@@ -95,8 +93,8 @@ async function buildIndividualScripts() {
     await esbuild.build({
       entryPoints: [script.in],
       outfile: script.out,
-      minify: process.env.NODE_ENV === 'production',
-      sourcemap: process.env.NODE_ENV !== 'production',
+      minify: true,
+      sourcemap: false,
       target: ['es2015'],
       platform: 'browser',
     });
