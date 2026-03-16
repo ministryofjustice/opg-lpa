@@ -18,6 +18,7 @@ npx sass \
 echo "Copying vendor CSS files..."
 
 # Copy govuk template CSS
+# TODO maybe we should not overwrite the ones that are there already in git and cannot be taken out
 cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css public/assets/v2/css/
 cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css public/assets/v2/css/
 cp node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css public/assets/v2/css/
