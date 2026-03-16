@@ -57,7 +57,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['build_js_dev']
+        tasks: ['build_js']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
@@ -139,21 +139,6 @@ module.exports = function (grunt) {
       jsdevgovukinit: {
         src: 'assets/js/opg/govuk-init.js',
         dest: 'public/assets/v2/js/govuk-init.js'
-      },
-
-      jsdevdashboardstatuses: {
-        src: 'assets/js/opg/dashboard-statuses.js',
-        dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
-      },
-
-      jsdevsessiontimeout: {
-        src: 'assets/js/opg/session-timeout-init.js',
-        dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
-      },
-
-      jsdevinitpolyfill: {
-        src: 'assets/js/opg/init-polyfill.js',
-        dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
 
       cssdevfonts: {
@@ -288,16 +273,6 @@ module.exports = function (grunt) {
 
   // define tasks
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
-  grunt.registerTask('build_js_dev', [
-    'copy:jsenv',
-    'handlebars',
-    'concat',
-    'copy:jsdev',
-    'copy:jsdevdashboardstatuses',
-    'copy:jsdevsessiontimeout',
-    'copy:jsdevgovukinit',
-    'copy:jsdevinitpolyfill'
-  ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'copy:cssdevfonts', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };
