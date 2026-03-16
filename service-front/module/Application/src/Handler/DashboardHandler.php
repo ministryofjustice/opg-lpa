@@ -6,7 +6,7 @@ namespace Application\Handler;
 
 use Application\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Handler\Traits\PaginationTrait;
-use Application\Listener\Attribute;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -36,7 +36,7 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
         $routeMatch = $request->getAttribute(RouteMatch::class);
 
         /** @var User $identity */
-        $identity = $request->getAttribute(Attribute::IDENTITY);
+        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;
