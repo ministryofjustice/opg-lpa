@@ -15,6 +15,15 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
 use RuntimeException;
 
+/**
+ * Loads the LPA for the current request, validates the user owns it, and checks
+ * the form flow to ensure the user can access the requested route. If the flow
+ * checker determines a different route should be shown first, the user is
+ * redirected there. On success, the LPA and a FormFlowChecker instance are set
+ * as event parameters for downstream listeners and view helpers to consume.
+ *
+ * This listener runs on MVC routes only; its PSR-7 equivalent is LpaLoaderMiddleware.
+ */
 class LpaLoaderListener extends AbstractListenerAggregate
 {
     public function __construct(
