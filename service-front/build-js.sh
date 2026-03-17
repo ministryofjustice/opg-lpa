@@ -80,40 +80,27 @@ for f in "${JS_FILES[@]}"; do
   printf ';\n' >> public/assets/v2/js/application.js
 done
 
-# Check if we're in CI mode
-if [[ "${NODE_ENV}" == "CI" ]] || [[ "${BUILD_ENV}" == "CI" ]]; then
-  echo "→ Minifying JavaScript files (CI mode)..."
+echo "→ Minifying JavaScript files (CI mode)..."
 
-  # Minify main application bundle
-  npx esbuild public/assets/v2/js/application.js \
-    --minify \
-    --outfile=public/assets/v2/js/application.min.js
+# Minify main application bundle
+npx esbuild public/assets/v2/js/application.js \
+--minify \
+--outfile=public/assets/v2/js/application.min.js
 
-  # Minify individual scripts
-  npx esbuild assets/js/opg/session-timeout-init.js \
-    --minify \
-    --outfile=public/assets/v2/js/opg/session-timeout-init.min.js
+# Minify individual scripts
+npx esbuild assets/js/opg/session-timeout-init.js \
+--minify \
+--outfile=public/assets/v2/js/opg/session-timeout-init.min.js
 
-  npx esbuild assets/js/opg/dashboard-statuses.js \
-    --minify \
-    --outfile=public/assets/v2/js/opg/dashboard-statuses.min.js
+npx esbuild assets/js/opg/dashboard-statuses.js \
+--minify \
+--outfile=public/assets/v2/js/opg/dashboard-statuses.min.js
 
-  npx esbuild assets/js/opg/init-polyfill.js \
-    --minify \
-    --outfile=public/assets/v2/js/opg/init-polyfill.min.js
+npx esbuild assets/js/opg/init-polyfill.js \
+--minify \
+--outfile=public/assets/v2/js/opg/init-polyfill.min.js
 
-  echo "✓ JavaScript minification complete"
-else
-  echo "→ Development mode - copying without minification..."
-
-  # In dev mode, just copy files
-  cp public/assets/v2/js/application.js public/assets/v2/js/application.min.js
-  cp assets/js/opg/session-timeout-init.js public/assets/v2/js/opg/session-timeout-init.min.js
-  cp assets/js/opg/dashboard-statuses.js public/assets/v2/js/opg/dashboard-statuses.min.js
-  cp assets/js/opg/init-polyfill.js public/assets/v2/js/opg/init-polyfill.min.js
-
-  echo "✓ JavaScript files copied (dev mode)"
-fi
+echo "✓ JavaScript minification complete"
 
 echo "→ Copying vendor files..."
 
