@@ -14,6 +14,16 @@ When(`I log in as seeded user`, () => {
   logInAsSeededUser();
 });
 
+When(`I log in as seeded user on the current page`, () => {
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
+
+  cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
+  cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));
+  cy.get('[data-cy=login-submit-button]').click();
+});
+
 When(`I log in as second seeded user`, () => {
   logInAsSecondSeededUser();
 });
