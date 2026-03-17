@@ -1,78 +1,104 @@
 import esbuild from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
-import { dirname } from 'path';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 
-// Environment variable injection plugin
-const envVarsPlugin = {
-  name: 'env-vars',
-  setup(build) {
-    build.onLoad({ filter: /env-vars\.js$/ }, async (args) => {
-      const template = readFileSync('assets/js/opg/env-vars.template.js', 'utf8');
+// All JS files to concatenate in order, matching the Grunt concat task and build-js.sh.
+// These files rely on globals (jQuery, lodash, moj) set up by earlier files in the list,
+// so they cannot be bundled with esbuild's module bundler - they must be concatenated
+// first, then minified as a single pre-concatenated file.
+const APPLICATION_JS_FILES = [
+  // Dependencies
+  'node_modules/handlebars/dist/handlebars.js',
+  'node_modules/lodash/lodash.js',
+  'node_modules/urijs/src/URI.min.js',
+  'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
 
-      // Inject REVISION if available
-      let envVarsContent = template.replace(
-        'window.BUILD_ENV = {};',
-        `window.BUILD_ENV = ${JSON.stringify({
-          revision: process.env.REVISION || 'dev'
-        })};`
-      );
+  // OPG Scripts
+  'assets/js/opg/jquery-plugin-opg-spinner.js',
+  'assets/js/opg/session-timeout-dialog.js',
+  'assets/js/opg/env-vars.js',
+  'assets/js/opg/cache-busting.js',
 
-      return {
-        contents: envVarsContent,
-        loader: 'js',
-      };
-    });
-  },
-};
+  // MoJ Scripts - Base
+  'assets/js/moj/moj.js',
+  'assets/js/moj/moj.helpers.js',
+  'assets/js/moj/moj.cookie-functions.js',
 
-// Handlebars template compiler plugin 
-const handlebarsPlugin = {
-  name: 'handlebars-templates',
-  setup(build) {
-    build.onLoad({ filter: /lpa\.templates\.js$/ }, async (args) => {
-      // For now, just ensure the file exists or create a placeholder
-      try {
-        const content = readFileSync(args.path, 'utf8');
-        return { contents: content, loader: 'js' };
-      } catch (e) {
-        console.warn('Warning: lpa.templates.js not found, creating empty placeholder');
-        return {
-          contents: 'window.lpa = window.lpa || {}; window.lpa.templates = {};',
-          loader: 'js'
-        };
-      }
-    });
-  },
-};
+  // LPA Scripts - Templates
+  'assets/js/lpa/lpa.templates.js',
+
+  // MoJ Scripts - Modules
+  'assets/js/moj/moj.modules/moj.password.js',
+  'assets/js/moj/moj.modules/moj.popup.js',
+  'assets/js/moj/moj.modules/moj.help-system.js',
+  'assets/js/moj/moj.modules/moj.form-popup.js',
+  'assets/js/moj/moj.modules/moj.title-switch.js',
+  'assets/js/moj/moj.modules/moj.postcode-lookup.js',
+  'assets/js/moj/moj.modules/moj.print-link.js',
+  'assets/js/moj/moj.modules/moj.person-form.js',
+  'assets/js/moj/moj.modules/moj.validation.js',
+  'assets/js/moj/moj.modules/moj.repeat-application.js',
+  'assets/js/moj/moj.modules/moj.dashboard.js',
+  'assets/js/moj/moj.modules/moj.ui-behaviour.js',
+  'assets/js/moj/moj.modules/moj.applicant.js',
+  'assets/js/moj/moj.modules/moj.polyfill.js',
+  'assets/js/moj/moj.modules/moj.single-use.js',
+  'assets/js/moj/moj.modules/moj.analytics.js',
+  'assets/js/moj/moj.modules/moj.cookie-consent.js',
+
+  // Init Script
+  'assets/js/main.js',
+];
+
+function buildEnvVarsContent() {
+  const template = readFileSync('assets/js/opg/env-vars.template.js', 'utf8');
+  return template.replace(
+    'window.BUILD_ENV = {};',
+    `window.BUILD_ENV = ${JSON.stringify({
+      revision: process.env.REVISION || 'dev'
+    })};`
+  );
+}
 
 async function buildApplication() {
   console.log('Building main application bundle...');
 
-  // Main application bundle
-  await esbuild.build({
-    entryPoints: [
-      // Create a virtual entry point that imports all files in order
-      {
-        in: 'assets/js/main.js',
-        out: 'application'
+  mkdirSync('public/assets/v2/js', { recursive: true });
+
+  // Concatenate all files in order, separated by ';\n' to match the Grunt
+  // concat separator and prevent adjacent IIFEs being parsed as call expressions.
+  const parts = [];
+  for (const filePath of APPLICATION_JS_FILES) {
+    let content;
+    if (filePath === 'assets/js/opg/env-vars.js') {
+      // Inject env vars from template at build time
+      content = buildEnvVarsContent();
+    } else if (!existsSync(filePath)) {
+      if (filePath === 'assets/js/lpa/lpa.templates.js') {
+        console.warn('Warning: lpa.templates.js not found, using empty placeholder');
+        content = 'window.lpa = window.lpa || {}; window.lpa.templates = window.lpa.templates || {};';
+      } else {
+        console.warn(`Warning: ${filePath} not found, skipping`);
+        continue;
       }
-    ],
-    bundle: true,
+    } else {
+      content = readFileSync(filePath, 'utf8');
+    }
+    parts.push(content);
+  }
+
+  const concatenated = parts.join(';\n');
+  const tmpFile = 'public/assets/v2/js/application.js';
+  writeFileSync(tmpFile, concatenated);
+
+  // Minify the concatenated file with esbuild (no bundling - just minification)
+  await esbuild.build({
+    entryPoints: [tmpFile],
     outfile: 'public/assets/v2/js/application.min.js',
     minify: true,
+    bundle: false,
     sourcemap: false,
     target: ['es2015'],
     platform: 'browser',
-    plugins: [envVarsPlugin, handlebarsPlugin],
-    // Inject dependencies in order
-    inject: ['assets/js/shim.js'].filter(path => {
-      try {
-        readFileSync(path);
-        return true;
-      } catch {
-        return false;
-      }
-    }),
   }).catch((e) => {
     console.error('Build failed:', e);
     process.exit(1);
@@ -84,8 +110,12 @@ async function buildApplication() {
 async function buildIndividualScripts() {
   console.log('Building individual scripts...');
 
+  mkdirSync('public/assets/v2/js/opg', { recursive: true });
+
   const scripts = [
     { in: 'assets/js/opg/session-timeout-init.js', out: 'public/assets/v2/js/opg/session-timeout-init.min.js' },
+    { in: 'assets/js/opg/dashboard-statuses.js', out: 'public/assets/v2/js/opg/dashboard-statuses.min.js' },
+    { in: 'assets/js/opg/init-polyfill.js', out: 'public/assets/v2/js/opg/init-polyfill.min.js' },
     { in: 'assets/js/opg/govuk-init.js', out: 'public/assets/v2/js/govuk-init.js' },
   ];
 
