@@ -89,23 +89,8 @@ case "$TASK" in
     done
     ;;
 
-  help|--help|-h)
-    echo "Build script for service-front"
-    echo ""
-    echo "Usage: ./build.sh [task]"
-    echo ""
-    echo "Tasks:"
-    echo "  build       - Build all assets (default)"
-    echo "  js          - Build JavaScript only"
-    echo "  css         - Build CSS only"
-    echo "  watch       - Watch for changes and rebuild (requires fswatch/inotifywait)"
-    echo "  watch:poll  - Watch for changes using polling (slower, no deps)"
-    echo "  help        - Show this help message"
-    ;;
-
   *)
     echo "Unknown task: $TASK"
-    echo "Run './build.sh help' for usage information"
     exit 1
     ;;
 esac

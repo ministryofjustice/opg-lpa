@@ -9,9 +9,7 @@
     "build:js": "./build-js.sh",
     "build:css": "./build-css.sh",
     "watch": "./build.sh watch",
-    "watch:poll": "./build.sh watch:poll",
-    "clean": "./build.sh clean",
-    "help": "./build.sh help"
+    "watch:poll": "./build.sh watch:poll"
   },
   "dependencies": {
     "esbuild": "^0.27.3",
@@ -30,7 +28,6 @@
     "grunt-contrib-watch": "^1.1.0",
     "grunt-text-replace": "^0.4.0",
     "handlebars": "^4.7.6",
-    "help": "^3.0.2",
     "lodash": "^4.17.21",
     "sass": "^1.35.1",
     "urijs": "^1.19.11"
