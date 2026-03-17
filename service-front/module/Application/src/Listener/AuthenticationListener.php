@@ -23,6 +23,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Checks that the user is authenticated before allowing access to protected routes,
+ * redirecting to the login page with an appropriate reason if not.
+ *
+ * Implements both the laminas-mvc listener interface (via listen()) and the PSR-7
+ * MiddlewareInterface (via process()), so it can run in a laminas-mvc PipeSpec during
+ * the Mezzio migration as well as in a full Mezzio pipeline. In the middleware path it
+ * also sets the authenticated identity and the number of seconds until the session
+ * expires as request attributes for downstream middleware to consume.
+ */
 class AuthenticationListener extends AbstractListenerAggregate implements MiddlewareInterface
 {
     private const string REASON_TIMEOUT = 'timeout';
