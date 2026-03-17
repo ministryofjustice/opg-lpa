@@ -7,7 +7,6 @@ namespace ApplicationTest\Handler\Factory;
 use Application\Handler\Factory\LoginHandlerFactory;
 use Application\Handler\LoginHandler;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Form\FormElementManager;
@@ -44,7 +43,6 @@ class LoginHandlerFactoryTest extends TestCase
                     AuthenticationService::class => $this->createMock(AuthenticationService::class),
                     SessionManagerSupport::class => $sessionManagerSupport,
                     SessionUtility::class => $this->createMock(SessionUtility::class),
-                    LpaApplicationService::class => $this->createMock(LpaApplicationService::class),
                     FlashMessenger::class => $this->createMock(FlashMessenger::class),
                 };
             });
