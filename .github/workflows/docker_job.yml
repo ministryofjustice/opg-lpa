@@ -131,7 +131,8 @@ jobs:
         run: |
           pushd service-front/
           npm ci --ignore-scripts && npm install -g --ignore-scripts sass
-          npm run build:css build:js
+          node_modules/grunt-cli/bin/grunt --gruntfile Gruntfile.cjs build_js
+          npm run build:css
           popd
 
       - name: Setup Docker Buildx
