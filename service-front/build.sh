@@ -89,13 +89,6 @@ case "$TASK" in
     done
     ;;
 
-  clean)
-    echo "Cleaning build artifacts..."
-    rm -rf public/assets/v2/css/*
-    rm -rf public/assets/v2/js/*
-    rm -rf public/assets/v2/fonts/*
-    ;;
-
   help|--help|-h)
     echo "Build script for service-front"
     echo ""
@@ -107,11 +100,7 @@ case "$TASK" in
     echo "  css         - Build CSS only"
     echo "  watch       - Watch for changes and rebuild (requires fswatch/inotifywait)"
     echo "  watch:poll  - Watch for changes using polling (slower, no deps)"
-    echo "  clean       - Remove build artifacts"
     echo "  help        - Show this help message"
-    echo ""
-    echo "Environment variables:"
-    echo "  NODE_ENV       - Set to 'CI' for minified builds"
     ;;
 
   *)
