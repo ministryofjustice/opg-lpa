@@ -39,7 +39,7 @@ class CurrentRouteListener extends AbstractListenerAggregate
         $currentRoute = $routeMatch->getMatchedRouteName();
 
         if ($currentRoute !== null) {
-            $event->setParam(EventParameter::CURRENT_ROUTE, $currentRoute);
+            $event->setParam(EventParameter::CURRENT_ROUTE_NAME, $currentRoute);
         }
     }
 }

@@ -91,7 +91,7 @@ class ApplicantHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/applicant');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/applicant');
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);

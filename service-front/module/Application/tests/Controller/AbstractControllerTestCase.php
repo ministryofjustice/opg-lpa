@@ -20,7 +20,6 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\User\Details;
 use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
-use ApplicationTest\Controller\Authenticated\Lpa\DonorControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
@@ -600,8 +599,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
             $actorName = 'Certificate provider';
         } elseif ($this instanceof CorrespondentControllerTest) {
             $actorName = 'Correspondent';
-        } elseif ($this instanceof DonorControllerTest) {
-            $actorName = 'Donor';
         } elseif ($this instanceof PeopleToNotifyControllerTest) {
             $actorName = 'Person to notify';
         } elseif ($this instanceof PrimaryAttorneyControllerTest) {
