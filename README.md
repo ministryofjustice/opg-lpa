@@ -118,6 +118,8 @@ make dc-up
 
 In this mode, the `Makefile` will fetch secrets using `aws secretsmanager` and `docker-compose` commands, removing the need for local configuration files. Most of the sign up, email, postcode lookup and payment functionality should now work against dev variants of 3rd party systems.
 
+Twig caching is disabled by default for local development, which means that changes to Twig templates will be picked up immediately without needing to clear the cache. If you want to enable Twig caching, set the `OPG_LPA_FRONT_TWIG_CACHE_DIR` environment variable to `true` before running `make dc-up`.
+
 The LPA Tool service will be available via <https://localhost:7002/home>
 
 The Admin service will be available via <https://localhost:7003>

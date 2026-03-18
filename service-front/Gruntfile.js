@@ -40,15 +40,6 @@ const injectEnvVars = function (content) {
   // pipeline env and similar
   let envVars = {};
 
-  // The following variables are set and passed to the template:
-  //   revision: set from the REVISION env var; in CircleCI, this is set
-  //   from a build-unique string in the pipeline;
-  //   this is then used as a cacheBust parameter on JS ajax calls
-  //   (see cache-busting.js)
-  if ('REVISION' in process.env) {
-    envVars.revision = process.env.REVISION;
-  }
-
   // render the template
   return template({ENV_VARS: envVars});
 };
@@ -66,7 +57,7 @@ module.exports = function (grunt) {
       },
       js: {
         files: 'assets/js/**/*.js',
-        tasks: ['build_js_dev']
+        tasks: ['build_js']
       },
       templates: {
         files: ['<%= handlebars.compile.src %>'],
@@ -89,18 +80,6 @@ module.exports = function (grunt) {
           'public/assets/v2/css/download-message.css': 'assets/sass/download-message.scss',
           'public/assets/v2/css/print.css': 'assets/sass/print.scss'
         }
-      }
-    },
-
-    // lint scss files
-    scsslint: {
-      allFiles: [
-        'assets/sass/**/*.scss'
-      ],
-      options: {
-        config: '.scss-lint.yml',
-        reporterOutput: null,
-        colorizeOutput: true
       }
     },
 
@@ -160,21 +139,6 @@ module.exports = function (grunt) {
       jsdevgovukinit: {
         src: 'assets/js/opg/govuk-init.js',
         dest: 'public/assets/v2/js/govuk-init.js'
-      },
-
-      jsdevdashboardstatuses: {
-        src: 'assets/js/opg/dashboard-statuses.js',
-        dest: 'public/assets/v2/js/opg/dashboard-statuses.min.js'
-      },
-
-      jsdevsessiontimeout: {
-        src: 'assets/js/opg/session-timeout-init.js',
-        dest: 'public/assets/v2/js/opg/session-timeout-init.min.js'
-      },
-
-      jsdevinitpolyfill: {
-        src: 'assets/js/opg/init-polyfill.js',
-        dest: 'public/assets/v2/js/opg/init-polyfill.min.js'
       },
 
       cssdevfonts: {
@@ -256,22 +220,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // lint js files
-    jshint: {
-      options: {
-        jshintrc: '.jshintrc',
-        ignores: []
-      },
-      files: [
-        'Gruntfile.js',
-        'assets/js/moj/**/*.js',
-        'assets/js/lpa/**/*.js',
-        'assets/js/main.js',
-        // ignore compiled handlebars templates
-        '!assets/js/lpa/lpa.templates.js'
-      ]
-    },
-
     // minify for production
     uglify: {
       options: {
@@ -316,28 +264,15 @@ module.exports = function (grunt) {
   // load npm tasks
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-scss-lint');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
-  grunt.registerTask('test', ['scsslint', 'jshint']);
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
-  grunt.registerTask('build_js_dev', [
-    'copy:jsenv',
-    'handlebars',
-    'concat',
-    'copy:jsdev',
-    'copy:jsdevdashboardstatuses',
-    'copy:jsdevsessiontimeout',
-    'copy:jsdevgovukinit',
-    'copy:jsdevinitpolyfill'
-  ]);
   grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'copy:cssdevfonts', 'cssmin']);
   grunt.registerTask('build', ['build_js', 'build_css']);
 };

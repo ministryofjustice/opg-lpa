@@ -5,6 +5,11 @@ Given(`I visit {string}`, (url) => {
   cy.visitWithChecks(url);
 });
 
+Given(`I visit {string} without being logged in`, (url) => {
+  cy.visit(url, { failOnStatusCode: false });
+  cy.url().should('include', '/login');
+});
+
 Then(`I visit the login page`, () => {
   // we do not require extra checks on login page
   cy.visit('/login');

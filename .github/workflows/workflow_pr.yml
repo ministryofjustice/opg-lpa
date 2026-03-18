@@ -10,15 +10,16 @@ on:
       - main
 
 permissions:
-  contents: write
-  security-events: write
-  pull-requests: read
   actions: none
   checks: none
+  contents: write
   deployments: none
+  id-token: write
   issues: none
   packages: none
+  pull-requests: read
   repository-projects: none
+  security-events: write
   statuses: none
 
 jobs:
@@ -83,10 +84,9 @@ jobs:
     needs:
       - workflow_variables
     with:
+      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   cypress_mezzio_tests:
@@ -95,7 +95,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -107,16 +107,15 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/account
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     needs:
       - terraform_lint
       - workflow_variables
@@ -128,16 +127,15 @@ jobs:
       workspace_manager_aws_iam_role: opg-lpa-ci
       terraform_apply: false
       terraform_directory: ./terraform/region
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_development:
     name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     needs:
       - docker_build_scan_push
       - phpunit_tests
@@ -155,11 +153,10 @@ jobs:
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
       persist_artifacts: true
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   run_dev_seed_db_task:
@@ -203,7 +200,7 @@ jobs:
           echo "configJson=${content}" >> $GITHUB_OUTPUT
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}

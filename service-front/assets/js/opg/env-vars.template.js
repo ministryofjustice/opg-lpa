@@ -5,7 +5,6 @@
 
 window.BUILD_ENV = {};
 
-
 // return a value from window.MAKE_ENV (if varName is a key in it),
 // or undefined (if not)
 window.getBuildEnvVar = function (varName) {
