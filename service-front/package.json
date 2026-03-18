@@ -6,9 +6,7 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "build:css": "./build-css.sh",
-    "watch": "./build.sh watch",
-    "watch:poll": "./build.sh watch:poll"
+    "build:css": "./build-css.sh"
   },
   "dependencies": {
     "esbuild": "^0.27.3",
