@@ -12,15 +12,16 @@ on:
     types: [checks_requested]
 
 permissions:
-  contents: write
-  security-events: write
-  pull-requests: read
   actions: none
   checks: none
-  deployments: none
+  contents: write
+  deployments: write
+  id-token: write
   issues: none
   packages: none
+  pull-requests: read
   repository-projects: none
+  security-events: write
   statuses: none
 
 jobs:
@@ -88,60 +89,58 @@ jobs:
       - set_variables
       - phpunit_tests
     with:
+      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: preproduction
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     needs:
       - set_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: preproduction
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
+      persist_artifacts: true
       terraform_apply: true
-      use_ssh_private_key: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=integration-${{ needs.set_variables.outputs.semver_tag }}"
-      persist_artifacts: true
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: preproduction
+      use_ssh_private_key: true
     needs:
       - docker_build_scan_push
       - set_variables
@@ -150,8 +149,6 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
   run_preproduction_seed_db_task:

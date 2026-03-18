@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Listener;
 
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
 use Application\Model\Service\Session\ContainerNamespace;
@@ -11,6 +12,7 @@ use Application\Model\Service\Session\SessionUtility;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
@@ -56,7 +58,7 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         // Identity is stored under ContainerNamespace::IDENTITY when a user successfully logs in
         if ($routeMatch->getParam('unauthenticated_route', false) || $identity instanceof User) {
             if ($identity instanceof User) {
-                $event->setParam(Attribute::IDENTITY, $identity);
+                $event->setParam(EventParameter::IDENTITY, $identity);
             }
 
             return null;
@@ -69,7 +71,9 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $reason = $this->getUnauthorisedReason($allowRedirect, $route);
+        $request = $event->getRequest();
+        $uriString = $request instanceof HttpRequest ? $request->getUriString() : '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $uriString);
 
         $url = $event->getRouter()->assemble(['state' => $reason], ['name' => 'login']);
 
@@ -93,6 +97,8 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
                     $tokenExpiresAt->getTimestamp() - time()
                 );
             }
+
+            $request = $request->withAttribute(RequestAttribute::IDENTITY, $identity);
         }
 
         $route = $request->getAttribute(RouteResult::class);
@@ -115,8 +121,8 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $routePath = $route->getMatchedRoute()->getPath() ?: '';
-        $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
+        $requestPath = $request->getUri()->getPath() ?: '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $requestPath);
 
         // TODO(mezzio): update routeName when we setup Mezzio routes
         return new RedirectResponse(

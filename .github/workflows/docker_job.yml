@@ -11,13 +11,26 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
+      oidc_docker_role:
+        description: "OIDC role to assume for ecr permissions"
+        required: true
+        type: string
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS:
-        required: true
-      AWS_SECRET_ACCESS_KEY_ACTIONS:
-        required: true
       SLACK_BOT_TOKEN:
         required: true
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
 
 jobs:
   docker_build_scan_push:
@@ -90,13 +103,11 @@ jobs:
       - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
-          role-duration-seconds: 1800
+          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
       - name: Apply override tag
@@ -154,6 +165,7 @@ jobs:
           severity: "HIGH,CRITICAL"
           scanners: "misconfig"
           version: "v${{env.TRIVY_VERSION}}"
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           exit-code: 1
 
       - name: Build Image
@@ -181,23 +193,27 @@ jobs:
           mkdir -p -m 0777 .trivy-cache ./test-results/
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image \
             ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
             --timeout 7m \
             --format table \
             --severity HIGH,CRITICAL
 
           docker run \
             --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./.trivy-cache:/root/.cache \
             --volume ./test-results:/test-results \
             --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
             --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
             aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
+            --db-repository aquasec/trivy-db \
+            --java-db-repository aquasec/trivy-java-db \
+            --checks-bundle-repository aquasec/trivy-checks \
             --severity HIGH,CRITICAL \
             --timeout 7m \
             --exit-code 1 \
@@ -206,8 +222,7 @@ jobs:
       - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
         id: trivy_upload_sarif
         uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
-        if: false
-        # if: always()
+        if: always()
         with:
           sarif_file: "./test-results/trivy.sarif"
 
@@ -215,17 +230,17 @@ jobs:
         id: trivy_sbom
         uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
         env:
-          # TRIVY_SKIP_DB_UPDATE: true
-          # TRIVY_SKIP_JAVA_DB_UPDATE: true
+          TRIVY_SKIP_DB_UPDATE: true
+          TRIVY_SKIP_JAVA_DB_UPDATE: true
           TRIVY_SKIP_CHECK_UPDATE: true
           TRIVY_SKIP_VERSION_CHECK: true
-
         with:
           scan-type: "image"
           image-ref: ${{ matrix.image_name }}:latest
           format: "github"
           output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
           github-pat: ${{ secrets.GITHUB_TOKEN }}
+          cache-dir: ${{ github.workspace }}/.cache/trivy
           version: "v${{env.TRIVY_VERSION}}"
 
       - name: Upload trivy report as a Github artifact

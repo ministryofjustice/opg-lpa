@@ -78,7 +78,7 @@ services:
 
   govpaystub:
     container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:054aefd743cb43677236ad83f42d54a7e7a4e7bdb2714ecde335ff4b69dff000
+    image: bbyars/mountebank@sha256:59d0f9f14d1a5df5690a10707241e3ffa8c259ca7f1fcea3e36223287bd82b80
     ports:
       - 2527:2525
       - 4547:4545
@@ -88,7 +88,7 @@ services:
 
   localstack:
     container_name: lpa-localstack
-    image: localstack/localstack:4.12.0@sha256:0df3a97da57de03a588c05d9b8f390f15c7033fc7c4512f94619d344bc3cd317
+    image: localstack/localstack:4.14.0@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
     depends_on:
       dynamodb:
         condition: service_started
@@ -173,6 +173,9 @@ services:
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
       OPG_LPA_FRONT_CSRF_SALT: "test"
+
+      # Disable Twig caching for local development
+      OPG_LPA_FRONT_TWIG_CACHE_DIR: "false"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
