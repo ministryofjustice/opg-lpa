@@ -18,6 +18,9 @@ use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\DonorAddHandler;
+use Application\Handler\Lpa\DonorEditHandler;
+use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -790,8 +793,15 @@ return [
                         'options' => [
                             'route'    => '/donor',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DonorController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    DonorIndexHandler::class,
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -801,7 +811,15 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            DonorAddHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -810,7 +828,15 @@ return [
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            DonorEditHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],

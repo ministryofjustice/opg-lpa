@@ -46,8 +46,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                     $actorName = 'Certificate provider';
                 } elseif ($this instanceof Lpa\CorrespondentController) {
                     $actorName = 'Correspondent';
-                } elseif ($this instanceof Lpa\DonorController) {
-                    $actorName = 'Donor';
                 } elseif ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
                 } elseif ($this instanceof Lpa\PrimaryAttorneyController) {
@@ -374,16 +372,15 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // If the filter flag was passed into this function as false then set all flags below to false so no
         // filtering takes place
         $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
-        $isDonorRoute = ($filterByActorAction && $this instanceof Lpa\DonorController);
         $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
         $isPrimaryAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\PrimaryAttorneyController);
         $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
 
         $lpaDocument = $this->getLpa()->document;
 
-        // If there is a donor present in the LPA and we are editing it, or adding/editing people to notify then
+        // If there is a donor present in the LPA and we are adding/editing people to notify then
         // do NOT include in the actor list
-        if (!$isDonorRoute && !$isPeopleToModifyRoute && $lpaDocument->donor instanceof Donor) {
+        if (!$isPeopleToModifyRoute && $lpaDocument->donor instanceof Donor) {
             $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
@@ -426,8 +423,8 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             }
         }
 
-        // Include all of the people to notify unless we adding/editing a donor or certificate provider
-        if (!$isDonorRoute && !$isCertificateProviderRoute) {
+        // Include all of the people to notify unless we are adding/editing a certificate provider
+        if (!$isCertificateProviderRoute) {
             foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
                 // We are editing this person to notify so do not add it to the actor list
                 if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
