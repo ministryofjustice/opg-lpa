@@ -51,10 +51,6 @@ module.exports = function (grunt) {
 
     // watching sass and js (as they need post tasks)
     watch: {
-      scss: {
-        files: 'assets/sass/**/*.scss',
-        tasks: ['build_css']
-      },
       js: {
         files: 'assets/js/**/*.js',
         tasks: ['build_js']
@@ -65,57 +61,7 @@ module.exports = function (grunt) {
       }
     },
 
-    // sass files to compile
-    sass: {
-      dev: {
-        options: {
-          loadPath: [
-            'node_modules/govuk_frontend_toolkit/stylesheets',
-            'node_modules/govuk-elements-sass/public/sass'
-          ],
-          sourcemap: false
-        },
-        files: {
-          'public/assets/v2/css/application.css': 'assets/sass/application.scss',
-          'public/assets/v2/css/download-message.css': 'assets/sass/download-message.scss',
-          'public/assets/v2/css/print.css': 'assets/sass/print.scss'
-        }
-      }
-    },
-
-    replace: {
-      // replacing a compass depended helper within govuk template css
-      image_url: {
-        src: ['public/assets/v2/css/*.css'],
-        dest: 'public/assets/v2/css/',
-        replacements: [{
-          from: 'image-url',
-          to: 'url'
-        }]
-      },
-
-      // replace deprecated colours in CSS files
-      colours: {
-        src: ['public/assets/v2/css/*.css'],
-        dest: 'public/assets/v2/css/',
-        replacements: colourPatching,
-      },
-    },
-
     copy: {
-      css: {
-        src: [
-          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css',
-          'node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css',
-          'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css'
-        ],
-        dest: 'public/assets/v2/css/',
-        options: {
-          process: colourPatch
-        },
-        flatten: true,
-      },
-
       jsenv: {
         src: 'assets/js/opg/env-vars.template.js',
         dest: 'assets/js/opg/env-vars.js',
@@ -140,29 +86,6 @@ module.exports = function (grunt) {
         src: 'assets/js/opg/govuk-init.js',
         dest: 'public/assets/v2/js/govuk-init.js'
       },
-
-      cssdevfonts: {
-          expand: true,
-          cwd: 'node_modules/govuk-frontend/dist/govuk/assets/fonts/',
-          src: ['*'],
-          dest: 'public/assets/v2/fonts/'
-      },
-    },
-
-    // minifying the css
-    cssmin: {
-      options: {
-        sourceMap: false
-      },
-      target: {
-        files: [{
-          expand: true,
-          cwd: 'public/assets/v2/css',
-          src: ['*.css', '!*.min.css'],
-          dest: 'public/assets/v2/css',
-          ext: '.min.css'
-        }]
-      }
     },
 
     // join the JS files
@@ -262,17 +185,13 @@ module.exports = function (grunt) {
   });
 
   // load npm tasks
-  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-handlebars');
   grunt.loadNpmTasks('grunt-contrib-copy');
 
   // define tasks
   grunt.registerTask('build_js', ['copy:jsenv', 'handlebars', 'concat', 'uglify', 'copy:jsdevgovuk', 'copy:jsdevgovukinit']);
-  grunt.registerTask('build_css', ['sass', 'replace', 'copy:css', 'copy:cssdevfonts', 'cssmin']);
-  grunt.registerTask('build', ['build_js', 'build_css']);
+  grunt.registerTask('build', ['build_js']);
 };
