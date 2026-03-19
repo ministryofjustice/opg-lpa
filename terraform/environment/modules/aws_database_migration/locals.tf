@@ -2,10 +2,10 @@ locals {
 
   # network values taken from terraform/environment/modules/environment/outputs.t
   network = var.dms_network
-  aurora_migration_network_sg_ids = var.dms_network == null ? [] : toset(distinct([
-    local.network.security_group_ids.source,
-    local.network.security_group_ids.target,
-  ]))
+  aurora_migration_network_sg_map = var.dms_network == null ? {} : {
+    source = local.network.security_group_ids.source
+    target = local.network.security_group_ids.target
+  }
 
   common_tags = merge(
     {
@@ -34,17 +34,17 @@ locals {
 
   default_task_settings = jsonencode({
     TargetMetadata = {
-      TargetSchema             = ""
-      SupportLobs              = true
-      FullLobMode              = true
-      LobChunkSize             = 64
-      InlineLobMaxSize         = 32
-      LimitedSizeLobMode       = false
-      LoadMaxFileSize          = 0
-      ParallelLoadThreads      = 8
-      ParallelLoadBufferSize   = 50
-      BatchApplyEnabled        = true
-      TaskRecoveryTableEnabled = true
+      TargetSchema = ""
+      SupportLobs  = false
+      # FullLobMode              = true
+      # LobChunkSize             = 64
+      # InlineLobMaxSize         = 32
+      # LimitedSizeLobMode       = false
+      # LoadMaxFileSize          = 0
+      # ParallelLoadThreads      = 8
+      # ParallelLoadBufferSize   = 50
+      # BatchApplyEnabled        = true
+      # TaskRecoveryTableEnabled = true
     }
 
     FullLoadSettings = {
@@ -52,9 +52,9 @@ locals {
       CreatePkAfterFullLoad           = false
       StopTaskCachedChangesApplied    = false
       StopTaskCachedChangesNotApplied = false
-      MaxFullLoadSubTasks             = 8
-      ParallelLoadThreads             = 8
-      ParallelLoadBufferSize          = 50
+      MaxFullLoadSubTasks             = 1
+      # ParallelLoadThreads             = 8
+      # ParallelLoadBufferSize          = 50
     }
 
     Logging = {
@@ -62,29 +62,31 @@ locals {
       LogComponents = [
         { Id = "SOURCE_UNLOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
         { Id = "TARGET_LOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        { Id = "TASK_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" }
+        { Id = "TASK_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
+        { Id = "TABLES_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
+        { ID = "METADATA_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
       ]
     }
 
-    ControlTablesSettings = {
-      ControlSchema            = "dms_control"
-      HistoryTimeslotInMinutes = 5
-      HistoryTableEnabled      = true
-    }
+    # ControlTablesSettings = {
+    #   ControlSchema            = "dms_control"
+    #   HistoryTimeslotInMinutes = 5
+    #   HistoryTableEnabled      = true
+    # }
 
-    ChangeProcessingDdlHandlingPolicy = {
-      HandleSourceTableDropped   = true
-      HandleSourceTableTruncated = true
-      HandleSourceTableAltered   = true
-    }
+    # ChangeProcessingDdlHandlingPolicy = {
+    #   HandleSourceTableDropped   = true
+    #   HandleSourceTableTruncated = true
+    #   HandleSourceTableAltered   = true
+    # }
 
-    ChangeProcessingTuning = {
-      BatchApplyPreserveTransaction = true
-      BatchApplyTimeoutMin          = 1
-      BatchApplyMemoryLimit         = 500
-      BatchSplitSize                = 0
-      MinTransactionSize            = 1000
-      CommitTimeout                 = 1
-    }
+    # ChangeProcessingTuning = {
+    #   BatchApplyPreserveTransaction = true
+    #   BatchApplyTimeoutMin          = 1
+    #   BatchApplyMemoryLimit         = 500
+    #   BatchSplitSize                = 0
+    #   MinTransactionSize            = 1000
+    #   CommitTimeout                 = 1
+    # }
   })
 }
