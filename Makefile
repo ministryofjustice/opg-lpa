@@ -105,7 +105,8 @@ dc-up: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	XDEBUG_MODE=off docker compose up -d --remove-orphans
+	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app; \
+	docker compose up -d --remove-orphans
 
 .PHONY: dc-up-debug
 dc-up-debug: run-composers
@@ -115,6 +116,7 @@ dc-up-debug: run-composers
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
+	docker compose build front-app admin-app api-app pdf-app; \
 	docker compose up -d --remove-orphans
 
 .PHONY: dc-build
@@ -199,23 +201,23 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --no-deps front-app /app/vendor/bin/phpunit
+	@docker compose run --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
-	@docker compose run --no-deps admin-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
-	@docker compose run --no-deps api-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
-	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
 
 .PHONY: dc-shared-unit-tests
 dc-shared-unit-tests:
-	@docker compose run --no-deps pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+	@docker compose run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
