@@ -2,34 +2,6 @@ const process = require('process');
 
 const Handlebars = require('handlebars');
 
-// for global replace of incorrect colours (from obsolete
-// govuk design system) with correct colours (from latest
-// design system); this will not be required when we upgrade to the latest
-// design system as we will just use the colours as they are
-// without any patching
-const colourPatching = [
-  // focus-colour
-  {
-    'from': /ffbf47/g,
-    'to': 'ffdd00'
-  },
-  // button-colour
-  {
-    'from': /00823b/g,
-    'to': '00703c'
-  }
-];
-
-const colourPatch = function (content) {
-  for (let patch in colourPatching) {
-    let oldColour = patch.from;
-    let newColour = patch.to;
-    content = content.replace(oldColour, newColour);
-  }
-
-  return content;
-};
-
 // content is the handlebars template content for the env-vars JS file
 const injectEnvVars = function (content) {
   // load the template into Handlebars
