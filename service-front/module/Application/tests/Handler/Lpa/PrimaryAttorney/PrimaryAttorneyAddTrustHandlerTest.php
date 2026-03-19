@@ -18,6 +18,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
@@ -61,6 +62,16 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         );
     }
 
+    private function makeAddress(): array
+    {
+        return [
+            'address1' => '1 Test Street',
+            'address2' => '',
+            'address3' => '',
+            'postcode' => 'AB1 2CD',
+        ];
+    }
+
     private function createLpa(string $type = Document::LPA_TYPE_PF): Lpa
     {
         $lpa = new Lpa();
@@ -69,7 +80,14 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $lpa->document->type = $type;
         $lpa->document->primaryAttorneys = [];
         $lpa->document->replacementAttorneys = [];
+        $lpa->seed = null;
+        return $lpa;
+    }
 
+    private function createLpaWithSeed(): Lpa
+    {
+        $lpa = $this->createLpa();
+        $lpa->seed = '88888';
         return $lpa;
     }
 
@@ -77,6 +95,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         string $method = 'GET',
         array $postData = [],
         ?Lpa $lpa = null,
+        array $queryParams = [],
         bool $isXhr = false,
     ): ServerRequest {
         $lpa = $lpa ?? $this->createLpa();
@@ -89,7 +108,8 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/add-trust');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/add-trust')
+            ->withQueryParams($queryParams);
 
         if ($isXhr) {
             $request = $request->withHeader('X-Requested-With', 'XMLHttpRequest');
@@ -102,7 +122,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         return $request;
     }
 
-    public function testGetRendersTrustForm(): void
+    public function testGetRendersFormForPfLpa(): void
     {
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->method('render')->willReturn('rendered-html');
@@ -113,9 +133,46 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testGetRedirectsToAddWhenTrustNotAllowedForHwLpa(): void
+    public function testGetRedirectsToAddWhenHwLpa(): void
     {
         $lpa = $this->createLpa(Document::LPA_TYPE_HW);
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney/add');
+
+        $response = $this->handler->handle($this->createRequest('GET', [], $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testRedirectsToAddWhenTrustAlreadyExistsInPrimary(): void
+    {
+        $lpa = $this->createLpa();
+        $lpa->document->primaryAttorneys = [
+            new TrustCorporation([
+                'id' => 1,
+                'name' => 'Existing Trust',
+                'number' => '12345678',
+                'address' => $this->makeAddress(),
+            ]),
+        ];
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney/add');
+
+        $response = $this->handler->handle($this->createRequest('GET', [], $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testRedirectsToAddWhenTrustExistsInReplacement(): void
+    {
+        $lpa = $this->createLpa();
+        $lpa->document->replacementAttorneys = [
+            new TrustCorporation([
+                'id' => 2,
+                'name' => 'Replacement Trust',
+                'number' => '87654321',
+                'address' => $this->makeAddress(),
+            ]),
+        ];
 
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney/add');
 
@@ -145,11 +202,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
             'number' => '12345678',
         ]);
 
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('addPrimaryAttorney')
-            ->willReturn(true);
-
+        $this->lpaApplicationService->expects($this->once())->method('addPrimaryAttorney')->willReturn(true);
         $this->replacementAttorneyCleanup->expects($this->once())->method('cleanUp');
         $this->applicantService->expects($this->once())->method('cleanUp');
 
@@ -174,7 +227,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name' => 'Test Trust Corp'], null, true)
+            $this->createRequest('POST', ['name' => 'Test Trust Corp'], null, [], true)
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -198,7 +251,181 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         );
     }
 
-    public function testTemplateParamsContainSwitchRoute(): void
+    public function testGetBindsSeedReuseDetailsFromQueryParam(): void
+    {
+        $lpa = $this->createLpaWithSeed();
+
+        $this->sessionUtility->method('getFromMvc')->willReturn([
+            'primaryAttorneys' => [[
+                'name' => 'Trust Corp From Seed',
+                'type' => 'trust',
+                'number' => '99999999',
+                'address' => $this->makeAddress(),
+            ]],
+        ]);
+
+        $this->form->expects($this->once())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testGetFetchesSeedDetailsFromApiWhenNotInSession(): void
+    {
+        $lpa = $this->createLpaWithSeed();
+
+        $this->sessionUtility->method('getFromMvc')->willReturn(null);
+
+        $this->lpaApplicationService
+            ->expects($this->once())
+            ->method('getSeedDetails')
+            ->with($lpa->id)
+            ->willReturn([
+                'primaryAttorneys' => [[
+                    'name' => 'API Trust Corp',
+                    'type' => 'trust',
+                    'number' => '11111111',
+                    'address' => $this->makeAddress(),
+                ]],
+            ]);
+
+        $this->sessionUtility->expects($this->once())->method('setInMvc');
+        $this->form->expects($this->once())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testGetDoesNotBindWhenReuseIndexNotFound(): void
+    {
+        $lpa = $this->createLpaWithSeed();
+
+        $this->sessionUtility->method('getFromMvc')->willReturn([]);
+
+        $this->form->expects($this->never())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testGetWithNoSeedReturnsEmptyReuseDetails(): void
+    {
+        $lpa = $this->createLpa();
+
+        $this->form->expects($this->never())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testBackButtonUrlShownWhenCallingUrlInQuery(): void
+    {
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                $this->anything(),
+                $this->callback(function (array $params): bool {
+                    $this->assertArrayHasKey('backButtonUrl', $params);
+                    return true;
+                })
+            )
+            ->willReturn('rendered-html');
+
+        $this->handler->handle(
+            $this->createRequest('GET', [], null, ['callingUrl' => '/lpa/91333263035/primary-attorney/add'])
+        );
+    }
+
+    public function testNoBackButtonWhenNoCallingUrl(): void
+    {
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                $this->anything(),
+                $this->callback(function (array $params): bool {
+                    $this->assertArrayNotHasKey('backButtonUrl', $params);
+                    return true;
+                })
+            )
+            ->willReturn('rendered-html');
+
+        $this->handler->handle($this->createRequest());
+    }
+
+    public function testSeedReplacementAttorneyTrustIncluded(): void
+    {
+        $lpa = $this->createLpaWithSeed();
+
+        $this->sessionUtility->method('getFromMvc')->willReturn([
+            'replacementAttorneys' => [[
+                'name' => 'Replacement Trust Corp',
+                'type' => 'trust',
+                'number' => '77777777',
+                'address' => $this->makeAddress(),
+            ]],
+        ]);
+
+        $this->form->expects($this->once())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testSeedHumanAttorneysExcludedFromTrustReuse(): void
+    {
+        $lpa = $this->createLpaWithSeed();
+
+        $this->sessionUtility->method('getFromMvc')->willReturn([
+            'primaryAttorneys' => [[
+                'name' => ['first' => 'Human', 'last' => 'Attorney'],
+                'type' => 'human',
+                'address' => $this->makeAddress(),
+            ]],
+        ]);
+
+        $this->form->expects($this->never())->method('bind');
+        $this->urlHelper->method('generate')->willReturn('/some-url');
+        $this->renderer->method('render')->willReturn('rendered-html');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], $lpa, ['reuseDetailsIndex' => 't'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testTemplateParamsContainSwitchRouteAndCancelUrl(): void
     {
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
