@@ -34,3 +34,9 @@ runs:
           echo "::add-mask::$masked_secret"
           echo "masked_secret=$masked_secret" >> "$GITHUB_ENV"
           echo "masked_secret=$masked_secret" >> "$GITHUB_OUTPUT"
+
+      - name: set secret as masked env var and output
+        id: print_secret
+        shell: bash
+        run: |
+          echo "${{ steps.set_secret.outputs.masked_secret}}"
