@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
 
@@ -27,7 +27,7 @@ echo "Patching colours in CSS files..."
 
 # Replace image-url helper (compass dependency)
 for file in public/assets/v2/css/*.css; do
-  if [[ -f "$file" ]]; then
+  if [ -f "$file" ]; then
     # Replace image-url with url
     sed -i.bak 's/image-url/url/g' "$file" && rm "${file}.bak" || true
 
@@ -43,10 +43,15 @@ done
 
 echo "Minifying CSS files..."
 for file in public/assets/v2/css/*.css; do
-  if [[ -f "$file" ]] && [[ ! "$file" =~ \.min\.css$ ]]; then
-    base="${file%.css}"
-    # Use esbuild for minification (it handles CSS too)
-    npx esbuild "$file" --minify --outfile="${base}.min.css"
+  if [ -f "$file" ]; then
+    case "$file" in
+      *.min.css) ;;
+      *)
+        base="${file%.css}"
+        # Use esbuild for minification (it handles CSS too)
+        npx esbuild "$file" --minify --outfile="${base}.min.css"
+        ;;
+    esac
   fi
 done
 
