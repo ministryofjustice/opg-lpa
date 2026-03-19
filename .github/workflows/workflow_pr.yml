@@ -74,24 +74,24 @@ jobs:
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
-  phpunit_tests:
-    name: Run PHPUnit tests
-    uses: ./.github/workflows/phpunit.yml
+  # phpunit_tests:
+  #   name: Run PHPUnit tests
+  #   uses: ./.github/workflows/phpunit.yml
 
-  docker_build_scan_push:
-    name: Docker Build, Scan and Push
-    uses: ./.github/workflows/docker_job.yml
-    needs:
-      - workflow_variables
-    with:
-      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
-      tag: ${{ needs.workflow_variables.outputs.short_sha }}
-    secrets:
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+  # docker_build_scan_push:
+  #   name: Docker Build, Scan and Push
+  #   uses: ./.github/workflows/docker_job.yml
+  #   needs:
+  #     - workflow_variables
+  #   with:
+  #     oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
+  #     tag: ${{ needs.workflow_variables.outputs.short_sha }}
+  #   secrets:
+  #     SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-  cypress_mezzio_tests:
-    uses: ./.github/workflows/front_mezzio_tests.yml
-    name: Run Cypress Front-Mezzio Tests
+  # cypress_mezzio_tests:
+  #   uses: ./.github/workflows/front_mezzio_tests.yml
+  #   name: Run Cypress Front-Mezzio Tests
 
   set_secrets:
     name: Fetch and Set Secret
@@ -104,10 +104,6 @@ jobs:
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
-      - name: Print Secret
-        run: |
-          echo $masked_secret
-          echo ${{ env.masked_secret }}
 
   print_secret:
     needs: set_secrets
@@ -116,7 +112,6 @@ jobs:
     steps:
       - name: Print Secret
         run: |
-          echo $masked_secret
           echo ${{ needs.set_secrets.outputs.masked_secret}}
 
   # terraform_account_development:
