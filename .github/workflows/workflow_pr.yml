@@ -105,6 +105,10 @@ jobs:
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
+      - name: Output secret
+        id: output
+        run: |
+          echo "masked_secret=${{ steps.secret_1.outputs.masked_secret }}" >> $GITHUB_OUTPUT
 
   print_secret:
     needs: set_secrets
@@ -113,7 +117,7 @@ jobs:
     steps:
       - name: Print Secret
         run: |
-          echo "${{ needs.set_secrets.secret_1.outputs.masked_secret}}"
+          echo "${{ needs.set_secrets.outputs.masked_secret}}"
 
   # terraform_account_development:
   #   name: TF Development - Account
