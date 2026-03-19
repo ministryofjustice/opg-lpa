@@ -107,15 +107,17 @@ jobs:
       - name: Print Secret
         run: |
           echo $masked_secret
+          echo ${{ env.masked_secret }}
 
   print_secret:
+    needs: set_secrets
     name: Print Masked Secret in Env Var
     runs-on: ubuntu-latest
     steps:
       - name: Print Secret
         run: |
           echo $masked_secret
-          echo ${{ env.masked_secret }}
+          echo ${{ needs.set_secrets.outputs.masked_secret}}
 
   # terraform_account_development:
   #   name: TF Development - Account
