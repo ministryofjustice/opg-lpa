@@ -84,7 +84,25 @@ variable "task" {
 }
 
 variable "tags" {
-  description = "Tags applied to DMS resources (merged with module defaults)."
+  description = "Tags applied to DMS resources"
   type        = map(string)
   default     = {}
 }
+
+variable "log_retention_days" {
+  description = "Retention period in days for the DMS CloudWatch log group."
+  type        = number
+  default     = 2
+}
+
+variable "cloudwatch_kms_key_arn" {
+  description = "ARN of a KMS key to encrypt the DMS CloudWatch log group. The key policy must allow the logs.amazonaws.com service principal."
+  type        = string
+  default     = null
+}
+
+# variable "test_connections" {
+#   description = "When true, creates aws_dms_endpoint_connection resources to verify source and target connectivity before the migration task runs."
+#   type        = bool
+#   default     = true
+# }

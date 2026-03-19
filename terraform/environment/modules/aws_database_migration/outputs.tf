@@ -37,3 +37,8 @@ output "dms_cloudwatch_role_arn" {
   description = "ARN of the DMS CloudWatch logs role if created."
   value       = var.create_iam_roles ? aws_iam_role.dms_cloudwatch_role[0].arn : null
 }
+
+output "dms_task_log_group_name" {
+  description = "Name of the CloudWatch log group for DMS task logs."
+  value       = aws_cloudwatch_log_group.dms_tasks.name
+}

@@ -1,4 +1,3 @@
-# dms values, including network, source db and target db definitions
 
 locals {
   # this flag enables DMS resources. Currently prevented from leaving development, and controlled in tfvars.json.
@@ -55,34 +54,6 @@ locals {
       "rule-action": "include"
     }
   ]
-}
-EOF
-    settings       = <<EOF
-{
-  "TargetMetadata": {
-    "SupportLobs": true,
-    "FullLobMode": false,
-    "LobChunkSize": 0,
-    "LimitedSizeLobMode": true,
-    "LobMaxSize": 32,
-    "InlineLobMaxSize": 0,
-    "LoadMaxFileSize": 0,
-    "ParallelLoadThreads": 0,
-    "ParallelLoadBufferSize": 0,
-    "BatchApplyEnabled": true
-  },
-  "FullLoadSettings": {
-    "TargetTablePrepMode": "DO_NOTHING",
-    "CreatePkAfterFullLoad": false,
-    "StopTaskCachedChangesApplied": false,
-    "StopTaskCachedChangesNotApplied": false,
-    "MaxFullLoadSubTasks": 8,
-    "TransactionConsistencyTimeout": 600,
-    "CommitRate": 10000
-  },
-  "Logging": {
-    "EnableLogging": true
-  }
 }
 EOF
   } : null
