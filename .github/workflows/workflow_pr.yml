@@ -93,6 +93,24 @@ jobs:
     uses: ./.github/workflows/front_mezzio_tests.yml
     name: Run Cypress Front-Mezzio Tests
 
+  set_secrets:
+    name: Output workflow variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set a test secret
+        uses: ./.github/actions/set_secrets/action.yml
+        with:
+          oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
+          secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
+
+  print_secret:
+    name: Output workflow variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Secret
+        run: |
+          echo ${{ env.masked_secret }}
+
   terraform_account_development:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@775636910c06dbeb813ab4d83b55142d1bb94d28 #v3.17.0
