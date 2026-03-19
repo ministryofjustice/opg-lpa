@@ -89,10 +89,11 @@ variable "tags" {
   default     = {}
 }
 
+# set to. 3 for dev/testing - Change to 7 or 14 for production?
 variable "log_retention_days" {
   description = "Retention period in days for the DMS CloudWatch log group."
   type        = number
-  default     = 2
+  default     = 3
 }
 
 variable "cloudwatch_kms_key_arn" {

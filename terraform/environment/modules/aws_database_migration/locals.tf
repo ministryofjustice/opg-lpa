@@ -34,22 +34,19 @@ locals {
 
   default_task_settings = jsonencode({
     TargetMetadata = {
-      TargetSchema           = ""
-      SupportLobs            = true
-      FullLobMode            = false
-      LimitedSizeLobMode     = true
-      LobMaxSize             = 32
-      BatchApplyEnabled      = true
-      ParallelLoadThreads    = 0
-      ParallelLoadBufferSize = 0
+      TargetSchema       = ""
+      SupportLobs        = true
+      FullLobMode        = false
+      LimitedSizeLobMode = true
+      LobMaxSize         = 32
+      BatchApplyEnabled  = false
     }
 
     FullLoadSettings = {
       TargetTablePrepMode             = "TRUNCATE_BEFORE_LOAD"
-      CreatePkAfterFullLoad           = false
       StopTaskCachedChangesApplied    = false
       StopTaskCachedChangesNotApplied = false
-      MaxFullLoadSubTasks             = 1
+      MaxFullLoadSubTasks             = 4
       TransactionConsistencyTimeout   = 600
       CommitRate                      = 10000
     }
@@ -58,15 +55,10 @@ locals {
       EnableLogging         = true
       CloudWatchLogGroupArn = aws_cloudwatch_log_group.dms_tasks.arn
       LogComponents = [
-        # Full-load components
         { Id = "SOURCE_UNLOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
         { Id = "TARGET_LOAD", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        { Id = "TABLES_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        { Id = "METADATA_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        # CDC components
         { Id = "SOURCE_CAPTURE", Severity = "LOGGER_SEVERITY_DEFAULT" },
         { Id = "TARGET_APPLY", Severity = "LOGGER_SEVERITY_DEFAULT" },
-        # General
         { Id = "TASK_MANAGER", Severity = "LOGGER_SEVERITY_DEFAULT" },
       ]
     }
@@ -77,13 +69,16 @@ locals {
       HandleSourceTableAltered   = true
     }
 
-    ChangeProcessingTuning = {
-      BatchApplyPreserveTransaction = true
-      BatchApplyTimeoutMin          = 1
-      BatchApplyMemoryLimit         = 500
-      BatchSplitSize                = 0
-      MinTransactionSize            = 1000
-      CommitTimeout                 = 1
+    ErrorBehavior = {
+      FailOnNoTablesCaptured               = true
+      FailOnTransactionConsistencyBreached = true
+    }
+
+    ValidationSettings = {
+      EnableValidation = true
+      ValidationMode   = "ROW_LEVEL"
+      ThreadCount      = 5
+      ValidationOnly   = false
     }
   })
 }
