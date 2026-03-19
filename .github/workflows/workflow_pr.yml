@@ -100,6 +100,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Set a test secret
+        id: secret_1
         uses: ./.github/actions/set_secrets
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
@@ -112,7 +113,7 @@ jobs:
     steps:
       - name: Print Secret
         run: |
-          echo "${{ needs.set_secrets.outputs.masked_secret}}"
+          echo "${{ needs.set_secrets.secret_1.outputs.masked_secret}}"
 
   # terraform_account_development:
   #   name: TF Development - Account
