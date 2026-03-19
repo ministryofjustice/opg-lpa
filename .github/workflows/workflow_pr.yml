@@ -94,7 +94,7 @@ jobs:
     name: Run Cypress Front-Mezzio Tests
 
   set_secrets:
-    name: Output workflow variables
+    name: Fetch and Set Secret
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -106,7 +106,7 @@ jobs:
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
 
   print_secret:
-    name: Output workflow variables
+    name: Print Masked Secret in Env Var
     runs-on: ubuntu-latest
     steps:
       - name: Print Secret
