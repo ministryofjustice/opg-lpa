@@ -104,6 +104,9 @@ jobs:
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
+      - name: Print Secret
+        run: |
+          echo $masked_secret
 
   print_secret:
     name: Print Masked Secret in Env Var
@@ -111,6 +114,7 @@ jobs:
     steps:
       - name: Print Secret
         run: |
+          echo $masked_secret
           echo ${{ env.masked_secret }}
 
   # terraform_account_development:
