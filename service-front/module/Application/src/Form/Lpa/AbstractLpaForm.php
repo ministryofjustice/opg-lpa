@@ -199,12 +199,12 @@ abstract class AbstractLpaForm extends AbstractCsrfForm
             $names = explode('-', $key);
             $m = &$modelData;
 
-            for ($i = 0; $i < count($names); $i++) {
-                if (!array_key_exists($names[$i], $m)) {
-                    $m[$names[$i]] = [];
+            foreach ($names as $name) {
+                if (!array_key_exists($name, $m)) {
+                    $m[$name] = [];
                 }
 
-                $m = &$m[$names[$i]];
+                $m = &$m[$name];
             }
 
             $m = $value;
