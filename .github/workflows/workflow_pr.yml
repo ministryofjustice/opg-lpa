@@ -97,13 +97,21 @@ jobs:
     name: Fetch and Set Secret
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - name: Set a test secret
-        uses: ./.github/actions/set_secrets
+      - name: configure AWS credentials for getting pagerduty token
+        uses: aws-actions/configure-aws-credentials@61815dcd50bd041e203e49132bacad1fd04d2708 # v5.1.1
         with:
-          oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
-          secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
+          role-to-assume: ${{ vars.oidc_set_secrets_role }}
+          aws-region: eu-west-1
+          role-duration-seconds: 1800
+          role-session-name: OPGLPAGetSecret
+
+      - name: set pagerduty token
+        shell: bash
+        run: |
+          export masked_secret=$(aws secretsmanager get-secret-value --secret-id \
+            ${{ vars.secrets_manager_secret_name }} --region eu-west-1 | jq -r '.SecretString' 2>/dev/null)
+          echo "::add-mask::$masked_secret"
+          echo masked_secret=$masked_secret >> $GITHUB_ENV
 
   print_secret:
     name: Print Masked Secret in Env Var
