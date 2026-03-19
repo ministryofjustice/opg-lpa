@@ -11,13 +11,26 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
+      oidc_docker_role:
+        description: "OIDC role to assume for ecr permissions"
+        required: true
+        type: string
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS:
-        required: true
-      AWS_SECRET_ACCESS_KEY_ACTIONS:
-        required: true
       SLACK_BOT_TOKEN:
         required: true
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
 
 jobs:
   docker_build_scan_push:
@@ -90,13 +103,11 @@ jobs:
       - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::311462405659:role/opg-lpa-ci
-          role-duration-seconds: 1800
+          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
       - name: Apply override tag
