@@ -126,7 +126,6 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
         }
 
         // Add reuse details back button
-        $queryParams = $queryParams ?? $request->getQueryParams();
         if (isset($queryParams['callingUrl'])) {
             $templateParams['backButtonUrl'] = str_replace(
                 'add-trust',
@@ -135,7 +134,7 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
             );
         }
 
-        $templateParams = array_merge($templateParams ?? [], [
+        $templateParams = array_merge($templateParams, [
             'isPopup' => $isPopup,
             'form' => $form,
             'switchAttorneyTypeRoute' => 'lpa/primary-attorney/add',

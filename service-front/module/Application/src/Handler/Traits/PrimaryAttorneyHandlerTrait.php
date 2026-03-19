@@ -13,8 +13,14 @@ use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Lpa;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * @psalm-require-implements \Psr\Http\Server\RequestHandlerInterface
+ *
+ * @property LpaApplicationService $lpaApplicationService
+ */
 trait PrimaryAttorneyHandlerTrait
 {
     private function getActorsList(Lpa $lpa, ?int $excludeIdx = null): array
@@ -157,7 +163,7 @@ trait PrimaryAttorneyHandlerTrait
             return;
         }
 
-        $isAttorney = ($actor instanceof AbstractAttorney && $correspondent->who === Correspondence::WHO_ATTORNEY);
+        $isAttorney = ($correspondent->who === Correspondence::WHO_ATTORNEY);
 
         if (!$isAttorney) {
             return;
