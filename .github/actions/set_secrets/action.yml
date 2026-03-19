@@ -8,6 +8,9 @@ inputs:
   secrets_manager_secret_name:
     description: "Name of the aws secrets manager secret"
     required: true
+outputs:
+  masked_secret: ${{ steps.set_secret.outputs.masked_secret }}
+
 
 runs:
   using: "composite"
@@ -20,10 +23,12 @@ runs:
           role-duration-seconds: 1800
           role-session-name: OPGLPAGetSecret
 
-      - name: set pagerduty token
+      - name: set secret as masked env var and output
+        id: set_secret
         shell: bash
         run: |
           export masked_secret=$(aws secretsmanager get-secret-value --secret-id \
             ${{ inputs.secrets_manager_secret_name }} --region eu-west-1 | jq -r '.SecretString' 2>/dev/null)
           echo "::add-mask::$masked_secret"
-          echo masked_secret=$masked_secret >> $GITHUB_ENV
+          echo "masked_secret=$masked_secret" >> "$GITHUB_ENV"
+          echo "masked_secret=$masked_secret" >> "$GITHUB_OUTPUT"
