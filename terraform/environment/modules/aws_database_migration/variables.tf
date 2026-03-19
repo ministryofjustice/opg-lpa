@@ -71,14 +71,16 @@ variable "replication_instance" {
 }
 
 variable "task" {
-  description = "DMS replication task configuration."
+  description = "DMS replication task configuration"
   type = object({
-    id                 = optional(string)
-    migration_type     = optional(string, "full-load-and-cdc")
-    table_mappings     = optional(string)
-    settings           = optional(string)
-    cdc_start_position = optional(string)
-    cdc_start_time     = optional(string)
+    id                  = optional(string, null)
+    migration_type      = optional(string, "full-load-and-cdc")
+    table_mappings      = optional(string, null)
+    table_mappings_file = optional(string, "table-mappings.json")
+    settings            = optional(string, null)
+    settings_file       = optional(string, "")
+    cdc_start_position  = optional(string, null)
+    cdc_start_time      = optional(string, null)
   })
   default = {}
 }
@@ -101,9 +103,3 @@ variable "cloudwatch_kms_key_arn" {
   type        = string
   default     = null
 }
-
-# variable "test_connections" {
-#   description = "When true, creates aws_dms_endpoint_connection resources to verify source and target connectivity before the migration task runs."
-#   type        = bool
-#   default     = true
-# }
