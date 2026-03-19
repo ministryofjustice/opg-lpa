@@ -86,13 +86,10 @@ module "cross_region_backup" {
   backup_vault_lock_min_retention_days = local.account.database.daily_backup_deletion
   backup_vault_lock_max_retention_days = local.account.database.monthly_backup_deletion
 }
-output "admin_domain" {
-  value = module.environment_dns.admin_domain
-}
 
-output "front_domain" {
-  value = module.environment_dns.front_domain
-}
+module "aws_dms_migration" {
+  count  = local.database_migration_enabled ? 1 : 0
+  source = "./modules/aws_database_migration"
 
   providers = {
     aws           = aws.eu_west_1
