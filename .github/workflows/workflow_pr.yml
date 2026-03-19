@@ -97,8 +97,8 @@ jobs:
     name: Fetch and Set Secret
     runs-on: ubuntu-latest
     outputs:
-      secret_1: ${{ steps.secret_1.outputs.masked_secret_1 }}
-      secret_2: ${{ steps.secret_1.outputs.masked_secret_2 }}
+      secret_1: ${{ steps.secret_1.outputs.masked_secret }}
+      secret_2: ${{ steps.secret_1.outputs.masked_secret }}
     steps:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -114,11 +114,11 @@ jobs:
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
-      - name: Output secret
-        id: output
-        run: |
-          echo "masked_secret_1=${{ steps.secret_1.outputs.masked_secret }}" >> $GITHUB_OUTPUT
-          echo "masked_secret_2=${{ steps.secret_2.outputs.masked_secret }}" >> $GITHUB_OUTPUT
+      # - name: Output secret
+      #   id: output
+      #   run: |
+      #     echo "masked_secret_1=${{ steps.secret_1.outputs.masked_secret }}" >> $GITHUB_OUTPUT
+      #     echo "masked_secret_2=${{ steps.secret_2.outputs.masked_secret }}" >> $GITHUB_OUTPUT
 
   print_secret:
     needs: set_secrets
