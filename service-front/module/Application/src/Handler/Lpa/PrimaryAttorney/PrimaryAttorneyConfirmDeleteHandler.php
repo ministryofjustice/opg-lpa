@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Application\Handler\Lpa\PrimaryAttorney;
 
 use Application\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Handler\Traits\PrimaryAttorneyHandlerTrait;
 use Application\Helper\MvcUrlHelper;
 use Application\Middleware\RequestAttribute;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -19,7 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class PrimaryAttorneyConfirmDeleteHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-    use PrimaryAttorneyHandlerTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -32,7 +30,7 @@ class PrimaryAttorneyConfirmDeleteHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        $isPopup = $this->isXmlHttpRequest($request);
+        $isPopup = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
 
         // Get the attorney index from the route params
         $routeResult = $request->getAttribute(RouteResult::class);

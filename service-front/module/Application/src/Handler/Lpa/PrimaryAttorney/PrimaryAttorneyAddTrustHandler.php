@@ -55,7 +55,6 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
 
         $isPopup = $this->isXmlHttpRequest($request);
 
-        // Redirect to human add attorney if trusts are not allowed
         if (!$this->allowTrust($lpa)) {
             $route = 'lpa/primary-attorney/add';
             return new RedirectResponse(
@@ -74,7 +73,6 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
             $this->urlHelper->generate('lpa/primary-attorney/add-trust', ['lpa-id' => $lpa->id])
         );
 
-        // Handle reuse details redirected back from ReuseDetailsController (via query params)
         $queryParams = $request->getQueryParams();
         $reuseDetailsIndexFromQuery = $queryParams['reuseDetailsIndex'] ?? null;
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
@@ -125,16 +123,7 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
             }
         }
 
-        // Add reuse details back button
-        if (isset($queryParams['callingUrl'])) {
-            $templateParams['backButtonUrl'] = str_replace(
-                'add-trust',
-                'add',
-                $this->urlHelper->generate('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])
-            );
-        }
-
-        $templateParams = array_merge($templateParams, [
+        $templateParams = [
             'isPopup' => $isPopup,
             'form' => $form,
             'switchAttorneyTypeRoute' => 'lpa/primary-attorney/add',
@@ -142,7 +131,15 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
                 'lpa/primary-attorney',
                 ['lpa-id' => $lpa->id]
             ),
-        ]);
+        ];
+
+        if (isset($queryParams['callingUrl'])) {
+            $templateParams['backButtonUrl'] = str_replace(
+                'add-trust',
+                'add',
+                $this->urlHelper->generate('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])
+            );
+        }
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/primary-attorney/trust-form.twig',
@@ -152,9 +149,6 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
         return new HtmlResponse($html);
     }
 
-    /**
-     * Fetch seed LPA reuse details from session/API.
-     */
     private function getSeedReuseDetails(Lpa $lpa): array
     {
         $seedId = (string) $lpa->seed;
