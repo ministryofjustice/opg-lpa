@@ -25,21 +25,3 @@ resource "aws_dms_replication_instance" "aurora_migration" {
     aws_iam_role_policy_attachment.dms_cloudwatch_role,
   ]
 }
-
-resource "aws_dms_replication_task" "aurora_migration" {
-  replication_task_id       = local.replication_task_id
-  migration_type            = local.replication_migration_type
-  replication_instance_arn  = aws_dms_replication_instance.aurora_migration.replication_instance_arn
-  source_endpoint_arn       = aws_dms_endpoint.source.endpoint_arn
-  target_endpoint_arn       = aws_dms_endpoint.target.endpoint_arn
-  table_mappings            = local.replication_table_mappings
-  replication_task_settings = local.replication_task_settings
-  cdc_start_position        = try(var.task.cdc_start_position, null)
-  cdc_start_time            = try(var.task.cdc_start_time, null)
-  tags = merge(
-    local.common_tags,
-    {
-      Resource_Type = "Aurora DMS Replication Task"
-    }
-  )
-}

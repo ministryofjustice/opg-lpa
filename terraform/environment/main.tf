@@ -87,7 +87,7 @@ module "cross_region_backup" {
   backup_vault_lock_max_retention_days = local.account.database.monthly_backup_deletion
 }
 
-module "aws_dms_migration" {
+module "aws_database_migration" {
   count  = local.database_migration_enabled ? 1 : 0
   source = "./modules/aws_database_migration"
 
@@ -98,9 +98,9 @@ module "aws_dms_migration" {
   account_name         = local.account_name
   environment_name     = local.environment_name
   create_iam_roles     = true
-  dms_network          = local.dms_network
-  source_config        = local.dms_source
-  target_config        = local.dms_target
-  replication_instance = local.dms_replication_instance
-  task                 = local.dms_task
+  dms_network          = local.dms_config.network
+  source_config        = local.dms_config.source
+  target_config        = local.dms_config.target
+  replication_instance = local.dms_config.replication_instance
+  task                 = local.dms_config.task
 }
