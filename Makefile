@@ -201,7 +201,7 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
