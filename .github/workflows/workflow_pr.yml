@@ -100,7 +100,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Set a test secret
-        uses: ./.github/actions/set_secrets/action.yml
+        uses: .github/actions/set_secrets/action.yml
         with:
           oidc_set_secrets_role: ${{ vars.OIDC_SET_SECRETS_ROLE }}
           secrets_manager_secret_name: ${{ vars.TEST_SECRET_NAME }}
