@@ -8,6 +8,18 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandlerFactory;
+use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\PrimaryAttorneyHandlerFactory;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
+use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Service\DateCheckViewModelHelper;
 use Application\Service\Factory\DateCheckViewModelHelperFactory;
@@ -36,6 +48,12 @@ return [
         'factories' => [
             ContinuationSheets::class => InvokableFactory::class,
             DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
+            PrimaryAttorneyHandler::class => PrimaryAttorneyHandlerFactory::class,
+            PrimaryAttorneyAddHandler::class => PrimaryAttorneyAddHandlerFactory::class,
+            PrimaryAttorneyEditHandler::class => PrimaryAttorneyEditHandlerFactory::class,
+            PrimaryAttorneyConfirmDeleteHandler::class => PrimaryAttorneyConfirmDeleteHandlerFactory::class,
+            PrimaryAttorneyDeleteHandler::class => PrimaryAttorneyDeleteHandlerFactory::class,
+            PrimaryAttorneyAddTrustHandler::class => PrimaryAttorneyAddTrustHandlerFactory::class,
         ],
         'aliases' => [
             'AdminService'                  => 'Application\Model\Service\Admin\Admin',

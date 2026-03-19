@@ -27,8 +27,15 @@ use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
+use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
+use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
 use Application\Handler\ChangeEmailAddressHandler;
@@ -1034,8 +1041,15 @@ return [
                         'options' => [
                             'route'    => '/primary-attorney',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PrimaryAttorneyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    PrimaryAttorneyHandler::class,
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1045,7 +1059,15 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            PrimaryAttorneyAddHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1057,7 +1079,15 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            PrimaryAttorneyEditHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1069,7 +1099,15 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            PrimaryAttorneyConfirmDeleteHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1081,7 +1119,15 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            PrimaryAttorneyDeleteHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1090,7 +1136,15 @@ return [
                                 'options' => [
                                     'route'    => '/add-trust',
                                     'defaults' => [
-                                        'action' => 'add-trust',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => new PipeSpec(
+                                            RouteMatchMiddleware::class,
+                                            AuthenticationListener::class,
+                                            UserDetailsListener::class,
+                                            TermsAndConditionsListener::class,
+                                            LpaLoaderMiddleware::class,
+                                            PrimaryAttorneyAddTrustHandler::class,
+                                        ),
                                     ],
                                 ],
                             ],
