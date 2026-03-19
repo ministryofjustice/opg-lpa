@@ -9,7 +9,9 @@ inputs:
     description: "Name of the aws secrets manager secret"
     required: true
 outputs:
-  masked_secret: ${{ steps.set_secret.outputs.masked_secret }}
+  masked_secret:
+    description: "the masked secret from this job"
+    value: ${{ steps.set_secret.outputs.masked_secret }}
 
 
 runs:
