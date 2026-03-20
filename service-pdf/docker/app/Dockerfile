@@ -2,7 +2,7 @@ FROM composer:2.9.5@sha256:f0809732b2188154b3faa8e44ab900595acb0b09cd0aa6c34e798
 
 FROM pdftk/pdftk:3.3.3@sha256:f3cd999626e0f936cd3490c8e85d4bab15044dac25f9b8ccd821e0227d969cea AS pdftk
 
-FROM php:8.4.13-fpm-alpine3.22@sha256:aee4a044beefc7d88d0419aee8825491e02391f37707b8fc0d8edba1a29c1165
+FROM php:8.4.19-fpm-alpine3.22@sha256:d4d819a881296479b471c2f61a99397c03bffe1ee28ef8310e50fc4e1d647457
 
 RUN adduser -D -g '' appuser && \
   chown -R appuser:appuser /tmp
