@@ -246,19 +246,13 @@ class CorrespondentController extends AbstractLpaActorController
         if ($request->isPost()) {
             // If this is reusing actor details then check to see if we
             // can just process the data without displaying it to the user
-            if ($this->reuseActorDetails($form)) {
-                // If the form is not editable then just validate and process it now
-                if (!$form->isEditable()) {
-                    // If it isn't then validate the form to set up the data,
-                    // extract it and process the correspondent
-                    $form->isValid();
+            $reusingActorDetails = $this->reuseActorDetails($form);
 
-                    // Extract the model data from the form and process it
-                    $correspondentData = $form->getModelDataFromValidatedForm();
-
-                    return $this->processCorrespondentData($correspondentData);
-                }
-            } else {
+            if ($reusingActorDetails && !$form->isEditable()) {
+                $form->isValid();
+                $correspondentData = $form->getModelDataFromValidatedForm() ?? [];
+                return $this->processCorrespondentData($correspondentData);
+            } elseif (!$reusingActorDetails) {
                 // This is a regular post from the form so just validate and save the data
                 $form->setData($request->getPost());
 
@@ -269,6 +263,14 @@ class CorrespondentController extends AbstractLpaActorController
 
                     return $this->processCorrespondentData($correspondentData);
                 }
+            }
+        } elseif ($this->params()->fromQuery('reuseDetailsIndex') !== null) {
+            // Returning from the reuse-details selection screen via GET redirect —
+            // bind selected actor data to the form (replaces the old forward-dispatch POST path)
+            if ($this->reuseActorDetails($form) && !$form->isEditable()) {
+                $form->isValid();
+                $correspondentData = $form->getModelDataFromValidatedForm() ?? [];
+                return $this->processCorrespondentData($correspondentData);
             }
         } elseif ($editingExistingCorrespondent) {
             // Find the existing correspondent data and bind it to the form

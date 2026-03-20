@@ -56,25 +56,37 @@ class DonorAddHandler implements RequestHandlerInterface
         // On GET requests only, check whether reuse details are available
         $displayReuseSessionUserLink = false;
         if (strtoupper($request->getMethod()) !== RequestMethodInterface::METHOD_POST) {
-            $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
-            $reuseCount = count($reuseDetails);
+            $queryParams = $request->getQueryParams();
+            $reuseDetailsIndex = $queryParams['reuseDetailsIndex'] ?? null;
 
-            if ($reuseCount === 1) {
-                // Only the session user is available — show the "Use my details" link
-                $displayReuseSessionUserLink = true;
-            } elseif ($reuseCount > 1) {
-                // Multiple options — redirect to the reuse-details selection screen
-                $reuseDetailsUrl = $this->urlHelper->generate(
-                    'lpa/reuse-details',
-                    ['lpa-id' => $lpa->id],
-                    ['query' => [
-                        'calling-url'    => $request->getUri()->getPath(),
-                        'include-trusts' => false,
-                        'actor-name'     => 'Donor',
-                    ]]
-                );
+            // If reuseDetailsIndex is present we're returning from the reuse-details screen — never redirect back
+            if ($reuseDetailsIndex === null) {
+                $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
+                $reuseCount = count($reuseDetails);
 
-                return new RedirectResponse($reuseDetailsUrl);
+                if ($reuseCount === 1) {
+                    // Only the session user is available — show the "Use my details" link
+                    $displayReuseSessionUserLink = true;
+                } elseif ($reuseCount > 1) {
+                    // Multiple options — redirect to the reuse-details selection screen
+                    $reuseDetailsUrl = $this->urlHelper->generate(
+                        'lpa/reuse-details',
+                        ['lpa-id' => $lpa->id],
+                        ['query' => [
+                            'calling-url'    => $request->getUri()->getPath(),
+                            'include-trusts' => false,
+                            'actor-name'     => 'Donor',
+                        ]]
+                    );
+
+                    return new RedirectResponse($reuseDetailsUrl);
+                }
+            } else {
+                // Pre-fill the form if a valid index was selected (not -1 / "none")
+                $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
+                if (array_key_exists($reuseDetailsIndex, $reuseDetails)) {
+                    $actorDetailsToReuse = $reuseDetails[$reuseDetailsIndex]['data'];
+                }
             }
         }
 
@@ -93,6 +105,11 @@ class DonorAddHandler implements RequestHandlerInterface
         $form = $this->formElementManager->get('Application\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/add', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));
+
+        // Pre-fill the form with reuse details if returning from the reuse-details selection screen
+        if (isset($actorDetailsToReuse)) {
+            $form->setData($actorDetailsToReuse);
+        }
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
