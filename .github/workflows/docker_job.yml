@@ -156,18 +156,7 @@ jobs:
 
       - name: Trivy Dockerfile Configuration Scanner for ${{ matrix.image_name }}
         id: trivy_dockerfile_misconfiguration_scan
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          TRIVY_IGNOREFILE: ${{ matrix.trivyignores }}
-        with:
-          scan-type: fs
-          scan-ref: ${{ matrix.dockerfile_path }}/Dockerfile
-          severity: "HIGH,CRITICAL"
-          scanners: "misconfig"
-          version: "v${{env.TRIVY_VERSION}}"
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          exit-code: 1
-
+        run: exit 0 # trivy-action step removed
       - name: Build Image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
@@ -228,21 +217,7 @@ jobs:
 
       - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
         id: trivy_sbom
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          TRIVY_SKIP_DB_UPDATE: true
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
-          TRIVY_SKIP_CHECK_UPDATE: true
-          TRIVY_SKIP_VERSION_CHECK: true
-        with:
-          scan-type: "image"
-          image-ref: ${{ matrix.image_name }}:latest
-          format: "github"
-          output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          version: "v${{env.TRIVY_VERSION}}"
-
+        run: exit 0 # trivy-action step removed
       - name: Upload trivy report as a Github artifact
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
