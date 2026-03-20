@@ -32,6 +32,11 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
 
         // If we are posting then do not execute a redirect just go back to the calling function
         if (!$request->isPost()) {
+            // If reuseDetailsIndex is present we're returning from the reuse-details screen — never redirect back
+            if ($this->params()->fromQuery('reuseDetailsIndex') !== null) {
+                return null;
+            }
+
             $actorReuseDetailsCount = count($this->getActorReuseDetails());
 
             // If there is only one actor details to reuse then it will be the session user
@@ -86,6 +91,23 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
     }
 
     /**
+     * On a GET request returning from the reuse-details screen, bind the selected actor details
+     * to the form. Returns true if data was bound (caller should skip normal POST handling and
+     * just render the pre-filled form).
+     *
+     * @param AbstractActorForm $actorForm
+     * @return bool
+     */
+    protected function handleReuseDetailsOnGet(AbstractActorForm $actorForm): bool
+    {
+        if ($this->params()->fromQuery('reuseDetailsIndex') !== null) {
+            return $this->reuseActorDetails($actorForm);
+        }
+
+        return false;
+    }
+
+    /**
      * Function to inspect the current MVC route and determine if some reuse details are trying to be used
      * If they are then obtain them and bind them to the form and return an appropriate boolean value
      *
@@ -100,8 +122,16 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             $actorReuseDetails = $this->getActorReuseDetails();
 
             if ($routeMatch instanceof Router\Http\RouteMatch) {
-                // We can reuse the details from this point if a post value has been provided and there is exactly
-                // one reuse option available (i.e. the session user)
+                // Check query params first — set by ReuseDetailsHandler redirect (works on both GET and POST)
+                $reuseDetailsIndex = $this->params()->fromQuery('reuseDetailsIndex');
+
+                if ($reuseDetailsIndex !== null && array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
+                    $actorDetailsToReuse = $actorReuseDetails[$reuseDetailsIndex]['data'];
+                    $actorForm->bind($actorDetailsToReuse);
+                    return true;
+                }
+
+                // Fall back to single-reuse-option via POST ('Use my details' link)
                 $reuseDetailsIndex = $this->convertRequest()->getPost('reuse-details');
 
                 if ($reuseDetailsIndex == '0' && count($actorReuseDetails) == 1) {
@@ -111,14 +141,11 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                     return true;
                 }
             } else {
-                // Get the reuse details index from the route
+                // Get the reuse details index from the route (legacy forward dispatch)
                 $reuseDetailsIndex = $routeMatch->getParam('reuseDetailsIndex');
 
                 if ($reuseDetailsIndex >= -1 || $reuseDetailsIndex == 't') {
-                    // If we are using a proper actor index (i.e. zero, positive or 't' for trust) then attempt to
-                    // get the actor reuse details and bind them to the abstract form
                     if (array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
-                        // Bind the actor data to the main form
                         $actorDetailsToReuse = $actorReuseDetails[$reuseDetailsIndex]['data'];
                         $actorForm->bind($actorDetailsToReuse);
                     }
@@ -151,6 +178,9 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             // params instead
             if (!$routeMatch instanceof Router\Http\RouteMatch) {
                 $backButtonUrl = $routeMatch->getParam('callingUrl');
+            } elseif ($this->params()->fromQuery('callingUrl')) {
+                // If this is a redirect from ReuseDetailsHandler, use the callingUrl query param
+                $backButtonUrl = $this->params()->fromQuery('callingUrl');
             }
 
             // Add the back button URL but make sure that the add trust views go back to the normal add views

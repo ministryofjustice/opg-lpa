@@ -202,6 +202,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
         $this->params = Mockery::mock(Params::class);
         $this->params->shouldReceive('__invoke')->andReturn($this->params);
+        $this->params->shouldReceive('fromQuery')->andReturn(null)->byDefault();
         $this->pluginManager->shouldReceive('get')->withArgs(['params', null])->andReturn($this->params);
 
         $this->url = Mockery::mock(Url::class);

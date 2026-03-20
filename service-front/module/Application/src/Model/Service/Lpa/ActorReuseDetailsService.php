@@ -10,6 +10,7 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Document\Attorneys;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -108,23 +109,87 @@ class ActorReuseDetailsService
     }
 
     /**
+     * Return reuse details for the correspondent form.
+     * Mirrors AbstractLpaActorController::getActorReuseDetails() for the correspondent case
+     * (forCorrespondent = true), using LPA document actors and seed correspondent.
+     */
+    public function getCorrespondentReuseDetails(User $user, Lpa $lpa): array
+    {
+        $actorReuseDetails = [];
+
+        // The MVC controller always adds the session user first for the correspondent case
+        // (checkIfAlreadyUsed=false), so we mirror that here to keep indices in sync
+        $this->addCurrentUserDetailsForReuse($user, $lpa, $actorReuseDetails, false);
+
+        $lpaDocument = $lpa->document;
+
+        if ($lpaDocument->donor instanceof Donor) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $lpaDocument->donor->toArray(),
+                Correspondence::WHO_DONOR,
+                '(donor)'
+            );
+        }
+
+        foreach ($lpaDocument->primaryAttorneys as $attorney) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $attorney->toArray(),
+                Correspondence::WHO_ATTORNEY,
+                '(primary attorney)'
+            );
+        }
+
+        foreach ($lpaDocument->replacementAttorneys as $attorney) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $attorney->toArray(),
+                Correspondence::WHO_ATTORNEY,
+                '(replacement attorney)'
+            );
+        }
+
+        if ($lpaDocument->certificateProvider instanceof CertificateProvider) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $lpaDocument->certificateProvider->toArray(),
+                Correspondence::WHO_CERTIFICATE_PROVIDER,
+                '(certificate provider)'
+            );
+        }
+
+        // Include the correspondent from the seed/cloned LPA if present
+        $seedActorDetails = $this->getSeedLpaActorDetails($lpa);
+        if (isset($seedActorDetails['correspondent'])) {
+            $correspondent = $seedActorDetails['correspondent'];
+            $actorType = ($correspondent['who'] ?? Correspondence::WHO_OTHER);
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $correspondent,
+                $actorType,
+                '(was the correspondent)'
+            );
+        }
+
+        return $actorReuseDetails;
+    }
+
+    /**
      * Add current user to the reuse details array if they haven't already been used as an actor.
      */
-    private function addCurrentUserDetailsForReuse(User $user, Lpa $lpa, array &$actorReuseDetails): void
+    private function addCurrentUserDetailsForReuse(User $user, Lpa $lpa, array &$actorReuseDetails, bool $checkIfAlreadyUsed = true): void
     {
         $shouldAdd = true;
 
-        foreach ($this->getActorsList($lpa) as $actorsListItem) {
-            if (
-                strtolower($user->name->first) === strtolower($actorsListItem['firstname'])
-                && strtolower($user->name->last) === strtolower($actorsListItem['lastname'])
-            ) {
-                $shouldAdd = false;
-                break;
+        if ($checkIfAlreadyUsed && $user->name !== null) {
+            foreach ($this->getActorsList($lpa) as $actorsListItem) {
+                if (
+                    strtolower($user->name->first) === strtolower($actorsListItem['firstname'])
+                    && strtolower($user->name->last) === strtolower($actorsListItem['lastname'])
+                ) {
+                    $shouldAdd = false;
+                    break;
+                }
             }
         }
 
-        if ($shouldAdd) {
+        if ($shouldAdd && $user->name !== null) {
             $userDetails = $user->flatten();
             $userDetails['who'] = 'other';
 

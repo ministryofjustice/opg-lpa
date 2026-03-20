@@ -21,6 +21,7 @@ use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -717,14 +718,7 @@ return [
                             'route'    => '/more-info-required',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    LpaLoaderMiddleware::class,
-                                    MoreInfoRequiredHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(MoreInfoRequiredHandler::class, []),
                             ],
                         ],
                     ],
@@ -794,14 +788,7 @@ return [
                             'route'    => '/donor',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    LpaLoaderMiddleware::class,
-                                    DonorIndexHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(DonorIndexHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -812,14 +799,7 @@ return [
                                     'route'    => '/add',
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            DonorAddHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DonorAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -829,14 +809,7 @@ return [
                                     'route'    => '/edit',
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            DonorEditHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DonorEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1247,8 +1220,8 @@ return [
                         'options' => [
                             'route'    => '/reuse-details',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\ReuseDetailsController',
-                                'action' => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(ReuseDetailsHandler::class, []),
                             ],
                         ],
                     ],

@@ -28,6 +28,7 @@ use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
 use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\ReuseDetailsHandlerFactory;
 use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
@@ -37,6 +38,7 @@ use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -527,7 +529,8 @@ class Module implements FormElementProviderInterface
                 DonorIndexHandler::class => DonorIndexHandlerFactory::class,
                 DonorAddHandler::class => DonorAddHandlerFactory::class,
                 DonorEditHandler::class => DonorEditHandlerFactory::class,
-                ActorReuseDetailsService::class => function ($sm) {
+                ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
+                ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
                     return new ActorReuseDetailsService(
                         $sm->get(LpaApplicationService::class),
                         $sm->get(SessionUtility::class),

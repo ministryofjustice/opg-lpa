@@ -46,7 +46,7 @@ class MoreInfoRequiredHandlerTest extends TestCase
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute('secondsUntilSessionExpires', 3600)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/more-info-required');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/more-info-required');
     }
 
     public function testHandleRendersTemplateWithLpaId(): void
@@ -84,7 +84,7 @@ class MoreInfoRequiredHandlerTest extends TestCase
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute('secondsUntilSessionExpires', 1800)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/more-info-required');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/more-info-required');
 
         $this->renderer
             ->expects($this->once())
