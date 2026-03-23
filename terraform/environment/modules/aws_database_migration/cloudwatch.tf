@@ -3,5 +3,5 @@ resource "aws_cloudwatch_log_group" "dms_tasks" {
   retention_in_days = var.log_retention_days
   kms_key_id        = var.cloudwatch_kms_key_arn
 
-  tags = var.tags
+  tags = local.common_tags
 }
