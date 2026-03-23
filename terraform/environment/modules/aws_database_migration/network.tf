@@ -10,9 +10,19 @@ resource "aws_security_group" "aurora_migration_replication" {
   }
 }
 
+resource "aws_vpc_security_group_egress_rule" "aurora_migration_db_egress" {
+  for_each = local.network.allow_all_egress ? {} : local.aurora_migration_network_sg_ids
+
+  security_group_id            = aws_security_group.aurora_migration_replication.id
+  referenced_security_group_id = each.value
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+  description                  = "Allow Aurora DMS outbound to database security group"
+}
 
 resource "aws_vpc_security_group_ingress_rule" "database_from_aurora_migration_ingress" {
-  for_each = local.aurora_migration_network_sg_map
+  for_each = local.aurora_migration_network_sg_ids
 
   security_group_id            = each.value
   referenced_security_group_id = aws_security_group.aurora_migration_replication.id

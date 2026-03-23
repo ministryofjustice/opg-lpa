@@ -98,9 +98,9 @@ module "aws_database_migration" {
   account_name         = local.account_name
   environment_name     = local.environment_name
   create_iam_roles     = true
-  dms_network          = local.dms_config.network
-  source_config        = local.dms_config.source
-  target_config        = local.dms_config.target
-  replication_instance = local.dms_config.replication_instance
-  task                 = local.dms_config.task
+  dms_network          = local.dms_network
+  source_config        = local.dms_source
+  target_config        = local.dms_target
+  replication_instance = local.dms_replication_instance
+  task                 = local.dms_task
 }

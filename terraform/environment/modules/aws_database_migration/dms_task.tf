@@ -1,3 +1,7 @@
+resource "terraform_data" "migration_type_trigger" {
+  triggers_replace = local.replication_task.migration_type
+}
+
 resource "aws_dms_replication_task" "aurora_migration" {
   replication_task_id       = local.replication_task.id
   migration_type            = local.replication_task.migration_type
@@ -14,4 +18,10 @@ resource "aws_dms_replication_task" "aurora_migration" {
       Resource_Type = "Aurora DMS Replication Task"
     }
   )
+
+  lifecycle {
+    replace_triggered_by = [
+      terraform_data.migration_type_trigger,
+    ]
+  }
 }

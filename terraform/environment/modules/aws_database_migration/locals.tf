@@ -1,9 +1,9 @@
 locals {
   network = var.dms_network
-  aurora_migration_network_sg_map = var.dms_network == null ? {} : {
-    source = local.network.security_group_ids.source
-    target = local.network.security_group_ids.target
-  }
+  aurora_migration_network_sg_ids = var.dms_network == null ? [] : toset(distinct([
+    local.network.security_group_ids.source,
+    local.network.security_group_ids.target,
+  ]))
 
   default_table_mappings = file("${path.module}/table-mappings.json")
 
@@ -25,21 +25,19 @@ locals {
     }
   ))
 
-  task_config = var.task == null ? {} : var.task
-
-  task_table_mappings_from_file = try(file("${path.module}/${local.task_config.table_mappings_file}"), null)
-  task_settings_from_file       = try(local.task_config.settings_file == "" ? null : file("${path.module}/${local.task_config.settings_file}"), null)
+  task_table_mappings_from_file = try(file("${path.module}/${var.task.table_mappings_file}"), null)
+  task_settings_from_file       = try(var.task.settings_file == "" ? null : file("${path.module}/${var.task.settings_file}"), null)
 
   replication_task = {
-    id             = coalesce(local.task_config.id, "aurora-${var.environment_name}-dms-task")
-    migration_type = coalesce(local.task_config.migration_type, "full-load-and-cdc")
+    id             = coalesce(var.task.id, "aurora-${var.environment_name}-dms-task")
+    migration_type = coalesce(var.task.migration_type, "full-load-and-cdc")
     table_mappings = coalesce(
-      local.task_config.table_mappings,
+      var.task.table_mappings,
       local.task_table_mappings_from_file,
       local.default_table_mappings
     )
     settings = coalesce(
-      local.task_config.settings,
+      var.task.settings,
       local.task_settings_from_file,
       local.default_task_settings
     )

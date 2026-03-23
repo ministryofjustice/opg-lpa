@@ -65,7 +65,6 @@ variable "replication_instance" {
     multi_az            = optional(bool, false)
     publicly_accessible = optional(bool, false)
     apply_immediately   = optional(bool, true)
-    kms_key_arn         = optional(string)
   })
   default = {}
 }
