@@ -22,6 +22,7 @@ use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -1200,8 +1201,15 @@ return [
                         'options' => [
                             'route'    => '/when-lpa-starts',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhenLpaStartsController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    WhenLpaStartsHandler::class,
+                                ),
                             ],
                         ],
                     ],
