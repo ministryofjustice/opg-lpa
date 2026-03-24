@@ -1,1 +1,1 @@
-window.moj.Modules.DetailsPolyfill.init();
+moj.Modules.DetailsPolyfill.init();
