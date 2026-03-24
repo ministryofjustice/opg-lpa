@@ -12,7 +12,7 @@
     "watch:poll": "./build.sh watch:poll"
   },
   "dependencies": {
-    "esbuild": "^0.27.3",
+    "esbuild": "^0.27.4",
     "govuk_frontend_toolkit": "^9.0.1",
     "govuk_template_mustache": "^0.26.0",
     "govuk-elements-sass": "^3.1.3",
