@@ -22,33 +22,62 @@ We are in the process of migrating our application to Mezzio, which is a middlew
 `RouteMatchMiddleware` is a bridge between the laminas-mvc and Mezzio. When a `PipeSpec` route is matched by laminas-mvc, the framework places the laminas `RouteMatch` object on the PSR-7 request as an attribute. `RouteMatchMiddleware` reads that `RouteMatch`, extracts the matched route name and parameters (including route-level options such as `unauthenticated_route` and `allowIncompleteUser`), and re-exposes them as a Mezzio `RouteResult` attribute. This means every downstream middleware in the pipe can use the standard Mezzio `RouteResult::class` attribute regardless of whether it is running inside a laminas-mvc `PipeSpec` or a full Mezzio pipeline, making the eventual cut-over transparent.
 
 ## Decision
-To ensure we are exercising the middleware code and to reduce the risk of something not working when we switch over to Mezzio, we have decided to use the laminas-mvc `PipeSpec` that supports PSR7 based middleware. This is configured as part of our routing config and is as close as we can get to Mezzio middleware:
+To ensure we are exercising the middleware code and to reduce the risk of something not working when we switch over to Mezzio, we have decided to use the laminas-mvc `PipeSpec` that supports PSR7 based middleware. This is configured as part of our routing config and is as close as we can get to Mezzio middleware.
+
+Routes are configured using the `addMiddleware` helper function defined at the top of `module.routes.php`, which builds a `PipeSpec` from the standard authenticated middleware stack minus any classes explicitly excluded:
 
 ```php
-'applicant' => [
+/**
+ * Builds a PipeSpec with the standard authenticated middleware stack, minus any classes in $ignore.
+ *
+ * The default stack is:
+ *   RouteMatchMiddleware → AuthenticationListener → UserDetailsListener
+ *     → TermsAndConditionsListener → LpaLoaderMiddleware → $handlerClass
+ *
+ * @param string $handlerClass The handler to append at the end of the pipeline.
+ * @param string[] $ignore Middleware classes to omit from the stack.
+ */
+function addMiddleware(string $handlerClass, array $ignore): PipeSpec
+```
+
+For an LPA-scoped route requiring the full stack:
+
+```php
+'life-sustaining' => [
     'type' => Literal::class,
     'options' => [
-        'route'    => '/applicant',
+        'route'    => '/life-sustaining',
         'defaults' => [
             'controller' => PipeSpec::class,
-            'middleware' => new PipeSpec(
-                RouteMatchMiddleware::class,
-                AuthenticationListener::class,
-                UserDetailsListener::class,
-                TermsAndConditionsListener::class,
-                LpaLoaderMiddleware::class,
-                ApplicantHandler::class,
+            'middleware' => addMiddleware(LifeSustainingHandler::class, []),
+        ],
+    ],
+],
+```
+
+For a non-LPA authenticated route (omitting `LpaLoaderMiddleware`):
+
+```php
+'change-password' => [
+    'type'    => Literal::class,
+    'options' => [
+        'route'    => '/change-password',
+        'defaults' => [
+            'controller' => PipeSpec::class,
+            'middleware' => addMiddleware(
+                ChangePasswordHandler::class,
+                [LpaLoaderMiddleware::class]
             ),
         ],
     ],
-]
+],
 ```
 
 This will allow us to test and validate the middleware code while still maintaining compatibility with the laminas-mvc event system.
 
 When migrating a controller to a handler we should always:
-* Add `RouteMatchMiddleware`, `AuthenticationListener`, `UserDetailsListener` and `TermsAndConditionsListener` to routes that don't require an LPA to be loaded
-* Add the above middleware and `LpaLoaderMiddleware` to routes that do require an LPA to be loaded
+* Add `RouteMatchMiddleware`, `AuthenticationListener`, `UserDetailsListener` and `TermsAndConditionsListener` to routes that don't require an LPA to be loaded (pass `[LpaLoaderMiddleware::class]` as the ignore list)
+* Add the above middleware and `LpaLoaderMiddleware` to routes that do require an LPA to be loaded (pass `[]` as the ignore list)
 * Rely on objects already added to requests by the above middleware instead of re-querying the database for the same information in the handler
 * Use `CommonTemplateVariablesTrait::getTemplateVariables()` in the handler to pass common view variables (user, session expiry, current route, LPA) to the template
 
