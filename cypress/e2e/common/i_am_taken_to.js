@@ -5,6 +5,10 @@ Then(`I am taken to {string}`, (url) => {
   cy.OPGCheckA11y();
 });
 
+Then(`I should be on {string}`, (url) => {
+  cy.url().should('include', Cypress.config().baseUrl + url);
+});
+
 Then(`I am taken to the login page`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + '/login');
   cy.OPGCheckA11y();
