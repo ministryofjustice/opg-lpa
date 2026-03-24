@@ -12,6 +12,7 @@ use Application\Model\Service\Session\SessionUtility;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
@@ -70,7 +71,9 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $reason = $this->getUnauthorisedReason($allowRedirect, $route);
+        $request = $event->getRequest();
+        $uriString = $request instanceof HttpRequest ? $request->getUriString() : '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $uriString);
 
         $url = $event->getRouter()->assemble(['state' => $reason], ['name' => 'login']);
 
@@ -118,8 +121,8 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $routePath = $route->getMatchedRoute()->getPath() ?: '';
-        $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
+        $requestPath = $request->getUri()->getPath() ?: '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $requestPath);
 
         // TODO(mezzio): update routeName when we setup Mezzio routes
         return new RedirectResponse(
