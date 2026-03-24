@@ -97,7 +97,7 @@ async function buildApplication() {
     minify: true,
     bundle: false,
     sourcemap: false,
-    target: ['es2015'],
+    target: ['es5'],
     platform: 'browser',
   }).catch((e) => {
     console.error('Build failed:', e);
@@ -125,7 +125,7 @@ async function buildIndividualScripts() {
       outfile: script.out,
       minify: true,
       sourcemap: false,
-      target: ['es2015'],
+      target: ['es5'],
       platform: 'browser',
     });
     console.log(`✓ Built ${script.out}`);
