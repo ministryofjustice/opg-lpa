@@ -11,28 +11,6 @@ services:
       context: ./
       dockerfile: node-build-assets/docker/Dockerfile
 
-  pgbouncer:
-    container_name: lpa-pgbouncer
-    build:
-      context: ./
-      dockerfile: service-api/docker/pgbouncer/Dockerfile
-    healthcheck:
-      test: ["CMD", "bash", "-c", "echo -n > /dev/tcp/127.0.0.1/6432 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
-    depends_on:
-      - postgres
-    #    ports:
-    #      - 6432:6432
-    environment:
-      POSTGRESQL_HOST: postgres
-      POSTGRESQL_USERNAME: lpauser
-      POSTGRESQL_PASSWORD: lpapass
-      POSTGRESQL_DATABASE: lpadb
-      PGBOUNCER_DATABASE: lpadb
-
   postgres:
     container_name: lpa-postgres
     image: postgres:14.18@sha256:90da0743e4ed7939b08e2945e0451401b4d7abd792530c7d3cc2da82ed534f08
@@ -132,7 +110,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: "1"
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
       - ./service-front:/app
@@ -232,7 +210,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: "1"
         OPG_LPA_COMMON_APP_VERSION: "${OPG_LPA_COMMON_APP_VERSION}"
       dockerfile: service-api/docker/app/Dockerfile
     volumes:
@@ -251,8 +229,8 @@ services:
 
       OPG_LPA_API_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
       OPG_LPA_AUTH_TOKEN_GENERATION: "hash"
-      OPG_LPA_POSTGRES_HOSTNAME: "pgbouncer"
-      OPG_LPA_POSTGRES_PORT: "6432"
+      OPG_LPA_POSTGRES_HOSTNAME: "postgres"
+      OPG_LPA_POSTGRES_PORT: "5432"
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
@@ -320,7 +298,7 @@ services:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: "1"
     volumes:
       - ./service-admin:/app
       - ./shared:/shared
@@ -395,7 +373,7 @@ services:
     build:
       context: ./
       args:
-        ENABLE_XDEBUG: 1
+        ENABLE_XDEBUG: "1"
         VISUAL_TESTS: true
       dockerfile: service-pdf/docker/app/Dockerfile
     environment:
