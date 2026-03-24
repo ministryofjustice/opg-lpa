@@ -90,15 +90,20 @@ async function buildApplication() {
   const tmpFile = 'public/assets/v2/js/application.js';
   writeFileSync(tmpFile, concatenated);
 
-  // Minify the concatenated file with esbuild (no bundling - just minification)
+  // Minify the concatenated file with esbuild (no bundling - just minification).
+  // Use platform 'neutral' because these are plain concatenated scripts (not ES
+  // modules). With 'browser', esbuild replaces top-level `this` with `undefined`
+  // (ESM strict-mode semantics), which breaks UMD wrappers like Handlebars that
+  // use `(function(root, factory) { ... })(this, ...)` to attach globals.
   await esbuild.build({
     entryPoints: [tmpFile],
     outfile: 'public/assets/v2/js/application.min.js',
     minify: true,
     bundle: false,
     sourcemap: false,
-    target: ['es5'],
-    platform: 'browser',
+    target: ['es2015'],
+    platform: 'neutral',
+    define: { 'this': 'globalThis' },
   }).catch((e) => {
     console.error('Build failed:', e);
     process.exit(1);
@@ -125,8 +130,8 @@ async function buildIndividualScripts() {
       outfile: script.out,
       minify: true,
       sourcemap: false,
-      target: ['es5'],
-      platform: 'browser',
+      target: ['es2015'],
+      platform: 'neutral',
     });
     console.log(`✓ Built ${script.out}`);
   }

@@ -174,7 +174,6 @@ jobs:
         run: |
           pushd service-front/
           npm ci --ignore-scripts && npm install -g --ignore-scripts sass
-          node_modules/grunt-cli/bin/grunt --gruntfile Gruntfile.cjs build_css
           node ./build.js
           popd
 
