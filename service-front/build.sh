@@ -8,14 +8,14 @@ WATCH_MODE=false
 case "$TASK" in
   build)
     echo "Running full build..."
-    ./build-js.sh
+    ./build.js
     ./build-css.sh
     echo "Build complete"
     ;;
 
   build:js|js)
     echo "Building JavaScript only..."
-    ./build-js.sh
+    ./build.js
     ;;
 
   build:css|css)
