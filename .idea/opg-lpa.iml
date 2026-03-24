@@ -419,6 +419,7 @@
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-flash" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session-ext" />
+      <excludeFolder url="file://$MODULE_DIR$/terraform/environment/.terraform" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
