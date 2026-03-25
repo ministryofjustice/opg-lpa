@@ -27,6 +27,7 @@ use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -51,6 +52,7 @@ use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -554,6 +556,7 @@ class Module implements FormElementProviderInterface
                 SummaryHandler::class => SummaryHandlerFactory::class,
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
                 InstructionsHandler::class => InstructionsHandlerFactory::class,
+                WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
