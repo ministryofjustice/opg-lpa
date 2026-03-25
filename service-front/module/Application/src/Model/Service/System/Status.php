@@ -61,6 +61,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
         // Check API (required)
         $result['api'] = $this->api();
+        $result['go-api'] = $this->goApi();
 
         // Check session save handling (required)
         $result['sessionSaveHandler'] = $this->session();
@@ -164,6 +165,33 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
         try {
             $api = $this->apiClient->httpGet('/ping');
+
+            $result['ok'] = $api['ok'];
+            $result['status'] = $api['status'];
+            unset($api['ok']);
+            unset($api['status']);
+
+            $result['details']['response_code'] = 200;
+            $result['details'] += $api;
+        } catch (Exception $e) {
+            $result['ok'] = false;
+            $result['status'] = Constants::STATUS_FAIL;
+            $result['details']['response_code'] = 500;
+        }
+
+        return $result;
+    }
+
+    private function goApi()
+    {
+        $result = [
+            'ok' => false,
+            'status' => Constants::STATUS_FAIL,
+            'details' => [],
+        ];
+
+        try {
+            $api = $this->apiClient->httpGet('/v3/health');
 
             $result['ok'] = $api['ok'];
             $result['status'] = $api['status'];

@@ -86,7 +86,9 @@ server {
     # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
     #
     location ~ \.php$ {
-        fastcgi_pass   ${APP_HOST}:${APP_PORT};
+        resolver 127.0.0.11 valid=5s;
+        set $upstream_app ${APP_HOST}:${APP_PORT};
+        fastcgi_pass   $upstream_app;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
 
@@ -106,6 +108,17 @@ server {
     #
     location ~ /\.ht {
         deny  all;
+    }
+
+    location /v3/ {
+        resolver 127.0.0.11 valid=5s;
+        set $upstream_go ${GO_APP_HOST}:${GO_APP_PORT};
+        proxy_pass http://$upstream_go;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Trace-Id $trace_id;
     }
 
     # Comply with https://security-guidance.service.justice.gov.uk/implement-security-txt/#implementing-securitytxt

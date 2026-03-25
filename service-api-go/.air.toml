@@ -1,0 +1,18 @@
+[build]
+cmd = "go build -o ./tmp/main ."
+entrypoint = "./tmp/main"
+delay = 100
+include_ext = ["go", "mod"]
+exclude_dir = ["vendor", "tmp"]
+
+[log]
+time = true
+
+[color]
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+clean_on_exit = true
