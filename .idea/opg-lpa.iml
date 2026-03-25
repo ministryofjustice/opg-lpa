@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="WEB_MODULE" version="4">
+  <component name="Go" enabled="true" />
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
       <sourceFolder url="file://$MODULE_DIR$/service-admin/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-api/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/service-admin/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-admin/src/App/src" isTestSource="false" packagePrefix="App\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-admin/test/AppTest" isTestSource="true" packagePrefix="AppTest\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-api/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-api/module/Application/src" isTestSource="false" packagePrefix="Application\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/../shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/module/Alphagov/Pay/src" isTestSource="false" packagePrefix="Alphagov\Pay\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/module/Application/src" isTestSource="false" packagePrefix="Application\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/module/Application/tests" isTestSource="false" packagePrefix="ApplicationTest\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/service-pdf/../shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-pdf/../shared/module/MakeShared/tests" isTestSource="false" packagePrefix="MakeSharedTest\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-pdf/src/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="Opg\Lpa\Pdf\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="OpgTest\Lpa\Pdf\" />
+      <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/byte-stream" />
