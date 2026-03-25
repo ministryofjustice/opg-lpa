@@ -19,6 +19,7 @@ use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
@@ -35,6 +36,7 @@ use Application\Handler\HomeHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
@@ -536,6 +538,7 @@ class Module implements FormElementProviderInterface
                         $sm->get(SessionUtility::class),
                     );
                 },
+                HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
