@@ -109,7 +109,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
@@ -126,7 +126,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_environment_preproduction:
     name: TF Preproduction - Environment
@@ -149,7 +149,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   run_preproduction_seed_db_task:
     name: Run preproduction DB seeding
