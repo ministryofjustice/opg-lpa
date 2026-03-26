@@ -43,6 +43,7 @@ class WhenLpaStartsHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE);
 
+        /** @var \Application\Form\Lpa\WhenLpaStartsForm $form */
         $form = $this->formElementManager->get(
             'Application\Form\Lpa\WhenLpaStartsForm',
             ['lpa' => $lpa]
