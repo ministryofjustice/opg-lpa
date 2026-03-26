@@ -3,8 +3,8 @@ version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 
 ignore:
-  snyk:lic:composer:tecnickcom:tcpdf:((GPL-3.0_OR_LGPL-3.0)_OR_GPL-2.0_OR_GPL-3.0)
-    - '*':
+  snyk:lic:composer:tecnickcom:tcpdf:((GPL-3.0_OR_LGPL-3.0)_OR_GPL-2.0_OR_GPL-3.0):
+    - "*":
         reason: This will not be resolved
         expires: 2026-04-23T14:57:38.314Z
         created: 2026-03-26T11:29:38.316Z
