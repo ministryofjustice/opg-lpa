@@ -1,4 +1,0 @@
-vulnerabilities:
-  - id: CVE-2025-45769
-    statement: fix after introducing trivy scanning
-    expired_at: 2026-04-10

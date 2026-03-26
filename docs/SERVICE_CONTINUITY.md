@@ -6,7 +6,6 @@ When the user creates an LPA in Make an LPA, details of the LPA are only stored 
 
 The service is developed and operated by OPG Digital; see [the overview in our technical docs](https://docs.opg.service.justice.gov.uk/documentation/support/lpa.html)
 
-
 ## Service Accountability (Accountable / Responsible)
 
 A product team within OPG Digital owns the delivery and maintenance of the service. The multi-disciplinary team is responsible for the service. We follow an agile software development lifecycle as mandated by the GDS Service Standard. Make an LPA Online has passed its Live assessment stage as part of the Service Standard.
@@ -14,9 +13,11 @@ A product team within OPG Digital owns the delivery and maintenance of the servi
 OPG Digital uses an embedded WebOps, which means infrastructure engineers are embedded within the team to support the product's pipelines and infrastructure, as well as developers who maintain the application code. OPG Digital follows a continuous delivery model, where we constantly deploy small chunks of change as soon as they are merged into the codebase. Comprehensive test automation ensures this is possible.
 
 ### Contacts
+
 - [Service contact details](https://docs.opg.service.justice.gov.uk/documentation/support/lpa.html#service-team-contact)
 
 ### Notes
+
 - The service will be replaced when the Modernised Digital LPA becomes publicly available.
 - Since October 2025 a seperate squad has been created to address some technical debt and ensure product support until decommissioned.
 
@@ -38,29 +39,27 @@ Make an LPA has a dependency on OPG Digital's internal Sirius service (via an AP
 
 ### External Dependencies
 
-| Dependency | Purpose |
-| ---------- | ------- |
-| Amazon Web Services (AWS) | Cloud hosting platform |
-| GitHub | Source control and build system |
-| Renovate | Automated dependency updates |
-| Trivy | Security scanning of containers |
-| Slack | Alerting |
-| PagerDuty | Alerting |
-| GOV.UK Pay | Payment handling |
-| GOV.UK Notify | Email handling |
-| Ordinance Survey Place API | Postcode to address lookup |
-| Google Analytics | Site statistics |
+| Dependency                 | Purpose                         |
+| -------------------------- | ------------------------------- |
+| Amazon Web Services (AWS)  | Cloud hosting platform          |
+| GitHub                     | Source control and build system |
+| Renovate                   | Automated dependency updates    |
+| Slack                      | Alerting                        |
+| PagerDuty                  | Alerting                        |
+| GOV.UK Pay                 | Payment handling                |
+| GOV.UK Notify              | Email handling                  |
+| Ordinance Survey Place API | Postcode to address lookup      |
+| Google Analytics           | Site statistics                 |
 
 ### Software
 
 - [Code dependency list (SBOM)](https://github.com/ministryofjustice/opg-lpa/network/dependencies)
 - Application code built with `PHP >= 8.4`
 - Docker containers based on `Alpine Linux >= 3.21`.
-    - [Admin area](https://github.com/ministryofjustice/opg-lpa/blob/main/service-admin/docker/)
-    - [API](https://github.com/ministryofjustice/opg-lpa/blob/main/service-api/docker/)
-    - [Front](https://github.com/ministryofjustice/opg-lpa/tree/main/service-front/docker)
-    - [PDF service](https://github.com/ministryofjustice/opg-lpa/tree/main/service-pdf/docker/)
-
+  - [Admin area](https://github.com/ministryofjustice/opg-lpa/blob/main/service-admin/docker/)
+  - [API](https://github.com/ministryofjustice/opg-lpa/blob/main/service-api/docker/)
+  - [Front](https://github.com/ministryofjustice/opg-lpa/tree/main/service-front/docker)
+  - [PDF service](https://github.com/ministryofjustice/opg-lpa/tree/main/service-pdf/docker/)
 
 ## Architecture (HLD/LLD)
 
@@ -98,14 +97,13 @@ After an incident a Root Cause Analysis is run so that lessons learned can be pi
 
 **Note**: The incident website requires GitHub SSO to the MOJ organisation.
 
-
 ## IT Continuity Plans (Resilience)
 
 Make An LPA is hosted in AWS. It has `development`, `pre-production` and `production` environments, each ring-fenced in its own AWS account to reduce blast radius of any incidents. Only production contains real user data, non prod environment access is limited to MOJ networks. Deployment is via automated promotion of releases through the `development` > `pre-production` > `production` pipeline. New work is tested on isolated ephemeral environments in `development` before merge to main.
 
 The application tiers run on [AWS Elastic Container Service](https://aws.amazon.com/ecs/). This is designed to handle traffic spikes and containers will scale up or down based on system usage (between 2 and 20 containers for primary system elements). Containers are balanced across multiple availability zones within the `eu-west-1` region to provide resilience.
 
-All application data is hosted in highly available services provided by AWS. The main data store is an [AWS Aurora](https://aws.amazon.com/rds/aurora/) Postgres cluster. [AWS Elasticache](https://aws.amazon.com/elasticache/) is used for session storage. System status messages are stored in [DynamoDB](https://aws.amazon.com/dynamodb/)  to be unaffected by Aurora issues.
+All application data is hosted in highly available services provided by AWS. The main data store is an [AWS Aurora](https://aws.amazon.com/rds/aurora/) Postgres cluster. [AWS Elasticache](https://aws.amazon.com/elasticache/) is used for session storage. System status messages are stored in [DynamoDB](https://aws.amazon.com/dynamodb/) to be unaffected by Aurora issues.
 
 [AWS Web Application Firewall](https://aws.amazon.com/waf/) is configured on the service to block known PHP issues, known bad inputs and common attacks (ie. CSRF, XSS and SQL injection attempts).
 

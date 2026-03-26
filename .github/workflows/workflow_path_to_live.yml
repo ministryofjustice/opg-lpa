@@ -80,6 +80,7 @@ jobs:
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   terraform_account_development:
     name: TF Development - Account
@@ -96,7 +97,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_development:
     name: TF Development - Region
@@ -114,7 +115,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment
@@ -192,7 +193,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_production:
     name: TF Production - Region
@@ -211,7 +212,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_environment_production:
     name: TF Production - Environment
@@ -234,7 +235,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   run_smoke_tests:
     runs-on: ubuntu-latest

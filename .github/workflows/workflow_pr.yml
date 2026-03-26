@@ -88,6 +88,7 @@ jobs:
       tag: ${{ needs.workflow_variables.outputs.short_sha }}
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   cypress_mezzio_tests:
     uses: ./.github/workflows/front_mezzio_tests.yml
@@ -111,7 +112,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_development:
     name: TF Development - Region
@@ -131,7 +132,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_environment_development:
     name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
@@ -157,7 +158,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   run_dev_seed_db_task:
     name: Run development DB seeding
