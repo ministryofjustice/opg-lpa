@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\LpaTypeHandler;
@@ -887,8 +888,15 @@ return [
                         'options' => [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    HowReplacementAttorneysMakeDecisionHandler::class,
+                                ),
                             ],
                         ],
                     ],
