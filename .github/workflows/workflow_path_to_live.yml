@@ -80,6 +80,7 @@ jobs:
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   terraform_account_development:
     name: TF Development - Account
