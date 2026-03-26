@@ -182,7 +182,7 @@ jobs:
           sarif_filepath: ./test-results
           sarif_filename: ${{ matrix.scan_id }}_snyk.sarif
           snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
-          snyk_test_args: --severity-threshold=high --exclude-app-vulns
+          snyk_test_args: --severity-threshold=high
 
       - name: Format undefined severity values
         if: always() && hashFiles(format('./test-results/{0}_snyk.sarif', matrix.scan_id)) != ''
