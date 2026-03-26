@@ -18,6 +18,8 @@ on:
     secrets:
       SLACK_BOT_TOKEN:
         required: true
+      SNYK_OPG_ORG_TOKEN:
+        required: true
 
 permissions:
   actions: none
@@ -36,8 +38,6 @@ jobs:
   docker_build_scan_push:
     name: "docker build"
     runs-on: ubuntu-latest
-    env:
-      TRIVY_VERSION: 0.69.2
     strategy:
       fail-fast: false
       matrix:
@@ -45,56 +45,56 @@ jobs:
           - image_name: online-lpa/front_app
             dockerfile_path: ./service-front/docker/app
             service_path: ./service-front
-            trivyignores: ./service-front/docker/app/.trivyignore.yml
-            sbom_name: front-app
+            snyk_policy_path: service-front/docker/app/.snyk
+            scan_id: front_app
 
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             service_path: ./service-front
-            trivyignores: ./service-front/docker/web/.trivyignore.yml
-            sbom_name: front-web
+            snyk_policy_path: service-front/docker/web/.snyk
+            scan_id: front_web
 
           - image_name: online-lpa/api_app
             dockerfile_path: ./service-api/docker/app
             service_path: ./service-api
-            trivyignores: ./service-api/docker/app/.trivyignore.yml
-            sbom_name: api-app
+            snyk_policy_path: service-api/docker/app/.snyk
+            scan_id: api_app
 
           - image_name: online-lpa/api_web
             dockerfile_path: ./service-api/docker/web
             service_path: ./service-api
-            trivyignores: ./service-api/docker/web/.trivyignore.yml
-            sbom_name: api-web
+            snyk_policy_path: service-api/docker/web/.snyk
+            scan_id: api_web
 
           - image_name: online-lpa/admin_app
             dockerfile_path: ./service-admin/docker/app
             service_path: ./service-admin
-            trivyignores: ./service-admin/docker/app/.trivyignore.yml
-            sbom_name: admin-app
+            snyk_policy_path: service-admin/docker/app/.snyk
+            scan_id: admin_app
 
           - image_name: online-lpa/admin_web
             dockerfile_path: ./service-admin/docker/web
             service_path: ./service-admin
-            trivyignores: ./service-admin/docker/web/.trivyignore.yml
-            sbom_name: admin-web
+            snyk_policy_path: service-admin/docker/web/.snyk
+            scan_id: admin_web
 
           - image_name: online-lpa/pdf_app
             dockerfile_path: ./service-pdf/docker/app
             service_path: ./service-pdf
-            trivyignores: ./service-pdf/docker/app/.trivyignore.yml
-            sbom_name: pdf-app
+            snyk_policy_path: service-pdf/docker/app/.snyk
+            scan_id: pdf_app
 
           - image_name: online-lpa/seeding_app
             dockerfile_path: ./service-seeding/docker/app
             service_path: ./service-seeding
-            trivyignores: ./service-seeding/docker/app/.trivyignore.yml
-            sbom_name: seeding-app
+            snyk_policy_path: service-seeding/docker/app/.snyk
+            scan_id: seeding_app
 
           - image_name: lambda-aurora_scheduler
             dockerfile_path: ./aurora-scheduler/docker
             service_path: ./aurora-scheduler
-            trivyignores: ./aurora-scheduler/docker/.trivyignore.yml
-            sbom_name: lambda-aurora-scheduler
+            snyk_policy_path: aurora-scheduler/docker/.snyk
+            scan_id: aurora_scheduler
             override_tag: latest
 
     steps:
@@ -154,20 +154,6 @@ jobs:
         with:
           registries: 311462405659
 
-      - name: Trivy Dockerfile Configuration Scanner for ${{ matrix.image_name }}
-        id: trivy_dockerfile_misconfiguration_scan
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          TRIVY_IGNOREFILE: ${{ matrix.trivyignores }}
-        with:
-          scan-type: fs
-          scan-ref: ${{ matrix.dockerfile_path }}/Dockerfile
-          severity: "HIGH,CRITICAL"
-          scanners: "misconfig"
-          version: "v${{env.TRIVY_VERSION}}"
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          exit-code: 1
-
       - name: Build Image
         uses: docker/build-push-action@263435318d21b8e681c14492fe198d362a7d2c83 # v6.18.0
         with:
@@ -186,69 +172,69 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: Trivy Image Vulnerability Scanner
-        id: trivy_scan
-        if: true
+      #SNYK SCAN STEPS
+      - name: Run SNYK vulnerability scan for ${{ matrix.scan_id }}
+        id: snyk_scan
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@8dea82fc8b8e7ffca431f0fb83848d523147ccd8 # v4.5.0
+        with:
+          SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          sarif_filepath: ./test-results
+          sarif_filename: ${{ matrix.scan_id }}_snyk.sarif
+          snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
+          snyk_test_args: --severity-threshold=high
+
+      - name: Format undefined severity values
+        if: always() && hashFiles(format('./test-results/{0}_snyk.sarif', matrix.scan_id)) != ''
         run: |
-          mkdir -p -m 0777 .trivy-cache ./test-results/
-          docker run \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./test-results:/test-results \
-            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
-            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            aquasec/trivy:${{ env.TRIVY_VERSION }} image \
-            ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
-            --checks-bundle-repository aquasec/trivy-checks \
-            --timeout 7m \
-            --format table \
-            --severity HIGH,CRITICAL
+          sed -i 's/"null"/"0"/g; s/"undefined"/"0"/g' ./test-results/${{ matrix.scan_id }}_snyk.sarif
 
-          docker run \
-            --volume /var/run/docker.sock:/var/run/docker.sock \
-            --volume ./test-results:/test-results \
-            --volume ./${{ matrix.trivyignores }}:/.trivyignore.yaml \
-            --env TRIVY_IGNOREFILE='.trivyignore.yaml' \
-            aquasec/trivy:${{ env.TRIVY_VERSION }} image ${{ matrix.image_name }}:latest \
-            --db-repository aquasec/trivy-db \
-            --java-db-repository aquasec/trivy-java-db \
-            --checks-bundle-repository aquasec/trivy-checks \
-            --severity HIGH,CRITICAL \
-            --timeout 7m \
-            --exit-code 1 \
-            --format sarif --output ./test-results/trivy.sarif
-
-      - name: Upload Trivy scan results to GitHub Security tab for ${{ matrix.image_name }}
-        id: trivy_upload_sarif
-        uses: github/codeql-action/upload-sarif@45cbd0c69e560cd9e7cd7f8c32362050c9b7ded2 #  v4.32.2
+      - name: Inspect SARIF results
         if: always()
-        with:
-          sarif_file: "./test-results/trivy.sarif"
+        run: |
+          echo "=== SNYK SCAN SUMMARY FOR ${{ matrix.scan_id }} ==="
+          echo "SARIF file: $file"
+          echo "scan outcome: ${{ steps.snyk_scan.outcome }}"
 
-      - name: Trivy Image SBOM Generator for ${{ matrix.image_name }} and submit results to Dependency Graph
-        id: trivy_sbom
-        uses: aquasecurity/trivy-action@b6643a29fecd7f34b3597bc6acb0a98b03d33ff8 # 0.33.1
-        env:
-          TRIVY_SKIP_DB_UPDATE: true
-          TRIVY_SKIP_JAVA_DB_UPDATE: true
-          TRIVY_SKIP_CHECK_UPDATE: true
-          TRIVY_SKIP_VERSION_CHECK: true
-        with:
-          scan-type: "image"
-          image-ref: ${{ matrix.image_name }}:latest
-          format: "github"
-          output: "${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
-          github-pat: ${{ secrets.GITHUB_TOKEN }}
-          cache-dir: ${{ github.workspace }}/.cache/trivy
-          version: "v${{env.TRIVY_VERSION}}"
+          if [ -f "./test-results/${{ matrix.scan_id }}_snyk.sarif" ]; then
+            echo "SARIF file exists, counting runs"
+            runs=$(jq '.runs | length' ./test-results/${{ matrix.scan_id }}_snyk.sarif)
+            echo "SARIF file has $runs runs"
+          else
+            echo "SARIF file does not exist, skipping run count"
+          fi
 
-      - name: Upload trivy report as a Github artifact
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+      # Split SARIF results if run limit exceeds 20
+      - name: Split SARIF results if run limit exceeds 20
+        if: always()
+        run: |
+          file="./test-results/${{ matrix.scan_id }}_snyk.sarif"
+          base="./test-results/${{ matrix.scan_id }}_snyk"
+          runs=$(jq '.runs | length' $file)
+          echo "runs=$runs"
+
+          if [ $runs -gt 20 ]; then
+            echo "SARIF file has $runs runs, splitting into 2 files (20 run limit)"
+            jq '.runs = .runs[0:20]' $file > ${base}_part_01.sarif
+            jq '.runs = .runs[20:]' $file > ${base}_part_02.sarif
+          else
+            echo "SARIF file has $runs runs, keeping as 1 file"
+            mv $file ${base}_part_01.sarif
+          fi
+
+      - name: Upload SARIF results part 1
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        if: always() && hashFiles(format('./test-results/{0}_snyk_part_01.sarif', matrix.scan_id)) != ''
         with:
-          name: trivy-sbom-report-${{ matrix.sbom_name }}-${{ inputs.tag }}
-          path: "${{ github.workspace }}/${{ matrix.sbom_name }}-${{ inputs.tag }}.sbom.json"
-          retention-days: 20 # 90 is the default
+          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_01.sarif
+          category: ${{ matrix.scan_id }}-1
+
+      - name: Upload SARIF results part 2
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        if: always() && hashFiles(format('./test-results/{0}_snyk_part_02.sarif', matrix.scan_id)) != ''
+        with:
+          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_02.sarif
+          category: ${{ matrix.scan_id }}-2
 
       - name: Tag and Push Container
         env:
