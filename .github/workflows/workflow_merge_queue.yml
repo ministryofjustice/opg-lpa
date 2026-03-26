@@ -93,6 +93,7 @@ jobs:
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   terraform_account_preproduction:
     name: TF Preproduction - Account
