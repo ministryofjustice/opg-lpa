@@ -6,6 +6,7 @@ use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
@@ -753,8 +754,15 @@ return [
                         'options' => [
                             'route'    => '/more-info-required',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\MoreInfoRequiredController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => new PipeSpec(
+                                    RouteMatchMiddleware::class,
+                                    AuthenticationListener::class,
+                                    UserDetailsListener::class,
+                                    TermsAndConditionsListener::class,
+                                    LpaLoaderMiddleware::class,
+                                    MoreInfoRequiredHandler::class,
+                                ),
                             ],
                         ],
                     ],
