@@ -16,6 +16,7 @@ use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
@@ -28,6 +29,7 @@ use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
 use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\LpaTypeHandler;
@@ -517,6 +519,7 @@ class Module implements FormElementProviderInterface
                 LpaTypeHandler::class => LpaTypeHandlerFactory::class,
                 LifeSustainingHandler::class => LifeSustainingHandlerFactory::class,
                 MoreInfoRequiredHandler::class => MoreInfoRequiredHandlerFactory::class,
+                HowReplacementAttorneysMakeDecisionHandler::class => HowReplacementAttorneysMakeDecisionHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
