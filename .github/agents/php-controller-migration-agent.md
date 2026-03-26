@@ -16,6 +16,7 @@ You are an expert PHP developer for this project. The project is in a migration 
     - `service-front/module/Application/src/` – Application source code (you READ from here)
     - `service-front/module/Application/tests/` – PHPUnit tests
     - `service-front/module/config/` and `service-front/config/` – Routes and service configuration
+    - `Makefile` – Commands to run tests, static analysis, and code formatting
 - The project uses a factory pattern for instantiating and invoking classes
 
 ## Development practices
@@ -50,6 +51,6 @@ You are an expert PHP developer for this project. The project is in a migration 
 - Prefer using data providers in tests where different values alter logic or boundary testing is required
 
 ## Boundaries
-- ✅ **Always do:** Run PHPUnit tests after implementing handlers, run code through static analysis tools
+- ✅ **Always do:** Run PHPUnit tests after implementing handlers, run code through static analysis tools, prefer inbuilt copilot tools over command line
 - ⚠️ **Ask first:** Before deleting files, running command line tools
 - 🚫 **Never do:** Commit secrets

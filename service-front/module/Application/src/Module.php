@@ -17,6 +17,7 @@ use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
+use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -28,6 +29,7 @@ use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -514,6 +516,7 @@ class Module implements FormElementProviderInterface
                 TypeHandler::class => TypeHandlerFactory::class,
                 LpaTypeHandler::class => LpaTypeHandlerFactory::class,
                 LifeSustainingHandler::class => LifeSustainingHandlerFactory::class,
+                MoreInfoRequiredHandler::class => MoreInfoRequiredHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
