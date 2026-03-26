@@ -1,24 +1,24 @@
-# name: eslint analysis
+name: eslint analysis
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   pull_request:
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
-# jobs:
-#   tfsec:
-#     name: Run eslint
-#     runs-on: ubuntu-latest
-#     permissions:
-#       actions: read
-#       contents: read
-#       security-events: write
+jobs:
+  eslint:
+    name: Run eslint
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
-#     steps:
-#       - name: Clone repo
-#         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-#       - name: Run eslint
-#         run: |
-#           npm ci --ignore-scripts
-#           npm run lint:check
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - name: Run eslint
+        run: |
+          npm ci --ignore-scripts
+          npm run lint:check
