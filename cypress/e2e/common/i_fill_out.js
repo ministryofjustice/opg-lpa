@@ -20,8 +20,6 @@ When(`I select {string} on {string}`, (value, id) => {
 });
 
 When(`I select {string} on {string} with data-inited`, (value, id) => {
-  // Wait for the JavaScript initialization to complete and set data-inited attribute
-  cy.get('[data-cy=' + id + ']', { timeout: 12000 }).should('have.attr', 'data-inited', 'true');
   cy.get('[data-cy=' + id + '][data-inited=true]').select(value);
 });
 
