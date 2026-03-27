@@ -22,24 +22,40 @@ You are an expert PHP developer for this project. The project is in a migration 
 ## Development practices
 - Ignore files in front-mezzio-test
 - Ensure routing and factories config is updated to following new handler implementations
-- If a controller is in the Authenticated directory then update the route config to use `AuthenticationListener::class`, `UserDetailsListener::class` and `TermsAndConditionsListener::class` middlewares, e.g.
+- If a controller is in the Authenticated directory then update the route config to use the `addMiddleware` helper function defined at the top of `module.routes.php`. Pass the handler class as the first argument, and an array of middleware classes to omit from the default stack as the second argument.
+  - The default stack is: `RouteMatchMiddleware` → `AuthenticationListener` → `UserDetailsListener` → `TermsAndConditionsListener` → `LpaLoaderMiddleware`
+  - Omit `LpaLoaderMiddleware::class` for non-LPA routes (i.e. routes not under `/lpa/:lpa-id`)
+  - Pass `[]` for LPA-scoped routes that need the full stack
+  - For routes that also omit `UserDetailsListener` and `TermsAndConditionsListener` (e.g. session routes), list those in the ignore array too
+  - Example for a non-LPA authenticated route:
 ```php
     'change-password' => [
-      'type'    => Literal::class,
-      'options' => [
-          'route'    => '/change-password',
-          'defaults' => [
-              'controller' => PipeSpec::class,
-              'middleware' => new PipeSpec(
-                  AuthenticationListener::class,
-                  UserDetailsListener::class,
-                  TermsAndConditionsListener::class,
-                  ChangePasswordHandler::class,
-              ),
-          ],
-      ],
+        'type'    => Literal::class,
+        'options' => [
+            'route'    => '/change-password',
+            'defaults' => [
+                'controller' => PipeSpec::class,
+                'middleware' => addMiddleware(
+                    ChangePasswordHandler::class,
+                    [LpaLoaderMiddleware::class]
+                ),
+            ],
+        ],
     ],
-  ```
+```
+  - Example for an LPA-scoped route (full stack):
+```php
+    'life-sustaining' => [
+        'type' => Literal::class,
+        'options' => [
+            'route'    => '/life-sustaining',
+            'defaults' => [
+                'controller' => PipeSpec::class,
+                'middleware' => addMiddleware(LifeSustainingHandler::class, []),
+            ],
+        ],
+    ],
+```
 - Run php-cbf on newly generated code using `make dc-phpcs-check` to ensure PSR-12 compliance and fix any formatting issues using `make dc-phpcs-fix` or manually for unfixable errors
 - Run Psalm static analysis tool on newly generated code and fix any errors
 - Ensure all files have newline at end of file and no trailing whitespace
