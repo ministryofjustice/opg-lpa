@@ -878,13 +878,9 @@ return [
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    LpaLoaderMiddleware::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
                                     HowPrimaryAttorneysMakeDecisionHandler::class,
+                                    [],
                                 ),
                             ],
                         ],
