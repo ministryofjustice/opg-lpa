@@ -1202,10 +1202,7 @@ return [
                             'route'    => '/when-lpa-starts',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => RouteMiddlewareHelper::addMiddleware(
-                                    WhenLpaStartsHandler::class,
-                                    [],
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(WhenLpaStartsHandler::class, []),
                             ],
                         ],
                     ],
