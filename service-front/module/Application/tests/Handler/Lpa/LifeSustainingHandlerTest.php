@@ -83,7 +83,7 @@ class LifeSustainingHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/life-sustaining');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/life-sustaining');
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);

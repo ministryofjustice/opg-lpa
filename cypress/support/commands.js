@@ -3,19 +3,22 @@ const axeWrapper = require("./axe_wrapper");
 const { dimensionsMismatchError, pixelsMismatchError } = require('./constants');
 
 Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
-    cy.exec('python3 tests/python-api-client/' + pythonCommand, {failOnNonZeroExit: false}).then(result => {
-        if (result.exitCode !== 0) {
-            throw new Error(
-                'Call to API failed' +
-                    '\ncommand: ' + pythonCommand +
-                    '\ncode: ' + result.exitCode +
-                    '\nstdout: ' + (result.stdout || '<EMPTY>') +
-                    '\nstderr: ' + (result.stderr || '<EMPTY>')
-            )
-        }
+    const python = 'command -v venv/bin/python3 > /dev/null 2>&1 && echo venv/bin/python3 || echo python3';
+    cy.exec(python).then(({stdout: pythonBin}) => {
+        cy.exec(pythonBin.trim() + ' tests/python-api-client/' + pythonCommand, {failOnNonZeroExit: false}).then(result => {
+            if (result.exitCode !== 0) {
+                throw new Error(
+                    'Call to API failed' +
+                        '\ncommand: ' + pythonCommand +
+                        '\ncode: ' + result.exitCode +
+                        '\nstdout: ' + (result.stdout || '<EMPTY>') +
+                        '\nstderr: ' + (result.stderr || '<EMPTY>')
+                )
+            }
 
-        return cy.wrap(result)
-    })
+            return cy.wrap(result)
+        });
+    });
 });
 
 Cypress.Commands.add("visitWithChecks", (url, options) => {
