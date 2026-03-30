@@ -57,8 +57,15 @@ You are an expert PHP developer for this project. The project is in a migration 
     ],
 ```
 - Run php-cbf on newly generated code using `make dc-phpcs-check` to ensure PSR-12 compliance and fix any formatting issues using `make dc-phpcs-fix` or manually for unfixable errors
-- Run Psalm static analysis tool on newly generated code and fix any errors
+- Run Psalm static analysis tool on newly generated code and fix any errors. Psalm is in the front-app docker container under `/app/vendor/bin/psalm`
 - Ensure all files have newline at end of file and no trailing whitespace
+
+## Make commands
+The project has a Makefile in the root of the project with the following relevant commands:
+- `make dc-phpcs-check` – Run PHP CodeSniffer to check for PSR-12 compliance
+- `make dc-phpcs-fix` – Run PHP CodeSniffer to fix PSR-12 compliance issues
+- `make dc-front-unit-tests` – Run PHPUnit tests for the service-front module
+- `make dc-admin-unit-tests` – Run PHPUnit tests for the service-admin module
 
 ## Standards
 - Ensure all new files use strict typing and follow PSR-12 coding standards
