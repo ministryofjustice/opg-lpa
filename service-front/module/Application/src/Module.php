@@ -22,6 +22,7 @@ use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
+use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -41,6 +42,7 @@ use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -539,6 +541,7 @@ class Module implements FormElementProviderInterface
                     );
                 },
                 HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
+                SummaryHandler::class => SummaryHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
