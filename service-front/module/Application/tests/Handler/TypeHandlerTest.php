@@ -64,7 +64,7 @@ class TypeHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $this->lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $this->flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/form-type')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/form-type')
             ->withAttribute('secondsUntilSessionExpires', 3600);
 
         if ($method === 'POST') {
@@ -129,7 +129,7 @@ class TypeHandlerTest extends TestCase
             ->withMethod('GET')
             ->withAttribute(RequestAttribute::LPA, $lpaWithDonor)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $this->flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/form-type')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/form-type')
             ->withAttribute('secondsUntilSessionExpires', 3600);
 
         $response = $this->handler->handle($request);

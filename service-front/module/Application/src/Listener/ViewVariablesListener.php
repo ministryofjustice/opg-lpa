@@ -43,7 +43,7 @@ class ViewVariablesListener extends AbstractListenerAggregate implements LoggerA
 
         $userDetails = $event->getParam(EventParameter::USER_DETAILS);
         $identity = $event->getParam(EventParameter::IDENTITY);
-        $currentRoute = $event->getParam(EventParameter::CURRENT_ROUTE);
+        $currentRoute = $event->getParam(EventParameter::CURRENT_ROUTE_NAME);
 
         if ($userDetails && $identity) {
             $result->setVariable('currentRouteName', $currentRoute);

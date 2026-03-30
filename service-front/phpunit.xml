@@ -22,5 +22,8 @@
       <!-- next line only required if you want coverage reports for twig templates -->
       <!--directory suffix=".php">./build/twig-cache</directory-->
     </include>
+    <exclude>
+      <file>./module/Application/src/Module.php</file>
+    </exclude>
   </source>
 </phpunit>

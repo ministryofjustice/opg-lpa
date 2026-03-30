@@ -222,8 +222,12 @@ dc-shared-unit-tests:
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
 
+# Reset ownership of node_modules if it was previously written by Docker (which runs as root),
+# which would cause npm ci to fail with EACCES permission errors. Only runs if the owner is wrong
+# to avoid an unnecessary sudo prompt.
 .PHONY: npm-install
 npm-install:
+	@if [ -d node_modules ] && [ "$$(stat -f '%u' node_modules)" != "$$(id -u)" ]; then sudo chown -R $$(id -u):$$(id -g) node_modules; fi
 	npm ci --ignore-scripts
 
 .PHONY: cypress-open
