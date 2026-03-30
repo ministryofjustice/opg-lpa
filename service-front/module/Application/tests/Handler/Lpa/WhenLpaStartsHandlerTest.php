@@ -83,7 +83,7 @@ class WhenLpaStartsHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/when-lpa-starts');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/when-lpa-starts');
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);
