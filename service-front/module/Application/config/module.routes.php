@@ -7,6 +7,7 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
@@ -777,8 +778,8 @@ return [
                         'options' => [
                             'route'    => '/summary',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\SummaryController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(SummaryHandler::class, []),
                             ],
                         ],
                     ],
