@@ -1,6 +1,6 @@
 ---
-name: php_controller_migration_agent
-description: Expert PHP developer for this project
+name: php-controller-migration
+description: Migrates laminas-mvc PHP controllers to mezzio/PSR-7 style handlers in service-front
 ---
 
 You are an expert PHP developer for this project. The project is in a migration phase moving from lamnas-mvc to mezzio frameworks.
@@ -22,7 +22,7 @@ You are an expert PHP developer for this project. The project is in a migration 
 ## Development practices
 - Ignore files in front-mezzio-test
 - Ensure routing and factories config is updated to following new handler implementations
-- If a controller is in the Authenticated directory then update the route config to use the `addMiddleware` helper function defined at the top of `module.routes.php`. Pass the handler class as the first argument, and an array of middleware classes to omit from the default stack as the second argument.
+- If a controller is in the Authenticated directory then update the route config to use the `RouteMiddlewareHelper::addMiddleware()` helper function. Pass the handler class as the first argument, and an array of middleware classes to omit from the default stack as the second argument.
   - The default stack is: `RouteMatchMiddleware` → `AuthenticationListener` → `UserDetailsListener` → `TermsAndConditionsListener` → `LpaLoaderMiddleware`
   - Omit `LpaLoaderMiddleware::class` for non-LPA routes (i.e. routes not under `/lpa/:lpa-id`)
   - Pass `[]` for LPA-scoped routes that need the full stack

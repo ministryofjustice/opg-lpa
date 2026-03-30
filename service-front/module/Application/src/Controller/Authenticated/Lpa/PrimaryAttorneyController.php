@@ -96,6 +96,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
 
         $request = $this->convertRequest();
 
+        $this->handleReuseDetailsOnGet($form);
+
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
             $form->setData($request->getPost());
@@ -355,6 +357,8 @@ class PrimaryAttorneyController extends AbstractLpaActorController
         );
 
         $request = $this->convertRequest();
+
+        $this->handleReuseDetailsOnGet($form);
 
         if ($request->isPost() && !$this->reuseActorDetails($form)) {
             //  Set the post data
