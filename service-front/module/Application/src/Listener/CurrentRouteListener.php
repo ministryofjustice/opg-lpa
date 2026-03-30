@@ -14,7 +14,7 @@ use Laminas\Mvc\MvcEvent;
  * the RouteMatch themselves.
  *
  * This listener runs on MVC routes only; its PSR-7 equivalent is
- * RouteMatchMiddleware, which sets the same value as RequestAttribute::CURRENT_ROUTE
+ * RouteMatchMiddleware, which sets the same value as RequestAttribute::CURRENT_ROUTE_NAME
  * on the PSR-7 request.
  */
 class CurrentRouteListener extends AbstractListenerAggregate
