@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\LpaTypeHandler;
@@ -877,8 +878,11 @@ return [
                         'options' => [
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    HowPrimaryAttorneysMakeDecisionHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                     ],
