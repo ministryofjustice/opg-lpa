@@ -6,6 +6,7 @@ use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\SummaryHandler;
@@ -888,8 +889,11 @@ return [
                         'options' => [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    HowReplacementAttorneysMakeDecisionHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                     ],
