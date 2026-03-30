@@ -45,7 +45,7 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
         /** @var FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
-        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE);
+        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         /** @var \Application\Form\Lpa\HowAttorneysMakeDecisionForm $form */
         $form = $this->formElementManager->get(

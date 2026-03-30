@@ -878,10 +878,7 @@ return [
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => RouteMiddlewareHelper::addMiddleware(
-                                    HowPrimaryAttorneysMakeDecisionHandler::class,
-                                    [],
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(HowPrimaryAttorneysMakeDecisionHandler::class, []),
                             ],
                         ],
                     ],
