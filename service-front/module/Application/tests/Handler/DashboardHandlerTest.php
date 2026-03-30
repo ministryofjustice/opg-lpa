@@ -48,7 +48,7 @@ class DashboardHandlerTest extends TestCase
             ->withQueryParams($queryParams);
 
         if ($currentRouteName !== null) {
-            $request = $request->withAttribute(RequestAttribute::CURRENT_ROUTE, $currentRouteName);
+            $request = $request->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, $currentRouteName);
         }
 
         return $request;
