@@ -78,7 +78,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/how-replacement-attorneys-make-decision');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/how-replacement-attorneys-make-decision');
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);
