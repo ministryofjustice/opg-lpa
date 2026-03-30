@@ -41,7 +41,7 @@ class RouteMatchMiddlewareTest extends TestCase
 
         $this->middleware->process($request, $handler);
 
-        // No RouteResult or CURRENT_ROUTE should have been added
+        // No RouteResult or CURRENT_ROUTE_NAME should have been added
         $this->assertNull($captured->getAttribute(RouteResult::class));
         $this->assertNull($captured->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME));
     }

@@ -16,12 +16,14 @@ use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
+use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -33,6 +35,7 @@ use Application\Handler\Factory\Lpa\ReuseDetailsHandlerFactory;
 use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
@@ -41,6 +44,7 @@ use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -528,6 +532,7 @@ class Module implements FormElementProviderInterface
                 LpaTypeHandler::class => LpaTypeHandlerFactory::class,
                 LifeSustainingHandler::class => LifeSustainingHandlerFactory::class,
                 MoreInfoRequiredHandler::class => MoreInfoRequiredHandlerFactory::class,
+                HowReplacementAttorneysMakeDecisionHandler::class => HowReplacementAttorneysMakeDecisionHandlerFactory::class,
                 DonorIndexHandler::class => DonorIndexHandlerFactory::class,
                 DonorAddHandler::class => DonorAddHandlerFactory::class,
                 DonorEditHandler::class => DonorEditHandlerFactory::class,
@@ -539,6 +544,7 @@ class Module implements FormElementProviderInterface
                     );
                 },
                 WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
+                SummaryHandler::class => SummaryHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
