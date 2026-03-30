@@ -24,7 +24,7 @@ We are in the process of migrating our application to Mezzio, which is a middlew
 ## Decision
 To ensure we are exercising the middleware code and to reduce the risk of something not working when we switch over to Mezzio, we have decided to use the laminas-mvc `PipeSpec` that supports PSR7 based middleware. This is configured as part of our routing config and is as close as we can get to Mezzio middleware.
 
-Routes are configured using the `addMiddleware` helper function defined at the top of `module.routes.php`, which builds a `PipeSpec` from the standard authenticated middleware stack minus any classes explicitly excluded:
+Routes are configured using `RouteMiddlewareHelper::addMiddleware()` helper function, which builds a `PipeSpec` from the standard authenticated middleware stack minus any classes explicitly excluded:
 
 ```php
 /**

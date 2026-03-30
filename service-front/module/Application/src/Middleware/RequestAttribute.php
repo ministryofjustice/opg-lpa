@@ -18,7 +18,7 @@ class RequestAttribute
 {
     public const string LPA = Lpa::class;
     public const string FLOW_CHECKER = FormFlowChecker::class;
-    public const string CURRENT_ROUTE = 'currentRouteName';
+    public const string CURRENT_ROUTE_NAME = 'currentRouteName';
     public const string USER_DETAILS = User::class;
     public const string IDENTITY = IdentityUser::class;
 }
