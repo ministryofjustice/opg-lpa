@@ -24,7 +24,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  * Route options (e.g. `unauthenticated_route`) are carried over from the
  * RouteMatch params so that middleware that inspect them via
  * $route->getMatchedRoute()->getOptions() continue to work. The matched
- * route name is also set as RequestAttribute::CURRENT_ROUTE on the request
+ * route name is also set as RequestAttribute::CURRENT_ROUTE_NAME on the request
  * for downstream handlers to consume.
  *
  * This is the PSR-7 equivalent of CurrentRouteListener.
