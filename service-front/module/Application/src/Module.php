@@ -25,6 +25,7 @@ use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactor
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
+use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
@@ -50,6 +51,7 @@ use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\SummaryHandler;
@@ -560,6 +562,7 @@ class Module implements FormElementProviderInterface
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
                 InstructionsHandler::class => InstructionsHandlerFactory::class,
                 WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
+                RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

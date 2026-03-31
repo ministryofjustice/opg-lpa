@@ -29,6 +29,7 @@ use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
@@ -1120,8 +1121,11 @@ return [
                         'options' => [
                             'route'    => '/repeat-application',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\RepeatApplicationController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    RepeatApplicationHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                     ],
