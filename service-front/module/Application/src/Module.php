@@ -23,6 +23,7 @@ use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
@@ -44,6 +45,7 @@ use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
@@ -543,6 +545,7 @@ class Module implements FormElementProviderInterface
                         $sm->get(SessionUtility::class),
                     );
                 },
+                WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
                 HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
                 SummaryHandler::class => SummaryHandlerFactory::class,
             ], // factories
