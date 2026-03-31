@@ -20,6 +20,7 @@ use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFa
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
@@ -39,6 +40,7 @@ use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
@@ -544,6 +546,7 @@ class Module implements FormElementProviderInterface
                     );
                 },
                 WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
+                HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
                 SummaryHandler::class => SummaryHandlerFactory::class,
             ], // factories
             'initializers' => [
