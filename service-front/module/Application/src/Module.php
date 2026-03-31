@@ -20,6 +20,12 @@ use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFa
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyAddTrustHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
@@ -46,6 +52,12 @@ use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\InstructionsHandler;
@@ -553,6 +565,12 @@ class Module implements FormElementProviderInterface
                 DonorIndexHandler::class => DonorIndexHandlerFactory::class,
                 DonorAddHandler::class => DonorAddHandlerFactory::class,
                 DonorEditHandler::class => DonorEditHandlerFactory::class,
+                ReplacementAttorneyIndexHandler::class => ReplacementAttorneyIndexHandlerFactory::class,
+                ReplacementAttorneyAddHandler::class => ReplacementAttorneyAddHandlerFactory::class,
+                ReplacementAttorneyAddTrustHandler::class => ReplacementAttorneyAddTrustHandlerFactory::class,
+                ReplacementAttorneyEditHandler::class => ReplacementAttorneyEditHandlerFactory::class,
+                ReplacementAttorneyConfirmDeleteHandler::class => ReplacementAttorneyConfirmDeleteHandlerFactory::class,
+                ReplacementAttorneyDeleteHandler::class => ReplacementAttorneyDeleteHandlerFactory::class,
                 FeeReductionHandler::class => FeeReductionHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
