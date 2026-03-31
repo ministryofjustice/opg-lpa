@@ -72,6 +72,8 @@ The project has a Makefile in the root of the project with the following relevan
 - Handlers should follow same style as `service-front/module/Application/src/Handler/ChangeEmailAddressHandler.php`
 - Tests should not use partial mocks unless completely unavoidable
 - Prefer using data providers in tests where different values alter logic or boundary testing is required
+- Do not use `#[Test]` PHPUnit attribute annotation  — use the conventional `test` method name prefix
+- Do not add section comment dividers in tests (e.g. `// ==================== GET Tests ====================`)
 
 ## Boundaries
 - ✅ **Always do:** Run PHPUnit tests after implementing handlers, run code through static analysis tools, prefer inbuilt copilot tools over command line

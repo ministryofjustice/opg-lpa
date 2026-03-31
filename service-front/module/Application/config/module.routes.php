@@ -7,10 +7,12 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
@@ -25,6 +27,7 @@ use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
@@ -910,8 +913,11 @@ return [
                         'options' => [
                             'route'    => '/instructions',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\InstructionsController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    InstructionsHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -921,7 +927,10 @@ return [
                             'route'    => '/life-sustaining',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => RouteMiddlewareHelper::addMiddleware(LifeSustainingHandler::class, []),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    LifeSustainingHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -1112,8 +1121,8 @@ return [
                         'options' => [
                             'route'    => '/fee-reduction',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\FeeReductionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(FeeReductionHandler::class, []),
                             ],
                         ],
                     ],
@@ -1229,8 +1238,11 @@ return [
                         'options' => [
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    WhenReplacementAttorneyStepInHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
