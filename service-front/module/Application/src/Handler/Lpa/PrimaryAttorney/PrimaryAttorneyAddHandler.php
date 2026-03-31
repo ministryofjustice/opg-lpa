@@ -53,7 +53,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         /** @var FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
-        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE);
+        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         $isPopup = $this->isXmlHttpRequest($request);
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
@@ -65,25 +65,30 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         /** @var User|null $userDetails */
         $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
 
+        $queryParams = $request->getQueryParams();
+        $reuseDetailsIndexFromQuery = $queryParams['reuseDetailsIndex'] ?? null;
+
         $actorReuseDetails = $this->getActorReuseDetails($lpa, $userDetails);
 
         if (!$isPost) {
-            $reuseCount = count($actorReuseDetails);
+            if ($reuseDetailsIndexFromQuery === null) {
+                $reuseCount = count($actorReuseDetails);
 
-            if ($reuseCount === 1) {
-                $templateParams['displayReuseSessionUserLink'] = true;
-            } elseif ($reuseCount > 1) {
-                $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
-                    'lpa-id' => $lpa->id,
-                ], [
-                    'query' => [
-                        'calling-url' => $request->getUri()->getPath(),
-                        'include-trusts' => true,
-                        'actor-name' => 'Attorney',
-                    ],
-                ]);
+                if ($reuseCount === 1) {
+                    $templateParams['displayReuseSessionUserLink'] = true;
+                } elseif ($reuseCount > 1) {
+                    $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
+                        'lpa-id' => $lpa->id,
+                    ], [
+                        'query' => [
+                            'calling-url' => $request->getUri()->getPath(),
+                            'include-trusts' => true,
+                            'actor-name' => 'Attorney',
+                        ],
+                    ]);
 
-                return new RedirectResponse($reuseDetailsUrl);
+                    return new RedirectResponse($reuseDetailsUrl);
+                }
             }
         }
 
@@ -95,8 +100,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         );
         $form->setActorData('attorney', $this->getActorsList($lpa));
 
-        $queryParams = $request->getQueryParams();
-        $reuseDetailsIndexFromQuery = $queryParams['reuseDetailsIndex'] ?? null;
 
         if (!$isPost && $reuseDetailsIndexFromQuery !== null) {
             $reuseDetails = $this->getActorReuseDetails($lpa, $userDetails);

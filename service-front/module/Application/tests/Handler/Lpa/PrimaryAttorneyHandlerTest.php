@@ -65,7 +65,7 @@ class PrimaryAttorneyHandlerTest extends TestCase
             ->withMethod('GET')
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney');
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney');
     }
 
     public function testGetWithNoAttorneysRendersPageWithoutNextUrl(): void

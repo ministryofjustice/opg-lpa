@@ -108,7 +108,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/add-trust')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/add-trust')
             ->withQueryParams($queryParams);
 
         if ($isXhr) {

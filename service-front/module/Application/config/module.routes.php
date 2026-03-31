@@ -35,7 +35,6 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
-use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
 use Application\Handler\ChangeEmailAddressHandler;
@@ -1042,14 +1041,7 @@ return [
                             'route'    => '/primary-attorney',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    LpaLoaderMiddleware::class,
-                                    PrimaryAttorneyHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1060,14 +1052,7 @@ return [
                                     'route'    => '/add',
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            PrimaryAttorneyAddHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1080,14 +1065,7 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            PrimaryAttorneyEditHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1100,14 +1078,7 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            PrimaryAttorneyConfirmDeleteHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1120,14 +1091,7 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            PrimaryAttorneyDeleteHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1137,14 +1101,7 @@ return [
                                     'route'    => '/add-trust',
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
-                                            LpaLoaderMiddleware::class,
-                                            PrimaryAttorneyAddTrustHandler::class,
-                                        ),
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyAddTrustHandler::class, []),
                                     ],
                                 ],
                             ],

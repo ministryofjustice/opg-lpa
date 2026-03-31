@@ -69,7 +69,7 @@ class PrimaryAttorneyConfirmDeleteHandlerTest extends TestCase
             ->withMethod('GET')
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/confirm-delete')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/confirm-delete')
             ->withAttribute(RouteResult::class, $routeResult);
     }
 
