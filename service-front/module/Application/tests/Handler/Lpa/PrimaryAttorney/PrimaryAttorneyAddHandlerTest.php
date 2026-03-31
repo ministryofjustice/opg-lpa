@@ -153,7 +153,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/add')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/add')
             ->withAttribute(RequestAttribute::USER_DETAILS, $userDetails)
             ->withUri(new Uri('/lpa/91333263035/primary-attorney/add'))
             ->withQueryParams($queryParams);

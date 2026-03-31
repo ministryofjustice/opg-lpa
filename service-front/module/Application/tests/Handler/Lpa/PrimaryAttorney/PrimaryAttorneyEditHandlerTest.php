@@ -123,7 +123,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
-            ->withAttribute(RequestAttribute::CURRENT_ROUTE, 'lpa/primary-attorney/edit')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/edit')
             ->withAttribute(RouteResult::class, $routeResult);
 
         if ($isXhr) {
