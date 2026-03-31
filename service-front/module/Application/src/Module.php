@@ -21,6 +21,7 @@ use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
@@ -42,6 +43,7 @@ use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
@@ -551,6 +553,7 @@ class Module implements FormElementProviderInterface
                 HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
                 SummaryHandler::class => SummaryHandlerFactory::class,
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
+                InstructionsHandler::class => InstructionsHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

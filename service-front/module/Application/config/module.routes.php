@@ -7,6 +7,7 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\SummaryHandler;
@@ -904,8 +905,11 @@ return [
                         'options' => [
                             'route'    => '/instructions',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\InstructionsController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    InstructionsHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -915,7 +919,10 @@ return [
                             'route'    => '/life-sustaining',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => RouteMiddlewareHelper::addMiddleware(LifeSustainingHandler::class, []),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    LifeSustainingHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
