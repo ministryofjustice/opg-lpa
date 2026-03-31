@@ -26,6 +26,7 @@ use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\StatusesHandler;
@@ -1108,8 +1109,8 @@ return [
                         'options' => [
                             'route'    => '/fee-reduction',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\FeeReductionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(FeeReductionHandler::class, []),
                             ],
                         ],
                     ],

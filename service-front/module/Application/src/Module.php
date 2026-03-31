@@ -20,6 +20,7 @@ use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFa
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
@@ -42,6 +43,7 @@ use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
@@ -542,6 +544,7 @@ class Module implements FormElementProviderInterface
                 DonorIndexHandler::class => DonorIndexHandlerFactory::class,
                 DonorAddHandler::class => DonorAddHandlerFactory::class,
                 DonorEditHandler::class => DonorEditHandlerFactory::class,
+                FeeReductionHandler::class => FeeReductionHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
                     return new ActorReuseDetailsService(
