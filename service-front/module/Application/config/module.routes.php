@@ -12,6 +12,7 @@ use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
@@ -1226,8 +1227,11 @@ return [
                         'options' => [
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    WhenReplacementAttorneyStepInHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
