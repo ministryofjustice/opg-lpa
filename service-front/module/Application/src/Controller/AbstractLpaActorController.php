@@ -53,9 +53,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                     $actorName = 'Correspondent';
                 } elseif ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
-                } elseif ($this instanceof Lpa\PrimaryAttorneyController) {
-                    $includeTrusts = true;
-                    $actorName = 'Attorney';
                 } elseif ($this instanceof Lpa\ReplacementAttorneyController) {
                     $includeTrusts = true;
                     $actorName = 'Replacement attorney';
@@ -403,7 +400,7 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // filtering takes place
         $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
         $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
-        $isPrimaryAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\PrimaryAttorneyController);
+        $isPrimaryAttorneyRoute = false;
         $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
 
         $lpaDocument = $this->getLpa()->document;
