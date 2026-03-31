@@ -21,7 +21,6 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Test;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -104,10 +103,7 @@ class FeeReductionHandlerTest extends TestCase
         return $request;
     }
 
-    // ==================== GET Tests ====================
-
-    #[Test]
-    public function getWithNoExistingPaymentRendersFormWithoutBind(): void
+    public function testWithNoExistingPaymentRendersFormWithoutBind(): void
     {
         $lpa = $this->createLpa();
 
@@ -123,8 +119,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    #[Test]
-    public function getWithExistingPaymentReducedFeeReceivesBenefitsBindsCorrectly(): void
+    public function testWithExistingPaymentReducedFeeReceivesBenefitsBindsCorrectly(): void
     {
         $payment = new Payment();
         $payment->reducedFeeReceivesBenefits = true;
@@ -144,8 +139,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    #[Test]
-    public function getWithExistingPaymentReducedFeeUniversalCreditBindsCorrectly(): void
+    public function testWithExistingPaymentReducedFeeUniversalCreditBindsCorrectly(): void
     {
         $payment = new Payment();
         $payment->reducedFeeUniversalCredit = true;
@@ -164,8 +158,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    #[Test]
-    public function getWithExistingPaymentReducedFeeLowIncomeBindsCorrectly(): void
+    public function testWithExistingPaymentReducedFeeLowIncomeBindsCorrectly(): void
     {
         $payment = new Payment();
         $payment->reducedFeeLowIncome = true;
@@ -184,8 +177,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    #[Test]
-    public function getWithExistingPaymentNotApplyBindsCorrectly(): void
+    public function testWithExistingPaymentNotApplyBindsCorrectly(): void
     {
         $payment = new Payment();
         $payment->reducedFeeReceivesBenefits = false;
@@ -207,8 +199,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    #[Test]
-    public function getRendersTemplateWithCorrectVariables(): void
+    public function testRendersTemplateWithCorrectVariables(): void
     {
         $lpa = $this->createLpa();
 
@@ -232,10 +223,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->handler->handle($this->createRequest('GET', [], $lpa));
     }
 
-    // ==================== POST Invalid Tests ====================
-
-    #[Test]
-    public function postInvalidRendersForm(): void
+    public function testInvalidRendersForm(): void
     {
         $lpa = $this->createLpa();
 
@@ -252,8 +240,6 @@ class FeeReductionHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
-
-    // ==================== POST Valid Tests ====================
 
     /**
      * @return array<string, array{string, array<string, bool|null>}>
@@ -300,9 +286,8 @@ class FeeReductionHandlerTest extends TestCase
         ];
     }
 
-    #[Test]
     #[DataProvider('reductionOptionsProvider')]
-    public function postValidSetsPaymentAndRedirects(
+    public function testValidSetsPaymentAndRedirects(
         string $option,
         array $expectedPaymentData,
     ): void {
@@ -337,8 +322,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertStringContainsString('/lpa/91333263035/checkout', $response->getHeaderLine('Location'));
     }
 
-    #[Test]
-    public function postValidWithNoChangeSkipsSaveAndRedirects(): void
+    public function testValidWithNoChangeSkipsSaveAndRedirects(): void
     {
         $payment = new Payment([
             'reducedFeeReceivesBenefits' => null,
@@ -367,8 +351,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
 
-    #[Test]
-    public function postValidWithChangedOptionSavesAndRedirects(): void
+    public function testValidWithChangedOptionSavesAndRedirects(): void
     {
         $payment = new Payment([
             'reducedFeeReceivesBenefits' => null,
@@ -398,8 +381,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
 
-    #[Test]
-    public function postValidApiFailureThrowsException(): void
+    public function testValidApiFailureThrowsException(): void
     {
         $lpa = $this->createLpa();
 
@@ -422,8 +404,7 @@ class FeeReductionHandlerTest extends TestCase
         );
     }
 
-    #[Test]
-    public function postValidXmlHttpRequestReturnsJsonResponse(): void
+    public function testValidXmlHttpRequestReturnsJsonResponse(): void
     {
         $lpa = $this->createLpa();
 
@@ -453,10 +434,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $response);
     }
 
-    // ==================== Repeat Application Tests ====================
-
-    #[Test]
-    public function getWithRepeatApplicationUsesRepeatFees(): void
+    public function testWithRepeatApplicationUsesRepeatFees(): void
     {
         $lpa = $this->createLpa();
         $lpa->repeatCaseNumber = '12345';
@@ -480,8 +458,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->handler->handle($this->createRequest('GET', [], $lpa));
     }
 
-    #[Test]
-    public function getWithoutRepeatApplicationUsesStandardFees(): void
+    public function testWithoutRepeatApplicationUsesStandardFees(): void
     {
         $lpa = $this->createLpa();
 
@@ -502,10 +479,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->handler->handle($this->createRequest('GET', [], $lpa));
     }
 
-    // ==================== Edge Cases ====================
-
-    #[Test]
-    public function postWithNullParsedBodyHandlesGracefully(): void
+    public function testWithNullParsedBodyHandlesGracefully(): void
     {
         $lpa = $this->createLpa();
 
@@ -526,8 +500,7 @@ class FeeReductionHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    #[Test]
-    public function postDoesNotBindExistingPaymentOnPost(): void
+    public function testDoesNotBindExistingPaymentOnPost(): void
     {
         $payment = new Payment();
         $payment->reducedFeeLowIncome = true;
