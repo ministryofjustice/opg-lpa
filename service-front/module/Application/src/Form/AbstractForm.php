@@ -2,6 +2,7 @@
 
 namespace Application\Form;
 
+use Application\Filter\StripTagsPreservingAngleBrackets;
 use Laminas\Form\Form;
 
 /**
@@ -28,19 +29,19 @@ abstract class AbstractForm extends Form
      */
     protected function addToInputFilter(array $inputData)
     {
-        // Only add the StripTags and StringTrim filters for
+        // Only add the tag stripping and trimming filters for
         // non-password fields; if used for password fields, these
         // filters strip leading/trailing spaces and remove anything that
         // looks like HTML, such as <>
         if (!in_array($inputData['name'], ['password', 'password_confirm', 'password_current'])) {
-            // Merge additional input filters for non-password fields
+            // Use StripTagsPreservingAngleBrackets (backed by HTML Purifier) instead of Laminas StripTags.
             $inputData = array_merge_recursive([
                 'filters'  => [
                     [
-                        'name' => 'Laminas\Filter\StripTags'
+                        'name' => StripTagsPreservingAngleBrackets::class,
                     ],
                     [
-                        'name' => 'Laminas\Filter\StringTrim'
+                        'name' => 'Laminas\Filter\StringTrim',
                     ],
                 ]
             ], $inputData);
