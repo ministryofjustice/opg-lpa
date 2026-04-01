@@ -72,7 +72,7 @@ final class FeedbackFormTest extends MockeryTestCase
         ], $this->form->getMessages());
     }
 
-    public function testDetailsFieldPreservesSpecialCharacters(): void
+    public function testDetailsFieldStripsHtmlTags(): void
     {
         $this->form->setData(array_merge([
             'rating' => 'very-satisfied',
@@ -81,11 +81,27 @@ final class FeedbackFormTest extends MockeryTestCase
         ], $this->getCsrfData()));
         $this->assertTrue($this->form->isValid());
 
-        // StripTags is not applied to textarea fields; XSS is handled
-        // by output escaping in templates. StringTrim trims the outer whitespace.
+        // HTML Purifier strips actual HTML tags but preserves text content.
+        // StringTrim trims leading/trailing whitespace.
         $filteredData = $this->form->getData();
         $this->assertEquals(
-            '<p>This is some feedback with <b>HTML</b> tags.  </p>',
+            'This is some feedback with HTML tags.',
+            $filteredData['details']
+        );
+    }
+
+    public function testDetailsFieldPreservesLoneAngleBrackets(): void
+    {
+        $this->form->setData(array_merge([
+            'rating' => 'very-satisfied',
+            'email' => 'a@b.com',
+            'details' => 'I would like < 5 visits per week',
+        ], $this->getCsrfData()));
+        $this->assertTrue($this->form->isValid());
+
+        $filteredData = $this->form->getData();
+        $this->assertEquals(
+            'I would like < 5 visits per week',
             $filteredData['details']
         );
     }
