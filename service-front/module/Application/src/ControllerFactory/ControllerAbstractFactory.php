@@ -6,7 +6,6 @@ use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
 use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\DateCheckController;
-use Application\Controller\Authenticated\Lpa\PrimaryAttorneyController;
 use Application\Controller\General\AuthController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
@@ -40,9 +39,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         CheckoutController::class => [
             'setCommunicationService' => 'Communication',
             'setPaymentClient'        => 'GovPayClient'
-        ],
-        PrimaryAttorneyController::class => [
-            'setApplicantService' => 'ApplicantService',
         ],
         DateCheckController::class => [
             'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,
