@@ -91,4 +91,66 @@ final class InstructionsAndPreferencesFormTest extends MockeryTestCase
         $this->assertFalse($this->form->isValid());
         $this->assertEquals(['preference' => [0 => 'expected-type:string-or-bool=false']], $this->form->getMessages());
     }
+
+    public function testLessThanSignInInstructionsIsPreserved(): void
+    {
+        $input = 'I would like < 5 visits per week';
+
+        $this->form->setData(array_merge([
+            'instruction' => $input,
+            'preference'  => '',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $data = $this->form->getData();
+        $this->assertEquals($input, $data['instruction']);
+    }
+
+    public function testLessThanSignInPreferencesIsPreserved(): void
+    {
+        $input = 'Temperature should be < 25 degrees';
+
+        $this->form->setData(array_merge([
+            'instruction' => '',
+            'preference'  => $input,
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $data = $this->form->getData();
+        $this->assertEquals($input, $data['preference']);
+    }
+
+    public function testAngleBracketsDoNotTruncateSubsequentLines(): void
+    {
+        $input = "Line one has a < sign\r\nLine two should still be here\r\nLine three too";
+
+        $this->form->setData(array_merge([
+            'instruction' => $input,
+            'preference'  => '',
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $data = $this->form->getData();
+        $this->assertStringContainsString('Line two should still be here', $data['instruction']);
+        $this->assertStringContainsString('Line three too', $data['instruction']);
+    }
+
+    public function testNewlinesInPreferencesArePreserved(): void
+    {
+        $input = "First preference\r\nSecond preference\r\nThird preference";
+
+        $this->form->setData(array_merge([
+            'instruction' => '',
+            'preference'  => $input,
+        ], $this->getCsrfData()));
+
+        $this->assertTrue($this->form->isValid());
+
+        $data = $this->form->getData();
+        $this->assertStringContainsString("\n", $data['preference']);
+        $this->assertStringContainsString('Second preference', $data['preference']);
+    }
 }
