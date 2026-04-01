@@ -72,7 +72,7 @@ final class FeedbackFormTest extends MockeryTestCase
         ], $this->form->getMessages());
     }
 
-    public function testDetailsFieldStripsTags(): void
+    public function testDetailsFieldPreservesSpecialCharacters(): void
     {
         $this->form->setData(array_merge([
             'rating' => 'very-satisfied',
@@ -81,7 +81,12 @@ final class FeedbackFormTest extends MockeryTestCase
         ], $this->getCsrfData()));
         $this->assertTrue($this->form->isValid());
 
+        // StripTags is not applied to textarea fields; XSS is handled
+        // by output escaping in templates. StringTrim trims the outer whitespace.
         $filteredData = $this->form->getData();
-        $this->assertEquals('This is some feedback with HTML tags.', $filteredData['details']);
+        $this->assertEquals(
+            '<p>This is some feedback with <b>HTML</b> tags.  </p>',
+            $filteredData['details']
+        );
     }
 }
