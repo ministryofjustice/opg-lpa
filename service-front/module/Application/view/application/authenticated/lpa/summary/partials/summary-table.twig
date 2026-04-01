@@ -80,7 +80,7 @@
         {% if lpa.document.primaryAttorneyDecisions is defined and lpa.document.primaryAttorneyDecisions.howDetails is not empty %}
             {{ macros.outputSection(
                 'Decisions that attorneys must make jointly',
-                lpa.document.primaryAttorneyDecisions.howDetails
+                lpa.document.primaryAttorneyDecisions.howDetails|e|nl2br
             ) }}
         {% endif %}
     {% endif %}
@@ -137,7 +137,7 @@
         {% if lpa.document.replacementAttorneyDecisions.whenDetails is not empty %}
             {{ macros.outputSection(
                 'Donor\'s instructions on how replacements step in',
-                lpa.document.replacementAttorneyDecisions.whenDetails
+                lpa.document.replacementAttorneyDecisions.whenDetails|e|nl2br
             ) }}
         {% endif %}
 
@@ -162,7 +162,7 @@
         {% if lpa.document.replacementAttorneyDecisions.howDetails is not empty %}
             {{ macros.outputSection(
                 'Decisions that replacement attorneys must make jointly',
-                lpa.document.replacementAttorneyDecisions.howDetails
+                lpa.document.replacementAttorneyDecisions.howDetails|e|nl2br
             ) }}
         {% endif %}
 
@@ -213,7 +213,7 @@
     {% if lpa.document.preference is defined %}
         {{ macros.outputSection(
             'Preferences',
-            (lpa.document.preference is empty ? 'No preferences' : lpa.document.preference),
+            (lpa.document.preference is empty ? 'No preferences' : lpa.document.preference|e|nl2br),
             url('lpa/instructions', {'lpa-id': lpa.id})
         ) }}
     {% endif %}
@@ -222,7 +222,7 @@
     {% if lpa.document.instruction is defined %}
         {{ macros.outputSection(
             'Instructions',
-            (lpa.document.instruction is empty ? 'No instructions' : lpa.document.instruction),
+            (lpa.document.instruction is empty ? 'No instructions' : lpa.document.instruction|e|nl2br),
             url('lpa/instructions', {'lpa-id': lpa.id})
         ) }}
     {% endif %}
