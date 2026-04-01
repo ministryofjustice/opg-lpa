@@ -26,6 +26,8 @@ use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
@@ -52,6 +54,8 @@ use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\CompleteIndexHandler;
+use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
 use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
@@ -126,7 +130,9 @@ use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Service\AccordionService;
+use Application\Service\CompleteViewParamsHelper;
 use Application\Service\Factory\AccordionServiceFactory;
+use Application\Service\Factory\CompleteViewParamsHelperFactory;
 use Application\Model\Service\User\Details;
 use Application\Service\NavigationViewModelHelper;
 use Application\Service\Factory\NavigationViewModelHelperFactory;
@@ -456,6 +462,7 @@ class Module implements FormElementProviderInterface
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
                 NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
+                CompleteViewParamsHelper::class => CompleteViewParamsHelperFactory::class,
                 EnableCookieHandler::class => fn (ServiceLocatorInterface $sm) => new EnableCookieHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
@@ -557,6 +564,8 @@ class Module implements FormElementProviderInterface
                 WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
                 HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
                 SummaryHandler::class => SummaryHandlerFactory::class,
+                CompleteIndexHandler::class => CompleteIndexHandlerFactory::class,
+                CompleteViewDocsHandler::class => CompleteViewDocsHandlerFactory::class,
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
                 InstructionsHandler::class => InstructionsHandlerFactory::class,
                 WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
