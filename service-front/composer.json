@@ -15,6 +15,7 @@
         "alphagov/notifications-php-client": "^6.0.0",
         "aws/aws-sdk-php": "^3.204.5",
         "egulias/email-validator": "^4",
+        "ezyang/htmlpurifier": "^4.19",
         "fig/http-message-util": "^1.1",
         "guzzlehttp/guzzle": "^7.0",
         "guzzlehttp/psr7": "^2.4",
