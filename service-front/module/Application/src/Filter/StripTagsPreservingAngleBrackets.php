@@ -6,17 +6,14 @@ namespace Application\Filter;
 
 use HTMLPurifier;
 use HTMLPurifier_Config;
-use Laminas\Filter\AbstractFilter;
+use Laminas\Filter\FilterInterface;
 
 /**
- * Sanitises input using HTML Purifier to remove dangerous HTML tags
+ * Sanitises input using HTML Purifier to remove dangerous HTML tags.
  * HTML Purifier encodes lone angle brackets as entities (&lt; &gt;);
  * we decode them back so the stored value contains the original characters.
- *
- * @template TOptions of array
- * @extends AbstractFilter<TOptions>
  */
-final class StripTagsPreservingAngleBrackets extends AbstractFilter
+class StripTagsPreservingAngleBrackets implements FilterInterface
 {
     private HTMLPurifier $purifier;
 
