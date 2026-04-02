@@ -45,9 +45,7 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                 $includeTrusts = false;
                 $actorName = null;
 
-                if ($this instanceof Lpa\CorrespondentController) {
-                    $actorName = 'Correspondent';
-                } elseif ($this instanceof Lpa\PeopleToNotifyController) {
+                if ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
                 }
 
@@ -188,10 +186,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
      */
     protected function getActorReuseDetails($includeTrusts = true, $forCorrespondent = false)
     {
-        // If this is the correspondent controller then the forCorrespondent flag MUST be true
-        if ($this instanceof Lpa\CorrespondentController) {
-            $forCorrespondent = true;
-        }
 
         // Initialise the reuse details details array
         $actorReuseDetails = [];
