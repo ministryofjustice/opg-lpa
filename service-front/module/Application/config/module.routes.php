@@ -50,6 +50,8 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
+use Application\Handler\Lpa\CorrespondentHandler;
+use Application\Handler\Lpa\CorrespondentEditHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -759,8 +761,8 @@ return [
                         'options' => [
                             'route'    => '/correspondent',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CorrespondentController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CorrespondentHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -770,7 +772,8 @@ return [
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(CorrespondentEditHandler::class, []),
                                     ],
                                 ],
                             ],
