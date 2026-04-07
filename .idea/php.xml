@@ -688,6 +688,7 @@
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/service-front/vendor/ezyang/htmlpurifier" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
