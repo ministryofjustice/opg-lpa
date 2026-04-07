@@ -113,3 +113,25 @@ Feature: ReusedDonorKeepsAllDetails
         # IMPORTANT - as we're reusing a donor who can't sign, the can't sign checkbox should
         # be checked here as well
         And "cannot-sign" is checked
+        And I click "form-save"
+        Then I see "Dr Herbert Gallantrathron" in the page text
+
+        When I click "save-and-continue"
+        Then I am taken to the when lpa starts page
+
+          # Select when LPA can be used
+        When I check "when-no-capacity"
+        And I click "save"
+        Then I am taken to the primary attorney page
+
+          # Primary attorney
+        When I click "add-attorney"
+        Then I can find "form-reuse-details"
+
+        When I click the option labelled with "Herbert Gallantrathron (was the donor)" in the reuse popup
+        And I click "continue"
+        Then I can find "form-attorney"
+
+        # Regression test for LPAL-1993 where re-use index was +1
+        Then I can find element with data attribute "name-first" containing "Herbert"
+        Then I can find element with data attribute "name-last" containing "Gallantrathron"
