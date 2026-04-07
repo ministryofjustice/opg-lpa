@@ -57,6 +57,11 @@ class CorrespondentHandler implements RequestHandlerInterface
 
         // Determine some details about the existing correspondent
         $correspondent = $this->getLpaCorrespondent($lpa);
+
+        if ($correspondent === null) {
+            throw new RuntimeException('Unable to determine correspondent for LPA: ' . $lpa->id);
+        }
+
         $correspondentEmailAddress = (
             $correspondent->email instanceof EmailAddress ? $correspondent->email : null
         );
@@ -86,12 +91,12 @@ class CorrespondentHandler implements RequestHandlerInterface
                         $correspondent instanceof Donor ? Correspondence::WHO_DONOR : Correspondence::WHO_ATTORNEY
                     );
                     $correspondentData['name'] = (
-                        $correspondent instanceof TrustCorporation ? null : $correspondent->name->toArray()
+                        $correspondent instanceof TrustCorporation ? null : $correspondent->name?->toArray()
                     );
                     $correspondentData['company'] = (
                         $correspondent instanceof TrustCorporation ? $correspondent->name : null
                     );
-                    $correspondentData['address'] = $correspondent->address->toArray();
+                    $correspondentData['address'] = $correspondent->address?->toArray();
                 }
 
                 $correspondent = new Correspondence($correspondentData);
@@ -192,12 +197,17 @@ class CorrespondentHandler implements RequestHandlerInterface
             if ($lpaDocument->whoIsRegistering == Correspondence::WHO_DONOR) {
                 $correspondent = $lpaDocument->donor;
             } else {
-                $firstAttorneyId = array_values($lpaDocument->whoIsRegistering)[0];
+                /** @var array|string|null $whoIsRegistering */
+                $whoIsRegistering = $lpaDocument->whoIsRegistering;
 
-                foreach ($lpaDocument->primaryAttorneys as $attorney) {
-                    if ($attorney->id == $firstAttorneyId) {
-                        $correspondent = $attorney;
-                        break;
+                if (is_array($whoIsRegistering)) {
+                    $firstAttorneyId = array_values($whoIsRegistering)[0];
+
+                    foreach ($lpaDocument->primaryAttorneys as $attorney) {
+                        if ($attorney->id == $firstAttorneyId) {
+                            $correspondent = $attorney;
+                            break;
+                        }
                     }
                 }
             }
@@ -216,7 +226,7 @@ class CorrespondentHandler implements RequestHandlerInterface
         if ($correspondent instanceof Correspondence) {
             if (
                 $correspondent->who == Correspondence::WHO_OTHER
-                || ($correspondent->who == Correspondence::WHO_ATTORNEY && !is_null($correspondent->company))
+                || ($correspondent->who == Correspondence::WHO_ATTORNEY && $correspondent->company !== '')
             ) {
                 return true;
             }
