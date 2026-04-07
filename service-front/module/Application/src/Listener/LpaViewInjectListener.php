@@ -10,6 +10,15 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
 
+/**
+ * Injects the LPA object into the root view model and all child view models
+ * on every render event, so that LPA data is available in templates without
+ * each controller having to set it explicitly.
+ *
+ * This listener runs on MVC routes only; its PSR-7 equivalent is
+ * CommonTemplateVariablesTrait::getTemplateVariables(), which reads the LPA
+ * from the request attribute set by LpaLoaderMiddleware.
+ */
 class LpaViewInjectListener extends AbstractListenerAggregate
 {
     public function attach(EventManagerInterface $events, $priority = 1): void

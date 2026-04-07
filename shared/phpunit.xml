@@ -4,6 +4,9 @@
     <include>
         <directory suffix=".php">module/MakeShared/src</directory>
     </include>
+    <report>
+        <html outputDirectory="./build/coverage"/>
+    </report>
   </coverage>
   <testsuites>
     <testsuite name="MakeSharedTest">

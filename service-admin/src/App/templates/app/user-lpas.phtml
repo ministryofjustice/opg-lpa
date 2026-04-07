@@ -71,7 +71,7 @@
                             Payment
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <?php if (isset($lpa['payment']['method']) && $lpa['payment']['method'] === 'online') { ?>
+                            <?php if (isset($lpa['payment']['method']) && $lpa['payment']['method'] === 'card') { ?>
                                 Paid online on <?= $this->dateFormat($lpa['payment']['date']) ?? 'unknown date'; ?> under reference <?= $lpa['payment']['reference'] ?? 'unknown'; ?>
                             <?php } else if (isset($lpa['payment']['method']) && $lpa['payment']['method'] === 'cheque') { ?>
                                 Paid with cheque on <?= $this->dateFormat($lpa['payment']['date']) ?? 'unknown date'; ?>

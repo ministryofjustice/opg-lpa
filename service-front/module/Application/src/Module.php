@@ -16,6 +16,19 @@ use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
 use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
+use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
+use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
+use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
+use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
+use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
+use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
+use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
+use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -23,9 +36,25 @@ use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
 use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\ReuseDetailsHandlerFactory;
 use Application\Handler\Factory\StatusesHandlerFactory;
 use Application\Handler\Factory\TermsChangedHandlerFactory;
 use Application\Handler\HomeHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\DonorAddHandler;
+use Application\Handler\Lpa\DonorEditHandler;
+use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\SummaryHandler;
+use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -451,11 +480,12 @@ class Module implements FormElementProviderInterface
                 HomeHandler::class => HomeHandlerFactory::class,
                 AboutYouHandler::class => AboutYouHandlerFactory::class,
                 AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
-                    return new AuthenticationListener(
+                    $instance = new AuthenticationListener(
                         $sm->get(SessionUtility::class),
                         $sm->get(AuthenticationService::class),
-                        null  // No UrlHelper for MVC
+                        null
                     );
+                    return $instance;
                 },
 
                 UserDetailsListener::class => function (ServiceLocatorInterface $sm) {
@@ -510,6 +540,26 @@ class Module implements FormElementProviderInterface
                 TermsChangedHandler::class     => TermsChangedHandlerFactory::class,
                 TypeHandler::class => TypeHandlerFactory::class,
                 LpaTypeHandler::class => LpaTypeHandlerFactory::class,
+                LifeSustainingHandler::class => LifeSustainingHandlerFactory::class,
+                MoreInfoRequiredHandler::class => MoreInfoRequiredHandlerFactory::class,
+                HowReplacementAttorneysMakeDecisionHandler::class => HowReplacementAttorneysMakeDecisionHandlerFactory::class,
+                DonorIndexHandler::class => DonorIndexHandlerFactory::class,
+                DonorAddHandler::class => DonorAddHandlerFactory::class,
+                DonorEditHandler::class => DonorEditHandlerFactory::class,
+                FeeReductionHandler::class => FeeReductionHandlerFactory::class,
+                ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
+                ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
+                    return new ActorReuseDetailsService(
+                        $sm->get(LpaApplicationService::class),
+                        $sm->get(SessionUtility::class),
+                    );
+                },
+                WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
+                HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
+                SummaryHandler::class => SummaryHandlerFactory::class,
+                WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
+                InstructionsHandler::class => InstructionsHandlerFactory::class,
+                WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

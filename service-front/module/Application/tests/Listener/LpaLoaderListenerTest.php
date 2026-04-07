@@ -230,8 +230,8 @@ class LpaLoaderListenerTest extends TestCase
         if ($result === null) {
             $this->assertInstanceOf(Lpa::class, $event->getParam(EventParameter::LPA));
             $this->assertInstanceOf(FormFlowChecker::class, $event->getParam(EventParameter::FLOW_CHECKER));
-            // CURRENT_ROUTE is set by CurrentRouteListener, not LpaLoaderListener
-            $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE));
+            // CURRENT_ROUTE_NAME is set by CurrentRouteListener, not LpaLoaderListener
+            $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE_NAME));
         } else {
             $this->assertTrue(true);
         }
@@ -274,14 +274,14 @@ class LpaLoaderListenerTest extends TestCase
         $result = $this->listener->listen($event);
 
         $this->assertNull($result);
-        // CURRENT_ROUTE is set by CurrentRouteListener, not LpaLoaderListener
-        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE));
+        // CURRENT_ROUTE_NAME is set by CurrentRouteListener, not LpaLoaderListener
+        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE_NAME));
     }
 
     public function testConstantsAreCorrectlyDefined(): void
     {
         $this->assertEquals(Lpa::class, EventParameter::LPA);
         $this->assertEquals(FormFlowChecker::class, EventParameter::FLOW_CHECKER);
-        $this->assertEquals('currentRouteName', EventParameter::CURRENT_ROUTE);
+        $this->assertEquals('currentRouteName', EventParameter::CURRENT_ROUTE_NAME);
     }
 }

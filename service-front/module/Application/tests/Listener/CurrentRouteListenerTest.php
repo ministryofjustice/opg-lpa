@@ -36,7 +36,7 @@ class CurrentRouteListenerTest extends TestCase
 
         $this->listener->listen($event);
 
-        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE));
+        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE_NAME));
     }
 
     public function testListenDoesNothingWhenRouteNameIsNull(): void
@@ -49,7 +49,7 @@ class CurrentRouteListenerTest extends TestCase
 
         $this->listener->listen($event);
 
-        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE));
+        $this->assertNull($event->getParam(EventParameter::CURRENT_ROUTE_NAME));
     }
 
     public function testListenSetsCurrentRouteOnEvent(): void
@@ -62,7 +62,7 @@ class CurrentRouteListenerTest extends TestCase
 
         $this->listener->listen($event);
 
-        $this->assertSame('user/dashboard', $event->getParam(EventParameter::CURRENT_ROUTE));
+        $this->assertSame('user/dashboard', $event->getParam(EventParameter::CURRENT_ROUTE_NAME));
     }
 
     public function testListenSetsCurrentRouteForLpaRoutes(): void
@@ -75,6 +75,6 @@ class CurrentRouteListenerTest extends TestCase
 
         $this->listener->listen($event);
 
-        $this->assertSame('lpa/form-type', $event->getParam(EventParameter::CURRENT_ROUTE));
+        $this->assertSame('lpa/form-type', $event->getParam(EventParameter::CURRENT_ROUTE_NAME));
     }
 }

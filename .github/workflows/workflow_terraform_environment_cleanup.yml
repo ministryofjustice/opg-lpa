@@ -3,18 +3,19 @@ name: "[Workflow] Cleanup PR Workspaces"
 on:
   schedule:
     # 6am and 6pm every day except Sundays
-    - cron: '0 6,18 * * 0-6'
+    - cron: "0 6,18 * * 0-6"
 
 permissions:
-  contents: read
-  security-events: none
-  pull-requests: none
   actions: none
   checks: none
+  contents: read
   deployments: none
+  id-token: write
   issues: none
   packages: none
+  pull-requests: none
   repository-projects: none
+  security-events: none
   statuses: none
 
 jobs:
@@ -34,17 +35,16 @@ jobs:
           terraform_wrapper: false
 
       - name: Configure AWS Credentials For Terraform
-        uses: aws-actions/configure-aws-credentials@00943011d9042930efac3dcd3a170e4273319bc8 # v5.1.0
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
           role-duration-seconds: 3600
           role-session-name: OPGLPATerraformGithubAction
+          role-to-assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
 
       - uses: webfactory/ssh-agent@a6f90b1f127823b31d4d4a8d96047790581349bd # v0.9.1
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
       - name: Install Terraform Workspace Manager
         run: |

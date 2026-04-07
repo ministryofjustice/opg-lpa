@@ -19,10 +19,18 @@ use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
 /**
- * Loads the LPA for the current request, validates access, and checks
- * the flow to ensure the user can access the requested route.
- * Requires the user identity to already be set as a request attribute
- * (keyed by RequestAttribute::IDENTITY) before this middleware runs.
+ * Loads the LPA for the current request, validates that the authenticated user owns
+ * it, and checks the form flow to ensure the user can access the requested route. If
+ * the flow checker determines a different route should be shown first, the user is
+ * redirected there. Returns a 404 response if the LPA cannot be found, and throws a
+ * RuntimeException if the LPA belongs to a different user. On success, the LPA and a
+ * FormFlowChecker instance are set as request attributes keyed by RequestAttribute::LPA
+ * and RequestAttribute::FLOW_CHECKER for downstream handlers to consume.
+ *
+ * Requires the authenticated identity to already be set as RequestAttribute::IDENTITY
+ * on the request (i.e. AuthenticationListener must run before this middleware).
+ *
+ * This is the PSR-7 equivalent of LpaLoaderListener.
  */
 class LpaLoaderMiddleware implements MiddlewareInterface
 {

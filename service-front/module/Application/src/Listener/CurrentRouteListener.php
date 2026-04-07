@@ -9,9 +9,13 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 
 /**
- * Sets the current route name as an event parameter on every dispatch
- * so that downstream listeners and view helpers can access it when the
- * route is handled by a traditional MVC controller
+ * Sets the current route name as an event parameter on every dispatch so that
+ * downstream listeners and view helpers can read it without having to inspect
+ * the RouteMatch themselves.
+ *
+ * This listener runs on MVC routes only; its PSR-7 equivalent is
+ * RouteMatchMiddleware, which sets the same value as RequestAttribute::CURRENT_ROUTE_NAME
+ * on the PSR-7 request.
  */
 class CurrentRouteListener extends AbstractListenerAggregate
 {
@@ -35,7 +39,7 @@ class CurrentRouteListener extends AbstractListenerAggregate
         $currentRoute = $routeMatch->getMatchedRouteName();
 
         if ($currentRoute !== null) {
-            $event->setParam(EventParameter::CURRENT_ROUTE, $currentRoute);
+            $event->setParam(EventParameter::CURRENT_ROUTE_NAME, $currentRoute);
         }
     }
 }

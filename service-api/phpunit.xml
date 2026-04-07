@@ -8,6 +8,11 @@
   <testsuite name="ApplicationTest">
     <directory>./module/Application/tests/</directory>
   </testsuite>
+  <coverage>
+    <report>
+      <html outputDirectory="./build/coverage"/>
+    </report>
+  </coverage>
   <source>
     <include>
       <directory suffix=".php">./module/Application/src</directory>

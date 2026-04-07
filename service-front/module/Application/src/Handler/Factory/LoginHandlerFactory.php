@@ -6,7 +6,6 @@ namespace Application\Handler\Factory;
 
 use Application\Handler\LoginHandler;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Laminas\Form\FormElementManager;
@@ -24,7 +23,6 @@ class LoginHandlerFactory
             $container->get(AuthenticationService::class),
             $container->get(SessionManagerSupport::class),
             $container->get(SessionUtility::class),
-            $container->get(LpaApplicationService::class),
             $container->get(FlashMessenger::class)
         );
     }

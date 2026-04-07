@@ -604,7 +604,7 @@ final class DateCheckViewModelHelperTest extends MockeryTestCase
             return [];
         }
 
-        $dom->loadHTML($html);
+        $dom->loadHTML($html, 32);
         $xpath = new DOMXpath($dom);
         $matches = $xpath->query($selector);
 

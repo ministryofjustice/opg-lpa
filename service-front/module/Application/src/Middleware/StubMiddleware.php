@@ -9,10 +9,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-// We need a MiddlewareInterface stub for RouteMatchMiddleware
-// as Mezzio\Router\Route requires one, but it is never invoked
-// through this RouteMatchMiddleware – the real handler is already in
-// the pipeline.
+/**
+ * A no-op middleware required solely to satisfy the Mezzio\Router\Route constructor,
+ * which demands a MiddlewareInterface instance. RouteMatchMiddleware constructs a
+ * Route object in order to produce a RouteResult, but the Route's middleware is never
+ * invoked — the real handler is already in the PipeSpec pipeline ahead of it.
+ */
 class StubMiddleware implements MiddlewareInterface
 {
     public function process(

@@ -47,7 +47,7 @@ class TypeHandler implements RequestHandlerInterface
         /** @var FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
-        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE);
+        $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         /** @var TypeForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
