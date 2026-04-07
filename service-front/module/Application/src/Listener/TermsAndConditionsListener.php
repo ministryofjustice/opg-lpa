@@ -22,11 +22,13 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * We check if the terms have changed since the user last logged in.
- * We also use a session to record whether the user has seen the 'Terms have changed' page since logging in.
+ * Checks whether the terms and conditions have changed since the user last logged in.
+ * A session flag records whether the user has already been shown the 'Terms have changed'
+ * page in the current session; if they haven't, they are redirected to it.
  *
- * If the terms have changed and they haven't seen the 'Terms have changed' page
- * in this session, we redirect them to it.
+ * Implements both the laminas-mvc listener interface (via listen()) and the PSR-7
+ * MiddlewareInterface (via process()), so it can run in a laminas-mvc PipeSpec during
+ * the Mezzio migration as well as in a full Mezzio pipeline.
  */
 class TermsAndConditionsListener extends AbstractListenerAggregate implements MiddlewareInterface
 {

@@ -15,7 +15,7 @@ trait CommonTemplateVariablesTrait
             'signedInUser' => $request->getAttribute(RequestAttribute::USER_DETAILS),
             'secondsUntilSessionExpires' => $request->getAttribute('secondsUntilSessionExpires'),
             'lpa' => $request->getAttribute(RequestAttribute::LPA),
-            'currentRouteName' => $request->getAttribute(RequestAttribute::CURRENT_ROUTE),
+            'currentRouteName' => $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME),
         ];
     }
 }

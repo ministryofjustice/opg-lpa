@@ -5,6 +5,14 @@ declare(strict_types=1);
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\SummaryHandler;
+use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
@@ -12,17 +20,29 @@ use Application\Handler\TypeHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\DashboardHandler;
+use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\DonorAddHandler;
+use Application\Handler\Lpa\DonorEditHandler;
+use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
+use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
+use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
-use Application\Listener\AuthenticationListener;
 use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
 use Application\Handler\ChangeEmailAddressHandler;
+use Application\Helper\RouteMiddlewareHelper;
 use Application\Middleware\LpaLoaderMiddleware;
-use Application\Middleware\RouteMatchMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -239,9 +259,13 @@ return [
                     'route'    => '/session-keep-alive',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'middleware' => new PipeSpec(
-                            AuthenticationListener::class,
+                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionKeepAliveHandler::class,
+                            [
+                                UserDetailsListener::class,
+                                TermsAndConditionsListener::class,
+                                LpaLoaderMiddleware::class,
+                            ]
                         ),
                     ],
                 ],
@@ -253,9 +277,13 @@ return [
                     'route'    => '/session-set-expiry',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'middleware' => new PipeSpec(
-                            AuthenticationListener::class,
+                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionSetExpiryHandler::class,
+                            [
+                                UserDetailsListener::class,
+                                TermsAndConditionsListener::class,
+                                LpaLoaderMiddleware::class,
+                            ]
                         ),
                     ],
                 ],
@@ -382,12 +410,9 @@ return [
                     'route'    => '/address-lookup',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'middleware' => new PipeSpec(
-                            RouteMatchMiddleware::class,
-                            AuthenticationListener::class,
-                            UserDetailsListener::class,
-                            TermsAndConditionsListener::class,
+                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                             Handler\PostcodeHandler::class,
+                            [LpaLoaderMiddleware::class]
                         ),
                         'allowIncompleteUser' => true,
                     ],
@@ -410,13 +435,7 @@ return [
                             'route' => '/about-you[/:new]',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    AboutYouHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(AboutYouHandler::class, []),
                                 'allowIncompleteUser' => true,
                             ],
                         ],
@@ -428,13 +447,7 @@ return [
                             'route' => '/change-email-address',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    ChangeEmailAddressHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(ChangeEmailAddressHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -462,12 +475,9 @@ return [
                             'route'    => '/change-password',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
                                     ChangePasswordHandler::class,
+                                    [LpaLoaderMiddleware::class]
                                 ),
                             ],
                         ],
@@ -479,12 +489,9 @@ return [
                             'route'    => '/dashboard',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
                                     DashboardHandler::class,
+                                    [LpaLoaderMiddleware::class]
                                 ),
                             ],
                         ],
@@ -499,12 +506,9 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            RouteMatchMiddleware::class,
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             DashboardHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                         'page' => 1,
                                     ],
@@ -519,11 +523,9 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             CreateLpaHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                     ],
                                 ],
@@ -537,11 +539,9 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             DeleteLpaHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                     ],
                                 ],
@@ -555,11 +555,9 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             ConfirmDeleteLpaHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                     ],
                                 ],
@@ -573,11 +571,9 @@ return [
                                     ],
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             StatusesHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                     ],
                                 ],
@@ -588,11 +584,9 @@ return [
                                     'route'    => '/new-terms',
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
-                                        'middleware' => new PipeSpec(
-                                            AuthenticationListener::class,
-                                            UserDetailsListener::class,
-                                            TermsAndConditionsListener::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                                             TermsChangedHandler::class,
+                                            [LpaLoaderMiddleware::class]
                                         ),
                                     ],
                                 ],
@@ -606,11 +600,9 @@ return [
                             'route' => '/delete',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
                                     DeleteAccountHandler::class,
+                                    [LpaLoaderMiddleware::class]
                                 ),
                             ],
                         ],
@@ -621,11 +613,9 @@ return [
                             'route' => '/delete/confirm',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
                                     DeleteAccountConfirmHandler::class,
+                                    [LpaLoaderMiddleware::class]
                                 ),
                             ],
                         ],
@@ -642,12 +632,9 @@ return [
                     'route'    => '/lpa/type',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'middleware' => new PipeSpec(
-                            RouteMatchMiddleware::class,
-                            AuthenticationListener::class,
-                            UserDetailsListener::class,
-                            TermsAndConditionsListener::class,
+                        'middleware' => RouteMiddlewareHelper::addMiddleware(
                             LpaTypeHandler::class,
+                            [LpaLoaderMiddleware::class]
                         ),
                     ],
                 ],
@@ -675,8 +662,8 @@ return [
                         'options' => [
                             'route'    => '/applicant',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\ApplicantController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(ApplicantHandler::class, []),
                             ],
                         ],
                     ],
@@ -744,8 +731,8 @@ return [
                         'options' => [
                             'route'    => '/more-info-required',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\MoreInfoRequiredController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(MoreInfoRequiredHandler::class, []),
                             ],
                         ],
                     ],
@@ -804,8 +791,8 @@ return [
                         'options' => [
                             'route'    => '/summary',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\SummaryController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(SummaryHandler::class, []),
                             ],
                         ],
                     ],
@@ -814,8 +801,8 @@ return [
                         'options' => [
                             'route'    => '/donor',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DonorController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(DonorIndexHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -825,7 +812,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DonorAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -834,7 +822,8 @@ return [
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DonorEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -892,14 +881,7 @@ return [
                             'route'    => '/type',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => new PipeSpec(
-                                    RouteMatchMiddleware::class,
-                                    AuthenticationListener::class,
-                                    UserDetailsListener::class,
-                                    TermsAndConditionsListener::class,
-                                    LpaLoaderMiddleware::class,
-                                    TypeHandler::class,
-                                ),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(TypeHandler::class, []),
                             ],
                         ],
                     ],
@@ -908,8 +890,8 @@ return [
                         'options' => [
                             'route'    => '/how-primary-attorneys-make-decision',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\HowPrimaryAttorneysMakeDecisionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(HowPrimaryAttorneysMakeDecisionHandler::class, []),
                             ],
                         ],
                     ],
@@ -918,8 +900,11 @@ return [
                         'options' => [
                             'route'    => '/how-replacement-attorneys-make-decision',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\HowReplacementAttorneysMakeDecisionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    HowReplacementAttorneysMakeDecisionHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                     ],
@@ -928,8 +913,11 @@ return [
                         'options' => [
                             'route'    => '/instructions',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\InstructionsController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    InstructionsHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -938,8 +926,11 @@ return [
                         'options' => [
                             'route'    => '/life-sustaining',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\LifeSustainingController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    LifeSustainingHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -1058,8 +1049,8 @@ return [
                         'options' => [
                             'route'    => '/primary-attorney',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PrimaryAttorneyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1069,7 +1060,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1081,7 +1073,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1093,7 +1086,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1105,7 +1099,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1114,7 +1109,8 @@ return [
                                 'options' => [
                                     'route'    => '/add-trust',
                                     'defaults' => [
-                                        'action' => 'add-trust',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PrimaryAttorneyAddTrustHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1125,8 +1121,8 @@ return [
                         'options' => [
                             'route'    => '/fee-reduction',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\FeeReductionController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(FeeReductionHandler::class, []),
                             ],
                         ],
                     ],
@@ -1222,8 +1218,8 @@ return [
                         'options' => [
                             'route'    => '/who-are-you',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhoAreYouController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(WhoAreYouHandler::class, []),
                             ],
                         ],
                     ],
@@ -1232,8 +1228,8 @@ return [
                         'options' => [
                             'route'    => '/when-lpa-starts',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhenLpaStartsController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(WhenLpaStartsHandler::class, []),
                             ],
                         ],
                     ],
@@ -1242,8 +1238,11 @@ return [
                         'options' => [
                             'route'    => '/when-replacement-attorney-step-in',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\WhenReplacementAttorneyStepInController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    WhenReplacementAttorneyStepInHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                     ],
@@ -1252,8 +1251,8 @@ return [
                         'options' => [
                             'route'    => '/reuse-details',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\ReuseDetailsController',
-                                'action' => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(ReuseDetailsHandler::class, []),
                             ],
                         ],
                     ],

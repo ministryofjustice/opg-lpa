@@ -13,15 +13,16 @@ on:
       - main
 
 permissions:
-  contents: write
-  security-events: write
-  pull-requests: read
   actions: none
   checks: none
-  deployments: none
+  contents: write
+  deployments: write
+  id-token: write
   issues: none
   packages: none
+  pull-requests: read
   repository-projects: none
+  security-events: write
   statuses: none
 
 jobs:
@@ -75,48 +76,46 @@ jobs:
     needs:
       - set_variables
     with:
+      oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: main-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   terraform_account_development:
     name: TF Development - Account
     needs:
       - set_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: development
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: development
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
     needs:
       - set_variables
       - terraform_account_development
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: development
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: development
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   slack_msg_production_deploy_begin:
     name: Annouce Production Deployment
@@ -180,55 +179,54 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
     with:
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/account
+      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+      terraform_workspace: production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
       - terraform_account_production
     with:
-      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
       terraform_apply: true
       terraform_directory: ./terraform/region
+      terraform_version: ${{ needs.set_variables.outputs.region_terraform_version }}
+      terraform_workspace: production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform.yml@361d19a6d7b291dab5d46f04765239341a4ca86b # v3.16.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
     with:
-      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
-      terraform_workspace: production
       is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
+      persist_artifacts: true
       terraform_apply: true
       terraform_directory: ./terraform/environment
-      use_ssh_private_key: true
-      persist_artifacts: true
       terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: production
+      use_ssh_private_key: true
     needs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
@@ -237,9 +235,7 @@ jobs:
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   run_smoke_tests:
     runs-on: ubuntu-latest

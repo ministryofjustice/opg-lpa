@@ -28,8 +28,16 @@ use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * Fetches user details and makes them available in the event/request/session for downstream
- * middleware and controllers to use.
+ * Fetches the authenticated user's details and makes them available to downstream
+ * middleware and controllers. If the user's profile is incomplete (no name set),
+ * they are redirected to the about-you page unless the route opts in with
+ * allowIncompleteUser. If the user record cannot be reconstructed from the session,
+ * the session is destroyed and the user is redirected to the login page.
+ *
+ * Implements both the laminas-mvc listener interface (via listen()) and the PSR-7
+ * MiddlewareInterface (via process()), so it can run in a laminas-mvc PipeSpec during
+ * the Mezzio migration as well as in a full Mezzio pipeline. In the middleware path,
+ * user details are stored as a request attribute keyed by RequestAttribute::USER_DETAILS.
  */
 class UserDetailsListener extends AbstractListenerAggregate implements MiddlewareInterface, LoggerAwareInterface
 {

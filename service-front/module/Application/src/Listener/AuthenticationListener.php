@@ -12,6 +12,7 @@ use Application\Model\Service\Session\SessionUtility;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;
+use Laminas\Http\Request as HttpRequest;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
@@ -22,6 +23,16 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Checks that the user is authenticated before allowing access to protected routes,
+ * redirecting to the login page with an appropriate reason if not.
+ *
+ * Implements both the laminas-mvc listener interface (via listen()) and the PSR-7
+ * MiddlewareInterface (via process()), so it can run in a laminas-mvc PipeSpec during
+ * the Mezzio migration as well as in a full Mezzio pipeline. In the middleware path it
+ * also sets the authenticated identity and the number of seconds until the session
+ * expires as request attributes for downstream middleware to consume.
+ */
 class AuthenticationListener extends AbstractListenerAggregate implements MiddlewareInterface
 {
     private const string REASON_TIMEOUT = 'timeout';
@@ -70,7 +81,9 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $reason = $this->getUnauthorisedReason($allowRedirect, $route);
+        $request = $event->getRequest();
+        $uriString = $request instanceof HttpRequest ? $request->getUriString() : '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $uriString);
 
         $url = $event->getRouter()->assemble(['state' => $reason], ['name' => 'login']);
 
@@ -118,8 +131,8 @@ class AuthenticationListener extends AbstractListenerAggregate implements Middle
         }
 
         $this->sessionUtility->unsetInMvc(ContainerNamespace::USER_DETAILS, 'user');
-        $routePath = $route->getMatchedRoute()->getPath() ?: '';
-        $reason = $this->getUnauthorisedReason($allowRedirect, $routePath);
+        $requestPath = $request->getUri()->getPath() ?: '';
+        $reason = $this->getUnauthorisedReason($allowRedirect, $requestPath);
 
         // TODO(mezzio): update routeName when we setup Mezzio routes
         return new RedirectResponse(
