@@ -4,7 +4,6 @@ namespace Application\ControllerFactory;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
-use Application\Controller\Authenticated\Lpa\CheckoutController;
 use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\General\AuthController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
@@ -35,10 +34,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
     private $additionalServices = [
         AuthController::class => [
             'setLpaApplicationService' => 'LpaApplicationService'
-        ],
-        CheckoutController::class => [
-            'setCommunicationService' => 'Communication',
-            'setPaymentClient'        => 'GovPayClient'
         ],
         DateCheckController::class => [
             'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,
