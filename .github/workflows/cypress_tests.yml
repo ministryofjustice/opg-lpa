@@ -33,6 +33,19 @@ on:
         required: true
         type: string
 
+permissions:
+  actions: none
+  checks: none
+  contents: read
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: none
+  statuses: none
+
 jobs:
   cypress_tests:
     runs-on: ubuntu-latest
