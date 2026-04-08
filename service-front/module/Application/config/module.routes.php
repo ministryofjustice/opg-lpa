@@ -24,6 +24,8 @@ use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\CompleteIndexHandler;
+use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
@@ -721,8 +723,8 @@ return [
                         'options' => [
                             'route'    => '/complete',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CompleteController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CompleteIndexHandler::class, []),
                             ],
                         ],
                     ],
@@ -1208,8 +1210,8 @@ return [
                         'options' => [
                             'route'    => '/view-docs',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CompleteController',
-                                'action'     => 'view-docs',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CompleteViewDocsHandler::class, []),
                             ],
                         ],
                     ],
