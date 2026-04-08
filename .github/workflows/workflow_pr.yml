@@ -172,11 +172,9 @@ jobs:
     with:
       account_id: "050256574573"
       task_name: "seeding"
+      oidc_role: ${{ vars.OIDC_ECS_START_TASK_DEVELOPMENT }}
     needs:
       - terraform_environment_development
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
 
   terraform_outputs:
     name: Render terraform outputs
