@@ -4,7 +4,8 @@ data "aws_kms_key" "replication" {
 }
 
 data "aws_rds_cluster" "source" {
-  cluster_identifier = var.source_config.cluster_identifier
+  count              = try(var.source_config.cluster_identifier, null) != null && trimspace(try(var.source_config.cluster_identifier, "")) != "" ? 1 : 0
+  cluster_identifier = try(var.source_config.cluster_identifier, "")
 }
 
 data "aws_rds_cluster" "target" {

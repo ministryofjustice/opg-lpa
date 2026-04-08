@@ -14,7 +14,10 @@ locals {
   } : null
 
   dms_source = local.database_migration_enabled ? {
-    cluster_identifier   = "api2-3191lpal1951testwh-cluster"
+    cluster_identifier   = ""
+    server_name          = module.eu-west-1.aws_aurora_cluster_endpoint
+    port                 = module.eu-west-1.aws_aurora_cluster_port
+    database_name        = module.eu-west-1.aws_aurora_cluster_database_name
     username_secret_name = "${local.account_name}/api_rds_username"
     password_secret_name = "${local.account_name}/api_rds_password"
     engine_name          = "aurora-postgresql"

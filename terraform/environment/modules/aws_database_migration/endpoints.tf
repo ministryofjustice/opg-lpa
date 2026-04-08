@@ -2,9 +2,9 @@ resource "aws_dms_endpoint" "source" {
   endpoint_id                 = "aurora-${var.environment_name}-dms-source"
   endpoint_type               = "source"
   engine_name                 = var.source_config.engine_name
-  server_name                 = data.aws_rds_cluster.source.endpoint
-  port                        = data.aws_rds_cluster.source.port
-  database_name               = data.aws_rds_cluster.source.database_name
+  server_name                 = coalesce(try(var.source_config.server_name, null), try(data.aws_rds_cluster.source[0].endpoint, null))
+  port                        = coalesce(try(var.source_config.port, null), try(data.aws_rds_cluster.source[0].port, null))
+  database_name               = coalesce(try(var.source_config.database_name, null), try(data.aws_rds_cluster.source[0].database_name, null))
   username                    = data.aws_secretsmanager_secret_version.source_db_username.secret_string
   password                    = data.aws_secretsmanager_secret_version.source_db_password.secret_string
   ssl_mode                    = var.source_config.ssl_mode

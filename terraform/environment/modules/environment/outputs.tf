@@ -43,6 +43,18 @@ output "aws_aurora_cluster_arn" {
   value = module.api_aurora[0].cluster.arn
 }
 
+output "aws_aurora_cluster_endpoint" {
+  value = module.api_aurora[0].cluster.endpoint
+}
+
+output "aws_aurora_cluster_port" {
+  value = module.api_aurora[0].cluster.port
+}
+
+output "aws_aurora_cluster_database_name" {
+  value = module.api_aurora[0].cluster.database_name
+}
+
 output "aws_ecs_task_definition_api_arn" {
   value = aws_ecs_task_definition.api.arn
 }
