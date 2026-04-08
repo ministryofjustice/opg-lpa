@@ -32,7 +32,10 @@ variable "dms_network" {
 variable "source_config" {
   description = "Source database lookup and endpoint settings."
   type = object({
-    cluster_identifier          = string
+    cluster_identifier          = optional(string)
+    server_name                 = optional(string)
+    port                        = optional(number)
+    database_name               = optional(string)
     username_secret_name        = string
     password_secret_name        = string
     engine_name                 = optional(string, "aurora-postgresql")
