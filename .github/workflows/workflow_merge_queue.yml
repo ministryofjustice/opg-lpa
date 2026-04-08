@@ -162,7 +162,6 @@ jobs:
     name: Run development DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
     with:
-      account_id: "050256574573"
       task_name: "seeding"
       oidc_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
     needs:
