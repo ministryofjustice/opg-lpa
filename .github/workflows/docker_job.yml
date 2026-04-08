@@ -97,6 +97,15 @@ jobs:
             scan_id: aurora_scheduler
             override_tag: latest
 
+          - image_name: lpa-admin-app-test
+            dockerfile_path: ./service-admin/docker/app
+            dockerfile_target: test-runner
+            service_path: ./service-admin
+            snyk_policy_path: service-admin/docker/app/.snyk
+            scan_id: admin_app_test
+            archive_name: admin-app-test
+            with_xdebug: true
+
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
@@ -162,10 +171,12 @@ jobs:
           tags: ${{ matrix.image_name }}:latest
           push: false
           file: ${{ matrix.dockerfile_path }}/Dockerfile
+          target: ${{ matrix.dockerfile_target }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
           build-args: |
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
+            ENABLE_XDEBUG=${{ matrix.with_xdebug && '1' || '0' }}
 
       - name: Move cache
         run: |
@@ -237,6 +248,7 @@ jobs:
           category: ${{ matrix.scan_id }}-2
 
       - name: Tag and Push Container
+        if: matrix.archive_name == ''
         env:
           ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
           IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
@@ -249,3 +261,18 @@ jobs:
             docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
           fi
           docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
+
+      - name: Cache image
+        if: matrix.archive_name != ''
+        env:
+          IMAGE_NAME: ${{ matrix.image_name }}
+        run: |
+          mkdir -p /tmp/images
+          docker save -o /tmp/images/image.tar $IMAGE_NAME:latest
+
+      - name: Archive image
+        if: matrix.archive_name != ''
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: ${{ matrix.archive_name }}
+          path: /tmp/images/image.tar

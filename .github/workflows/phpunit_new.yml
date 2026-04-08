@@ -1,0 +1,49 @@
+# minCoverage sets the minimum coverage level for unit tests; if coverage is less than this,
+# the build fails. The values for these parameters were set on 2023-03-03 from the coverage
+# levels of the phpunit tests at that time, rounded down. See LPAL-1143 for more details.
+name: phpunit tests
+
+on: workflow_call
+
+jobs:
+  phpunit:
+    name: phpunit
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        scan:
+          - name: service-admin
+            path: ./service-admin
+            service: admin-app-test
+            minCoverage: 3
+    defaults:
+      run:
+        working-directory: ${{ matrix.scan.path }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: ${{ matrix.scan.service }}
+          path: /tmp/images
+      - name: Load Images
+        run: |
+          docker load -i /tmp/images/image.tar
+
+      - name: Run phpunit
+        run: |
+          mkdir -m 0777 ./coverage-html ./coverage-xml
+          docker compose run --rm \
+            --env XDEBUG_MODE=coverage \
+            ${{ matrix.scan.service }} \
+            vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+      - name: Check coverage
+        run: docker compose run --rm ${{ matrix.scan.service }} php /shared/src/functions/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
+      - name: Upload Coverage Artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ${{ matrix.scan.name }}-coverage-html
+          path: ${{ matrix.scan.path }}/coverage-html/
+          overwrite: true
