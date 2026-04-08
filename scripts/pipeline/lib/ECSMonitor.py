@@ -9,7 +9,7 @@ class ECSMonitor:
     aws_iam_session = {"Credentials": {}}
     aws_ecs_client = ""
     aws_ecs_cluster = ""
-    aws_ec2_client = ""
+    # aws_ec2_client = ""
     aws_logs_client = ""
     aws_region = ""
     aws_private_subnets = []
@@ -38,15 +38,15 @@ class ECSMonitor:
             aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
         )
         # looks like this client isn't used
-        self.aws_ec2_client = boto3.client(
-            "ec2",
-            region_name=self.aws_region,
-            aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
-            aws_secret_access_key=self.aws_iam_session["Credentials"][
-                "SecretAccessKey"
-            ],
-            aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
-        )
+        # self.aws_ec2_client = boto3.client(
+        #     "ec2",
+        #     region_name=self.aws_region,
+        #     aws_access_key_id=self.aws_iam_session["Credentials"]["AccessKeyId"],
+        #     aws_secret_access_key=self.aws_iam_session["Credentials"][
+        #         "SecretAccessKey"
+        #     ],
+        #     aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
+        # )
         self.aws_logs_client = boto3.client(
             "logs",
             region_name=self.aws_region,
