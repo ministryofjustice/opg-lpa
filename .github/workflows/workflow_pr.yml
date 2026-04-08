@@ -168,7 +168,7 @@ jobs:
 
   run_dev_seed_db_task:
     name: Run development DB seeding
-    uses: ./.github/workflows/workflow_start_task.yml
+    uses: ./.github/workflows/start_task.yml
     with:
       task_name: "seeding"
       oidc_role: ${{ vars.OIDC_ECS_START_TASK_DEVELOPMENT }}
