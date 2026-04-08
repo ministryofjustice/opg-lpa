@@ -211,8 +211,9 @@ class ActorReuseDetailsService
     /**
      * Return a flat list of actors already on the LPA (excluding the donor role, since the donor
      * handler is adding/editing the donor and should not see themselves in the duplicate-check list).
+     * Pass $excludeReplacementAttorneyIdx to exclude a specific replacement attorney (e.g. when editing).
      */
-    public function getActorsList(Lpa $lpa, bool $excludeDonor = true): array
+    public function getActorsList(Lpa $lpa, bool $excludeDonor = true, ?int $excludeReplacementAttorneyIdx = null): array
     {
         $actorsList = [];
         $lpaDocument = $lpa->document;
@@ -231,7 +232,10 @@ class ActorReuseDetailsService
             }
         }
 
-        foreach ($lpaDocument->replacementAttorneys as $attorney) {
+        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
+            if ($excludeReplacementAttorneyIdx !== null && $idx === $excludeReplacementAttorneyIdx) {
+                continue;
+            }
             if ($attorney instanceof Attorneys\Human) {
                 $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
             }
@@ -339,7 +343,7 @@ class ActorReuseDetailsService
         return $formData;
     }
 
-    private function allowTrust(Lpa $lpa): bool
+    public function allowTrust(Lpa $lpa): bool
     {
         if ($lpa->document->type === Document::LPA_TYPE_HW) {
             return false;

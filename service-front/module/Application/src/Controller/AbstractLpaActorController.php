@@ -53,9 +53,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                     $actorName = 'Correspondent';
                 } elseif ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
-                } elseif ($this instanceof Lpa\ReplacementAttorneyController) {
-                    $includeTrusts = true;
-                    $actorName = 'Replacement attorney';
                 }
 
                 // Generate the URL to redirect to reuse details
@@ -400,7 +397,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // filtering takes place
         $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
         $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
-        $isReplacementAttorneyRoute = ($filterByActorAction && $this instanceof Lpa\ReplacementAttorneyController);
 
         $lpaDocument = $this->getLpa()->document;
 
@@ -417,27 +413,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             $lpaDocument->certificateProvider instanceof CertificateProvider
         ) {
             $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
-        }
-
-        // Include all of the primary attorney details unless we are adding/editing a replacement attorney
-        if (!$isReplacementAttorneyRoute) {
-            foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
-                if ($attorney instanceof Attorneys\Human) {
-                    $actorsList[] = $this->getActorDetails($attorney, 'attorney');
-                }
-            }
-        }
-
-        // Include all of the replacement attorney details
-        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
-            // We are editing this attorney so do not add it to the actor list
-            if ($isReplacementAttorneyRoute && $actorIndexToExclude === $idx) {
-                continue;
-            }
-
-            if ($attorney instanceof Attorneys\Human) {
-                $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
-            }
         }
 
         // Include all of the people to notify unless we are adding/editing a certificate provider
