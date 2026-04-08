@@ -21,6 +21,11 @@ use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
 use Application\Handler\DashboardHandler;
 use Application\Handler\Lpa\ApplicantHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
@@ -680,8 +685,8 @@ return [
                         'options' => [
                             'route'    => '/certificate-provider',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CertificateProviderController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CertificateProviderHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -691,7 +696,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(CertificateProviderAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -700,7 +706,8 @@ return [
                                 'options' => [
                                     'route'    => '/edit',
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(CertificateProviderEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -709,7 +716,8 @@ return [
                                 'options' => [
                                     'route'    => '/confirm-delete',
                                     'defaults' => [
-                                        'action' => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(CertificateProviderConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -718,7 +726,8 @@ return [
                                 'options' => [
                                     'route'    => '/delete',
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(CertificateProviderDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
