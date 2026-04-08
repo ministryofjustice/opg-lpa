@@ -7,10 +7,6 @@ defaults:
 on:
   workflow_call:
     inputs:
-      account_id:
-        description: "AWS account of the role to assume"
-        required: true
-        type: string
       task_name:
         description: "Name of the task to run"
         required: true
