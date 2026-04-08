@@ -90,6 +90,12 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
+  phpunit_tests_new:
+    name: Run PHPUnit tests
+    uses: ./.github/workflows/phpunit_new.yml
+    needs:
+      - docker_build_scan_push
+
   cypress_mezzio_tests:
     uses: ./.github/workflows/front_mezzio_tests.yml
     name: Run Cypress Front-Mezzio Tests
