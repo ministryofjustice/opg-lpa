@@ -37,6 +37,7 @@ class ECSMonitor:
             ],
             aws_session_token=self.aws_iam_session["Credentials"]["SessionToken"],
         )
+        # looks like this client isn't used
         self.aws_ec2_client = boto3.client(
             "ec2",
             region_name=self.aws_region,
