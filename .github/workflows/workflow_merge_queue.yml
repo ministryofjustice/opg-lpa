@@ -158,20 +158,10 @@ jobs:
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
       SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
-  run_dev_seed_db_task:
-    name: Run development DB seeding
-    uses: ./.github/workflows/workflow_start_task.yml
-    with:
-      task_name: "seeding"
-      oidc_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
-    needs:
-      - terraform_environment_preproduction
-
   run_preproduction_seed_db_task:
     name: Run preproduction DB seeding
     uses: ./.github/workflows/workflow_start_task.yml
     with:
-      account_id: "987830934591"
       task_name: "seeding"
       oidc_role: ${{ vars.OIDC_ECS_START_TASK_PREPRODUCTION }}
     needs:
