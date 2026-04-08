@@ -47,9 +47,7 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                 $includeTrusts = false;
                 $actorName = null;
 
-                if ($this instanceof Lpa\CertificateProviderController) {
-                    $actorName = 'Certificate provider';
-                } elseif ($this instanceof Lpa\CorrespondentController) {
+                if ($this instanceof Lpa\CorrespondentController) {
                     $actorName = 'Correspondent';
                 } elseif ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
@@ -395,7 +393,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // Determine which route we have come from so the results below can be filtered
         // If the filter flag was passed into this function as false then set all flags below to false so no
         // filtering takes place
-        $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
         $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
 
         $lpaDocument = $this->getLpa()->document;
@@ -406,10 +403,10 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
-        // If there is a certificate provider present in the LPA and we are editing it, or adding/editing people to
+        // If there is a certificate provider present in the LPA and we are adding/editing people to
         // notify then do NOT include in the actor list
         if (
-            !$isCertificateProviderRoute && !$isPeopleToModifyRoute &&
+            !$isPeopleToModifyRoute &&
             $lpaDocument->certificateProvider instanceof CertificateProvider
         ) {
             $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
