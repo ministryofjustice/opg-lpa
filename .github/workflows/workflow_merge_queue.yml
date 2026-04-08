@@ -222,9 +222,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@StitchedPF"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   cypress_tests_Signup_StitchedHW:
     name: Run Cypress tests - @Signup,@StitchedHW
@@ -237,9 +235,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@StitchedHW"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
@@ -252,9 +248,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "@SignupIncluded"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
@@ -269,9 +263,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
       cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   locust_tests:
     name: Run locust tests
@@ -282,9 +274,7 @@ jobs:
     with:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       account_id: "987830934591"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   end_of_workflow:
     name: End of Workflow
