@@ -337,6 +337,16 @@ services:
       retries: 3
       start_period: 90s
 
+  admin-app-test:
+    image: lpa-admin-app-test
+    build:
+      context: ./
+      dockerfile: service-admin/docker/app/Dockerfile
+      target: test-runner
+    volumes:
+      - ./service-admin/coverage-html:/app/coverage-html
+      - ./service-admin/coverage-xml:/app/coverage-xml
+
   admin-ssl:
     container_name: lpa-admin-ssl
     image: lpa-admin-ssl
