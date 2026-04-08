@@ -165,7 +165,7 @@ jobs:
       task_name: "seeding"
       oidc_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
     needs:
-      - terraform_environment_development
+      - terraform_environment_preproduction
 
   run_preproduction_seed_db_task:
     name: Run preproduction DB seeding
