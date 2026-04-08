@@ -16,6 +16,19 @@ on:
         required: true
         type: string
 
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
+
 jobs:
   run_seeding_task:
     name: Run seeding task
