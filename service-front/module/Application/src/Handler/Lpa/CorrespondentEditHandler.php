@@ -166,16 +166,17 @@ class CorrespondentEditHandler implements RequestHandlerInterface
                     $form->bind($existingCorrespondent->flatten());
                 }
             }
+        }
 
-            // Add back button URL if reuse details are available and we're not editing existing
-            if (!$editingExistingCorrespondent && $backButtonUrl === null) {
-                $reuseDetails = $this->actorReuseDetailsService->getCorrespondentReuseDetails($user, $lpa);
-                if (count($reuseDetails) > 1) {
-                    $backButtonUrl = $this->urlHelper->generate(
-                        'lpa/correspondent',
-                        ['lpa-id' => $lpa->id]
-                    );
-                }
+        // Ensure the back button is shown whenever multiple reuse options exist,
+        // including after POST validation failure (mirrors the old controller's addReuseDetailsBackButton)
+        if ($backButtonUrl === null && !$editingExistingCorrespondent) {
+            $reuseDetails = $this->actorReuseDetailsService->getCorrespondentReuseDetails($user, $lpa);
+            if (count($reuseDetails) > 1) {
+                $backButtonUrl = $this->urlHelper->generate(
+                    'lpa/correspondent/edit',
+                    ['lpa-id' => $lpa->id]
+                );
             }
         }
 
