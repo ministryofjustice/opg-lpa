@@ -11,8 +11,6 @@ use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Attorneys;
-use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
-use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Donor;
@@ -47,9 +45,7 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                 $includeTrusts = false;
                 $actorName = null;
 
-                if ($this instanceof Lpa\CertificateProviderController) {
-                    $actorName = 'Certificate provider';
-                } elseif ($this instanceof Lpa\CorrespondentController) {
+                if ($this instanceof Lpa\CorrespondentController) {
                     $actorName = 'Correspondent';
                 } elseif ($this instanceof Lpa\PeopleToNotifyController) {
                     $actorName = 'Person to notify';
@@ -395,7 +391,6 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // Determine which route we have come from so the results below can be filtered
         // If the filter flag was passed into this function as false then set all flags below to false so no
         // filtering takes place
-        $isCertificateProviderRoute = ($filterByActorAction && $this instanceof Lpa\CertificateProviderController);
         $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
 
         $lpaDocument = $this->getLpa()->document;
@@ -406,26 +401,38 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
             $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
-        // If there is a certificate provider present in the LPA and we are editing it, or adding/editing people to
+        // If there is a certificate provider present in the LPA and we are adding/editing people to
         // notify then do NOT include in the actor list
         if (
-            !$isCertificateProviderRoute && !$isPeopleToModifyRoute &&
+            !$isPeopleToModifyRoute &&
             $lpaDocument->certificateProvider instanceof CertificateProvider
         ) {
             $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
         }
 
-        // Include all of the people to notify unless we are adding/editing a certificate provider
-        if (!$isCertificateProviderRoute) {
-            foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
-                // We are editing this person to notify so do not add it to the actor list
-                if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
-                    continue;
-                }
-
-                // Use "person" rather than "people" to ensure the JS warning is phrased correctly
-                $actorsList[] = $this->getActorDetails($notifiedPerson, 'person to notify');
+        // Include all of the primary attorney details
+        foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
+            if ($attorney instanceof Attorneys\Human) {
+                $actorsList[] = $this->getActorDetails($attorney, 'attorney');
             }
+        }
+
+        // Include all of the replacement attorney details
+        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
+            if ($attorney instanceof Attorneys\Human) {
+                $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
+            }
+        }
+
+        // Include all of the people to notify
+        foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
+            // We are editing this person to notify so do not add it to the actor list
+            if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
+                continue;
+            }
+
+            // Use "person" rather than "people" to ensure the JS warning is phrased correctly
+            $actorsList[] = $this->getActorDetails($notifiedPerson, 'person to notify');
         }
 
         return $actorsList;
@@ -621,26 +628,5 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
                 }
             }
         }
-    }
-
-    /**
-     * Simple method to return a boolean indicating if the provided attorney is also set as the correspondent
-     * for this LPA
-     *
-     * @param AbstractAttorney $attorney
-     * @return bool
-     */
-    protected function attorneyIsCorrespondent(AbstractAttorney $attorney)
-    {
-        $correspondent = $this->getLpa()->getDocument()->getCorrespondent();
-
-        if ($correspondent instanceof Correspondence && $correspondent->getWho() == Correspondence::WHO_ATTORNEY) {
-            // Compare the appropriate name and address
-            $nameToCompare = ($attorney instanceof TrustCorporation ? $correspondent->getCompany() :
-                new Name($correspondent->getName()->flatten()));
-            return ($attorney->getName() == $nameToCompare && $correspondent->getAddress() == $attorney->getAddress());
-        }
-
-        return false;
     }
 }
