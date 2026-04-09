@@ -38,6 +38,11 @@ use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderAddHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderEditHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -73,6 +78,11 @@ use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
 use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -589,6 +599,11 @@ class Module implements FormElementProviderInterface
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
                 InstructionsHandler::class => InstructionsHandlerFactory::class,
                 WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
+                CertificateProviderHandler::class => CertificateProviderHandlerFactory::class,
+                CertificateProviderAddHandler::class => CertificateProviderAddHandlerFactory::class,
+                CertificateProviderEditHandler::class => CertificateProviderEditHandlerFactory::class,
+                CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
+                CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
             ], // factories
             'initializers' => [
