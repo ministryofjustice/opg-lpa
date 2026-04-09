@@ -24,9 +24,17 @@ use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\CompleteIndexHandler;
+use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\RepeatApplicationHandler;
@@ -722,8 +730,8 @@ return [
                         'options' => [
                             'route'    => '/complete',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CompleteController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CompleteIndexHandler::class, []),
                             ],
                         ],
                     ],
@@ -1145,8 +1153,11 @@ return [
                         'options' => [
                             'route'    => '/replacement-attorney',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\ReplacementAttorneyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    ReplacementAttorneyIndexHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1156,7 +1167,11 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            ReplacementAttorneyAddHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1168,7 +1183,11 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            ReplacementAttorneyEditHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1180,7 +1199,11 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            ReplacementAttorneyConfirmDeleteHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1192,7 +1215,11 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            ReplacementAttorneyDeleteHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1201,7 +1228,11 @@ return [
                                 'options' => [
                                     'route'    => '/add-trust',
                                     'defaults' => [
-                                        'action' => 'add-trust',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            ReplacementAttorneyAddTrustHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1212,8 +1243,8 @@ return [
                         'options' => [
                             'route'    => '/view-docs',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CompleteController',
-                                'action'     => 'view-docs',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(CompleteViewDocsHandler::class, []),
                             ],
                         ],
                     ],

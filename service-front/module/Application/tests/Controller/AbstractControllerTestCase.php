@@ -22,7 +22,6 @@ use ApplicationTest\Controller\Authenticated\Lpa\CertificateProviderControllerTe
 use ApplicationTest\Controller\Authenticated\Lpa\CorrespondentControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PeopleToNotifyControllerTest;
 use ApplicationTest\Controller\Authenticated\Lpa\PrimaryAttorneyControllerTest;
-use ApplicationTest\Controller\Authenticated\Lpa\ReplacementAttorneyControllerTest;
 use Application\Listener\EventParameter;
 use Application\Model\FormFlowChecker;
 use Laminas\Session\SessionManager;
@@ -605,9 +604,6 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         } elseif ($this instanceof PrimaryAttorneyControllerTest) {
             $includeTrusts = true;
             $actorName = 'Attorney';
-        } elseif ($this instanceof ReplacementAttorneyControllerTest) {
-            $includeTrusts = true;
-            $actorName = 'Replacement attorney';
         }
 
         $this->request->shouldReceive('getUri')->andReturn($uri)->once();

@@ -41,6 +41,8 @@ cypress/integration/common/local_dev_only.js
 *.pyc
 __pycache__
 .coverage
+coverage-xml
+coverage-html
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
 phpcs/config/

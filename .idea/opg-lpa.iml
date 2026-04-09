@@ -25,6 +25,7 @@
       <sourceFolder url="file://$MODULE_DIR$/service-pdf/src/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="Opg\Lpa\Pdf\" />
       <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/service-pdf/tests/Opg/Lpa/Pdf" isTestSource="false" packagePrefix="OpgTest\Lpa\Pdf\" />
+      <sourceFolder url="file://$MODULE_DIR$/service-front/spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/shared/module/MakeShared/src" isTestSource="false" packagePrefix="MakeShared\" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/alphagov/notifications-php-client" />
       <excludeFolder url="file://$MODULE_DIR$/service-api/vendor/amphp/amp" />
@@ -420,6 +421,7 @@
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session" />
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session-ext" />
       <excludeFolder url="file://$MODULE_DIR$/terraform/environment/.terraform" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/ezyang/htmlpurifier" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

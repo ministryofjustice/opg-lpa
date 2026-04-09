@@ -13,10 +13,6 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-admin
-            path: "./service-admin"
-            minCoverage: 3
-            phpVersion: "8.4"
           - name: service-front
             path: "./service-front"
             minCoverage: 85

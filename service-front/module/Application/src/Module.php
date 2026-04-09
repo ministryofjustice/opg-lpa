@@ -20,6 +20,12 @@ use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFa
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyAddTrustHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\ReplacementAttorneyIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
@@ -27,6 +33,8 @@ use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
 use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
 use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
@@ -45,6 +53,12 @@ use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\InstructionsHandler;
@@ -54,6 +68,8 @@ use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\CompleteIndexHandler;
+use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\SummaryHandler;
 use Application\Handler\Lpa\WhoAreYouHandler;
 use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
@@ -128,7 +144,9 @@ use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Service\AccordionService;
+use Application\Service\CompleteViewParamsHelper;
 use Application\Service\Factory\AccordionServiceFactory;
+use Application\Service\Factory\CompleteViewParamsHelperFactory;
 use Application\Model\Service\User\Details;
 use Application\Service\NavigationViewModelHelper;
 use Application\Service\Factory\NavigationViewModelHelperFactory;
@@ -458,6 +476,7 @@ class Module implements FormElementProviderInterface
                 GuidanceHandler::class      => GuidanceHandlerFactory::class,
                 AccordionService::class      => AccordionServiceFactory::class,
                 NavigationViewModelHelper::class      => NavigationViewModelHelperFactory::class,
+                CompleteViewParamsHelper::class => CompleteViewParamsHelperFactory::class,
                 EnableCookieHandler::class => fn (ServiceLocatorInterface $sm) => new EnableCookieHandler(
                     $sm->get(TemplateRendererInterface::class),
                 ),
@@ -548,6 +567,12 @@ class Module implements FormElementProviderInterface
                 DonorIndexHandler::class => DonorIndexHandlerFactory::class,
                 DonorAddHandler::class => DonorAddHandlerFactory::class,
                 DonorEditHandler::class => DonorEditHandlerFactory::class,
+                ReplacementAttorneyIndexHandler::class => ReplacementAttorneyIndexHandlerFactory::class,
+                ReplacementAttorneyAddHandler::class => ReplacementAttorneyAddHandlerFactory::class,
+                ReplacementAttorneyAddTrustHandler::class => ReplacementAttorneyAddTrustHandlerFactory::class,
+                ReplacementAttorneyEditHandler::class => ReplacementAttorneyEditHandlerFactory::class,
+                ReplacementAttorneyConfirmDeleteHandler::class => ReplacementAttorneyConfirmDeleteHandlerFactory::class,
+                ReplacementAttorneyDeleteHandler::class => ReplacementAttorneyDeleteHandlerFactory::class,
                 FeeReductionHandler::class => FeeReductionHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
@@ -559,6 +584,8 @@ class Module implements FormElementProviderInterface
                 WhenLpaStartsHandler::class => WhenLpaStartsHandlerFactory::class,
                 HowPrimaryAttorneysMakeDecisionHandler::class => HowPrimaryAttorneysMakeDecisionHandlerFactory::class,
                 SummaryHandler::class => SummaryHandlerFactory::class,
+                CompleteIndexHandler::class => CompleteIndexHandlerFactory::class,
+                CompleteViewDocsHandler::class => CompleteViewDocsHandlerFactory::class,
                 WhoAreYouHandler::class => WhoAreYouHandlerFactory::class,
                 InstructionsHandler::class => InstructionsHandlerFactory::class,
                 WhenReplacementAttorneyStepInHandler::class => WhenReplacementAttorneyStepInHandlerFactory::class,
