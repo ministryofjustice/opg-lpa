@@ -1,6 +1,6 @@
 FROM composer:2.9.5@sha256:f0809732b2188154b3faa8e44ab900595acb0b09cd0aa6c34e798efe4ebc9021 AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9
+FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9 AS base
 
 COPY --from=mlocati/php-extension-installer:2@sha256:15ad94ce82aeb6e8f442ae7edc4ea318cd9b359ebc9c20208fbfe767abf9ed49 /usr/bin/install-php-extensions /usr/bin/
 
@@ -71,6 +71,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       docker-php-ext-enable xdebug ; \
+      touch /tmp/xdebug.log ; \
+      chown appuser:appuser /tmp/xdebug.log ; \
     fi ;
 
 
@@ -82,3 +84,29 @@ USER appuser
 VOLUME [ "/tmp" ]
 
 CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
+
+FROM base AS test-runner
+
+USER "root"
+RUN chown -R appuser:appuser /app/vendor
+
+COPY --chown=root:root service-api/composer.json /app/composer.json
+COPY --chown=root:root service-api/composer.lock /app/composer.lock
+COPY --from=composer /usr/bin/composer /usr/bin/
+
+RUN composer check-platform-reqs -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
+    && rm /app/composer.json \
+    && rm /usr/bin/composer
+
+USER appuser
+
+COPY --chown=root:root service-api/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-api/psalm.xml /app/psalm.xml
+
+FROM base AS production
+
+USER root
+RUN rm -rf /app/module/Application/tests
+USER appuser

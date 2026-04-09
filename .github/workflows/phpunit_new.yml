@@ -13,13 +13,16 @@ jobs:
       fail-fast: true
       matrix:
         scan:
-          - name: service-admin
-            path: ./service-admin
-            service: admin-app-test
+          - service: admin-app-test
             minCoverage: 3
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
+          - service: front-app-test
+            minCoverage: 85
+          - service: api-app-test
+            minCoverage: 74
+          - service: pdf-app-test
+            minCoverage: 84
+          - service: shared-test
+            minCoverage: 90
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -37,13 +40,17 @@ jobs:
           mkdir -m 0777 ./coverage-html ./coverage-xml
           docker compose run --rm \
             --env XDEBUG_MODE=coverage \
+            --volume ./coverage-html:/tmp/coverage-html \
+            --volume ./coverage-xml:/tmp/coverage-xml \
             ${{ matrix.scan.service }} \
-            vendor/bin/phpunit --coverage-html ./coverage-html --coverage-xml ./coverage-xml
+            vendor/bin/phpunit --coverage-html /tmp/coverage-html --coverage-xml /tmp/coverage-xml
       - name: Check coverage
-        run: docker compose run --rm ${{ matrix.scan.service }} php /shared/src/functions/check_coverage.php ./coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
+        run: |
+          docker compose run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
+          php /shared/src/functions/check_coverage.php /tmp/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: ${{ matrix.scan.name }}-coverage-html
-          path: ${{ matrix.scan.path }}/coverage-html/
+          name: ${{ matrix.scan.service }}-coverage-html
+          path: ./coverage-html/
           overwrite: true

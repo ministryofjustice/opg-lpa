@@ -168,6 +168,13 @@ services:
       retries: 3
       start_period: 90s
 
+  front-app-test:
+    image: lpa-front-app-test
+    build:
+      context: ./
+      dockerfile: service-front/docker/app/Dockerfile
+      target: test-runner
+
   front-ssl:
     container_name: lpa-front-ssl
     image: lpa-front-ssl
@@ -276,6 +283,13 @@ services:
       retries: 3
       start_period: 90s
 
+  api-app-test:
+    image: lpa-api-app-test
+    build:
+      context: ./
+      dockerfile: service-api/docker/app/Dockerfile
+      target: test-runner
+
   # ---------------------------
   # Admin
 
@@ -343,9 +357,6 @@ services:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
       target: test-runner
-    volumes:
-      - ./service-admin/coverage-html:/app/coverage-html
-      - ./service-admin/coverage-xml:/app/coverage-xml
 
   admin-ssl:
     container_name: lpa-admin-ssl
@@ -402,6 +413,14 @@ services:
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
 
       PHP_IDE_CONFIG: serverName=lpa-pdf-app
+
+  pdf-app-test:
+    image: lpa-pdf-app-test
+    build:
+      context: ./
+      dockerfile: service-pdf/docker/app/Dockerfile
+      target: test-runner
+
   # ---------------------------
   # Seeding
   seeding:
@@ -441,6 +460,13 @@ services:
       - ./service-pdf:/app/service-pdf
       - ./shared:/app/shared
       - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
+
+  shared-test:
+    image: lpa-shared-test
+    build:
+      context: ./
+      dockerfile: shared/docker/test-runner/Dockerfile
+      target: test-runner
 
   cypress:
     build:
