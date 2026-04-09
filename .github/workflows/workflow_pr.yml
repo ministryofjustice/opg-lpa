@@ -74,10 +74,6 @@ jobs:
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
-  phpunit_tests:
-    name: Run PHPUnit tests
-    uses: ./.github/workflows/phpunit.yml
-
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
@@ -90,7 +86,7 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
-  phpunit_tests_new:
+  phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit_new.yml
     needs:

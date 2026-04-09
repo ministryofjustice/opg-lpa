@@ -19,7 +19,3 @@ metadata.json
 terraform
 tests/load
 tests/sirius-gateway-mock
-service-api/tests
-service-front/module/Application/tests
-service-pdf/tests
-service-pdf/test-tools
