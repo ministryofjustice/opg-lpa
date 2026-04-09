@@ -32,9 +32,9 @@ class PdfCompare
             '-png',
             '-singlefile',
             $pdfPath,
-            $name,
+            '/tmp/' . $name,
         ]));
 
-        return $name . '.png';
+        return '/tmp/' . $name . '.png';
     }
 }

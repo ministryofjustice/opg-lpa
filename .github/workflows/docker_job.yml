@@ -106,6 +106,42 @@ jobs:
             archive_name: admin-app-test
             with_xdebug: true
 
+          - image_name: lpa-api-app-test
+            dockerfile_path: ./service-api/docker/app
+            dockerfile_target: test-runner
+            service_path: ./service-api
+            snyk_policy_path: service-api/docker/app/.snyk
+            scan_id: api_app_test
+            archive_name: api-app-test
+            with_xdebug: true
+
+          - image_name: lpa-front-app-test
+            dockerfile_path: ./service-front/docker/app
+            dockerfile_target: test-runner
+            service_path: ./service-front
+            snyk_policy_path: service-front/docker/app/.snyk
+            scan_id: front_app_test
+            archive_name: front-app-test
+            with_xdebug: true
+
+          - image_name: lpa-pdf-app-test
+            dockerfile_path: ./service-pdf/docker/app
+            dockerfile_target: test-runner
+            service_path: ./service-pdf
+            snyk_policy_path: service-pdf/docker/app/.snyk
+            scan_id: pdf_app_test
+            archive_name: pdf-app-test
+            with_xdebug: true
+            with_visual_tests: true
+
+          - image_name: lpa-shared-test
+            dockerfile_path: ./shared/docker/test-runner
+            dockerfile_target: test-runner
+            service_path: ./shared
+            snyk_policy_path: shared/docker/test-runner/.snyk
+            scan_id: shared_test
+            archive_name: shared-test
+
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
@@ -177,6 +213,7 @@ jobs:
           build-args: |
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
             ENABLE_XDEBUG=${{ matrix.with_xdebug && '1' || '0' }}
+            VISUAL_TESTS=${{ matrix.with_visual_tests && 'true' || 'false' }}
 
       - name: Move cache
         run: |

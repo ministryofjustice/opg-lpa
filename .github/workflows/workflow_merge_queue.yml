@@ -78,16 +78,11 @@ jobs:
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
 
-  phpunit_tests:
-    name: Run PHPUnit tests
-    uses: ./.github/workflows/phpunit.yml
-
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
     needs:
       - set_variables
-      - phpunit_tests
     with:
       oidc_docker_role: ${{ vars.OIDC_DOCKER_ROLE }}
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
@@ -95,7 +90,7 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
-  phpunit_tests_new:
+  phpunit_tests:
     name: Run PHPUnit tests
     uses: ./.github/workflows/phpunit_new.yml
     needs:
@@ -150,6 +145,7 @@ jobs:
       use_ssh_private_key: true
     needs:
       - docker_build_scan_push
+      - phpunit_tests
       - set_variables
       - terraform_region_preproduction
       - terraform_account_preproduction

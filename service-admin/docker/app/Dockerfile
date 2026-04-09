@@ -53,6 +53,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       docker-php-ext-enable xdebug ; \
+      touch /tmp/xdebug.log ; \
+      chown appuser:appuser /tmp/xdebug.log ; \
     fi ;
 
 # Clean up build dependencies, but only after everything else we need has been installed
@@ -84,6 +86,5 @@ USER appuser
 COPY --chown=root:root service-admin/test /app/test
 COPY --chown=root:root service-admin/phpunit.xml.dist /app/phpunit.xml.dist
 COPY --chown=root:root service-admin/psalm.xml /app/psalm.xml
-COPY --chown=root:root phpcs.xml.dist /app/phpcs.xml.dist
 
 FROM base AS production
