@@ -8,8 +8,8 @@
   "scripts": {
     "test": "jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js || true",
     "build": "./build.sh build",
-    "build:js": "./build-js.sh",
-    "build:css": "./build-css.sh",
+    "build:js": "./build.sh build:js",
+    "build:css": "./build.sh build:css",
     "watch": "./build.sh watch",
     "watch:poll": "./build.sh watch:poll",
     "clean": "./build.sh clean",
