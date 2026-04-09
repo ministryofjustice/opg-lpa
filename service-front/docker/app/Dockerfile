@@ -1,6 +1,6 @@
 FROM composer:2.9.5@sha256:f0809732b2188154b3faa8e44ab900595acb0b09cd0aa6c34e798efe4ebc9021 AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9
+FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9 AS base
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -53,9 +53,6 @@ WORKDIR /app
 # Enable debug and test coverage tooling if needed. Should only be used locally.
 ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
-    chmod a+w /tmp ; \
-    chown -R appuser:appuser /app ; \
-    apk add --no-cache --virtual .build-dependencies linux-headers pcre-dev ${PHPIZE_DEPS} ; \
     pecl install xdebug ; \
     echo "xdebug.mode = profile" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
@@ -64,8 +61,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     docker-php-ext-enable xdebug ; \
-    composer require phpunit/php-code-coverage:9.2.* ; \
-    composer dump-autoload ; \
+    touch /tmp/xdebug.log ; \
+    chown appuser:appuser /tmp/xdebug.log ; \
 fi
 
 # Remove composer build-time artifacts and secure composer dependencies
@@ -80,3 +77,32 @@ USER appuser
 VOLUME [ "/tmp" ]
 
 CMD ["php-fpm"]
+
+FROM base AS test-runner
+
+USER "root"
+RUN chown -R appuser:appuser /app/vendor
+
+COPY --chown=root:root service-front/composer.json /app/composer.json
+COPY --chown=root:root service-front/composer.lock /app/composer.lock
+COPY --from=composer /usr/bin/composer /usr/bin/
+
+RUN composer check-platform-reqs -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
+    && rm /app/composer.json \
+    && rm /usr/bin/composer
+
+RUN chmod -R a+w /tmp
+RUN mkdir -m a+w build
+
+USER appuser
+
+COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-front/psalm.xml /app/psalm.xml
+
+FROM base AS production
+
+USER root
+RUN rm -rf /app/module/Application/tests
+USER appuser
