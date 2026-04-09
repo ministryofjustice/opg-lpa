@@ -206,16 +206,6 @@ jobs:
           content="${content//$'\r'/'%0D'}"
           echo "configJson=${content}" >> $GITHUB_OUTPUT
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-          aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::050256574573:role/opg-lpa-ci
-          role-duration-seconds: 900
-          role-session-name: OPGLPABuildPipeline
-
       - name: Extract Admin FQDN from JSON
         id: admin_fqdn
         env:
@@ -239,10 +229,7 @@ jobs:
       account_id: "050256574573"
       cypress_tags: "@StitchedPF"
       visual_regression_enabled: "1"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
   cypress_tests_Signup_StitchedHW:
     name: Run Cypress tests - Signup,StitchedHW
     uses: ./.github/workflows/cypress_tests.yml
@@ -254,10 +241,7 @@ jobs:
       account_id: "050256574573"
       cypress_tags: "@StitchedHW"
       visual_regression_enabled: "1"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
   cypress_tests_Signup_StitchedClone:
     name: Run Cypress tests - Signup,StitchedClone
     uses: ./.github/workflows/cypress_tests.yml
@@ -269,10 +253,7 @@ jobs:
       account_id: "050256574573"
       cypress_tags: "@StitchedClone"
       visual_regression_enabled: "1"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
-
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
     uses: ./.github/workflows/cypress_tests.yml
@@ -283,9 +264,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "@SignupIncluded"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
@@ -299,9 +278,7 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
       cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @FrontMezzio"
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-      AWS_SECRET_ACCESS_KEY_ACTIONS: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
   end_of_workflow:
     name: End of Workflow
