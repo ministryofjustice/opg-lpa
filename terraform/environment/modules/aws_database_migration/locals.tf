@@ -1,9 +1,7 @@
 locals {
-  network = var.dms_network
-  aurora_migration_network_sg_ids = var.dms_network == null ? [] : toset(distinct([
-    local.network.security_group_ids.source,
-    local.network.security_group_ids.target,
-  ]))
+  network                      = var.dms_network
+  dms_source_security_group_id = var.dms_network == null ? null : var.dms_network.security_group_ids.source
+  dms_target_security_group_id = var.dms_network == null ? null : var.dms_network.security_group_ids.target
 
   default_table_mappings = file("${path.module}/table-mappings.json")
 
