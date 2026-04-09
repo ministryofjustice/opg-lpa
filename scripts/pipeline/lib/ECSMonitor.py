@@ -6,7 +6,6 @@ import os
 
 class ECSMonitor:
     aws_account_id = ""
-    aws_iam_session = {"Credentials": {}}
     aws_ecs_client = ""
     aws_ecs_cluster = ""
     aws_logs_client = ""
