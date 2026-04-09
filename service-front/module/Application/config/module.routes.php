@@ -37,6 +37,7 @@ use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
 use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
@@ -1139,8 +1140,11 @@ return [
                         'options' => [
                             'route'    => '/repeat-application',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\RepeatApplicationController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    RepeatApplicationHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                     ],
