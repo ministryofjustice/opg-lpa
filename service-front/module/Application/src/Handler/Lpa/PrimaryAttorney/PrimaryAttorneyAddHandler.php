@@ -12,14 +12,13 @@ use Application\Middleware\RequestAttribute;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Applicant as ApplicantService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use Application\Model\Service\Session\SessionUtility;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
-use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
@@ -41,7 +40,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         private readonly MvcUrlHelper $urlHelper,
         private readonly ApplicantService $applicantService,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
-        private readonly SessionUtility $sessionUtility,
+        private readonly ActorReuseDetailsService $actorReuseDetailsService,
     ) {
     }
 
@@ -68,7 +67,9 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         $queryParams = $request->getQueryParams();
         $reuseDetailsIndexFromQuery = $queryParams['reuseDetailsIndex'] ?? null;
 
-        $actorReuseDetails = $this->getActorReuseDetails($lpa, $userDetails);
+        $actorReuseDetails = $userDetails instanceof User
+            ? $this->actorReuseDetailsService->getActorReuseDetails($userDetails, $lpa)
+            : [];
 
         if (!$isPost) {
             if ($reuseDetailsIndexFromQuery === null) {
@@ -98,11 +99,13 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             'action',
             $this->urlHelper->generate('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])
         );
-        $form->setActorData('attorney', $this->getActorsList($lpa));
+        $form->setActorData('attorney', $this->actorReuseDetailsService->getActorsList($lpa, false));
 
 
         if (!$isPost && $reuseDetailsIndexFromQuery !== null) {
-            $reuseDetails = $this->getActorReuseDetails($lpa, $userDetails);
+            $reuseDetails = $userDetails instanceof User
+                ? $this->actorReuseDetailsService->getActorReuseDetails($userDetails, $lpa)
+                : [];
             if (array_key_exists($reuseDetailsIndexFromQuery, $reuseDetails)) {
                 $form->bind($reuseDetails[$reuseDetailsIndexFromQuery]['data']);
             }
@@ -158,7 +161,10 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        if (count($this->getActorReuseDetails($lpa, $userDetails)) > 1) {
+        $reuseDetailsForBackButton = $userDetails instanceof User
+            ? $this->actorReuseDetailsService->getActorReuseDetails($userDetails, $lpa)
+            : [];
+        if (count($reuseDetailsForBackButton) > 1) {
             $templateParams['backButtonUrl'] = str_replace(
                 'add-trust',
                 'add',
@@ -184,174 +190,5 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
-    }
-
-    /**
-     * Return an array of actor details available for reuse.
-     *
-     * For the primary attorney add screen this includes:
-     * - The current session user (if their name hasn't already been used)
-     * - Actors from the seed LPA (if this LPA is a clone)
-     */
-    private function getActorReuseDetails(Lpa $lpa, ?User $userDetails): array
-    {
-        $actorReuseDetails = [];
-
-        // Add current user details if not already used
-        if ($userDetails instanceof User && $userDetails->name !== null) {
-            $alreadyUsed = false;
-
-            foreach ($this->getAllActorsList($lpa) as $actor) {
-                if (
-                    strtolower((string) $userDetails->name->first) === strtolower((string) $actor['firstname'])
-                    && strtolower((string) $userDetails->name->last) === strtolower((string) $actor['lastname'])
-                ) {
-                    $alreadyUsed = true;
-                    break;
-                }
-            }
-
-            if (!$alreadyUsed) {
-                $userData = $userDetails->flatten();
-                $userData['who'] = 'other';
-
-                if (($dateOfBirth = $userDetails->dob) instanceof Dob) {
-                    $userData['dob-date'] = [
-                        'day'   => $dateOfBirth->date->format('d'),
-                        'month' => $dateOfBirth->date->format('m'),
-                        'year'  => $dateOfBirth->date->format('Y'),
-                    ];
-                }
-
-                $actorReuseDetails[] = [
-                    'label' => sprintf(
-                        '%s %s (myself)',
-                        $userDetails->name->first,
-                        $userDetails->name->last
-                    ),
-                    'data' => $userData,
-                ];
-            }
-        }
-
-        // Add seed LPA actor details if this LPA is a clone
-        $seedId = (string) $lpa->seed;
-
-        if (!empty($seedId)) {
-            $sessionSeedData = $this->sessionUtility->getFromMvc('clone', $seedId);
-            $seedDetails = [];
-
-            if ($sessionSeedData === null) {
-                $seedDetails = $this->lpaApplicationService->getSeedDetails($lpa->id);
-                $this->sessionUtility->setInMvc('clone', $seedId, $seedDetails);
-            } elseif (is_array($sessionSeedData)) {
-                $seedDetails = $sessionSeedData;
-            }
-
-            foreach ($seedDetails as $type => $actorData) {
-                switch ($type) {
-                    case 'donor':
-                        $actorReuseDetails[] = $this->buildReuseEntry($actorData, '(was the donor)');
-                        break;
-                    case 'certificateProvider':
-                        $actorReuseDetails[] = $this->buildReuseEntry($actorData, '(was the certificate provider)');
-                        break;
-                    case 'primaryAttorneys':
-                    case 'replacementAttorneys':
-                        $suffixText = $type === 'primaryAttorneys'
-                            ? '(was a primary attorney)'
-                            : '(was a replacement attorney)';
-                        foreach ($actorData as $singleActorData) {
-                            $isTrust = (($singleActorData['type'] ?? '') === 'trust');
-                            if ($isTrust && !$this->allowTrust($lpa)) {
-                                continue;
-                            }
-                            $entry = $this->buildReuseEntry($singleActorData, $suffixText);
-                            if ($isTrust) {
-                                $actorReuseDetails['t'] = $entry;
-                            } else {
-                                $actorReuseDetails[] = $entry;
-                            }
-                        }
-                        break;
-                    case 'peopleToNotify':
-                        foreach ($actorData as $singleActorData) {
-                            $actorReuseDetails[] = $this->buildReuseEntry(
-                                $singleActorData,
-                                '(was a person to be notified)'
-                            );
-                        }
-                        break;
-                    case 'correspondent':
-                        $actorType = ($actorData['who'] ?? 'other');
-                        if ($actorType === 'other') {
-                            $actorReuseDetails[] = $this->buildReuseEntry(
-                                $actorData,
-                                '(was the correspondent)'
-                            );
-                        }
-                        break;
-                }
-            }
-        }
-
-        return $actorReuseDetails;
-    }
-
-    /**
-     * Build a single reuse-details entry from actor data.
-     */
-    private function buildReuseEntry(array $actorData, string $suffixText): array
-    {
-        $actorData['who'] = $actorData['who'] ?? 'other';
-
-        $label = $actorData['name'] ?? '';
-
-        if (isset($actorData['type']) && $actorData['type'] === 'trust') {
-            $actorData['company'] = $label;
-        } elseif (is_array($label)) {
-            $label = ($label['first'] ?? '') . ' ' . ($label['last'] ?? '');
-        }
-
-        // Filter to only allowed keys
-        $allowedKeys = [
-            'name', 'number', 'otherNames', 'address', 'dob', 'email',
-            'case', 'phone', 'who', 'company', 'type', 'canSign',
-        ];
-        $actorData = array_intersect_key($actorData, array_flip($allowedKeys));
-
-        return [
-            'label' => trim($label . ' ' . $suffixText),
-            'data' => $this->flattenData($actorData),
-        ];
-    }
-
-    /**
-     * Flatten nested model data into form-compatible flat key format.
-     */
-    private function flattenData(array $modelData): array
-    {
-        $formData = [];
-
-        foreach ($modelData as $l1 => $l2) {
-            if (is_array($l2)) {
-                foreach ($l2 as $name => $l3) {
-                    if ($l1 === 'dob') {
-                        $dob = new \DateTime($l3);
-                        $formData['dob-date'] = [
-                            'day'   => $dob->format('d'),
-                            'month' => $dob->format('m'),
-                            'year'  => $dob->format('Y'),
-                        ];
-                    } else {
-                        $formData[$l1 . '-' . $name] = $l3;
-                    }
-                }
-            } else {
-                $formData[$l1] = $l2;
-            }
-        }
-
-        return $formData;
     }
 }
