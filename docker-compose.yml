@@ -460,6 +460,7 @@ services:
       - ./service-pdf:/app/service-pdf
       - ./shared:/app/shared
       - ./phpcs.xml.dist:/app/config/phpcs.xml.dist
+      - ./phpcs/output:/app/output
 
   shared-test:
     image: lpa-shared-test
