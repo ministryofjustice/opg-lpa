@@ -70,7 +70,7 @@ jobs:
     name: TF - Lint
     needs:
       - workflow_variables
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/linting-infrastructure-terraform.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
@@ -104,7 +104,7 @@ jobs:
 
   terraform_account_development:
     name: TF Development - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - terraform_lint
       - workflow_variables
@@ -124,7 +124,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - terraform_lint
       - workflow_variables
@@ -144,7 +144,7 @@ jobs:
 
   terraform_environment_development:
     name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@6e25a7da7d1f1d728915ef6a51f1a269e9751069 # v3.18.0
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - docker_build_scan_push
       - phpunit_tests
