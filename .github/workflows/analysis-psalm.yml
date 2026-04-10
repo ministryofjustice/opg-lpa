@@ -1,10 +1,6 @@
 name: Psalm analysis
 
-on:
-  push:
-    branches: ["main"]
-  pull_request:
-    branches: ["main"]
+on: workflow_call
 
 permissions:
   security-events: write
@@ -14,45 +10,45 @@ jobs:
     name: psalm-scan
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         scan:
           - name: service-admin
-            path: "./service-admin"
-            phpVersion: "8.4"
+            service: admin-app-test
           - name: service-front
-            path: "./service-front"
-            phpVersion: "8.4"
+            service: front-app-test
           - name: service-api
-            path: "./service-api"
-            phpVersion: "8.4"
+            service: api-app-test
           - name: shared
-            path: "./shared"
-            phpVersion: "8.4"
+            service: shared-test
           - name: service-pdf
-            path: "./service-pdf"
-            phpVersion: "8.4"
-
-    defaults:
-      run:
-        working-directory: ${{ matrix.scan.path }}
+            service: pdf-app-test
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - name: Setup PHP
-        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
+
+      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
-          php-version: ${{ matrix.scan.phpVersion }}
-      - name: Composer install
-        run: composer install --prefer-dist --optimize-autoloader --no-suggest --no-interaction --no-scripts
-      - name: Run psalm
-        run: ./vendor/bin/psalm --output-format=github --report=psalm-results.sarif --no-cache
+          name: ${{ matrix.scan.service }}
+          path: /tmp/images
+      - name: Load Images
+        run: |
+          docker load -i /tmp/images/image.tar
+
+      - name: Run Psalm
+        run: |
+          mkdir -m 0777 ./output
+          docker compose run --rm \
+            --volume ./output:/tmp/output \
+            ${{ matrix.scan.service }} \
+            vendor/bin/psalm --report=/tmp/output/psalm-results.sarif --no-cache
       - name: Add prefix to Psalm paths
         if: always()
         run: |
-          sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' psalm-results.sarif
+          sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' ./output/psalm-results.sarif
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@014f16e7ab1402f30e7c3329d33797e7948572db # v4.31.3
         if: always()
         with:
-          sarif_file: ${{ matrix.scan.path }}/psalm-results.sarif
+          sarif_file: ./output/psalm-results.sarif
+          category: psalm-${{ matrix.scan.name }}
