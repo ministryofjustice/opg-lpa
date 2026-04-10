@@ -43,6 +43,7 @@ class PeopleToNotifyHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
+        /** @var \Application\Form\Lpa\BlankMainFlowForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa,
         ]);
