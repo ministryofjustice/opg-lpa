@@ -38,7 +38,7 @@ jobs:
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
       - name: Set safe branch name
         id: safe_branch_name
-        uses: ministryofjustice/opg-github-actions/actions/branch-name@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
+        uses: ministryofjustice/opg-github-actions/actions/branch-name@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
       - name: Set workspace name
         id: set_workspace_name
         run: |
@@ -52,17 +52,17 @@ jobs:
 
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           terraform_directory: "./terraform/environment"
       - name: Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           terraform_directory: "./terraform/region"
 
