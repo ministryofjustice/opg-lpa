@@ -92,7 +92,13 @@ jobs:
 
   phpunit_tests:
     name: Run PHPUnit tests
-    uses: ./.github/workflows/phpunit_new.yml
+    uses: ./.github/workflows/phpunit.yml
+    needs:
+      - docker_build_scan_push
+
+  psalm_tests:
+    name: Run Psalm analysis
+    uses: ./.github/workflows/analysis-psalm.yml
     needs:
       - docker_build_scan_push
 
@@ -146,6 +152,7 @@ jobs:
     needs:
       - docker_build_scan_push
       - phpunit_tests
+      - psalm_tests
       - set_variables
       - terraform_region_preproduction
       - terraform_account_preproduction
