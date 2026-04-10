@@ -19,8 +19,6 @@ COMPOSER_VERSION := "2.8.11"
 # Unique identifier for this version of the application
 APP_VERSION := $(shell echo -n `git rev-parse --short HEAD`)
 
-PHPCS_REPORT ?= full
-
 #COLORS
 YELLOW := $(shell tput -Txterm setaf 3)
 RESET  := $(shell tput -Txterm sgr0)
@@ -287,7 +285,7 @@ dc-phpcs-fix:
 
 dc-phpcs-check:
 	docker compose build phpcs
-	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --report=${PHPCS_REPORT}
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
 
 dc-clear-cache:
 	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
