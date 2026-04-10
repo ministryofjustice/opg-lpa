@@ -19,6 +19,8 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -74,12 +76,19 @@ class PeopleToNotifyEditHandlerTest extends TestCase
         $flowChecker->method('nextRoute')->willReturn('lpa/people-to-notify');
         $flowChecker->method('getRouteOptions')->willReturn([]);
 
+        $routeParams = ['lpa-id' => $lpa->id];
+        if ($idx !== null) {
+            $routeParams['idx'] = $idx;
+        }
+        $route = new Route('/lpa/:lpa-id/people-to-notify/edit/:idx', new \Application\Middleware\StubMiddleware(), null, 'lpa/people-to-notify/edit');
+        $routeResult = RouteResult::fromRoute($route, $routeParams);
+
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/people-to-notify/edit')
-            ->withAttribute('idx', $idx);
+            ->withAttribute(RouteResult::class, $routeResult);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);

@@ -18,6 +18,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -50,7 +51,10 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
 
         $isPopup = $this->isXmlHttpRequest($request);
 
-        $personIdx = $request->getAttribute('idx');
+        /** @var RouteResult|null $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $params = $routeResult instanceof RouteResult ? $routeResult->getMatchedParams() : [];
+        $personIdx = $params['idx'] ?? null;
 
         if ($personIdx === null || !array_key_exists((int) $personIdx, $lpa->document->peopleToNotify)) {
             return new HtmlResponse('', 404);

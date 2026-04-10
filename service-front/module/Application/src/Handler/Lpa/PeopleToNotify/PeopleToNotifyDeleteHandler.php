@@ -10,6 +10,7 @@ use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -28,7 +29,10 @@ class PeopleToNotifyDeleteHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        $personIdx = $request->getAttribute('idx');
+        /** @var RouteResult|null $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $params = $routeResult instanceof RouteResult ? $routeResult->getMatchedParams() : [];
+        $personIdx = $params['idx'] ?? null;
 
         if ($personIdx === null || !array_key_exists((int) $personIdx, $lpa->document->peopleToNotify)) {
             return new HtmlResponse('', 404);

@@ -14,6 +14,8 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -54,10 +56,17 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
 
     private function createRequest(Lpa $lpa, ?string $idx = '0', array $headers = []): ServerRequest
     {
+        $routeParams = ['lpa-id' => $lpa->id];
+        if ($idx !== null) {
+            $routeParams['idx'] = $idx;
+        }
+        $route = new Route('/lpa/:lpa-id/people-to-notify/confirm-delete/:idx', new \Application\Middleware\StubMiddleware(), null, 'lpa/people-to-notify/confirm-delete');
+        $routeResult = RouteResult::fromRoute($route, $routeParams);
+
         $request = (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RequestAttribute::LPA, $lpa)
-            ->withAttribute('idx', $idx);
+            ->withAttribute(RouteResult::class, $routeResult);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);

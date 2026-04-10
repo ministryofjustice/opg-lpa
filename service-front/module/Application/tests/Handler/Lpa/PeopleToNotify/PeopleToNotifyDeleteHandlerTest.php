@@ -16,6 +16,8 @@ use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -55,10 +57,17 @@ class PeopleToNotifyDeleteHandlerTest extends TestCase
 
     private function createRequest(Lpa $lpa, ?string $idx = '0'): ServerRequest
     {
+        $routeParams = ['lpa-id' => $lpa->id];
+        if ($idx !== null) {
+            $routeParams['idx'] = $idx;
+        }
+        $route = new Route('/lpa/:lpa-id/people-to-notify/delete/:idx', new \Application\Middleware\StubMiddleware(), null, 'lpa/people-to-notify/delete');
+        $routeResult = RouteResult::fromRoute($route, $routeParams);
+
         return (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RequestAttribute::LPA, $lpa)
-            ->withAttribute('idx', $idx);
+            ->withAttribute(RouteResult::class, $routeResult);
     }
 
     public function testDeletesPersonAndRedirects(): void
