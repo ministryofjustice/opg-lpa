@@ -23,7 +23,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - uses: unfor19/install-aws-cli-action@f5b46b7f32cf5e7ebd652656c5036bf83dd1e60c # 1.0.8
       - name: Get terraform version
         id: set-terraform-version
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@e3177e63e9f2951dd3f1f7c7aa093918a5a0794a # v4.3.6
