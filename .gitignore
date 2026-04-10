@@ -45,7 +45,7 @@ coverage-xml
 coverage-html
 .php-cs-fixer.cache
 shared/module/MakeShared/tests/autoload.php
-phpcs/config/
+phpcs/output/
 service-pdf/before.png
 service-pdf/after.png
 service-pdf/*.pdf

@@ -10,7 +10,7 @@ jobs:
     name: phpunit
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         scan:
           - service: admin-app-test
