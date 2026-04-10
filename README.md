@@ -4,6 +4,8 @@ The Office of the Public Guardian Lasting Power of Attorney online service: Mana
 
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/opg-lpa/badge)](https://github-community.service.justice.gov.uk/repository-standards/opg-lpa)
 
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/ministryofjustice/opg-lpa/badge)](https://scorecard.dev/viewer/?uri=github.com/ministryofjustice/opg-lpa)
+
 ## Pre-requisites for Local Development
 
 Set up software on your machine required to run the application locally:
