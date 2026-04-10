@@ -10,7 +10,6 @@ use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\Http\Response;
 use Laminas\Mvc\Application;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Router\RouteStackInterface;
 
 /**
  * Redirects requests with a trailing slash to the same URL without it,
@@ -42,7 +41,7 @@ class TrailingSlashRedirectListener extends AbstractListenerAggregate
         }
 
         $uri = $request->getUri();
-        $path = $uri->getPath();
+        $path = $uri->getPath() ?? '';
 
         // Only act if the path has a trailing slash and is not just "/"
         if ($path === '/' || !str_ends_with($path, '/')) {
@@ -52,10 +51,6 @@ class TrailingSlashRedirectListener extends AbstractListenerAggregate
         $strippedPath = rtrim($path, '/');
 
         $router = $event->getRouter();
-
-        if (!$router instanceof RouteStackInterface) {
-            return;
-        }
 
         $testUri = clone $uri;
         $testUri->setPath($strippedPath);
@@ -71,8 +66,9 @@ class TrailingSlashRedirectListener extends AbstractListenerAggregate
 
         $redirectUrl = $strippedPath;
 
+        /** @var string|null $query */
         $query = $uri->getQuery();
-        if (!empty($query)) {
+        if (is_string($query) && $query !== '') {
             $redirectUrl .= '?' . $query;
         }
 
