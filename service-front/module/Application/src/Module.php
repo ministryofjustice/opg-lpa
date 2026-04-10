@@ -130,6 +130,7 @@ use Application\Listener\AuthenticationListener;
 use Application\Listener\CurrentRouteListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
+use Application\Listener\TrailingSlashRedirectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
 use Application\Middleware\LpaLoaderMiddleware;
@@ -200,6 +201,9 @@ class Module implements FormElementProviderInterface
         $eventManager = $application->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        // Redirect trailing-slash URLs to their canonical form (e.g. /login/ → /login)
+        (new TrailingSlashRedirectListener())->attach($eventManager, 100);
 
         // Register error handler for dispatch and render errors
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
