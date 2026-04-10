@@ -382,50 +382,29 @@ abstract class AbstractLpaActorController extends AbstractAuthenticatedControlle
         // Ensure the index to exclude is an integer or null
         $actorIndexToExclude = (is_null($actorIndexToExclude) ? null : intval($actorIndexToExclude));
 
-        // Determine which route we have come from so the results below can be filtered
-        // If the filter flag was passed into this function as false then set all flags below to false so no
-        // filtering takes place
-        $isPeopleToModifyRoute = ($filterByActorAction && $this instanceof Lpa\PeopleToNotifyController);
-
         $lpaDocument = $this->getLpa()->document;
 
-        // If there is a donor present in the LPA and we are adding/editing people to notify then
-        // do NOT include in the actor list
-        if (!$isPeopleToModifyRoute && $lpaDocument->donor instanceof Donor) {
+        if ($lpaDocument->donor instanceof Donor) {
             $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
         }
 
-        // If there is a certificate provider present in the LPA and we are adding/editing people to
-        // notify then do NOT include in the actor list
-        if (
-            !$isPeopleToModifyRoute &&
-            $lpaDocument->certificateProvider instanceof CertificateProvider
-        ) {
+        if ($lpaDocument->certificateProvider instanceof CertificateProvider) {
             $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
         }
 
-        // Include all of the primary attorney details
         foreach ($lpaDocument->primaryAttorneys as $idx => $attorney) {
             if ($attorney instanceof Attorneys\Human) {
                 $actorsList[] = $this->getActorDetails($attorney, 'attorney');
             }
         }
 
-        // Include all of the replacement attorney details
         foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
             if ($attorney instanceof Attorneys\Human) {
                 $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
             }
         }
 
-        // Include all of the people to notify
         foreach ($lpaDocument->peopleToNotify as $idx => $notifiedPerson) {
-            // We are editing this person to notify so do not add it to the actor list
-            if ($isPeopleToModifyRoute && $actorIndexToExclude === $idx) {
-                continue;
-            }
-
-            // Use "person" rather than "people" to ensure the JS warning is phrased correctly
             $actorsList[] = $this->getActorDetails($notifiedPerson, 'person to notify');
         }
 

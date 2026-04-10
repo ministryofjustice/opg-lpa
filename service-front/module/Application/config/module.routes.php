@@ -52,6 +52,11 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -1012,8 +1017,8 @@ return [
                         'options' => [
                             'route'    => '/people-to-notify',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1023,7 +1028,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1035,7 +1041,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1047,7 +1054,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1059,7 +1067,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
