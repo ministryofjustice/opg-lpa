@@ -17,21 +17,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
-      - name: Setup PHP
-        uses: shivammathur/setup-php@bf6b4fbd49ca58e4608c9c89fba0b8d90bd2a39f # 2.35.5
-        with:
-          php-version: 8.4
-          coverage: none # disable xdebug, pcov
-          tools: cs2pr
       - name: Run phpcs
         id: phpcs
-        env:
-          PHPCS_REPORT: checkstyle
-        run: make dc-phpcs-check > phpcs-report.xml
-      - name: Fix paths in PHPCS report
-        if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        run: |
-          sed -i 's|name="/app/|name="|g' phpcs-report.xml
+        run: make dc-phpcs-check
       - name: Publish PHPCS as PR annotations
         if: ${{ always() && steps.phpcs.outcome == 'failure' }}
-        run: cs2pr ./phpcs-report.xml
+        run: docker compose run --rm --no-deps --entrypoint=vendor/bin/cs2pr phpcs /app/output/phpcs-report.xml
