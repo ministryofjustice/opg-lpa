@@ -7,19 +7,27 @@ defaults:
 on:
   workflow_call:
     inputs:
-      account_id:
-        description: "AWS account of the role to assume"
-        required: true
-        type: string
       task_name:
         description: "Name of the task to run"
         required: true
         type: string
-    secrets:
-      AWS_ACCESS_KEY_ID_ACTIONS:
+      oidc_role:
+        description: "Role to use to start an ECS task"
         required: true
-      AWS_SECRET_ACCESS_KEY_ACTIONS:
-        required: true
+        type: string
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
 
 jobs:
   run_seeding_task:
@@ -38,10 +46,8 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_ACTIONS }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_ACTIONS }}
           aws-region: eu-west-1
-          role-to-assume: arn:aws:iam::${{ inputs.account_id }}:role/opg-lpa-ci
+          role-to-assume: ${{ inputs.oidc_role }}
           role-duration-seconds: 900
           role-session-name: OPGLPABuildPipeline
 
