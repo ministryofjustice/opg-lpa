@@ -41,7 +41,7 @@ class UserLpasHandlerTest extends TestCase
             'app::user-lpas',
             $this->callback(fn ($args) =>
                 $args['userId'] === '123'
-                && $args['failureReason'] === 'missing-email')
+                && $args['failureReason'] === 'not-this-reason')
         )->willReturn('response');
 
         $response = $this->handler->handle($request);

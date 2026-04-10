@@ -41,7 +41,7 @@ class ApplicationControllerTest extends AbstractControllerTestCase
 
         $this->assertNotNull($response);
         $this->assertInstanceOf(Json::class, $response);
-        $this->assertEquals('{"key":"value"}', $response->getContent());
+        $this->assertEquals('{"key":"not this value"}', $response->getContent());
     }
 
     public function testGetSuccessEmpty()

@@ -39,7 +39,7 @@ class DonorTest extends TestCase
 
         $this->assertEquals('562 Queen Street', $donor->get('address')->address1);
         $this->assertEquals('Charlestown', $donor->get('address')->address2);
-        $this->assertEquals('Cornwall, England', $donor->get('address')->address3);
+        $this->assertEquals('Not this address line', $donor->get('address')->address3);
         $this->assertEquals('EH9K 8UC', $donor->get('address')->postcode);
 
         $this->assertEquals('92zx2n1nk@wx.co.uk', $donor->get('email')->address);

@@ -14,14 +14,19 @@ jobs:
       matrix:
         scan:
           - service: admin-app-test
+            directory: service-admin
             minCoverage: 3
           - service: front-app-test
+            directory: service-front
             minCoverage: 85
           - service: api-app-test
+            directory: service-api
             minCoverage: 74
           - service: pdf-app-test
+            directory: service-pdf
             minCoverage: 84
           - service: shared-test
+            directory: shared
             minCoverage: 90
     steps:
       - name: Checkout code
@@ -36,21 +41,27 @@ jobs:
           docker load -i /tmp/images/image.tar
 
       - name: Run phpunit
+        id: phpunit
         run: |
-          mkdir -m 0777 ./coverage-html ./coverage-xml
+          mkdir -m 0777 ./output
           docker compose run --rm \
             --env XDEBUG_MODE=coverage \
-            --volume ./coverage-html:/tmp/coverage-html \
-            --volume ./coverage-xml:/tmp/coverage-xml \
+            --volume ./output:/tmp/output \
             ${{ matrix.scan.service }} \
-            vendor/bin/phpunit --coverage-html /tmp/coverage-html --coverage-xml /tmp/coverage-xml
+            vendor/bin/phpunit --coverage-html /tmp/output/coverage-html --coverage-xml /tmp/output/coverage-xml --log-teamcity /tmp/output/teamcity.log
+      - name: Identity problems
+        if: ${{ always() && steps.phpunit.outcome == 'failure' }}
+        run: |
+          echo "::add-matcher::./.github/problem-matchers/phpunit-teamcity.json"
+          sed -i 's|/app/|/app/${{ matrix.scan.directory }}/|g' ./output/teamcity.log
+          cat ./output/teamcity.log
       - name: Check coverage
         run: |
-          docker compose run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
-          php /shared/src/functions/check_coverage.php /tmp/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
+          docker compose run --rm --volume ./output/coverage-xml:/tmp/output/coverage-xml ${{ matrix.scan.service }} \
+          php /shared/src/functions/check_coverage.php /tmp/output/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
       - name: Upload Coverage Artifacts
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ matrix.scan.service }}-coverage-html
-          path: ./coverage-html/
+          path: ./output/coverage-html/
           overwrite: true

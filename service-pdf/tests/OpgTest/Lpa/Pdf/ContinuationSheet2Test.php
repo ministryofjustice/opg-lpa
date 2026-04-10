@@ -42,7 +42,7 @@ class ContinuationSheet2Test extends AbstractPdfTestCase
 
     public function testConstructorExceptionContentPage1()
     {
-        $this->expectExceptionMessage('Page 1 of the preferences and instructions can not be displayed on continuation sheet 2');
+        $this->expectExceptionMessage('Not this exception');
 
         $lpa = $this->getLpa();
         $contentPage = 1;

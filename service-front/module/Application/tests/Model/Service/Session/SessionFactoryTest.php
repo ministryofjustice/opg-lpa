@@ -72,7 +72,7 @@ final class SessionFactoryTest extends MockeryTestCase
             ->once();
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Session configuration setting not found');
+        $this->expectExceptionMessage('Something else');
 
         $factory = new SessionFactory();
         $factory($container, null, null);
