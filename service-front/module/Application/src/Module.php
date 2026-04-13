@@ -83,6 +83,12 @@ use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDelete
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Factory\Lpa\Download\DownloadCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadFileHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadHandlerFactory;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -605,6 +611,9 @@ class Module implements FormElementProviderInterface
                 CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
                 CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
+                DownloadHandler::class => DownloadHandlerFactory::class,
+                DownloadCheckHandler::class => DownloadCheckHandlerFactory::class,
+                DownloadFileHandler::class => DownloadFileHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
