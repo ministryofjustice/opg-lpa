@@ -6,8 +6,9 @@
         "php": "8.4.*"
     },
     "require-dev": {
-      "squizlabs/php_codesniffer": "^4.0",
-      "slevomat/coding-standard": "^8.0"
+        "slevomat/coding-standard": "^8.0",
+        "squizlabs/php_codesniffer": "^4.0",
+        "staabm/annotate-pull-request-from-checkstyle": "^1.0"
     },
     "config": {
         "allow-plugins": {
