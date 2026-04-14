@@ -71,7 +71,7 @@ class DownloadHandlerTest extends TestCase
             ->withAttribute(RouteResult::class, $routeResult);
     }
 
-    public function testIndexReturnsErrorPageWhenLpa120NotAvailable(): void
+    public function testIndexReturns404PageWhenLpa120NotAvailable(): void
     {
         $lpa = FixturesData::getPfLpa();
 
@@ -85,27 +85,29 @@ class DownloadHandlerTest extends TestCase
 
         $this->renderer->expects($this->once())
             ->method('render')
-            ->with('application/download/index.twig', $this->anything())
+            ->with('error/404.twig', $this->anything())
             ->willReturn('html');
 
         $response = $this->handler->handle($this->createRequest($lpa, 'lpa120'));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
-    public function testIndexReturnsErrorPageWhenLp3NotAvailable(): void
+    public function testIndexReturns404PageWhenLp3NotAvailable(): void
     {
         $lpa = FixturesData::getPfLpa();
         $lpa->document->peopleToNotify = [];
 
         $this->renderer->expects($this->once())
             ->method('render')
-            ->with('application/download/index.twig', $this->anything())
+            ->with('error/404.twig', $this->anything())
             ->willReturn('html');
 
         $response = $this->handler->handle($this->createRequest($lpa, 'lp3'));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     public function testIndexRendersPollingPageWhenPdfInQueue(): void
@@ -225,7 +227,7 @@ class DownloadHandlerTest extends TestCase
     /**
      * @dataProvider pdfTypeNotAvailableProvider
      */
-    public function testIndexReturnsErrorWhenPdfTypeNotAvailable(
+    public function testIndexReturns404WhenPdfTypeNotAvailable(
         string $pdfType,
         callable $lpaModifier
     ): void {
@@ -234,12 +236,13 @@ class DownloadHandlerTest extends TestCase
 
         $this->renderer->expects($this->once())
             ->method('render')
-            ->with('application/download/index.twig', $this->anything())
+            ->with('error/404.twig', $this->anything())
             ->willReturn('html');
 
         $response = $this->handler->handle($this->createRequest($lpa, $pdfType));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame(404, $response->getStatusCode());
     }
 
     /**
