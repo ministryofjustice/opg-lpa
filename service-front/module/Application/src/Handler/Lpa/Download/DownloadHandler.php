@@ -45,7 +45,7 @@ class DownloadHandler implements RequestHandlerInterface
             'pdfType' => $pdfType,
         ]);
 
-        // Check PDF availability; return a nice error if unavailable
+        // Check PDF availability; return a 404 if the LPA is not eligible for this PDF type
         if (
             ($pdfType === 'lpa120' && !$lpa->canGenerateLPA120())
             || ($pdfType === 'lp3' && !$lpa->canGenerateLP3())
@@ -57,11 +57,11 @@ class DownloadHandler implements RequestHandlerInterface
             ]);
 
             $html = $this->renderer->render(
-                'application/download/index.twig',
+                'error/404.twig',
                 $this->getTemplateVariables($request)
             );
 
-            return new HtmlResponse($html);
+            return new HtmlResponse($html, 404);
         }
 
         if ($this->pdfIsReady($lpa->getId(), $pdfType)) {
