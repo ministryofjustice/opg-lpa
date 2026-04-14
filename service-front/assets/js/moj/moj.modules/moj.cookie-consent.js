@@ -115,6 +115,10 @@
       if (usage) {
         // enable analytics and fire off a pageview
         moj.Events.trigger('Analytics.start');
+        let s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = 'https://www.googletagmanager.com/gtag/js?id=G-DY4BCL021L"';
+        document.getElementsByTagName('head')[0].appendChild(s);
       }
     },
 
