@@ -32,6 +32,7 @@ use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
+use Application\Handler\Factory\Lpa\StatusHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
 use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
@@ -72,6 +73,7 @@ use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\CompleteIndexHandler;
 use Application\Handler\Lpa\CompleteViewDocsHandler;
@@ -136,6 +138,7 @@ use Application\Listener\AuthenticationListener;
 use Application\Listener\CurrentRouteListener;
 use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
+use Application\Listener\TrailingSlashRedirectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
 use Application\Middleware\LpaLoaderMiddleware;
@@ -206,6 +209,9 @@ class Module implements FormElementProviderInterface
         $eventManager = $application->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        // Redirect trailing-slash URLs to their canonical form (e.g. /login/ → /login)
+        (new TrailingSlashRedirectListener())->attach($eventManager, 100);
 
         // Register error handler for dispatch and render errors
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
@@ -614,6 +620,7 @@ class Module implements FormElementProviderInterface
                 DownloadHandler::class => DownloadHandlerFactory::class,
                 DownloadCheckHandler::class => DownloadCheckHandlerFactory::class,
                 DownloadFileHandler::class => DownloadFileHandlerFactory::class,
+                StatusHandler::class => StatusHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {

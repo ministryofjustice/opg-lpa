@@ -55,6 +55,7 @@ use Application\Handler\Lpa\CorrespondentEditHandler;
 use Application\Handler\Lpa\Download\DownloadCheckHandler;
 use Application\Handler\Lpa\Download\DownloadFileHandler;
 use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -1314,8 +1315,8 @@ return [
                         'options' => [
                             'route'    => '/status',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\StatusController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(StatusHandler::class, []),
                             ],
                         ],
                     ],
