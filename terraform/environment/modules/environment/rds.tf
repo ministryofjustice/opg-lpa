@@ -1,9 +1,18 @@
+# data "aws_kms_key" "rds" {
+#   key_id = "alias/aws/rds"
+# }
+# remove once prod encryption with new key has been done
 data "aws_kms_key" "aurora_new_key" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
 }
 locals {
-  kms_key_id = data.aws_kms_key.aurora_new_key.arn
+  kms_key_id = var.account_name != "production" ? data.aws_kms_key.aurora_new_key.arn : data.aws_kms_key.rds.arn
 }
+#  remove once prod encryption with new key has been done > replace with the line below
+
+# locals {
+#   kms_key_id = data.aws_kms_key.aurora_new_key.arn
+# }
 locals {
   psql_parameter_group_family_list = [
     "postgres13",
