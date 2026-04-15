@@ -1,5 +1,11 @@
 import esbuild from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { createRequire } from 'module';
+import path from 'path';
+
+// Use require() to load Handlebars (CommonJS) from an ES module context.
+const require = createRequire(import.meta.url);
+const Handlebars = require('handlebars');
 
 // All JS files to concatenate in order, matching the Grunt concat task and build-js.sh.
 // These files rely on globals (jQuery, lodash, moj) set up by earlier files in the list,
@@ -49,6 +55,37 @@ const APPLICATION_JS_FILES = [
   'assets/js/main.js',
 ];
 
+function buildHandlebarsTemplates() {
+  const templatesDir = 'assets/js/lpa/templates';
+  const outputFile = 'assets/js/lpa/lpa.templates.js';
+
+  const files = readdirSync(templatesDir)
+    .filter(f => f.endsWith('.html'))
+    .sort();
+
+  const lines = [
+    'this["lpa"] = this["lpa"] || {};',
+    'this["lpa"]["templates"] = this["lpa"]["templates"] || {};',
+  ];
+
+  for (const file of files) {
+    const filePath = path.join(templatesDir, file);
+    const content = readFileSync(filePath, 'utf8');
+
+    // Replicate the Grunt processName function:
+    // strip everything up to and including 'templates/' then remove extension.
+    const fullPath = filePath.replace(/\\/g, '/');
+    const afterTemplates = fullPath.slice(fullPath.indexOf('templates/') + 'templates/'.length);
+    const templateName = afterTemplates.replace(/\.[^/.]+$/, '');
+
+    const precompiled = Handlebars.precompile(content, {});
+    lines.push(`\nthis["lpa"]["templates"]["${templateName}"] = Handlebars.template(${precompiled});`);
+  }
+
+  writeFileSync(outputFile, lines.join('\n'));
+  console.log(`✓ Compiled ${files.length} Handlebars templates → ${outputFile}`);
+}
+
 function buildEnvVarsContent() {
   const template = readFileSync('assets/js/opg/env-vars.template.js', 'utf8');
   return template.replace(
@@ -62,6 +99,9 @@ function buildEnvVarsContent() {
 async function buildApplication() {
   console.log('Building main application bundle...');
 
+  // Always regenerate lpa.templates.js from source HTML templates before bundling.
+  buildHandlebarsTemplates();
+
   mkdirSync('public/assets/v2/js', { recursive: true });
 
   // Concatenate all files in order, separated by ';\n' to match the Grunt
@@ -73,13 +113,8 @@ async function buildApplication() {
       // Inject env vars from template at build time
       content = buildEnvVarsContent();
     } else if (!existsSync(filePath)) {
-      if (filePath === 'assets/js/lpa/lpa.templates.js') {
-        console.warn('Warning: lpa.templates.js not found, using empty placeholder');
-        content = 'window.lpa = window.lpa || {}; window.lpa.templates = window.lpa.templates || {};';
-      } else {
-        console.warn(`Warning: ${filePath} not found, skipping`);
-        continue;
-      }
+      console.warn(`Warning: ${filePath} not found, skipping`);
+      continue;
     } else {
       content = readFileSync(filePath, 'utf8');
     }
