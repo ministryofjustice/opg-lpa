@@ -105,6 +105,8 @@ dc-up: run-composers
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app; \
 	docker compose up -d --remove-orphans
+	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
+	@cd service-front && npm run watch
 
 .PHONY: dc-up-debug
 dc-up-debug: run-composers

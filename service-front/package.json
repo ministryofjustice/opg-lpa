@@ -6,24 +6,18 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "test": "jshint assets/js/moj/**/*.js assets/js/lpa/**/*.js assets/js/main.js || true",
     "build": "./build.sh build",
     "build:js": "./build.sh build:js",
     "build:css": "./build.sh build:css",
-    "watch": "./build.sh watch",
-    "watch:poll": "./build.sh watch:poll",
-    "clean": "./build.sh clean",
-    "lint": "./build.sh test",
-    "help": "./build.sh help"
+    "watch": "./build.sh watch"
   },
   "dependencies": {
     "esbuild": "^0.27.3",
+    "govuk_frontend_toolkit": "^9.0.1",
     "govuk_template_mustache": "^0.26.0",
     "govuk-elements-sass": "^3.1.3",
     "govuk-frontend": "^5.11.1",
-    "govuk_frontend_toolkit": "^9.0.1",
     "handlebars": "^4.7.9",
-    "jshint": "^2.13.6",
     "lodash": "^4.17.21",
     "sass": "^1.35.1",
     "urijs": "^1.19.11"
