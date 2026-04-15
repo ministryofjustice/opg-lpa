@@ -6,7 +6,7 @@ data "aws_kms_key" "aurora_new_key" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
 }
 locals {
-  kms_key_id = var.account_name == "development" ? data.aws_kms_key.aurora_new_key.arn : data.aws_kms_key.rds.arn
+  kms_key_id = var.account_name != "production" ? data.aws_kms_key.aurora_new_key.arn : data.aws_kms_key.rds.arn
 }
 locals {
   psql_parameter_group_family_list = [
