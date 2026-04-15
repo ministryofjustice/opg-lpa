@@ -21,7 +21,7 @@ public/assets/v2/js/*.js
 public/assets/v2/js/*.js.map
 public/assets/v2/js/application.min.js
 public/assets/v2/js/application.min.js.map
-public/assets/v2/js/opg/*.js
+public/assets/v2/js/opg/
 assets/js/lpa/lpa.templates.js
 local.php.old
 module/Application/tests/coverage/
