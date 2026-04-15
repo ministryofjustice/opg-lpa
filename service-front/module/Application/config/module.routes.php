@@ -57,6 +57,7 @@ use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
+use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -1317,8 +1318,8 @@ return [
                         'options' => [
                             'route'    => '/status',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\StatusController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(StatusHandler::class, []),
                             ],
                         ],
                     ],

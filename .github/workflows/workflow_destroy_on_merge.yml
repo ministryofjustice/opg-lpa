@@ -63,7 +63,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-duration-seconds: 900
+          role-duration-seconds: 1800
           role-session-name: OPGLPADestroyEphemeralEnvironment
           role-to-assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
 
