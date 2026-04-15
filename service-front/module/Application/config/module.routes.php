@@ -52,6 +52,7 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -1308,8 +1309,8 @@ return [
                         'options' => [
                             'route'    => '/status',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\StatusController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(StatusHandler::class, []),
                             ],
                         ],
                     ],

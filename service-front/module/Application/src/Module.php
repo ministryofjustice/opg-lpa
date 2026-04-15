@@ -32,6 +32,7 @@ use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
 use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
 use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
+use Application\Handler\Factory\Lpa\StatusHandlerFactory;
 use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
 use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
@@ -72,6 +73,7 @@ use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
 use Application\Handler\Lpa\RepeatApplicationHandler;
 use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\Lpa\WhenLpaStartsHandler;
 use Application\Handler\Lpa\CompleteIndexHandler;
 use Application\Handler\Lpa\CompleteViewDocsHandler;
@@ -605,6 +607,7 @@ class Module implements FormElementProviderInterface
                 CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
                 CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
+                StatusHandler::class => StatusHandlerFactory::class,
             ], // factories
             'initializers' => [
                 function (ServiceLocatorInterface $container, $instance) {
