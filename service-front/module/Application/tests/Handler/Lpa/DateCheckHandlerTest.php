@@ -353,7 +353,7 @@ class DateCheckHandlerTest extends TestCase
     {
         $lpa = $this->createLpa('2024-01-01');
         $lpa->document->whoIsRegistering = 'donor';
-        $lpa->document->donor->name = new \MakeShared\DataModel\Common\Name([
+        $lpa->document->donor->name = new \MakeShared\DataModel\Common\LongName([
             'title' => 'Mr',
             'first' => 'John',
             'last' => 'Doe',
