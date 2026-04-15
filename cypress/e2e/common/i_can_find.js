@@ -11,7 +11,7 @@ Then(`I can find use-my-details if lpa is new`, () => {
 });
 
 Then(`I can find {string} with data-inited`, (object) => {
-  cy.get('[data-cy=' + object + '][data-inited=true]');
+    cy.get('[data-cy=' + object + '][data-inited=true]');
 });
 
 Then(`I cannot find {string}`, (object) => {

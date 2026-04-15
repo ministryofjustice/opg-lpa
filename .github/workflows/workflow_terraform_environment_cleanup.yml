@@ -2,8 +2,8 @@ name: "[Workflow] Cleanup PR Workspaces"
 
 on:
   schedule:
-    # 6am and 6pm every day except Sundays
-    - cron: "0 6,18 * * 0-6"
+    # Run Hourly
+    - cron: "0 * * * *"
 
 permissions:
   actions: none
