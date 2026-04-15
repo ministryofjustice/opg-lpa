@@ -1,6 +1,6 @@
-# data "aws_kms_key" "rds" {
-#   key_id = "alias/aws/rds"
-# }
+data "aws_kms_key" "rds" {
+  key_id = "alias/aws/rds"
+}
 # remove once prod encryption with new key has been done
 data "aws_kms_key" "aurora_new_key" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
