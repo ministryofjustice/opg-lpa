@@ -53,6 +53,8 @@ use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
 use Application\Handler\Lpa\StatusHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -785,8 +787,11 @@ return [
                         'options' => [
                             'route'    => '/date-check',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DateCheckController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    DateCheckHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -795,6 +800,13 @@ return [
                                 'type'    => Literal::class,
                                 'options' => [
                                     'route' => '/complete',
+                                    'defaults' => [
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckHandler::class,
+                                            [],
+                                        ),
+                                    ],
                                 ],
                             ],
                             'valid' => [
@@ -802,7 +814,11 @@ return [
                                 'options' => [
                                     'route'  => '/valid',
                                     'defaults' => [
-                                        'action' => 'valid',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckValidHandler::class,
+                                            [],
+                                        ),
                                     ],
                                 ],
                             ],

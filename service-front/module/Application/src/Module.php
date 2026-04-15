@@ -27,6 +27,8 @@ use Application\Handler\Factory\Lpa\ReplacementAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyEditHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckValidHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
@@ -66,6 +68,8 @@ use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
 use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
 use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
@@ -590,6 +594,8 @@ class Module implements FormElementProviderInterface
                 ReplacementAttorneyConfirmDeleteHandler::class => ReplacementAttorneyConfirmDeleteHandlerFactory::class,
                 ReplacementAttorneyDeleteHandler::class => ReplacementAttorneyDeleteHandlerFactory::class,
                 FeeReductionHandler::class => FeeReductionHandlerFactory::class,
+                DateCheckHandler::class => DateCheckHandlerFactory::class,
+                DateCheckValidHandler::class => DateCheckValidHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
                     return new ActorReuseDetailsService(
