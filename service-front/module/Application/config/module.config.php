@@ -8,8 +8,17 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Application\Handler\Factory\Lpa\CheckoutChequeHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutConfirmHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutPayHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutPayResponseHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandlerFactory;
-use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandlerFactory;
+use Application\Handler\Lpa\CheckoutChequeHandler;
+use Application\Handler\Lpa\CheckoutConfirmHandler;
+use Application\Handler\Lpa\CheckoutIndexHandler;
+use Application\Handler\Lpa\CheckoutPayHandler;
+use Application\Handler\Lpa\CheckoutPayResponseHandler;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandlerFactory;
@@ -46,6 +55,11 @@ return [
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
         'factories' => [
+            CheckoutIndexHandler::class => CheckoutIndexHandlerFactory::class,
+            CheckoutChequeHandler::class => CheckoutChequeHandlerFactory::class,
+            CheckoutConfirmHandler::class => CheckoutConfirmHandlerFactory::class,
+            CheckoutPayHandler::class => CheckoutPayHandlerFactory::class,
+            CheckoutPayResponseHandler::class => CheckoutPayResponseHandlerFactory::class,
             ContinuationSheets::class => InvokableFactory::class,
             DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
             PrimaryAttorneyHandler::class => PrimaryAttorneyHandlerFactory::class,
