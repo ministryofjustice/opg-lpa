@@ -42,7 +42,8 @@ variable "accounts" {
         aurora_cross_region_backup_enabled = bool
         cross_account_backup_enabled       = bool
         aurora_restore_testing_enabled     = bool
-        enable_backup_vault_lock           = bool
+        aurora_enabled                     = bool
+        enable_aurora_clone                = bool
         daily_backup_deletion              = number
         daily_backup_cold_storage          = number
         monthly_backup_deletion            = number

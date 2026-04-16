@@ -17,6 +17,7 @@ variable "account" {
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
+      aurora_enabled                     = bool
       aurora_restore_testing_enabled     = bool
       daily_backup_deletion              = number
       daily_backup_cold_storage          = number
@@ -24,6 +25,7 @@ variable "account" {
       monthly_backup_cold_storage        = number
       aurora_instance_count              = number
       aurora_serverless                  = bool
+      enable_aurora_clone                = bool
       deletion_protection                = bool
       psql_engine_version                = string
       psql_parameter_group_family        = string
@@ -63,6 +65,7 @@ variable "account_name" {
 variable "environment_name" {
   type = string
 }
+
 
 variable "region_name" {
   type = string
