@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^8.0.0",
-    "esbuild": "^0.27.2",
+    "esbuild": "^0.28.0",
     "govuk-frontend": "^5.14.0",
     "moment": "^2.30.1",
     "sass": "^1.97.2"
