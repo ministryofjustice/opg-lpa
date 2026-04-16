@@ -22,7 +22,9 @@ use Application\Handler\Lpa\CheckoutPayResponseHandler;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\IndexHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorneyHandlerFactory;
+use Application\Handler\Lpa\IndexHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
@@ -62,6 +64,7 @@ return [
             CheckoutPayResponseHandler::class => CheckoutPayResponseHandlerFactory::class,
             ContinuationSheets::class => InvokableFactory::class,
             DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
+            IndexHandler::class => IndexHandlerFactory::class,
             PrimaryAttorneyHandler::class => PrimaryAttorneyHandlerFactory::class,
             PrimaryAttorneyAddHandler::class => PrimaryAttorneyAddHandlerFactory::class,
             PrimaryAttorneyEditHandler::class => PrimaryAttorneyEditHandlerFactory::class,
