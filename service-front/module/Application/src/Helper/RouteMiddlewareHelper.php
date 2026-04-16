@@ -18,8 +18,9 @@ class RouteMiddlewareHelper
      *
      * @param string $handlerClass The handler to append at the end of the pipeline.
      * @param string[] $ignore Middleware classes to omit from the stack.
+     * @param string[] $extra Additional middleware classes to insert immediately before the handler.
      */
-    public static function addMiddleware(string $handlerClass, array $ignore): PipeSpec
+    public static function addMiddleware(string $handlerClass, array $ignore, array $extra = []): PipeSpec
     {
         $middlewares = array_diff([
             RouteMatchMiddleware::class,
@@ -29,6 +30,7 @@ class RouteMiddlewareHelper
             LpaLoaderMiddleware::class,
         ], $ignore);
 
+        array_push($middlewares, ...$extra);
         $middlewares[] = $handlerClass;
 
         return new PipeSpec(...$middlewares);

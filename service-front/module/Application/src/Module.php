@@ -146,6 +146,8 @@ use Application\Listener\TrailingSlashRedirectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\CsrfValidationMiddleware;
+use Application\Middleware\MvcSessionBridgeMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
@@ -196,6 +198,8 @@ use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
+use Mezzio\Csrf\CsrfMiddleware;
+use Mezzio\Csrf\SessionCsrfGuardFactory;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -378,6 +382,9 @@ class Module implements FormElementProviderInterface
                 },
                 SessionMiddleware::class => function () {
                     return new SessionMiddleware(new PhpSessionPersistence());
+                },
+                CsrfMiddleware::class => function () {
+                    return new CsrfMiddleware(new SessionCsrfGuardFactory());
                 },
                 'ExporterFactory'       => ReflectionBasedAbstractFactory::class,
 
@@ -569,6 +576,8 @@ class Module implements FormElementProviderInterface
                 },
 
                 RouteMatchMiddleware::class => InvokableFactory::class,
+                MvcSessionBridgeMiddleware::class => InvokableFactory::class,
+                CsrfValidationMiddleware::class => InvokableFactory::class,
 
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
