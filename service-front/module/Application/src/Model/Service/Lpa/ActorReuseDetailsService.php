@@ -17,8 +17,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 
 /**
- * Provides actor reuse details for LPA forms, extracted from AbstractLpaActorController
- * for use in Mezzio PSR-15 handlers.
+ * Provides actor reuse details for LPA forms, for use in Mezzio PSR-15 handlers.
  */
 class ActorReuseDetailsService
 {
@@ -30,7 +29,6 @@ class ActorReuseDetailsService
 
     /**
      * Return reuse details for non-correspondent actor forms (donor, attorney, certificate provider, etc.)
-     * Mirrors AbstractLpaActorController::getActorReuseDetails() for the non-correspondent case.
      */
     public function getActorReuseDetails(User $user, Lpa $lpa, bool $includeTrusts = true): array
     {
@@ -110,8 +108,6 @@ class ActorReuseDetailsService
 
     /**
      * Return reuse details for the correspondent form.
-     * Mirrors AbstractLpaActorController::getActorReuseDetails() for the correspondent case
-     * (forCorrespondent = true), using LPA document actors and seed correspondent.
      */
     public function getCorrespondentReuseDetails(User $user, Lpa $lpa): array
     {
