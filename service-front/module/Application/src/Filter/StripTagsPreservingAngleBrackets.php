@@ -45,6 +45,11 @@ class StripTagsPreservingAngleBrackets implements FilterInterface
         // Decode HTML entities back to literal characters so that
         // stored data contains "<" not "&lt;". Output escaping in
         // templates (Twig auto-escape, FormTextarea) handles XSS.
-        return html_entity_decode($purified, ENT_QUOTES, 'UTF-8');
+        $decoded = html_entity_decode($purified, ENT_QUOTES, 'UTF-8');
+
+        $decoded = str_replace("\r\n", "\n", $decoded);
+        $decoded = str_replace("\n", "\r\n", $decoded);
+
+        return $decoded;
     }
 }
