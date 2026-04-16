@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Lpa;
 
-use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use PHPUnit\Framework\TestCase;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\Model\Service\Lpa\ContinuationSheets;
 
-final class ContinuationSheetsTest extends AbstractHttpControllerTestCase
+final class ContinuationSheetsTest extends TestCase
 {
     private ContinuationSheets $service;
 
     public function setUp(): void
     {
-        parent::setUp();
 
         $this->service = new ContinuationSheets();
     }

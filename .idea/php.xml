@@ -390,14 +390,12 @@
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-session" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stdlib" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-stratigility" />
-      <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-test" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-translator" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-uri" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-validator" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-view" />
       <path value="$PROJECT_DIR$/service-front/vendor/league/uri" />
       <path value="$PROJECT_DIR$/service-front/vendor/league/uri-interfaces" />
-      <path value="$PROJECT_DIR$/service-front/vendor/masterminds/html5" />
       <path value="$PROJECT_DIR$/service-front/vendor/mezzio/mezzio-helpers" />
       <path value="$PROJECT_DIR$/service-front/vendor/mezzio/mezzio-router" />
       <path value="$PROJECT_DIR$/service-front/vendor/mezzio/mezzio-session" />
@@ -455,9 +453,7 @@
       <path value="$PROJECT_DIR$/service-front/vendor/sebastian/version" />
       <path value="$PROJECT_DIR$/service-front/vendor/spatie/array-to-xml" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/console" />
-      <path value="$PROJECT_DIR$/service-front/vendor/symfony/css-selector" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/deprecation-contracts" />
-      <path value="$PROJECT_DIR$/service-front/vendor/symfony/dom-crawler" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/filesystem" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-ctype" />
       <path value="$PROJECT_DIR$/service-front/vendor/symfony/polyfill-intl-grapheme" />
