@@ -1,8 +1,5 @@
 #  old kms keys  - needed until prod and preprod are migrated to new keys - used in current backup plan
-
 data "aws_caller_identity" "current" {}
-
-data "aws_region" "current" {}
 data "aws_region" "secondary" {
   provider = aws.destination
 }

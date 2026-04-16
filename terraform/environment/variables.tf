@@ -40,6 +40,7 @@ variable "accounts" {
       database = object({
         cluster_identifier                 = string
         aurora_cross_region_backup_enabled = bool
+        database_migration_enabled         = bool
         cross_account_backup_enabled       = bool
         aurora_restore_testing_enabled     = bool
         enable_backup_vault_lock           = bool

@@ -1,0 +1,33 @@
+{
+  "TargetMetadata": {
+    "TargetSchema": "",
+    "SupportLobs": true,
+    "FullLobMode": false,
+    "LimitedSizeLobMode": true,
+    "LobMaxSize": 32,
+    "BatchApplyEnabled": false
+  },
+  "FullLoadSettings": {
+    "TargetTablePrepMode": "TRUNCATE_BEFORE_LOAD",
+    "StopTaskCachedChangesApplied": false,
+    "StopTaskCachedChangesNotApplied": false,
+    "MaxFullLoadSubTasks": 4,
+    "TransactionConsistencyTimeout": 600,
+    "CommitRate": 10000
+  },
+  "ChangeProcessingDdlHandlingPolicy": {
+    "HandleSourceTableDropped": true,
+    "HandleSourceTableTruncated": true,
+    "HandleSourceTableAltered": true
+  },
+  "ErrorBehavior": {
+    "FailOnNoTablesCaptured": true,
+    "FailOnTransactionConsistencyBreached": true
+  },
+  "ValidationSettings": {
+    "EnableValidation": true,
+    "ValidationMode": "ROW_LEVEL",
+    "ThreadCount": 5,
+    "ValidationOnly": false
+  }
+}

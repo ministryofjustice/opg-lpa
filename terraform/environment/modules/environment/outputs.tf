@@ -27,6 +27,10 @@ output "db_client_security_group_id" {
   value = aws_security_group.rds_client.id
 }
 
+output "db_api_security_group_id" {
+  value = aws_security_group.rds_api.id
+}
+
 output "seeding_security_group_id" {
   value = aws_security_group.seeding_ecs_service.id
 }
@@ -39,6 +43,18 @@ output "aws_aurora_cluster_arn" {
   value = module.api_aurora[0].cluster.arn
 }
 
+output "aws_aurora_cluster_endpoint" {
+  value = module.api_aurora[0].cluster.endpoint
+}
+
+output "aws_aurora_cluster_port" {
+  value = module.api_aurora[0].cluster.port
+}
+
+output "aws_aurora_cluster_database_name" {
+  value = module.api_aurora[0].cluster.database_name
+}
+
 output "aws_ecs_task_definition_api_arn" {
   value = aws_ecs_task_definition.api.arn
 }
@@ -49,4 +65,8 @@ output "vpc_id" {
 
 output "app_subnet_ids" {
   value = [for subnet in data.aws_subnet.application : subnet.id]
+}
+
+output "data_subnet_ids" {
+  value = [for subnet in data.aws_subnet.data : subnet.id]
 }
