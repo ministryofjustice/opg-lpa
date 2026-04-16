@@ -76,4 +76,17 @@ class FormatterTest extends TestCase
 
         $this->assertEquals($expected, $actual);
     }
+
+    public function testFlattenInstructionsOrPreferencesWithLfOnlyNewlines()
+    {
+        $text = "Line one.\nLine two.\nLine three.";
+
+        $expected = "Line one.                                                                           \r\n" .
+                    "Line two.                                                                           \r\n" .
+                    "Line three.                                                                         ";
+
+        $actual = Formatter::flattenInstructionsOrPreferences($text);
+
+        $this->assertEquals($expected, $actual);
+    }
 }
