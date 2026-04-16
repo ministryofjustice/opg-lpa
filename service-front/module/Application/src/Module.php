@@ -46,6 +46,11 @@ use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderConfi
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderEditHandlerFactory;
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -89,6 +94,11 @@ use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDelete
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler as PeopleToNotifyIndexHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -616,6 +626,11 @@ class Module implements FormElementProviderInterface
                 CertificateProviderEditHandler::class => CertificateProviderEditHandlerFactory::class,
                 CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
                 CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
+                PeopleToNotifyIndexHandler::class => PeopleToNotifyHandlerFactory::class,
+                PeopleToNotifyAddHandler::class => PeopleToNotifyAddHandlerFactory::class,
+                PeopleToNotifyEditHandler::class => PeopleToNotifyEditHandlerFactory::class,
+                PeopleToNotifyConfirmDeleteHandler::class => PeopleToNotifyConfirmDeleteHandlerFactory::class,
+                PeopleToNotifyDeleteHandler::class => PeopleToNotifyDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
                 StatusHandler::class => StatusHandlerFactory::class,
             ], // factories

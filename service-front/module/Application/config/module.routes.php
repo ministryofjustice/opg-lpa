@@ -26,6 +26,11 @@ use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDelete
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\CheckoutChequeHandler;
+use Application\Handler\Lpa\CheckoutConfirmHandler;
+use Application\Handler\Lpa\CheckoutIndexHandler;
+use Application\Handler\Lpa\CheckoutPayHandler;
+use Application\Handler\Lpa\CheckoutPayResponseHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
@@ -52,6 +57,11 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use Application\Handler\Lpa\StatusHandler;
 use Application\Handler\Lpa\DateCheckHandler;
 use Application\Handler\Lpa\DateCheckValidHandler;
@@ -977,8 +987,11 @@ return [
                         'options' => [
                             'route'    => '/checkout',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CheckoutController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    CheckoutIndexHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -988,7 +1001,11 @@ return [
                                 'options' => [
                                     'route'    => '/cheque',
                                     'defaults' => [
-                                        'action'     => 'cheque',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutChequeHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -997,7 +1014,11 @@ return [
                                 'options' => [
                                     'route'    => '/pay',
                                     'defaults' => [
-                                        'action'     => 'pay',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutPayHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                                 'may_terminate' => true,
@@ -1007,7 +1028,11 @@ return [
                                         'options' => [
                                             'route'    => '/response',
                                             'defaults' => [
-                                                'action' => 'payResponse',
+                                                'controller' => PipeSpec::class,
+                                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                                    CheckoutPayResponseHandler::class,
+                                                    []
+                                                ),
                                             ],
                                         ],
                                     ],
@@ -1018,7 +1043,11 @@ return [
                                 'options' => [
                                     'route'    => '/confirm',
                                     'defaults' => [
-                                        'action'     => 'confirm',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutConfirmHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1029,8 +1058,8 @@ return [
                         'options' => [
                             'route'    => '/people-to-notify',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1040,7 +1069,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1052,7 +1082,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1064,7 +1095,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1076,7 +1108,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
