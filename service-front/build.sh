@@ -23,6 +23,7 @@ case "$TASK" in
     ;;
 
   watch)
+	node ./build.js
     echo "Starting watch mode..."
 
     if ! command -v fswatch >/dev/null 2>&1; then
