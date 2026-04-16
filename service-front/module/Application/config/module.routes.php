@@ -7,6 +7,7 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\IndexHandler;
 use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
@@ -678,8 +679,8 @@ return [
                         'lpa-id' => '[0-9]+',
                     ],
                     'defaults' => [
-                            'controller' => 'Authenticated\Lpa\IndexController',
-                            'action'     => 'index',
+                            'controller' => PipeSpec::class,
+                            'middleware' => RouteMiddlewareHelper::addMiddleware(IndexHandler::class, []),
                     ],
                 ],
                 'may_terminate' => true,
