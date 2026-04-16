@@ -422,6 +422,7 @@
       <excludeFolder url="file://$MODULE_DIR$/service-admin/vendor/mezzio/mezzio-session-ext" />
       <excludeFolder url="file://$MODULE_DIR$/terraform/environment/.terraform" />
       <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/ezyang/htmlpurifier" />
+      <excludeFolder url="file://$MODULE_DIR$/service-front/vendor/mezzio/mezzio-csrf" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

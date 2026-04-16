@@ -69,10 +69,13 @@ use Application\Listener\TermsAndConditionsListener;
 use Application\Listener\UserDetailsListener;
 use Application\Handler\ChangeEmailAddressHandler;
 use Application\Helper\RouteMiddlewareHelper;
+use Application\Middleware\CsrfValidationMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\MvcSessionBridgeMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
+use Mezzio\Csrf\CsrfMiddleware;
 
 return [
 
@@ -913,7 +916,11 @@ return [
                             'route'    => '/type',
                             'defaults' => [
                                 'controller' => PipeSpec::class,
-                                'middleware' => RouteMiddlewareHelper::addMiddleware(TypeHandler::class, []),
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    TypeHandler::class,
+                                    [],
+                                    [MvcSessionBridgeMiddleware::class, CsrfMiddleware::class, CsrfValidationMiddleware::class],
+                                ),
                             ],
                         ],
                     ],

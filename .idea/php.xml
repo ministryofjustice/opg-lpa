@@ -689,6 +689,7 @@
       <path value="$PROJECT_DIR$/shared/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/service-front/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/service-front/vendor/mezzio/mezzio-csrf" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

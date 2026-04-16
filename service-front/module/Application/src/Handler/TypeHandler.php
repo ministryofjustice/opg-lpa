@@ -17,6 +17,7 @@ use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Lpa;
 use Application\Helper\MvcUrlHelper;
+use Application\Middleware\CsrfValidationMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -49,8 +50,19 @@ class TypeHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var TypeForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
+
+        // mezzio-csrf handles CSRF via CsrfValidationMiddleware; remove the form's
+        // built-in CSRF element so it doesn't interfere with form validation.
+        $csrfElement = $form->getCsrf();
+        if ($csrfElement !== null) {
+            $csrfName = $csrfElement->getName();
+            $form->remove($csrfName);
+            $form->getInputFilter()->remove($csrfName);
+        }
 
         $isChangeAllowed = true;
 
@@ -114,6 +126,7 @@ class TypeHandler implements RequestHandlerInterface
                     'cloneUrl'        => $cloneUrl,
                     'nextUrl'         => $nextUrl,
                     'isChangeAllowed' => $isChangeAllowed,
+                    'csrfToken'       => $csrfToken,
                 ]
             )
         );

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "df0d7409a79907704263dff4d7280d51",
+    "content-hash": "0ec21324e9329c994e68e607087e97ea",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
@@ -3215,6 +3215,80 @@
                 }
             ],
             "time": "2025-08-07T08:55:27+00:00"
+        },
+        {
+            "name": "mezzio/mezzio-csrf",
+            "version": "1.11.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mezzio/mezzio-csrf.git",
+                "reference": "e6eedfacc9dbbde2ca51b24a121b765f4331e8ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mezzio/mezzio-csrf/zipball/e6eedfacc9dbbde2ca51b24a121b765f4331e8ab",
+                "reference": "e6eedfacc9dbbde2ca51b24a121b765f4331e8ab",
+                "shasum": ""
+            },
+            "require": {
+                "mezzio/mezzio-session": "^1.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "psr/container": "^1.0 || ^2.0",
+                "psr/http-server-middleware": "^1.0"
+            },
+            "conflict": {
+                "zendframework/zend-expressive-csrf": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~3.1.0",
+                "mezzio/mezzio-flash": "^1.9",
+                "phpunit/phpunit": "^11.5.42",
+                "vimeo/psalm": "^6.13.1"
+            },
+            "suggest": {
+                "mezzio/mezzio-flash": "^1.0 To back CSRF tokens using flash messages"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "config-provider": "Mezzio\\Csrf\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Mezzio\\Csrf\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "CSRF token generation and validation for PSR-7 and PSR-15 applications using mezzio-session",
+            "homepage": "https://mezzio.dev",
+            "keywords": [
+                "csrf",
+                "laminas",
+                "mezzio",
+                "psr-15",
+                "psr-7",
+                "security",
+                "session"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.mezzio.dev/mezzio-csrf/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/mezzio/mezzio-csrf/issues",
+                "rss": "https://github.com/mezzio/mezzio-csrf/releases.atom",
+                "source": "https://github.com/mezzio/mezzio-csrf"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2025-10-12T19:39:41+00:00"
         },
         {
             "name": "mezzio/mezzio-helpers",
