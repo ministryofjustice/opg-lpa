@@ -4,64 +4,89 @@ The Lasting Power of Attorney front end makes up the user facing views and busin
 
 ## Building assets
 
-Static assets are generated using grunt.
+Static assets (JS and CSS) are built using [esbuild](https://esbuild.github.io/) via `build.js` and `build-css.sh`, orchestrated through `build.sh`.
 
-`grunt build`
+First install Node dependencies:
 
-To setup Grunt within the container
 ```bash
-apt-get update && apt-get install nodejs-legacy npm ruby-sass
-
-npm install -g grunt grunt-cli grunt-contrib-sass --save-dev
-
-cd /app
+cd service-front
 npm ci --ignore-scripts
-
+npm rebuild esbuild
 ```
 
-## To build grunt for development
-- Apply the scss change
-- Run below command
+Then run a full build:
 
-    ```docker run -it --rm -v $(pwd)/service-front:/srv huli/grunt:alpine grunt build --force```
+```bash
+npm run build
+```
+
+### What the build does
+
+- **Handlebars templates** — HTML templates in `assets/js/lpa/templates/` are precompiled into `assets/js/lpa/lpa.templates.js`.
+- **JavaScript** — all source files are concatenated in dependency order and minified into `public/assets/v2/js/application.min.js`. Individual scripts (session timeout, dashboard statuses, etc.) are minified separately into `public/assets/v2/js/opg/`.
+- **CSS** — Sass files are compiled into `public/assets/v2/css/`.
+
+### Individual build commands
+
+| Command | What it does |
+|---|---|
+| `npm run build` | Full build (JS + CSS) |
+| `npm run build:js` | JavaScript only |
+| `npm run build:css` | CSS only |
+
+### Watch mode (local development)
+
+Watch mode rebuilds JS or CSS automatically whenever source files change. It requires [fswatch](https://github.com/emcornish/fswatch):
+
+```bash
+brew install fswatch
+```
+
+Then start watching:
+
+```bash
+npm run watch
+```
+
+When running the full local stack, `make dc-up` starts the containers and then runs `npm run watch` automatically, so rebuilt assets are immediately available in the browser without restarting anything.
 
 ## Tests
 
-Some unit tests can be found in `opg-lpa-front/module/Application/tests/`
+Unit tests can be found in `module/Application/tests/`.
 
-All other tests are located with the `lpa-deploy` repository.
+End-to-end tests are in the `cypress/` directory at the root of the repository.
 
-With special thanks to [BrowserStack](https://www.browserstack.com) for providing cross browser testing.
+### Unit test coverage
 
-### Test coverage
+To run the unit tests locally with coverage reporting:
 
-To run the unit tests locally with test coverage, install the necessary dependencies:
+1. Ensure your local PHP has [XDebug](https://xdebug.org/docs/install) installed.
+2. Set `xdebug.mode = coverage` in your `php.ini`.
+3. You may need to increase the default `memory_limit` in `php.ini`, e.g. to `1024M`.
+4. Run the docker-compose stack first, which installs the Composer dependencies.
 
-1. Ensure you local PHP has pecl (available as part of a [PEAR installation](https://pear.php.net/)).
-1. [Install XDebug](https://xdebug.org/docs/install) for your local PHP.
-2. Ensure your php.ini file has the following setting in it: `xdebug.mode = coverage`
-3. You may need to increase the default PHP `memory_limit` in php.ini, e.g. to `1024M`.
-4. Run the docker-compose stack, which installs the composer dependencies for the app.
+Then:
 
-With the above in place, you can run the unit tests with coverage reporting:
-
-```
+```bash
 cd service-front
 mkdir -p build/coverage
 php vendor/bin/phpunit --coverage-html=build/coverage/
 ```
 
-The coverage reports are available in *build/coverage/index.html*.
+Coverage reports are available at `build/coverage/index.html`.
 
-## Development
+## Updating Composer dependencies
 
-### Updating composer libraries
+```bash
+docker run --rm -v $(pwd)/service-front:/app composer:2 composer update --prefer-dist --no-interaction --no-scripts
+```
 
-    cd /app
-    curl -s https://getcomposer.org/installer | php
-    php composer.phar self-update
-    php composer.phar update --prefer-dist --optimize-autoloader
+Or use the Makefile helpers from the repo root:
+
+```bash
+make front-composer-update PACKAGE=vendor/package:version
+```
 
 ## License
 
-The Lasting Power of Attorney Data Models are released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
+The Lasting Power of Attorney front end is released under the MIT license, a copy of which can be found in [LICENSE](LICENSE).
