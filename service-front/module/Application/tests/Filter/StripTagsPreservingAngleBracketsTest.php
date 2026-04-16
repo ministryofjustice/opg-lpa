@@ -88,16 +88,24 @@ final class StripTagsPreservingAngleBracketsTest extends TestCase
         );
     }
 
-    public function testPreservesNewlines(): void
+    public function testNewlinesConvertedToCrLf(): void
     {
         $input = "Line one\nLine two\nLine three";
+        $expected = "Line one\r\nLine two\r\nLine three";
+        $this->assertEquals($expected, $this->filter->filter($input));
+    }
+
+    public function testCrLfPreserved(): void
+    {
+        $input = "Line one\r\nLine two\r\nLine three";
         $this->assertEquals($input, $this->filter->filter($input));
     }
 
     public function testPreservesTextAfterLoneAngleBracket(): void
     {
         $input = "Line one has a < sign\nLine two should still be here";
-        $this->assertEquals($input, $this->filter->filter($input));
+        $expected = "Line one has a < sign\r\nLine two should still be here";
+        $this->assertEquals($expected, $this->filter->filter($input));
     }
 
     public function testReturnsNonStringInputUnchanged(): void
