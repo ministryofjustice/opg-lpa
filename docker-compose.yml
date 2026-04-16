@@ -2,15 +2,6 @@ services:
   # ---------------------------
   # Local Services
 
-  node-build-assets:
-    container_name: lpa-node-build-assets
-    image: lpa-node-build-assets
-    volumes:
-      - ./service-front:/service-front
-    build:
-      context: ./
-      dockerfile: node-build-assets/docker/Dockerfile
-
   postgres:
     container_name: lpa-postgres
     image: postgres:14.18@sha256:90da0743e4ed7939b08e2945e0451401b4d7abd792530c7d3cc2da82ed534f08
@@ -121,8 +112,6 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      node-build-assets:
-        condition: service_started
       govpaystub:
         condition: service_started
     environment:
