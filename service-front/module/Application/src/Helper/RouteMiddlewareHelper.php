@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Application\Helper;
 
-use Application\Listener\AuthenticationListener;
-use Application\Listener\TermsAndConditionsListener;
-use Application\Listener\UserDetailsListener;
+use Application\Middleware\AuthenticationMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
+use Application\Middleware\TermsAndConditionsMiddleware;
+use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 
 class RouteMiddlewareHelper
@@ -23,9 +23,9 @@ class RouteMiddlewareHelper
     {
         $middlewares = array_diff([
             RouteMatchMiddleware::class,
-            AuthenticationListener::class,
-            UserDetailsListener::class,
-            TermsAndConditionsListener::class,
+            AuthenticationMiddleware::class,
+            UserDetailsMiddleware::class,
+            TermsAndConditionsMiddleware::class,
             LpaLoaderMiddleware::class,
         ], $ignore);
 

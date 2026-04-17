@@ -4,23 +4,11 @@ declare(strict_types=1);
 
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\ChangePasswordHandler;
-use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\IndexHandler;
-use Application\Handler\Lpa\InstructionsHandler;
-use Application\Handler\Lpa\LifeSustainingHandler;
-use Application\Handler\Lpa\MoreInfoRequiredHandler;
-use Application\Handler\Lpa\SummaryHandler;
-use Application\Handler\Lpa\WhoAreYouHandler;
-use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
-use Application\Handler\LpaTypeHandler;
-use Application\Handler\SessionKeepAliveHandler;
-use Application\Handler\SessionSetExpiryHandler;
-use Application\Handler\TypeHandler;
+use Application\Handler\DashboardHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
-use Application\Handler\DashboardHandler;
 use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
@@ -32,50 +20,62 @@ use Application\Handler\Lpa\CheckoutConfirmHandler;
 use Application\Handler\Lpa\CheckoutIndexHandler;
 use Application\Handler\Lpa\CheckoutPayHandler;
 use Application\Handler\Lpa\CheckoutPayResponseHandler;
-use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
-use Application\Handler\Lpa\CreateLpaHandler;
-use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\CompleteIndexHandler;
 use Application\Handler\Lpa\CompleteViewDocsHandler;
+use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
+use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\CorrespondentHandler;
+use Application\Handler\Lpa\CreateLpaHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
+use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
-use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
-use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
-use Application\Handler\Lpa\ReuseDetailsHandler;
-use Application\Handler\Lpa\RepeatApplicationHandler;
-use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\IndexHandler;
+use Application\Handler\Lpa\InstructionsHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
-use Application\Handler\Lpa\CorrespondentHandler;
-use Application\Handler\Lpa\CorrespondentEditHandler;
-use Application\Handler\Lpa\Download\DownloadCheckHandler;
-use Application\Handler\Lpa\Download\DownloadFileHandler;
-use Application\Handler\Lpa\Download\DownloadHandler;
-use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
-use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
-use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
-use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
-use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\StatusHandler;
-use Application\Handler\Lpa\DateCheckHandler;
-use Application\Handler\Lpa\DateCheckValidHandler;
+use Application\Handler\Lpa\SummaryHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
+use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\LpaTypeHandler;
+use Application\Handler\SessionKeepAliveHandler;
+use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
-use Application\Listener\TermsAndConditionsListener;
-use Application\Listener\UserDetailsListener;
-use Application\Handler\ChangeEmailAddressHandler;
+use Application\Handler\TypeHandler;
 use Application\Helper\RouteMiddlewareHelper;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\TermsAndConditionsMiddleware;
+use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -295,8 +295,8 @@ return [
                         'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionKeepAliveHandler::class,
                             [
-                                UserDetailsListener::class,
-                                TermsAndConditionsListener::class,
+                                UserDetailsMiddleware::class,
+                                TermsAndConditionsMiddleware::class,
                                 LpaLoaderMiddleware::class,
                             ]
                         ),
@@ -313,8 +313,8 @@ return [
                         'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionSetExpiryHandler::class,
                             [
-                                UserDetailsListener::class,
-                                TermsAndConditionsListener::class,
+                                UserDetailsMiddleware::class,
+                                TermsAndConditionsMiddleware::class,
                                 LpaLoaderMiddleware::class,
                             ]
                         ),

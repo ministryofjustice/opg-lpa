@@ -48,7 +48,7 @@ class RouteMatchMiddleware implements MiddlewareInterface
 
         // Pull well-known "option" keys out of the flat params array so they
         // are accessible via RouteResult->getMatchedRoute()->getOptions(),
-        // matching the Mezzio convention used by AuthenticationListener, etc.
+        // matching the Mezzio convention used by AuthenticationMiddleware, etc.
         $optionKeys = ['unauthenticated_route', 'allowIncompleteUser'];
         $options    = [];
         foreach ($optionKeys as $key) {

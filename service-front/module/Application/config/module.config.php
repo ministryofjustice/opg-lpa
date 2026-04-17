@@ -44,12 +44,6 @@ return [
     /* ------------ All routes are in module.routes.php ------------ */
     /* ------------------------------------------------------------- */
 
-    'controllers' => [
-        'abstract_factories' => [
-            'Application\ControllerFactory\ControllerAbstractFactory'
-        ],
-    ],
-
     'service_manager' => [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
