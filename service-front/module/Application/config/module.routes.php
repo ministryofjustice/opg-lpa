@@ -7,6 +7,7 @@ use Application\Handler\AboutYouHandler;
 use Application\Handler\ChangePasswordHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\IndexHandler;
 use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
 use Application\Handler\Lpa\MoreInfoRequiredHandler;
@@ -57,7 +58,17 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use Application\Handler\Lpa\StatusHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Listener\TermsAndConditionsListener;
@@ -673,8 +684,8 @@ return [
                         'lpa-id' => '[0-9]+',
                     ],
                     'defaults' => [
-                            'controller' => 'Authenticated\Lpa\IndexController',
-                            'action'     => 'index',
+                            'controller' => PipeSpec::class,
+                            'middleware' => RouteMiddlewareHelper::addMiddleware(IndexHandler::class, []),
                     ],
                 ],
                 'may_terminate' => true,
@@ -790,8 +801,11 @@ return [
                         'options' => [
                             'route'    => '/date-check',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DateCheckController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    DateCheckHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -800,6 +814,13 @@ return [
                                 'type'    => Literal::class,
                                 'options' => [
                                     'route' => '/complete',
+                                    'defaults' => [
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckHandler::class,
+                                            [],
+                                        ),
+                                    ],
                                 ],
                             ],
                             'valid' => [
@@ -807,7 +828,11 @@ return [
                                 'options' => [
                                     'route'  => '/valid',
                                     'defaults' => [
-                                        'action' => 'valid',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckValidHandler::class,
+                                            [],
+                                        ),
                                     ],
                                 ],
                             ],
@@ -864,8 +889,8 @@ return [
                                 'pdf-type' => 'lp1|lp3|lpa120',
                             ],
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DownloadController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -875,7 +900,8 @@ return [
                                 'options' => [
                                     'route'    => '/draft',
                                     'defaults' => [
-                                        'action' => 'index',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -887,7 +913,8 @@ return [
                                         'pdf-filename' => '[a-zA-Z0-9-]+\.pdf',
                                     ],
                                     'defaults' => [
-                                        'action' => 'download',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadFileHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -896,7 +923,8 @@ return [
                                 'options' => [
                                     'route'    => '/check',
                                     'defaults' => [
-                                        'action' => 'check',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadCheckHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1037,8 +1065,8 @@ return [
                         'options' => [
                             'route'    => '/people-to-notify',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1048,7 +1076,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1060,7 +1089,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1072,7 +1102,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1084,7 +1115,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],

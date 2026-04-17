@@ -27,6 +27,8 @@ use Application\Handler\Factory\Lpa\ReplacementAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyEditHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyIndexHandlerFactory;
 use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckValidHandlerFactory;
 use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
 use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
 use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
@@ -44,6 +46,11 @@ use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderConfi
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderEditHandlerFactory;
 use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandlerFactory;
 use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
@@ -66,6 +73,8 @@ use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
 use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
 use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
 use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use Application\Handler\Lpa\InstructionsHandler;
 use Application\Handler\Lpa\LifeSustainingHandler;
@@ -85,6 +94,17 @@ use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDelete
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Factory\Lpa\Download\DownloadCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadFileHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadHandlerFactory;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler as PeopleToNotifyIndexHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use Application\Handler\LpaTypeHandler;
 use Application\Handler\TypeHandler;
 use Application\Adapter\DynamoDbKeyValueStore;
@@ -590,6 +610,8 @@ class Module implements FormElementProviderInterface
                 ReplacementAttorneyConfirmDeleteHandler::class => ReplacementAttorneyConfirmDeleteHandlerFactory::class,
                 ReplacementAttorneyDeleteHandler::class => ReplacementAttorneyDeleteHandlerFactory::class,
                 FeeReductionHandler::class => FeeReductionHandlerFactory::class,
+                DateCheckHandler::class => DateCheckHandlerFactory::class,
+                DateCheckValidHandler::class => DateCheckValidHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
                     return new ActorReuseDetailsService(
@@ -610,7 +632,15 @@ class Module implements FormElementProviderInterface
                 CertificateProviderEditHandler::class => CertificateProviderEditHandlerFactory::class,
                 CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
                 CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
+                PeopleToNotifyIndexHandler::class => PeopleToNotifyHandlerFactory::class,
+                PeopleToNotifyAddHandler::class => PeopleToNotifyAddHandlerFactory::class,
+                PeopleToNotifyEditHandler::class => PeopleToNotifyEditHandlerFactory::class,
+                PeopleToNotifyConfirmDeleteHandler::class => PeopleToNotifyConfirmDeleteHandlerFactory::class,
+                PeopleToNotifyDeleteHandler::class => PeopleToNotifyDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
+                DownloadHandler::class => DownloadHandlerFactory::class,
+                DownloadCheckHandler::class => DownloadCheckHandlerFactory::class,
+                DownloadFileHandler::class => DownloadFileHandlerFactory::class,
                 StatusHandler::class => StatusHandlerFactory::class,
             ], // factories
             'initializers' => [
