@@ -57,6 +57,9 @@ use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
 use Application\Handler\Lpa\CorrespondentHandler;
 use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
@@ -869,8 +872,8 @@ return [
                                 'pdf-type' => 'lp1|lp3|lpa120',
                             ],
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DownloadController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -880,7 +883,8 @@ return [
                                 'options' => [
                                     'route'    => '/draft',
                                     'defaults' => [
-                                        'action' => 'index',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -892,7 +896,8 @@ return [
                                         'pdf-filename' => '[a-zA-Z0-9-]+\.pdf',
                                     ],
                                     'defaults' => [
-                                        'action' => 'download',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadFileHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -901,7 +906,8 @@ return [
                                 'options' => [
                                     'route'    => '/check',
                                     'defaults' => [
-                                        'action' => 'check',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadCheckHandler::class, []),
                                     ],
                                 ],
                             ],

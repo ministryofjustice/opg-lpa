@@ -90,6 +90,12 @@ use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDelete
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Factory\Lpa\Download\DownloadCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadFileHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadHandlerFactory;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler as PeopleToNotifyIndexHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
 use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
@@ -626,6 +632,9 @@ class Module implements FormElementProviderInterface
                 PeopleToNotifyConfirmDeleteHandler::class => PeopleToNotifyConfirmDeleteHandlerFactory::class,
                 PeopleToNotifyDeleteHandler::class => PeopleToNotifyDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
+                DownloadHandler::class => DownloadHandlerFactory::class,
+                DownloadCheckHandler::class => DownloadCheckHandlerFactory::class,
+                DownloadFileHandler::class => DownloadFileHandlerFactory::class,
                 StatusHandler::class => StatusHandlerFactory::class,
             ], // factories
             'initializers' => [
