@@ -28,7 +28,7 @@ use RuntimeException;
  * and RequestAttribute::FLOW_CHECKER for downstream handlers to consume.
  *
  * Requires the authenticated identity to already be set as RequestAttribute::IDENTITY
- * on the request (i.e. AuthenticationListener must run before this middleware).
+ * on the request (i.e. AuthenticationMiddleware must run before this middleware).
  *
  * This is the PSR-7 equivalent of LpaLoaderListener.
  */
