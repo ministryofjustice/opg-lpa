@@ -4,11 +4,9 @@ namespace Application\ControllerFactory;
 
 use Application\Controller\AbstractAuthenticatedController;
 use Application\Controller\AbstractBaseController;
-use Application\Controller\Authenticated\Lpa\DateCheckController;
 use Application\Controller\General\AuthController;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Application\Model\Service\Session\SessionManagerSupport;
-use Application\Service\DateCheckViewModelHelper;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
@@ -35,9 +33,6 @@ class ControllerAbstractFactory implements AbstractFactoryInterface
         AuthController::class => [
             'setLpaApplicationService' => 'LpaApplicationService'
         ],
-        DateCheckController::class => [
-            'setDateCheckViewModelHelper' => DateCheckViewModelHelper::class,
-        ]
     ];
 
     /**

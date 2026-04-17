@@ -1,56 +1,73 @@
 <?php
 
-namespace Application\Controller\Authenticated\Lpa;
+declare(strict_types=1);
 
-use Application\Controller\AbstractAuthenticatedController;
-use Application\Listener\LpaLoaderTrait;
+namespace Application\Handler\Lpa;
+
+use Application\Handler\Traits\CommonTemplateVariablesTrait;
+use Application\Helper\MvcUrlHelper;
+use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\Service\DateCheckViewModelHelper;
-use Laminas\Http\Response;
-use Laminas\View\Model\ViewModel;
-use MakeShared\Logging\LoggerTrait;
+use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Template\TemplateRendererInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class DateCheckController extends AbstractAuthenticatedController
+class DateCheckHandler implements RequestHandlerInterface
 {
-    use LoggerTrait;
-    use LpaLoaderTrait;
+    use CommonTemplateVariablesTrait;
 
-    private DateCheckViewModelHelper $dateCheckViewModelHelper;
+    public function __construct(
+        private readonly TemplateRendererInterface $renderer,
+        private readonly FormElementManager $formElementManager,
+        private readonly MvcUrlHelper $urlHelper,
+    ) {
+    }
 
-    public function indexAction(): ViewModel|Response
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $lpa = $this->getLpa();
+        /** @var Lpa $lpa */
+        $lpa = $request->getAttribute(RequestAttribute::LPA);
+
+        $currentRouteName = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         // If the return route has been submitted in the post then just use it
-        $returnRoute = $this->params()->fromPost('return-route', null);
-
-        $currentRouteName = $this->getEvent()->getRouteMatch()->getMatchedRouteName();
+        $postData = $request->getParsedBody() ?? [];
+        if (!is_array($postData)) {
+            $postData = [];
+        }
+        $returnRoute = $postData['return-route'] ?? null;
 
         if (is_null($returnRoute)) {
             // If we came from the "LPA complete" route then set the return target back there
-            if ($currentRouteName == 'lpa/date-check/complete') {
+            if ($currentRouteName === 'lpa/date-check/complete') {
                 $returnRoute = 'lpa/complete';
             }
         }
 
-        // Create the date check form and set the action
-        $form = $this->getFormElementManager()->get('Application\Form\Lpa\DateCheckForm', [
+        /** @var \Application\Form\Lpa\DateCheckForm $form */
+        $form = $this->formElementManager->get('Application\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
 
-        $form->setAttribute('action', $this->url()->fromRoute($currentRouteName, [
-            'lpa-id' => $lpa->id
-        ]));
+        $form->setAttribute('action', $this->urlHelper->generate(
+            $currentRouteName,
+            ['lpa-id' => $lpa->id],
+        ));
 
         $helperResult = DateCheckViewModelHelper::build($lpa);
 
-        $request = $this->convertRequest();
-
-        if ($request->isPost()) {
-            // Set the post data in the form and validate it
-            $form->setData($request->getPost());
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            $form->setData($postData);
 
             if ($form->isValid()) {
+                /** @var array $data */
                 $data = $form->getData();
 
                 // Extract the attorney dates from the post data
@@ -76,7 +93,7 @@ class DateCheckController extends AbstractAuthenticatedController
 
                 // is the donor the applicant?
                 $donorIsApplicant = false;
-                if (count($helperResult['applicants']) == 1) {
+                if (count($helperResult['applicants']) === 1) {
                     $applicant = $helperResult['applicants'][0];
                     $donorIsApplicant = ($applicant['isDonor'] && $applicant['isHuman']);
                 }
@@ -104,54 +121,43 @@ class DateCheckController extends AbstractAuthenticatedController
                         $queryParams['return-route'] = $returnRoute;
                     }
 
-                    $validUrl = $this->url()->fromRoute(
+                    $validUrl = $this->urlHelper->generate(
                         'lpa/date-check/valid',
-                        ['lpa-id' => $lpa->id,],
+                        ['lpa-id' => $lpa->id],
                         ['query' => $queryParams],
                     );
 
-                    return $this->redirectToUrl($validUrl);
-                } else {
-                    $form->setMessages($result);
+                    return new RedirectResponse($validUrl);
                 }
+
+                $form->setMessages($result);
             }
         }
 
-        $viewModel = new ViewModel([
-            'form' => $form,
-            'returnRoute' => $returnRoute,
-        ]);
+        $html = $this->renderer->render(
+            'application/authenticated/lpa/date-check/index.twig',
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                    'returnRoute' => $returnRoute,
+                ],
+                $helperResult,
+            )
+        );
 
-        $viewModel->setVariables($helperResult);
-
-        return $viewModel;
+        return new HtmlResponse($html);
     }
 
-    public function validAction()
-    {
-        // Generate the return target from the route
-        // If there is no route then return to the dashboard
-        $returnRoute = $this->params()->fromQuery('return-route', null);
-
-        if (is_null($returnRoute)) {
-            $returnRoute = 'user/dashboard';
-        }
-
-        return new ViewModel([
-            'returnRoute' => $returnRoute,
-        ]);
-    }
-
-    private function dateArrayToTime(array $dateArray)
+    /**
+     * @param array $dateArray
+     * @return int|false
+     */
+    private function dateArrayToTime(array $dateArray): int|false
     {
         $day = $dateArray['day'];
         $month = $dateArray['month'];
         $year = $dateArray['year'];
         return strtotime("$day-$month-$year");
-    }
-
-    public function setDateCheckViewModelHelper(DateCheckViewModelHelper $helper): void
-    {
-        $this->dateCheckViewModelHelper = $helper;
     }
 }
