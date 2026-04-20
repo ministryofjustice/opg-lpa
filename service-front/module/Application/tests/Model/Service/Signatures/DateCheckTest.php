@@ -6,15 +6,15 @@ namespace ApplicationTest\Model;
 
 use Application\Model\Service\Date\IDateService;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
-use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 use Application\Model\Service\Signatures\DateCheck;
 use DateTime;
 
 /**
  * FormFlowChecker test case.
  */
-final class DateCheckTest extends AbstractHttpControllerTestCase
+final class DateCheckTest extends MockeryTestCase
 {
     private MockInterface|IDateService $dateService;
 
@@ -23,7 +23,6 @@ final class DateCheckTest extends AbstractHttpControllerTestCase
      */
     protected function setUp(): void
     {
-        parent::setUp();
         $this->dateService = Mockery::mock(IDateService::class);
     }
 

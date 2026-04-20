@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\Payment\Helper;
 
 use Exception;
-use Laminas\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
+use PHPUnit\Framework\TestCase;
 use Application\Model\Service\Payment\Helper\LpaIdHelper;
 
 /**
  * Payment test case.
  */
-final class LpaIdHelperTest extends AbstractHttpControllerTestCase
+final class LpaIdHelperTest extends TestCase
 {
     public function testPadLpaIdWithStringWhenZeroesNeeded(): void
     {

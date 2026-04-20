@@ -8,12 +8,23 @@
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
 
+use Application\Handler\Factory\Lpa\CheckoutChequeHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutConfirmHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutPayHandlerFactory;
+use Application\Handler\Factory\Lpa\CheckoutPayResponseHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandlerFactory;
-use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandlerFactory;
+use Application\Handler\Lpa\CheckoutChequeHandler;
+use Application\Handler\Lpa\CheckoutConfirmHandler;
+use Application\Handler\Lpa\CheckoutIndexHandler;
+use Application\Handler\Lpa\CheckoutPayHandler;
+use Application\Handler\Lpa\CheckoutPayResponseHandler;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\IndexHandlerFactory;
 use Application\Handler\Factory\Lpa\PrimaryAttorneyHandlerFactory;
+use Application\Handler\Lpa\IndexHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
@@ -33,12 +44,6 @@ return [
     /* ------------ All routes are in module.routes.php ------------ */
     /* ------------------------------------------------------------- */
 
-    'controllers' => [
-        'abstract_factories' => [
-            'Application\ControllerFactory\ControllerAbstractFactory'
-        ],
-    ],
-
     'service_manager' => [
         'abstract_factories' => [
             'Application\Model\Service\ServiceAbstractFactory',
@@ -46,8 +51,14 @@ return [
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
         'factories' => [
+            CheckoutIndexHandler::class => CheckoutIndexHandlerFactory::class,
+            CheckoutChequeHandler::class => CheckoutChequeHandlerFactory::class,
+            CheckoutConfirmHandler::class => CheckoutConfirmHandlerFactory::class,
+            CheckoutPayHandler::class => CheckoutPayHandlerFactory::class,
+            CheckoutPayResponseHandler::class => CheckoutPayResponseHandlerFactory::class,
             ContinuationSheets::class => InvokableFactory::class,
             DateCheckViewModelHelper::class => DateCheckViewModelHelperFactory::class,
+            IndexHandler::class => IndexHandlerFactory::class,
             PrimaryAttorneyHandler::class => PrimaryAttorneyHandlerFactory::class,
             PrimaryAttorneyAddHandler::class => PrimaryAttorneyAddHandlerFactory::class,
             PrimaryAttorneyEditHandler::class => PrimaryAttorneyEditHandlerFactory::class,
