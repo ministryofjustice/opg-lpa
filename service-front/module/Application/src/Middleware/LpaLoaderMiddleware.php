@@ -16,14 +16,13 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 /**
  * Loads the LPA for the current request, validates that the authenticated user owns
  * it, and checks the form flow to ensure the user can access the requested route. If
  * the flow checker determines a different route should be shown first, the user is
- * redirected there. Returns a 404 response if the LPA cannot be found, and throws a
- * RuntimeException if the LPA belongs to a different user. On success, the LPA and a
+ * redirected there. Returns a 404 response if the LPA cannot be found or belongs to
+ * a different user. On success, the LPA and a
  * FormFlowChecker instance are set as request attributes keyed by RequestAttribute::LPA
  * and RequestAttribute::FLOW_CHECKER for downstream handlers to consume.
  *
@@ -71,7 +70,10 @@ class LpaLoaderMiddleware implements MiddlewareInterface
         }
 
         if ($identity->id() !== $lpa->user) {
-            throw new RuntimeException('Invalid LPA - current user can not access it');
+            return new HtmlResponse(
+                'The requested LPA could not be found',
+                404
+            );
         }
 
         $flowChecker  = new FormFlowChecker($lpa);
