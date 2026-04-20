@@ -3,150 +3,171 @@
 namespace Application;
 
 use Alphagov\Pay\Client as GovPayClient;
+use Application\Adapter\DynamoDbKeyValueStore;
+use Application\Form\AbstractCsrfForm;
+use Application\Form\Element\CsrfBuilder;
+use Application\Form\Error\FormLinkedErrors;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\AccessibilityHandler;
+use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\ChangePasswordHandler;
+use Application\Handler\ConfirmRegistrationHandler;
+use Application\Handler\ContactHandler;
+use Application\Handler\CookiesHandler;
+use Application\Handler\DashboardHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
-use Application\Handler\DashboardHandler;
+use Application\Handler\EnableCookieHandler;
 use Application\Handler\Factory\AboutYouHandlerFactory;
-use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\Factory\ChangeEmailAddressHandlerFactory;
 use Application\Handler\Factory\ChangePasswordHandlerFactory;
+use Application\Handler\Factory\ConfirmRegistrationHandlerFactory;
+use Application\Handler\Factory\CookiesHandlerFactory;
+use Application\Handler\Factory\DashboardHandlerFactory;
 use Application\Handler\Factory\DeleteAccountConfirmHandlerFactory;
 use Application\Handler\Factory\DeleteAccountHandlerFactory;
-use Application\Handler\Factory\DashboardHandlerFactory;
+use Application\Handler\Factory\FeedbackHandlerFactory;
+use Application\Handler\Factory\FeedbackThanksHandlerFactory;
+use Application\Handler\Factory\GuidanceHandlerFactory;
+use Application\Handler\Factory\HomeHandlerFactory;
 use Application\Handler\Factory\HomeRedirectHandlerFactory;
-use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderAddHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderEditHandlerFactory;
+use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
+use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\DateCheckValidHandlerFactory;
+use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorAddHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorEditHandlerFactory;
 use Application\Handler\Factory\Lpa\DonorIndexHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadCheckHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadFileHandlerFactory;
+use Application\Handler\Factory\Lpa\Download\DownloadHandlerFactory;
+use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
+use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\HowReplacementAttorneysMakeDecisionHandlerFactory;
+use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
+use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
+use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyAddHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyEditHandlerFactory;
+use Application\Handler\Factory\Lpa\PeopleToNotify\PeopleToNotifyHandlerFactory;
+use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyAddHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyAddTrustHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyConfirmDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyDeleteHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyEditHandlerFactory;
 use Application\Handler\Factory\Lpa\ReplacementAttorneyIndexHandlerFactory;
-use Application\Handler\Factory\Lpa\FeeReductionHandlerFactory;
-use Application\Handler\Factory\Lpa\HowPrimaryAttorneysMakeDecisionHandlerFactory;
-use Application\Handler\Factory\Lpa\InstructionsHandlerFactory;
-use Application\Handler\Factory\Lpa\LifeSustainingHandlerFactory;
-use Application\Handler\Factory\Lpa\MoreInfoRequiredHandlerFactory;
-use Application\Handler\Factory\Lpa\RepeatApplicationHandlerFactory;
-use Application\Handler\Factory\Lpa\StatusHandlerFactory;
-use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
-use Application\Handler\Factory\Lpa\CompleteIndexHandlerFactory;
-use Application\Handler\Factory\Lpa\CompleteViewDocsHandlerFactory;
-use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
-use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
-use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
-use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderAddHandlerFactory;
-use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandlerFactory;
-use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderDeleteHandlerFactory;
-use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderEditHandlerFactory;
-use Application\Handler\Factory\Lpa\CertificateProvider\CertificateProviderHandlerFactory;
-use Application\Handler\Factory\LpaTypeHandlerFactory;
-use Application\Handler\Factory\TypeHandlerFactory;
-use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
-use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
-use Application\Handler\Factory\Lpa\ConfirmDeleteLpaHandlerFactory;
-use Application\Handler\Factory\Lpa\CreateLpaHandlerFactory;
-use Application\Handler\Factory\Lpa\DeleteLpaHandlerFactory;
 use Application\Handler\Factory\Lpa\ReuseDetailsHandlerFactory;
-use Application\Handler\Factory\StatusesHandlerFactory;
-use Application\Handler\Factory\TermsChangedHandlerFactory;
-use Application\Handler\HomeHandler;
-use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\DonorAddHandler;
-use Application\Handler\Lpa\DonorEditHandler;
-use Application\Handler\Lpa\DonorIndexHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
-use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
-use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
-use Application\Handler\Lpa\FeeReductionHandler;
-use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\InstructionsHandler;
-use Application\Handler\Lpa\LifeSustainingHandler;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Handler\Lpa\MoreInfoRequiredHandler;
-use Application\Handler\Lpa\RepeatApplicationHandler;
-use Application\Handler\Lpa\ReuseDetailsHandler;
-use Application\Handler\Lpa\StatusHandler;
-use Application\Handler\Lpa\WhenLpaStartsHandler;
-use Application\Handler\Lpa\CompleteIndexHandler;
-use Application\Handler\Lpa\CompleteViewDocsHandler;
-use Application\Handler\Lpa\SummaryHandler;
-use Application\Handler\Lpa\WhoAreYouHandler;
-use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
-use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
-use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
-use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
-use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
-use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
-use Application\Handler\LpaTypeHandler;
-use Application\Handler\TypeHandler;
-use Application\Adapter\DynamoDbKeyValueStore;
-use Application\Form\AbstractCsrfForm;
-use Application\Form\Element\CsrfBuilder;
-use Application\Form\Error\FormLinkedErrors;
-use Application\Handler\ConfirmRegistrationHandler;
-use Application\Handler\AccessibilityHandler;
-use Application\Handler\ContactHandler;
-use Application\Handler\CookiesHandler;
-use Application\Handler\Factory\ConfirmRegistrationHandlerFactory;
-use Application\Handler\EnableCookieHandler;
-use Application\Handler\Factory\CookiesHandlerFactory;
-use Application\Handler\Factory\FeedbackHandlerFactory;
-use Application\Handler\Factory\FeedbackThanksHandlerFactory;
-use Application\Handler\Factory\GuidanceHandlerFactory;
-use Application\Handler\Factory\HomeHandlerFactory;
+use Application\Handler\Factory\Lpa\StatusHandlerFactory;
+use Application\Handler\Factory\Lpa\SummaryHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenLpaStartsHandlerFactory;
+use Application\Handler\Factory\Lpa\WhenReplacementAttorneyStepInHandlerFactory;
+use Application\Handler\Factory\Lpa\WhoAreYouHandlerFactory;
+use Application\Handler\Factory\LpaTypeHandlerFactory;
 use Application\Handler\Factory\PingHandlerFactory;
 use Application\Handler\Factory\PingHandlerJsonFactory;
 use Application\Handler\Factory\PingHandlerPingdomFactory;
 use Application\Handler\Factory\PostcodeHandlerFactory;
 use Application\Handler\Factory\RegisterHandlerFactory;
 use Application\Handler\Factory\ResendActivationEmailHandlerFactory;
+use Application\Handler\Factory\SessionKeepAliveHandlerFactory;
+use Application\Handler\Factory\SessionSetExpiryHandlerFactory;
+use Application\Handler\Factory\StatusesHandlerFactory;
+use Application\Handler\Factory\TermsChangedHandlerFactory;
+use Application\Handler\Factory\TypeHandlerFactory;
 use Application\Handler\FeedbackHandler;
 use Application\Handler\FeedbackThanksHandler;
 use Application\Handler\GuidanceHandler;
+use Application\Handler\HomeHandler;
 use Application\Handler\HomeRedirectHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
+use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use Application\Handler\Lpa\CompleteIndexHandler;
+use Application\Handler\Lpa\CompleteViewDocsHandler;
 use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
 use Application\Handler\Lpa\CreateLpaHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
 use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\DonorAddHandler;
+use Application\Handler\Lpa\DonorEditHandler;
+use Application\Handler\Lpa\DonorIndexHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
+use Application\Handler\Lpa\FeeReductionHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\InstructionsHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler as PeopleToNotifyIndexHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
+use Application\Handler\Lpa\StatusHandler;
+use Application\Handler\Lpa\SummaryHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
+use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\LpaTypeHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerJson;
 use Application\Handler\PingHandlerPingdom;
 use Application\Handler\PostcodeHandler;
+use Application\Handler\PrivacyHandler;
 use Application\Handler\RegisterHandler;
 use Application\Handler\ResendActivationEmailHandler;
-use Application\Handler\PrivacyHandler;
 use Application\Handler\SessionKeepAliveHandler;
 use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
 use Application\Handler\TermsHandler;
+use Application\Handler\TypeHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Listener\AuthenticationListener;
 use Application\Listener\CurrentRouteListener;
-use Application\Listener\LpaLoaderListener;
 use Application\Listener\LpaViewInjectListener;
 use Application\Listener\TrailingSlashRedirectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
+use Application\Middleware\AuthenticationMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
-use Application\Model\Service\ApiClient\Exception\ApiException;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Authentication\Identity\User as Identity;
-use Application\Listener\TermsAndConditionsListener;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use Application\Middleware\TermsAndConditionsMiddleware;
+use Application\Middleware\UserDetailsMiddleware;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;
+use Application\Model\Service\ApiClient\Exception\ApiException;
+use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use Application\Model\Service\Authentication\AuthenticationService;
+use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
+use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Redis\RedisClient;
 use Application\Model\Service\Session\ContainerNamespace;
@@ -156,14 +177,14 @@ use Application\Model\Service\Session\PersistentSessionDetails;
 use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
+use Application\Model\Service\User\Details;
 use Application\Service\AccordionService;
 use Application\Service\CompleteViewParamsHelper;
 use Application\Service\Factory\AccordionServiceFactory;
 use Application\Service\Factory\CompleteViewParamsHelperFactory;
-use Application\Model\Service\User\Details;
-use Application\Service\NavigationViewModelHelper;
 use Application\Service\Factory\NavigationViewModelHelperFactory;
 use Application\Service\Factory\SystemMessageFactory;
+use Application\Service\NavigationViewModelHelper;
 use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
@@ -205,7 +226,7 @@ class Module implements FormElementProviderInterface
         $moduleRouteListener->attach($eventManager);
 
         // Redirect trailing-slash URLs to their canonical form (e.g. /login/ → /login)
-        (new TrailingSlashRedirectListener())->attach($eventManager, 100);
+        new TrailingSlashRedirectListener()->attach($eventManager, 100);
 
         // Register error handler for dispatch and render errors
         $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError']);
@@ -256,16 +277,12 @@ class Module implements FormElementProviderInterface
                 $authenticationService = $serviceManager->get(AuthenticationService::class);
                 $sessionUtility = $serviceManager->get(SessionUtility::class);
                 $userService = $serviceManager->get(Details::class);
-                $config = $serviceManager->get('config');
                 $dateService = $serviceManager->get(DateService::class);
-                $lpaApplicationService = $serviceManager->get(LpaApplicationService::class);
 
                 // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
                 new CurrentRouteListener()->attach($eventManager, 1004);
                 new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
                 new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
-                new LpaLoaderListener($authenticationService, $lpaApplicationService)->attach($eventManager, 1001);
-                new TermsAndConditionsListener($config, $sessionUtility, $authenticationService)->attach($eventManager, 1000);
 
                 // Listeners that run on every request, just before view is rendered (higher priority numbers run first)
                 new ViewVariablesListener($dateService)->attach($eventManager, 1001);
@@ -516,13 +533,46 @@ class Module implements FormElementProviderInterface
                 HomeRedirectHandler::class => HomeRedirectHandlerFactory::class,
                 HomeHandler::class => HomeHandlerFactory::class,
                 AboutYouHandler::class => AboutYouHandlerFactory::class,
-                AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
-                    $instance = new AuthenticationListener(
+                AuthenticationMiddleware::class => function (ServiceLocatorInterface $sm) {
+                    $instance = new AuthenticationMiddleware(
                         $sm->get(SessionUtility::class),
                         $sm->get(AuthenticationService::class),
                         null
                     );
                     return $instance;
+                },
+
+                UserDetailsMiddleware::class => function (ServiceLocatorInterface $sm) {
+                    return new UserDetailsMiddleware(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(Details::class),
+                        $sm->get(AuthenticationService::class),
+                        $sm->get('SessionManager'),
+                        $sm->get(LoggerInterface::class),
+                    );
+                },
+
+                TermsAndConditionsMiddleware::class => function (ServiceLocatorInterface $sm) {
+                    return new TermsAndConditionsMiddleware(
+                        $sm->get('config'),
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                        null  // No UrlHelper for MVC
+                    );
+                },
+
+                LpaLoaderMiddleware::class => function (ServiceLocatorInterface $sm) {
+                    return new LpaLoaderMiddleware(
+                        $sm->get(LpaApplicationService::class),
+                        new MvcUrlHelper($sm->get(RouteStackInterface::class)),
+                    );
+                },
+
+                AuthenticationListener::class => function (ServiceLocatorInterface $sm) {
+                    return new AuthenticationListener(
+                        $sm->get(SessionUtility::class),
+                        $sm->get(AuthenticationService::class),
+                    );
                 },
 
                 UserDetailsListener::class => function (ServiceLocatorInterface $sm) {
@@ -532,29 +582,6 @@ class Module implements FormElementProviderInterface
                         $sm->get(AuthenticationService::class),
                         $sm->get('SessionManager'),
                         $sm->get(LoggerInterface::class),
-                    );
-                },
-
-                TermsAndConditionsListener::class => function (ServiceLocatorInterface $sm) {
-                    return new TermsAndConditionsListener(
-                        $sm->get('config'),
-                        $sm->get(SessionUtility::class),
-                        $sm->get(AuthenticationService::class),
-                        null  // No UrlHelper for MVC
-                    );
-                },
-
-                LpaLoaderListener::class => function (ServiceLocatorInterface $sm) {
-                    return new LpaLoaderListener(
-                        $sm->get(AuthenticationService::class),
-                        $sm->get(LpaApplicationService::class),
-                    );
-                },
-
-                LpaLoaderMiddleware::class => function (ServiceLocatorInterface $sm) {
-                    return new LpaLoaderMiddleware(
-                        $sm->get(LpaApplicationService::class),
-                        new MvcUrlHelper($sm->get(RouteStackInterface::class)),
                     );
                 },
 
@@ -590,6 +617,8 @@ class Module implements FormElementProviderInterface
                 ReplacementAttorneyConfirmDeleteHandler::class => ReplacementAttorneyConfirmDeleteHandlerFactory::class,
                 ReplacementAttorneyDeleteHandler::class => ReplacementAttorneyDeleteHandlerFactory::class,
                 FeeReductionHandler::class => FeeReductionHandlerFactory::class,
+                DateCheckHandler::class => DateCheckHandlerFactory::class,
+                DateCheckValidHandler::class => DateCheckValidHandlerFactory::class,
                 ReuseDetailsHandler::class => ReuseDetailsHandlerFactory::class,
                 ActorReuseDetailsService::class => function (ServiceLocatorInterface $sm) {
                     return new ActorReuseDetailsService(
@@ -610,7 +639,15 @@ class Module implements FormElementProviderInterface
                 CertificateProviderEditHandler::class => CertificateProviderEditHandlerFactory::class,
                 CertificateProviderConfirmDeleteHandler::class => CertificateProviderConfirmDeleteHandlerFactory::class,
                 CertificateProviderDeleteHandler::class => CertificateProviderDeleteHandlerFactory::class,
+                PeopleToNotifyIndexHandler::class => PeopleToNotifyHandlerFactory::class,
+                PeopleToNotifyAddHandler::class => PeopleToNotifyAddHandlerFactory::class,
+                PeopleToNotifyEditHandler::class => PeopleToNotifyEditHandlerFactory::class,
+                PeopleToNotifyConfirmDeleteHandler::class => PeopleToNotifyConfirmDeleteHandlerFactory::class,
+                PeopleToNotifyDeleteHandler::class => PeopleToNotifyDeleteHandlerFactory::class,
                 RepeatApplicationHandler::class => RepeatApplicationHandlerFactory::class,
+                DownloadHandler::class => DownloadHandlerFactory::class,
+                DownloadCheckHandler::class => DownloadCheckHandlerFactory::class,
+                DownloadFileHandler::class => DownloadFileHandlerFactory::class,
                 StatusHandler::class => StatusHandlerFactory::class,
             ], // factories
             'initializers' => [
