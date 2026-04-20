@@ -196,8 +196,6 @@
 
               // set the topic now that all content has loaded
               self._setTopic(topic);
-
-              moj.Modules.Popup.redoLoopedTabKeys();
             });
           },
           onClose: this.settings.popupOnClose,
