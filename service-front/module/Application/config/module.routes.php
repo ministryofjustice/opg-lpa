@@ -4,62 +4,78 @@ declare(strict_types=1);
 
 use Application\Handler;
 use Application\Handler\AboutYouHandler;
+use Application\Handler\ChangeEmailAddressHandler;
 use Application\Handler\ChangePasswordHandler;
-use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
-use Application\Handler\Lpa\InstructionsHandler;
-use Application\Handler\Lpa\LifeSustainingHandler;
-use Application\Handler\Lpa\MoreInfoRequiredHandler;
-use Application\Handler\Lpa\SummaryHandler;
-use Application\Handler\Lpa\WhoAreYouHandler;
-use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
-use Application\Handler\LpaTypeHandler;
-use Application\Handler\SessionKeepAliveHandler;
-use Application\Handler\SessionSetExpiryHandler;
-use Application\Handler\TypeHandler;
+use Application\Handler\DashboardHandler;
 use Application\Handler\DeleteAccountConfirmHandler;
 use Application\Handler\DeleteAccountHandler;
-use Application\Handler\DashboardHandler;
 use Application\Handler\Lpa\ApplicantHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use Application\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
-use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
-use Application\Handler\Lpa\CreateLpaHandler;
-use Application\Handler\Lpa\DeleteLpaHandler;
+use Application\Handler\Lpa\CheckoutChequeHandler;
+use Application\Handler\Lpa\CheckoutConfirmHandler;
+use Application\Handler\Lpa\CheckoutIndexHandler;
+use Application\Handler\Lpa\CheckoutPayHandler;
+use Application\Handler\Lpa\CheckoutPayResponseHandler;
 use Application\Handler\Lpa\CompleteIndexHandler;
 use Application\Handler\Lpa\CompleteViewDocsHandler;
+use Application\Handler\Lpa\ConfirmDeleteLpaHandler;
+use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\CorrespondentHandler;
+use Application\Handler\Lpa\CreateLpaHandler;
+use Application\Handler\Lpa\DateCheckHandler;
+use Application\Handler\Lpa\DateCheckValidHandler;
+use Application\Handler\Lpa\DeleteLpaHandler;
 use Application\Handler\Lpa\DonorAddHandler;
 use Application\Handler\Lpa\DonorEditHandler;
 use Application\Handler\Lpa\DonorIndexHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
-use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
-use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
-use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
-use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
+use Application\Handler\Lpa\Download\DownloadCheckHandler;
+use Application\Handler\Lpa\Download\DownloadFileHandler;
+use Application\Handler\Lpa\Download\DownloadHandler;
 use Application\Handler\Lpa\FeeReductionHandler;
-use Application\Handler\Lpa\ReuseDetailsHandler;
-use Application\Handler\Lpa\RepeatApplicationHandler;
-use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use Application\Handler\Lpa\IndexHandler;
+use Application\Handler\Lpa\InstructionsHandler;
+use Application\Handler\Lpa\LifeSustainingHandler;
+use Application\Handler\Lpa\MoreInfoRequiredHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
+use Application\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use Application\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use Application\Handler\Lpa\PrimaryAttorneyHandler;
-use Application\Handler\Lpa\CorrespondentHandler;
-use Application\Handler\Lpa\CorrespondentEditHandler;
+use Application\Handler\Lpa\RepeatApplicationHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddHandler;
+use Application\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
+use Application\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyDeleteHandler;
+use Application\Handler\Lpa\ReplacementAttorneyEditHandler;
+use Application\Handler\Lpa\ReplacementAttorneyIndexHandler;
+use Application\Handler\Lpa\ReuseDetailsHandler;
 use Application\Handler\Lpa\StatusHandler;
+use Application\Handler\Lpa\SummaryHandler;
+use Application\Handler\Lpa\WhenLpaStartsHandler;
+use Application\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
+use Application\Handler\Lpa\WhoAreYouHandler;
+use Application\Handler\LpaTypeHandler;
+use Application\Handler\SessionKeepAliveHandler;
+use Application\Handler\SessionSetExpiryHandler;
 use Application\Handler\StatusesHandler;
 use Application\Handler\TermsChangedHandler;
-use Application\Listener\TermsAndConditionsListener;
-use Application\Listener\UserDetailsListener;
-use Application\Handler\ChangeEmailAddressHandler;
+use Application\Handler\TypeHandler;
 use Application\Helper\RouteMiddlewareHelper;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\TermsAndConditionsMiddleware;
+use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\Router\Http\Literal;
 use Laminas\Router\Http\Segment;
@@ -279,8 +295,8 @@ return [
                         'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionKeepAliveHandler::class,
                             [
-                                UserDetailsListener::class,
-                                TermsAndConditionsListener::class,
+                                UserDetailsMiddleware::class,
+                                TermsAndConditionsMiddleware::class,
                                 LpaLoaderMiddleware::class,
                             ]
                         ),
@@ -297,8 +313,8 @@ return [
                         'middleware' => RouteMiddlewareHelper::addMiddleware(
                             SessionSetExpiryHandler::class,
                             [
-                                UserDetailsListener::class,
-                                TermsAndConditionsListener::class,
+                                UserDetailsMiddleware::class,
+                                TermsAndConditionsMiddleware::class,
                                 LpaLoaderMiddleware::class,
                             ]
                         ),
@@ -668,8 +684,8 @@ return [
                         'lpa-id' => '[0-9]+',
                     ],
                     'defaults' => [
-                            'controller' => 'Authenticated\Lpa\IndexController',
-                            'action'     => 'index',
+                            'controller' => PipeSpec::class,
+                            'middleware' => RouteMiddlewareHelper::addMiddleware(IndexHandler::class, []),
                     ],
                 ],
                 'may_terminate' => true,
@@ -785,8 +801,11 @@ return [
                         'options' => [
                             'route'    => '/date-check',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DateCheckController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    DateCheckHandler::class,
+                                    [],
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -795,6 +814,13 @@ return [
                                 'type'    => Literal::class,
                                 'options' => [
                                     'route' => '/complete',
+                                    'defaults' => [
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckHandler::class,
+                                            [],
+                                        ),
+                                    ],
                                 ],
                             ],
                             'valid' => [
@@ -802,7 +828,11 @@ return [
                                 'options' => [
                                     'route'  => '/valid',
                                     'defaults' => [
-                                        'action' => 'valid',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            DateCheckValidHandler::class,
+                                            [],
+                                        ),
                                     ],
                                 ],
                             ],
@@ -859,8 +889,8 @@ return [
                                 'pdf-type' => 'lp1|lp3|lpa120',
                             ],
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\DownloadController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -870,7 +900,8 @@ return [
                                 'options' => [
                                     'route'    => '/draft',
                                     'defaults' => [
-                                        'action' => 'index',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -882,7 +913,8 @@ return [
                                         'pdf-filename' => '[a-zA-Z0-9-]+\.pdf',
                                     ],
                                     'defaults' => [
-                                        'action' => 'download',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadFileHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -891,7 +923,8 @@ return [
                                 'options' => [
                                     'route'    => '/check',
                                     'defaults' => [
-                                        'action' => 'check',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(DownloadCheckHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -961,8 +994,11 @@ return [
                         'options' => [
                             'route'    => '/checkout',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\CheckoutController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                    CheckoutIndexHandler::class,
+                                    []
+                                ),
                             ],
                         ],
                         'may_terminate' => true,
@@ -972,7 +1008,11 @@ return [
                                 'options' => [
                                     'route'    => '/cheque',
                                     'defaults' => [
-                                        'action'     => 'cheque',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutChequeHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -981,7 +1021,11 @@ return [
                                 'options' => [
                                     'route'    => '/pay',
                                     'defaults' => [
-                                        'action'     => 'pay',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutPayHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                                 'may_terminate' => true,
@@ -991,7 +1035,11 @@ return [
                                         'options' => [
                                             'route'    => '/response',
                                             'defaults' => [
-                                                'action' => 'payResponse',
+                                                'controller' => PipeSpec::class,
+                                                'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                                    CheckoutPayResponseHandler::class,
+                                                    []
+                                                ),
                                             ],
                                         ],
                                     ],
@@ -1002,7 +1050,11 @@ return [
                                 'options' => [
                                     'route'    => '/confirm',
                                     'defaults' => [
-                                        'action'     => 'confirm',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(
+                                            CheckoutConfirmHandler::class,
+                                            []
+                                        ),
                                     ],
                                 ],
                             ],
@@ -1013,8 +1065,8 @@ return [
                         'options' => [
                             'route'    => '/people-to-notify',
                             'defaults' => [
-                                'controller' => 'Authenticated\Lpa\PeopleToNotifyController',
-                                'action'     => 'index',
+                                'controller' => PipeSpec::class,
+                                'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyHandler::class, []),
                             ],
                         ],
                         'may_terminate' => true,
@@ -1024,7 +1076,8 @@ return [
                                 'options' => [
                                     'route'    => '/add',
                                     'defaults' => [
-                                        'action' => 'add',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyAddHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1036,7 +1089,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'edit',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyEditHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1048,7 +1102,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action'     => 'confirm-delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyConfirmDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
@@ -1060,7 +1115,8 @@ return [
                                         'idx' => '[0-9]+',
                                     ],
                                     'defaults' => [
-                                        'action' => 'delete',
+                                        'controller' => PipeSpec::class,
+                                        'middleware' => RouteMiddlewareHelper::addMiddleware(PeopleToNotifyDeleteHandler::class, []),
                                     ],
                                 ],
                             ],
