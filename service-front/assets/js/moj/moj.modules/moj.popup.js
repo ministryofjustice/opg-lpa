@@ -105,7 +105,7 @@
       // Center and fase in the popup
       this.$popup.delay(100).fadeIn(200, function () {
         self.$popup.find('h2').attr('tabindex', -1);
-        self.$popup.find('.close a').trigger('focus');
+        self.$popup.find('.close button').trigger('focus');
 
         // callback func
         if (opts.onOpen && typeof opts.onOpen === 'function') {
