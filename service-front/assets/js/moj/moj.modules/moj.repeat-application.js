@@ -46,9 +46,6 @@
         });
         moj.Modules.Popup.open(html, {
           ident: 'dialog',
-          beforeOpen: function () {
-            moj.Modules.Popup.redoLoopedTabKeys();
-          },
         });
 
         $('.dialog').on('click', 'a', function (evt) {

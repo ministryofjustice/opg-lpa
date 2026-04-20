@@ -19,6 +19,7 @@ Feature: Add donor to Health and Welfare LPA
         Then the page matches the "donor" baseline image
         When I click "add-donor"
         Then I can find "form-donor"
+        And "dialog-title" is the active element
         And accessibility checks should pass for "donorHW page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
