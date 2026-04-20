@@ -37,10 +37,3 @@ data "aws_iam_policy_document" "cross_account_permissions" {
     resources = [aws_backup_vault.backup_account.arn]
   }
 }
-
-resource "aws_backup_selection" "main" {
-  plan_id      = aws_backup_plan.main.id
-  name         = "${var.environment_name}_aurora_cluster_selection"
-  iam_role_arn = data.aws_iam_role.aurora_backup_role.arn
-  resources    = [var.source_cluster_arn]
-}

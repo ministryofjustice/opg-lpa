@@ -37,7 +37,7 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
 
         $error = null;
 
-        // Get current email from user details (set by UserDetailsListener middleware)
+        // Get current email from user details (set by UserDetailsMiddleware middleware)
         $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
         $currentEmailAddress = (string) $userDetails->email;
 

@@ -38,7 +38,10 @@ class Formatter
 
         $content = '';
 
-        foreach (explode("\r\n", trim($text)) as $contentLine) {
+        $text = str_replace("\r\n", "\n", trim($text));
+        $text = str_replace("\r", "\n", $text);
+
+        foreach (explode("\n", $text) as $contentLine) {
             $content .= wordwrap($contentLine, self::INSTRUCTIONS_PREFERENCES_ROW_WIDTH, "\r\n", false);
             $content .= "\r\n";
         }
