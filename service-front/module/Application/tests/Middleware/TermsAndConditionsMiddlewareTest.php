@@ -2,26 +2,23 @@
 
 declare(strict_types=1);
 
-namespace ApplicationTest\Listener;
+namespace ApplicationTest\Middleware;
 
+use Application\Middleware\TermsAndConditionsMiddleware;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User;
-use Application\Listener\TermsAndConditionsListener;
 use Application\Model\Service\Session\SessionUtility;
 use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\EventManager\EventManagerInterface;
-use Laminas\Http\Response as MVCResponse;
-use Laminas\Mvc\MvcEvent;
-use Laminas\Router\RouteStackInterface;
 use Mezzio\Helper\UrlHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class TermsAndConditionsListenerTest extends TestCase
+class TermsAndConditionsMiddlewareTest extends TestCase
 {
     private array $config;
     private SessionUtility|MockObject $sessionUtility;
@@ -36,141 +33,13 @@ class TermsAndConditionsListenerTest extends TestCase
         $this->authenticationService = $this->createMock(AuthenticationService::class);
     }
 
-    public function testAttach(): void
-    {
-        $expectedFn = function () {
-        };
-
-        $this->eventManager
-            ->expects($this->once())
-            ->method('attach')
-            ->with(
-                MvcEvent::EVENT_DISPATCH,
-                $this->callback(function ($arg) {
-                    return is_array($arg)
-                        && count($arg) === 2
-                        && $arg[0] instanceof TermsAndConditionsListener
-                        && $arg[1] === 'listen';
-                }),
-                1
-            )
-            ->willReturn($expectedFn);
-
-        $listener = new TermsAndConditionsListener(
-            $this->config,
-            $this->sessionUtility,
-            $this->authenticationService,
-        );
-
-        $listener->attach($this->eventManager);
-    }
-
-    public function testListenWhenNoIdentity()
-    {
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn(null);
-
-        $listener = new TermsAndConditionsListener(
-            $this->config,
-            $this->sessionUtility,
-            $this->authenticationService,
-        );
-
-        $this->assertNull($listener->listen(new MvcEvent()));
-    }
-
-    public function testListenWhenTermsAcceptedAndUpToDate(): void
-    {
-        $identity = new User('1', 'testoken', 10000, new DateTime('2001-01-01'));
-
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn($identity);
-
-        $listener = new TermsAndConditionsListener(
-            $this->config,
-            $this->sessionUtility,
-            $this->authenticationService,
-        );
-
-        $this->assertNull($listener->listen(new MvcEvent()));
-    }
-
-    public function testListenWhenTermsAlreadyAccepted(): void
-    {
-        $identity = new User('1', 'testoken', 10000, new DateTime('1999-01-01'));
-
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn($identity);
-
-        $this->sessionUtility
-            ->method('getFromMvc')
-            ->with('TermsAndConditionsCheck')
-            ->willReturn(true);
-
-        $listener = new TermsAndConditionsListener(
-            $this->config,
-            $this->sessionUtility,
-            $this->authenticationService,
-        );
-
-        $this->assertNull($listener->listen(new MvcEvent()));
-    }
-
-    public function testListenWhenTermsNotAccepted(): void
-    {
-        $identity = new User('1', 'testoken', 10000, new DateTime('1999-01-01'));
-
-        $this->authenticationService
-            ->method('getIdentity')
-            ->willReturn($identity);
-
-        $this->sessionUtility
-            ->method('getFromMvc')
-            ->with('TermsAndConditionsCheck', 'seen')
-            ->willReturn(null);
-        $this->sessionUtility
-            ->method('setInMvc')
-            ->with('TermsAndConditionsCheck', 'seen', true);
-
-        $router = $this->createMock(RouteStackInterface::class);
-        $router
-            ->method('assemble')
-            ->with([], ['name' => 'user/dashboard/terms-changed'])
-            ->willReturn('/assembled-url');
-
-        $event = $this->createMock(MvcEvent::class);
-        $event
-            ->method('getRouter')
-            ->willReturn($router);
-        $event
-            ->method('getResponse')
-            ->willReturn(new MVCResponse());
-
-        $listener = new TermsAndConditionsListener(
-            $this->config,
-            $this->sessionUtility,
-            $this->authenticationService,
-        );
-
-        $result = $listener->listen($event);
-
-        $expectedResponse = new MVCResponse();
-        $expectedResponse->getHeaders()->addHeaderLine('Location', '/assembled-url');
-        $expectedResponse->setStatusCode('302');
-
-        $this->assertEquals($expectedResponse, $result);
-    }
-
     public function testProcessWhenNoIdentity()
     {
         $this->authenticationService
             ->method('getIdentity')
             ->willReturn(null);
 
-        $listener = new TermsAndConditionsListener(
+        $listener = new TermsAndConditionsMiddleware(
             $this->config,
             $this->sessionUtility,
             $this->authenticationService,
@@ -196,7 +65,7 @@ class TermsAndConditionsListenerTest extends TestCase
             ->method('getIdentity')
             ->willReturn($identity);
 
-        $listener = new TermsAndConditionsListener(
+        $listener = new TermsAndConditionsMiddleware(
             $this->config,
             $this->sessionUtility,
             $this->authenticationService,
@@ -227,7 +96,7 @@ class TermsAndConditionsListenerTest extends TestCase
             ->with('TermsAndConditionsCheck')
             ->willReturn(true);
 
-        $listener = new TermsAndConditionsListener(
+        $listener = new TermsAndConditionsMiddleware(
             $this->config,
             $this->sessionUtility,
             $this->authenticationService,
@@ -267,7 +136,7 @@ class TermsAndConditionsListenerTest extends TestCase
             ->with('user/dashboard/terms-changed')
             ->willReturn('/generated-url');
 
-        $listener = new TermsAndConditionsListener(
+        $listener = new TermsAndConditionsMiddleware(
             $this->config,
             $this->sessionUtility,
             $this->authenticationService,
