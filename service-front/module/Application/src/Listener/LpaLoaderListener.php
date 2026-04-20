@@ -13,7 +13,6 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Stdlib\ResponseInterface as MVCResponse;
-use RuntimeException;
 
 /**
  * Loads the LPA for the current request, validates the user owns it, and checks
@@ -77,7 +76,9 @@ class LpaLoaderListener extends AbstractListenerAggregate
         }
 
         if ($identity->id() !== $lpa->user) {
-            throw new RuntimeException('Invalid LPA - current user can not access it');
+            $response = new Response();
+            $response->setStatusCode(404);
+            return $response;
         }
 
         $flowChecker = new FormFlowChecker($lpa);

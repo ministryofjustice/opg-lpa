@@ -23,7 +23,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 class LpaLoaderMiddlewareTest extends TestCase
 {
@@ -138,7 +137,7 @@ class LpaLoaderMiddlewareTest extends TestCase
         $this->assertEquals(404, $result->getStatusCode());
     }
 
-    public function testThrowsExceptionWhenUserDoesNotOwnLpa(): void
+    public function testReturns404WhenUserDoesNotOwnLpa(): void
     {
         $routeResult = $this->makeRouteResult('lpa/form-type', ['lpa-id' => '123']);
         $request = (new ServerRequest())
@@ -147,10 +146,10 @@ class LpaLoaderMiddlewareTest extends TestCase
 
         $this->lpaApplicationService->method('getApplication')->willReturn($this->createLpa(123, 'user-123'));
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid LPA - current user can not access it');
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
 
-        $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+        $this->assertInstanceOf(HtmlResponse::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
     }
 
     public function testSetsRequestAttributesWhenRouteIsAccessible(): void
