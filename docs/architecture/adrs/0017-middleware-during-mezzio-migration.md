@@ -31,8 +31,8 @@ Routes are configured using `RouteMiddlewareHelper::addMiddleware()` helper func
  * Builds a PipeSpec with the standard authenticated middleware stack, minus any classes in $ignore.
  *
  * The default stack is:
- *   RouteMatchMiddleware → AuthenticationListener → UserDetailsListener
- *     → TermsAndConditionsListener → LpaLoaderMiddleware → $handlerClass
+ *   RouteMatchMiddleware → AuthenticationMiddleware → UserDetailsMiddleware
+ *     → TermsAndConditionsMiddleware → LpaLoaderMiddleware → $handlerClass
  *
  * @param string $handlerClass The handler to append at the end of the pipeline.
  * @param string[] $ignore Middleware classes to omit from the stack.

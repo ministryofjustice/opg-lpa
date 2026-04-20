@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ApplicationTest\Helper;
 
 use Application\Helper\RouteMiddlewareHelper;
-use Application\Listener\AuthenticationListener;
-use Application\Listener\TermsAndConditionsListener;
-use Application\Listener\UserDetailsListener;
+use Application\Middleware\AuthenticationMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
+use Application\Middleware\TermsAndConditionsMiddleware;
+use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
 use PHPUnit\Framework\TestCase;
 
@@ -17,9 +17,9 @@ class RouteMiddlewareHelperTest extends TestCase
 {
     private const FULL_STACK = [
         RouteMatchMiddleware::class,
-        AuthenticationListener::class,
-        UserDetailsListener::class,
-        TermsAndConditionsListener::class,
+        AuthenticationMiddleware::class,
+        UserDetailsMiddleware::class,
+        TermsAndConditionsMiddleware::class,
         LpaLoaderMiddleware::class,
     ];
 
@@ -49,29 +49,29 @@ class RouteMiddlewareHelperTest extends TestCase
 
     public function testSingleMiddlewareCanBeIgnored(): void
     {
-        $result = RouteMiddlewareHelper::addMiddleware('SomeHandler', [AuthenticationListener::class]);
+        $result = RouteMiddlewareHelper::addMiddleware('SomeHandler', [AuthenticationMiddleware::class]);
 
         $spec = $result->getSpec();
-        $this->assertNotContains(AuthenticationListener::class, $spec);
+        $this->assertNotContains(AuthenticationMiddleware::class, $spec);
         $this->assertContains(RouteMatchMiddleware::class, $spec);
-        $this->assertContains(UserDetailsListener::class, $spec);
-        $this->assertContains(TermsAndConditionsListener::class, $spec);
+        $this->assertContains(UserDetailsMiddleware::class, $spec);
+        $this->assertContains(TermsAndConditionsMiddleware::class, $spec);
         $this->assertContains(LpaLoaderMiddleware::class, $spec);
         $this->assertContains('SomeHandler', $spec);
     }
 
     public function testMultipleMiddlewaresCanBeIgnored(): void
     {
-        $ignore = [AuthenticationListener::class, LpaLoaderMiddleware::class];
+        $ignore = [AuthenticationMiddleware::class, LpaLoaderMiddleware::class];
 
         $result = RouteMiddlewareHelper::addMiddleware('SomeHandler', $ignore);
 
         $spec = $result->getSpec();
-        $this->assertNotContains(AuthenticationListener::class, $spec);
+        $this->assertNotContains(AuthenticationMiddleware::class, $spec);
         $this->assertNotContains(LpaLoaderMiddleware::class, $spec);
         $this->assertContains(RouteMatchMiddleware::class, $spec);
-        $this->assertContains(UserDetailsListener::class, $spec);
-        $this->assertContains(TermsAndConditionsListener::class, $spec);
+        $this->assertContains(UserDetailsMiddleware::class, $spec);
+        $this->assertContains(TermsAndConditionsMiddleware::class, $spec);
         $this->assertContains('SomeHandler', $spec);
     }
 
