@@ -2,7 +2,7 @@
 # See https://pre-commit.com/hooks.html for more hooks
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
       - id: trailing-whitespace # trims trailing whitespace.
       - id: check-added-large-files # prevents giant files from being committed.
@@ -20,14 +20,14 @@ repos:
       - id: end-of-file-fixer
         exclude: ".*/package-lock.json"
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.86.0
+    rev: d0e12caebb2ab0ee8bf98181c8bfe9702bca103d  # frozen: v1.105.0
     hooks:
       - id: terraform_fmt
       - id: terraform_tflint
         args:
         - --args=--recursive
   - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.5.0
+    rev: 68e8b45440415753fff70a312ece8da92ba85b4a  # frozen: v1.5.0
     hooks:
     -   id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
@@ -39,11 +39,11 @@ repos:
       entry: docker compose run --rm -T --no-deps phpcs
       files: \.(php)$
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: c6755bb741b6481d6b3d3bb563c83fa060db96c9  # frozen: 26.3.1
     hooks:
     - id: black
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.39.1
+    rev: aba7df358642862cbd44be4afe010013a77d009a  # frozen: v10.1.0
     hooks:
     - id: eslint
       files: service-front/assets/js|cypress/e2e/common
@@ -52,11 +52,11 @@ repos:
       -   eslint@9
       -   eslint-plugin-prettier@v5
   - repo: https://github.com/renovatebot/pre-commit-hooks
-    rev: 40.32.7
+    rev: e25675f5d5bdcedb8a5ccb75b5f92c8ec0455cb6  # frozen: 43.132.1
     hooks:
       - id: renovate-config-validator
   - repo: https://github.com/tekwizely/pre-commit-golang
-    rev: v1.0.0-rc.2
+    rev: f298c082154b2cb239fac06a4f452368e66e66dd  # frozen: v1.0.0-rc.4
     hooks:
       - id: go-imports # replaces go-fmt
       - id: go-mod-tidy
