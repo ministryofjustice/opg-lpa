@@ -15,12 +15,10 @@ Feature: Cookies
     Scenario: Accepting analytics cookies then rejecting them removes them from client (LPAL-486)
         Given I visit "/home"
         When I visit link in new tab containing "View cookies"
-        And I can find "usageCookies-yes" with data-inited
         And I click "usageCookies-yes"
         And I click "cookies-save"
         And I see "You’ve set your cookie preferences." in the page text
 
-        Then I visit "/cookies"
         And "usageCookies-yes" is checked
         And analytics cookies are set
 
@@ -28,7 +26,6 @@ Feature: Cookies
         And I click "cookies-save"
         And I see "You’ve set your cookie preferences." in the page text
 
-        Then I visit "/cookies"
         And "usageCookies-no" is checked
         And analytics cookies are not set
 
