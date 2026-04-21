@@ -59,7 +59,6 @@
 
           saveCookieConsent(input.checked);
           flashBanner.removeAttribute('hidden');
-          input.attr('data-inited', 'true');
 
           return flashBanner.scrollIntoView();
         });
