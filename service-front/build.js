@@ -13,6 +13,7 @@ const Handlebars = require('handlebars');
 // first, then minified as a single pre-concatenated file.
 const APPLICATION_JS_FILES = [
   // Dependencies
+  'node_modules/jquery/dist/jquery.min.js',
   'node_modules/handlebars/dist/handlebars.js',
   'node_modules/lodash/lodash.js',
   'node_modules/urijs/src/URI.min.js',
