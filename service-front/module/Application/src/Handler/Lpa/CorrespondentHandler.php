@@ -112,7 +112,7 @@ class CorrespondentHandler implements RequestHandlerInterface
 
                 if ($correspondenceFormData['contactByEmail']) {
                     $correspondent->setEmail(new EmailAddress([
-                        'address' => $correspondenceFormData['email-address']
+                        'address' => strtolower($correspondenceFormData['email-address'])
                     ]));
                 }
 
