@@ -5,8 +5,6 @@
     {%- set defaultTitle = 'Make a lasting power of attorney' -%}
     <title>{% if (authError is not empty or error is not empty or (form is not empty and form.getMessages|length > 0)) %}Error: {% endif %}{% if overridePageTitle %}{{ overridePageTitle }} - {% elseif pageTitle %}{{ pageTitle }} - {% else %}{% set pageTitle = defaultTitle %}{% endif %}{{ defaultTitle }} - GOV.UK</title>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DY4BCL021L"></script>
-
     <link href="{{ '/assets/v2/css/govuk-template.css' | asset_path({ 'minify':true }) }}" rel="stylesheet" type="text/css"/>
 
 
