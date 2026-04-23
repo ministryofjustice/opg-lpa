@@ -6,6 +6,7 @@ namespace Application\Middleware;
 
 use MakeShared\Constants;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -31,16 +32,12 @@ class RequestLoggingMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->logger instanceof Logger) {
-            $this->logger->pushProcessor(function (array $record) use ($request): array {
-                $record['extra']['request_path']   = $request->getUri()->getPath();
-                $record['extra']['request_method'] = $request->getMethod();
-
-                $traceId = $request->getHeaderLine('X-Request-ID');
-                if ($traceId !== '') {
-                    $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $traceId;
-                }
-
-                return $record;
+            $this->logger->pushProcessor(function (LogRecord $record) use ($request): LogRecord {
+                return $record->with(extra: array_merge($record->extra, [
+                    'request_path'                       => $request->getUri()->getPath(),
+                    'request_method'                     => $request->getMethod(),
+                    Constants::TRACE_ID_FIELD_NAME       => $request->getHeaderLine('X-Request-ID') ?: '',
+                ]));
             });
         }
 
