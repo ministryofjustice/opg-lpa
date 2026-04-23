@@ -19,7 +19,7 @@ Feature: View Summary for Health and Welfare LPA
             | Donor | | |
             | Name | Mrs Nancy Garrison | donor |
             | Date of birth | 22 October 1988 | |
-            | Email address | opglpademo+NancyGarrison@gmail.com | |
+            | Email address | opglpademo+nancygarrison@gmail.com | |
             | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | The donor can physically sign or make a mark on the LPA | No | |
             | Life-sustaining treatment | The attorneys can make decisions | life-sustaining |
