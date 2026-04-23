@@ -32,6 +32,9 @@ class EmailAddress extends AbstractValidator
      */
     public function isValid($value)
     {
+        $value = strtolower($value);
+        $this->setValue($value);
+
         $valid = $this->validator->isValid($value);
 
         if ($valid === false && count($this->validator->getMessages()) > 0) {

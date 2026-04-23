@@ -111,6 +111,11 @@ class FeedbackForm extends AbstractCsrfForm
         $this->addToInputFilter([
             'name'     => 'email',
             'required' => false,
+            'filters' => [
+                [
+                    'name' => 'StringToLower',
+                ],
+            ],
             'validators' => [
                 [
                     'name' => EmailAddress::class
