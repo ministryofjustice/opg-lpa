@@ -177,7 +177,7 @@ Feature: Add attorneys to a Property and Finance LPA
             | dob-date-day| 22 |
             | dob-date-month| 10 |
             | dob-date-year| 1988 |
-            | email-address| opglpademo+AmyWheeler@gmail.com |
+            | email-address| opglpademo+amywheeler@gmail.com |
             | address-address1| Brickhill Cottage |
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |
