@@ -81,6 +81,6 @@ data "aws_nat_gateway" "main" {
 data "aws_security_group" "vpc_endpoint" {
   filter {
     name   = "Name"
-    values = "vpc-endpoint-access-private-subnets-${data.aws_vpc.main.id}"
+    values = ["vpc-endpoint-access-private-subnets-${data.aws_vpc.main.id}"]
   }
 }
