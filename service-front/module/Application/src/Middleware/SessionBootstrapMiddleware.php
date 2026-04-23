@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Middleware;
 
-use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
-use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,12 +14,12 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Bootstraps the laminas-session stack on every request that requires a session.
  *
- * Replicates the bootstrapSession() logic from Module::onBootstrap(), converted
- * to PSR-15 middleware. Skipped for health-check endpoints that must not create
- * sessions.
- *
- * Must run before any middleware that reads or writes the session (e.g.
- * IdentityTokenRefreshMiddleware, AuthenticationMiddleware).
+ * NativeSessionConfig::configure() and Container::setDefaultManager() are called
+ * earlier, in Module::onBootstrap(), so that the Redis save handler is registered
+ * before any Laminas Container subclass (e.g. authentication storage) is constructed
+ * during service wiring.  This middleware is responsible only for starting the
+ * session (if it has not already been started by a Container constructor) and
+ * running the session-ID regeneration logic.
  */
 class SessionBootstrapMiddleware implements MiddlewareInterface
 {
@@ -34,7 +32,6 @@ class SessionBootstrapMiddleware implements MiddlewareInterface
     ];
 
     public function __construct(
-        private readonly NativeSessionConfig $nativeSessionConfig,
         private readonly SessionManager $sessionManager,
         private readonly SessionManagerSupport $sessionManagerSupport,
     ) {
@@ -45,14 +42,15 @@ class SessionBootstrapMiddleware implements MiddlewareInterface
         $path = $request->getUri()->getPath();
 
         if (!in_array($path, self::SESSION_EXCLUDED_PATHS, true)) {
-            // Configure the save handler (Redis), cookie settings, etc.
-            $this->nativeSessionConfig->configure();
+            // configure() and Container::setDefaultManager() are called early in
+            // Module::onBootstrap() so that the correct save handler is registered
+            // before any Laminas\Session\Container subclass (e.g. authentication
+            // storage) is instantiated during service wiring.
+            // Here we only need to ensure the session is open and initialised.
+            if (PHP_SESSION_NONE === session_status()) {
+                $this->sessionManager->start();
+            }
 
-            // Start the session and make this manager the default for all Containers.
-            $this->sessionManager->start();
-            Container::setDefaultManager($this->sessionManager);
-
-            // Regenerate session ID on first visit to prevent fixation.
             $this->sessionManagerSupport->initialise();
         }
 
