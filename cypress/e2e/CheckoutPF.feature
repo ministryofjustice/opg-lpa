@@ -26,7 +26,7 @@ Feature: Checkout for a Property and Finance LPA
             | 1st attorney | | |
             | Name | Mrs Amy Wheeler | primary-attorney |
             | Date of birth | 22 October 1988 | |
-            | Email address | opglpademo+AmyWheeler@gmail.com | |
+            | Email address | opglpademo+amywheeler@gmail.com | |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | 2nd attorney | | |
             | Name | Standard Trust | primary-attorney |
