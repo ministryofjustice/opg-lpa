@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Application\Middleware;
 
+use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\SessionManagerSupport;
+use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,12 +16,17 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Bootstraps the laminas-session stack on every request that requires a session.
  *
- * NativeSessionConfig::configure() and Container::setDefaultManager() are called
- * earlier, in Module::onBootstrap(), so that the Redis save handler is registered
- * before any Laminas Container subclass (e.g. authentication storage) is constructed
- * during service wiring.  This middleware is responsible only for starting the
- * session (if it has not already been started by a Container constructor) and
- * running the session-ID regeneration logic.
+ * In a pure Mezzio pipeline this middleware is responsible for the full
+ * session setup: configure (save handler, cookie settings) → start → initialise.
+ *
+ * In the Laminas MVC app Module::onBootstrap() calls
+ * NativeSessionConfig::configure() and Container::setDefaultManager() early
+ * so that the correct save handler is in place before any Container subclass
+ * (e.g. Laminas\Authentication\Storage\Session) is constructed during service
+ * wiring.  When that early setup has already run, configure() is a no-op here
+ * because session_status() will be PHP_SESSION_ACTIVE.
+ *
+ * Skipped entirely for health-check endpoints that must not create sessions.
  */
 class SessionBootstrapMiddleware implements MiddlewareInterface
 {
@@ -32,6 +39,7 @@ class SessionBootstrapMiddleware implements MiddlewareInterface
     ];
 
     public function __construct(
+        private readonly NativeSessionConfig $nativeSessionConfig,
         private readonly SessionManager $sessionManager,
         private readonly SessionManagerSupport $sessionManagerSupport,
     ) {
@@ -42,13 +50,14 @@ class SessionBootstrapMiddleware implements MiddlewareInterface
         $path = $request->getUri()->getPath();
 
         if (!in_array($path, self::SESSION_EXCLUDED_PATHS, true)) {
-            // configure() and Container::setDefaultManager() are called early in
-            // Module::onBootstrap() so that the correct save handler is registered
-            // before any Laminas\Session\Container subclass (e.g. authentication
-            // storage) is instantiated during service wiring.
-            // Here we only need to ensure the session is open and initialised.
+            // configure() sets the save handler and ini settings.
+            // In the MVC app this has already been called in Module::onBootstrap(),
+            // so session_status() will be PHP_SESSION_ACTIVE and the call is a no-op.
+            // In a pure Mezzio pipeline it runs here for the first time.
             if (PHP_SESSION_NONE === session_status()) {
+                $this->nativeSessionConfig->configure();
                 $this->sessionManager->start();
+                Container::setDefaultManager($this->sessionManager);
             }
 
             $this->sessionManagerSupport->initialise();
