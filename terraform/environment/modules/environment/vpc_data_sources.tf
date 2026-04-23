@@ -77,3 +77,10 @@ data "aws_nat_gateway" "main" {
   count = length(data.aws_nat_gateways.main.ids)
   id    = tolist(data.aws_nat_gateways.main.ids)[count.index]
 }
+
+data "aws_security_group" "vpc_endpoint" {
+  filter {
+    name   = "Name"
+    values = "vpc-endpoint-access-private-subnets-${data.aws_vpc.main.id}"
+  }
+}
