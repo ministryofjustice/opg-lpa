@@ -220,12 +220,12 @@ class AuthenticationMiddlewareTest extends TestCase
             ->method('unsetInMvc')
             ->with(ContainerNamespace::USER_DETAILS, 'user');
 
-        $expectedUrl = '/login?state=' . $expectedState;
+        $expectedUrl = '/login/' . $expectedState;
         $urlHelper = $this->createMock(UrlHelper::class);
         $urlHelper
             ->expects($this->once())
             ->method('generate')
-            ->with('login', [], ['state' => $expectedState])
+            ->with('login', ['state' => $expectedState])
             ->willReturn($expectedUrl);
 
         $request = (new ServerRequest(uri: $requestPath))->withAttribute(RouteResult::class, $routeResult);

@@ -8,7 +8,9 @@ use Application\Middleware\RequestLoggingMiddleware;
 use MakeShared\Constants;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
+use Monolog\Level;
 use Monolog\Logger;
+use Monolog\LogRecord;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -21,6 +23,18 @@ class RequestLoggingMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->method('handle')->willReturn(new Response());
         return $handler;
+    }
+
+    private function makeRecord(array $extra = []): LogRecord
+    {
+        return new LogRecord(
+            datetime: new \DateTimeImmutable(),
+            channel: 'test',
+            level: Level::Info,
+            message: 'test',
+            context: [],
+            extra: $extra,
+        );
     }
 
     public function testPushesProcessorWhenLoggerIsMonolog(): void
@@ -37,12 +51,10 @@ class RequestLoggingMiddlewareTest extends TestCase
 
     public function testDoesNotPushProcessorForNonMonologLogger(): void
     {
-        // NullLogger implements LoggerInterface but is not a Monolog\Logger instance
         $logger = new NullLogger();
 
         $middleware = new RequestLoggingMiddleware($logger);
 
-        // No exception and handler is still called
         $request = new ServerRequest(uri: 'https://example.com/dashboard');
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->once())->method('handle');
@@ -71,10 +83,11 @@ class RequestLoggingMiddlewareTest extends TestCase
 
         $this->assertNotNull($capturedProcessor);
 
-        $record = $capturedProcessor(['extra' => []]);
+        $result = $capturedProcessor($this->makeRecord());
 
-        $this->assertSame('/login', $record['extra']['request_path']);
-        $this->assertSame('POST', $record['extra']['request_method']);
+        $this->assertInstanceOf(LogRecord::class, $result);
+        $this->assertSame('/login', $result->extra['request_path']);
+        $this->assertSame('POST', $result->extra['request_method']);
     }
 
     public function testProcessorAddsTraceIdWhenHeaderPresent(): void
@@ -94,13 +107,14 @@ class RequestLoggingMiddlewareTest extends TestCase
         $middleware = new RequestLoggingMiddleware($logger);
         $middleware->process($request, $this->makeHandler());
 
-        $record = $capturedProcessor(['extra' => []]);
+        $result = $capturedProcessor($this->makeRecord());
 
-        $this->assertArrayHasKey(Constants::TRACE_ID_FIELD_NAME, $record['extra']);
-        $this->assertSame('trace-abc-123', $record['extra'][Constants::TRACE_ID_FIELD_NAME]);
+        $this->assertInstanceOf(LogRecord::class, $result);
+        $this->assertArrayHasKey(Constants::TRACE_ID_FIELD_NAME, $result->extra);
+        $this->assertSame('trace-abc-123', $result->extra[Constants::TRACE_ID_FIELD_NAME]);
     }
 
-    public function testProcessorDoesNotAddTraceIdWhenHeaderAbsent(): void
+    public function testProcessorSetsEmptyTraceIdWhenHeaderAbsent(): void
     {
         $capturedProcessor = null;
 
@@ -116,9 +130,11 @@ class RequestLoggingMiddlewareTest extends TestCase
         $middleware = new RequestLoggingMiddleware($logger);
         $middleware->process($request, $this->makeHandler());
 
-        $record = $capturedProcessor(['extra' => []]);
+        $result = $capturedProcessor($this->makeRecord());
 
-        $this->assertArrayNotHasKey(Constants::TRACE_ID_FIELD_NAME, $record['extra']);
+        $this->assertInstanceOf(LogRecord::class, $result);
+        $this->assertArrayHasKey(Constants::TRACE_ID_FIELD_NAME, $result->extra);
+        $this->assertSame('', $result->extra[Constants::TRACE_ID_FIELD_NAME]);
     }
 
     public function testPassesThroughResponseFromHandler(): void
