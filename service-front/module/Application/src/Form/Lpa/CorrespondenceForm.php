@@ -82,7 +82,7 @@ class CorrespondenceForm extends AbstractMainFlowForm
 
         if ($correspondenceData['contactByEmail'] == '1') {
             $correspondent->setEmail(new EmailAddress([
-                'address' => strtolower($correspondenceData['email-address'])
+                'address' => $correspondenceData['email-address']
             ]));
         }
 
