@@ -6,8 +6,11 @@ namespace ApplicationTest\Helper;
 
 use Application\Helper\RouteMiddlewareHelper;
 use Application\Middleware\AuthenticationMiddleware;
+use Application\Middleware\IdentityTokenRefreshMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\RequestLoggingMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
+use Application\Middleware\SessionBootstrapMiddleware;
 use Application\Middleware\TermsAndConditionsMiddleware;
 use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
@@ -16,6 +19,9 @@ use PHPUnit\Framework\TestCase;
 class RouteMiddlewareHelperTest extends TestCase
 {
     private const FULL_STACK = [
+        RequestLoggingMiddleware::class,
+        SessionBootstrapMiddleware::class,
+        IdentityTokenRefreshMiddleware::class,
         RouteMatchMiddleware::class,
         AuthenticationMiddleware::class,
         UserDetailsMiddleware::class,
@@ -77,9 +83,22 @@ class RouteMiddlewareHelperTest extends TestCase
 
     public function testAllMiddlewareCanBeIgnored(): void
     {
-        $result = RouteMiddlewareHelper::addMiddleware('SomeHandler', self::FULL_STACK);
+        $ignorable = [
+            RouteMatchMiddleware::class,
+            AuthenticationMiddleware::class,
+            UserDetailsMiddleware::class,
+            TermsAndConditionsMiddleware::class,
+            LpaLoaderMiddleware::class,
+        ];
 
-        $this->assertSame(['SomeHandler'], $result->getSpec());
+        $result = RouteMiddlewareHelper::addMiddleware('SomeHandler', $ignorable);
+
+        $this->assertSame([
+            RequestLoggingMiddleware::class,
+            SessionBootstrapMiddleware::class,
+            IdentityTokenRefreshMiddleware::class,
+            'SomeHandler',
+        ], $result->getSpec());
     }
 
     public function testIgnoringNonExistentMiddlewareHasNoEffect(): void
