@@ -154,23 +154,26 @@ use Application\Listener\TrailingSlashRedirectListener;
 use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
 use Application\Middleware\AuthenticationMiddleware;
+use Application\Middleware\Factory\IdentityTokenRefreshMiddlewareFactory;
+use Application\Middleware\Factory\RequestLoggingMiddlewareFactory;
+use Application\Middleware\Factory\SessionBootstrapMiddlewareFactory;
+use Application\Middleware\IdentityTokenRefreshMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
+use Application\Middleware\RequestLoggingMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
+use Application\Middleware\SessionBootstrapMiddleware;
 use Application\Middleware\TermsAndConditionsMiddleware;
 use Application\Middleware\UserDetailsMiddleware;
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
 use Application\Model\Service\AddressLookup\OrdnanceSurveyFactory;
-use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
 use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User as Identity;
 use Application\Model\Service\Date\DateService;
 use Application\Model\Service\Date\IDateService;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ContinuationSheets;
 use Application\Model\Service\Redis\RedisClient;
-use Application\Model\Service\Session\ContainerNamespace;
 use Application\Model\Service\Session\FilteringSaveHandler;
 use Application\Model\Service\Session\NativeSessionConfig;
 use Application\Model\Service\Session\PersistentSessionDetails;
@@ -178,6 +181,7 @@ use Application\Model\Service\Session\SessionManagerSupport;
 use Application\Model\Service\Session\SessionUtility;
 use Application\Model\Service\Session\WritePolicy;
 use Application\Model\Service\User\Details;
+use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Application\Service\AccordionService;
 use Application\Service\CompleteViewParamsHelper;
 use Application\Service\Factory\AccordionServiceFactory;
@@ -189,7 +193,6 @@ use Application\Service\SystemMessage;
 use Application\View\Twig\AppFiltersExtension;
 use Application\View\Twig\AppFunctionsExtension;
 use Aws\DynamoDb\DynamoDbClient;
-use Laminas\Http\PhpEnvironment\Request as HttpRequest;
 use Laminas\ModuleManager\Feature\FormElementProviderInterface;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
@@ -202,7 +205,6 @@ use Laminas\Session\Container;
 use Laminas\Session\SessionManager;
 use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
-use MakeShared\Constants;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
@@ -245,117 +247,25 @@ class Module implements FormElementProviderInterface
 
         $serviceManager = $application->getServiceManager();
         $request = $application->getRequest();
-        $logger = $serviceManager->get(LoggerInterface::class);
+        $dateService = $serviceManager->get(DateService::class);
 
-        // Add request context to logs as a processor
+        // Configure the session and register our SessionManager as the default for all
+        // Laminas\Session\Container instances.  This must happen in onBootstrap — before
+        // any Container subclass (e.g. Laminas\Authentication\Storage\Session) is
+        // instantiated during the service-wiring phase — otherwise AbstractContainer
+        // creates a bare SessionManager with no save handler and calls session_start()
+        // before our middleware has a chance to configure Redis.
         if ($request instanceof HttpRequest) {
-            $logger->pushProcessor(function ($record) use ($request) {
-                $record['extra']['request_path'] = $request->getUri()->getPath();
-                $record['extra']['request_method'] = $request->getMethod();
-
-                if ($request->getHeader('X-Request-ID')) {
-                    $record['extra'][Constants::TRACE_ID_FIELD_NAME] =  $request->getHeader('X-Request-ID')->getFieldValue() ?? '';
-                }
-
-                return $record;
-            });
-
-            $path = $request->getUri()->getPath();
-
-            // Only bootstrap the session if it's *not* PHPUnit AND is not an excluded url.
-            if (
-                !strstr($request->getServer('SCRIPT_NAME'), 'phpunit') &&
-                !in_array($path, [
-                    // URLs excluded from creating a session
-                    '/ping/elb',
-                    '/ping/json',
-                ])
-            ) {
-                $sessionManager = $this->bootstrapSession($e);
-                $this->bootstrapIdentity($e, $path != '/session-state');
-
-                $authenticationService = $serviceManager->get(AuthenticationService::class);
-                $sessionUtility = $serviceManager->get(SessionUtility::class);
-                $userService = $serviceManager->get(Details::class);
-                $dateService = $serviceManager->get(DateService::class);
-
-                // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
-                new CurrentRouteListener()->attach($eventManager, 1004);
-                new AuthenticationListener($sessionUtility, $authenticationService)->attach($eventManager, 1003);
-                new UserDetailsListener($sessionUtility, $userService, $authenticationService, $sessionManager, $logger)->attach($eventManager, 1002);
-
-                // Listeners that run on every request, just before view is rendered (higher priority numbers run first)
-                new ViewVariablesListener($dateService)->attach($eventManager, 1001);
-                new LpaViewInjectListener()->attach($eventManager, 1000);
-            }
+            $serviceManager->get(NativeSessionConfig::class)->configure();
+            Container::setDefaultManager($serviceManager->get('SessionManager'));
         }
-    }
 
-    /**
-     * Sets up and starts global sessions.
-     *
-     * @param MvcEvent $e
-     */
-    private function bootstrapSession(MvcEvent $e): SessionManager
-    {
-        $sm = $e->getApplication()->getServiceManager();
+        // Listeners that run on every request, just before controllers execute (higher priority numbers run first)
+        new CurrentRouteListener()->attach($eventManager, 1004);
 
-        $nativeSession = $sm->get(NativeSessionConfig::class);
-        $nativeSession->configure();
-
-        /** @var SessionManager $session */
-        $sessionManager = $sm->get('SessionManager');
-
-        // Always starts the session.
-        $sessionManager->start();
-
-        // Ensures this SessionManager is used for all Session Containers.
-        Container::setDefaultManager($sessionManager);
-
-        $sm->get(SessionManagerSupport::class)->initialise();
-
-        return $sessionManager;
-    }
-
-    /**
-     *
-     * This now checks the token on every request otherwise we have no method of knowing if the user has
-     * logged in on another browser.
-     *
-     * We don't deal with forcing the user to re-authenticate here as they
-     * may be accessing a page that does not require authentication.
-     *
-     * @param MvcEvent $e
-     */
-    private function bootstrapIdentity(MvcEvent $e, bool $updateToken = true)
-    {
-        $sm = $e->getApplication()->getServiceManager();
-        $authenticationService = $sm->get(AuthenticationService::class);
-        /** @var Identity $identity */
-        $identity = $authenticationService->getIdentity();
-
-        //  If there is an identity (logged in user) then get the token details and check to see if it has expired
-        if (!is_null($identity) && $updateToken) {
-            try {
-                $info = $sm->get('UserService')->getTokenInfo($identity->token());
-
-                if ($info['success'] && !is_null($info['expiresIn'])) {
-                    // update the time the token expires in the session
-                    $identity->tokenExpiresIn($info['expiresIn']);
-                } else {
-                    $authenticationService->clearIdentity();
-
-                    // Record that identity was cleared because of a 500 error (normally db-related)
-                    if ($info['failureCode'] >= 500) {
-                        $sessionUtility = $sm->get(SessionUtility::class);
-                        $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'reason', 'Internal system error');
-                        $sessionUtility->setInMvc(ContainerNamespace::AUTH_FAILURE_REASON, 'code', $info['failureCode']);
-                    }
-                }
-            } catch (ApiException $ex) {
-                $authenticationService->clearIdentity();
-            }
-        }
+        // Listeners that run on every request, just before view is rendered (higher priority numbers run first)
+        new ViewVariablesListener($dateService)->attach($eventManager, 1001);
+        new LpaViewInjectListener()->attach($eventManager, 1000);
     }
 
     public function getServiceConfig()
@@ -369,6 +279,7 @@ class Module implements FormElementProviderInterface
                 AuthenticationService::class => 'AuthenticationService',
                 ServiceLocatorInterface::class => ServiceManager::class,
                 IDateService::class => DateService::class,
+                SessionManager::class => 'SessionManager',
             ],
             'factories' => [
                 'ApiClient'             => 'Application\Model\Service\ApiClient\ClientFactory',
@@ -586,6 +497,9 @@ class Module implements FormElementProviderInterface
                 },
 
                 RouteMatchMiddleware::class => InvokableFactory::class,
+                RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
+                SessionBootstrapMiddleware::class => SessionBootstrapMiddlewareFactory::class,
+                IdentityTokenRefreshMiddleware::class => IdentityTokenRefreshMiddlewareFactory::class,
 
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
