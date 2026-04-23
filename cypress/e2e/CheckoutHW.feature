@@ -27,12 +27,12 @@ Feature: Checkout for a Health and Welfare LPA
             | 1st attorney | | |
             | Name | Mrs Amy Wheeler | primary-attorney |
             | Date of birth | 22 October 1988 | |
-            | Email address | opglpademo+AmyWheeler@gmail.com | |
+            | Email address | opglpademo+amywheeler@gmail.com | |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | 2nd attorney | | |
             | Name | Mr David Wheeler | primary-attorney |
             | Date of birth | 12 March 1972 | |
-            | Email address | opglpademo+DavidWheeler@gmail.com | |
+            | Email address | opglpademo+davidwheeler@gmail.com | |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | Attorney decisions | | |
             | How decisions are made | The attorneys will act jointly and severally | how-primary-attorneys-make-decision |
