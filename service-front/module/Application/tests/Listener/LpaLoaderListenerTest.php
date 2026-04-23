@@ -18,7 +18,6 @@ use Laminas\Router\RouteStackInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class LpaLoaderListenerTest extends TestCase
 {
@@ -116,7 +115,7 @@ class LpaLoaderListenerTest extends TestCase
         $this->assertEquals(404, $result->getStatusCode());
     }
 
-    public function testListenThrowsExceptionWhenUserDoesNotOwnLpa(): void
+    public function testListenReturns404WhenUserDoesNotOwnLpa(): void
     {
         $routeMatch = $this->createMock(RouteMatch::class);
         $routeMatch->method('getMatchedRouteName')->willReturn('lpa/form-type');
@@ -133,10 +132,10 @@ class LpaLoaderListenerTest extends TestCase
         $this->authenticationService->method('getIdentity')->willReturn($identity);
         $this->lpaApplicationService->method('getApplication')->with(123)->willReturn($lpa);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Invalid LPA - current user can not access it');
+        $result = $this->listener->listen($event);
 
-        $this->listener->listen($event);
+        $this->assertInstanceOf(\Laminas\Http\Response::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
     }
 
     public function testListenReturnsResponseWhenFlowCheckerReturnsFalse(): void
