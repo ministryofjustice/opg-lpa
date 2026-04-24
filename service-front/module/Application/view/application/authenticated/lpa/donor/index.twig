@@ -8,7 +8,7 @@
 
 <li id="donor-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -29,10 +29,10 @@
 
     {% if (lpa.document.donor) %}
 
-        <h2 class="heading-medium flush--top">The donor</h2>
+        <h2 class="govuk-heading-m flush--top">The donor</h2>
 
         <div class="person person--wider">
-            <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }}</h3>
+            <h3 class="person-name govuk-heading-s flush--ends">{{ lpa.document.donor.name }}</h3>
             <p class="person-address flush--ends">{{ lpa.document.donor.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
@@ -41,13 +41,13 @@
             </ul>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ nextUrl }}" role="button" class="button" data-cy="save-and-continue">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ addUrl }}" role="button" class="button js-form-popup" aria-label="Add Donor" data-cy="add-donor">Add donor</a>
         </div>
 

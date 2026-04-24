@@ -146,18 +146,16 @@
       this.query = this.$wrap.find('.js-PostcodeLookup__query').val();
 
       if (!$el.hasClass('disabled')) {
-        $searchContainer.children('.error-message').remove();
-
+        $searchContainer.children('.govuk-error-message').remove();
         if (this.query !== '') {
           $searchContainer.removeClass('error');
-          $searchContainer.removeClass('form-group-error');
+          $searchContainer.removeClass('govuk-form-group--error');
           $el.spinner();
           this.findPostcode(this.query);
         } else {
           $searchContainer.addClass('error');
-
           if (this.showErrorBar) {
-            $searchContainer.addClass('form-group-error');
+            $searchContainer.addClass('govuk-form-group--error');
           }
 
           var $errorElt = $(
@@ -250,12 +248,10 @@
 
         if (response.isPostcodeValid) {
           $searchContainer.addClass('error');
-
           if (this.showErrorBar) {
-            $searchContainer.addClass('form-group-error');
+            $searchContainer.addClass('govuk-form-group--error');
           }
-
-          $postcodeLabel.children('.error-message').remove();
+          $postcodeLabel.children('.govuk-error-message').remove();
 
           var $errorElt = $(
             this.errorMessageTpl({

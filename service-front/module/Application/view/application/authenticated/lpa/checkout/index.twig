@@ -92,13 +92,13 @@
     {% if (lpaIsCompleted) %}
 
         <div class="appstatus" role="alert">
-            <h2 class="heading-xlarge">Confirm and
+            <h2 class="govuk-heading-xl">Confirm and
                 {% if lpa.payment.amount == 0 %}finish{% else %}pay{% endif %}
             </h2>
             {% if lpa.payment.amount is null %}
-                <h3 class="heading-medium">We'll contact you about the fee</h3>
+                <h3 class="govuk-heading-m">We'll contact you about the fee</h3>
             {% else %}
-                <h3 class="heading-medium">Application fee: £{{ lpa.payment.amount | money_format }}</h3>
+                <h3 class="govuk-heading-m">Application fee: £{{ lpa.payment.amount | money_format }}</h3>
             {% endif %}
         </div>
 
@@ -138,7 +138,7 @@
                 {{ form().openTag( form )|raw }}
                 {{ formElement(form.getCsrf) }}
 
-            <div class="form-group">
+            <div class="govuk-form-group">
                 {{ formElement(form.get('submit')) }}
                 <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>

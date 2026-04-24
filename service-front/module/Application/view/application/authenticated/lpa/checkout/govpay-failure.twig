@@ -4,7 +4,7 @@
 
 {% block content %}
 
-    <h2 class="heading-medium flush--top">Amount due: &pound;{{ lpa.payment.amount | money_format }}</h2>
+    <h2 class="govuk-heading-m flush--top">Amount due: &pound;{{ lpa.payment.amount | money_format }}</h2>
 
     <div class="text">
 
@@ -19,7 +19,7 @@
             {{ form().openTag( form )|raw }}
             {{ formElement(form.getCsrf) }}
 
-            <div class="form-group">
+            <div class="govuk-form-group">
                 {{ formElement(form.get('submit')) }}
             </div>
 

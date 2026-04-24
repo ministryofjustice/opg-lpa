@@ -43,10 +43,10 @@
         {% if status == 'checking' %}
 
             <div>
-                <h2 class="heading-xlarge">We’re checking the LPA</h2>
+                <h2 class="govuk-heading-xl">We’re checking the LPA</h2>
             </div>
             <div>
-                <p class="lede">We’re checking the LPA to make sure it’s been made correctly. Once we’ve checked it, we'll write to the donor, attorneys and correspondent to let them know what happens next.</p>
+                <p class="govuk-body-l">We’re checking the LPA to make sure it’s been made correctly. Once we’ve checked it, we'll write to the donor, attorneys and correspondent to let them know what happens next.</p>
                 <p>If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
                 <p>The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
             </div>
@@ -54,7 +54,7 @@
         {% elseif status == 'waiting' %}
 
             <div>
-                <h2 class="heading-xlarge">We're waiting to confirm receipt of this LPA</h2>
+                <h2 class="govuk-heading-xl">We're waiting to confirm receipt of this LPA</h2>
             </div>
             <div>
                 <p>It will take up to 30 working days for us to add this LPA to our records and confirm we've received it. It will then take up to 8 weeks to process the LPA if there are no mistakes in the application.</p>
@@ -71,7 +71,7 @@
         {% elseif status == 'processed' %}
 
             <div>
-                <h2 class="heading-xlarge">We’ve processed the LPA</h2>
+                <h2 class="govuk-heading-xl">We’ve processed the LPA</h2>
             </div>
 
             <div>
@@ -106,21 +106,21 @@
         {% elseif status == 'received' %}
 
             <div>
-                <h2 class="heading-xlarge">We’ve received the LPA</h2>
+                <h2 class="govuk-heading-xl">We’ve received the LPA</h2>
             </div>
             <div>
-                <p class="lede">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
+                <p class="govuk-body-l">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
                 <p>It will take up to 16 weeks to register the LPA if there are no mistakes in the application.</p>
             </div>
 
         {% elseif status == 'completed' %}
 
             <div>
-                <h2 class="heading-xlarge">You have completed the LPA application</h2>
+                <h2 class="govuk-heading-xl">You have completed the LPA application</h2>
             </div>
             <div>
-                <p class="lede">This LPA was made before it was possible to track the progress of an LPA application online.</p>
-                <p class="lede">If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p class="govuk-body-l">This LPA was made before it was possible to track the progress of an LPA application online.</p>
+                <p class="govuk-body-l">If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
         {% endif %}

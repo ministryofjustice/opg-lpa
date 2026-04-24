@@ -28,7 +28,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">{{ actorName }} details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">{{ actorName }} details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -39,9 +39,9 @@
     {{ form().openTag(form)|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <div class="form-group {{ reuseDetails.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ reuseDetails.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="reuse-details-container">
-                <legend class="heading-medium">Which details would you like to reuse?</legend>
+                <legend class="govuk-heading-m">Which details would you like to reuse?</legend>
                 <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
                 {{ formRadio(reuseDetails) }}
 

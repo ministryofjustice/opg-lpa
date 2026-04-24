@@ -140,7 +140,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">Correspondent details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">Correspondent details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -155,7 +155,7 @@
     {{ formElement(form.getCsrf) }}
     {{ formElement(form.get('who')) }}
 
-    <h2 class="heading-medium popup-exclude">Correspondent's details?</h2>
+    <h2 class="govuk-heading-m popup-exclude">Correspondent's details?</h2>
 
     <fieldset>
         <legend class="visually-hidden">Add correspondent's details</legend>
@@ -166,14 +166,14 @@
 
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
+    <h2 class="govuk-heading-m popup-exclude">Correspondent's company name{{ form.trustSelected() ? '' : '?' }}</h2>
 
     <fieldset>
         <legend class="visually hidden">Add company name</legend>
         {% if form.trustSelected() %}
             {{ formHidden(company) }}
-            <div class="form-group read-only">
-                <label class="form-label">{{ company.getOption('label') }}</label>
+            <div class="govuk-form-group read-only">
+                <label class="govuk-label">{{ company.getOption('label') }}</label>
                 <div class="read-only-value">{{ company.getValue() }}</div>
             </div>
         {% else %}
@@ -181,7 +181,7 @@
         {% endif %}
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
+    <h2 class="govuk-heading-m popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
     <fieldset class="postcodelookup">
         <legend class="visually-hidden">Add address details</legend>
@@ -203,8 +203,8 @@
                 {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
             {% endif %}
 
-            <div class="form-group read-only">
-                <label class="form-label">Address</label>
+            <div class="govuk-form-group read-only">
+                <label class="govuk-label">Address</label>
                 <div class="read-only-value">{{ addressString }}</div>
             </div>
         {% else %}
@@ -218,7 +218,7 @@
 
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">Correspondent's contact details?</h2>
+    <h2 class="govuk-heading-m popup-exclude">Correspondent's contact details?</h2>
 
     <fieldset>
         <legend class="visually-hidden">Add correspondent's contact details</legend>

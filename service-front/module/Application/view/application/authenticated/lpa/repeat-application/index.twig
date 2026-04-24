@@ -72,10 +72,10 @@
 }) ? '' }}
 
 <li id="repeat-application-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
-            <details class="form-group">
+            <details class="govuk-form-group">
                 <summary data-analytics-click="page:link.reveal:help: What is a repeat application?" role="button" aria-expanded="false">What is a repeat application?</summary>
                 <div>
                     <p>If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
@@ -92,7 +92,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="visually-hidden">Is this a repeat application?</legend>
 
@@ -118,7 +118,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
     {{ form().closeTag|raw }}

@@ -73,7 +73,7 @@
 {{ whenDetails.setOptions({label:'Details'}) ? '' }}
 
 <li id="when-replacement-attorney-step-in-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
 		<div class="text">
 			<p>The donor can choose when their replacement attorneys step in and in what order.</p>
@@ -90,7 +90,7 @@
 
 		{{ macros.formErrorSummary(error,form) }}
 
-		<div class="govuk-form-group {{ when.getMessages|length > 0 ? 'form-group-error'}}">
+		<div class="govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">
 	            <legend class="visually-hidden">How should the replacement attorneys step in?</legend>
 
@@ -108,7 +108,7 @@
 				</div>
 	        </fieldset>
 	    </div>
-		<div class="form-group">
+		<div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

@@ -8,9 +8,9 @@
         <p>We'll save the LPA as you progress so you do not need to do it all in one go.</p>
         <p>If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="js-guidance" data-analytics-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="js-guidance" data-analytics-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
     </div>
-    <div class="govuk-details__text">
-        If you already have a registered LPA and want to use it online, go to the<br>
-        <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+    <div class="govuk-inset-text">
+        If you already have a registered LPA and want to use it online, go to the
+        <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
     </div>
 {%- endblock -%}
 
@@ -45,7 +45,7 @@
 
 <li id="lpa-type-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -62,11 +62,11 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ type.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset>
                 <legend class="visually-hidden">Choose type of LPA</legend>
 
-                <h2 class="heading-medium flush--top">Which type of LPA do you want to make?</h2>
+                <h2 class="govuk-heading-m flush--top">Which type of LPA do you want to make?</h2>
 
                 {{ formElementErrorsV2(type) }}
                 {{ formRadio(type) }}
@@ -81,7 +81,7 @@
         </div>
         {% endif %}
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <details class="text">
                 <summary data-analytics-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
                 <div>
@@ -94,7 +94,7 @@
 
 
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {% if (isChangeAllowed) %}
                 {{ formElement(form.get('save')) }}
             {% else %}
