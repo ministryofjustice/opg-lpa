@@ -46,7 +46,7 @@ final class ContinuationNotesTwigMacroTest extends MockeryTestCase
         $xpath = new DOMXpath($dom);
 
         // check section title is in place with correct class
-        $matches = $xpath->query('//h3[@class="heading-medium"]');
+        $matches = $xpath->query('//h3[@class="govuk-heading-m"]');
         $this->assertEquals(1, $matches->length, 'number of continuation sheet 2 headings is incorrect');
 
         // check section title has correct content
