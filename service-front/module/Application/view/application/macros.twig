@@ -3,7 +3,7 @@
 
     {% if (error is not empty or form.getMessages|length > 0) %}
     <div class="error-summary text" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary">
-        <h2 class="heading-medium error-summary-heading" id="error-heading" data-cy="error-heading">{{ message }}</h2>
+        <h2 class="govuk-heading-m error-summary-heading" id="error-heading" data-cy="error-heading">{{ message }}</h2>
 
         {% if error is not empty %}
             {# API errors #}
@@ -51,9 +51,9 @@
 {# Text input #}
 {% macro formGroup(element) %}
 
-<div class="form-group{{ element.getMessages|length >0 ? ' form-group-error'}}">
+<div class="govuk-form-group{{ element.getMessages|length >0 ? ' govuk-form-group--error'}}">
     {{ formElementErrorsV2(element) }}
-    <label class="form-label" for="{{ element.getAttribute('id') }}">
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
     </label>
     {{ formElement(element) }}
@@ -65,7 +65,7 @@
 {% macro formGroupCheckbox(element) %}
 
 <div class="option group">
-    <label class="form-label" for="{{ element.getAttribute('id') }}">
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label')|raw }}
     </label>
     {{ formElement(element) }}
@@ -110,7 +110,7 @@
 {% macro continuationNotes(continuationNoteKeys) %}
 
     {%- if continuationNoteKeys|length > 0 -%}
-        <h3 class="heading-medium">Continuation sheets</h3>
+        <h3 class="govuk-heading-m">Continuation sheets</h3>
 
         {%- for cnote in continuationNoteKeys -%}
             {%- if cnote != 'HAS_ATTORNEY_DECISIONS' and cnote != 'LONG_INSTRUCTIONS_OR_PREFERENCES' -%}

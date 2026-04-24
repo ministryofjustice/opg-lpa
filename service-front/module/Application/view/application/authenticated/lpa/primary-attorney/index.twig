@@ -5,7 +5,7 @@
 {% block content %}
 
 <li id="primary-attorney-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <p>Attorneys are people the donor appoints to make decisions on their behalf.</p>
@@ -27,7 +27,7 @@
     </div>
 
     {% if (attorneys) %}
-        <h2 class="heading-medium flush--top">
+        <h2 class="govuk-heading-m flush--top">
             The attorney{% if attorneys|length > 1 %}s{% endif %}
         </h2>
         <ul>
@@ -37,7 +37,7 @@
         </ul>
     {% endif %}
 
-    <div class="{% if (attorneys) %}action-item{% endif %} form-group">
+    <div class="{% if (attorneys) %}action-item{% endif %} govuk-form-group">
         <a href="{{ addUrl }}" role="button" data-cy="add-attorney" class="{% if not (attorneys) %}button{% endif %} js-form-popup" >
             {% if (attorneys) %}
                 Add another attorney?
@@ -48,7 +48,7 @@
     </div>
 
     {% if (attorneys) %}
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ nextUrl }}" role="button" data-cy="save" class="button">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
     {% endif %}

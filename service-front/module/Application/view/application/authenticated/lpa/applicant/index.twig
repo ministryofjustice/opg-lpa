@@ -89,7 +89,7 @@
 
 <li id="applicant-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -112,10 +112,10 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ whoIsRegistering.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 
             <fieldset>
-                <legend class="heading-medium flush--top">This LPA is being registered by</legend>
+                <legend class="govuk-heading-m flush--top">This LPA is being registered by</legend>
                     {{ formElementErrorsV2(whoIsRegistering) }}
                     {{ formRadio(whoIsRegistering) }}
             </fieldset>
@@ -129,7 +129,7 @@
             {% endif %}
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

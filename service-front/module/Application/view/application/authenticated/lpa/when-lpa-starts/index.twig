@@ -17,7 +17,7 @@
 {% set when = form.get('when') %}
 
 <li id="when-lpa-starts-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <p>If the donor wants help straight away with managing their property and finances, they can say that their LPA can be used as soon as it's registered.</p>
@@ -33,10 +33,10 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group {{ when.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset>
                 <legend class="visually-hidden">When can the LPA be used?</legend>
-                <h2 class="heading-medium flush--top">The LPA can be used</h2>
+                <h2 class="govuk-heading-m flush--top">The LPA can be used</h2>
 
                 {{ formElementErrorsV2(when) }}
                 {{ formRadio().outputOption(when, 'now')|raw }}
@@ -56,7 +56,7 @@
                 </div>
             </fieldset>
         </div>
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

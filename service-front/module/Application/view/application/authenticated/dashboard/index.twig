@@ -11,7 +11,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <div class="text">
-            <p class="lede">On this page you'll find all the LPAs that you've made. As well as making a new LPA from scratch, you can:</p>
+            <p class="govuk-body-l">On this page you'll find all the LPAs that you've made. As well as making a new LPA from scratch, you can:</p>
             <ul class="list list-bullet">
                 <li><strong class="bold-small">continue making</strong> an LPA</li>
                 <li><strong class="bold-small">check the signing dates</strong> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
@@ -19,14 +19,14 @@
                 <li><strong class="bold-small">reuse details from an existing LPA to make a new one</strong> - you can do this once you've completed all sections up to and including the person to notify section
                 </li>
             </ul>
-            <div class="govuk-details__text">
-                If you already have a registered LPA and want to use it online, go to the <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+            <div class="govuk-inset-text">
+                If you already have a registered LPA and want to use it online, go to the <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
             </div>
         </div>
     </div>
     <div class="column-one-third">
         <div class="panel-cta tablet-and-up">
-            <div class="panel-heading heading-medium">Make another LPA</div>
+            <div class="panel-heading govuk-heading-m">Make another LPA</div>
             <div class="panel-body">
                 <p><a id="create-new-lpa" class="button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
                 <p class="bold-xsmall">Or reuse the details of an LPA below</p>
@@ -38,7 +38,7 @@
 {% if shortList %}
 {# With less than 6 LPAs, no search is displayed #}
     {% if lpaTotalCount == 0 %}
-        <h2 class="heading-large flush--ends">You have no LPAs</h2>
+        <h2 class="govuk-heading-l flush--ends">You have no LPAs</h2>
     {% endif %}
 {% else %}
 {# Over 6 LPAs and search is presented #}
@@ -46,7 +46,7 @@
     <div class="grid-row">
         <div class="column-one-half tablet-and-up">
         {% if isSearch %}
-            <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+            <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
             <p class="flush--bottom">
                 {% if lpaTotalCount == 0 %}
                     Your search has found no results.<br>
@@ -57,9 +57,9 @@
             </p>
         {% else %}
             {% if lpaTotalCount == 0 %}
-                <h2 class="heading-large flush--ends">No LPAs found</h2>
+                <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
             {% else %}
-                <h2 class="heading-large flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+                <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
             {% endif %}
         {% endif %}
         </div>
@@ -76,7 +76,7 @@
         <div class="column-one-half mobile">
         {# This is only displayed on mobile #}
             {% if isSearch %}
-                <h2 class="heading-large flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+                <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
                 <p class="flush--bottom">
                     {% if lpaTotalCount == 0 %}
                         Your search has found no results.<br>
@@ -87,9 +87,9 @@
                 </p>
             {% else %}
                 {% if lpaTotalCount == 0 %}
-                    <h2 class="heading-large flush--ends">No LPAs found</h2>
+                    <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
                 {% else %}
-                    <h2 class="heading-large flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+                    <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
                 {% endif %}
             {% endif %}
         </div>
@@ -112,7 +112,7 @@
 {% endif %}
 
 <div class="panel-cta mobile">
-    <div class="panel-heading heading-medium">Create another LPA</div>
+    <div class="panel-heading govuk-heading-m">Create another LPA</div>
     <div class="panel-body">
         <p>
             <a class="button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>

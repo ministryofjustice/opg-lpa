@@ -26,14 +26,14 @@
 
     {% if not isPaymentSkipped %}
 
-        <h2 class="heading-large">Payment received</h2>
+        <h2 class="govuk-heading-l">Payment received</h2>
 
         <p>Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount | money_format }}</strong></p>
 
         <p>Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
 
 
-        <h2 class="heading-large">The LPA is ready to print and sign</h2>
+        <h2 class="govuk-heading-l">The LPA is ready to print and sign</h2>
 
     {% endif %}
 
@@ -43,7 +43,7 @@
 
     <p>You can access this page at any time from <a href="/user/dashboard">Your LPAs</a>.</p>
 
-    <h2 class="heading-medium">What you need to do</h2>
+    <h2 class="govuk-heading-m">What you need to do</h2>
 
     <ol class="list list-number">
         <li>Download and print the LPA, and get it signed and dated in the right order</li>
@@ -95,7 +95,7 @@
 
     </ol>
 
-    <h2 class="heading-large">Documents</h2>
+    <h2 class="govuk-heading-l">Documents</h2>
 
     <div class="panel-cta">
         <div class="panel-body">
@@ -146,7 +146,7 @@
     {{ macros.continuationNotes(continuationNoteKeys) }}
     {% endblock %}
 
-    <h2 class="heading-large">Sign the LPA in the right order</h2>
+    <h2 class="govuk-heading-l">Sign the LPA in the right order</h2>
 
     <p>The different sections of the LPA must be signed in the right order. If they’re not, we cannot register the LPA.</p>
 
@@ -155,14 +155,14 @@
     <p>Once the LPA has been signed, you can <a href="{{ dateCheckUrl }}" data-analytics-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
 
 
-    <h2 class="heading-large">Found a mistake in the LPA?</h2>
+    <h2 class="govuk-heading-l">Found a mistake in the LPA?</h2>
 
     <p>If you spot a mistake in the LPA, do not cross anything out or write anything on the LPA - if you do, we may not be able to register it.</p>
 
     <p>Find out what to do if you’ve <a class="js-guidance" href="/guide#topic-if-you-find-a-mistake" data-analytics-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
 
 
-    <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
+    <h2 class="govuk-heading-l">Post your LPA to the Office of the Public Guardian</h2>
 
     <p>You need to send us:</p>
 
@@ -211,18 +211,18 @@
     {% endif %}
 
 
-    <h2 class="heading-large">What happens next?</h2>
+    <h2 class="govuk-heading-l">What happens next?</h2>
 
     <p>It will take up to 8 weeks to register the LPA if there are no mistakes in the application. This includes a 4 week waiting period during which people can object to the registration of the LPA. This waiting period is an important safeguard and is required by law.</p>
 
     <p>If there are no problems with the LPA, we'll register it and send it to the correspondent, {{ correspondentName }}. If we cannot register the LPA, we'll write to the correspondent to let them know.</p>
 
 
-    <h2 class="heading-large">Track the progress of the LPA online</h2>
+    <h2 class="govuk-heading-l">Track the progress of the LPA online</h2>
     <p>You can view the status of this LPA from the Your LPAs page. This will let you know when we've received it, when we're checking it, and when we've processed it.</p>
     <p>The status of this LPA has now been changed to 'Waiting', as the LPA is now ready to print, sign, and then post to us.</p>
 
-    <h2 class="heading-large">Make another LPA?</h2>
+    <h2 class="govuk-heading-l">Make another LPA?</h2>
 
     <ul class="list">
         <li>
