@@ -14,5 +14,15 @@ resource "aws_security_group_rule" "cloudshell_egress" {
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.rds_api.id
   security_group_id        = aws_security_group.cloudshell.id
-  description              = "Cloudshell Postgres"
+  description              = "Cloudshell to Postgres"
+}
+
+resource "aws_security_group_rule" "vpc_endpont_egress" {
+  type                     = "egress"
+  from_port                = 0
+  to_port                  = 65536
+  protocol                 = "all"
+  source_security_group_id = data.aws_security_group.vpc_endpoint.id
+  security_group_id        = aws_security_group.cloudshell.id
+  description              = "Cloudshell to VPC Endpoint"
 }
