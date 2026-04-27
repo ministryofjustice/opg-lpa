@@ -24,6 +24,13 @@ abstract class AbstractActorForm extends AbstractLpaForm
 
     public function init()
     {
+        //  If the form has an email address field then add the StringToLower filter
+        if (isset($this->formElements['email-address'])) {
+            $this->formElements['email-address']['filters'][] = [
+                'name' => 'StringToLower',
+            ];
+        }
+
         //  If the form has a title field then add the select attributes to be used in a dropdown menu
         if (isset($this->formElements['name-title'])) {
             $this->formElements['name-title']['attributes'] = [

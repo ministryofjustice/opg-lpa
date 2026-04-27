@@ -149,7 +149,7 @@ Feature: Add attorneys to a Health and Welfare LPA
             | dob-date-day| 12 |
             | dob-date-month| 03 |
             | dob-date-year| 1972 |
-            | email-address| opglpademo+DavidWheeler@gmail.com |
+            | email-address| opglpademo+davidwheeler@gmail.com |
             | address-address1| Brickhill Cottage |
             | address-address2| Birch Cross |
             | address-address3| Marchington, Uttoxeter, Staffordshire |

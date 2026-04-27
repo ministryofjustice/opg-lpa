@@ -38,7 +38,7 @@ Feature: Add donor to Property and Finance LPA
             | dob-date-day | 22 |
             | dob-date-month | 10 |
             | dob-date-year | 1988 |
-            | email-address | opglpademo+NancyGarrison@gmail.com |
+            | email-address | opglpademo+nancygarrison@gmail.com |
             | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address2 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address3 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -81,7 +81,7 @@ Feature: Add donor to Property and Finance LPA
             | dob-date-day| 22 |
             | dob-date-month| 10 |
             | dob-date-year| 1988 |
-            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | email-address| opglpademo+nancygarrison@gmail.com |
             | address-address1| Bank End Farm House |
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
