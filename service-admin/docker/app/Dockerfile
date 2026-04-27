@@ -2,7 +2,7 @@ FROM composer:2.9.7@sha256:dc292c5c0f95f526b051d4c341bf08e7e2b18504c74625e3203d7
 
 FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9 AS base
 
-COPY --from=mlocati/php-extension-installer:2@sha256:9b0ae36ff08bb66525fa73f7ff581e9ad711e165717d554a79d2a40296a5f98d /usr/bin/install-php-extensions /usr/bin/
+COPY --from=mlocati/php-extension-installer:2@sha256:3287619fd920a2ccbbbf50f3ca6f38d57cc26cd6460d7979025286890b6453d2 /usr/bin/install-php-extensions /usr/bin/
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
