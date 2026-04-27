@@ -19,14 +19,14 @@ Feature: Checkout for a Property and Finance LPA
             | Donor | | |
             | Name | Mrs Nancy Garrison | donor |
             | Date of birth | 22 October 1988 | |
-            | Email address | opglpademo+NancyGarrison@gmail.com | |
+            | Email address | opglpademo+nancygarrison@gmail.com | |
             | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | The donor can physically sign or make a mark on the LPA | No | |
             | When LPA starts |  As soon as it's registered (and with the donor's consent) | when-lpa-starts |
             | 1st attorney | | |
             | Name | Mrs Amy Wheeler | primary-attorney |
             | Date of birth | 22 October 1988 | |
-            | Email address | opglpademo+AmyWheeler@gmail.com | |
+            | Email address | opglpademo+amywheeler@gmail.com | |
             | Address | Brickhill Cottage $ Birch Cross $ Marchington, Uttoxeter, Staffordshire $ ST14 8NX | |
             | 2nd attorney | | |
             | Name | Standard Trust | primary-attorney |
@@ -57,7 +57,7 @@ Feature: Checkout for a Property and Finance LPA
             | Who is registering the LPA | Donor | applicant |
             | Correspondent | | |
             | Name | Mrs Nancy Garrison | correspondent |
-            | Email address | opglpademo+NancyGarrison@gmail.com | |
+            | Email address | opglpademo+nancygarrison@gmail.com | |
             | Address | Bank End Farm House $ Undercliff Drive$ Ventnor, Isle of Wight $ PO38 1UL | |
             | Repeat application | This is a repeat application with case number 12345678 | repeat-application |
             | Application fee | Application fee: £23 as the donor has an income of less than £12,000 | fee-reduction |
