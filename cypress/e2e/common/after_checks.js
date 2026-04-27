@@ -26,7 +26,7 @@ After({ tags: '@RunErrorSummaryCheckAfterStep' }, () => {
   cy.log('Checking error summary headings are at the correct level');
 
   cy.document().then((doc) => {
-    doc.querySelectorAll('.error-summary-heading').forEach((node) => {
+    doc.querySelectorAll('.govuk-error-summary__title').forEach((node) => {
       assert(node.tagName == 'H2', 'error summary headings should be <h2>');
     });
   });
