@@ -110,7 +110,8 @@ Per-PR checklist:
 
 Once the templates above are migrated:
 
-- Update the two Cypress selectors: `div.form-group-error` → `.govuk-form-group--error`; `.error-summary-heading` → `.govuk-error-summary__title`.
+- Update the two Cypress selectors: `div.form-group-error` → `.govuk-form-group--error`; `.error-summary-heading` → `.govuk-error-summary__title`. (Also: `.error-message` → `.govuk-error-message` in `cypress/e2e/common/date_check.js`.)
+  > **Follow-up (separate ticket):** these are still class-based and therefore coupled to GOV.UK Frontend's CSS naming. A subsequent PR should add stable `data-cy` (or `data-form-errors`-style) hooks to the relevant templates (`layout/partials/form-element-errors.twig`, `application/macros.twig`, `assets/js/lpa/templates/alert.withinForm.html`) and rewrite the Cypress assertions to use them, so future framework upgrades don't break tests for purely visual reasons.
 - Rewrite bespoke partials in `assets/sass/patterns/*` and `assets/sass/extensions/*` that still use toolkit mixins/vars (`@include media`, `core-*`, `bold-*`, `button()`, `em()`, `$grey-*`, `$gutter`, etc.) using v5 equivalents (`govuk-font`, `govuk-typography-responsive`, `govuk-colour()`, `govuk-spacing()`, `govuk-media-query()`).
 - Rework `print.scss` to v5 selectors.
 
