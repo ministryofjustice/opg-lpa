@@ -67,7 +67,7 @@ Feature: Add donor to Health and Welfare LPA
             | dob-date-day| 22 |
             | dob-date-month| 10 |
             | dob-date-year| 1988 |
-            | email-address| opglpademo+NancyGarrison@gmail.com |
+            | email-address| opglpademo+nancygarrison@gmail.com |
             | address-address1| Bank End Farm House |
             | address-address2| Undercliff Drive |
             | address-address3| Ventnor, Isle of Wight |
