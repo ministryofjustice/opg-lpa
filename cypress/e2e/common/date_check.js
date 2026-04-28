@@ -110,10 +110,10 @@ Then(
     const applicantText =
       'Enter the signature date of the person signing on behalf of the applicant';
     cy.get('[data-cy=date-check-donor]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', donorText);
     cy.get('[data-cy=date-check-applicant]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', applicantText);
   },
 );
@@ -123,12 +123,12 @@ Then(
   () => {
     const donorText = "Enter the donor's signature date";
     cy.get('[data-cy=date-check-donor]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', donorText);
 
     const applicantText = "Enter the applicant's signature date";
     cy.get('[data-cy=date-check-applicant]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', applicantText);
   },
 );
@@ -193,7 +193,7 @@ Then(
       'Check your dates. The signature date of the person signing on behalf ' +
       'of the applicant cannot be in the future';
     cy.get('[data-cy=date-check-applicant]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', errorText);
   },
 );
@@ -205,7 +205,7 @@ Then(
       'The person signing on behalf of the applicant must sign on the same day or after ' +
       'all section 11s have been signed. You need to print and re-sign section 15';
     cy.get('[data-cy=date-check-applicant]')
-      .find('.govuk-error-message')
+      .find('.error-message')
       .should('contain.text', errorText);
   },
 );
@@ -225,7 +225,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-certificate-provider] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-certificate-provider] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -238,7 +238,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-primary-attorney] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-primary-attorney] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -251,7 +251,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-applicant] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -264,7 +264,7 @@ Then(
     const errorText =
       'The applicant must sign on the same day or after all section 11s have been signed. ' +
       'You need to print and re-sign section 15';
-    cy.get('[data-cy=date-check-applicant] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -276,7 +276,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The donor's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-donor] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-donor] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -288,7 +288,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The attorney's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-primary-attorney] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-primary-attorney] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -300,7 +300,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The certificate provider's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-certificate-provider] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-certificate-provider] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -312,7 +312,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The applicant's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-applicant] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -325,7 +325,7 @@ Then(
     const errorText =
       'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' +
       'You need to print and re-sign continuation sheet 3 and sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-donor] .govuk-error-message').should(
+    cy.get('[data-cy=date-check-donor] .error-message').should(
       'contain.text',
       errorText,
     );

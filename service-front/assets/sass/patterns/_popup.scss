@@ -57,21 +57,27 @@
             border-width: .2em;
         }
 
-        // 'X' Close button positioning wrapper. The button itself uses the
-        // standard GOV.UK Frontend button classes (`govuk-button
-        // govuk-button--secondary`) so all visual styling, hover and focus
-        // states come from govuk-frontend — no bespoke CSS required here.
+        // 'X' Close button
         .close {
             position: absolute;
             top: .5em;
             right: .5em;
             margin: 0;
             z-index: 2;
+        }
 
-            // Remove the default bottom margin govuk-button applies so the
-            // control sits flush in the popup corner.
-            .govuk-button {
-                margin-bottom: 0;
+        .button-close {
+            display: block;
+            width: 2em;
+            height: 2em;
+            background-image: url('/assets/v2/images/icons/icon-close.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            text-indent: -9999px;
+            overflow: hidden;
+
+            &:hover {
+                background-color: $grey-2;
             }
         }
     }

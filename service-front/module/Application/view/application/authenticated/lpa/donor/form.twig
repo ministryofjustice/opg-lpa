@@ -175,7 +175,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">Donor details</h2>
+    <h2 class="heading-small popup-header-title" id="dialog-title">Donor details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -194,7 +194,7 @@
 {{ form().openTag( form )|raw }}
     {{ formElement(form.getCsrf) }}
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's name?</h2>
+    <h2 class="heading-medium popup-exclude">What is the donor's name?</h2>
     <fieldset>
         <legend class="visually-hidden">Add donor details</legend>
 
@@ -202,11 +202,11 @@
         {{ macros.formGroup(firstname) }}
         {{ macros.formGroup(lastname) }}
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
                 <summary class="summary" role="button" aria-expanded="false"  data-analytics-click="page:link.reveal:data: Donor known by other names">Is the donor known by any other names?</summary>
                 <div>
-                    <span class="govuk-hint summary-text">
+                    <span class="form-hint summary-text">
                         {% if lpa.document.type is defined %}
                             {% if lpa.document.type == 'property-and-financial' %}
                                 For example, does the donor have a bank account in their maiden name or in a name spelt slightly differently?
@@ -221,11 +221,11 @@
         </div>
     </fieldset>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's date of birth?</h2>
+    <h2 class="heading-medium popup-exclude">What is the donor's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="govuk-label dob-label">Date of birth</legend>
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+        <legend class="form-label dob-label">Date of birth</legend>
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+            <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
                 {{ formElementErrorsV2(dobYear) }}
@@ -241,28 +241,28 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="govuk-form-group govuk-form-group-day {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
+            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
-            <div class="govuk-form-group govuk-form-group-month {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
+            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
-            <div class="govuk-form-group govuk-form-group-year {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
+            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
         </div>
     </fieldset>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's email address?</h2>
+    <h2 class="heading-medium popup-exclude">What is the donor's email address?</h2>
     <fieldset>
         <legend class="visually-hidden">Email address</legend>
         {{ macros.formGroup(email) }}
     </fieldset>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's address?</h2>
+    <h2 class="heading-medium popup-exclude">What is the donor's address?</h2>
     <fieldset class="postcodelookup">
         <legend class="visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
@@ -273,7 +273,7 @@
         </div>
     </fieldset>
 
-    <div class="single-checkbox-group govuk-form-group {{ cannotSign.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+    <div class="single-checkbox-group form-group {{ cannotSign.getMessages|length > 0 ? 'form-group-error'}}">
         <fieldset>
             <legend class="visually-hidden"></legend>
             <div class="multiple-choice">
@@ -281,7 +281,7 @@
                 {{ formElement(cannotSign) }}
                 <label for="{{ cannotSign.getAttribute('id') }}">
                     {{ cannotSign.getOption('label') }}
-                    <span class="govuk-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
+                    <span class="form-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
                 </label>
             </div>
         </fieldset>

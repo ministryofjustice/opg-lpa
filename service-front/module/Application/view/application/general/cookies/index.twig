@@ -76,7 +76,7 @@
             {{ form.prepare() ? '' }}
             {{ form().openTag( form )|raw }}
             {{ formElement(form.getCsrf) }}
-            <div class="govuk-form-group">
+            <div class="form-group">
                 <fieldset data-cy="cookies-fieldset">
                     <legend id="id-usage-cookies">
                         <h3 class="govuk-heading-m">Do you want to accept analytics cookies?</h3>
@@ -87,7 +87,7 @@
             </div>
             {{ form().closeTag|raw }}
 
-            <div class="govuk-form-group">
+            <div class="form-group">
                 <input class="button" type="submit" value="Save changes" data-cy="cookies-save">
             </div>
         </div>

@@ -210,7 +210,7 @@
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 
     <div class="date-check-person person person--full" data-cy="date-check-donor">
-        <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">
         {% if lpa.document.donor.canSign %}
             {{ lpa.document.donor.name }} (donor)
         {% else %}
@@ -220,7 +220,7 @@
 
         {% if donorLifeSustainingElement is defined %}
             <div class="person-address flush--ends">
-                <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(donorLifeSustainingElementDay) }}
                     {{ formElementErrorsV2(donorLifeSustainingElementMonth) }}
                     {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
@@ -243,18 +243,18 @@
                             person who signed section 5 of the LPA on behalf of the donor
                         {% endif %}
                         </legend>
-                        <div class="govuk-form-group govuk-form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
+                        <div class="form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
                             {{ formElement(donorLifeSustainingElementDay) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-month {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorLifeSustainingElementMonthId }}">Month</label>
+                        <div class="form-group form-group-month {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorLifeSustainingElementMonthId }}">Month</label>
                             {{ formElement(donorLifeSustainingElementMonth) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-year {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorLifeSustainingElementYearId }}">Year</label>
+                        <div class="form-group form-group-year {{ donorLifeSustainingElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorLifeSustainingElementYearId }}">Year</label>
                             {{ formElement(donorLifeSustainingElementYear) }}
                         </div>
                     </fieldset>
@@ -267,7 +267,7 @@
 
         {% block donorGuidance %}
             <div class="person-address flush--ends">
-                <div class="dob-element form-date {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                <div class="dob-element form-date {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(donorElementDay) }}
                     {{ formElementErrorsV2(donorElementMonth) }}
                     {{ formElementErrorsV2(donorElementYear) }}
@@ -289,18 +289,18 @@
                             person who signed on behalf of the donor
                         {% endif %}
                         </legend>
-                        <div class="govuk-form-group govuk-form-group-day {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorElementDayId }}">Day</label>
+                        <div class="form-group form-group-day {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementDayId }}">Day</label>
                             {{ formElement(donorElementDay) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-month {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorElementMonthId }}">Month</label>
+                        <div class="form-group form-group-month {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementMonthId }}">Month</label>
                             {{ formElement(donorElementMonth) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-year {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ donorElementYearId }}">Year</label>
+                        <div class="form-group form-group-year {{ donorElement.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ donorElementYearId }}">Year</label>
                             {{ formElement(donorElementYear) }}
                         </div>
                     </fieldset>
@@ -362,9 +362,9 @@
     </div>
 
     <div class="date-check-person person person--full" data-cy="date-check-certificate-provider">
-        <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+        <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
         <div class="person-address flush--ends">
-            <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(certificateProviderElementDay) }}
                 {{ formElementErrorsV2(certificateProviderElementMonth) }}
                 {{ formElementErrorsV2(certificateProviderElementYear) }}
@@ -374,18 +374,18 @@
 
                 <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-certificate-provider-date">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
-                    <div class="govuk-form-group govuk-form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
-                        <label class="govuk-label" for="{{ certificateProviderElementDayId }}">Day</label>
+                    <div class="form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
+                        <label class="form-label" for="{{ certificateProviderElementDayId }}">Day</label>
                         {{ formElement(certificateProviderElementDay) }}
                     </div>
 
-                    <div class="govuk-form-group govuk-form-group-month {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                        <label class="govuk-label" for="{{ certificateProviderElementMonthId }}">Month</label>
+                    <div class="form-group form-group-month {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
+                        <label class="form-label" for="{{ certificateProviderElementMonthId }}">Month</label>
                         {{ formElement(certificateProviderElementMonth) }}
                     </div>
 
-                    <div class="govuk-form-group govuk-form-group-year {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                        <label class="govuk-label" for="{{ certificateProviderElementYearId }}">Year</label>
+                    <div class="form-group form-group-year {{ certificateProviderElement.getMessages|length >0 ? 'form-group-error'}}">
+                        <label class="form-label" for="{{ certificateProviderElementYearId }}">Year</label>
                         {{ formElement(certificateProviderElementYear) }}
                     </div>
                 </fieldset>
@@ -434,9 +434,9 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full" data-cy="date-check-primary-attorney">
-            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
             <div class="person-address flush--ends">
-                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
                     {{ formElementErrorsV2(elementMonth) }}
                     {{ formElementErrorsV2(elementYear) }}
@@ -452,18 +452,18 @@
 
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-primary-attorney-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for primary attorney</legend>
-                        <div class="govuk-form-group govuk-form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                        <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                        <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                        <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
@@ -516,9 +516,9 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full">
-            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ attorney.name }} (replacement attorney)</h3>
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">{{ attorney.name }} (replacement attorney)</h3>
             <div class="person-address flush--ends">
-                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
                     {{ formElementErrorsV2(elementMonth) }}
                     {{ formElementErrorsV2(elementYear) }}
@@ -534,18 +534,18 @@
 
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-replacement-attorney-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for replacement attorney</legend>
-                        <div class="govuk-form-group govuk-form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                        <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                        <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                        <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>
@@ -598,7 +598,7 @@
         }) ? '' }}
 
         <div class="date-check-person person person--full" data-cy="date-check-applicant">
-            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">
+            <h3 class="person-name heading-small flush--ends" data-cy="person-name">
             {% if applicant['isDonor'] and not lpa.document.donor.canSign %}
                 The person signing on behalf of {{ applicant['name'] }} (applicant)
             {% else %}
@@ -606,7 +606,7 @@
             {% endif %}
             </h3>
             <div class="person-address flush--ends">
-                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'form-group-error'}}">
                     {{ formElementErrorsV2(elementDay) }}
                     {{ formElementErrorsV2(elementMonth) }}
                     {{ formElementErrorsV2(elementYear) }}
@@ -624,18 +624,18 @@
 
                     <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-applicant-{{idx}}-date">
                         <legend class="visually-hidden">Check signature dates for applicant</legend>
-                        <div class="govuk-form-group govuk-form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                        <div class="form-group form-group-day {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementDayId }}">Day</label>
                             {{ formElement(elementDay) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                        <div class="form-group form-group-month {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementMonthId }}">Month</label>
                             {{ formElement(elementMonth) }}
                         </div>
 
-                        <div class="govuk-form-group govuk-form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                        <div class="form-group form-group-year {{ element.getMessages|length >0 ? 'form-group-error'}}">
+                            <label class="form-label" for="{{ elementYearId }}">Year</label>
                             {{ formElement(elementYear) }}
                         </div>
                     </fieldset>

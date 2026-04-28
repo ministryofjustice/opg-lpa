@@ -6,7 +6,7 @@
 
 <li id="people-to-notify-section" class="section current" data-cy="section-current">
 
-    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -19,7 +19,7 @@
 
     {% if (peopleToNotify) %}
 
-        <h2 class="govuk-heading-m flush--top">
+        <h2 class="heading-medium flush--top">
             The {% if peopleToNotify|length > 1 %}people{% else %}person{% endif %} to notify
         </h2>
 
@@ -33,7 +33,7 @@
 
     {% if peopleToNotify|length < 5 %}
 
-        <div class="{% if (peopleToNotify) %}action-item{% endif %} govuk-form-group">
+        <div class="{% if (peopleToNotify) %}action-item{% endif %} form-group">
             <a href="{{ addRoute }}" role="{% if not (peopleToNotify) %}button{% endif %}" data-cy="add" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
                 {% if (peopleToNotify) %}
                     Add another 'person to notify'
@@ -50,7 +50,7 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

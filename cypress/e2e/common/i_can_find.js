@@ -31,7 +31,7 @@ Then(`I can find {string} and it is visible`, (object) => {
 });
 
 Then(`I can find {string} wrapped with error highlighting`, (object) => {
-  cy.get('div.govuk-form-group--error').within(() => {
+  cy.get('div.form-group-error').within(() => {
     cy.get('[data-cy=' + object + ']');
   });
 });

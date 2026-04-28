@@ -164,7 +164,7 @@
 
     {% import _self as macros %}
 
-    {{ macros.outputSection('<h3 class="govuk-heading-s">' ~ sectionHeading ~ '</h3>') }}
+    {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
 
 {% endmacro %}
 
@@ -172,6 +172,6 @@
 
     {% import _self as macros %}
 
-    {{ macros.outputSection('<' ~ headerType ~ ' class="govuk-heading-s">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
+    {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
 
 {% endmacro %}
