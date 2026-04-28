@@ -10,7 +10,7 @@
     "build:fonts": "mkdir -p public/assets/fonts && cp node_modules/govuk-frontend/dist/govuk/assets/fonts/* public/assets/fonts"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^8.0.0",
+    "@ministryofjustice/frontend": "^9.0.0",
     "esbuild": "^0.28.0",
     "govuk-frontend": "^5.14.0",
     "moment": "^2.30.1",
