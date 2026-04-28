@@ -8,7 +8,7 @@
 
 <li id="replacement-attorney-section" class="section current" data-cy="section-current">
 
-    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
@@ -20,7 +20,7 @@
                 <div class="alert" role="alert">
                     <i class="icon icon-important-small" role="presentation"></i>
                     <div class="alert-message">
-                        <h2 class="govuk-heading-s flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
+                        <h2 class="heading-small flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
                         <p>If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
                         <p>If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
                         <ul class="list list-bullet">
@@ -38,7 +38,7 @@
                 <div class="alert" role="alert">
                     <i class="icon icon-information" role="presentation"></i>
                     <div class="alert-message">
-                        <h2 class="govuk-heading-s flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
+                        <h2 class="heading-small flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
                         <p>This means that if an original attorney dies or can no longer act:</p>
                         <ul class="list list-bullet">
                             <li>
@@ -61,7 +61,7 @@
     </div>
 
     {% if (attorneys) %}
-        <h2 class="govuk-heading-m flush--top">
+        <h2 class="heading-medium flush--top">
             The replacement attorney{% if attorneys|length > 1 %}s{% endif %}
         </h2>
         <ul>
@@ -71,7 +71,7 @@
         </ul>
     {% endif %}
 
-    <div class="{% if (attorneys) %}action-item{% endif %} govuk-form-group">
+    <div class="{% if (attorneys) %}action-item{% endif %} form-group">
         <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" data-cy="add-replacement-attorney">
             {% if (attorneys) %}
                 Add another replacement attorney?
@@ -85,7 +85,7 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
     {{ form().closeTag|raw }}

@@ -13,7 +13,7 @@
     {{ formHidden(form.get('email_confirm')) }}
 
     <div class="text">
-        <p class="govuk-body-l">We've sent a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
+        <p class="lede">We've sent a link to <span class="bold-medium">{{ email }}</span> that you need to click to verify your email address and activate your account.</p>
         <p>Use this link within 24 hours or you'll have to enter your details again.</p>
         <p>The email should arrive in a few minutes. If it doesn’t, please check your spam, bulk or junk email folder &ndash; your email system may have blocked it by mistake. If you cannot find the email, we can <input type="submit" class="button-input-to-link" value="resend the activation email">.</p>
         <p>If you've already activated your account, you can <a href="{{ url('login') }}">sign in now</a>.</p>

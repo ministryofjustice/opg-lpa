@@ -206,32 +206,29 @@
                   }
                 }
 
-                const $duplicationAlert = $(
-                  tplAlert({
-                    elementJSref: 'js-duplication-alert',
-                    alertType: 'important-small',
-                    alertMessage:
-                      '<p>' +
-                      alertStart +
-                      duplicateName.firstname +
-                      ' ' +
-                      duplicateName.lastname +
-                      '. ' +
-                      alertMiddle +
-                      '. By saving this section, you are confirming that these are ' +
-                      '2 different people with the same name.</p>',
-                  }),
-                );
-
                 $('label[for="name-last"]', $form)
-                  .parents('.govuk-form-group')
-                  .after($duplicationAlert);
+                  .parents('.form-group')
+                  .after(
+                    $(
+                      tplAlert({
+                        elementJSref: 'js-duplication-alert',
+                        alertType: 'important-small',
+                        alertMessage:
+                          '<p>' +
+                          alertStart +
+                          duplicateName.firstname +
+                          ' ' +
+                          duplicateName.lastname +
+                          '. ' +
+                          alertMiddle +
+                          '. By saving this section, you are confirming that these are ' +
+                          '2 different people with the same name.</p>',
+                      }),
+                    ),
+                  );
 
-                const $alertPanel = $duplicationAlert.find('.alert.panel');
-                $alertPanel.trigger('focus');
-                if ($alertPanel.length && typeof $alertPanel[0].scrollIntoView === 'function') {
-                  $alertPanel[0].scrollIntoView({ block: 'center', behavior: 'auto' });
-                }
+                // Focus on alert panel for accessibility
+                $('.alert.panel').trigger('focus');
               }
             }
 
@@ -245,8 +242,6 @@
 
               dob = getDOB();
               if (dob !== null) {
-                let $ageCheckAlert = null;
-
                 // Display alerts if under 18 or over 100 years old
                 // Under 18 and earlier than today.
                 // A server side validation check is in place for dob greater than today.
@@ -268,21 +263,22 @@
                     ageWarningAlertMiddle = 'they';
                   }
 
-                  $ageCheckAlert = $(
-                    tplAlert({
-                      elementJSref: 'js-age-check',
-                      alertType: 'important-small',
-                      alertMessage:
-                        ageWarningAlertStart +
-                        ' I understand that the ' +
-                        actorType +
-                        ' must be at least 18 <strong class="bold-small">on the date ' +
-                        ageWarningAlertMiddle +
-                        ' signs the LPA</strong>, ' +
-                        'otherwise the LPA will be rejected.',
-                    }),
+                  $('.dob-element', $form).after(
+                    $(
+                      tplAlert({
+                        elementJSref: 'js-age-check',
+                        alertType: 'important-small',
+                        alertMessage:
+                          ageWarningAlertStart +
+                          ' I understand that the ' +
+                          actorType +
+                          ' must be at least 18 <strong class="bold-small">on the date ' +
+                          ageWarningAlertMiddle +
+                          ' signs the LPA</strong>, ' +
+                          'otherwise the LPA will be rejected.',
+                      }),
+                    ),
                   );
-                  $('.dob-element', $form).after($ageCheckAlert);
                 } else if (dob <= maxAge) {
                   if (
                     $.inArray(actorType, ['attorney', 'replacement attorney']) >
@@ -294,26 +290,22 @@
                   }
 
                   // Over 100
-                  $ageCheckAlert = $(
-                    tplAlert({
-                      elementJSref: 'js-age-check',
-                      alertType: 'important-small',
-                      alertMessage:
-                        'By saving this section, you confirm that ' +
-                        ageWarningAlertMiddle +
-                        ' is more than 100 years old. If not, please change the date.',
-                    }),
+                  $('.dob-element', $form).after(
+                    $(
+                      tplAlert({
+                        elementJSref: 'js-age-check',
+                        alertType: 'important-small',
+                        alertMessage:
+                          'By saving this section, you confirm that ' +
+                          ageWarningAlertMiddle +
+                          ' is more than 100 years old. If not, please change the date.',
+                      }),
+                    ),
                   );
-                  $('.dob-element', $form).after($ageCheckAlert);
                 }
 
-                if ($ageCheckAlert) {
-                  const $alertPanel = $ageCheckAlert.find('.alert.panel');
-                  $alertPanel.trigger('focus');
-                  if ($alertPanel.length && typeof $alertPanel[0].scrollIntoView === 'function') {
-                    $alertPanel[0].scrollIntoView({ block: 'center', behavior: 'auto' });
-                  }
-                }
+                // Focus on alert panel for accessibility
+                $('.alert.panel').trigger('focus');
               }
             }
           }

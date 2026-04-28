@@ -38,7 +38,7 @@
 {% endif %}
 
 <li id="who-are-you-section" class="section current" data-cy="section-current">
-    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     {% if not form %}
         <div class="accordion-info">
@@ -48,7 +48,7 @@
                 <p>Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
             </div>
         </div>
-        <div class="govuk-form-group">
+        <div class="form-group">
             <a href="{{ nextUrl }}" role="button" class="button" data-cy="continue">{{ (final_check_accessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
         </div>
     {% else %}
@@ -68,7 +68,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="visually-hidden">Who was using the LPA service</legend>
 
@@ -149,7 +149,7 @@
 
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden panel panel-border-narrow"
                          id="other-input">
-                        <label class="govuk-label" for="{{ other.getAttribute('id') }}">
+                        <label class="form-label" for="{{ other.getAttribute('id') }}">
                             {{ other.getOption('label') }}
                         </label>
                         {{ formElementErrorsV2(other) }}
@@ -166,7 +166,7 @@
                 </div>
             </fieldset>
         </div>
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

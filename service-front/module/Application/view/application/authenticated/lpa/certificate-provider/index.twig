@@ -6,7 +6,7 @@
 
 <li id="certificate-provider-section" class="section current" data-cy="section-current">
 
-    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
 
@@ -46,13 +46,13 @@
                 </strong>
             </div>
 
-            <div class="govuk-form-group">
+            <div class="form-group">
                 <details role="group">
                     <summary role="button" data-analytics-click="page:link.reveal:help: Rules on who can and cannot be the certificate provider">
                         <span class="summary">Rules on who can and cannot be the certificate provider</span>
                     </summary>
                     <div class="panel">
-                        <h2 class="govuk-heading-m">Who can be a certificate provider</h2>
+                        <h2 class="heading-medium">Who can be a certificate provider</h2>
 
                         <p>The certificate provider must be either:</p>
 
@@ -68,7 +68,7 @@
                             <li>be able to make their own decisions (have ‘mental capacity’)</li>
                         </ul>
 
-                        <h2 class="govuk-heading-m">Who cannot be a certificate provider</h2>
+                        <h2 class="heading-medium">Who cannot be a certificate provider</h2>
 
                         <p>It’s important that the certificate provider is someone independent.</p>
 
@@ -100,10 +100,10 @@
 
     {% if (lpa.document.certificateProvider) %}
 
-        <h2 class="govuk-heading-m flush--top">The certificate provider</h2>
+        <h2 class="heading-medium flush--top">The certificate provider</h2>
 
         <div class="person">
-            <h3 class="person-name govuk-heading-s flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
+            <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
             <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
@@ -115,7 +115,7 @@
             </ul>
         </div>
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
@@ -126,7 +126,7 @@
         {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
             <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
         </div>

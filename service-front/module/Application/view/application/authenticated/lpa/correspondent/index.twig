@@ -103,7 +103,7 @@
 
 <li id="correspondent-section" class="section current" data-cy="section-current">
 
-    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
 
@@ -117,10 +117,10 @@
         </div>
     </div>
 
-    <h2 class="govuk-heading-m flush--top">The correspondent</h2>
+    <h2 class="heading-medium flush--top">The correspondent</h2>
 
     <div class="person">
-        <h3 class="person-name govuk-heading-s flush--ends">{{ correspondentName }}</h3>
+        <h3 class="person-name heading-small flush--ends">{{ correspondentName }}</h3>
         <p class="person-address flush--ends">{{ correspondentAddress }}</p>
         <ul class="person-actions">
             {% if allowEditButton %}
@@ -142,11 +142,11 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ topLevelError ? 'govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ topLevelError ? 'form-group-error'}}">
 
             <fieldset class="govuk-fieldset" id="{{ correspondence.getAttribute('name') }}">
                 <legend class="visually-hidden">Contact options</legend>
-                <h3 class="govuk-heading-m flush--top">How would the person above prefer to be contacted?</h3>
+                <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
 
                 <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
@@ -205,8 +205,8 @@
             </fieldset>
         </div>
 
-        <div class="govuk-form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-        <h3 class="govuk-heading-m flush--top">Which language should we use in written correspondence?</h3>
+        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
+        <h3 class="heading-medium flush--top">Which language should we use in written correspondence?</h3>
 
             <fieldset class="inline">
                 <legend class="visually-hidden">Language options</legend>
@@ -217,7 +217,7 @@
             </fieldset>
         </div>
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

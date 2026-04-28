@@ -59,35 +59,35 @@
             <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
         </div>
 
-        <div class="govuk-form-group {{ rating.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <label class="govuk-heading-m flush--top text" for="{{ rating.getAttribute('id') }}">
+        <div class="form-group {{ rating.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ rating.getAttribute('id') }}">
                 How would you rate your experience with this service?
             </label>
             {{ formElementErrorsV2(rating) }}
             {{ formRadio(rating) }}
         </div>
 
-        <div class="govuk-form-group {{ details.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <label class="govuk-heading-m flush--top text" for="{{ details.getAttribute('id') }}">
+        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ details.getAttribute('id') }}">
                 Please take a moment to tell us about your experience, what worked and what did not.
             </label>
             {{ formElementErrorsV2(details) }}
-            <span class="govuk-hint">2000 characters max</span>
+            <span class="form-hint">2000 characters max</span>
             {{ formElement(details) }}
         </div>
 
-        <p class="govuk-heading-m">If you’re happy to take part in research about this service, please leave your preferred contact details.</p>
+        <p class="heading-medium">If you’re happy to take part in research about this service, please leave your preferred contact details.</p>
 
-        <div class="govuk-form-group {{ email.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <label class="govuk-heading-m flush--top text" for="{{ email.getAttribute('id') }}">
+        <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ email.getAttribute('id') }}">
                 Your email address
             </label>
             {{ formElementErrorsV2(email) }}
             {{ formElement(email) }}
         </div>
 
-        <div class="govuk-form-group {{ phone.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <label class="govuk-heading-m flush--top text" for="{{ phone.getAttribute('id') }}">
+        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
+            <label class="heading-medium flush--top text" for="{{ phone.getAttribute('id') }}">
                 Your phone number
             </label>
             {{ formElementErrorsV2(phone) }}

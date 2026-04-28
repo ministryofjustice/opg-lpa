@@ -68,11 +68,19 @@
         }
     }
 
-    // NOTE: legacy floating-label layout (`.form-label { float: left; width: 150px; }`
-    // and matching `margin-left: 150px` on siblings) was removed as part of the
-    // GOV.UK Frontend v5 migration. Forms inside the popup now use the standard
-    // vertical `govuk-form-group` / `govuk-label` stacking, so no extra offsets
-    // are needed. See docs/govuk-frontend-migration-plan.md.
+    .form-label {
+        @include media(tablet) {
+            width: 150px;
+            margin-top: 6px;
+            float: left;
+        }
+    }
+
+    .form-control {
+        @include media(tablet) {
+            width: 420px;
+        }
+    }
 
     .postcode-input {
         @include media(tablet) {
@@ -80,6 +88,24 @@
         }
     }
 
+    .summary,
+    .summary-text,
+    .address-type-toggle,
+    .block-label,
+    .button,
+    .alert,
+    .single-checkbox-group {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+    }
+
+    .postcode-button,
+    .button-secondary {
+        @include media(tablet) {
+            margin-left: 0;
+        }
+    }
 
     .form-date {
         .form-group {
@@ -100,7 +126,7 @@
             @include media(tablet) {
                 position: absolute;
                 top: 10px;
-                right: 10px;
+                right: 182px;
             }
         }
     }
@@ -158,6 +184,9 @@
     .error-message {
         @include media(tablet) {
             position: relative;
+            top: 13px;
+            left: 150px;
+            width: 80%;
             padding-bottom: 15px;
         }
     }
@@ -188,6 +217,10 @@
 
     .use-details-link-panel {
         padding: 15px;
+
+        @include media($min-width: 641px) {
+            padding-left: 165px;
+        }
     }
 }
 
