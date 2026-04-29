@@ -219,7 +219,7 @@ class DonorAddHandlerTest extends TestCase
     public function testPostUseMyDetailsPrefillsFormAndRenders(): void
     {
         $handler = $this->createHandlerWithReuseDetails([
-            ['label' => 'Unit Test (myself)', 'data' => $this->postData],
+            ['label' => 'Me', 'data' => $this->postData],
         ]);
         $this->urlHelper->method('generate')->willReturn('/url');
         $this->form->expects($this->once())->method('setData')->with($this->postData);
