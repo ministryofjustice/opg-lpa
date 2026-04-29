@@ -15,7 +15,7 @@ charset-normalizer==3.4.7
     # via requests
 colorama==0.4.6
     # via awscli
-docutils==0.22.4
+docutils==0.19
     # via awscli
 idna==3.12
     # via requests
