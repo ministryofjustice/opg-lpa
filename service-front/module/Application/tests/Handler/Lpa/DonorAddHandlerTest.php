@@ -128,13 +128,27 @@ class DonorAddHandlerTest extends TestCase
         );
     }
 
-    public function testGetWithOneReuseOptionShowsUseMyDetailsLink(): void
+    public function testGetWithOneSessionUserReuseOptionShowsUseMyDetailsLink(): void
     {
         $handler = $this->createHandlerWithReuseDetails([['label' => 'Me', 'data' => []]]);
         $this->urlHelper->method('generate')->willReturn('/url');
         $this->renderer->expects($this->once())->method('render')
             ->with('application/authenticated/lpa/donor/form.twig', $this->callback(
                 fn(array $vars) => $vars['displayReuseSessionUserLink'] === true
+            ))
+            ->willReturn('html');
+
+        $response = $handler->handle($this->createRequest());
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testGetWithOneNonSessionReuseOptionDoesNotShowUseMyDetailsLink(): void
+    {
+        $handler = $this->createHandlerWithReuseDetails([['label' => 'Other Person', 'data' => []]]);
+        $this->urlHelper->method('generate')->willReturn('/url');
+        $this->renderer->expects($this->once())->method('render')
+            ->with('application/authenticated/lpa/donor/form.twig', $this->callback(
+                fn(array $vars) => $vars['displayReuseSessionUserLink'] === false
             ))
             ->willReturn('html');
 
@@ -199,6 +213,20 @@ class DonorAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/url');
         $this->renderer->expects($this->once())->method('render')->willReturn('html');
         $response = $this->handler->handle($this->createRequest('POST', $this->postData));
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testPostUseMyDetailsPrefillsFormAndRenders(): void
+    {
+        $handler = $this->createHandlerWithReuseDetails([
+            ['label' => 'Unit Test (myself)', 'data' => $this->postData],
+        ]);
+        $this->urlHelper->method('generate')->willReturn('/url');
+        $this->form->expects($this->once())->method('setData')->with($this->postData);
+        $this->renderer->expects($this->once())->method('render')->willReturn('html');
+
+        $response = $handler->handle($this->createRequest('POST', ['reuse-details' => '0']));
+
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
