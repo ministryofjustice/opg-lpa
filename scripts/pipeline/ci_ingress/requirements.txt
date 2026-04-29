@@ -2,9 +2,9 @@
 #    uv pip compile requirements.in -o requirements.txt
 argparse==1.4.0
     # via -r requirements.in
-boto3==1.42.85
+boto3==1.42.93
     # via -r requirements.in
-botocore==1.42.85
+botocore==1.42.93
     # via
     #   -r requirements.in
     #   boto3
