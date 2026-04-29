@@ -55,6 +55,7 @@ class DonorAddHandler implements RequestHandlerInterface
 
         // On GET requests only, check whether reuse details are available
         $displayReuseSessionUserLink = false;
+        $actorDetailsToReuse = null;
         if (strtoupper($request->getMethod()) !== RequestMethodInterface::METHOD_POST) {
             $queryParams = $request->getQueryParams();
             $reuseDetailsIndex = $queryParams['reuseDetailsIndex'] ?? null;
@@ -64,7 +65,7 @@ class DonorAddHandler implements RequestHandlerInterface
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
                 $reuseCount = count($reuseDetails);
 
-                if ($reuseCount === 1) {
+                if ($reuseCount === 1 && $this->isCurrentUserReuseDetails($reuseDetails[0])) {
                     // Only the session user is available — show the "Use my details" link
                     $displayReuseSessionUserLink = true;
                 } elseif ($reuseCount > 1) {
@@ -117,6 +118,34 @@ class DonorAddHandler implements RequestHandlerInterface
                 $postData = [];
             }
 
+            // Handle the single-option "Use my details" POST.
+            if (($postData['reuse-details'] ?? null) === '0') {
+                $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
+                if (count($reuseDetails) === 1 && $this->isCurrentUserReuseDetails($reuseDetails[0])) {
+                    $form->setData($reuseDetails[0]['data']);
+
+                    $templateParams = [
+                        'form'      => $form,
+                        'cancelUrl' => $this->urlHelper->generate('lpa/donor', ['lpa-id' => $lpa->id]),
+                        'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+                    ];
+
+                    if ($isPopup) {
+                        $templateParams['isPopup'] = true;
+                    }
+
+                    $html = $this->renderer->render(
+                        'application/authenticated/lpa/donor/form.twig',
+                        array_merge(
+                            $this->getTemplateVariables($request),
+                            $templateParams
+                        )
+                    );
+
+                    return new HtmlResponse($html);
+                }
+            }
+
             $form->setData($postData);
 
             if ($form->isValid()) {
@@ -165,5 +194,10 @@ class DonorAddHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
+    }
+
+    private function isCurrentUserReuseDetails(array $reuseDetails): bool
+    {
+        return str_ends_with((string) ($reuseDetails['label'] ?? ''), '(myself)');
     }
 }
