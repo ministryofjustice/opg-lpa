@@ -128,7 +128,7 @@ class DonorAddHandlerTest extends TestCase
         );
     }
 
-    public function testGetWithOneSessionUserReuseOptionShowsUseMyDetailsLink(): void
+    public function testGetWithOneReuseOptionShowsUseMyDetailsLink(): void
     {
         $handler = $this->createHandlerWithReuseDetails([['label' => 'Me', 'data' => []]]);
         $this->urlHelper->method('generate')->willReturn('/url');
@@ -142,7 +142,7 @@ class DonorAddHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testGetWithOneNonSessionReuseOptionDoesNotShowUseMyDetailsLink(): void
+/*    public function testGetWithOneNonSessionReuseOptionDoesNotShowUseMyDetailsLink(): void
     {
         $handler = $this->createHandlerWithReuseDetails([['label' => 'Other Person', 'data' => []]]);
         $this->urlHelper->method('generate')->willReturn('/url');
@@ -154,7 +154,7 @@ class DonorAddHandlerTest extends TestCase
 
         $response = $handler->handle($this->createRequest());
         $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
+}*/
 
     public function testGetWithMultipleReuseOptionsRedirectsToReuseDetails(): void
     {

@@ -65,8 +65,7 @@ class DonorAddHandler implements RequestHandlerInterface
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
                 $reuseCount = count($reuseDetails);
 
-                if ($reuseCount === 1 && $this->isCurrentUserReuseDetails($reuseDetails[0])) {
-                    // Only the session user is available — show the "Use my details" link
+                if ($reuseCount === 1) {
                     $displayReuseSessionUserLink = true;
                 } elseif ($reuseCount > 1) {
                     // Multiple options — redirect to the reuse-details selection screen
@@ -121,7 +120,7 @@ class DonorAddHandler implements RequestHandlerInterface
             // Handle the single-option "Use my details" POST.
             if (($postData['reuse-details'] ?? null) === '0') {
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
-                if (count($reuseDetails) === 1 && $this->isCurrentUserReuseDetails($reuseDetails[0])) {
+                if (count($reuseDetails) === 1 {
                     $form->setData($reuseDetails[0]['data']);
 
                     $templateParams = [
@@ -194,10 +193,5 @@ class DonorAddHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
-    }
-
-    private function isCurrentUserReuseDetails(array $reuseDetails): bool
-    {
-        return str_ends_with((string) ($reuseDetails['label'] ?? ''), '(myself)');
     }
 }
