@@ -64,8 +64,8 @@ class DonorAddHandler implements RequestHandlerInterface
             if ($reuseDetailsIndex === null) {
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
                 $reuseCount = count($reuseDetails);
-
                 if ($reuseCount === 1) {
+                    // Only the session user is available — show the "Use my details" link
                     $displayReuseSessionUserLink = true;
                 } elseif ($reuseCount > 1) {
                     // Multiple options — redirect to the reuse-details selection screen
@@ -120,7 +120,7 @@ class DonorAddHandler implements RequestHandlerInterface
             // Handle the single-option "Use my details" POST.
             if (($postData['reuse-details'] ?? null) === '0') {
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
-                if (count($reuseDetails) === 1 {
+                if (count($reuseDetails) === 1) {
                     $form->setData($reuseDetails[0]['data']);
 
                     $templateParams = [
