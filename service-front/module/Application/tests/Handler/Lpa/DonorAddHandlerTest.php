@@ -142,20 +142,6 @@ class DonorAddHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-/*    public function testGetWithOneNonSessionReuseOptionDoesNotShowUseMyDetailsLink(): void
-    {
-        $handler = $this->createHandlerWithReuseDetails([['label' => 'Other Person', 'data' => []]]);
-        $this->urlHelper->method('generate')->willReturn('/url');
-        $this->renderer->expects($this->once())->method('render')
-            ->with('application/authenticated/lpa/donor/form.twig', $this->callback(
-                fn(array $vars) => $vars['displayReuseSessionUserLink'] === false
-            ))
-            ->willReturn('html');
-
-        $response = $handler->handle($this->createRequest());
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-}*/
-
     public function testGetWithMultipleReuseOptionsRedirectsToReuseDetails(): void
     {
         $handler = $this->createHandlerWithReuseDetails([
