@@ -55,6 +55,7 @@ class DonorAddHandler implements RequestHandlerInterface
 
         // On GET requests only, check whether reuse details are available
         $displayReuseSessionUserLink = false;
+        $actorDetailsToReuse = null;
         if (strtoupper($request->getMethod()) !== RequestMethodInterface::METHOD_POST) {
             $queryParams = $request->getQueryParams();
             $reuseDetailsIndex = $queryParams['reuseDetailsIndex'] ?? null;
@@ -63,7 +64,6 @@ class DonorAddHandler implements RequestHandlerInterface
             if ($reuseDetailsIndex === null) {
                 $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
                 $reuseCount = count($reuseDetails);
-
                 if ($reuseCount === 1) {
                     // Only the session user is available — show the "Use my details" link
                     $displayReuseSessionUserLink = true;
@@ -115,6 +115,34 @@ class DonorAddHandler implements RequestHandlerInterface
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
                 $postData = [];
+            }
+
+            // Handle the single-option "Use my details" POST.
+            if (($postData['reuse-details'] ?? null) === '0') {
+                $reuseDetails = $this->actorReuseDetailsService->getActorReuseDetails($user, $lpa);
+                if (count($reuseDetails) === 1) {
+                    $form->setData($reuseDetails[0]['data']);
+
+                    $templateParams = [
+                        'form'      => $form,
+                        'cancelUrl' => $this->urlHelper->generate('lpa/donor', ['lpa-id' => $lpa->id]),
+                        'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+                    ];
+
+                    if ($isPopup) {
+                        $templateParams['isPopup'] = true;
+                    }
+
+                    $html = $this->renderer->render(
+                        'application/authenticated/lpa/donor/form.twig',
+                        array_merge(
+                            $this->getTemplateVariables($request),
+                            $templateParams
+                        )
+                    );
+
+                    return new HtmlResponse($html);
+                }
             }
 
             $form->setData($postData);
