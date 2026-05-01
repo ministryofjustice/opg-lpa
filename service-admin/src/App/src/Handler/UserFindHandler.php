@@ -116,6 +116,17 @@ class UserFindHandler extends AbstractHandler
                 // so remove the one retrieved for the purposes of determining
                 // if there are more results to come
                 $users = array_slice($result, 0, $limit);
+
+                $this->auditLog(
+                    $request,
+                    'admin.user.find',
+                    'Admin searched users',
+                    [
+                        'query' => $query,
+                        'offset' => $offset,
+                        'results_count' => count($users),
+                    ],
+                );
             }
         }
 

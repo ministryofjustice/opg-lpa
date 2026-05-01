@@ -18,6 +18,12 @@ class SignOutHandler extends AbstractHandler
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $this->auditLog(
+            $request,
+            'admin.auth.sign_out',
+            'Admin signed out',
+        );
+
         $this->clearTokenData();
 
         return $this->redirectToRoute('sign.in');

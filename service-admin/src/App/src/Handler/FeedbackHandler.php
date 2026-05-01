@@ -75,6 +75,17 @@ class FeedbackHandler extends AbstractHandler
                     $queryParams = $request->getQueryParams();
                     $isExport = (array_key_exists('export', $queryParams) && $queryParams['export'] === 'true');
 
+                    $this->auditLog(
+                        $request,
+                        $isExport ? 'admin.feedback.export' : 'admin.feedback.search',
+                        $isExport ? 'Admin exported feedback' : 'Admin searched feedback',
+                        [
+                            'start_date' => $startDate->format('Y-m-d'),
+                            'end_date' => $endDate->format('Y-m-d'),
+                            'results_count' => count($result['results']),
+                        ],
+                    );
+
                     if ($isExport) {
                         // note that this terminates script processing with exit()
                         $this->exportToCsv($feedback);

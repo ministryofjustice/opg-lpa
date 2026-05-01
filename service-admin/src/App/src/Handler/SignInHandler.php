@@ -107,15 +107,33 @@ class SignInHandler extends AbstractHandler
                                     ])
                             );
                         } else {
+                            $this->getLogger()->info('Admin signed in', [
+                                'event' => 'admin.auth.sign_in',
+                                'admin_id' => $identity->getUserId(),
+                                'admin_email' => $email,
+                            ]);
+
                             return $this->redirectToRoute('home');
                         }
                     }
+
+                    $this->getLogger()->warning('Admin sign-in failed', [
+                        'event' => 'admin.auth.sign_in_failed',
+                        'admin_email' => $email,
+                        'reason' => $result->getCode() === Result::FAILURE_ACCOUNT_LOCKED
+                            ? 'account-locked' : 'bad-credentials',
+                    ]);
 
                     $form->setAuthError(
                         $result->getCode() === Result::FAILURE_ACCOUNT_LOCKED ?
                             'account-locked' : 'authentication-error'
                     );
                 } else {
+                    $this->getLogger()->warning('Non-admin sign-in attempt', [
+                        'event' => 'admin.auth.unauthorised_attempt',
+                        'email' => $email,
+                    ]);
+
                     $form->setAuthError('authorization-error');
                 }
             }
