@@ -58,7 +58,7 @@ class SystemMessageHandler extends AbstractHandler
                 $confirmMessage = 'System message removed';
 
                 $this->auditLog(
-                    $request,
+                    $request->getAttribute('user')->id,
                     'admin.system_message.removed',
                     'Admin removed system message',
                 );
@@ -67,7 +67,7 @@ class SystemMessageHandler extends AbstractHandler
                 $confirmMessage = 'System message set';
 
                 $this->auditLog(
-                    $request,
+                    $request->getAttribute('user')->id,
                     'admin.system_message.set',
                     'Admin set system message',
                     ['message_content' => $newMessage],

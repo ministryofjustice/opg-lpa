@@ -19,7 +19,7 @@ class SignOutHandler extends AbstractHandler
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->auditLog(
-            $request,
+            $request->getAttribute('user')->id,
             'admin.auth.sign_out',
             'Admin signed out',
         );

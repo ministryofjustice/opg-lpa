@@ -58,6 +58,7 @@ class UserSearchHandlerTest extends TestCase
     public function testSubmitsSearch()
     {
         $user = new User(['name' => new Name(['first' => 'David'])]);
+        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserSearch::class);
 
         $this->mockUserService->expects($this->once())
@@ -75,7 +76,8 @@ class UserSearchHandlerTest extends TestCase
 
         $request = new ServerRequest()
             ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'user@example.com', 'secret' => $secret]);
+            ->withParsedBody(['email' => 'user@example.com', 'secret' => $secret])
+            ->withAttribute('user', $adminUser);
 
         $this->handler->handle($request);
     }
@@ -103,7 +105,7 @@ class UserSearchHandlerTest extends TestCase
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.search'
                     && $context['admin_id'] === 'admin-id'
-                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_email', $context)
                     && $context['searched_for'] === 'user@example.com')
             );
 

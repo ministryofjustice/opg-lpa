@@ -55,6 +55,7 @@ class UserFindHandlerTest extends TestCase
     public function testSubmitsSearch()
     {
         $user = new User(['name' => new Name(['first' => 'David'])]);
+        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserFind::class);
 
         $request = new ServerRequest()
@@ -63,7 +64,8 @@ class UserFindHandlerTest extends TestCase
                 'query' => 'test',
                 'offset' => '0',
                 'secret' => $secret,
-            ]);
+            ])
+            ->withAttribute('user', $adminUser);
 
         $this->mockUserService->expects($this->once())
             ->method('match')
@@ -103,7 +105,7 @@ class UserFindHandlerTest extends TestCase
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.find'
                     && $context['admin_id'] === 'admin-id'
-                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_email', $context)
                     && $context['query'] === 'test'
                     && $context['results_count'] === 1)
             );

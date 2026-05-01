@@ -86,10 +86,12 @@ class UserLpasHandlerTest extends TestCase
             ['uId' => 'M-1234-5678-9012', 'donor' => 'John Doe'],
             ['uId' => 'M-9876-5432-1098', 'donor' => 'Jane Smith'],
         ];
+        $adminUser = new User(['id' => 'admin-id']);
 
         $request = new ServerRequest()
             ->withMethod(RequestMethodInterface::METHOD_GET)
             ->withAttribute('id', '123')
+            ->withAttribute('user', $adminUser)
             ->withQueryParams(['email' => 'user@example.com']);
 
         $this->mockUserService->expects($this->once())
@@ -130,9 +132,9 @@ class UserLpasHandlerTest extends TestCase
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.lpas.view'
                     && $context['admin_id'] === 'admin-id'
-                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_email', $context)
+                    && !array_key_exists('viewed_user_email', $context)
                     && $context['viewed_user'] === '123'
-                    && $context['viewed_user_email'] === 'user@example.com'
                     && $context['lpa_count'] === 1)
             );
 
