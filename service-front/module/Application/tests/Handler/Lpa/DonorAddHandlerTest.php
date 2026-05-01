@@ -202,6 +202,20 @@ class DonorAddHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    public function testPostUseMyDetailsPrefillsFormAndRenders(): void
+    {
+        $handler = $this->createHandlerWithReuseDetails([
+            ['label' => 'Me', 'data' => $this->postData],
+        ]);
+        $this->urlHelper->method('generate')->willReturn('/url');
+        $this->form->expects($this->once())->method('setData')->with($this->postData);
+        $this->renderer->expects($this->once())->method('render')->willReturn('html');
+
+        $response = $handler->handle($this->createRequest('POST', ['reuse-details' => '0']));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
     public function testPostValidApiFailureThrowsException(): void
     {
         $this->form->method('isValid')->willReturn(true);
