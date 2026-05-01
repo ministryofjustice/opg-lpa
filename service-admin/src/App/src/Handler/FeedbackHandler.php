@@ -76,7 +76,7 @@ class FeedbackHandler extends AbstractHandler
                     $isExport = (array_key_exists('export', $queryParams) && $queryParams['export'] === 'true');
 
                     $this->auditLog(
-                        $request,
+                        $request->getAttribute('user')->id,
                         $isExport ? 'admin.feedback.export' : 'admin.feedback.search',
                         $isExport ? 'Admin exported feedback' : 'Admin searched feedback',
                         [
