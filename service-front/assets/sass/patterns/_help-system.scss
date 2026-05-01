@@ -1,6 +1,12 @@
 // =======================================================
 // LPA GUIDANCE HELP SYSTEM
 
+.help-system {
+    font-family: "GDS Transport", arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
 .help-header {
     display: none;
     position: relative;
