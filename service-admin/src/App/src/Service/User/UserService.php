@@ -106,7 +106,7 @@ class UserService implements LoggerAwareInterface
         return $this->search($userData['email']['address']);
     }
 
-    public function userLpas(string $userId): array|bool
+    public function userLpas(string $userId): array|false
     {
         try {
             $lpaData = $this->client->httpGet(sprintf('/v2/user/%s/applications', $userId), [
@@ -114,17 +114,15 @@ class UserService implements LoggerAwareInterface
                 'perPage' => 20,
             ]);
 
-            if (is_array($lpaData) && array_key_exists('applications', $lpaData)) {
-                $lpas = $lpaData['applications'];
-            } else {
-                return false;
+            if (is_array($lpaData) && array_key_exists('applications', $lpaData) && is_array($lpaData['applications'])) {
+                return $lpaData['applications'];
             }
+
+            return false;
         } catch (Exception $e) {
             $this->getLogger()->error($e->getMessage());
             return false;
         }
-
-        return $lpas;
     }
 
     public function match(array $params): array

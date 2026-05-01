@@ -62,7 +62,7 @@ class FeedbackHandler extends AbstractHandler
 
                 $result = $this->feedbackService->search($startDate, $endDate);
 
-                if ($result === false) {
+                if (!is_array($result)) {
                     // Set a general error message
                     $form->setMessages([[
                         'There was a problem retrieving the feedback',
