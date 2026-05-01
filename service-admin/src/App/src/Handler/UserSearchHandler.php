@@ -71,6 +71,13 @@ class UserSearchHandler extends AbstractHandler
                     $form->setMessages($messages);
                 } else {
                     $user = $result;
+
+                    $this->auditLog(
+                        $request,
+                        'admin.user.search',
+                        'Admin viewed user data',
+                        ['searched_for' => $input],
+                    );
                 }
             }
         }
