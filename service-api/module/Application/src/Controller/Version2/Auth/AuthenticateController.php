@@ -64,10 +64,8 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->info('Failed authentication attempt with a authToken', [
-                'authToken' => $authToken
-            ]);
-
+            // No log here — failed token auth is high-volume noise and we
+            // must never log the raw token (it's a secret).
             return new ApiProblem(401, $result);
         }
 
@@ -76,11 +74,7 @@ class AuthenticateController extends AbstractAuthController
             return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info('User successfully authenticated with a authToken', [
-            'tokenExtended' => $updateToken,
-            'userId'        => $result['userId'],
-            'expiresAt'     => $result['expiresAt'],
-        ]);
+        $this->getLogger()->info('User successfully authenticated with a authToken', $result);
 
         return new JsonModel($result);
     }
@@ -98,10 +92,8 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withPassword($username, $password, $updateToken);
 
         if (is_string($result)) {
-            $this->getLogger()->debug('Failed authentication attempt with a password', [
-                'username' => $username
-            ]);
-
+            // No log here — the auth service already logs failures with user_id.
+            // Username is PII and must not be logged.
             return new ApiProblem(401, $result);
         }
 
@@ -111,9 +103,8 @@ class AuthenticateController extends AbstractAuthController
         }, $result);
 
         $this->getLogger()->info('User successfully authenticated with a password', [
-            'userId'     => $result['userId'],
-            'last_login' => $result['last_login'],
-            'expiresAt'  => $result['expiresAt'],
+            'userId'    => $result['userId'],
+            'expiresAt' => $result['expiresAt'],
         ]);
 
         return new JsonModel($result);
