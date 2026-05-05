@@ -7,6 +7,8 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Pdfs\Service;
+use Laminas\Http\Request;
+use Laminas\Stdlib\ParametersInterface;
 use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
@@ -102,5 +104,34 @@ class PdfControllerTest extends AbstractControllerTestCase
 
         $controller = $this->getController();
         $controller->get(10);
+    }
+
+    public function testGetHandlesMissingTraceHeaders(): void
+    {
+        $this->service = Mockery::mock(Service::class);
+
+        $controller = new PdfController($this->authorizationService, $this->service);
+
+        $params = Mockery::mock(ParametersInterface::class);
+        $params->shouldReceive('toArray')->andReturn([]);
+
+        $request = Mockery::mock(Request::class);
+        $request->shouldReceive('getQuery')->andReturn($params);
+        $request->shouldReceive('getHeader')->with('X-Trace-Id')->andReturn(false);
+        $request->shouldReceive('getHeader')->with('X-Request-ID')->andReturn(false);
+
+        $controller->setEventManager($this->eventManager);
+        $controller->dispatch($request);
+        $this->callOnDispatch($controller);
+
+        $this->service->shouldReceive('fetch')
+            ->with('98765', 10, '')
+            ->andReturn(['key' => 'value'])
+            ->once();
+
+        $response = $controller->get(10);
+
+        $this->assertNotNull($response);
+        $this->assertInstanceOf(Json::class, $response);
     }
 }
