@@ -38,7 +38,7 @@
   // helper to return the scroll position of an element
   moj.Helpers.scrollTo = function (e) {
     const $target = e.target !== undefined ? $($(e.target).attr('href')) : $(e);
-    const $scrollEl = moj.Helpers.isPopupOpen() ? $('#mask') : $('html, body');
+    const $scrollEl = moj.Helpers.isPopupOpen() ? $('#popup') : $('html, body');
     const topPos = moj.Helpers.scrollPos($target);
 
     $scrollEl

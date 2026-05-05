@@ -35,8 +35,6 @@ window.SessionTimeoutDialog = function (options) {
     : 0;
 
   const continueButton = $('#session-timeout-continue');
-  const logoutButton = $('#session-timeout-logout');
-  const underlay = $('.session-timeout-underlay');
 
   // attach click event
   continueButton.on('click', function (e) {
@@ -45,24 +43,20 @@ window.SessionTimeoutDialog = function (options) {
   });
 
   this.showWarning = function () {
-    that.element.css('visibility', 'visible');
-    that.element.show();
-    underlay.css({
-      visibility: 'visible',
-      height: $(document).height() + 'px',
-    });
-    underlay.show();
-
-    // setTimeout() ensures that the navigation trap happens only after the
-    // previous show() functions are called
-    setTimeout(function () {
-      that.trapNavigation([continueButton[0], logoutButton[0]]);
-    }, 1);
+    that.element[0].showModal();
+    // Explicitly focus the heading after showModal() — autofocus is processed
+    // asynchronously and is unreliable in headless browsers. This ensures
+    // document.activeElement is set before any keyboard interaction.
+    const heading = that.element[0].querySelector('h1');
+    if (heading) {
+      heading.focus();
+    }
   };
 
   this.hideWarning = function () {
-    this.element.hide();
-    underlay.hide();
+    if (this.element[0].open) {
+      this.element[0].close();
+    }
   };
 
   // status: 200 means user is still logged in; 204 means they have timed out
@@ -137,44 +131,10 @@ window.SessionTimeoutDialog = function (options) {
     this.hideWarning();
 
     // Keep the session alive
-    $.get(this.keepSessionAliveUrl).complete(function () {
+    $.get(this.keepSessionAliveUrl).always(function () {
       // restart countdown
       that.checkSessionState();
     });
-
-    this.releaseNavigation();
-  };
-
-  this.trapNavigation = function (focusables) {
-    let currentElementIndex = 0;
-    focusables[currentElementIndex].focus();
-
-    const lastFocusableIndex = focusables.length - 1;
-
-    this.element.on('keydown', function (e) {
-      // capture only tab events on this dialog
-      if (e.key !== 'Tab' && e.keyCode !== 9) {
-        return true;
-      }
-      e.preventDefault();
-
-      const direction = e.shiftKey ? -1 : 1;
-
-      currentElementIndex = currentElementIndex + direction;
-
-      // cycle to start/end of list if out of bounds
-      if (currentElementIndex > lastFocusableIndex) {
-        currentElementIndex = 0;
-      } else if (currentElementIndex < 0) {
-        currentElementIndex = lastFocusableIndex;
-      }
-
-      focusables[currentElementIndex].focus();
-    });
-  };
-
-  this.releaseNavigation = function () {
-    this.element.off('keydown');
   };
 
   // Start countdown
