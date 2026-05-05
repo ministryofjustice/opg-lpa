@@ -51,6 +51,10 @@ class Service extends AbstractService
         }
 
         if (!$user->isActive()) {
+            $this->log('warning', 'Sign-in attempt against inactive account', [
+                'event' => 'auth.sign_in.inactive_account',
+                'user_id' => $user->id(),
+            ]);
             return 'account-not-active';
         }
 
@@ -60,6 +64,10 @@ class Service extends AbstractService
                 $user->lastFailedLoginAttemptAt() instanceof DateTime
                 && $user->lastFailedLoginAttemptAt() > new DateTime('-' . self::ACCOUNT_LOCK_TIME . " seconds")
             ) {
+                $this->log('warning', 'Sign-in attempt against locked account', [
+                    'event' => 'auth.sign_in.account_locked',
+                    'user_id' => $user->id(),
+                ]);
                 return 'account-locked/max-login-attempts';
             } else {
                 // Reset field failed login counter
@@ -73,8 +81,18 @@ class Service extends AbstractService
             $this->getUserRepository()->incrementFailedLoginCounter($user->id());
 
             if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
+                $this->log('warning', 'Account locked after consecutive failed sign-in attempts', [
+                    'event' => 'auth.account.locked',
+                    'user_id' => $user->id(),
+                    'failed_attempts' => $user->failedLoginAttempts() + 1,
+                ]);
                 return 'invalid-user-credentials/account-locked';
             } else {
+                $this->log('warning', 'Failed sign-in attempt', [
+                    'event' => 'auth.sign_in.failed',
+                    'user_id' => $user->id(),
+                    'failed_attempts' => $user->failedLoginAttempts() + 1,
+                ]);
                 return 'invalid-user-credentials';
             }
         }
@@ -92,6 +110,11 @@ class Service extends AbstractService
         if ($user->failedLoginAttempts() > 0) {
             $this->getUserRepository()->resetFailedLoginCounter($user->id());
         }
+
+        $this->log('info', 'User signed in', [
+            'event' => 'auth.sign_in.success',
+            'user_id' => $user->id(),
+        ]);
 
         $tokenDetails = [];
 

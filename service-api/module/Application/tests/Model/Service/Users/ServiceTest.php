@@ -171,6 +171,61 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertTrue($this->service->activate($token));
     }
 
+    public function testCreateAccountEmitsAuditLog()
+    {
+        $email = 'newuser@foo.org';
+        $password = 'Pass1234';
+
+        $this->authUserRepository->shouldReceive('getByUsername')
+            ->with($email)
+            ->andReturn(null);
+
+        $this->authUserRepository->shouldReceive('create')
+            ->andReturn(true);
+
+        $logger = Mockery::mock(\Psr\Log\LoggerInterface::class);
+        $logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'info'
+                    && $message === 'User account created'
+                    && $context['event'] === 'auth.account.created'
+                    && !empty($context['user_id'])
+                    && !array_key_exists('username', $context)
+                    && !array_key_exists('activation_token', $context)
+                    && !array_key_exists('password', $context);
+            });
+        $this->service->setLogger($logger);
+
+        $result = $this->service->create($email, $password);
+
+        $this->assertIsArray($result);
+        $this->assertNotEmpty($result['userId']);
+    }
+
+    public function testActivateAccountEmitsAuditLog()
+    {
+        $token = 'a-token';
+
+        $this->authUserRepository->shouldReceive('activate')
+            ->with($token)
+            ->andReturn(true);
+
+        $logger = Mockery::mock(\Psr\Log\LoggerInterface::class);
+        $logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'info'
+                    && $message === 'User account activated'
+                    && $context['event'] === 'auth.account.activated'
+                    && !array_key_exists('activation_token', $context)
+                    && !array_key_exists('token', $context);
+            });
+        $this->service->setLogger($logger);
+
+        $this->assertTrue($this->service->activate($token));
+    }
+
     public function testFetchDoesNotExist()
     {
         $user = FixturesData::getUser();

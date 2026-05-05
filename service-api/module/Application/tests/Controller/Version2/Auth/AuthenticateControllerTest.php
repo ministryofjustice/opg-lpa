@@ -78,10 +78,11 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('Failed authentication attempt with a authToken', [
-                'authToken' => 'abcde12345',
-            ]);
+        // No log call expected — failed token auth is high-volume noise and we
+        // must never log the raw token (it's a secret).
+        $this->logger->shouldNotReceive('info');
+        $this->logger->shouldNotReceive('warning');
+        $this->logger->shouldNotReceive('debug');
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
@@ -112,8 +113,13 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn($passwordReturnData)
             ->once();
 
+        // Controller logs userId + expiresAt only (no PII / no last_login).
         $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a password', $passwordReturnData);
+            ->once()
+            ->with('User successfully authenticated with a password', [
+                'userId'    => 'abcde12345',
+                'expiresAt' => 67890,
+            ]);
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
@@ -142,7 +148,11 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         $this->logger->shouldReceive('info')
-            ->with('User successfully authenticated with a password', $passwordReturnData);
+            ->once()
+            ->with('User successfully authenticated with a password', [
+                'userId'    => 'abcde12345',
+                'expiresAt' => 67890,
+            ]);
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
@@ -165,10 +175,11 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        $this->logger->shouldReceive('debug')
-            ->with('Failed authentication attempt with a password', [
-                'username' => 'Username',
-            ]);
+        // The controller no longer logs failed sign-in attempts (the username
+        // is PII and the auth service already logs failures with the user_id).
+        $this->logger->shouldNotReceive('info');
+        $this->logger->shouldNotReceive('warning');
+        $this->logger->shouldNotReceive('debug');
 
         /** @var AuthenticateController $controller */
         $controller = $this->getController(AuthenticateController::class, [
