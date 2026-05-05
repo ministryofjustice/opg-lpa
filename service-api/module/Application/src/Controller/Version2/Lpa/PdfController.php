@@ -34,7 +34,12 @@ class PdfController extends AbstractLpaController
     {
         $this->checkAccess();
         $request = $this->getRequest();
-        $traceId = $request instanceof Request ? $request->getHeader('X-Trace-Id')->getFieldValue() : '';
+        $traceId = '';
+
+        if ($request instanceof Request) {
+            $traceHeader = $request->getHeader('X-Trace-Id') ?: $request->getHeader('X-Request-ID');
+            $traceId = $traceHeader ? $traceHeader->getFieldValue() : '';
+        }
 
         $result = $this->getService()->fetch($this->lpaId, $id, $traceId);
 
