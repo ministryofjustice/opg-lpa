@@ -78,8 +78,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        // No log call expected — failed token auth is high-volume noise and we
-        // must never log the raw token (it's a secret).
         $this->logger->shouldNotReceive('info');
         $this->logger->shouldNotReceive('warning');
         $this->logger->shouldNotReceive('debug');
@@ -175,8 +173,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Big big failure')
             ->once();
 
-        // The controller no longer logs failed sign-in attempts (the username
-        // is PII and the auth service already logs failures with the user_id).
         $this->logger->shouldNotReceive('info');
         $this->logger->shouldNotReceive('warning');
         $this->logger->shouldNotReceive('debug');

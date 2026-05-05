@@ -64,8 +64,6 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withToken($authToken, $updateToken);
 
         if (is_string($result)) {
-            // No log here — failed token auth is high-volume noise and we
-            // must never log the raw token (it's a secret).
             return new ApiProblem(401, $result);
         }
 
@@ -92,8 +90,6 @@ class AuthenticateController extends AbstractAuthController
         $result = $this->authenticationService->withPassword($username, $password, $updateToken);
 
         if (is_string($result)) {
-            // No log here — the auth service already logs failures with user_id.
-            // Username is PII and must not be logged.
             return new ApiProblem(401, $result);
         }
 
