@@ -133,9 +133,14 @@ module "secrets_manager_encryption_key" {
 
   encryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_role_patterns = [
+    "proxy-assume-role-",
+    "execution-role-ecs-cluster",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ci",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
