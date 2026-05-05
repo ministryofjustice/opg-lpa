@@ -64,6 +64,7 @@ data "aws_secretsmanager_secret" "performance_platform_db_password" {
 resource "aws_secretsmanager_secret" "api_rds_credentials" {
   name                    = "${var.environment_name}/api_rds_credentials"
   recovery_window_in_days = 0
+  kms_key_id              = data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_id
 }
 
 resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
