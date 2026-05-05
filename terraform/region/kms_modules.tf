@@ -132,13 +132,9 @@ module "secrets_manager_encryption_key" {
   ]
 
   encryption_role_patterns = [
-    "-seeding-task-role",
-    "-api-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   decryption_role_patterns = [
-    "-seeding-task-role",
-    "-api-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   caller_accounts = [
