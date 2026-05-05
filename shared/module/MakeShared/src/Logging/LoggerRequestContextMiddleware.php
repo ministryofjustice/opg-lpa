@@ -27,7 +27,16 @@ class LoggerRequestContextMiddleware implements MiddlewareInterface
         $this->logger->pushProcessor(function ($record) use ($request) {
             $record['extra']['request_path'] = $request->getUri()->getPath();
             $record['extra']['request_method'] = $request->getMethod();
-            $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $request->getHeaderLine('X-Request-ID');
+            $traceId = $request->getHeaderLine('X-Trace-Id');
+
+            if ($traceId === '') {
+                $traceId = $request->getHeaderLine('X-Request-ID');
+            }
+
+            if ($traceId !== '') {
+                $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $traceId;
+            }
+
             return $record;
         });
 
