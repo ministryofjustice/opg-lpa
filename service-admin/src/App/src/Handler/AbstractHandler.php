@@ -8,11 +8,13 @@ use App\Handler\Initializers\TemplatingSupportInterface;
 use App\Handler\Initializers\TemplatingSupportTrait;
 use App\Handler\Initializers\UrlHelperInterface;
 use App\Handler\Initializers\UrlHelperTrait;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 
@@ -20,10 +22,15 @@ use Psr\Http\Message\ResponseInterface;
  * Class AbstractHandler
  * @package App\Handler
  */
-abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSupportInterface, UrlHelperInterface
+abstract class AbstractHandler implements
+    RequestHandlerInterface,
+    TemplatingSupportInterface,
+    UrlHelperInterface,
+    LoggerAwareInterface
 {
     use TemplatingSupportTrait;
     use UrlHelperTrait;
+    use LoggerTrait;
 
     /**
      * Handles a request and produces a response
@@ -91,5 +98,28 @@ abstract class AbstractHandler implements RequestHandlerInterface, TemplatingSup
         /** @var FlashMessagesInterface $flash */
         $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
         return $flash->getFlashes();
+    }
+
+    /**
+     * @param string|null $adminId The authenticated admin's user id
+     * @param string $event Dotted event name (e.g. "admin.user.search")
+     * @param string $message Human-readable message
+     * @param array<string, mixed> $context Additional context fields
+     * @param string $level Log level: 'info' (default) or 'warning'
+     * @return void
+     */
+    protected function auditLog(
+        ?string $adminId,
+        string $event,
+        string $message,
+        array $context = [],
+        string $level = 'info'
+    ): void {
+        $baseContext = [
+            'event' => $event,
+            'admin_id' => $adminId,
+        ];
+
+        $this->getLogger()->{$level}($message, array_merge($baseContext, $context));
     }
 }
