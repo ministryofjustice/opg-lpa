@@ -36,11 +36,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image_name: region
+          - name: region
             terraform_configuration_path: ./terraform/region/
-          - image_name: account
+          - name: account
             terraform_configuration_path: ./terraform/account/
-          - image_name: environment
+          - name: environment
             terraform_configuration_path: ./terraform/environment/
 
     steps:
@@ -60,18 +60,17 @@ jobs:
         with:
           registries: 311462405659
 
-      - name: Snyk IaC
+      - name: Snyk IaC ${{ matrix.name }}
         id: snyk_iac
         uses: ministryofjustice/opg-github-actions/actions/snyk-iac@9e8b7c2fb29c11e77b12913f74459fa48b11829f # v4.8.2
         with:
-          # iac_test_directory: "./terraform/environment/"
           iac_test_directory: "${{ matrix.terraform_configuration_path }}"
           SNYK_TOKEN: ${{ secrets.snyk_token }}
-          snyk_test_args: "--severity-threshold=high"
+          # snyk_test_args: "--severity-threshold=high"
           snyk_policy_path: "${{ matrix.terraform_configuration_path }}.snyk"
-      # - name: Upload Snyk IaC results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
-      #   if: always()
-      #   with:
-      #     category: "IaC"
-      #     sarif_file: "test-results/snyk.sarif"
+      - name: Upload Snyk IaC results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        if: always()
+        with:
+          category: "IaC-${{matrix.name}}"
+          sarif_file: "test-results/snyk.sarif"
