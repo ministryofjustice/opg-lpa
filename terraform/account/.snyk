@@ -1,0 +1,15 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-CC-TF-125:
+    - '*':
+        reason: Not required for the workspaces table
+        expires: 9999-06-05T13:28:08.682Z
+        created: 2026-05-06T13:28:08.686Z
+  SNYK-CC-TF-55:
+    - '*':
+        reason: Scheduled for fix LPAL-1095
+        expires: 2026-06-05T13:29:09.493Z
+        created: 2026-05-06T13:29:09.500Z
+patch: {}
