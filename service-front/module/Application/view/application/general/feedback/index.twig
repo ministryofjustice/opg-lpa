@@ -1,8 +1,8 @@
 {% extends 'layout/layout.twig' %}
 
-{% set hideFeedbackLink = true %}
-
 {%- set pageTitle = 'Send us feedback' -%}
+
+{% set hideFeedbackLink = true %}
 
 {% set rating = form.get('rating').setOptions({ label: 'Rate your experience' }) %}
 
@@ -25,7 +25,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control',
+    class: 'govuk-textarea',
     'data-cy': 'feedback-textarea'
 }) ? ''}}
 
@@ -33,7 +33,7 @@
     id: 'email',
     type: 'email',
     maxlength: 100,
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'feedback-email'
 }) ? ''}}
 
@@ -41,12 +41,12 @@
     id: 'phone',
     type: 'phone',
     maxlength: 15,
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'feedback-phone'
 }) ? ''}}
 
 {{ rating.setOptions({
-    label_attributes: {'class': 'block-label'}
+    label_attributes: {'class': 'govuk-radios__label'}
 }) ? ''}}
 
 {{ form().openTag( form )|raw }}
@@ -54,47 +54,47 @@
     {{ formElement(form.getCsrf) }}
 
     <fieldset>
-        <div class="text">
+        <div class="govuk-body">
             <p>We will not respond to your feedback directly but will use it to improve this service.</p>
             <p>If you have a question about your LPA, please email <a href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
         </div>
 
-        <div class="form-group {{ rating.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="heading-medium flush--top text" for="{{ rating.getAttribute('id') }}">
+        <div class="govuk-form-group {{ rating.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <label class="govuk-heading-m" for="{{ rating.getAttribute('id') }}">
                 How would you rate your experience with this service?
             </label>
             {{ formElementErrorsV2(rating) }}
             {{ formRadio(rating) }}
         </div>
 
-        <div class="form-group {{ details.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="heading-medium flush--top text" for="{{ details.getAttribute('id') }}">
+        <div class="govuk-form-group {{ details.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <label class="govuk-heading-m" for="{{ details.getAttribute('id') }}">
                 Please take a moment to tell us about your experience, what worked and what did not.
             </label>
             {{ formElementErrorsV2(details) }}
-            <span class="form-hint">2000 characters max</span>
+            <span class="govuk-hint">2000 characters max</span>
             {{ formElement(details) }}
         </div>
 
-        <p class="heading-medium">If you’re happy to take part in research about this service, please leave your preferred contact details.</p>
+        <p class="govuk-heading-m">If you're happy to take part in research about this service, please leave your preferred contact details.</p>
 
-        <div class="form-group {{ email.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="heading-medium flush--top text" for="{{ email.getAttribute('id') }}">
+        <div class="govuk-form-group {{ email.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <label class="govuk-label" for="{{ email.getAttribute('id') }}">
                 Your email address
             </label>
             {{ formElementErrorsV2(email) }}
             {{ formElement(email) }}
         </div>
 
-        <div class="form-group {{ phone.getMessages|length >0 ? 'form-group-error'}}">
-            <label class="heading-medium flush--top text" for="{{ phone.getAttribute('id') }}">
+        <div class="govuk-form-group {{ phone.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <label class="govuk-label" for="{{ phone.getAttribute('id') }}">
                 Your phone number
             </label>
             {{ formElementErrorsV2(phone) }}
             {{ formElement(phone) }}
         </div>
 
-        <input type="submit" name="send" id="send" class="button" data-cy="feedback-submit-button" value="Send feedback">
+        <input type="submit" name="send" id="send" class="govuk-button" data-cy="feedback-submit-button" value="Send feedback">
     </fieldset>
 
 {{ form().closeTag|raw }}

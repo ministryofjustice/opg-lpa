@@ -2,14 +2,14 @@
 
 {% block content %}
 
-<div class="text">
+<div class="govuk-body">
 
-    <p class="lede">This online service will help you to make a lasting power of attorney
+    <p class="govuk-body-l">This online service will help you to make a lasting power of attorney
         (LPA) for England and Wales.</p>
 
-    <p>It has step-by-step <a class="js-guidance" href="/guide#topic-what-is-an-lpa" data-analytics-click="page:link:help: lasting power of attorney" data-cy="guidance-to-making-an-lpa-link">guidance to making an LPA</a>, which will help you answer each question as you go through the service. We’ll use your answers to make an LPA that you can save and print, sign and send to the Office of the Public Guardian for registration.</p>
+    <p>It has step-by-step <a class="js-guidance" href="/guide#topic-what-is-an-lpa" data-analytics-click="page:link:help: lasting power of attorney" data-cy="guidance-to-making-an-lpa-link">guidance to making an LPA</a>, which will help you answer each question as you go through the service. We'll use your answers to make an LPA that you can save and print, sign and send to the Office of the Public Guardian for registration.</p>
 
-    <p>We’ll save your LPA as you progress so you do not need to complete it in one go.</p>
+    <p>We'll save your LPA as you progress so you do not need to complete it in one go.</p>
 
     <div class="govuk-details__text">
         If you already have a registered LPA and want to use it online, go to the <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
@@ -22,31 +22,31 @@
     {% if (identity() is empty) %}
         <div id="home-boxes-left">
             <div>
-                <h2 class="heading-medium">I do not have an LPA account</h2>
+                <h2 class="govuk-heading-m">I do not have an LPA account</h2>
                 <p>
                     To start your LPA you first need to set up an online account. You can use your account
                     to make multiple LPAs for yourself and others.
                 </p>
-                <a class="button button-start" href="{{ url('register') }}" role="button">Create my account</a>
+                <a class="govuk-button govuk-button--start" href="{{ url('register') }}" role="button">Create my account</a>
             </div>
         </div>
         <div id="home-boxes-right">
             <div>
-                <h2 class="heading-medium">I already have an LPA account</h2>
+                <h2 class="govuk-heading-m">I already have an LPA account</h2>
                 <p>
                     Continue making your LPA online by signing into your existing account.
                 </p>
-                <a class="button button-start" href="{{ url('login') }}" role="button" data-cy="sign-in-button">Sign in</a>
+                <a class="govuk-button govuk-button--start" href="{{ url('login') }}" role="button" data-cy="sign-in-button">Sign in</a>
             </div>
             </div>
     {% else %}
         <div id="home-boxes-left">
             <div>
-                <h2 class="heading-medium">Make an LPA</h2>
+                <h2 class="govuk-heading-m">Make an LPA</h2>
                 <p>
                     Begin the guided steps to make your LPA to print and sign.
                 </p>
-                <a class="button button-start" href="{{ url('user/dashboard/create-lpa') }}" role="button">Start now</a>
+                <a class="govuk-button govuk-button--start" href="{{ url('user/dashboard/create-lpa') }}" role="button">Start now</a>
             </div>
         </div>
     {% endif %}
@@ -55,7 +55,7 @@
 
 <br><br>
 
-<h2 class="heading-medium">
+<h2 class="govuk-heading-m">
     Before you make your LPA
 </h2>
 
@@ -65,7 +65,7 @@
              How much does it cost?
         </span>
     </summary>
-    <div class="panel panel-border-narrow text govuk-details__text">
+    <div class="govuk-details__text">
         <p>
             It is free to complete your LPA online, however your LPA cannot be used until it's registered. There's a &pound;{{ lpaFee }} application fee to register each LPA. If the donor has an income below £12,000, or gets certain benefits, they might qualify for a lower fee, or the fee might be waived altogether. If you're eligible for a reduction the completed form for this will be given to you at the end of this service. You can pay your application fee by card online or send a cheque with your LPA to OPG.
         </p>
@@ -81,8 +81,8 @@
              What do I need to complete the form?
         </span>
     </summary>
-    <div class="panel panel-border-narrow text govuk-details__text">
-        <ul class="list list-bullet">
+    <div class="govuk-details__text">
+        <ul class="govuk-list govuk-list--bullet">
             <li>name, address and date of birth of the <a href="/guide#topic-donor" class="js-guidance" data-analytics-click="page:link:help: donor">donor</a> (the person the LPA is for)</li>
             <li>names, addresses and dates of birth of all <a href="/guide#topic-attorneys" class="js-guidance" data-analytics-click="page:link:help: attorneys">attorneys</a>
                     and <a href="/guide#topic-replacement-attorneys" class="js-guidance"  data-analytics-click="page:link:help: replacement attorneys">replacement attorneys</a></li>
@@ -99,12 +99,12 @@
 </details>
 
 <details class="govuk-details">
-    <summary class="govuk-details__summary" data-analytics-click="page:link.reveal:help: Why can’t I do all of this online?">
+    <summary class="govuk-details__summary" data-analytics-click="page:link.reveal:help: Why can't I do all of this online?">
         <span class="govuk-details__summary-text">
-            Why can’t I do all of this online?
+            Why can't I do all of this online?
         </span>
     </summary>
-    <div class="panel panel-border-narrow text govuk-details__text">
+    <div class="govuk-details__text">
         <p>
             For an LPA to be valid it needs to be signed and witnessed by all people mentioned on the
             LPA. The online tool makes it simpler to do the first part, the filling in of the form.
