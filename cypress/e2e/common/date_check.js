@@ -150,7 +150,7 @@ Then('I fill in all signature dates on the check dates form', () => {
   let signatureDate = new Date(Date.now() - MS_PER_DAY * 40);
 
   // fill in all date fields
-  cy.get('fieldset.date-check-dates').each((elt) => {
+  cy.get('[data-cy^="date-check-dates-"]').each((elt) => {
     fillSignatureDateInputs(elt, signatureDate);
 
     // move to next day
