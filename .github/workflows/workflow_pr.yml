@@ -80,7 +80,7 @@ jobs:
     with:
       oidc_role: ${{ vars.OIDC_DOCKER_ROLE }}
     secrets:
-      SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+      snyk_token: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
   docker_build_scan_push:
     name: Docker Build, Scan and Push
