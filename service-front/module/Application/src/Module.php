@@ -255,7 +255,7 @@ class Module implements FormElementProviderInterface
 
                 $traceHeader = $request->getHeader('X-Trace-Id') ?: $request->getHeader('X-Request-ID');
 
-                if ($traceHeader) {
+                if ($traceHeader instanceof \Laminas\Http\Header\HeaderInterface) {
                     $record['extra'][Constants::TRACE_ID_FIELD_NAME] = $traceHeader->getFieldValue();
                 }
 
