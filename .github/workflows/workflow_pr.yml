@@ -75,7 +75,7 @@ jobs:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
   snyk_iac_scan:
-    name: Docker Build, Scan and Push
+    name: Snyk IAC Scan
     uses: ./.github/workflows/snyk_iac_scan.yml
     with:
       oidc_role: ${{ vars.OIDC_DOCKER_ROLE }}
