@@ -17,13 +17,13 @@
 {# form fields config #}
 {{ email.setAttributes({
     id: 'email',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'login-email'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'login-password'
 }) ? '' }}
 
@@ -44,13 +44,13 @@
 {{ form().openTag( form )|raw }}
 
     <fieldset>
-        <legend class="visually-hidden">Sign in</legend>
+        <legend class="govuk-visually-hidden">Sign in</legend>
 
         {{ macros.formGroup(email) }}
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
-            <label class="form-label" for="{{ password.getAttribute('id') }}">
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
             </label>
             {{ formElement(password) }}
@@ -59,8 +59,8 @@
             </div>
         </div>
 
-        <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="button">
+        <div class="govuk-form-group">
+            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="govuk-button">
         </div>
 
     </fieldset>
