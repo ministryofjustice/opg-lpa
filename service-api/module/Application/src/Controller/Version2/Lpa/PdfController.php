@@ -38,7 +38,7 @@ class PdfController extends AbstractLpaController
 
         if ($request instanceof Request) {
             $traceHeader = $request->getHeader('X-Trace-Id') ?: $request->getHeader('X-Request-ID');
-            $traceId = $traceHeader ? $traceHeader->getFieldValue() : '';
+            $traceId = $traceHeader instanceof \Laminas\Http\Header\HeaderInterface ? $traceHeader->getFieldValue() : '';
         }
 
         $result = $this->getService()->fetch($this->lpaId, $id, $traceId);
