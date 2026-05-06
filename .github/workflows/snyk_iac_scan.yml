@@ -32,6 +32,17 @@ jobs:
   snyk_iac_scan:
     name: Run Snyk IAC scan
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: region
+            terraform_configuration_path: terraform/region/
+          - image_name: account
+            terraform_configuration_path: terraform/account/
+          - image_name: environment
+            terraform_configuration_path: terraform/environment/
+
     steps:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
@@ -53,7 +64,7 @@ jobs:
         id: snyk_iac
         uses: ministryofjustice/opg-github-actions/actions/snyk-iac@9e8b7c2fb29c11e77b12913f74459fa48b11829f # v4.8.2
         with:
-          iac_test_directory: "./terraform/environment/"
+          iac_test_directory: "${{ matrix.terraform_configuration_path }}"
           SNYK_TOKEN: ${{ secrets.snyk_token }}
           snyk_test_args: "--severity-threshold=high"
       # - name: Upload Snyk IaC results to GitHub Security tab
