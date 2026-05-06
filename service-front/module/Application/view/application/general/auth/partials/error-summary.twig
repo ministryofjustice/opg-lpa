@@ -10,25 +10,25 @@
 }) %}
 
 {% if isTimeout %}
-    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h2 class="heading-medium error-summary-heading" id="error-heading">We’ve signed you out</h2>
-      <div class="error-summary-text" data-tracking-context="Session">
-          <p data-tracking-summary="Session timed out">This is because you stopped using the service or because you signed in somewhere else. Any changes you’ve saved will not be affected. To continue, sign in again.</p>
+    <div class="govuk-error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading">We've signed you out</h2>
+      <div class="govuk-error-summary__body" data-tracking-context="Session">
+          <p data-tracking-summary="Session timed out">This is because you stopped using the service or because you signed in somewhere else. Any changes you've saved will not be affected. To continue, sign in again.</p>
       </div>
     </div>
 {% elseif isInternalSystemError %}
-    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h2 class="heading-medium error-summary-heading" id="error-heading">There is a problem</h2>
-      <div class="error-summary-text" data-tracking-context="Session">
+    <div class="govuk-error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading">There is a problem</h2>
+      <div class="govuk-error-summary__body" data-tracking-context="Session">
           <p data-tracking-summary="Internal error">Sorry, the service is unavailable. Please try again later.</p>
       </div>
     </div>
 {% endif %}
 
 {% if authError %}
-    <div class="error-summary text" role="group" aria-labelledby="error-heading" tabindex="-1">
-      <h2 class="heading-medium error-summary-heading" id="error-heading" data-cy="error-heading">There is a problem</h2>
-      <div class="error-summary-text" data-tracking-context="Signing in">
+    <div class="govuk-error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading" data-cy="error-heading">There is a problem</h2>
+      <div class="govuk-error-summary__body" data-tracking-context="Signing in">
             {% if authError == 'api-error' %}
                 <p data-tracking-summary="API unavailable">Sorry, the service is unavailable. Please try again later.</p>
             {% elseif authError == 'not-activated' %}
