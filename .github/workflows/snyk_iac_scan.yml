@@ -29,8 +29,8 @@ permissions:
   statuses: none
 
 jobs:
-  run_seeding_task:
-    name: Run seeding task
+  snyk_iac_scan:
+    name: Run Snyk IAC scan
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
