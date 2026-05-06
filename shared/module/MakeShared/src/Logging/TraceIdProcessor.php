@@ -22,11 +22,7 @@ class TraceIdProcessor implements ProcessorInterface
             ?? null;
 
         if (!is_string($traceId) || $traceId === '') {
-            try {
-                $traceId = bin2hex(random_bytes(16));
-            } catch (\Throwable) {
-                $traceId = uniqid('trace-', true);
-            }
+            $traceId = 'not available';
         }
 
         $record->extra[Constants::TRACE_ID_FIELD_NAME] = $traceId;
