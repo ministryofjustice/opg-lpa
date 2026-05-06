@@ -37,11 +37,11 @@ jobs:
       matrix:
         include:
           - image_name: region
-            terraform_configuration_path: terraform/region/
+            terraform_configuration_path: "./terraform/region/"
           - image_name: account
-            terraform_configuration_path: terraform/account/
+            terraform_configuration_path: "./terraform/account/"
           - image_name: environment
-            terraform_configuration_path: terraform/environment/
+            terraform_configuration_path: "./terraform/environment/"
 
     steps:
       - name: Checkout
@@ -64,7 +64,8 @@ jobs:
         id: snyk_iac
         uses: ministryofjustice/opg-github-actions/actions/snyk-iac@9e8b7c2fb29c11e77b12913f74459fa48b11829f # v4.8.2
         with:
-          iac_test_directory: "${{ matrix.terraform_configuration_path }}"
+          # iac_test_directory: "./terraform/environment/"
+          iac_test_directory: ${{ matrix.terraform_configuration_path }}
           SNYK_TOKEN: ${{ secrets.snyk_token }}
           snyk_test_args: "--severity-threshold=high"
       # - name: Upload Snyk IaC results to GitHub Security tab
