@@ -7,4 +7,24 @@ ignore:
         reason: Policy merged with others to produce more restrictive policy
         expires: 2026-06-05T12:41:53.331Z
         created: 2026-05-06T12:41:53.334Z
+  SNYK-CC-TF-55:
+    - '*':
+        reason: Scheduled for fix LPAL-1095
+        expires: 2026-06-05T13:21:30.702Z
+        created: 2026-05-06T13:21:30.709Z
+  SNYK-CC-TF-215:
+    - '*':
+        reason: Scheduled for fix LPAL-2080
+        expires: 2026-06-05T13:24:01.814Z
+        created: 2026-05-06T13:24:01.821Z
+  SNYK-CC-TF-119:
+    - '*':
+        reason: Policy merged with others to produce more restrictive policy
+        expires: 2026-06-05T13:25:02.332Z
+        created: 2026-05-06T13:25:02.341Z
+  SNYK-CC-TF-40:
+    - '*':
+        reason: Scheduled for fix LPAL-2081
+        expires: 2026-06-05T13:25:27.744Z
+        created: 2026-05-06T13:25:27.752Z
 patch: {}

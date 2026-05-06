@@ -1,5 +1,25 @@
 # Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
-ignore: {}
+ignore:
+  SNYK-CC-TF-55:
+    - '*':
+        reason: Scheduled for fix LPAL-1095
+        expires: 2026-06-05T13:30:05.884Z
+        created: 2026-05-06T13:30:05.890Z
+  SNYK-CC-TF-37:
+    - '*':
+        reason: These groups are for public facing load balancers
+        expires: 9999-06-05T13:32:00.416Z
+        created: 2026-05-06T13:32:00.423Z
+  SNYK-CC-TF-125:
+    - '*':
+        reason: These tables do not need point in time recovery
+        expires: 9999-06-05T13:35:01.354Z
+        created: 2026-05-06T13:35:01.361Z
+  SNYK-CC-AWS-710:
+    - '*':
+        reason: Not planned
+        expires: 9999-06-05T13:36:16.605Z
+        created: 2026-05-06T13:36:16.613Z
 patch: {}
