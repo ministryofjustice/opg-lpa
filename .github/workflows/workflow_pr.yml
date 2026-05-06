@@ -116,6 +116,7 @@ jobs:
     needs:
       - terraform_lint
       - workflow_variables
+      - snyk_iac_scan
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
       terraform_workspace: development
@@ -136,6 +137,7 @@ jobs:
     needs:
       - terraform_lint
       - workflow_variables
+      - snyk_iac_scan
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
       terraform_workspace: development
@@ -158,6 +160,7 @@ jobs:
       - phpunit_tests
       - psalm_tests
       - workflow_variables
+      - snyk_iac_scan
       - terraform_account_development
       - terraform_region_development
     with:
