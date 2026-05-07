@@ -1,0 +1,76 @@
+name: "Snyk IAC scan"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      oidc_role:
+        description: "Role to use to fetch Snyk container"
+        required: true
+        type: string
+    secrets:
+      snyk_token:
+        required: true
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
+
+jobs:
+  snyk_iac_scan:
+    name: Run Snyk IAC scan
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: region
+            terraform_configuration_path: ./terraform/region/
+          - name: account
+            terraform_configuration_path: ./terraform/account/
+          - name: environment
+            terraform_configuration_path: ./terraform/environment/
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ inputs.oidc_role }}
+          role-duration-seconds: 3600
+          role-session-name: OPGLPASnykIACScan
+
+      - name: ECR Login
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        with:
+          registries: 311462405659
+
+      - name: Snyk IaC ${{ matrix.name }}
+        id: snyk_iac
+        uses: ministryofjustice/opg-github-actions/actions/snyk-iac@9e8b7c2fb29c11e77b12913f74459fa48b11829f # v4.8.2
+        with:
+          iac_test_directory: "${{ matrix.terraform_configuration_path }}"
+          SNYK_TOKEN: ${{ secrets.snyk_token }}
+          snyk_test_args: "--severity-threshold=high"
+          snyk_policy_path: "${{ matrix.terraform_configuration_path }}.snyk"
+      - name: Upload Snyk IaC results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        if: always()
+        with:
+          category: "IaC-${{matrix.name}}"
+          sarif_file: "test-results/snyk.sarif"
