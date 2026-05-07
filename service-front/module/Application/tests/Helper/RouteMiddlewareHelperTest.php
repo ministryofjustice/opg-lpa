@@ -8,12 +8,12 @@ use Application\Helper\RouteMiddlewareHelper;
 use Application\Middleware\AuthenticationMiddleware;
 use Application\Middleware\IdentityTokenRefreshMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
-use Application\Middleware\RequestLoggingMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
 use Application\Middleware\SessionBootstrapMiddleware;
 use Application\Middleware\TermsAndConditionsMiddleware;
 use Application\Middleware\UserDetailsMiddleware;
 use Laminas\Mvc\Middleware\PipeSpec;
+use MakeShared\Logging\RequestLoggingMiddleware;
 use PHPUnit\Framework\TestCase;
 
 class RouteMiddlewareHelperTest extends TestCase

@@ -155,11 +155,9 @@ use Application\Listener\UserDetailsListener;
 use Application\Listener\ViewVariablesListener;
 use Application\Middleware\AuthenticationMiddleware;
 use Application\Middleware\Factory\IdentityTokenRefreshMiddlewareFactory;
-use Application\Middleware\Factory\RequestLoggingMiddlewareFactory;
 use Application\Middleware\Factory\SessionBootstrapMiddlewareFactory;
 use Application\Middleware\IdentityTokenRefreshMiddleware;
 use Application\Middleware\LpaLoaderMiddleware;
-use Application\Middleware\RequestLoggingMiddleware;
 use Application\Middleware\RouteMatchMiddleware;
 use Application\Middleware\SessionBootstrapMiddleware;
 use Application\Middleware\TermsAndConditionsMiddleware;
@@ -207,6 +205,8 @@ use Laminas\Stdlib\ArrayUtils;
 use Laminas\View\Model\ViewModel;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\RequestLoggingMiddleware;
+use MakeShared\Logging\RequestLoggingMiddlewareFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
 use Mezzio\Session\Ext\PhpSessionPersistence;
@@ -500,7 +500,6 @@ class Module implements FormElementProviderInterface
                 RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
                 SessionBootstrapMiddleware::class => SessionBootstrapMiddlewareFactory::class,
                 IdentityTokenRefreshMiddleware::class => IdentityTokenRefreshMiddlewareFactory::class,
-
                 RegisterHandler::class => RegisterHandlerFactory::class,
                 ResendActivationEmailHandler::class => ResendActivationEmailHandlerFactory::class,
                 ConfirmRegistrationHandler::class => ConfirmRegistrationHandlerFactory::class,
