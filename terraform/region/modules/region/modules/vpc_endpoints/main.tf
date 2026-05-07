@@ -154,6 +154,7 @@ resource "aws_vpc_endpoint" "cloudshell" {
   private_dns_enabled = true
   security_group_ids  = aws_security_group.vpc_endpoints_private[*].id
   subnet_ids          = var.application_subnets_id
+  policy              = data.aws_iam_policy_document.allow_account_access.json
   tags                = { Name = "cloudshell-${each.value}-private" }
 }
 

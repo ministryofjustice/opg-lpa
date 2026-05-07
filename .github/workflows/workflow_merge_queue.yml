@@ -78,6 +78,14 @@ jobs:
     with:
       terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
 
+  snyk_iac_scan:
+    name: Snyk IAC Scan
+    uses: ./.github/workflows/snyk_iac_scan.yml
+    with:
+      oidc_role: ${{ vars.OIDC_DOCKER_ROLE }}
+    secrets:
+      snyk_token: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
@@ -106,6 +114,7 @@ jobs:
     name: TF Preproduction - Account
     needs:
       - set_variables
+      - snyk_iac_scan
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     with:
       is_ephemeral: false
@@ -124,6 +133,7 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - set_variables
+      - snyk_iac_scan
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
@@ -154,6 +164,7 @@ jobs:
       - phpunit_tests
       - psalm_tests
       - set_variables
+      - snyk_iac_scan
       - terraform_region_preproduction
       - terraform_account_preproduction
     secrets:
