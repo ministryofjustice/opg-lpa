@@ -95,6 +95,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\HomeRedirectHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // index-redirect
@@ -106,6 +107,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\HomeHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // home
@@ -117,6 +119,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\TermsHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // terms
@@ -128,6 +131,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\AccessibilityHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // accessibility
@@ -139,6 +143,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\PrivacyHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // privacy
@@ -150,6 +155,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\ContactHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // contact
@@ -161,6 +167,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\CookiesHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // cookies
@@ -172,6 +179,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\ForgotPasswordHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
                 'may_terminate' => true,
@@ -186,6 +194,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\ResetPasswordHandler::class),
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -199,6 +208,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\FeedbackHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // send-feedback
@@ -210,6 +220,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\FeedbackThanksHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // feedback-thanks
@@ -222,6 +233,7 @@ return [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\GuidanceHandler::class),
                         'section'    => '',
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // guidance
@@ -233,6 +245,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\EnableCookieHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // enable-cookie
@@ -244,6 +257,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\LoginHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // login
@@ -255,6 +269,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\LogoutHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // logout
@@ -266,6 +281,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\SessionExpiryHandler::class),
+                        'unauthenticated_route' => true,
                     ]
                 ],
             ], // session state
@@ -313,6 +329,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\DeletedAccountHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // deleted
@@ -324,6 +341,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\RegisterHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
                 'may_terminate' => true,
@@ -338,6 +356,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\ConfirmRegistrationHandler::class),
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -348,6 +367,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\ResendActivationEmailHandler::class),
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -361,6 +381,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\StatsHandler::class),
+                        'unauthenticated_route' => true,
                     ],
                 ],
             ], // stats
@@ -372,6 +393,7 @@ return [
                     'defaults' => [
                         'controller' => PipeSpec::class,
                         'middleware' => Handler\PingHandler::class,
+                        'unauthenticated_route' => true,
                     ],
                 ],
                 'may_terminate' => true,
@@ -383,6 +405,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => Handler\PingHandlerJson::class,
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -393,6 +416,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => Handler\PingHandlerElb::class,
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -403,6 +427,7 @@ return [
                             'defaults' => [
                                 'controller' => PipeSpec::class,
                                 'middleware' => Handler\PingHandlerPingdom::class,
+                                'unauthenticated_route' => true,
                             ],
                         ],
                     ],
@@ -470,6 +495,7 @@ return [
                                     'defaults' => [
                                         'controller' => PipeSpec::class,
                                         'middleware' => RouteMiddlewareHelper::addPublicMiddleware(Handler\VerifyEmailAddressHandler::class),
+                                        'unauthenticated_route' => true,
                                     ],
                                 ],
                             ],
