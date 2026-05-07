@@ -17,3 +17,13 @@ moved {
   from = module.aws_backup_cross_account_key.aws_kms_replica_key.eu_west_2
   to   = module.aws_backup_source_account_key.aws_kms_replica_key.replica["eu-west-2"]
 }
+
+moved {
+  from = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.cloudshell["codecatalyst.packages"]
+  to   = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.codecatalyst["codecatalyst.packages"]
+}
+
+moved {
+  from = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.cloudshell["codecatalyst.git"]
+  to   = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.codecatalyst["codecatalyst.git"]
+}
