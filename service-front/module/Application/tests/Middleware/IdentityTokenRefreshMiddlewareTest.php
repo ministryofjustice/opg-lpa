@@ -71,10 +71,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->makeHandler());
     }
 
-    // -------------------------------------------------------------------------
-    // No identity
-    // -------------------------------------------------------------------------
-
     public function testDoesNothingWhenNoIdentity(): void
     {
         $this->authService->expects($this->once())->method('getIdentity')->willReturn(null);
@@ -84,10 +80,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $this->middleware->process($request, $this->makeHandler());
     }
 
-    // -------------------------------------------------------------------------
-    // /session-state path — identity checked but token NOT refreshed
-    // -------------------------------------------------------------------------
-
     public function testSkipsTokenUpdateForSessionStatePath(): void
     {
         $this->authService->expects($this->once())->method('getIdentity')->willReturn(null);
@@ -96,10 +88,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $request = new ServerRequest(uri: 'https://example.com/session-state');
         $this->middleware->process($request, $this->makeHandler());
     }
-
-    // -------------------------------------------------------------------------
-    // Token refresh success
-    // -------------------------------------------------------------------------
 
     public function testUpdatesTokenExpiryOnSuccess(): void
     {
@@ -121,10 +109,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $this->assertNotNull($identity->tokenExpiresAt());
     }
 
-    // -------------------------------------------------------------------------
-    // Token refresh failure — non-500
-    // -------------------------------------------------------------------------
-
     public function testClearsIdentityOnNonSuccessResponse(): void
     {
         $identity = $this->makeIdentity();
@@ -140,10 +124,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $request = new ServerRequest(uri: 'https://example.com/dashboard');
         $this->middleware->process($request, $this->makeHandler());
     }
-
-    // -------------------------------------------------------------------------
-    // Token refresh failure — 500-class error
-    // -------------------------------------------------------------------------
 
     public function testRecordsInternalSystemErrorInSessionOn500(): void
     {
@@ -188,10 +168,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $this->assertSame([ContainerNamespace::AUTH_FAILURE_REASON, 'code', 500], $recorded[1]);
     }
 
-    // -------------------------------------------------------------------------
-    // ApiException
-    // -------------------------------------------------------------------------
-
     public function testClearsIdentityOnApiException(): void
     {
         $identity = $this->makeIdentity();
@@ -206,10 +182,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $request = new ServerRequest(uri: 'https://example.com/dashboard');
         $this->middleware->process($request, $this->makeHandler());
     }
-
-    // -------------------------------------------------------------------------
-    // Response passthrough
-    // -------------------------------------------------------------------------
 
     public function testPassesThroughResponseFromHandler(): void
     {

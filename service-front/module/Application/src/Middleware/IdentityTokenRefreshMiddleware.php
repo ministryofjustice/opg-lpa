@@ -24,7 +24,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  *
  * We don't redirect unauthenticated users here — AuthenticationMiddleware handles
  * that on protected routes. We only clear a stale or failed identity so that
- * downstream middleware sees an accurate authentication state.
+ * downstream middleware gets an accurate authentication state.
  *
  * Must run after SessionBootstrapMiddleware.
  */
