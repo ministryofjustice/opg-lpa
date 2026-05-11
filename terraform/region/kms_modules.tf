@@ -148,7 +148,7 @@ module "secrets_manager_encryption_key" {
 }
 
 module "application_log_group_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
   description        = "Customer managed encryption key for application CloudWatch log groups"
   alias              = "opg-lpa-${local.account_name}-application-log-group-encryption-key"
   usage_services     = ["logs.*.amazonaws.com"]
