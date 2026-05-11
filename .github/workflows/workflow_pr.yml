@@ -74,6 +74,14 @@ jobs:
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.environment_terraform_version }}
 
+  snyk_iac_scan:
+    name: Snyk IAC Scan
+    uses: ./.github/workflows/snyk_iac_scan.yml
+    with:
+      oidc_role: ${{ vars.OIDC_DOCKER_ROLE }}
+    secrets:
+      snyk_token: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
@@ -108,6 +116,7 @@ jobs:
     needs:
       - terraform_lint
       - workflow_variables
+      - snyk_iac_scan
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.account_terraform_version }}
       terraform_workspace: development
@@ -128,6 +137,7 @@ jobs:
     needs:
       - terraform_lint
       - workflow_variables
+      - snyk_iac_scan
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
       terraform_workspace: development
@@ -150,6 +160,7 @@ jobs:
       - phpunit_tests
       - psalm_tests
       - workflow_variables
+      - snyk_iac_scan
       - terraform_account_development
       - terraform_region_development
     with:
