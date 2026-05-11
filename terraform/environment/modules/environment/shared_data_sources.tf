@@ -46,7 +46,7 @@ data "aws_kms_alias" "secrets_encryption_alias" {
 }
 
 data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
-  name = "alias/mrk_secrets_encryption_key-${var.account_name}"
+  name = "alias/opg-lpa-${var.account_name}-secrets-manager-encryption-key"
 }
 
 data "aws_region" "current" {}
