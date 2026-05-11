@@ -11,6 +11,7 @@
         display: none !important;
     }
 
+    .govuk-visually-hidden,
     .visually-hidden,
     .menu,
     .global-nav,
@@ -20,6 +21,7 @@
     .iconlinks,
     main > hr,
     main > p,
+    .govuk-button,
     .button,
     .button-link,
     .no-print-for-summary {
@@ -62,6 +64,7 @@
     }
 
     .table-summary-heading {
+        .govuk-heading-s,
         .heading-small {
             font-size: 24px;
             margin-top: 10px;
