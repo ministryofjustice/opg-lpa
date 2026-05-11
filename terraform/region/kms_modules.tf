@@ -146,3 +146,40 @@ module "secrets_manager_encryption_key" {
     data.aws_caller_identity.current.account_id,
   ]
 }
+
+module "application_log_group_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  description        = "Customer managed encryption key for application CloudWatch log groups"
+  alias              = "opg-lpa-${local.account_name}-application-log-group-encryption-key"
+  usage_services     = ["logs.*.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  encryption_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-admin-task-role",
+    "-front-task-role",
+    "-pdf-task-role",
+    "-seeding-task-role",
+    "execution-role-ecs-cluster",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
