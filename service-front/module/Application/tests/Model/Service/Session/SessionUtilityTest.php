@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\Session;
 
 use Application\Model\Service\Session\SessionUtility;
+use Laminas\Session\Config\StandardConfig;
 use Laminas\Session\Container as LaminasContainer;
+use Laminas\Session\SessionManager;
+use Laminas\Session\Storage\ArrayStorage;
 use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -17,6 +20,9 @@ class SessionUtilityTest extends TestCase
 
     protected function setUp(): void
     {
+        $manager = new SessionManager(new StandardConfig(), new ArrayStorage());
+        LaminasContainer::setDefaultManager($manager);
+
         $container = new LaminasContainer(self::CONTAINER_NAME);
         foreach ($container as $key => $value) {
             unset($container->$key);
