@@ -53,10 +53,12 @@
         margin-top: 0;
         margin-bottom: $gutter-half;
 
-        @include media(tablet) {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
+        &:has(> .form-label) {
+            @include media(tablet) {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
         }
 
         &.read-only {
