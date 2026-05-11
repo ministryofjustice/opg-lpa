@@ -79,11 +79,11 @@ class AuthenticationMiddleware implements MiddlewareInterface
 
         // TODO(mezzio): update routeName when we setup Mezzio routes
         if ($this->urlHelper === null) {
-            return new RedirectResponse('/login?state=' . $reason);
+            return new RedirectResponse('/login/' . $reason);
         }
 
         return new RedirectResponse(
-            $this->urlHelper->generate('login', [], ['state' => $reason])
+            $this->urlHelper->generate('login', ['state' => $reason])
         );
     }
 
