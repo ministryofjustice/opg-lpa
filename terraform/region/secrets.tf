@@ -9,7 +9,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -21,7 +21,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_common_account_cleanup_notificatio
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -34,7 +34,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_front_csrf_salt" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -46,7 +46,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_api_notify_api_key" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -59,7 +59,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -72,7 +72,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_front_gov_pay_key" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -84,7 +84,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_front_os_places_hub_license_key" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -97,7 +97,7 @@ resource "aws_secretsmanager_secret" "opg_lpa_pdf_owner_password" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -110,7 +110,7 @@ resource "aws_secretsmanager_secret" "api_rds_username" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -122,7 +122,7 @@ resource "aws_secretsmanager_secret" "api_rds_password" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -134,7 +134,7 @@ resource "aws_secretsmanager_secret" "api_rds_credentials" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -147,7 +147,7 @@ resource "aws_secretsmanager_secret" "performance_platform_db_username" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
 
@@ -159,6 +159,6 @@ resource "aws_secretsmanager_secret" "performance_platform_db_password" {
 
   replica {
     region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys["eu-west-2"].arn
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
