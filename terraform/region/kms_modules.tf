@@ -110,7 +110,7 @@ module "aurora_database_encryption_key" {
 }
 
 module "secrets_manager_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
   description        = "Customer managed encryption key for Secrets Manager"
   alias              = "opg-lpa-${local.account_name}-secrets-manager-encryption-key"
   usage_services     = []
