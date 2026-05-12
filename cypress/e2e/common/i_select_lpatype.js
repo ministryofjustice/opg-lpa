@@ -7,9 +7,9 @@ Then('I choose Property and Finance', () => {
     .should('be.checked');
   cy.get('body').then(($body) => {
     if (
-      $body.find('input[name="isRepeatApplication"][value="is-repeat"]').length
+      $body.find('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').length
     ) {
-      cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
+      cy.get('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').check({
         force: true,
       });
       cy.get('[data-aria-controls="#conditional-repeat-application"]')
@@ -44,9 +44,9 @@ Then('I choose Health and Welfare', () => {
     .should('be.checked');
   cy.get('body').then(($body) => {
     if (
-      $body.find('input[name="isRepeatApplication"][value="is-repeat"]').length
+      $body.find('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').length
     ) {
-      cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
+      cy.get('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').check({
         force: true,
       });
       cy.get('[data-aria-controls="#conditional-repeat-application"]')
