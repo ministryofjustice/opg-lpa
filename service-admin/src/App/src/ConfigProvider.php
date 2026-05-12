@@ -7,8 +7,8 @@ namespace App;
 use App\Logging\LoggingErrorListenerDelegatorFactory;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
-use MakeShared\Logging\LoggerRequestContextMiddleware;
-use MakeShared\Logging\LoggerRequestContextMiddlewareFactory;
+use MakeShared\Logging\RequestLoggingMiddleware;
+use MakeShared\Logging\RequestLoggingMiddlewareFactory;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\Ext\PhpSessionPersistence;
 use Mezzio\Session\SessionMiddleware;
@@ -88,7 +88,7 @@ class ConfigProvider
                 Middleware\Session\SessionMiddleware::class => Middleware\Session\SessionMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
                 LoggerInterface::class => LoggerFactory::class,
-                LoggerRequestContextMiddleware::class => LoggerRequestContextMiddlewareFactory::class,
+                RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
 
                 //  Services
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,

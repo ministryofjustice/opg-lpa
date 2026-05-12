@@ -18,20 +18,20 @@
 {# form fields config #}
 {{ password.setAttributes({
     id: 'password_current',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'password_current'
 }) ? ''}}
 
 {{ email.setAttributes({
     id: 'email',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'email'
 }) ? ''}}
 
 {{ email_confirm.setAttributes({
     id: 'email_confirm',
     autocomplete: 'off',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'email_confirm'
 }) ? ''}}
 
@@ -46,20 +46,20 @@
     {{ formElement(form.getCsrf) }}
 
     <fieldset>
-        <legend class="visually-hidden">Change email address</legend>
+        <legend class="govuk-visually-hidden">Change email address</legend>
 
-        <div class="form-group">
-            <label class="form-label" for="email_current">Current email address</label>
-            <input type="text" name="email_current" id="email_current" data-cy="email_current" autocomplete="off" class="form-control disabled" value="{{ currentEmailAddress }}" disabled="disabled">
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="email_current">Current email address</label>
+            <input type="text" name="email_current" id="email_current" data-cy="email_current" autocomplete="off" class="govuk-input disabled" value="{{ currentEmailAddress }}" disabled="disabled">
         </div>
 
         {{ macros.formGroup(password) }}
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(email_confirm) }}
 
-        <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" class="button" data-cy='save-new-email' value="Save new email address">
-            <a href="{{ cancelUrl }}" class="button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        <div class="govuk-form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="govuk-button" data-cy='save-new-email' value="Save new email address">
+            <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
         </div>
 
     </fieldset>

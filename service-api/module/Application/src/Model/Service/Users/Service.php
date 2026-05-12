@@ -76,6 +76,11 @@ class Service extends AbstractService
             ]);
         } while (!$created);
 
+        $this->log('info', 'User account created', [
+            'event'   => 'auth.account.created',
+            'user_id' => $userId,
+        ]);
+
         return [
             'userId'            => $userId,
             'activation_token'  => $activationToken,
@@ -93,6 +98,10 @@ class Service extends AbstractService
         if (is_null($result) || $result === false) {
             return 'account-not-found';
         }
+
+        $this->log('info', 'User account activated', [
+            'event' => 'auth.account.activated',
+        ]);
 
         return true;
     }

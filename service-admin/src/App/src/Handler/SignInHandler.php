@@ -107,6 +107,11 @@ class SignInHandler extends AbstractHandler
                                     ])
                             );
                         } else {
+                            $this->getLogger()->info('Admin signed in', [
+                                'event' => 'admin.auth.sign_in',
+                                'admin_id' => $identity->getUserId(),
+                            ]);
+
                             return $this->redirectToRoute('home');
                         }
                     }

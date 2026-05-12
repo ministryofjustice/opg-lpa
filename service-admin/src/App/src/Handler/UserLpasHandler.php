@@ -39,6 +39,16 @@ class UserLpasHandler extends AbstractHandler
             ]), 404);
         }
 
+        $this->auditLog(
+            $request->getAttribute('user')->id,
+            'admin.user.lpas.view',
+            'Admin viewed user LPAs',
+            [
+                'viewed_user' => $userId,
+                'lpa_count' => count($lpas),
+            ],
+        );
+
         return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
             'lpaEmail' => $userEmail,
             'lpas' => $lpas,

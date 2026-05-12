@@ -10,6 +10,7 @@ use DateTime;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -20,12 +21,27 @@ class ServiceTest extends MockeryTestCase
      */
     private $authUserRepository;
 
+    /**
+     * @var MockInterface|LoggerInterface
+     */
+    private $logger;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         //  Set up the services so they can be enhanced for each test
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
+        $this->logger->shouldReceive('log')->byDefault();
+    }
+
+    private function makeService(int $tokenTtl = AuthenticationService::TOKEN_TTL): AuthenticationService
+    {
+        $service = new AuthenticationService($tokenTtl);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setLogger($this->logger);
+        return $service;
     }
 
     public function testWithPasswordMissingCredentials()
@@ -362,6 +378,142 @@ class ServiceTest extends MockeryTestCase
             'username' => 'test@test.com',
             'last_login' => $today
         ] + $this->tokenDetails, $result);
+    }
+
+    public function testAuditLogsSuccessfulSignIn()
+    {
+        $today = new DateTime('today');
+
+        $this->setUserDataSourceGetByUsernameExpectation('test@test.com', new User([
+            'id' => 'user-id-1',
+            'identity' => 'test@test.com',
+            'active' => true,
+            'password_hash' => password_hash('valid', PASSWORD_DEFAULT),
+            'last_login' => $today,
+        ]));
+
+        $this->authUserRepository->shouldReceive('updateLastLoginTime')
+            ->withArgs(['user-id-1'])->once();
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'info'
+                    && $message === 'User signed in'
+                    && $context['event'] === 'auth.sign_in.success'
+                    && $context['user_id'] === 'user-id-1'
+                    && !array_key_exists('username', $context);
+            });
+
+        $this->makeService()->withPassword('test@test.com', 'valid', false);
+    }
+
+    public function testAuditLogsFailedSignIn()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('test@test.com', new User([
+            'id' => 'user-id-2',
+            'active' => true,
+            'failed_login_attempts' => 1,
+            'password_hash' => password_hash('actual_password', PASSWORD_DEFAULT),
+        ]));
+
+        $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
+            ->withArgs(['user-id-2'])->once();
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'warning'
+                    && $message === 'Failed sign-in attempt'
+                    && $context['event'] === 'auth.sign_in.failed'
+                    && $context['user_id'] === 'user-id-2'
+                    && $context['failed_attempts'] === 2
+                    && !array_key_exists('username', $context);
+            });
+
+        $result = $this->makeService()->withPassword('test@test.com', 'wrong', false);
+        $this->assertEquals('invalid-user-credentials', $result);
+    }
+
+    public function testAuditLogsAccountLockoutTriggered()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('lockme@test.com', new User([
+            'id' => 'user-id-3',
+            'active' => true,
+            'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS - 1,
+            'password_hash' => password_hash('actual_password', PASSWORD_DEFAULT),
+        ]));
+
+        $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
+            ->withArgs(['user-id-3'])->once();
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'warning'
+                    && $message === 'Account locked after consecutive failed sign-in attempts'
+                    && $context['event'] === 'auth.account.locked'
+                    && $context['user_id'] === 'user-id-3'
+                    && $context['failed_attempts'] === AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS
+                    && !array_key_exists('username', $context);
+            });
+
+        $result = $this->makeService()->withPassword('lockme@test.com', 'wrong', false);
+        $this->assertEquals('invalid-user-credentials/account-locked', $result);
+    }
+
+    public function testAuditLogsSignInAttemptOnLockedAccount()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('locked@test.com', new User([
+            'id' => 'user-id-4',
+            'active' => true,
+            'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS,
+            'last_failed_login' => new DateTime(),
+        ]));
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'warning'
+                    && $message === 'Sign-in attempt against locked account'
+                    && $context['event'] === 'auth.sign_in.account_locked'
+                    && $context['user_id'] === 'user-id-4'
+                    && !array_key_exists('username', $context);
+            });
+
+        $result = $this->makeService()->withPassword('locked@test.com', 'whatever', false);
+        $this->assertEquals('account-locked/max-login-attempts', $result);
+    }
+
+    public function testAuditLogsSignInAttemptOnInactiveAccount()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('inactive@test.com', new User([
+            'id' => 'user-id-5',
+            'active' => false,
+        ]));
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) {
+                return $level === 'warning'
+                    && $message === 'Sign-in attempt against inactive account'
+                    && $context['event'] === 'auth.sign_in.inactive_account'
+                    && $context['user_id'] === 'user-id-5'
+                    && !array_key_exists('username', $context);
+            });
+
+        $result = $this->makeService()->withPassword('inactive@test.com', 'whatever', false);
+        $this->assertEquals('account-not-active', $result);
+    }
+
+    public function testAuditLogDoesNotEmitForUnknownUser()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('not@found.com', null);
+
+        $this->logger->shouldNotReceive('log');
+
+        $result = $this->makeService()->withPassword('not@found.com', 'whatever', false);
+        $this->assertEquals('user-not-found', $result);
     }
 
     /**

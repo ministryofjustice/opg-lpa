@@ -2,8 +2,8 @@
 
 namespace Opg\Lpa\Pdf\Traits;
 
-use MakeShared\Constants;
 use MakeShared\Logging\OpgJsonFormatter;
+use MakeShared\Logging\TraceIdProcessor;
 use Monolog\Handler\StreamHandler;
 use Monolog\Level;
 use Monolog\Logger;
@@ -27,13 +27,7 @@ trait LoggerTrait
             $streamHandler->setFormatter(new OpgJsonFormatter());
 
             $this->logger->pushHandler($streamHandler);
-            $this->logger
-                ->pushProcessor(function (\Monolog\LogRecord $record) {
-                    if (isset($record->context[Constants::TRACE_ID_FIELD_NAME])) {
-                        $record->extra[Constants::TRACE_ID_FIELD_NAME] = $record->context[Constants::TRACE_ID_FIELD_NAME];
-                    }
-                    return $record;
-                });
+            $this->logger->pushProcessor(new TraceIdProcessor());
         }
 
         return $this->logger;
