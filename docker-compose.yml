@@ -232,6 +232,7 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+      OPG_LPA_AUTH_LOG_SALT: "a-dummy-salt-for-auth-logs"
 
       # Fake key; deliberately committed
       OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
