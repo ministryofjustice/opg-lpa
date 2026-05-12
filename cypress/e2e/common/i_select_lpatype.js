@@ -12,7 +12,7 @@ Then('I choose Property and Finance', () => {
       cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
         force: true,
       });
-      cy.get('#conditional-repeat-application')
+      cy.get('[data-aria-controls="#conditional-repeat-application"]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
