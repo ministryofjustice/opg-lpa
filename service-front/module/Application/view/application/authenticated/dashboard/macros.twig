@@ -2,7 +2,7 @@
 
     {% import _self as macros %}
 
-    <hr class="visually-hidden">
+    <hr class="govuk-visually-hidden">
 
     {{ macros.showTypeHeaderIfLpasExist(lpas, type) }}
 
@@ -26,7 +26,7 @@
                     </div>
 
                     <div class="list-item_status">
-                        <p class="opg-application-status-text visually-hidden">Application status for A{{ lpa.id }} - {{status}}</p>
+                        <p class="opg-application-status-text govuk-visually-hidden">Application status for A{{ lpa.id }} - {{status}}</p>
                         <div data-cy="lpa-status-lozenge-{{ lpa.id }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
@@ -48,20 +48,20 @@
                 </div>
 
                 <div class="list-item_cta">
-                    <a class="button" data-cy="view-or-continue-lpa-{{ lpa.id }}" role="button" href="/lpa/{{ lpa.id }}">
-                        {% if lpa.progress in ['Started', 'Created'] %}Continue<span class="visually-hidden"> LPA A{{ lpa.id }}</span>{% else %}View LPA<span class="visually-hidden"> A{{ lpa.id }}</span>{% endif %}
+                    <a class="govuk-button" data-cy="view-or-continue-lpa-{{ lpa.id }}" role="button" href="/lpa/{{ lpa.id }}">
+                        {% if lpa.progress in ['Started', 'Created'] %}Continue<span class="govuk-visually-hidden"> LPA A{{ lpa.id }}</span>{% else %}View LPA<span class="govuk-visually-hidden"> A{{ lpa.id }}</span>{% endif %}
                     </a>
                     <ul class="list-item_secondary_actions">
                         {% if lpa.isReusable %}
                             <li>
-                                <a href="/lpa/{{ lpa.id }}/date-check" data-cy="check-signing-dates" data-analytics-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates<span class="visually-hidden"> for A{{ lpa.id }}</span></a>
+                                <a href="/lpa/{{ lpa.id }}/date-check" data-cy="check-signing-dates" data-analytics-click="page:link:navigation: Check signing dates">Check <span class="extra-text">signing</span> dates<span class="govuk-visually-hidden"> for A{{ lpa.id }}</span></a>
                             </li>
                             <li>
-                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-cy="reuse-lpa-details" data-analytics-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details<span class="visually-hidden"> from A{{ lpa.id }}</span></a>
+                                <a href="{{ url('user/dashboard/create-lpa', {'lpa-id': lpa.id}) }}" data-cy="reuse-lpa-details" data-analytics-click="page:link:reuse: Reuse LPA details">Reuse <span class="extra-text">LPA</span> details<span class="govuk-visually-hidden"> from A{{ lpa.id }}</span></a>
                             </li>
                         {% endif %}
                         <li>
-                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-cy="delete-lpa" data-analytics-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="visually-hidden"> A{{ lpa.id }}</span></a>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-cy="delete-lpa" data-analytics-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="govuk-visually-hidden"> A{{ lpa.id }}</span></a>
                         </li>
                     </ul>
                 </div>
@@ -81,7 +81,7 @@
     {% for key,lpa in lpas %}
         {% if not found %}
             {% if (type == lpa.type) %}
-                <h2 class="heading-large">
+                <h2 class="govuk-heading-l">
                     {% if lpa.type == '' %}
                         No type selected
                     {% elseif lpa.type == 'property-and-financial' %}
