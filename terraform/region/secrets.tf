@@ -50,6 +50,19 @@ resource "aws_secretsmanager_secret" "opg_lpa_api_notify_api_key" {
   }
 }
 
+resource "aws_secretsmanager_secret" "opg_lpa_api_auth_log_salt" {
+  name                           = "${local.account_name}/opg_lpa_api_auth_log_salt"
+  tags                           = local.api_component_tag
+  kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
+  force_overwrite_replica_secret = true
+
+  replica {
+    region     = "eu-west-2"
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
+  }
+}
+
+
 # admin secrets
 resource "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
   name                           = "${local.account_name}/opg_lpa_admin_jwt_secret"
