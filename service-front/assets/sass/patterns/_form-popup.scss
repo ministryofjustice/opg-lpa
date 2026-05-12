@@ -53,6 +53,14 @@
         margin-top: 0;
         margin-bottom: $gutter-half;
 
+        &:has(> .form-label) {
+            @include media(tablet) {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+        }
+
         &.read-only {
             label {
                 @include media(mobile) {
@@ -72,13 +80,14 @@
         @include media(tablet) {
             width: 150px;
             margin-top: 6px;
-            float: left;
+            flex-shrink: 0;
         }
     }
 
     .form-control {
         @include media(tablet) {
-            width: 420px;
+            flex: 1;
+            min-width: 0;
         }
     }
 
@@ -107,9 +116,33 @@
         }
     }
 
+    .dob-label {
+        @include media(tablet) {
+            float: left;
+        }
+    }
+
     .form-date {
+        @include media(tablet) {
+            margin-left: 150px;
+        }
+
         .form-group {
+            display: inline-block;
             margin-bottom: 18px;
+        }
+
+        .form-label {
+            @include media(tablet) {
+                width: auto;
+                flex-shrink: unset;
+            }
+        }
+
+        .form-control {
+            @include media(tablet) {
+                flex: unset;
+            }
         }
 
         .form-hint {
