@@ -160,16 +160,15 @@ module "application_log_group_encryption_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_roles = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "*",
   ]
   encryption_roles = [
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "*",
   ]
   grant_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
-
-  decryption_role_patterns = [
+  encryption_role_patterns = [
     "-api-task-role",
     "-admin-task-role",
     "-front-task-role",
@@ -177,7 +176,10 @@ module "application_log_group_encryption_key" {
     "-seeding-task-role",
     "execution-role-ecs-cluster",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/operator",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
