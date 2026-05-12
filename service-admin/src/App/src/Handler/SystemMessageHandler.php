@@ -56,9 +56,22 @@ class SystemMessageHandler extends AbstractHandler
             if (empty($newMessage) && !is_null($this->cache->getItem('system-message'))) {
                 $this->cache->removeItem('system-message');
                 $confirmMessage = 'System message removed';
+
+                $this->auditLog(
+                    $request->getAttribute('user')->id,
+                    'admin.system_message.removed',
+                    'Admin removed system message',
+                );
             } elseif ($form->isValid() && !empty($newMessage)) {
                 $this->cache->setItem('system-message', $newMessage);
                 $confirmMessage = 'System message set';
+
+                $this->auditLog(
+                    $request->getAttribute('user')->id,
+                    'admin.system_message.set',
+                    'Admin set system message',
+                    ['message_content' => $newMessage],
+                );
             }
 
             $this->setFlashInfoMessage($request, $confirmMessage);

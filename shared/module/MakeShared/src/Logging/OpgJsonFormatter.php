@@ -25,10 +25,10 @@ class OpgJsonFormatter extends NormalizerFormatter
             'level' => $original['level_name'],
             'msg' => $original['message'],
             'service_name' => $original['channel'],
+            Constants::TRACE_ID_FIELD_NAME => $original['extra'][Constants::TRACE_ID_FIELD_NAME] ?? 'missing-trace-id',
         ];
 
         if (isset($original['extra'][Constants::TRACE_ID_FIELD_NAME])) {
-            $record[Constants::TRACE_ID_FIELD_NAME] = $original['extra'][Constants::TRACE_ID_FIELD_NAME];
             unset($original['extra'][Constants::TRACE_ID_FIELD_NAME]);
         }
 

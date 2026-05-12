@@ -62,7 +62,7 @@ class FeedbackHandler extends AbstractHandler
 
                 $result = $this->feedbackService->search($startDate, $endDate);
 
-                if ($result === false) {
+                if (!is_array($result)) {
                     // Set a general error message
                     $form->setMessages([[
                         'There was a problem retrieving the feedback',
@@ -74,6 +74,17 @@ class FeedbackHandler extends AbstractHandler
                     // Check to see if this is an export request
                     $queryParams = $request->getQueryParams();
                     $isExport = (array_key_exists('export', $queryParams) && $queryParams['export'] === 'true');
+
+                    $this->auditLog(
+                        $request->getAttribute('user')->id,
+                        $isExport ? 'admin.feedback.export' : 'admin.feedback.search',
+                        $isExport ? 'Admin exported feedback' : 'Admin searched feedback',
+                        [
+                            'start_date' => $startDate->format('Y-m-d'),
+                            'end_date' => $endDate->format('Y-m-d'),
+                            'results_count' => count($result['results']),
+                        ],
+                    );
 
                     if ($isExport) {
                         // note that this terminates script processing with exit()

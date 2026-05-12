@@ -23,3 +23,14 @@ Then('my focus is within {string}', (dataCyReference) => {
 Then('{string} is the active element', (dataCyReference) => {
   cy.focused().should('have.attr', 'data-cy', dataCyReference);
 });
+
+Then('{string} is a modal dialog', (dataCyReference) => {
+  // Verify the element is a native <dialog> (not a div with ARIA bolted on)
+  // and that it was opened with showModal() — indicated by the 'open' attribute
+  // and the ::backdrop pseudo-element being present (only exists for modal dialogs)
+  cy.get('[data-cy=' + dataCyReference + ']').should(($el) => {
+    expect($el[0].tagName.toLowerCase()).to.equal('dialog');
+    expect($el[0].open).to.be.true;
+    expect($el[0].matches(':modal')).to.be.true;
+  });
+});

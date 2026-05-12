@@ -27,6 +27,7 @@ class OpgJsonFormatterTest extends TestCase
         $this->assertEquals('ERROR', $formattedRecord['level']);
         $this->assertEquals('message contents', $formattedRecord['msg']);
         $this->assertEquals('my-service', $formattedRecord['service_name']);
+        $this->assertEquals('missing-trace-id', $formattedRecord['trace_id']);
 
         $this->assertArrayNotHasKey('datetime', $formattedRecord);
         $this->assertArrayNotHasKey('level_name', $formattedRecord);

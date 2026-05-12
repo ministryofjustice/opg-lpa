@@ -70,6 +70,14 @@ jobs:
           prerelease: ${{ github.ref != 'refs/heads/main' }}
           default_bump: minor
 
+  snyk_iac_scan:
+    name: Snyk IAC Scan
+    uses: ./.github/workflows/snyk_iac_scan.yml
+    with:
+      oidc_role: ${{ vars.OIDC_DOCKER_ROLE }}
+    secrets:
+      snyk_token: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+
   docker_build_scan_push:
     name: Docker Build, Scan and Push
     uses: ./.github/workflows/docker_job.yml
@@ -86,6 +94,7 @@ jobs:
     name: TF Development - Account
     needs:
       - set_variables
+      - snyk_iac_scan
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     with:
       is_ephemeral: false
@@ -104,6 +113,7 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - set_variables
+      - snyk_iac_scan
       - terraform_account_development
     with:
       is_ephemeral: false
@@ -182,6 +192,7 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - slack_msg_production_deploy_begin
+      - snyk_iac_scan
       - set_variables
     with:
       is_ephemeral: false
@@ -201,6 +212,7 @@ jobs:
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
+      - snyk_iac_scan
       - terraform_account_production
     with:
       is_ephemeral: false
@@ -231,6 +243,7 @@ jobs:
       - docker_build_scan_push
       - slack_msg_production_deploy_begin
       - set_variables
+      - snyk_iac_scan
       - terraform_region_production
     secrets:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}

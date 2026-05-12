@@ -2,43 +2,20 @@
 // POPUPS
 
 @mixin popup($width: 70%, $height: 26em) {
-    // Helper styles for popups
-    .noscroll {
-        position: relative;
-        overflow: hidden;
-
-        @include media(tablet) {
-            padding-right: 15px;
-        }
-    }
-
-    .popover-mask {
-        display: none;
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        outline: 0;
+    // Backdrop for native <dialog> modal
+    dialog.popup::backdrop {
         background-color: rgba(0, 0, 0, .5);
-        z-index: 60;
-        overflow-x: hidden;
-        overflow-y: auto;
-
-        @include ie-lte(8) {
-            background-color: $grey-1;
-        }
     }
 
     .popup {
-        display: none;
-        position: relative;
+        padding: 0;
+        overflow-y: auto;
+        max-height: calc(100dvh - 8em);
         width: $width;
         max-width: 1100px;
         margin: 4em auto;
         border: .5em solid $black;
         background-color: $white;
-        z-index: 999999;
 
         @include ie-lte(8) {
             margin: 0 auto;
@@ -121,9 +98,4 @@
             margin-top: 2px;
         }
     }
-}
-
-// IE specific fix for popup scrollbars. From https://github.com/twbs/bootstrap/issues/21780
-@-ms-viewport {
-    width: auto;
 }

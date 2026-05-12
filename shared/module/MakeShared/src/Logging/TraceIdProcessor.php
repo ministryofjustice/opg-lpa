@@ -15,10 +15,17 @@ class TraceIdProcessor implements ProcessorInterface
 {
     public function __invoke(LogRecord $record): LogRecord
     {
-        if (array_key_exists(Constants::X_TRACE_ID_HEADER_NAME, $_SERVER)) {
-            $record->extra[Constants::TRACE_ID_FIELD_NAME] =
-                $_SERVER[Constants::X_TRACE_ID_HEADER_NAME];
+        $traceId = $record->extra[Constants::TRACE_ID_FIELD_NAME]
+            ?? $record->context[Constants::TRACE_ID_FIELD_NAME]
+            ?? $_SERVER[Constants::X_TRACE_ID_HEADER_NAME]
+            ?? $_SERVER['HTTP_X_REQUEST_ID']
+            ?? null;
+
+        if (!is_string($traceId) || $traceId === '') {
+            $traceId = 'not available';
         }
+
+        $record->extra[Constants::TRACE_ID_FIELD_NAME] = $traceId;
 
         return $record;
     }

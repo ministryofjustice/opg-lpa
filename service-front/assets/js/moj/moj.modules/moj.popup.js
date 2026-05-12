@@ -18,7 +18,6 @@
       placement: 'body',
       popupId: 'popup',
       ident: null,
-      maskTemplate: lpa.templates['popup.mask'](),
       containerTemplate: lpa.templates['popup.container'](),
       contentTemplate: lpa.templates['popup.content'](),
       closeTemplate: lpa.templates['popup.close'](),
@@ -30,10 +29,7 @@
     init: function () {},
 
     _cacheEls: function () {
-      this.$win = $(window);
-      this.$html = $('html');
       this.$body = $('body');
-      this.$mask = $(this.settings.maskTemplate);
       this.$popup = $(this.settings.containerTemplate);
       this.$content = $(this.settings.contentTemplate);
       this.$close = $(this.settings.closeTemplate);
@@ -42,11 +38,6 @@
     _bindEvents: function () {
       const self = this;
 
-      $('body').on('keydown.moj.Modules.Popup', function (e) {
-        if (e.which === 27) {
-          self.close();
-        }
-      });
       this.$popup.on(
         'click.moj.Modules.Popup',
         '.js-popup-close, .js-cancel',
@@ -55,22 +46,21 @@
           self.close();
         },
       );
+
+      // Native dialog fires 'cancel' on Escape key press
+      this.$popup[0].addEventListener('cancel', function (e) {
+        e.preventDefault();
+        self.close();
+      });
     },
 
     _unbindEvents: function () {
-      $('body').off('keydown.moj.Modules.Popup');
       this.$popup.off('click.moj.Modules.Popup');
     },
 
     open: function (html, opts) {
-      const self = this;
       // combine opts with settings for local settings
       opts = $.extend({}, this.settings, opts);
-
-      // disable body scroll
-      $('html').addClass('noscroll');
-      // hide main contents from print layout
-      $('body > *').addClass('print-hidden');
 
       // Join it all together
       this.$popup
@@ -78,17 +68,16 @@
         .removeClass()
         .addClass('popup ' + opts.ident)
         .append(this.$close)
-        .append(this.$content.html(html))
-        .appendTo(this.$mask);
+        .append(this.$content.html(html));
 
       // bind event handlers
       this._bindEvents();
 
-      // Place the mask in the DOM
+      // Place the popup in the DOM.
       // If a placement has been provided, the popup is appended to that element,
       // otherwise the popup is appended to the body element.
       $(opts.placement)[opts.placement === 'body' ? 'append' : 'after'](
-        this.$mask,
+        this.$popup,
       );
 
       // callback func
@@ -96,104 +85,65 @@
         opts.beforeOpen();
       }
 
-      // prevent tab navigation outside the lightbox
-      self.loopTabKeys(self.$popup);
+      // If already open, close it before reloading content so showModal()
+      // can be called again without throwing a DOMException
+      if (this.$popup[0].open) {
+        this.$popup[0].close();
+      }
 
-      // Fade in the mask
-      this.$mask.fadeTo(200, 1);
+      // Open as a modal – browser handles backdrop, focus trap and scroll lock
+      this.$popup[0].showModal();
 
-      // Center and fase in the popup
-      this.$popup.delay(100).fadeIn(200, function () {
-        self.$popup.find('h2').attr('tabindex', -1);
-        self.$popup.find('.close button').trigger('focus');
-
-        // callback func
-        if (opts.onOpen && typeof opts.onOpen === 'function') {
-          opts.onOpen();
+      // Focus the first heading in the dialog for accessibility;
+      // fall back to the close button if no heading is present.
+      // tabindex="-1" is required for programmatic focus on non-interactive elements.
+      const $heading = this.$popup.find('h1, h2').first();
+      if ($heading.length) {
+        if (!$heading.attr('tabindex')) {
+          $heading.attr('tabindex', '-1');
         }
-      });
+        $heading.trigger('focus');
+      } else {
+        this.$popup.find('.close button').trigger('focus');
+      }
+
+      // callback func
+      if (opts.onOpen && typeof opts.onOpen === 'function') {
+        opts.onOpen();
+      }
     },
 
     close: function () {
       // make sure there is a popup to close
       if (this.isOpen()) {
         const self = this;
-        const opts = $('#popup').data('settings');
-        const scrollPosition = $(window).scrollTop();
+        const opts = $('#' + this.settings.popupId).data('settings');
 
-        self.$popup.fadeOut(400, function () {
-          self.$mask.fadeOut(200, function () {
-            // focus on previous element
-            if (typeof opts.source !== 'undefined' && opts.source) {
-              opts.source.trigger('focus');
-            }
-            // clear out any hash locations
-            window.location.hash = '';
-            if (history.pushState) {
-              history.pushState('', document.title, window.location.pathname);
-            }
+        // Close the native dialog
+        self.$popup[0].close();
 
-            // callback func
-            if (opts.onClose && typeof opts.onClose === 'function') {
-              opts.onClose();
-            }
+        // focus on previous element
+        if (typeof opts !== 'undefined' && opts.source) {
+          opts.source.trigger('focus');
+        }
 
-            // Remove the popup from the DOM
-            $(this).remove();
+        // clear out any hash locations
+        window.location.hash = '';
+        if (history.pushState) {
+          history.pushState('', document.title, window.location.pathname);
+        }
 
-            // re-enable body scroll
-            $(window).scrollTop(scrollPosition);
-            $('html').removeClass('noscroll');
-            // unhide main contents from print layout
-            $('body > *').removeClass('print-hidden');
+        // callback func
+        if (opts && opts.onClose && typeof opts.onClose === 'function') {
+          opts.onClose();
+        }
 
-            // unbind event handlers
-            self._unbindEvents();
-          });
-        });
+        // Remove the popup from the DOM
+        self.$popup.remove();
+
+        // unbind event handlers
+        self._unbindEvents();
       }
-    },
-
-    tabFocusesOn: function (e) {
-      // on tab set focus
-      if (e.key === 'Tab' && !e.shiftKey) {
-        e.preventDefault();
-        e.data.element.trigger('focus');
-      }
-    },
-
-    reverseTabFocusesOn: function (e) {
-      // on tab with shift held set focus
-      if (e.key === 'Tab' && e.shiftKey) {
-        e.preventDefault();
-        e.data.element.trigger('focus');
-      }
-    },
-
-    loopTabKeys: function (wrap) {
-      const tabbable =
-        'a, area, button, input, object, select, textarea, [tabindex]';
-      this.$first = wrap.find(tabbable).filter(':first');
-      this.$last = wrap.find(tabbable).filter(':last');
-
-      this.$first.on(
-        'keydown',
-        { element: this.$last },
-        this.reverseTabFocusesOn,
-      );
-      this.$last.on('keydown', { element: this.$first }, this.tabFocusesOn);
-    },
-
-    redoLoopedTabKeys: function () {
-      if (typeof this.$first !== 'undefined') {
-        this.$first.off('keydown', this.reverseTabFocusesOn);
-      }
-
-      if (typeof this.$last !== 'undefined') {
-        this.$last.off('keydown', this.tabFocusesOn);
-      }
-
-      this.loopTabKeys(this.$popup);
     },
 
     isOpen: function () {

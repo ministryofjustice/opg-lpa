@@ -26,17 +26,11 @@ Feature: Session
 
         Then I see "Session timeout" in the page text
         And there are "two" "button" elements inside "session-timeout-form"
-        # Pressing tab twice will take the user outside the timeout pop-up
-        # if focus is not being held within it; likewise, shift+tab will take
-        # the user outside (in the backwards direction)
-        When I press tab
-        Then my focus is within "session-timeout-form"
-        When I press tab
-        Then my focus is within "session-timeout-form"
-        When I press shift+tab
-        Then my focus is within "session-timeout-form"
-        When I press shift+tab
-        Then my focus is within "session-timeout-form"
+        # Verify the popup is a native modal dialog - the browser enforces the
+        # focus trap, so we test our code: correct element type, opened as a modal,
+        # and that focus is placed on the heading on open (custom code in showWarning())
+        And "timeout-popup" is a modal dialog
+        And "timeout-dialog-title" is the active element
 
     Scenario: Session timeout displays after inactivity with revised message (LPAL-905)
         Given I log in as appropriate test user
