@@ -115,7 +115,7 @@ resource "aws_secretsmanager_secret" "api_rds_username" {
 }
 
 resource "aws_secretsmanager_secret" "api_rds_password" {
-  name                           = "${local.account_name}/old_api_rds_password"
+  name                           = "${local.account_name}/api_rds_password"
   tags                           = local.db_component_tag
   kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
   force_overwrite_replica_secret = true
@@ -142,6 +142,18 @@ resource "aws_secretsmanager_secret" "performance_platform_db_username" {
 resource "aws_secretsmanager_secret" "performance_platform_db_password" {
   name                           = "${local.account_name}/performance_platform_db_password"
   tags                           = local.performance_platform_component_tag
+  kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
+  force_overwrite_replica_secret = true
+
+  replica {
+    region     = "eu-west-2"
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
+  }
+}
+
+resource "aws_secretsmanager_secret" "api_rds_credentials" {
+  name                           = "${local.account_name}/old_api_rds_credentials"
+  tags                           = local.db_component_tag
   kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
   force_overwrite_replica_secret = true
 
