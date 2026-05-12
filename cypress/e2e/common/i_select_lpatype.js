@@ -29,7 +29,7 @@ Then('I choose Property and Finance', () => {
         .first()
         .scrollIntoView()
         .click({ force: true });
-      cy.get('#reduced-fee-low-income')
+      cy.get('[data-cy=reduced-fee-low-income]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
