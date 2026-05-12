@@ -115,7 +115,7 @@ resource "aws_secretsmanager_secret" "api_rds_username" {
 }
 
 resource "aws_secretsmanager_secret" "api_rds_password" {
-  name                           = "${local.account_name}/api_rds_password"
+  name                           = "${local.account_name}/old_api_rds_password"
   tags                           = local.db_component_tag
   kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
   force_overwrite_replica_secret = true
