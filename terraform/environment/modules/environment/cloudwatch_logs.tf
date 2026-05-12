@@ -126,6 +126,19 @@ resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_account_locked" {
   }
 }
 
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_user_not_found" {
+  name           = "${var.environment_name}-auth-sign-in-user-not-found"
+  pattern        = "{ $.context.event = \"auth.sign_in.user_not_found\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-user-not-found"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
 resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_inactive_account" {
   name           = "${var.environment_name}-auth-sign-in-inactive-account"
   pattern        = "{ $.context.event = \"auth.sign_in.inactive_account\" }"
