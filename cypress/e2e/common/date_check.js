@@ -4,13 +4,13 @@ const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
 const fillSignatureDateInputs = (elt, signatureDate) => {
   elt
-    .find('[data-cy=date-check-date-day]')
+    .find('[data-cy~=date-check-date-day]')
     .attr('value', signatureDate.getDate());
   elt
-    .find('[data-cy=date-check-date-month]')
+    .find('[data-cy~=date-check-date-month]')
     .attr('value', signatureDate.getMonth() + 1);
   elt
-    .find('[data-cy=date-check-date-year]')
+    .find('[data-cy~=date-check-date-year]')
     .attr('value', signatureDate.getFullYear());
 };
 
@@ -21,7 +21,7 @@ Then('I visit the date check page for the LPA with A-ref {string}', (aRef) => {
 });
 
 Then('I cannot see continuation sheet reminders', () => {
-  cy.get('[data-cy=continuation-sheet-info]').should('not.exist');
+  cy.get('[data-cy~=continuation-sheet-info]').should('not.exist');
 });
 
 Then(
@@ -34,7 +34,7 @@ Then(
       applicantName + ' (applicant)',
     ];
 
-    cy.get('[data-cy=person-name]').then(($name) => {
+    cy.get('[data-cy~=person-name]').then(($name) => {
       const names = $name
         .map(function () {
           return this.innerText;
@@ -48,14 +48,14 @@ Then(
 Then('I can see a reminder to sign continuation sheet 1, 2 and 3', () => {
   const text =
     'Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.';
-  cy.get('[data-cy=continuation-sheet-info]').should('contain.text', text);
+  cy.get('[data-cy~=continuation-sheet-info]').should('contain.text', text);
 });
 
 Then('I can see a reminder to sign continuation sheet 4', () => {
   const text =
     "They must have signed continuation sheet 4 after the 'certificate provider' has signed section 10 of the LPA form.";
-  cy.get('[data-cy=date-check-primary-attorney]')
-    .find('[data-cy=continuation-sheet-info]')
+  cy.get('[data-cy~=date-check-primary-attorney]')
+    .find('[data-cy~=continuation-sheet-info]')
     .should('contain.text', text);
 });
 
@@ -63,10 +63,10 @@ Then('I can see that the donor {string} cannot sign', (name) => {
   const donorName = 'The person signing on behalf of ' + name + ' (donor)';
   const donorText =
     'This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on';
-  cy.get('[data-cy=date-check-donor]')
+  cy.get('[data-cy~=date-check-donor]')
     .find('h3')
     .should('contain.text', donorName);
-  cy.get('[data-cy=date-check-donor]')
+  cy.get('[data-cy~=date-check-donor]')
     .find('p')
     .should('contain.text', donorText);
 
@@ -74,10 +74,10 @@ Then('I can see that the donor {string} cannot sign', (name) => {
     'The person signing on behalf of ' + name + ' (applicant)';
   const applicantText =
     'This person signed section 15 of the LPA on behalf of the applicant on';
-  cy.get('[data-cy=date-check-applicant]')
+  cy.get('[data-cy~=date-check-applicant]')
     .find('h3')
     .should('contain.text', applicantName);
-  cy.get('[data-cy=date-check-applicant]')
+  cy.get('[data-cy~=date-check-applicant]')
     .find('p')
     .should('contain.text', applicantText);
 });
@@ -85,19 +85,19 @@ Then('I can see that the donor {string} cannot sign', (name) => {
 Then('I can see that the donor {string} can sign', (name) => {
   const donorName = name + ' (donor)';
   const donorText = 'This person signed section 9 of the LPA on';
-  cy.get('[data-cy=date-check-donor]')
+  cy.get('[data-cy~=date-check-donor]')
     .find('h3')
     .should('contain.text', donorName);
-  cy.get('[data-cy=date-check-donor]')
+  cy.get('[data-cy~=date-check-donor]')
     .find('p')
     .should('contain.text', donorText);
 
   const applicantName = name + ' (applicant)';
   const applicantText = 'This person signed section 15';
-  cy.get('[data-cy=date-check-applicant]')
+  cy.get('[data-cy~=date-check-applicant]')
     .find('h3')
     .should('contain.text', applicantName);
-  cy.get('[data-cy=date-check-applicant]')
+  cy.get('[data-cy~=date-check-applicant]')
     .find('p')
     .should('contain.text', applicantText);
 });
@@ -109,10 +109,10 @@ Then(
       'Enter the signature date of the person signing on behalf of the donor';
     const applicantText =
       'Enter the signature date of the person signing on behalf of the applicant';
-    cy.get('[data-cy=date-check-donor]')
+    cy.get('[data-cy~=date-check-donor]')
       .find('.error-message')
       .should('contain.text', donorText);
-    cy.get('[data-cy=date-check-applicant]')
+    cy.get('[data-cy~=date-check-applicant]')
       .find('.error-message')
       .should('contain.text', applicantText);
   },
@@ -122,12 +122,12 @@ Then(
   'I can see validation errors refer to the donor, who is also the applicant',
   () => {
     const donorText = "Enter the donor's signature date";
-    cy.get('[data-cy=date-check-donor]')
+    cy.get('[data-cy~=date-check-donor]')
       .find('.error-message')
       .should('contain.text', donorText);
 
     const applicantText = "Enter the applicant's signature date";
-    cy.get('[data-cy=date-check-applicant]')
+    cy.get('[data-cy~=date-check-applicant]')
       .find('.error-message')
       .should('contain.text', applicantText);
   },
@@ -136,8 +136,8 @@ Then(
 Then(
   'I can see that a person is signing on behalf of the applicant {string}',
   (name) => {
-    cy.get('[data-cy=date-check-applicant]')
-      .find('[data-cy=person-name]')
+    cy.get('[data-cy~=date-check-applicant]')
+      .find('[data-cy~=person-name]')
       .should(
         'contain.text',
         'The person signing on behalf of ' + name + ' (applicant)',
@@ -150,7 +150,7 @@ Then('I fill in all signature dates on the check dates form', () => {
   let signatureDate = new Date(Date.now() - MS_PER_DAY * 40);
 
   // fill in all date fields
-  cy.get('fieldset.date-check-dates').each((elt) => {
+  cy.get('[data-cy~=date-check-dates]').each((elt) => {
     fillSignatureDateInputs(elt, signatureDate);
 
     // move to next day
@@ -192,7 +192,7 @@ Then(
     const errorText =
       'Check your dates. The signature date of the person signing on behalf ' +
       'of the applicant cannot be in the future';
-    cy.get('[data-cy=date-check-applicant]')
+    cy.get('[data-cy~=date-check-applicant]')
       .find('.error-message')
       .should('contain.text', errorText);
   },
@@ -204,7 +204,7 @@ Then(
     const errorText =
       'The person signing on behalf of the applicant must sign on the same day or after ' +
       'all section 11s have been signed. You need to print and re-sign section 15';
-    cy.get('[data-cy=date-check-applicant]')
+    cy.get('[data-cy~=date-check-applicant]')
       .find('.error-message')
       .should('contain.text', errorText);
   },
@@ -213,7 +213,7 @@ Then(
 Then(
   'the visually-hidden legend for {string} states {string}',
   (fieldset, text) => {
-    cy.get('[data-cy=' + fieldset)
+    cy.get('[data-cy~=' + fieldset)
       .find('legend.visually-hidden')
       .contains(text);
   },
@@ -225,7 +225,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-certificate-provider] .error-message').should(
+    cy.get('[data-cy~=date-check-certificate-provider] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -238,7 +238,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-primary-attorney] .error-message').should(
+    cy.get('[data-cy~=date-check-primary-attorney] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -251,7 +251,7 @@ Then(
     const errorText =
       'The donor must be the first person to sign the LPA. ' +
       'You need to print and re-sign sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-applicant] .error-message').should(
+    cy.get('[data-cy~=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -264,7 +264,7 @@ Then(
     const errorText =
       'The applicant must sign on the same day or after all section 11s have been signed. ' +
       'You need to print and re-sign section 15';
-    cy.get('[data-cy=date-check-applicant] .error-message').should(
+    cy.get('[data-cy~=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -276,7 +276,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The donor's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-donor] .error-message').should(
+    cy.get('[data-cy~=date-check-donor] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -288,7 +288,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The attorney's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-primary-attorney] .error-message').should(
+    cy.get('[data-cy~=date-check-primary-attorney] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -300,7 +300,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The certificate provider's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-certificate-provider] .error-message').should(
+    cy.get('[data-cy~=date-check-certificate-provider] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -312,7 +312,7 @@ Then(
   () => {
     const errorText =
       "Check your dates. The applicant's signature date cannot be in the future";
-    cy.get('[data-cy=date-check-applicant] .error-message').should(
+    cy.get('[data-cy~=date-check-applicant] .error-message').should(
       'contain.text',
       errorText,
     );
@@ -325,7 +325,7 @@ Then(
     const errorText =
       'The donor must sign Section 5 on the same day or before they sign continuation sheet 3. ' +
       'You need to print and re-sign continuation sheet 3 and sections 10, 11 and 15';
-    cy.get('[data-cy=date-check-donor] .error-message').should(
+    cy.get('[data-cy~=date-check-donor] .error-message').should(
       'contain.text',
       errorText,
     );
