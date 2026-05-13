@@ -23,7 +23,8 @@
 }
 
 .icon {
-    .heading-medium & {
+    .heading-medium &,
+    .govuk-heading-m & {
         @extend %icon-with-heading-base;
     }
 }
