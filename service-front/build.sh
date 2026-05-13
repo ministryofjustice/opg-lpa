@@ -23,6 +23,7 @@ case "$TASK" in
     ;;
 
   watch)
+    ./build-css.sh
 	node ./build.js
     echo "Starting watch mode..."
 

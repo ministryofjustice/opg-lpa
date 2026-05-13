@@ -1,5 +1,5 @@
 {% if messages is not empty %}
-    <span class="error-message text">
+    <span class="error-message text" data-cy="form-error">
         <span class="visually-hidden">Error:</span>
         {{ messages|join('<br>')|raw }}
     </span>
