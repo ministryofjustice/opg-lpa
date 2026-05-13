@@ -74,7 +74,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
     actions = [
       "kms:Decrypt"
     ]
-    resources = [var.secretsmanager_encryption_key_arn]
+    resources = var.secretsmanager_encryption_key_arns
   }
 }
 
