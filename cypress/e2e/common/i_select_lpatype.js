@@ -7,12 +7,12 @@ Then('I choose Property and Finance', () => {
     .should('be.checked');
   cy.get('body').then(($body) => {
     if (
-      $body.find('input[name="isRepeatApplication"][value="is-repeat"]').length
+      $body.find('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').length
     ) {
-      cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
+      cy.get('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').check({
         force: true,
       });
-      cy.get('#conditional-repeat-application')
+      cy.get('[data-aria-controls="#conditional-repeat-application"]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
@@ -29,7 +29,7 @@ Then('I choose Property and Finance', () => {
         .first()
         .scrollIntoView()
         .click({ force: true });
-      cy.get('#reduced-fee-low-income')
+      cy.get('[data-cy=reduced-fee-low-income]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
@@ -44,12 +44,12 @@ Then('I choose Health and Welfare', () => {
     .should('be.checked');
   cy.get('body').then(($body) => {
     if (
-      $body.find('input[name="isRepeatApplication"][value="is-repeat"]').length
+      $body.find('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').length
     ) {
-      cy.get('input[name="isRepeatApplication"][value="is-repeat"]').check({
+      cy.get('[data-aria-controls="#conditional-repeat-application"][value="is-repeat"]').check({
         force: true,
       });
-      cy.get('#conditional-repeat-application-details')
+      cy.get('[data-aria-controls="#conditional-repeat-application"]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
@@ -65,7 +65,7 @@ Then('I choose Health and Welfare', () => {
         .first()
         .scrollIntoView()
         .click({ force: true });
-      cy.get('#reduced-fee-low-income')
+      cy.get('[data-cy=reduced-fee-low-income]')
         .should('exist')
         .and('not.have.class', 'js-hidden')
         .and('not.have.css', 'display', 'none');
