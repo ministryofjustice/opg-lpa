@@ -22,7 +22,7 @@
 {{ email.setAttributes({
     id: 'email',
     type: 'email',
-    class: 'form-control',
+    class: 'govuk-input',
     "data-cy": 'signup-email'
 }) ? ''}}
 
@@ -30,19 +30,19 @@
     id: 'email_confirm',
     type: 'email',
     autocomplete: 'off',
-    class: 'form-control',
+    class: 'govuk-input',
     "data-cy": 'signup-email-confirm'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    class: 'form-control',
+    class: 'govuk-input',
     "data-cy": 'signup-password'
 }) ? ''}}
 
 {{ password_confirm.setAttributes({
     id: 'password_confirm',
-    class: 'form-control',
+    class: 'govuk-input',
     "data-cy": 'signup-password-confirm'
 }) ? ''}}
 
@@ -62,8 +62,8 @@
 {{ password.setOptions( { label: 'Password' }) ? '' }}
 {{ password_confirm.setOptions( { label: 'Confirm password' }) ? '' }}
 
-<div class="text">
-    <p class="lede">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
+<div class="govuk-body">
+    <p class="govuk-body-l">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
     <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
     <p>If you already have an account, please <a href="{{ url('login') }}">sign in</a>.</p>
     <div class="govuk-details__text">
@@ -79,26 +79,26 @@
 {{ form().openTag( form )|raw }}
     {{ formElement(form.getCsrf) }}
 
-    <h2 class="heading-medium">Email address</h2>
+    <h2 class="govuk-heading-m">Email address</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Email</legend>
+        <legend class="govuk-visually-hidden">Email</legend>
 
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(email_confirm) }}
 
     </fieldset>
 
-    <h2 class="heading-medium">Create password</h2>
+    <h2 class="govuk-heading-m">Create password</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Password</legend>
+        <legend class="govuk-visually-hidden">Password</legend>
 
         {% include 'application/partials/password-rules.twig' %}
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
-            <label class="form-label" for="{{ password.getAttribute('id') }}">
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
             </label>
             {{ formElement(password) }}
@@ -112,10 +112,10 @@
 
     </fieldset>
 
-    <div class="form-group {{ terms.getMessages|length >0 ? 'form-group-error'}}">
+    <div class="govuk-form-group {{ terms.getMessages|length >0 ? 'govuk-form-group--error'}}">
         <fieldset>
-            <legend class="visually-hidden">Terms</legend>
-            <div class="text">
+            <legend class="govuk-visually-hidden">Terms</legend>
+            <div class="govuk-body">
                 <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
             </div>
 
@@ -129,8 +129,8 @@
         </fieldset>
     </div>
 
-    <div class="form-group">
-        <input type="submit" name="submit" id="signin-form-submit" data-cy="signup-submit-button" value="Create account" class="button">
+    <div class="govuk-form-group">
+        <input type="submit" name="submit" id="signin-form-submit" data-cy="signup-submit-button" value="Create account" class="govuk-button">
     </div>
 
 {{ form().closeTag|raw }}

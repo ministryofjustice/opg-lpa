@@ -33,7 +33,7 @@ Feature: Change User Personal Details
             | Enter a valid email address |
         And I see "Error" in the title
         When I try to change email address correctly
-        Then I see "We've emailed a link to anewemail@digital.justice.gov.uk. You'll need to click on the link so we know this email address is correct" in the page text
+        Then I see "We’ve emailed a link to anewemail@digital.justice.gov.uk. You’ll need to click on the link so we know this email address is correct" in the page text
 
     @focus
     Scenario: Change address
