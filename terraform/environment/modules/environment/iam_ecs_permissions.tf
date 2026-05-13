@@ -88,7 +88,8 @@ data "aws_iam_policy_document" "execution_role" {
     sid    = "AllowECSKMS"
     resources = [
       data.aws_kms_alias.secrets_encryption_alias.target_key_arn,
-      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
+      data.aws_kms_alias.old_multi_region_secrets_encryption_alias.target_key_arn
     ]
 
     actions = [
