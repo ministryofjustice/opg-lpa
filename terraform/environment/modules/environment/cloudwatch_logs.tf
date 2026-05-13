@@ -1,3 +1,4 @@
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key encryption of logs too expensive
 resource "aws_cloudwatch_log_group" "application_logs" {
   name              = "${var.environment_name}_application_logs"
   retention_in_days = var.account.log_retention_in_days
