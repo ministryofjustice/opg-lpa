@@ -18,11 +18,13 @@
         color: $black;
     }
 
-    .heading-xlarge {
+    .heading-xlarge,
+    .govuk-heading-xl {
         margin: 0 0 10px;
     }
 
-    .heading-medium {
+    .heading-medium,
+    .govuk-heading-m {
         margin: 0;
     }
 }
