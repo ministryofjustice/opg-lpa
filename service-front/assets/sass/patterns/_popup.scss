@@ -89,7 +89,8 @@
         .no-js & {
             padding-left: 0;
 
-            &.heading-small {
+            &.heading-small,
+            &.govuk-heading-s {
                 @extend %heading-large;
             }
         }
