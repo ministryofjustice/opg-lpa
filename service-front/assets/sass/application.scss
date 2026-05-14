@@ -1,5 +1,5 @@
 // GOVUK Frontend
-@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
+@use "../../node_modules/govuk-frontend/dist/govuk/index" as * with (
   $govuk-assets-path: "/assets/v2/"
 );
 
@@ -60,9 +60,6 @@
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
 
-html {
-  font-size: 100% !important;
-}
 
 .govuk-service-navigation {
   width: 100vw !important;

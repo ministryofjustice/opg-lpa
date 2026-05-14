@@ -56,7 +56,7 @@
                 {% endif %}
             {% endif %}
 
-            <p><a class="js-guidance" href="/guide#topic-replacement-attorneys" data-analytics-click="page:link:help: Find out more about replacement attorneys">Find out more about replacement attorneys</a></p>
+            <p><a class="govuk-link js-guidance" href="/guide#topic-replacement-attorneys" data-analytics-click="page:link:help: Find out more about replacement attorneys">Find out more about replacement attorneys</a></p>
         </div>
     </div>
 
@@ -71,8 +71,8 @@
         </ul>
     {% endif %}
 
-    <div class="{% if (attorneys) %}action-item{% endif %} form-group">
-        <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}button{% endif %} js-form-popup" data-cy="add-replacement-attorney">
+    <div class="{% if (attorneys) %}action-item{% endif %}">
+        <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}govuk-button{% endif %} js-form-popup" data-cy="add-replacement-attorney">
             {% if (attorneys) %}
                 Add another replacement attorney?
             {% else %}
@@ -85,9 +85,7 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
-        <div class="form-group">
-            {{ formElement(form.get('save')) }}
-        </div>
+        {{ formElement(form.get('save')) }}
     {{ form().closeTag|raw }}
 
 </li>

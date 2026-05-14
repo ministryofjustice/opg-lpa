@@ -1,96 +1,36 @@
 // =======================================================
 // BUTTONS
 
+// govuk-button-group replaces the legacy form-group wrapper used around
+// buttons. govuk-button-group uses responsive-margin(6) (~30px) as its own
+// bottom margin and also keeps the govuk-button margin-bottom inside it.
+// The legacy form-group only added 15px (mobile) / 30px (tablet) below the
+// whole group. Override here to remove the redundant inner button margin so
+// the overall spacing matches what form-group previously provided.
 
-.button-warning {
-    @extend %button-extended;
-    @include button($error-colour);
-}
-
-%button-extended {
-    @include box-sizing (border-box);
-    padding: em(10) em(15) em(5);
-    vertical-align: top;
-
-    @include media (mobile) {
-        width: 100%;
+.govuk-button-group {
+    .govuk-button {
+        margin-bottom: govuk-spacing(2);
     }
 }
 
-.button,
-.button-secondary {
-    @include media(mobile) {
-        text-align: center;
-    }
-
-    + .button,
-    + .button-secondary {
-        @include media(mobile) {
-            margin-top: 15px;
-        }
-    }
+// Standalone govuk-button elements (not inside a button-group) also carry
+// GOV.UK Frontend's default ~32px margin-bottom. Reduce to match the spacing
+// that the legacy form-group wrapper previously provided.
+.govuk-button {
+    margin-bottom: govuk-spacing(2);
 }
 
-.button {
-    // replacement for:
-    // # govuk_frontend_toolkit/**/_buttons.scss
-    // @include box-shadow(0 2px 0 darken($colour, 15%));
-    // @include ie-lte(8) {
-    //   border-bottom: 2px solid darken($colour, 15%);
-    // }
-    @include box-shadow(0 2px 0 #002d18);
-    @include ie-lte(8) {
-      border-bottom: 2px solid #002d18;
-    }
 
-    // replacement for:
-    // # govuk_frontend_toolkit/**/_buttons.scss
-    // darken($button-color, 5%)
-    &:hover, &:focus {
-        background-color: #005a30 !important;
-    }
+.app-button-link {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: inherit;
+  color: $govuk-link-colour;
 }
 
-.button-secondary {
-    @extend %button-extended;
-    @include button($panel-colour);
-
-    // override button colour settings from govuk stylesheets
-    background-color: #f3f2f1 !important;
-    &:hover, &:focus {
-        background-color: #d0d3d6 !important;
-    }
-}
-
-.button-link {
-    margin-left: $gutter;
-    line-height: 2.5em;
-
-    @include media(mobile) {
-        margin-left: 0;
-    }
-}
-
-.reuse-details-button {
-    @include media(tablet) {
-        margin-right: 4px;
-    }
-}
-
-.button-input-to-link {
-    @extend a;
-
-    color: $link-colour;
-    background-color: transparent;
-    cursor: pointer;
-    text-decoration: underline;
-
-    &::-moz-focus-inner {
-        padding: 0;
-        border: 0
-    }
-
-    + .spinner {
-        margin-bottom: -3px;
-    }
+.app-button-link:focus {
+  outline: inherit;
 }
