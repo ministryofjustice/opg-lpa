@@ -71,7 +71,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_ingress_management_role }}
+          role-to-assume: ${{ inputs.oidc_ingress_management_role || vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupStart
 
