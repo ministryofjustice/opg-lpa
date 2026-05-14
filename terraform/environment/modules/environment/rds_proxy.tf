@@ -9,6 +9,6 @@ module "rds_proxy" {
   rds_api_security_group_id      = aws_security_group.rds_api.id
   secretsmanager_encryption_key_arns = [
     data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
-    data.aws_kms_alias.old_multi_region_secrets_encryption_alias.target_key_arn
+    # data.aws_kms_alias.old_multi_region_secrets_encryption_alias.target_key_arn
   ]
 }
