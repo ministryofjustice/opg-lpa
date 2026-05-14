@@ -67,6 +67,6 @@ data "aws_availability_zones" "aws_zones" {
 
 data "aws_default_tags" "current" {}
 
-# data "aws_kms_alias" "application_log_group_encryption_alias" {
-#   name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
-# }
+data "aws_kms_alias" "application_log_group_encryption_alias" {
+  name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+}
