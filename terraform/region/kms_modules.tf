@@ -151,7 +151,7 @@ module "application_log_group_encryption_key" {
   source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
   description        = "Customer managed encryption key for application CloudWatch log groups"
   alias              = "opg-lpa-${local.account_name}-application-log-group-encryption-key"
-  usage_services     = ["logs.*.amazonaws.com"]
+  usage_services     = []
   primary_region     = "eu-west-1"
   replicas_to_create = ["eu-west-2"]
 
