@@ -16,8 +16,10 @@
         <p>Click 'OK' to stay signed in and continue using this service.</p>
 
         <form name="session-timeout-form" action="{{ url('logout', {'force_canonical': true}) }}" data-cy="session-timeout-form">
-            <button type="button" name="continue" id="session-timeout-continue" class="button js-ok-button">OK</button>
-            <button type="submit" name="submit" id="session-timeout-logout" class="button-secondary">Sign out</button>
+            <div class="govuk-button-group">
+                <button type="button" name="continue" id="session-timeout-continue" class="govuk-button js-ok-button">OK</button>
+                <button type="submit" name="submit" id="session-timeout-logout" class="govuk-button govuk-button--secondary">Sign out</button>
+            </div>
         </form>
     </div>
 </dialog>
