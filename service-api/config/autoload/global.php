@@ -111,6 +111,9 @@ return [
         // lifetime of authentication tokens, in seconds
         'token_ttl' => getenv('OPG_LPA_AUTH_TOKEN_TTL') ?: 4500,
 
+        // salt for hashing user identifiers in audit logs
+        'log_salt' => getenv('OPG_LPA_AUTH_LOG_SALT') ?: '',
+
         'dynamodb' => [
             'client' => [
                 'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
