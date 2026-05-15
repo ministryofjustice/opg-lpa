@@ -60,3 +60,4 @@ jobs:
         env:
           TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
         run: |
+          ../../scripts/pipeline/workspace_cleanup/workspace_cleanup.sh $(terraform-workspace-manager -protected-workspaces=true -aws-account-id=050256574573 -aws-iam-role=opg-lpa-ci)
