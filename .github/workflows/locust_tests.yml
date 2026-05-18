@@ -5,19 +5,39 @@ defaults:
     shell: bash
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      account_id:
-        description: "AWS account ID containing the role to assume for boto commands"
+      users:
+        description: "Number of users"
+        default: "5"
+        required: true
+        type: string
+      run_time:
+        description: "Test duration (e.g. 2m, 5m)"
+        default: "2m"
         required: true
         type: string
       front_url:
-        description: "URL of the frontend"
+        description: "URL of the frontend to run tests against"
+        required: true
+        type: string
+  workflow_call:
+    inputs:
+      front_url:
+        description: "URL of the frontend to run tests against"
         required: true
         type: string
       oidc_ingress_management_role:
         description: "OIDC role to assume for ingress management permissions"
         required: true
+        type: string
+      users:
+        description: "Number of users"
+        default: "5"
+        type: string
+      run_time:
+        description: "Test duration (e.g. 2m, 5m)"
+        default: "2m"
         type: string
 
 permissions:
@@ -40,11 +60,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
+      - name: Protect against production load tests
+        run: |
+          if [[ "${{ inputs.front_url }}" =~ ^(https://lastingpowerofattorney\.service\.gov\.uk|https://front\.lpa\.opg\.service\.justice\.gov\.uk)$ ]]; then
+            echo "Error: cannot run load tests against production"
+            exit 1
+          fi
+
       - name: Configure AWS Credentials - Ingress Management
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_ingress_management_role }}
+          role-to-assume: ${{ inputs.oidc_ingress_management_role || vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupStart
 
@@ -86,14 +113,14 @@ jobs:
         run: |
           pip install boto3 locust beautifulsoup4 faker
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
+          locust --headless -f ./locustfile.py -r 1 --host ${{ inputs.front_url }} -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
 
       - name: Configure AWS Credentials - Ingress Management
         if: always()
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_ingress_management_role }}
+          role-to-assume: ${{ inputs.oidc_ingress_management_role || vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupEnd
 
