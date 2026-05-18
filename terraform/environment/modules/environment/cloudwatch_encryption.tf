@@ -42,19 +42,13 @@ data "aws_iam_policy_document" "application_log_group_cloudwatch_logs" {
       identifiers = ["logs.${data.aws_region.current.name}.amazonaws.com"]
     }
 
-    actions = [
-      "kms:Encrypt*",
-      "kms:Decrypt*",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:Describe*",
-    ]
+    actions   = []
     resources = ["*"]
 
     condition {
       test     = "ArnLike"
       variable = "kms:EncryptionContext:aws:logs:arn"
-      values   = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group/*"]
+      values   = ["arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:*"]
     }
   }
 }
