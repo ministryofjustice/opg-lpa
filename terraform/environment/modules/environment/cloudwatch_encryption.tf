@@ -21,6 +21,19 @@ resource "aws_kms_key_policy" "application_log_group_cloudwatch_logs" {
 
 data "aws_iam_policy_document" "application_log_group_cloudwatch_logs" {
   statement {
+    sid    = "Allow root to manage key policies"
+    effect = "Allow"
+
+    principals {
+      type        = "AWS"
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
+    }
+
+    actions   = ["kms:*"]
+    resources = ["*"]
+  }
+
+  statement {
     sid    = "Allow CloudWatch access"
     effect = "Allow"
 
