@@ -143,20 +143,41 @@ The load tests are located in `tests/load`. They are written using [locust](http
 To run the load tests:
 
 1. Start the stack (see above).
-1. Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
-path for the virtual environment).
-1. Install dependencies:
+2. Create a virtualenv: (substitute your preferred path for the virtual environment).
+```bash
+virtualenv -p python3 ~/.loadtestsvenv 
+source ~/.loadtestsvenv/bin/activate
+```
+
+3. Install dependencies from tests/load, and locust:
 ```bash
 cd tests/load
 pip install -e .
 ```
-1. Run the test suite: `run_load_tests.sh tests/suite.py`
+
+4. Run the test suite: `run_load_tests.sh tests/suite.py`
     The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
     Running `run_load_tests.sh` without arguments shows the available switches.
 
 When working on the tests, it can be useful to debug HTTP requests made by the requests library.
 To enable this, edit the `tests/load/load-test-config.json` file and set `"requests_debugging": true`.
 The output is very verbose but can be useful for a low-level view of the HTTP layer.
+
+Alternatively, to run locust itself independently as is done by CI, do steps 1 and 2 above, then step 3 is :
+```bash
+cd locust
+pip install locust boto3 beautifulsoup4 faker
+python -m locust -f locustfile.py
+python -m locust -f locustfile.py --host=https://localhost:7002
+```
+
+You can see a web interface for locust at http://0.0.0.0:8089 where you can experiment with different loads
+
+Or you can run it headless:
+```bash
+python -m locust -f locustfile.py --headless -u 1 -r 1 -t 10s --host=https://localhost:7002
+```
+
 
 ### Cypress functional tests
 
