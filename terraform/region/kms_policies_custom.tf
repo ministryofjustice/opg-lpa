@@ -1,20 +1,6 @@
 
-# custom application log group encryption key policy document
-
+# additional custom policy document for application_log_group kms_key
 data "aws_iam_policy_document" "application_log_group_kms_policy" {
-  statement {
-    sid    = "Allow root to manage application log key policies"
-    effect = "Allow"
-
-    principals {
-      type        = "AWS"
-      identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"]
-    }
-
-    actions   = ["kms:*"]
-    resources = ["*"]
-  }
-
   statement {
     sid    = "Allow CloudWatch access to application log encryption key"
     effect = "Allow"
