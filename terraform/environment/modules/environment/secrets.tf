@@ -16,6 +16,10 @@ data "aws_secretsmanager_secret" "opg_lpa_api_notify_api_key" {
   name = "${var.account_name}/opg_lpa_api_notify_api_key"
 }
 
+data "aws_secretsmanager_secret" "opg_lpa_api_auth_log_salt" {
+  name = "${var.account_name}/opg_lpa_api_auth_log_salt"
+}
+
 # admin secrets
 data "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
   name = "${var.account_name}/opg_lpa_admin_jwt_secret"
