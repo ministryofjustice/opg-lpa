@@ -198,8 +198,6 @@ class User:
             )
 
     def get_activation_code(self, identifier):
-        #activation_token = hashlib.sha1(identifier.encode('utf-8')).hexdigest()
-
         sha1_obj = hashlib.sha1()
         sha1_obj.update(identifier.encode("utf-8"))
         activation_token = sha1_obj.hexdigest()
