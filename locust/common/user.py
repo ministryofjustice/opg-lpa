@@ -59,7 +59,15 @@ class User:
 
         if response.status_code == 200:
             logger.info(
-                "%s %s %s signed up successfully using email address %s",
+                "%s %s %s managed to post to signup url using email address %s and received a 200, but that does not necessarily guarantee success",
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
+            )
+        else:
+            logger.info(
+                "%s %s %s failed to post to /signup using email address %s",
                 self.account_details["title"],
                 self.account_details["first_name"],
                 self.account_details["last_name"],
@@ -69,7 +77,23 @@ class User:
     def activate(self, email_address_id):
         logger.debug("About to click signup for %s", email_address_id)
         activation_code = self.get_activation_code(email_address_id)
-        self.client.get(f"/signup/confirm/{activation_code}")
+        response = self.client.get(f"/signup/confirm/{activation_code}")
+        if response.status_code == 200:
+            logger.info(
+                "%s %s %s activation using email address %s returned a 200, but that does not necessarily guarantee success",
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
+            )
+        else:
+            logger.info(
+                "%s %s %s failed to activate using email address %s",
+                self.account_details["title"],
+                self.account_details["first_name"],
+                self.account_details["last_name"],
+                self.account_details["email"],
+            )
 
     def update_profile(self):
         csrf_token_name, csrf_token = get_csrf_token(self.client, "/user/about-you/new")
@@ -174,6 +198,10 @@ class User:
             )
 
     def get_activation_code(self, identifier):
-        activation_token = hashlib.sha1(identifier.encode('utf-8')).hexdigest()
+        #activation_token = hashlib.sha1(identifier.encode('utf-8')).hexdigest()
+
+        sha1_obj = hashlib.sha1()
+        sha1_obj.update(identifier.encode("utf-8"))
+        activation_token = sha1_obj.hexdigest()
         return activation_token
 
