@@ -1,4 +1,5 @@
 from common.helper import get_csrf_token
+import hashlib
 import time
 from faker import Faker
 from bs4 import BeautifulSoup
@@ -66,23 +67,9 @@ class User:
             )
 
     def activate(self, email_address_id):
-        email_received = False
-        logger.debug("Waiting for email to be received for %s", email_address_id)
-        while not email_received:
-            try:
-                with open(
-                    "../cypress/activation_emails/" + email_address_id + ".activation"
-                ) as f:
-                    email = f.read()
-                    activation_link = email.split(",")[1]
-                    self.client.get(
-                        activation_link, name="/signup/confirm/[activation_code]"
-                    )
-                    email_received = True
-            except FileNotFoundError:
-                logger.debug("Email not received yet for %s", email_address_id)
-                time.sleep(1)
-                pass
+        logger.debug("About to click signup for %s", email_address_id)
+        activation_code = self.get_activation_code(email_address_id)
+        self.client.get(f"/signup/confirm/{activation_code}")
 
     def update_profile(self):
         csrf_token_name, csrf_token = get_csrf_token(self.client, "/user/about-you/new")
@@ -185,3 +172,8 @@ class User:
                 self.account_details["email"],
                 response.status_code,
             )
+
+    def get_activation_code(self, identifier):
+        activation_token = hashlib.sha1(identifier.encode('utf-8')).hexdigest()
+        return activation_token
+
