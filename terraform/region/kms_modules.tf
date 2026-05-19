@@ -148,13 +148,13 @@ module "secrets_manager_encryption_key" {
 }
 
 module "application_log_group_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
-  description        = "Customer managed encryption key for application CloudWatch log groups"
-  alias              = "opg-lpa-${local.account_name}-application-log-group-encryption-key"
-  usage_services     = []
-  primary_region     = "eu-west-1"
-  replicas_to_create = ["eu-west-2"]
-
+  source                      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description                 = "Customer managed encryption key for application CloudWatch log groups"
+  alias                       = "opg-lpa-${local.account_name}-application-log-group-encryption-key"
+  usage_services              = []
+  primary_region              = "eu-west-1"
+  replicas_to_create          = ["eu-west-2"]
+  additional_policy_documents = data.aws_iam_policy_document.application_log_group_kms_policy.json
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
