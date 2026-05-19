@@ -168,14 +168,14 @@ Alternatively, to run locust itself independently as is done by CI, do steps 1 a
 cd locust
 pip install locust boto3 beautifulsoup4 faker
 python -m locust -f locustfile.py
-python -m locust -f locustfile.py --host=http://localhost:7002
+python -m locust -f locustfile.py --host=https://localhost:7002
 ```
 
 You can see a web interface for locust at http://0.0.0.0:8089 where you can experiment with different loads
 
 Or you can run it headless:
 ```bash
-python -m locust -f locustfile.py --headless -u 1 -r 1 -t 10s --host=http://localhost:7002
+python -m locust -f locustfile.py --headless -u 1 -r 1 -t 10s --host=https://localhost:7002
 ```
 
 
