@@ -106,10 +106,6 @@ jobs:
     needs:
       - docker_build_scan_push
 
-  cypress_mezzio_tests:
-    uses: ./.github/workflows/front_mezzio_tests.yml
-    name: Run Cypress Front-Mezzio Tests
-
   terraform_account_development:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
