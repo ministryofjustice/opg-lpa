@@ -22,7 +22,7 @@ class MakeAnLPAUser(HttpUser):
         )
         self.user = User(self.client, email_address)
         self.user.create()
-        self.user.activate(random_number)
+        self.user.activate(email_address)
         self.user.login()
         self.user.update_profile()
         self.user.login()

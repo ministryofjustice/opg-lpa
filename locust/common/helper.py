@@ -12,7 +12,7 @@ def get_csrf_token(client, url):
     response = client.get(url, name=grouped_url)
     if response.status_code != 200:
         logger.warning(
-            "Could not get csrf token for %s. Status code returned ",
+            "Could not get csrf token for %s. Status code returned %s",
             url,
             response.status_code,
         )
