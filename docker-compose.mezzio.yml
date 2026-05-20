@@ -10,12 +10,19 @@ services:
       dockerfile: service-front/mezzio/docker/app/Dockerfile
     environment:
       PHP_IDE_CONFIG: serverName=lpa-mezzio-app
+    healthcheck:
+      test: ["CMD-SHELL", "cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
 
   mezzio-web:
     container_name: lpa-mezzio-web
     image: lpa-mezzio-web
     depends_on:
-      - mezzio-app
+      mezzio-app:
+        condition: service_healthy
     build:
       context: ./
       dockerfile: service-front/docker/web/Dockerfile

@@ -16,7 +16,7 @@ jobs:
 
       - name: Run Front Mezzio Tests
         run: |
-          docker compose -f docker-compose.mezzio.yml up --detach
+          docker compose -f docker-compose.mezzio.yml up --detach --wait
           docker compose -f docker-compose.mezzio.yml run --rm cypress-mezzio
           docker compose -f docker-compose.mezzio.yml down
 
