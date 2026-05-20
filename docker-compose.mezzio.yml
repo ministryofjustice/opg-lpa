@@ -49,3 +49,15 @@ services:
       SSL_PORT: "443"
       TARGET_HOST: "mezzio-web"
       TARGET_PORT: "8080"
+
+  cypress-mezzio:
+    depends_on:
+      - mezzio-ssl
+    build:
+      context: ./
+      dockerfile: cypress/Dockerfile
+    command: [ "run", "--spec", "cypress/e2e/MezzioHome.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    environment:
+      CYPRESS_baseUrl: https://mezzio-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots

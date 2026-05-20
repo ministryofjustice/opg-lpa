@@ -229,6 +229,10 @@ mezzio-dc-reset:
 	@rm -fr ./service-front/mezzio/vendor
 	@${MAKE} mezzio-dc-up
 
+.PHONY: cypress-run-spec-mezzio
+cypress-run-spec-mezzio:
+	${MEZZIO_COMPOSE} run --rm cypress-mezzio
+
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
 	@docker compose run --rm --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
@@ -316,20 +320,11 @@ _cypress-update-baselines-suite:
 	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
 
 # Replicates CI cypress runs locally to ensure visual regression test baseline images use the same user to keep
-# consistent page dimensions and LPA data for each stitched suite. Run in parallell to save time.
+# consistent page dimensions and LPA data for each stitched suite. Run in parallel to save time.
 cypress-update-all-baselines:
-	@pushd cypress && python3 stitch.py && popd
-	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
-	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
-	( CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW" ) & \
-	( CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedPF" ) & \
-	( CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_updateBaseline="1" -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedClone" ) & \
+	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedHW & \
+	${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedPF & \
+	${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedClone & \
 	wait
 
 dc-phpcs-fix:
