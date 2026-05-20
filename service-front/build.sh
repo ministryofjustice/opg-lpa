@@ -23,30 +23,8 @@ case "$TASK" in
     ;;
 
   watch)
-    ./build-css.sh
-	node ./build.js
-    echo "Starting watch mode..."
-
-    if ! command -v fswatch >/dev/null 2>&1; then
-      echo "Error: fswatch is not installed. Run: brew install fswatch"
-      exit 1
-    fi
-
-    # Watch hand-edited JS source files and Handlebars HTML templates.
-    # Exclude lpa.templates.js because build.js regenerates it on every run,
-    # which would otherwise trigger an infinite rebuild loop.
-    fswatch -o --exclude 'lpa\.templates\.js' assets/js | while read; do
-      echo "JavaScript files changed, rebuilding..."
-      node ./build.js &
-    done &
-
-    # Watch Sass files
-    fswatch -o assets/sass | while read; do
-      echo "Sass files changed, rebuilding..."
-      ./build-css.sh &
-    done &
-
     echo "Watching for changes... Press Ctrl+C to stop."
+	node ./watch.js
     wait
     ;;
 
