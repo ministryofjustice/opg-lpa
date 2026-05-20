@@ -26,11 +26,8 @@ class ConfigProvider
     public function getDependencies(): array
     {
         return [
-            'invokables' => [
-                Handler\PingHandler::class => Handler\PingHandler::class,
-            ],
+            'invokables' => [],
             'factories'  => [
-                Handler\HomePageHandler::class => Handler\HomePageHandlerFactory::class,
                 Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
                 View\Twig\LegacyCompatExtension::class
                     => View\Twig\LegacyCompatExtensionFactory::class,

@@ -30,7 +30,7 @@
             "laminas/laminas-component-installer": true
         },
         "platform": {
-            "php": "8.2.99"
+            "php": "8.4.12"
         }
     },
     "extra": {
@@ -46,7 +46,7 @@
         }
     },
     "require": {
-        "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "php": "8.4.*",
         "composer/package-versions-deprecated": "^1.11.99.5",
         "laminas/laminas-component-installer": "^2.6 || ^3.5",
         "laminas/laminas-config-aggregator": "^1.18",

@@ -21,6 +21,20 @@
     <!-- Include all rules from the Laminas Coding Standard -->
     <rule ref="LaminasCodingStandard"/>
 
+    <!-- Rules merged from root phpcs.xml.dist -->
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax"/>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
+
+    <!-- Exclude vendor files -->
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
     <rule ref="Squiz.Classes.ClassFileName.NoMatch">
         <exclude-pattern>src/ConfigProvider.*.php</exclude-pattern>
     </rule>
