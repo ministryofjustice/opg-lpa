@@ -1,0 +1,70 @@
+services:
+
+  mezzio-app:
+    container_name: lpa-mezzio-app
+    image: lpa-mezzio-app
+    build:
+      context: ./
+      args:
+        ENABLE_XDEBUG: 0
+      dockerfile: service-front/mezzio/docker/app/Dockerfile
+    environment:
+      PHP_IDE_CONFIG: serverName=lpa-mezzio-app
+    healthcheck:
+      test: ["CMD-SHELL", "cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+
+  mezzio-web:
+    container_name: lpa-mezzio-web
+    image: lpa-mezzio-web
+    depends_on:
+      mezzio-app:
+        condition: service_healthy
+    build:
+      context: ./
+      dockerfile: service-front/docker/web/Dockerfile
+    # Point the shared nginx image at the Mezzio app's public/ directory
+    # Mount the legacy app's already-built CSS / JS / fonts / images
+    # into /web/assets/v2 so the duplicated home page can render with the
+    # full GOV.UK frontend styling. This is a temporary arrangement until the
+    # asset build pipeline is duplicated into the mezzio app proper.
+    volumes:
+      - ./service-front/mezzio/public:/web
+      - ./service-front/public/assets/v2:/web/assets/v2:ro
+    environment:
+      APP_HOST: mezzio-app
+      APP_PORT: 9000
+
+  mezzio-ssl:
+    container_name: lpa-mezzio-ssl
+    image: lpa-mezzio-ssl
+    depends_on:
+      - mezzio-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
+    ports:
+      - 7004:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7004"
+      SSL_PORT: "443"
+      TARGET_HOST: "mezzio-web"
+      TARGET_PORT: "8080"
+
+  cypress-mezzio:
+    depends_on:
+      - mezzio-ssl
+    build:
+      context: ./
+      dockerfile: cypress/Dockerfile
+    command: [ "run", "--spec", "cypress/e2e/MezzioHome.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    environment:
+      CYPRESS_baseUrl: https://mezzio-ssl
+    volumes:
+      - ./cypress/screenshots:/app/cypress/screenshots
