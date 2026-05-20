@@ -10,3 +10,5 @@ resource "aws_cloudwatch_log_group" "application_logs" {
     },
   )
 }
+
+# testing encryption key
