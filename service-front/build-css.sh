@@ -52,3 +52,5 @@ done
 
 echo "Copying fonts..."
 cp -r node_modules/govuk-frontend/dist/govuk/assets/fonts/* public/assets/v2/fonts/ 2>/dev/null || true
+
+echo "✓ CSS build complete!"
