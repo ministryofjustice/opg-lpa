@@ -163,20 +163,11 @@ jobs:
           fi
           echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
 
-      - name: Setup Node.js
-        uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
-        with:
-          node-version-file: ".nvmrc"
-
       - name: Install Dependencies
         if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
         run: |
-          pushd service-front/
-          npm ci --ignore-scripts
-          npm rebuild esbuild
-          npm run build
-          popd
+          docker compose run --rm npm-front ci --ignore-scripts
+          docker compose run --rm npm-front run build
 
       - name: Setup Docker Buildx
         id: docker_buildx
