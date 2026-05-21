@@ -8,5 +8,6 @@ use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+    $app->get('/', HomeHandler::class, 'root');
     $app->get('/home', HomeHandler::class, 'application.home');
 };
