@@ -19,6 +19,7 @@ _stitch_config = {
             "RepeatApplicationPF",
             "FeeReductionPF",
             "CheckoutPF",
+            "Guidance",
         ],
     },
     "StitchedCreateHWLpa": {
@@ -100,6 +101,7 @@ def stitch_feature_files(feature_files_dir):
 
                     # append to the stitch file
                     out.write(content + "\n")
+
 
 if __name__ == "__main__":
     stitch_feature_files("e2e")
