@@ -16,6 +16,10 @@ data "aws_secretsmanager_secret" "opg_lpa_api_notify_api_key" {
   name = "${var.account_name}/opg_lpa_api_notify_api_key"
 }
 
+data "aws_secretsmanager_secret" "opg_lpa_api_auth_log_salt" {
+  name = "${var.account_name}/opg_lpa_api_auth_log_salt"
+}
+
 # admin secrets
 data "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
   name = "${var.account_name}/opg_lpa_admin_jwt_secret"
@@ -59,10 +63,6 @@ data "aws_secretsmanager_secret" "performance_platform_db_username" {
 
 data "aws_secretsmanager_secret" "performance_platform_db_password" {
   name = "${var.account_name}/performance_platform_db_password"
-}
-
-data "aws_secretsmanager_secret" "opg_lpa_api_auth_log_salt" {
-  name = "${var.account_name}/opg_lpa_api_auth_log_salt"
 }
 
 resource "aws_secretsmanager_secret" "api_rds_credentials" {
