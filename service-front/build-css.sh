@@ -6,6 +6,8 @@ echo "======================================"
 echo "Building CSS assets"
 echo "======================================"
 
+# sass --style is a global flag that applies to all outputs in a single invocation,
+# so two separate runs are required to produce both expanded (.css) and compressed (.min.css) versions.
 echo "→ Compiling Sass files..."
 npx sass \
   --load-path=node_modules/govuk_frontend_toolkit/stylesheets \
@@ -14,6 +16,16 @@ npx sass \
   assets/sass/application.scss:public/assets/v2/css/application.css \
   assets/sass/download-message.scss:public/assets/v2/css/download-message.css \
   assets/sass/print.scss:public/assets/v2/css/print.css
+
+echo "→ Compiling minified Sass files..."
+npx sass \
+  --load-path=node_modules/govuk_frontend_toolkit/stylesheets \
+  --load-path=node_modules/govuk-elements-sass/public/sass \
+  --no-source-map \
+  --style=compressed \
+  assets/sass/application.scss:public/assets/v2/css/application.min.css \
+  assets/sass/download-message.scss:public/assets/v2/css/download-message.min.css \
+  assets/sass/print.scss:public/assets/v2/css/print.min.css
 
 echo "Copying vendor CSS files..."
 
@@ -41,12 +53,15 @@ for file in public/assets/v2/css/*.css; do
 done
 
 echo "Minifying CSS files..."
+# Create .min.css copies of vendor CSS files (govuk-template files) that don't already have minified versions
 for file in public/assets/v2/css/*.css; do
   if [ -f "$file" ]; then
     case "$file" in *.min.css) continue ;; esac
     base="${file%.css}"
-    # Use esbuild for minification (it handles CSS too)
-    npx esbuild "$file" --minify --outfile="${base}.min.css"
+    # Only create .min.css if one doesn't already exist (sass files already have minified versions)
+    if [ ! -f "${base}.min.css" ]; then
+      cp "$file" "${base}.min.css"
+    fi
   fi
 done
 
