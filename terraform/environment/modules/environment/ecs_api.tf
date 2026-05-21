@@ -35,6 +35,10 @@ resource "aws_ecs_service" "api" {
     data.aws_ecs_task_execution.migrations,
     aws_iam_role_policy.execution_role
   ]
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
