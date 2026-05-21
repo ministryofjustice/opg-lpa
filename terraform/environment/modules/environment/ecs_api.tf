@@ -33,6 +33,7 @@ resource "aws_ecs_service" "api" {
   }
   depends_on = [
     data.aws_ecs_task_execution.migrations,
+    aws_iam_role_policy.execution_role
   ]
 
   timeouts {
