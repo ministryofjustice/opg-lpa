@@ -106,6 +106,7 @@ dc-up: run-composers
 	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app; \
 	docker compose up -d --remove-orphans
 	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
+	docker compose run --rm npm-front install
 	docker compose run --rm npm-front run watch
 
 .PHONY: dc-up-debug
@@ -300,10 +301,17 @@ cypress-update-baselines-pf:
 cypress-update-baselines-clone:
 	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedClone
 
+.PHONY: _cypress-stitch
+_cypress-stitch:
+	@pushd cypress && python3 stitch.py && popd
+
 # Internal helper - do not call directly. Expects SUITE_TAG to be set (e.g. @StitchedHW).
 .PHONY: _cypress-update-baselines-suite
-_cypress-update-baselines-suite:
-	@pushd cypress && python3 stitch.py && popd
+_cypress-update-baselines-suite: _cypress-stitch _cypress-run-baseline-suite
+
+# Internal helper - runs the baseline cypress commands without stitching. Expects SUITE_TAG to be set.
+.PHONY: _cypress-run-baseline-suite
+_cypress-run-baseline-suite:
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
@@ -312,10 +320,10 @@ _cypress-update-baselines-suite:
 
 # Replicates CI cypress runs locally to ensure visual regression test baseline images use the same user to keep
 # consistent page dimensions and LPA data for each stitched suite. Run in parallel to save time.
-cypress-update-all-baselines:
-	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedHW & \
-	${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedPF & \
-	${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedClone & \
+cypress-update-all-baselines: _cypress-stitch
+	@${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedHW & \
+	${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedPF & \
+	${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedClone & \
 	wait
 
 dc-phpcs-fix:
