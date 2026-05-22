@@ -217,6 +217,8 @@ locals {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
           awslogs-stream-prefix = "${var.environment_name}.api-web.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       environment = [
@@ -263,7 +265,9 @@ locals {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
+          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [
