@@ -7,7 +7,7 @@ module "eu-west-1" {
   providers = {
     aws            = aws
     aws.management = aws.management
-    aws.region     = aws
+    aws.region     = aws.eu-west-1
   }
 }
 
