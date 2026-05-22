@@ -156,6 +156,13 @@
     .postcodelookup {
         position: relative;
 
+        .error-message {
+            @include media(tablet) {
+                left: 0;
+                width: 100%;
+            }
+        }
+
         .spinner {
             @include media(tablet) {
                 position: absolute;
