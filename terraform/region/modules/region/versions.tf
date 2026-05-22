@@ -5,7 +5,7 @@ terraform {
       version = "6.28.0"
       configuration_aliases = [
         aws.management,
-        aws.region
+        aws.region,
       ]
     }
     pagerduty = {
