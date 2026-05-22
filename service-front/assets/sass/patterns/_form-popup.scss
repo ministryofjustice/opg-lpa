@@ -156,7 +156,7 @@
     .postcodelookup {
         position: relative;
 
-        .error-message {
+        .js-PostcodeLookup__search .error-message {
             @include media(tablet) {
                 left: 0;
                 width: 100%;
