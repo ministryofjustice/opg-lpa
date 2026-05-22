@@ -83,7 +83,9 @@ locals {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.migrations.online-lpa"
+          awslogs-stream-prefix = "${var.environment_name}.migrations.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [
