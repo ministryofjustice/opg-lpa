@@ -153,7 +153,7 @@ jobs:
         env:
           DISABLE_SSL_VERIFY: True
         run: |
-          pip install boto3 locust beautifulsoup4 faker
+          pip install -r locust/requirements.txt
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
           locust --headless -f ./locustfile.py -r 1 --host $FRONT_URL -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
 
