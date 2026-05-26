@@ -7,19 +7,19 @@ defaults:
 on:
   workflow_dispatch:
     inputs:
+      environment:
+        description: "Terraform workspace / environment name (e.g. 3359lpal1896addaut)"
+        required: true
+        type: string
       users:
         description: "Number of users"
         default: "5"
-        required: true
+        required: false
         type: string
       run_time:
         description: "Test duration (e.g. 2m, 5m)"
         default: "2m"
-        required: true
-        type: string
-      front_url:
-        description: "URL of the frontend to run tests against"
-        required: true
+        required: false
         type: string
   workflow_call:
     inputs:
@@ -60,12 +60,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
-      - name: Protect against production load tests
-        run: |
-          if [[ "${{ inputs.front_url }}" =~ ^(https://lastingpowerofattorney\.service\.gov\.uk|https://front\.lpa\.opg\.service\.justice\.gov\.uk)$ ]]; then
-            echo "Error: cannot run load tests against production"
-            exit 1
-          fi
 
       - name: Configure AWS Credentials - Ingress Management
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
@@ -85,11 +79,59 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r scripts/pipeline/ci_ingress/requirements.txt
 
+      - name: Generate Terraform artifact config (dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          ENVIRONMENT="${{ inputs.environment }}"
+          ACCOUNT_ID="050256574573"
+          FRONT_URL="https://${ENVIRONMENT}.development.front.lpa.opg.service.justice.gov.uk"
+
+          FRONT_SG=$(aws ec2 describe-security-groups \
+            --filters \
+              "Name=tag:environment-name,Values=${ENVIRONMENT}" \
+              "Name=tag:component,Values=front" \
+            --query "SecurityGroups[0].GroupId" \
+            --output text)
+
+          ADMIN_SG=$(aws ec2 describe-security-groups \
+            --filters \
+              "Name=tag:environment-name,Values=${ENVIRONMENT}" \
+              "Name=tag:component,Values=admin" \
+            --query "SecurityGroups[0].GroupId" \
+            --output text)
+
+          echo "Front URL: ${FRONT_URL}"
+          echo "Front SG: ${FRONT_SG}"
+          echo "Admin SG: ${ADMIN_SG}"
+
+          echo "FRONT_URL=${FRONT_URL}" >> $GITHUB_ENV
+
+          cat <<EOF > /tmp/environment_pipeline_tasks_config.json
+          {
+            "region": "eu-west-1",
+            "account_id": "${ACCOUNT_ID}",
+            "front_load_balancer_security_group_id": "${FRONT_SG}",
+            "admin_load_balancer_security_group_id": "${ADMIN_SG}"
+          }
+          EOF
+
+      - name: Set FRONT_URL for workflow_call
+        if: github.event_name == 'workflow_call'
+        run: echo "FRONT_URL=${{ inputs.front_url }}" >> $GITHUB_ENV
+
       - name: Download Terraform Task definition
+        if: github.event_name != 'workflow_dispatch'
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
           name: terraform-artifact
           path: /tmp/
+
+      - name: Protect against production load tests
+        run: |
+          if [[ "${FRONT_URL}" =~ ^(https://lastingpowerofattorney\.service\.gov\.uk|https://front\.lpa\.opg\.service\.justice\.gov\.uk)$ ]]; then
+            echo "Error: cannot run load tests against production"
+            exit 1
+          fi
 
       - name: Add GitHub Actions runner Ingress Rule
         run: |
@@ -113,7 +155,7 @@ jobs:
         run: |
           pip install boto3 locust beautifulsoup4 faker
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          locust --headless -f ./locustfile.py -r 1 --host ${{ inputs.front_url }} -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
+          locust --headless -f ./locustfile.py -r 1 --host $FRONT_URL -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
 
       - name: Configure AWS Credentials - Ingress Management
         if: always()
