@@ -11,7 +11,6 @@ locals {
   admin_dns                   = "admin.lpa"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                 = var.account.regions[data.aws_region.current.region].region
-
   shared_component_tag = {
     component = "shared"
   }
@@ -67,7 +66,9 @@ locals {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.otel.online-lpa"
+          awslogs-stream-prefix = "${var.environment_name}.otel.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       }
     }

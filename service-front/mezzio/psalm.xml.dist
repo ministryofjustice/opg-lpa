@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<psalm
+    cacheDirectory="./.psalm-cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="https://getpsalm.org/schema/config"
+    xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+    errorLevel="1"
+    findUnusedPsalmSuppress="true"
+    findUnusedCode="true"
+    findUnusedBaselineEntry="true"
+    errorBaseline="psalm-baseline.xml"
+>
+    <issueHandlers>
+        <MissingOverrideAttribute>
+            <errorLevel type="suppress">
+                <directory name="src" />
+                <directory name="test" />
+            </errorLevel>
+        </MissingOverrideAttribute>
+
+        <!--
+            AbstractData defines properties as protected then adds getters for them. This means
+            they're available publicly, but Psalm can't understand that.
+        -->
+        <InaccessibleProperty errorLevel="suppress" />
+
+        <!--
+            `final` classes are difficult to mock in tests and all of our code is internal,
+            minimising its usefulness
+        -->
+        <ClassMustBeFinal errorLevel="suppress" />
+
+        <!-- We magically assign properties to Laminas\Session\Container and Laminas\View\Model\ViewModel -->
+        <UndefinedMagicPropertyAssignment errorLevel="suppress" />
+        <UndefinedMagicPropertyFetch errorLevel="suppress" />
+    </issueHandlers>
+
+    <projectFiles>
+        <directory name="src"/>
+        <directory name="test"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
+</psalm>

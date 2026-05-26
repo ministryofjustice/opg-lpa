@@ -33,7 +33,12 @@ resource "aws_ecs_service" "api" {
   }
   depends_on = [
     data.aws_ecs_task_execution.migrations,
+    aws_iam_role_policy.execution_role
   ]
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
@@ -212,6 +217,8 @@ locals {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
           awslogs-stream-prefix = "${var.environment_name}.api-web.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       environment = [
@@ -258,7 +265,9 @@ locals {
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
           awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
+          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [
