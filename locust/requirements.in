@@ -1,3 +1,4 @@
-bs4==0.0.2
-Faker==40.15.0
-locust==2.43.4
+boto3
+locust
+beautifulsoup4
+faker
