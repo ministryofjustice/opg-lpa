@@ -15,6 +15,9 @@ $cacheConfig = [
 $aggregator = new ConfigAggregator([
     \Mezzio\Twig\ConfigProvider::class,
     \Mezzio\Tooling\ConfigProvider::class,
+    \Mezzio\Session\ConfigProvider::class,
+    \Mezzio\Session\Ext\ConfigProvider::class,
+    \Laminas\Form\ConfigProvider::class,
     \Mezzio\Router\FastRouteRouter\ConfigProvider::class,
     \Laminas\HttpHandlerRunner\ConfigProvider::class,
     // Include cache configuration
