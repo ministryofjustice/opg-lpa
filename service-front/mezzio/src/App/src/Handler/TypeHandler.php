@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\Lpa\TypeForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -16,7 +16,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Lpa;
-use Application\Helper\MvcUrlHelper;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -35,7 +35,7 @@ class TypeHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
@@ -49,7 +49,9 @@ class TypeHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var TypeForm $form */
+        // CSRF is validated by CsrfValidationMiddleware before this handler runs.
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
 
         $isChangeAllowed = true;
@@ -114,6 +116,7 @@ class TypeHandler implements RequestHandlerInterface
                     'cloneUrl'        => $cloneUrl,
                     'nextUrl'         => $nextUrl,
                     'isChangeAllowed' => $isChangeAllowed,
+                    'csrfToken'       => $csrfToken,
                 ]
             )
         );

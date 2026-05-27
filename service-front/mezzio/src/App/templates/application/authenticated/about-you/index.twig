@@ -1,0 +1,200 @@
+{% extends 'layout/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/authenticated/about-you/partials/form-error-summary.twig' %}
+{% endblock %}
+
+{%- set pageTitle = 'Your details' -%}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{% if (isNew) %}
+
+    <div class="govuk-body">
+        <p>First, please give us some information about yourself.</p>
+        <p>You do not have to be the person the LPA is for – you might just be helping someone else make an LPA.</p>
+        <p>You'll be able to use these details in any LPAs you make using this service.</p>
+    </div>
+
+{% else %}
+
+    <p>Update your details.</p>
+
+    <p><a href="{{ url('user/change-password') }}">Change Password</a></p>
+    <p><a href="{{ url('user/change-email-address') }}">Change Email Address</a></p>
+    <p><a href="{{ url('user/delete') }}">Delete Account</a></p>
+
+{% endif %}
+
+{# Set form fields variables #}
+{% set title = form.get('name-title') %}
+{% set firstName = form.get('name-first') %}
+{% set lastName = form.get('name-last') %}
+{% set dob = form.get('dob-date') %}
+{% set dayOfBirth = dob.get('day') %}
+{% set monthOfBirth = dob.get('month') %}
+{% set yearOfBirth = dob.get('year') %}
+{% set address1 = form.get('address-address1') %}
+{% set address2 = form.get('address-address2') %}
+{% set address3 = form.get('address-address3') %}
+{% set postcode = form.get('address-postcode') %}
+
+{# form fields config #}
+{{ title.setAttributes({
+    id: 'name-title',
+    class: 'govuk-input',
+    'data-cy': 'name-title',
+}) ? ''}}
+
+{{ firstName.setAttributes({
+    id: 'name-first',
+    class: 'govuk-input',
+    'data-cy': 'name-first',
+}) ? '' }}
+
+{{ lastName.setAttributes({
+    id: 'name-last',
+    class: 'govuk-input',
+    'data-cy': 'name-last',
+}) ? '' }}
+
+{{ dayOfBirth.setAttributes({
+    id: 'dob-date-day',
+    type: 'text',
+    class: 'govuk-input govuk-input--width-2',
+    maxlength: '2',
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-day',
+    inputmode: 'numeric'
+}) ? ''}}
+
+{{ monthOfBirth.setAttributes({
+    id: 'dob-date-month',
+    type: 'text',
+    class: 'govuk-input govuk-input--width-2',
+    maxlength: '2',
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-month',
+    inputmode: 'numeric'
+ }) ? ''}}
+
+{{ yearOfBirth.setAttributes({
+    id: 'dob-date-year',
+    type: 'text',
+    class: 'govuk-input govuk-input--width-4',
+    maxlength: '4',
+    pattern: '[0-9]*',
+    'data-cy': 'dob-date-year',
+    inputmode: 'numeric'
+})  ? ''}}
+
+{{ address1.setAttributes({
+    id: 'address-address1',
+    class: 'govuk-input',
+    'data-cy': 'address-address1',
+}) ? ''}}
+
+{{ address2.setAttributes({
+    id: 'address-address2',
+    class: 'govuk-input',
+    'data-cy': 'address-address2',
+}) ? ''}}
+
+{{ address3.setAttributes({
+    id: 'address-address3',
+    class: 'govuk-input',
+    'data-cy': 'address-address3',
+}) ? ''}}
+
+{{ postcode.setAttributes({
+    id: 'address-postcode',
+    class: 'govuk-input',
+    'data-cy': 'address-postcode',
+}) ? ''}}
+
+{# form fields labels #}
+{{ address1.setOptions( {label: 'Address line 1'} ) ? '' }}
+{{ address2.setOptions( {label: 'Address line 2'} ) ? '' }}
+{{ address3.setOptions( {label: 'Address line 3'} ) ? '' }}
+{{ postcode.setOptions( {label: 'Postcode'} ) ? '' }}
+{{ title.setOptions( {label: 'Title'} ).setLabelAttributes( {id:'title-label'} ) ? '' }}
+{{ firstName.setOptions( {label: 'First names'} ) ? '' }}
+{{ lastName.setOptions( {label: 'Last name'} ) ? '' }}
+{{ lastName.setOptions( {label: 'Last name'} ) ? '' }}
+{{ dayOfBirth.setLabel('Day') ? '' }}
+{{ monthOfBirth.setLabel('Month') ? '' }}
+{{ yearOfBirth.setLabel('Year') ? '' }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    {{ formElement(form.getCsrf) }}
+
+    <h2 class="govuk-heading-m">What is your name?</h2>
+
+    <fieldset>
+        <legend class="govuk-visually-hidden">Name</legend>
+
+        {{ macros.formGroup(title) }}
+        {{ macros.formGroup(firstName) }}
+        {{ macros.formGroup(lastName) }}
+
+    </fieldset>
+
+    <h2 class="govuk-heading-m">What is your date of birth?</h2>
+
+    <fieldset id="{{ dob.getAttribute('name') }}">
+        <legend class="govuk-visually-hidden">Date of birth</legend>
+
+        <div class="form-date {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+
+            <div class="error-group">
+                {{ formElementErrorsV2(yearOfBirth) }}
+                {{ formElementErrorsV2(monthOfBirth) }}
+                {{ formElementErrorsV2(dayOfBirth) }}
+                {{ formElementErrorsV2(dob) }}
+            </div>
+
+            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <label for="dob-date-day">Day</label>
+                {{ formElement(dayOfBirth) }}
+            </div>
+
+            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <label for="dob-date-month">Month</label>
+                {{ formElement(monthOfBirth) }}
+            </div>
+
+            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <label for="dob-date-year">Year</label>
+                {{ formElement(yearOfBirth) }}
+            </div>
+        </div>
+
+    </fieldset>
+
+    <h2 class="govuk-heading-m">What is your address?</h2>
+
+    <fieldset class="js-PostcodeLookup" data-showerrorbar="true">
+        <legend class="govuk-visually-hidden">Address</legend>
+
+        <div class="js-PostcodeLookup__postal-add">
+            {{ macros.formGroup(address1) }}
+            {{ macros.formGroup(address2) }}
+            {{ macros.formGroup(address3) }}
+            {{ macros.formGroup(postcode) }}
+        </div>
+
+    </fieldset>
+
+    <input type="submit" name="save" id="save" data-cy="save" class="govuk-button" value="Save and continue">
+    {%- if not isNew -%}
+    <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+    {%- endif -%}
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}
