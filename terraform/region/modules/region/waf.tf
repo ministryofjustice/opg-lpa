@@ -41,7 +41,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 6
 
     action {
-      block {}
+      count {}
     }
 
     statement {
@@ -70,7 +70,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 7
 
     action {
-      block {}
+      count {}
     }
 
     statement {
@@ -265,7 +265,6 @@ resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns" {
     regex_string = "(?i)\\.(env|git|sql|bak|php|asp|aspx|cgi|sh|exe|tar|gz|tgz|zip|rar|7z|z|bz2|lz|xz|db|sqlite|sqlitedb|war|jar|config|conf|ini|log|pem|key|p12|pfx|crt|ovpn|htaccess|htpasswd|DS_Store|swp)$"
   }
 }
-
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   log_destination_configs = [aws_cloudwatch_log_group.waf_web_acl.arn]
