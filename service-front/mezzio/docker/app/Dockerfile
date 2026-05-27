@@ -19,6 +19,8 @@ COPY --chown=root:root shared /shared
 RUN mkdir -p /service-front/mezzio
 COPY --chown=root:root service-front/mezzio/composer.json /service-front/mezzio/composer.json
 COPY --chown=root:root service-front/mezzio/composer.lock /service-front/mezzio/composer.lock
+# Copy the legacy Application module which is referenced by mezzio's autoloader
+COPY --chown=root:root service-front/module /service-front/module
 RUN ln -s /service-front/mezzio /app
 
 COPY --from=composer /usr/bin/composer /usr/bin/

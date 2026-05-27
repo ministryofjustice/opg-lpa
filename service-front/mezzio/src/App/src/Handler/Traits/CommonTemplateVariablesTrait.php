@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Traits;
 
-use Application\Middleware\RequestAttribute;
+use App\Middleware\RequestAttribute;
 use Psr\Http\Message\ServerRequestInterface;
 
 trait CommonTemplateVariablesTrait

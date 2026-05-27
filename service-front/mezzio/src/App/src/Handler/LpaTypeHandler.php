@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\Lpa\TypeForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Model\FormFlowChecker;
+use App\Middleware\CsrfValidationMiddleware;
+use App\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
-use Application\Helper\MvcUrlHelper;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -38,13 +38,14 @@ class LpaTypeHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var TypeForm $form */
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -94,6 +95,7 @@ class LpaTypeHandler implements RequestHandlerInterface
                     'form'             => $form,
                     'isChangeAllowed'  => true,
                     'currentRouteName' => self::ROUTE_NAME,
+                    'csrfToken'        => $csrfToken,
                 ]
             )
         );

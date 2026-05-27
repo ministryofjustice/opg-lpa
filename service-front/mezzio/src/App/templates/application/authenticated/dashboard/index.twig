@@ -1,0 +1,130 @@
+{% extends 'layout/layout.twig' %}
+
+{% import "application/authenticated/dashboard/macros.twig" as macros %}
+
+{%- set pageTitle = 'Your LPAs' -%}
+
+{% block content %}
+
+{% set shortList = lpaTotalCount <= 6 and isSearch == false %}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <div class="govuk-body">
+            <p class="govuk-body-l">On this page you'll find all the LPAs that you've made. As well as making a new LPA from scratch, you can:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>
+                <li><span class="govuk-!-font-weight-bold">check the signing dates</span> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
+                </li>
+                <li><span class="govuk-!-font-weight-bold">reuse details from an existing LPA to make a new one</span> - you can do this once you've completed all sections up to and including the person to notify section
+                </li>
+            </ul>
+            <div class="govuk-details__text">
+                If you already have a registered LPA and want to use it online, go to the <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+            </div>
+        </div>
+    </div>
+    <div class="column-one-third">
+        <div class="panel-cta tablet-and-up">
+            <div class="panel-heading govuk-heading-m">Make another LPA</div>
+            <div class="panel-body">
+                <p><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
+                <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if shortList %}
+{# With less than 6 LPAs, no search is displayed #}
+    {% if lpaTotalCount == 0 %}
+        <h2 class="govuk-heading-l flush--ends">You have no LPAs</h2>
+    {% endif %}
+{% else %}
+{# Over 6 LPAs and search is presented #}
+<div class="dashboard-search">
+    <div class="grid-row">
+        <div class="column-one-half tablet-and-up">
+        {% if isSearch %}
+            <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+            <p class="flush--bottom">
+                {% if lpaTotalCount == 0 %}
+                    Your search has found no results.<br>
+                {% else %}
+                    Your search has found {{ lpaTotalCount }} results.<br>
+                {% endif %}
+                <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+            </p>
+        {% else %}
+            {% if lpaTotalCount == 0 %}
+                <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
+            {% else %}
+                <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+            {% endif %}
+        {% endif %}
+        </div>
+        <div class="column-one-half">
+            <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
+                <fieldset>
+                    <legend class="govuk-visually-hidden">Search for LPAs</legend>
+                    <label for="search" class="search-label">Search for an LPA or donor</label>
+                    <input type="text" id="search" name="search" value="{{ freeText ? escapeHtmlAttr( freeText ) : '' }}" class="js-search-focus search-input govuk-input" data-cy="dashboard-search-box"/>
+                    <input class="search-button govuk-button" type="submit" data-cy="dashboard-search-icon" value="Search"/>
+                </fieldset>
+            </form>
+        </div>
+        <div class="column-one-half mobile">
+        {# This is only displayed on mobile #}
+            {% if isSearch %}
+                <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+                <p class="flush--bottom">
+                    {% if lpaTotalCount == 0 %}
+                        Your search has found no results.<br>
+                    {% else %}
+                        Your search has found {{ lpaTotalCount }} results.<br>
+                    {% endif %}
+                    <a id="clear-mobile" href='{{ url('user/dashboard') }}'>Clear search results</a>
+                </p>
+            {% else %}
+                {% if lpaTotalCount == 0 %}
+                    <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
+                {% else %}
+                    <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if lpaTotalCount > 0 %}
+
+    {% if shortList %}
+        {{ macros.listLpas(lpas, null, null, trackingEnabled) }}
+        {{ macros.listLpas(lpas, 'property-and-financial', null, trackingEnabled) }}
+        {{ macros.listLpas(lpas, 'health-and-welfare', null, trackingEnabled) }}
+    {% else %}
+        {{ macros.listLpas(lpas, 'all', paginationControlData['page'], trackingEnabled) }}
+    {% endif %}
+
+    {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
+
+{% endif %}
+
+<div class="panel-cta mobile">
+    <div class="panel-heading govuk-heading-m">Create another LPA</div>
+    <div class="panel-body">
+        <p>
+            <a class="govuk-button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
+        </p>
+        <p class="govuk-!-font-weight-bold govuk-body-s">Or select an LPA above whose details you want to reuse</p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+    {% if trackingEnabled %}
+    <script src="{{ '/assets/v2/js/opg/dashboard-statuses.js' | asset_path({ 'minify':true }) }}"></script>
+    {% endif %}
+{% endblock %}
