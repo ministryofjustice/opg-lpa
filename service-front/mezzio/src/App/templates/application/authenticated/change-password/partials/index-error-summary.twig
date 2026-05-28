@@ -1,0 +1,21 @@
+{% import "application/macros.twig" as macros %}
+
+{% set form = formErrorTextExchange(form,  {
+    'password_current' : {
+        'is-incorrect' : 'Your password is incorrect',
+        'cannot-be-empty' : 'Enter your current password'
+    },
+    'password' : {
+        'cannot-be-empty' : 'Enter your new password',
+        'min-length-12' : 'Choose a new password that is at least twelve characters long',
+        'must-include-digit' : 'Choose a new password that includes at least one digit (0-9)',
+        'must-include-lower-case' : 'Choose a new password that includes at least one lower case letter (a-z)',
+        'must-include-upper-case' : 'Choose a new password that includes at least one capital letter (A-Z)',
+        'did-not-match' : 'Enter matching passwords',
+    },
+    'password_confirm' : {
+        'cannot-be-empty' : 'Confirm your new password'
+    }
+}) %}
+
+{{ macros.formErrorSummary(error,form) }}

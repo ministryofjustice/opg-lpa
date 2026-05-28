@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\Authentication\AuthenticationService;
+use App\Authentication\AuthenticationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
