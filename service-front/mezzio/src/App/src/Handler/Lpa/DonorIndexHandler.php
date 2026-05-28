@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,7 +22,7 @@ class DonorIndexHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 

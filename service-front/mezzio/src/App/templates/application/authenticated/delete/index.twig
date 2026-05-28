@@ -1,0 +1,13 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Deleting your account' -%}
+
+{% block content %}
+
+<div class="govuk-body">
+	<p class="govuk-body-l">You are about to delete your account. Doing this will permanently remove all your LPAs and personal details from our system.</p>
+	<p><a href="{{ url('user/delete-confirm') }}">Yes, continue deleting my account</a></p>
+	<p><a href="{{ url( 'user/dashboard' ) }}">No, return to my LPAs</a></p>
+</div>
+
+{% endblock content %}

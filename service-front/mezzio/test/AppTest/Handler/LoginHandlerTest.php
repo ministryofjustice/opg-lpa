@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\LoginHandler;
-use Application\Model\Service\Authentication\AuthenticationService;
+use App\Authentication\AuthenticationService;
 use Application\Model\Service\Authentication\Identity\User as UserIdentity;
 use DateTime;
 use Laminas\Authentication\Result;

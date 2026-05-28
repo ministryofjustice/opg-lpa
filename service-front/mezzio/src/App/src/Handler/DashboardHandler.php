@@ -45,8 +45,8 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
         $lpasPerPage = 50;
 
         $lpasSummary = $this->lpaApplicationService->getLpaSummaries($search, $page, $lpasPerPage);
-        $lpas = $lpasSummary['applications'];
-        $lpasTotalCount = $lpasSummary['total'];
+        $lpas = $lpasSummary['applications'] ?? [];
+        $lpasTotalCount = $lpasSummary['total'] ?? count($lpas);
 
         // If there are no LPAs and this is NOT a search, redirect to create
         if (is_null($search) && count($lpas) == 0) {
