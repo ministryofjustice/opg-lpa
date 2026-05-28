@@ -7,7 +7,6 @@
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.getCsrf) }}
 
     {{ formHidden(form.get('email')) }}
     {{ formHidden(form.get('email_confirm')) }}

@@ -6,7 +6,8 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
+use App\Middleware\CsrfValidationMiddleware;
+use Mezzio\Helper\UrlHelper;
 use Application\Middleware\RequestAttribute;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
@@ -36,7 +37,7 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
         private readonly Metadata $metadata,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
@@ -45,6 +46,8 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -123,7 +126,7 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
                     $html = $this->renderer->render(
                         'application/authenticated/lpa/replacement-attorney/trust-form.twig',
-                        array_merge($this->getTemplateVariables($request), $templateParams)
+                        array_merge($this->getTemplateVariables($request), $templateParams + ['csrfToken' => $csrfToken])
                     );
 
                     return new HtmlResponse($html);
@@ -188,7 +191,7 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/replacement-attorney/trust-form.twig',
-            array_merge($this->getTemplateVariables($request), $templateParams)
+            array_merge($this->getTemplateVariables($request), $templateParams + ['csrfToken' => $csrfToken])
         );
 
         return new HtmlResponse($html);
