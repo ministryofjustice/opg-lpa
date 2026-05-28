@@ -6,7 +6,8 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
+use App\Middleware\CsrfValidationMiddleware;
+use Mezzio\Helper\UrlHelper;
 use Application\Middleware\RequestAttribute;
 use Application\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
@@ -34,13 +35,15 @@ class DonorAddHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -127,6 +130,7 @@ class DonorAddHandler implements RequestHandlerInterface
                         'form'      => $form,
                         'cancelUrl' => $this->urlHelper->generate('lpa/donor', ['lpa-id' => $lpa->id]),
                         'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+                        'csrfToken' => $csrfToken,
                     ];
 
                     if ($isPopup) {
@@ -178,6 +182,7 @@ class DonorAddHandler implements RequestHandlerInterface
             'form'      => $form,
             'cancelUrl' => $cancelUrl,
             'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+            'csrfToken' => $csrfToken,
         ];
 
         if ($isPopup) {

@@ -67,7 +67,6 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.getCsrf) }}
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
             <summary data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
