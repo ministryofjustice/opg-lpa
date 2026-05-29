@@ -12,4 +12,34 @@
 
 declare(strict_types=1);
 
-return [];
+use Mezzio\Container\WhoopsErrorResponseGeneratorFactory;
+use Mezzio\Container\WhoopsFactory;
+use Mezzio\Container\WhoopsPageHandlerFactory;
+use Mezzio\Handler\NotFoundHandler;
+use Mezzio\Middleware\ErrorResponseGenerator;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+return [
+    'dependencies' => [
+        'factories' => [
+            // Replace the default error response generator with Whoops in dev mode.
+            // This covers 500 errors and any exception thrown inside a handler.
+            ErrorResponseGenerator::class => WhoopsErrorResponseGeneratorFactory::class,
+            'Mezzio\Whoops'              => WhoopsFactory::class,
+            'Mezzio\WhoopsPageHandler'   => WhoopsPageHandlerFactory::class,
+
+            // Replace the 404 handler with one that throws, so Whoops catches it
+            // and shows the full stack trace instead of the custom 404 template.
+            NotFoundHandler::class => static fn () => new class implements RequestHandlerInterface {
+                public function handle(ServerRequestInterface $request): ResponseInterface
+                {
+                    throw new \RuntimeException(
+                        sprintf('404 Not Found: no route matched "%s %s"', $request->getMethod(), $request->getUri()->getPath())
+                    );
+                }
+            },
+        ],
+    ],
+];
