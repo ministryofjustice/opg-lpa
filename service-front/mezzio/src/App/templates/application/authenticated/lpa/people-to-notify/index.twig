@@ -48,9 +48,10 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.getCsrf) }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="form-group">
+
             {{ formElement(form.get('save')) }}
         </div>
 

@@ -23,6 +23,10 @@ case "$TASK" in
     ;;
 
   watch)
+	echo "Running full build..."
+	./build-css.sh
+	node ./build.js
+	echo "Build complete"
     echo "Watching for changes... Press Ctrl+C to stop."
 	node ./watch.js
     wait
