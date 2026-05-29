@@ -14,34 +14,23 @@ class ConfigProvider
     public function __invoke(): array
     {
         return [
-            'dependencies' => $this->getDependencies(),
-            'templates'    => $this->getTemplates(),
-            'twig'         => $this->getTwig(),
-            'version'      => [
+            'templates' => $this->getTemplates(),
+            'twig'      => $this->getTwig(),
+            'version'   => [
                 'tag'   => getenv('OPG_LPA_COMMON_APP_VERSION') ?: 'dev',
                 'cache' => getenv('OPG_LPA_COMMON_ASSETS_VERSION') ?: '',
             ],
         ];
     }
-    public function getDependencies(): array
-    {
-        return [
-            'invokables' => [],
-            'factories'  => [
-                Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
-                View\Twig\LegacyCompatExtension::class
-                    => View\Twig\LegacyCompatExtensionFactory::class,
-            ],
-        ];
-    }
+
     public function getTemplates(): array
     {
         return [
             'paths' => [
-                'app'         => [__DIR__ . '/../templates/app'],
                 'error'       => [__DIR__ . '/../templates/error'],
                 'layout'      => [__DIR__ . '/../templates/layout'],
                 'application' => [__DIR__ . '/../templates/application'],
+                'guidance'    => [__DIR__ . '/../templates/guidance'],
                 __DIR__ . '/../templates',
             ],
         ];

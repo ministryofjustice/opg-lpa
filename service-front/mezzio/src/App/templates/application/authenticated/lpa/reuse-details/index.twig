@@ -1,0 +1,57 @@
+{% extends isPopup ? 'layout/popup.twig' : 'layout/layout.twig' %}
+
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{{ form.setAttributes({
+    class: 'form reuse-details-form',
+}) ? '' }}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form,  {
+    'reuse-details': {
+        'cannot-be-empty': 'Choose the details you would like to reuse',
+    },
+}) %}
+
+{# Set form fields variables #}
+{% set reuseDetails = form.get('reuse-details') %}
+{% set submit = form.get('submit') %}
+
+{{ submit.setAttributes({
+    value: 'Continue',
+    class: 'button flush--left reuse-details-button',
+    'data-cy': 'continue',
+}) ? '' }}
+
+<header class="popup-header">
+    <i class="icon icon-person"></i>
+    <h2 class="heading-small popup-header-title" id="dialog-title">{{ actorName }} details</h2>
+</header>
+
+{{ form.prepare() ? '' }}
+
+{#Error summary#}
+{{ macros.formErrorSummary(error, form) }}
+
+    {{ form().openTag(form)|raw }}
+        {{ formElement(form.getCsrf) }}
+
+        <div class="form-group {{ reuseDetails.getMessages|length > 0 ? 'form-group-error'}}">
+            <fieldset class="reuse-details-container">
+                <legend class="heading-medium">Which details would you like to reuse?</legend>
+                <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
+                {{ formRadio(reuseDetails) }}
+
+            </fieldset>
+        </div>
+
+        {{ formElement(submit) }}
+
+        <a data-cy="cancel" href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+
+    {{ form().closeTag|raw }}
+
+{% endblock %}

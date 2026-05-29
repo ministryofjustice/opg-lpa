@@ -1,0 +1,33 @@
+{% if data['pageCount'] > 1 %}
+    {% set currentPage = data['page'] %}
+    {% set previousPage = (currentPage > 1 ? currentPage - 1 : false) %}
+    {% set nextPage = (currentPage < data['pageCount'] ? currentPage + 1 : false) %}
+
+    <div class="pager">
+        <div class="pager-controls">
+
+        {% if previousPage %}
+            <a class="pager-prev" href="{{ url(route, {page: previousPage}) }}">Prev</a>
+        {% endif %}
+
+        <ul class="pager-items">
+        {% for pageInRange in data['pagesInRange'] %}
+            <li>
+                {% if pageInRange != currentPage %}
+                    <a href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
+                {% else %}
+                    {{ pageInRange }}
+                {%  endif %}
+            </li>
+        {% endfor %}
+        </ul>
+
+        {% if nextPage %}
+            <a class="pager-next" href="{{ url(route, {page: nextPage}) }}">Next</a>
+        {% endif %}
+
+        </div>
+
+        <div class="pager-summary">Showing {{ data['firstItemNumber'] }} - {{ data['lastItemNumber'] }} of {{ data['totalItemCount'] }} LPAs</div>
+    </div>
+{% endif %}

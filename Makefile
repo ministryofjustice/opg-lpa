@@ -207,7 +207,7 @@ run-mezzio-composer:
 	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: mezzio-dc-build
-mezzio-dc-build: run-mezzio-composer
+mezzio-dc-build: run-mezzio-composer run-api-composer
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
 
 .PHONY: mezzio-dc-up
@@ -223,6 +223,14 @@ mezzio-dc-down:
 mezzio-dc-logs:
 	@${MEZZIO_COMPOSE} logs -f
 
+.PHONY: mezzio-dev-enable
+mezzio-dev-enable:
+	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-enable
+
+.PHONY: mezzio-dev-disable
+mezzio-dev-disable:
+	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-disable
+
 .PHONY: mezzio-dc-reset
 mezzio-dc-reset:
 	@${MAKE} mezzio-dc-down
@@ -233,6 +241,10 @@ mezzio-dc-reset:
 .PHONY: cypress-run-spec-mezzio
 cypress-run-spec-mezzio:
 	${MEZZIO_COMPOSE} run --rm cypress-mezzio
+
+.PHONY: dc-mezzio-unit-tests
+dc-mezzio-unit-tests:
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml.dist
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
@@ -341,5 +353,17 @@ dc-clear-cache:
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
 	rm -fr service-front/twig-cache/*
 
+.PHONY: mezzio-clear-cache
+mezzio-clear-cache:
+	@${MEZZIO_COMPOSE} exec mezzio-app rm -f /app/data/cache/config-cache.php
+
 update-secrets-baseline:
 	detect-secrets scan --baseline .secrets.baseline
+
+.PHONY: psql
+psql:
+	@docker exec -it lpa-postgres psql --username=lpauser --dbname=lpadb
+
+.PHONY: mezzio-seed
+mezzio-seed:
+	@${MEZZIO_COMPOSE} run --rm seeding
