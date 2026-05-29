@@ -12,6 +12,7 @@ Feature: Guidance
     # save button should be missing initially
     When I visit "/home"
     And I click "guidance"
+    And I can find "help-footer-contacts"
     Then the page matches the "guidance" baseline image
     And I am using a viewport which is 400 pixels wide
     When I visit "/home"
