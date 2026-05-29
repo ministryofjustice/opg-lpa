@@ -60,7 +60,6 @@ return [
             // UserDetailsHolder — shared instance; populated per-request by UserDetailsMiddleware
             UserDetailsHolder::class => static fn() => new UserDetailsHolder(),
 
-            // Handlers — simple template renderers
             Handler\HomeRedirectHandler::class => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
                 $c->get('config'),
             ),
@@ -84,7 +83,6 @@ return [
                 $c->get(\Laminas\Form\FormElementManager::class),
             ),
 
-            // Handlers
             Handler\HomeHandler::class => static fn(ContainerInterface $c) => new Handler\HomeHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get('config'),

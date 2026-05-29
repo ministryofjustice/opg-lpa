@@ -8,9 +8,6 @@ use Application\Model\Service\ApiClient\Client as ApiClient;
 use Exception;
 use MakeShared\Constants;
 
-/**
- * Lightweight status checker for Mezzio — only checks the API.
- */
 class StatusService
 {
     public function __construct(
