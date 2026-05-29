@@ -6,8 +6,8 @@ namespace App\Handler\Lpa\CertificateProvider;
 
 use App\Handler\Traits\CertificateProviderHandlerTrait;
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Middleware\RequestAttribute;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;

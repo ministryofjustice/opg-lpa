@@ -12,13 +12,19 @@ use App\Model\FlashMessagesHolder;
  */
 final class FlashMessenger
 {
+    public const string ERROR   = 'flash_error';
+    public const string SUCCESS = 'flash_success';
+    public const string WARNING = 'flash_warning';
+    public const string INFO    = 'flash_info';
+    public const string DEFAULT = 'flash_default';
+
     /** Maps flash type names (used in templates) to session keys used in handlers */
-    private const TYPE_KEY_MAP = [
-        'error'   => 'flash_error',
-        'success' => 'flash_success',
-        'warning' => 'flash_warning',
-        'info'    => 'flash_info',
-        'default' => 'flash_default',
+    private const array TYPE_KEY_MAP = [
+        'error'   => self::ERROR,
+        'success' => self::SUCCESS,
+        'warning' => self::WARNING,
+        'info'    => self::INFO,
+        'default' => self::DEFAULT,
     ];
 
     public function __construct(

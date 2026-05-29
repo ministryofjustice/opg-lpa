@@ -6,11 +6,11 @@ namespace AppTest\Handler\Lpa;
 
 use App\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
 use Application\Model\Service\Lpa\Applicant as ApplicantService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

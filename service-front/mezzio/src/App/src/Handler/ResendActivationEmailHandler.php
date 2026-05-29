@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use Application\Form\User\ConfirmEmail;
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
@@ -36,9 +36,7 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
         $form = $this->formElementManager->get(ConfirmEmail::class);
         $form->setAttribute('action', '/signup/resend-email');
 
-        $data = [
-            'form' => $form,
-        ];
+        $data = ['form' => $form];
 
         // Handle POST request
         if ($request->getMethod() === 'POST') {

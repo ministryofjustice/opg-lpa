@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Factory;
 
 use App\Handler\ChangeEmailAddressHandler;
-use Application\Model\Service\Authentication\AuthenticationService;
+use App\Authentication\AuthenticationService;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;

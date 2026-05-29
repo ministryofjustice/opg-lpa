@@ -13,7 +13,7 @@ use App\Service\AccordionService;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
 use App\View\Twig\Traits\MoneyFormatterTrait;
-use Application\Model\Service\Authentication\Identity\User;
+use App\Model\Service\Authentication\Identity\User;
 use Mezzio\Helper\UrlHelper;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
@@ -266,7 +266,9 @@ class LegacyCompatExtension extends AbstractExtension
             $newMessages = [];
 
             foreach ($messages as $key => $message) {
-                $newMessages[$key] = $replacements[$key] ?? $message;
+                // $message is the raw validation key (e.g. 'cannot-be-empty'),
+                // $replacements maps that key to a human-readable string.
+                $newMessages[$key] = $replacements[$message] ?? $message;
             }
 
             $element->setMessages($newMessages);
@@ -303,12 +305,15 @@ class LegacyCompatExtension extends AbstractExtension
         if ($element === null) {
             return '';
         }
-        if ($element instanceof Checkbox || $element instanceof MultiCheckbox) {
-            return $this->formCheckbox($element);
-        }
 
+        // Radio must be checked before Checkbox/MultiCheckbox because
+        // Radio extends MultiCheckbox which extends Checkbox.
         if ($element instanceof Radio) {
             return $this->formRadio($element);
+        }
+
+        if ($element instanceof Checkbox || $element instanceof MultiCheckbox) {
+            return $this->formCheckbox($element);
         }
 
         $type = $element->getAttribute('type') ?? 'text';
@@ -344,20 +349,26 @@ class LegacyCompatExtension extends AbstractExtension
      */
     public function formCheckbox(ElementInterface $element): string
     {
-        $name    = htmlspecialchars((string) $element->getAttribute('name'), ENT_QUOTES);
-        $id      = htmlspecialchars((string) $element->getAttribute('id'), ENT_QUOTES);
-        $value   = htmlspecialchars((string) $element->getValue(), ENT_QUOTES);
-        $checked = $element->getValue() ? ' checked' : '';
-        $class   = htmlspecialchars((string) ($element->getAttribute('class') ?? 'govuk-checkboxes__input'), ENT_QUOTES);
+        // Use the checked value ('1' by default) as the submitted value, and
+        // determine checked state via isChecked() so the value attribute is
+        // always correct regardless of current element state.
+        if ($element instanceof Checkbox) {
+            $value   = $element->getCheckedValue();
+            $checked = $element->isChecked();
+        } else {
+            $value   = (string) $element->getValue();
+            $checked = (bool) $element->getValue();
+        }
 
-        return sprintf(
-            '<input type="checkbox" name="%s" id="%s" value="%s" class="%s"%s>',
-            $name,
-            $id,
-            $value,
-            $class,
-            $checked,
-        );
+        $attrs = array_merge($element->getAttributes(), [
+            'type'  => 'checkbox',
+            'value' => $value,
+            'class' => $element->getAttribute('class') ?? 'govuk-checkboxes__input',
+        ]);
+
+        $attrString = $this->buildAttributeString($attrs);
+
+        return sprintf('<input %s%s>', $attrString, $checked ? ' checked' : '');
     }
 
     /**
@@ -365,24 +376,32 @@ class LegacyCompatExtension extends AbstractExtension
      */
     public function formRadio(ElementInterface $element): string
     {
-        $name         = htmlspecialchars((string) $element->getAttribute('name'), ENT_QUOTES);
+        $name         = (string) ($element->getAttribute('name') ?? '');
         $valueOptions = method_exists($element, 'getValueOptions') ? $element->getValueOptions() : [];
         $currentValue = $element->getValue();
         $html         = '';
 
+        // Base attributes from the element (excluding value/type which vary per option)
+        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id']));
+        $baseAttrs['type']  = 'radio';
+        $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
+
         foreach ($valueOptions as $optValue => $optLabel) {
-            $checked = ($currentValue == $optValue) ? ' checked' : '';
-            $optId   = htmlspecialchars($name . '-' . $optValue, ENT_QUOTES);
-            $html   .= sprintf(
+            $optAttrs        = $baseAttrs;
+            $optAttrs['id']  = htmlspecialchars($name . '-' . $optValue, ENT_QUOTES);
+            $optAttrs['value'] = (string) $optValue;
+
+            $attrString = $this->buildAttributeString($optAttrs);
+            $checked    = ($currentValue == $optValue) ? ' checked' : '';
+
+            $html .= sprintf(
                 '<div class="govuk-radios__item">'
-                . '<input class="govuk-radios__input" type="radio" name="%s" id="%s" value="%s"%s>'
+                . '<input %s%s>'
                 . '<label class="govuk-label govuk-radios__label" for="%s">%s</label>'
                 . '</div>',
-                $name,
-                $optId,
-                htmlspecialchars((string) $optValue, ENT_QUOTES),
+                $attrString,
                 $checked,
-                $optId,
+                htmlspecialchars($optAttrs['id'], ENT_QUOTES),
                 htmlspecialchars((string) $optLabel, ENT_QUOTES),
             );
         }
@@ -436,33 +455,41 @@ class LegacyCompatExtension extends AbstractExtension
 
     private function buildInputAttributes(ElementInterface $element): string
     {
-        $type  = $element->getAttribute('type') ?? 'text';
-        $name  = $element->getAttribute('name') ?? '';
-        $id    = $element->getAttribute('id') ?? '';
-        $value = $element->getValue() ?? '';
-        $class = $element->getAttribute('class') ?? 'govuk-input';
+        $attrs = $element->getAttributes();
 
-        if (!empty($element->getMessages()) && strpos((string) $class, 'govuk-input--error') === false) {
-            $class .= ' govuk-input--error';
+        $attrs['type']  = $attrs['type'] ?? 'text';
+        $attrs['value'] = $element->getValue() ?? '';
+        $attrs['class'] = $attrs['class'] ?? 'govuk-input';
+
+        if (!empty($element->getMessages()) && strpos((string) $attrs['class'], 'govuk-input--error') === false) {
+            $attrs['class'] .= ' govuk-input--error';
         }
 
-        $attrs = sprintf(
-            'type="%s" name="%s" id="%s" value="%s" class="%s"',
-            htmlspecialchars((string) $type, ENT_QUOTES),
-            htmlspecialchars((string) $name, ENT_QUOTES),
-            htmlspecialchars((string) $id, ENT_QUOTES),
-            htmlspecialchars((string) $value, ENT_QUOTES),
-            htmlspecialchars((string) $class, ENT_QUOTES),
-        );
+        return $this->buildAttributeString($attrs);
+    }
 
-        foreach (['autocomplete', 'data-cy', 'aria-describedby', 'aria-label', 'required', 'disabled'] as $attr) {
-            $attrValue = $element->getAttribute($attr);
-            if ($attrValue !== null) {
-                $attrs .= sprintf(' %s="%s"', $attr, htmlspecialchars((string) $attrValue, ENT_QUOTES));
+    /**
+     * Renders an associative array of HTML attributes into a string.
+     * Boolean true renders as a standalone attribute; null/false values are skipped.
+     */
+    private function buildAttributeString(array $attrs): string
+    {
+        $parts = [];
+        foreach ($attrs as $key => $value) {
+            if ($value === null || $value === false || is_array($value)) {
+                continue;
+            }
+            if ($value === true) {
+                $parts[] = htmlspecialchars((string) $key, ENT_QUOTES);
+            } else {
+                $parts[] = sprintf(
+                    '%s="%s"',
+                    htmlspecialchars((string) $key, ENT_QUOTES),
+                    htmlspecialchars((string) $value, ENT_QUOTES),
+                );
             }
         }
-
-        return $attrs;
+        return implode(' ', $parts);
     }
 
     private function flattenMessages(array $errors): array

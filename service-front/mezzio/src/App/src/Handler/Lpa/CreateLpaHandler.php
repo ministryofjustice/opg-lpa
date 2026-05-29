@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Flash\FlashMessageMiddleware;
@@ -39,7 +40,7 @@ class CreateLpaHandler implements RequestHandlerInterface
             if (!$lpa instanceof Lpa) {
                 /** @var FlashMessagesInterface $flash */
                 $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                $flash->flash('flash_error', ['Error creating a new LPA. Please try again.']);
+                $flash->flash(FlashMessenger::ERROR, ['Error creating a new LPA. Please try again.']);
                 return new RedirectResponse('/user/dashboard');
             }
 
@@ -50,7 +51,7 @@ class CreateLpaHandler implements RequestHandlerInterface
             if ($result !== true) {
                 /** @var FlashMessagesInterface $flash */
                 $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                $flash->flash('flash_warning', ['LPA created but could not set seed']);
+                $flash->flash(FlashMessenger::WARNING, ['LPA created but could not set seed']);
             }
 
             return new RedirectResponse(sprintf('/lpa/%s/type', $lpa->id));

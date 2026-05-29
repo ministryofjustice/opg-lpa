@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\RedirectResponse;
+use App\View\Twig\FlashMessenger;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -29,7 +30,7 @@ class DeleteLpaHandler implements RequestHandlerInterface
         if ($this->lpaApplicationService->deleteApplication($lpaId) !== true) {
             /** @var FlashMessagesInterface $flash */
             $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-            $flash->flash('flash_error', ['LPA could not be deleted']);
+            $flash->flash(FlashMessenger::ERROR, ['LPA could not be deleted']);
         }
 
         if (is_numeric($page)) {

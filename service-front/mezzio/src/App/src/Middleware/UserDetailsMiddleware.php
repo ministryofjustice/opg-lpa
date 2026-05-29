@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Authentication\AuthenticationService;
+use App\Service\UserDetails as UserService;
 use App\Model\UserDetailsHolder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\User\User;

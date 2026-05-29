@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Storage;
 
-use Application\Model\Service\Authentication\Identity\User;
+use App\Model\Service\Authentication\Identity\User;
 use DateTime;
 use Laminas\Authentication\Storage\StorageInterface;
 use Mezzio\Session\SessionInterface;

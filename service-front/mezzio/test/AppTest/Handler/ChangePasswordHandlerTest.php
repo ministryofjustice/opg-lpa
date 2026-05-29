@@ -6,10 +6,10 @@ namespace AppTest\Handler;
 
 use App\Handler\ChangePasswordHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Form\User\ChangePassword as ChangePasswordForm;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Form\User\ChangePassword as ChangePasswordForm;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;

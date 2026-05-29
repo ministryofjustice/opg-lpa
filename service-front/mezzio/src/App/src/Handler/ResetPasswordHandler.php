@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
@@ -72,7 +73,7 @@ class ResetPasswordHandler implements RequestHandlerInterface
                 if ($result === true) {
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                    $flash->flash('flash_success', ['Password successfully reset']);
+                    $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
                     return new RedirectResponse('/login');
                 }
 
@@ -90,7 +91,7 @@ class ResetPasswordHandler implements RequestHandlerInterface
             $this->renderer->render(
                 'application/general/forgot-password/reset-password.twig',
                 [
-                    'form' => $form,
+                    'form'  => $form,
                     'error' => $error,
                 ]
             )

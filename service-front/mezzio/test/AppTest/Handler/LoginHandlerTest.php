@@ -6,7 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\LoginHandler;
 use App\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User as UserIdentity;
+use App\Model\Service\Authentication\Identity\User as UserIdentity;
 use DateTime;
 use Laminas\Authentication\Result;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -14,6 +14,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use App\View\Twig\FlashMessenger;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
@@ -295,10 +296,10 @@ class LoginHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertArrayHasKey('flash_warning', $flashCalls);
+        $this->assertArrayHasKey(FlashMessenger::WARNING, $flashCalls);
         $this->assertContains(
             'Thanks for logging in. Your LPA account will stay open for another 9 months.',
-            $flashCalls['flash_warning']
+            $flashCalls[FlashMessenger::WARNING]
         );
     }
 
@@ -344,7 +345,7 @@ class LoginHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertEquals('/stored/url', $response->getHeaderLine('Location'));
-        $this->assertArrayNotHasKey('flash_warning', $flashCalls);
+        $this->assertArrayNotHasKey(FlashMessenger::WARNING, $flashCalls);
     }
 
     public function testSessionNotRegeneratedOnFailedLogin(): void

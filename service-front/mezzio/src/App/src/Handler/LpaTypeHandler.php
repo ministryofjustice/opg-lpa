@@ -7,7 +7,8 @@ namespace App\Handler;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -60,7 +61,7 @@ class LpaTypeHandler implements RequestHandlerInterface
                 if (!$lpa instanceof Lpa) {
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                    $flash->flash('flash_error', ['Error creating a new LPA. Please try again.']);
+                    $flash->flash(FlashMessenger::ERROR, ['Error creating a new LPA. Please try again.']);
                     return new RedirectResponse('/user/dashboard');
                 }
 

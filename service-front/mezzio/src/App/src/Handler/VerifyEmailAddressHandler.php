@@ -6,7 +6,7 @@ namespace App\Handler;
 
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Flash\FlashMessageMiddleware;
+use App\View\Twig\FlashMessenger;
 use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -40,11 +40,11 @@ class VerifyEmailAddressHandler implements RequestHandlerInterface
         }
 
         if ($success) {
-            $flash->flash('flash_success', [
+            $flash->flash(FlashMessenger::SUCCESS, [
                 'Your email address was successfully updated. Please login with your new address.',
             ]);
         } else {
-            $flash->flash('flash_error', [
+            $flash->flash(FlashMessenger::ERROR, [
                 'There was an error updating your email address',
             ]);
         }

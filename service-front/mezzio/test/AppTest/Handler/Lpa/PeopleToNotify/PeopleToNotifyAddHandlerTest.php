@@ -6,10 +6,10 @@ namespace AppTest\Handler\Lpa\PeopleToNotify;
 
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
