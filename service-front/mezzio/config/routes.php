@@ -2,14 +2,29 @@
 
 declare(strict_types=1);
 
+use App\Handler\AccessibilityHandler;
+use App\Handler\ContactHandler;
+use App\Handler\CookiesHandler;
 use App\Handler\DashboardHandler;
+use App\Handler\EnableCookieHandler;
+use App\Handler\FeedbackHandler;
+use App\Handler\FeedbackThanksHandler;
+use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
+use App\Handler\HomeRedirectHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DonorIndexHandler;
 use App\Handler\LpaTypeHandler;
+use App\Handler\PingHandler;
+use App\Handler\PingHandlerElb;
+use App\Handler\PingHandlerJson;
+use App\Handler\PingHandlerPingdom;
+use App\Handler\PrivacyHandler;
 use App\Handler\SessionExpiryHandler;
+use App\Handler\StatsHandler;
+use App\Handler\TermsHandler;
 use App\Handler\TypeHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\LpaLoaderMiddleware;
@@ -27,6 +42,20 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/session-state', SessionExpiryHandler::class, 'session-state')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/home-redirect', HomeRedirectHandler::class, 'application.home-redirect')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/terms', TermsHandler::class, 'application.terms')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/accessibility', AccessibilityHandler::class, 'application.accessibility')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/privacy-notice', PrivacyHandler::class, 'application.privacy-notice')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/contact', ContactHandler::class, 'application.contact')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/enable-cookie', EnableCookieHandler::class, 'application.enable-cookie')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->route('/cookies', CookiesHandler::class, ['GET', 'POST'], 'application.cookies')
         ->setOptions(['unauthenticated_route' => true]);
 
     $app->route(
@@ -66,4 +95,32 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ['GET'],
         'lpa/donor',
     );
+
+    // Feedback
+    $app->route(
+        '/send-feedback',
+        $factory->pipeline(CsrfValidationMiddleware::class, FeedbackHandler::class),
+        ['GET', 'POST'],
+        'send-feedback',
+    )->setOptions(['unauthenticated_route' => true]);
+    $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
+        ->setOptions(['unauthenticated_route' => true]);
+
+    // Guidance
+    $app->get('/guide[/{section}]', GuidanceHandler::class, 'guidance')
+        ->setOptions(['unauthenticated_route' => true]);
+
+    // Stats
+    $app->get('/stats', StatsHandler::class, 'stats')
+        ->setOptions(['unauthenticated_route' => true]);
+
+    // Ping / health checks
+    $app->get('/ping', PingHandler::class, 'ping')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/ping/json', PingHandlerJson::class, 'ping/json')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/ping/elb', PingHandlerElb::class, 'ping/elb')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/ping/pingdom', PingHandlerPingdom::class, 'ping/pingdom')
+        ->setOptions(['unauthenticated_route' => true]);
 };
