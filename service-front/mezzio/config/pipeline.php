@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 use App\Middleware\AuthenticationMiddleware;
+use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use Mezzio\Csrf\CsrfMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\Application;
+use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\ServerUrlMiddleware;
 use Mezzio\Helper\UrlHelperMiddleware;
@@ -25,6 +27,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(ErrorHandler::class);
     $app->pipe(ServerUrlMiddleware::class);
     $app->pipe(SessionMiddleware::class);
+    $app->pipe(FlashMessageMiddleware::class);
+    $app->pipe(FlashMessagesHolderMiddleware::class);
     $app->pipe(CsrfMiddleware::class);
     $app->pipe(IdentityTokenRefreshMiddleware::class);
     $app->pipe(RouteMiddleware::class);

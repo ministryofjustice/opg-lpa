@@ -13,9 +13,9 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Helper\UrlHelper;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,8 +31,6 @@ class LpaTypeHandler implements RequestHandlerInterface
     use CommonTemplateVariablesTrait;
 
     private const string ROUTE_NAME = 'lpa-type-no-id';
-
-    private const FLASH_KEY_ERROR = 'flash_error';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -60,10 +58,9 @@ class LpaTypeHandler implements RequestHandlerInterface
                 $lpa = $this->lpaApplicationService->createApplication();
 
                 if (!$lpa instanceof Lpa) {
-                    $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-                    if ($session instanceof SessionInterface) {
-                        $session->set(self::FLASH_KEY_ERROR, ['Error creating a new LPA. Please try again.']);
-                    }
+                    /** @var FlashMessagesInterface $flash */
+                    $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                    $flash->flash('flash_error', ['Error creating a new LPA. Please try again.']);
                     return new RedirectResponse('/user/dashboard');
                 }
 

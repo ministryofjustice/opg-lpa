@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\View\Twig;
 
 use App\Form\Error\FormLinkedErrors;
+use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
@@ -24,6 +25,7 @@ class LegacyCompatExtensionFactory
             $container->get(MezzioSessionStorage::class),
             $container->get(UserDetailsHolder::class),
             $container->get(UrlHelper::class),
+            $container->get(FlashMessagesHolder::class),
         );
     }
 }

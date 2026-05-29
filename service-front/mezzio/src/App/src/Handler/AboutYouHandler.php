@@ -12,6 +12,8 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -23,9 +25,7 @@ class AboutYouHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
-    private const SESSION_KEY_IDENTITY = 'identity';
     private const SESSION_KEY_USER_DETAILS = 'user_details';
-    private const FLASH_KEY_SUCCESS = 'flash_success';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -38,9 +38,12 @@ class AboutYouHandler implements RequestHandlerInterface
     {
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
-        if (!$session instanceof SessionInterface || !$session->has(self::SESSION_KEY_IDENTITY)) {
+        if (!$session instanceof SessionInterface || !$session->has('identity')) {
             return new RedirectResponse('/login');
         }
+
+        /** @var FlashMessagesInterface $flash */
+        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
 
         $isNew = $request->getAttribute('new') !== null;
 
@@ -72,7 +75,7 @@ class AboutYouHandler implements RequestHandlerInterface
                 $session->unset(self::SESSION_KEY_USER_DETAILS);
 
                 if (!$isNew) {
-                    $session->set(self::FLASH_KEY_SUCCESS, ['Your details have been updated.']);
+                    $flash->flash('flash_success', ['Your details have been updated.']);
                 }
 
                 return new RedirectResponse('/user/dashboard');

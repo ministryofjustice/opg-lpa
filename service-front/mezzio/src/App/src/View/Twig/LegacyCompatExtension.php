@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\View\Twig;
 
 use App\Form\Error\FormLinkedErrors;
+use App\Model\FlashMessagesHolder;
 use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
@@ -39,6 +40,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly MezzioSessionStorage $sessionStorage,
         private readonly UserDetailsHolder $userDetailsHolder,
         private readonly UrlHelper $urlHelper,
+        private readonly FlashMessagesHolder $flashMessagesHolder,
     ) {
     }
 
@@ -60,8 +62,7 @@ class LegacyCompatExtension extends AbstractExtension
             // Returns the current authenticated User identity, or null if not logged in
             new TwigFunction('identity', fn () => $this->sessionStorage->read()),
             new TwigFunction('url', [$this, 'url']),
-            // TODO: stub — always returns an empty FlashMessengerStub; wire up real flash messages when available
-            new TwigFunction('flashMessenger', fn () => new FlashMessengerStub()),
+            new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
             // TODO: stub — always returns empty string; wire up SystemMessage service when available
             new TwigFunction('systemMessage', fn () => '', ['is_safe' => ['html']]),

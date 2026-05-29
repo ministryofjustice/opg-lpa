@@ -14,6 +14,8 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -27,6 +29,7 @@ class LoginHandlerTest extends TestCase
     private AuthenticationService&MockObject $authenticationService;
     private SessionInterface&MockObject $session;
     private FormInterface&MockObject $form;
+    private FlashMessagesInterface&MockObject $flash;
     private LoginHandler $handler;
 
     protected function setUp(): void
@@ -36,6 +39,7 @@ class LoginHandlerTest extends TestCase
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->session = $this->createMock(SessionInterface::class);
         $this->form = $this->createMock(FormInterface::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->formElementManager
             ->method('get')
@@ -53,7 +57,8 @@ class LoginHandlerTest extends TestCase
     {
         $request = (new ServerRequest())
             ->withMethod($method)
-            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash);
 
         if ($parsedBody !== null) {
             $request = $request->withParsedBody($parsedBody);
@@ -277,6 +282,11 @@ class LoginHandlerTest extends TestCase
             $setCalls[$key] = $value;
         });
 
+        $flashCalls = [];
+        $this->flash->method('flash')->willReturnCallback(function ($key, $value) use (&$flashCalls) {
+            $flashCalls[$key] = $value;
+        });
+
         $request = $this->createRequestWithSession('POST', [
             'email' => 'test@example.com',
             'password' => 'password123', // pragma: allowlist secret
@@ -285,10 +295,10 @@ class LoginHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertArrayHasKey('flash_warning', $setCalls);
+        $this->assertArrayHasKey('flash_warning', $flashCalls);
         $this->assertContains(
             'Thanks for logging in. Your LPA account will stay open for another 9 months.',
-            $setCalls['flash_warning']
+            $flashCalls['flash_warning']
         );
     }
 
@@ -321,6 +331,11 @@ class LoginHandlerTest extends TestCase
             $setCalls[$key] = $value;
         });
 
+        $flashCalls = [];
+        $this->flash->method('flash')->willReturnCallback(function ($key, $value) use (&$flashCalls) {
+            $flashCalls[$key] = $value;
+        });
+
         $request = $this->createRequestWithSession('POST', [
             'email' => 'test@example.com',
             'password' => 'password123', // pragma: allowlist secret
@@ -329,7 +344,7 @@ class LoginHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertEquals('/stored/url', $response->getHeaderLine('Location'));
-        $this->assertArrayNotHasKey('flash_warning', $setCalls);
+        $this->assertArrayNotHasKey('flash_warning', $flashCalls);
     }
 
     public function testSessionNotRegeneratedOnFailedLogin(): void

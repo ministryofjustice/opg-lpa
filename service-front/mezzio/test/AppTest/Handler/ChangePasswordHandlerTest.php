@@ -16,6 +16,8 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\User\User;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -27,6 +29,7 @@ class ChangePasswordHandlerTest extends TestCase
     private AuthenticationService&MockObject $authenticationService;
     private UserService&MockObject $userService;
     private ChangePasswordForm&MockObject $form;
+    private FlashMessagesInterface&MockObject $flash;
     private ChangePasswordHandler $handler;
 
     protected function setUp(): void
@@ -36,6 +39,7 @@ class ChangePasswordHandlerTest extends TestCase
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->userService = $this->createMock(UserService::class);
         $this->form = $this->createMock(ChangePasswordForm::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->formElementManager
             ->method('get')
@@ -61,6 +65,7 @@ class ChangePasswordHandlerTest extends TestCase
     {
         return (new ServerRequest())
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash)
             ->withAttribute('secondsUntilSessionExpires', 3600)
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
     }
