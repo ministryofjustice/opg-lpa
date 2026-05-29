@@ -270,11 +270,6 @@
           } else {
             $errorElt.insertBefore($postcodeLabel);
           }
-
-          // set width to that of the search container - offset from left
-          var errorPosLeft = $errorElt.position().left;
-          var containerWidth = $searchContainer.width();
-          $errorElt.width(containerWidth - errorPosLeft);
         } else {
           alert('Enter a valid UK postcode');
         }

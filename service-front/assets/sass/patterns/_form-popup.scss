@@ -156,6 +156,12 @@
     .postcodelookup {
         position: relative;
 
+        .js-PostcodeLookup__search .error-message {
+            @include media(tablet) {
+                width: 79%;
+            }
+        }
+
         .spinner {
             @include media(tablet) {
                 position: absolute;
