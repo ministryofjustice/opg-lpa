@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Authentication;
 
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use App\Service\ApiClient\Client as ApiClient;
+use App\Authentication\Adapter\LpaAuthAdapter;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

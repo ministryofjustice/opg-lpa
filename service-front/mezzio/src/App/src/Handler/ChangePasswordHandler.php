@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\User\ChangePassword as ChangePasswordForm;
+use App\Authentication\AuthenticationService;
+use App\Form\User\ChangePassword as ChangePasswordForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Middleware\RequestAttribute;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -80,7 +81,7 @@ class ChangePasswordHandler implements RequestHandlerInterface
                 if ($result === true) {
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                    $flash->flash('flash_success', [
+                    $flash->flash(FlashMessenger::SUCCESS, [
                         'Your new password has been saved. ' .
                         'Please remember to use this new password to sign in from now on.',
                     ]);

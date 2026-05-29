@@ -6,7 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\LpaTypeHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -14,6 +14,7 @@ use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
+use App\View\Twig\FlashMessenger;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
@@ -120,7 +121,7 @@ class LpaTypeHandlerTest extends TestCase
         $this->flash
             ->expects($this->once())
             ->method('flash')
-            ->with('flash_error', ['Error creating a new LPA. Please try again.']);
+            ->with(FlashMessenger::ERROR, ['Error creating a new LPA. Please try again.']);
 
         $response = $this->handler->handle($this->createRequest('POST', ['type' => Document::LPA_TYPE_HW]));
 

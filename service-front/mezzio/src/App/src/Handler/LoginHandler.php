@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -86,7 +87,7 @@ class LoginHandler implements RequestHandlerInterface
                     if (in_array('inactivity-flags-cleared', $result->getMessages(), true)) {
                         /** @var FlashMessagesInterface $flash */
                         $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                        $flash->flash('flash_warning', [
+                        $flash->flash(FlashMessenger::WARNING, [
                             'Thanks for logging in. Your LPA account will stay open for another 9 months.',
                         ]);
                     }
