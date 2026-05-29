@@ -7,6 +7,8 @@ namespace App\Handler\Lpa;
 use Application\Model\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -16,8 +18,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CreateLpaHandler implements RequestHandlerInterface
 {
     private const SESSION_KEY_CLONE_DATA = 'clone_data';
-    private const FLASH_KEY_ERROR = 'flash_error';
-    private const FLASH_KEY_WARNING = 'flash_warning';
 
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
@@ -37,7 +37,9 @@ class CreateLpaHandler implements RequestHandlerInterface
             $lpa = $this->lpaApplicationService->createApplication();
 
             if (!$lpa instanceof Lpa) {
-                $session->set(self::FLASH_KEY_ERROR, ['Error creating a new LPA. Please try again.']);
+                /** @var FlashMessagesInterface $flash */
+                $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                $flash->flash('flash_error', ['Error creating a new LPA. Please try again.']);
                 return new RedirectResponse('/user/dashboard');
             }
 
@@ -46,7 +48,9 @@ class CreateLpaHandler implements RequestHandlerInterface
             $this->resetSessionCloneData($session, $seedId);
 
             if ($result !== true) {
-                $session->set(self::FLASH_KEY_WARNING, ['LPA created but could not set seed']);
+                /** @var FlashMessagesInterface $flash */
+                $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                $flash->flash('flash_warning', ['LPA created but could not set seed']);
             }
 
             return new RedirectResponse(sprintf('/lpa/%s/type', $lpa->id));

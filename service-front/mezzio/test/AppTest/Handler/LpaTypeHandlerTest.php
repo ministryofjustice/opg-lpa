@@ -14,6 +14,8 @@ use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -28,6 +30,7 @@ class LpaTypeHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private FormInterface&MockObject $form;
     private SessionInterface&MockObject $session;
+    private FlashMessagesInterface&MockObject $flash;
     private LpaTypeHandler $handler;
 
     protected function setUp(): void
@@ -37,6 +40,7 @@ class LpaTypeHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->session = $this->createMock(SessionInterface::class);
         $this->form = $this->createMock(FormInterface::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->formElementManager
             ->method('get')
@@ -56,6 +60,7 @@ class LpaTypeHandlerTest extends TestCase
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash)
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token')
             ->withAttribute('secondsUntilSessionExpires', 3600);
 
@@ -112,9 +117,9 @@ class LpaTypeHandlerTest extends TestCase
             ->method('createApplication')
             ->willReturn(false);
 
-        $this->session
+        $this->flash
             ->expects($this->once())
-            ->method('set')
+            ->method('flash')
             ->with('flash_error', ['Error creating a new LPA. Please try again.']);
 
         $response = $this->handler->handle($this->createRequest('POST', ['type' => Document::LPA_TYPE_HW]));

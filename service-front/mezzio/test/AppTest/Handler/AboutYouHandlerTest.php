@@ -12,6 +12,8 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -25,6 +27,7 @@ class AboutYouHandlerTest extends TestCase
     private UserService&MockObject $userService;
     private FormInterface&MockObject $form;
     private SessionInterface&MockObject $session;
+    private FlashMessagesInterface&MockObject $flash;
     private AboutYouHandler $handler;
 
     protected function setUp(): void
@@ -34,6 +37,7 @@ class AboutYouHandlerTest extends TestCase
         $this->userService = $this->createMock(UserService::class);
         $this->form = $this->createMock(FormInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->formElementManager
             ->method('get')
@@ -89,6 +93,7 @@ class AboutYouHandlerTest extends TestCase
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash)
             ->withAttribute('secondsUntilSessionExpires', 3600)
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
 
@@ -223,7 +228,8 @@ class AboutYouHandlerTest extends TestCase
 
         $session = $this->createAuthenticatedSession($this->createUserDetails());
         $session->expects($this->once())->method('unset')->with('user_details');
-        $session->expects($this->once())->method('set')->with('flash_success', ['Your details have been updated.']);
+
+        $this->flash->expects($this->once())->method('flash')->with('flash_success', ['Your details have been updated.']);
 
         $response = $this->handler->handle($this->createRequest('POST', $postData, $session));
 
@@ -242,6 +248,8 @@ class AboutYouHandlerTest extends TestCase
 
         $session = $this->createAuthenticatedSession($this->createUserDetails());
         $session->expects($this->never())->method('set');
+
+        $this->flash->expects($this->never())->method('flash');
 
         $response = $this->handler->handle($this->createRequest('POST', $postData, $session, true));
 

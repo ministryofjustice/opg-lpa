@@ -6,6 +6,8 @@ namespace App\Handler;
 
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -14,9 +16,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class VerifyEmailAddressHandler implements RequestHandlerInterface
 {
-    private const FLASH_KEY_SUCCESS = 'flash_success';
-    private const FLASH_KEY_ERROR = 'flash_error';
-
     public function __construct(
         private readonly UserService $userService,
     ) {
@@ -30,6 +29,9 @@ class VerifyEmailAddressHandler implements RequestHandlerInterface
         $session->clear();
         $session->regenerate();
 
+        /** @var FlashMessagesInterface $flash */
+        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+
         $token = $request->getAttribute('token');
 
         $success = false;
@@ -38,11 +40,11 @@ class VerifyEmailAddressHandler implements RequestHandlerInterface
         }
 
         if ($success) {
-            $session->set(self::FLASH_KEY_SUCCESS, [
+            $flash->flash('flash_success', [
                 'Your email address was successfully updated. Please login with your new address.',
             ]);
         } else {
-            $session->set(self::FLASH_KEY_ERROR, [
+            $flash->flash('flash_error', [
                 'There was an error updating your email address',
             ]);
         }

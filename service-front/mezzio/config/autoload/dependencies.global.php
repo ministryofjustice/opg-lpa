@@ -6,6 +6,7 @@ use App\Authentication\AuthenticationService;
 use App\Handler;
 use App\Middleware\AuthenticationMiddleware;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddlewareFactory;
 use App\Middleware\LpaLoaderMiddleware;
@@ -13,6 +14,7 @@ use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
 use App\Model\UserDetailsHolder;
+use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Service\LpaApplicationServiceFactory;
 use App\Storage\MezzioSessionStorage;
@@ -54,6 +56,8 @@ return [
             PersistentSessionDetails::class => static fn() => new PersistentSessionDetails(),
             // UserDetailsHolder — shared instance; populated per-request by UserDetailsMiddleware
             UserDetailsHolder::class => static fn() => new UserDetailsHolder(),
+            // FlashMessagesHolder — shared instance; populated per-request by FlashMessagesHolderMiddleware
+            FlashMessagesHolder::class => static fn() => new FlashMessagesHolder(),
 
             // Handlers
             Handler\HomeHandler::class => static fn(ContainerInterface $c) => new Handler\HomeHandler(
@@ -111,6 +115,9 @@ return [
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
             CsrfValidationMiddleware::class        => static fn() => new CsrfValidationMiddleware(),
+            FlashMessagesHolderMiddleware::class    => static fn(ContainerInterface $c) => new FlashMessagesHolderMiddleware(
+                $c->get(FlashMessagesHolder::class),
+            ),
             PersistentSessionDetailsMiddleware::class => static fn(ContainerInterface $c) => new PersistentSessionDetailsMiddleware(
                 $c->get(PersistentSessionDetails::class),
             ),
