@@ -3,30 +3,30 @@
 
 .form-popup {
     // Taken from main (elements/elements_typography line 7) instead of extending
-    @include core-19;
+    @include govuk-font(19);
     -webkit-font-smoothing: antialiased;
 
     &.popup {
         max-width: 600px;
 
-        @include media($max-width: 1000px) {
+        @include govuk-media-query($until: 1000px) {
             margin: 2em auto;
         }
 
-        @include media(mobile) {
+        @include govuk-media-query($until: tablet) {
             margin: 2em .5em 10em;
         }
     }
 
     .form {
-        padding: $gutter $gutter-half;
+        padding: govuk-spacing(6) govuk-spacing(3);
 
-        @include media(mobile) {
+        @include govuk-media-query($until: tablet) {
             padding-top: 0;
         }
 
         > .heading-medium {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 margin-top: 0;
                 margin-bottom: 0;
             }
@@ -35,14 +35,14 @@
         // For hiding in the popup on tablets and up
         // Used for .heading-medium primarily
         .popup-exclude {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 display: none;
             }
         }
 
         &.reuse-details-form {
             .heading-medium {
-                @include media(tablet) {
+                @include govuk-media-query($from: tablet) {
                     margin-top: 0;
                 }
             }
@@ -51,10 +51,10 @@
 
     .form-group {
         margin-top: 0;
-        margin-bottom: $gutter-half;
+        margin-bottom: govuk-spacing(3);
 
         &:has(> .form-label) {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 display: flex;
                 flex-wrap: wrap;
                 align-items: flex-start;
@@ -63,13 +63,13 @@
 
         &.read-only {
             label {
-                @include media(mobile) {
+                @include govuk-media-query($until: tablet) {
                     display: none;
                 }
             }
 
             .read-only-value {
-                @include media(tablet) {
+                @include govuk-media-query($from: tablet) {
                     margin-top: 7px;
                 }
             }
@@ -77,7 +77,7 @@
     }
 
     .form-label {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
             flex-shrink: 0;
@@ -85,14 +85,14 @@
     }
 
     .form-control {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             flex: 1;
             min-width: 0;
         }
     }
 
     .postcode-input {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             width: 252px;
         }
     }
@@ -104,26 +104,26 @@
     .button,
     .alert,
     .single-checkbox-group {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             margin-left: 150px;
         }
     }
 
     .postcode-button,
     .button-secondary {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             margin-left: 0;
         }
     }
 
     .dob-label {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             float: left;
         }
     }
 
     .form-date {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             margin-left: 150px;
         }
 
@@ -133,21 +133,21 @@
         }
 
         .form-label {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 width: auto;
                 flex-shrink: unset;
             }
         }
 
         .form-control {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 flex: unset;
             }
         }
 
         .form-hint,
         .govuk-hint {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 display: none;
             }
         }
@@ -157,13 +157,13 @@
         position: relative;
 
         .js-PostcodeLookup__search .error-message {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 width: 79%;
             }
         }
 
         .spinner {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 position: absolute;
                 top: 10px;
                 right: 182px;
@@ -172,10 +172,10 @@
     }
 
     .error-summary {
-        margin: $gutter-half $gutter-half 0;
+        margin: govuk-spacing(3) govuk-spacing(3) 0;
         padding: 10px 10px 4px;
 
-        @include media(mobile) {
+        @include govuk-media-query($until: tablet) {
             padding-bottom: 8px;
         }
 
@@ -183,7 +183,7 @@
         .govuk-heading-m {
             margin-bottom: 10px;
 
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 font-size: 22px;
             }
         }
@@ -196,7 +196,7 @@
     .form-group-error {
         border-left: 0;
 
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             position: relative;
             margin-right: 0;
             padding-left: 0;
@@ -216,14 +216,14 @@
 
     .form-date {
         .form-group-error {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 margin-right: 20px;
             }
         }
     }
 
     .error-message {
-        @include media(tablet) {
+        @include govuk-media-query($from: tablet) {
             position: relative;
             top: 13px;
             left: 150px;
@@ -236,7 +236,7 @@
     .form-date {
 
         .error-message {
-            @include media(tablet) {
+            @include govuk-media-query($from: tablet) {
                 top: 3px;
                 left: 0;
                 width: 100%;
@@ -259,7 +259,7 @@
     .use-details-link-panel {
         padding: 15px;
 
-        @include media($min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             padding-left: 165px;
         }
     }
