@@ -76,7 +76,7 @@
 
         <div class="iconlinks iconlinks--right">
             <div class="iconlinks-item">
-                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-analytics-click="page:link:Print this summary">
+                <a href="#" class="govuk-link iconlinks-link js-print hide-if-no-js" data-analytics-click="page:link:Print this summary">
                     <i class="icon icon-print"></i>
                     <span class="iconlinks-text">Print this summary</span>
                 </a>
@@ -105,7 +105,7 @@
         {% if lpa.payment.amount == 0 %}
 
             {# -- Nothing to pay -- #}
-            <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" role="button" class="button" data-cy="confirm-and-finish">Confirm and finish</a></p>
+            <p class="divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button" data-cy="confirm-and-finish">Confirm and finish</a></p>
 
         {% else %}
 
@@ -138,9 +138,9 @@
                 {{ form().openTag( form )|raw }}
                 {{ formElement(form.getCsrf) }}
 
-            <div class="form-group">
+            <div class="govuk-button-group">
                 {{ formElement(form.get('submit')) }}
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="govuk-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>
 
             {{ form().closeTag|raw }}
@@ -149,7 +149,7 @@
         {% endif %}
 
         <p class="divorced">
-            <a href="/user/dashboard" data-analytics-click="page:link:save: Save for later">Save for later</a>
+            <a class="govuk-link" href="/user/dashboard" data-analytics-click="page:link:save: Save for later">Save for later</a>
         </p>
 
     {% else %}
@@ -161,8 +161,10 @@
             </div>
         </div>
 
-        <a class="button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="button-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        <div class="govuk-button-group">
+            <a class="govuk-button" disabled="disabled">Confirm</a>
+            <a href="/user/dashboard" class="govuk-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        </div>
 
     {% endif %}
 
