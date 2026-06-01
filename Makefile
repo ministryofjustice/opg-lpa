@@ -200,52 +200,6 @@ reset-api:
 dc-down:
 	@docker compose down --remove-orphans
 
-MEZZIO_COMPOSE := docker compose -f docker-compose.mezzio.yml
-
-.PHONY: run-mezzio-composer
-run-mezzio-composer:
-	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
-
-.PHONY: mezzio-dc-build
-mezzio-dc-build: run-mezzio-composer run-api-composer
-	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
-
-.PHONY: mezzio-dc-up
-mezzio-dc-up: mezzio-dc-build
-	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
-	@${MEZZIO_COMPOSE} up -d --remove-orphans
-
-.PHONY: mezzio-dc-down
-mezzio-dc-down:
-	@${MEZZIO_COMPOSE} down --remove-orphans
-
-.PHONY: mezzio-dc-logs
-mezzio-dc-logs:
-	@${MEZZIO_COMPOSE} logs -f
-
-.PHONY: mezzio-dev-enable
-mezzio-dev-enable:
-	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-enable
-
-.PHONY: mezzio-dev-disable
-mezzio-dev-disable:
-	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-disable
-
-.PHONY: mezzio-dc-reset
-mezzio-dc-reset:
-	@${MAKE} mezzio-dc-down
-	@docker rmi lpa-mezzio-app lpa-mezzio-web lpa-mezzio-ssl 2>/dev/null || true
-	@rm -fr ./service-front/mezzio/vendor
-	@${MAKE} mezzio-dc-up
-
-.PHONY: cypress-run-spec-mezzio
-cypress-run-spec-mezzio:
-	${MEZZIO_COMPOSE} run --rm cypress-mezzio
-
-.PHONY: dc-mezzio-unit-tests
-dc-mezzio-unit-tests:
-	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml.dist
-
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
 	@docker compose run --rm --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
@@ -287,7 +241,6 @@ cypress-open: npm-install
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec:
 	docker compose run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
-
 
 # This should be used in the form : make cypress-run-tags TAGS=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
@@ -353,10 +306,6 @@ dc-clear-cache:
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
 	rm -fr service-front/twig-cache/*
 
-.PHONY: mezzio-clear-cache
-mezzio-clear-cache:
-	@${MEZZIO_COMPOSE} exec mezzio-app rm -f /app/data/cache/config-cache.php
-
 update-secrets-baseline:
 	detect-secrets scan --baseline .secrets.baseline
 
@@ -364,6 +313,64 @@ update-secrets-baseline:
 psql:
 	@docker exec -it lpa-postgres psql --username=lpauser --dbname=lpadb
 
+# --- MEZZIO TARGETS ---
+
+MEZZIO_COMPOSE := docker compose -f docker-compose.mezzio.yml
+
+.PHONY: run-mezzio-composer
+run-mezzio-composer:
+	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+
+.PHONY: mezzio-dc-build
+mezzio-dc-build: run-mezzio-composer run-api-composer
+	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
+
+.PHONY: mezzio-dc-up
+mezzio-dc-up: mezzio-dc-build
+	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
+	@${MEZZIO_COMPOSE} up -d --remove-orphans
+
+.PHONY: mezzio-dc-down
+mezzio-dc-down:
+	@${MEZZIO_COMPOSE} down --remove-orphans
+
+.PHONY: mezzio-dc-logs
+mezzio-dc-logs:
+	@${MEZZIO_COMPOSE} logs -f
+
+.PHONY: mezzio-dev-enable
+mezzio-dev-enable:
+	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-enable
+
+.PHONY: mezzio-dev-disable
+mezzio-dev-disable:
+	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-disable
+
+.PHONY: mezzio-dc-reset
+mezzio-dc-reset:
+	@${MAKE} mezzio-dc-down
+	@docker rmi lpa-mezzio-app lpa-mezzio-web lpa-mezzio-ssl 2>/dev/null || true
+	@rm -fr ./service-front/mezzio/vendor
+	@${MAKE} mezzio-dc-up
+
 .PHONY: mezzio-seed
 mezzio-seed:
 	@${MEZZIO_COMPOSE} run --rm seeding
+
+.PHONY: mezzio-clear-cache
+mezzio-clear-cache:
+	@${MEZZIO_COMPOSE} exec mezzio-app rm -f /app/data/cache/config-cache.php
+
+.PHONY: cypress-run-spec-mezzio
+cypress-run-spec-mezzio:
+	${MEZZIO_COMPOSE} run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+
+.PHONY: cypress-open-mezzio
+cypress-open-mezzio: npm-install
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7004" \
+		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
+		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+
+.PHONY: dc-mezzio-unit-tests
+dc-mezzio-unit-tests:
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml.dist

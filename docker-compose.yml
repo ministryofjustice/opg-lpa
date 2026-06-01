@@ -158,6 +158,7 @@ services:
       start_period: 90s
 
   front-app-test:
+    profiles: ["test"]
     image: lpa-front-app-test
     build:
       context: ./
@@ -275,6 +276,7 @@ services:
       start_period: 90s
 
   api-app-test:
+    profiles: ["test"]
     image: lpa-api-app-test
     build:
       context: ./
@@ -345,6 +347,7 @@ services:
       start_period: 90s
 
   admin-app-test:
+    profiles: ["test"]
     image: lpa-admin-app-test
     build:
       context: ./
@@ -410,6 +413,7 @@ services:
       PHP_IDE_CONFIG: serverName=lpa-pdf-app
 
   pdf-app-test:
+    profiles: ["test"]
     image: lpa-pdf-app-test
     build:
       context: ./
@@ -461,6 +465,7 @@ services:
       - ./phpcs/output:/app/output
 
   shared-test:
+    profiles: ["test"]
     image: lpa-shared-test
     build:
       context: ./

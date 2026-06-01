@@ -138,7 +138,6 @@
     {{ form.prepare() ? '' }}
 
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.getCsrf) }}
 
         {{ macros.formErrorSummary(error,form) }}
 

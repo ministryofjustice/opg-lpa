@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Middleware\CsrfValidationMiddleware;
 use Application\Model\Service\User\Details as UserService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -51,6 +52,8 @@ class AboutYouHandler implements RequestHandlerInterface
 
         $userDetails = $session->get(self::SESSION_KEY_USER_DETAILS);
         $userDetailsArr = is_array($userDetails) ? $userDetails : [];
+
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
@@ -99,9 +102,10 @@ class AboutYouHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form' => $form,
-                    'isNew' => $isNew,
+                    'form'      => $form,
+                    'isNew'     => $isNew,
                     'cancelUrl' => '/user/dashboard',
+                    'csrfToken' => $csrfToken,
                 ]
             )
         );

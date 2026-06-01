@@ -167,8 +167,8 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
-    {{ formElement(form.getCsrf) }}
-    {{ formElementErrorsV2(form.getCsrf) }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
 
     <h2 class="heading-medium popup-exclude">What is the replacement attorney's name?</h2>
     <fieldset>

@@ -250,8 +250,10 @@ services:
     build:
       context: ./
       dockerfile: cypress/Dockerfile
-    command: [ "run", "--spec", "cypress/e2e/MezzioHome.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
     environment:
-      CYPRESS_baseUrl: https://mezzio-ssl
+      CYPRESS_baseUrl: "https://mezzio-ssl"
+      CYPRESS_adminUrl: "https://admin-ssl"
+      SERVICE_API_ROOT: "http://api-web:8080"
     volumes:
+      - ./cypress:/app/cypress
       - ./cypress/screenshots:/app/cypress/screenshots

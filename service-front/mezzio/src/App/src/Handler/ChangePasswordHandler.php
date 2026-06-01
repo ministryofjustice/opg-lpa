@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use Application\Form\User\ChangePassword as ChangePasswordForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Middleware\CsrfValidationMiddleware;
 use Application\Middleware\RequestAttribute;
 use Application\Model\Service\Authentication\AuthenticationService;
 use Application\Model\Service\User\Details as UserService;
@@ -36,6 +37,7 @@ class ChangePasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         $form = $this->formElementManager->get(ChangePasswordForm::class);
         assert($form instanceof ChangePasswordForm);
@@ -96,10 +98,11 @@ class ChangePasswordHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form' => $form,
-                    'error' => $error,
+                    'form'      => $form,
+                    'error'     => $error,
                     'pageTitle' => 'Change your password',
                     'cancelUrl' => '/user/about-you',
+                    'csrfToken' => $csrfToken,
                 ]
             )
         );

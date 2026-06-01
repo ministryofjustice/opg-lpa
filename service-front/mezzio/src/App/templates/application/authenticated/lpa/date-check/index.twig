@@ -205,7 +205,6 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-    {{ formElement(form.getCsrf) }}
 
     <input type="hidden" name="return-route" value="{{ returnRoute }}">
 

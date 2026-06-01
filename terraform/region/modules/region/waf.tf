@@ -41,7 +41,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 6
 
     action {
-      count {}
+      block {}
     }
 
     statement {
@@ -70,7 +70,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 7
 
     action {
-      count {}
+      block {}
     }
 
     statement {

@@ -37,7 +37,7 @@
 {{ macros.formErrorSummary(error, form) }}
 
     {{ form().openTag(form)|raw }}
-        {{ formElement(form.getCsrf) }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="form-group {{ reuseDetails.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset class="reuse-details-container">
