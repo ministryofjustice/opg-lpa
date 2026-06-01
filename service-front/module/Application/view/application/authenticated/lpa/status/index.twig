@@ -65,7 +65,7 @@
                     <p>If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. We will not start processing the LPA or update this message until we've heard back from them.</p>
                 {% endif %}
 
-                <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p>If you have not posted the LPA to us yet, <a class="govuk-link" href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
         {% elseif status == 'processed' %}
@@ -88,7 +88,7 @@
                     <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
 
                     <p>If the LPA has successfully been registered, the donor and attorneys will be able to use it
-                    by creating an account on <a href="https://www.gov.uk/use-lasting-power-of-attorney">Use an LPA</a>
+                    by creating an account on <a class="govuk-link" href="https://www.gov.uk/use-lasting-power-of-attorney">Use an LPA</a>
                     and adding the details provided in the letter.</p>
                 {% endif %}
 
@@ -120,13 +120,13 @@
             </div>
             <div>
                 <p class="lede">This LPA was made before it was possible to track the progress of an LPA application online.</p>
-                <p class="govuk-body-l">If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p class="govuk-body-l">If you have not posted the LPA to us yet, <a class="govuk-link" href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
         {% endif %}
 
         <div>
-            <a href="/user/dashboard">Back to your LPAs</a>
+            <a class="govuk-link" href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 {% endblock content %}
