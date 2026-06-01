@@ -3,31 +3,37 @@
 
 .dialog {
     // Taken from main (elements/elements_typography line 7) instead of extending
-    @include core-19;
+    @include govuk-font(19);
     -webkit-font-smoothing: antialiased;
 
     &.popup {
         max-width: 600px;
 
-        @include media($max-width: 1000px) {
+        @include govuk-media-query($until: 1000px) {
             margin: 2em auto;
         }
 
-        @include media(mobile) {
+        @include govuk-media-query($until: tablet) {
             margin: 2em .5em 10em;
         }
     }
 }
 
 .dialog-container {
-    padding: 0 $gutter $gutter;
+    padding: 0 govuk-spacing(6) govuk-spacing(6);
 }
 
 .dialog-title-block {
-    @extend %heading-large;
+    @include govuk-font(36, $weight: bold);
+    margin-top: govuk-spacing(5);
+    margin-bottom: govuk-spacing(2);
+
+    @include govuk-media-query($from: tablet) {
+        margin-top: 45px;
+        margin-bottom: govuk-spacing(4);
+    }
 }
 
 .dialog-message-block {
-    margin-bottom: $gutter;
+    margin-bottom: govuk-spacing(6);
 }
-
