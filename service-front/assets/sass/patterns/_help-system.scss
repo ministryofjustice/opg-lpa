@@ -10,8 +10,8 @@
 .help-header {
     display: none;
     position: relative;
-    padding: $gutter-half;
-    border-bottom: 1px solid $border-colour;
+    padding: 15px;
+    border-bottom: 1px solid #bfc1c3;
 
     .popup & {
         display: block;
@@ -26,46 +26,46 @@
     display: block;
     padding-left: 35px;
 
-    @include media(mobile) {
+    @media (max-width: 640px) {
         padding-right: 40px;
     }
 }
 
 .help-body {
     .column-left {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         width: 75%;
         min-height: 820px;
-        padding: 0 $gutter-half;
+        padding: 0 15px;
         float: left;
 
-        @include media($min-width: 640px, $max-width: 1000px) {
+        @media (min-width: 640px) and (max-width: 1000px) {
             width: 70%;
         }
 
-        @include media(mobile) {
+        @media (max-width: 640px) {
             width: 100%;
             float: none;
         }
 
         .popup & {
-            border-right: 2px solid $border-colour;
+            border-right: 2px solid #bfc1c3;
         }
     }
 
     .column-right {
-        @include box-sizing(border-box);
+        box-sizing: border-box;
         position: relative;
         width: 25%;
-        padding: 0 $gutter-half;
+        padding: 0 15px;
         float: right;
         z-index: 10;
 
-        @include media($min-width: 640px, $max-width: 1000px) {
+        @media (min-width: 640px) and (max-width: 1000px) {
             width: 30%;
         }
 
-        @include media(mobile) {
+        @media (max-width: 640px) {
             width: 100%;
             float: none;
         }
@@ -75,7 +75,7 @@
 .help-navigation {
     .popup & {
         margin-left: -17px;
-        padding: $gutter 0;
+        padding: 30px 0;
     }
 }
 
@@ -83,14 +83,14 @@
     .popup & {
         padding-left: 30px;
 
-        @include media(mobile) {
+        @media (max-width: 640px) {
             padding-left: 32px;
         }
     }
 }
 
 .help-topics {
-    margin-top: $gutter-half;
+    margin-top: 15px;
     list-style: none;
 
     li {
@@ -100,7 +100,7 @@
         .popup & {
             padding: 4px 30px;
 
-            @include media(mobile) {
+            @media (max-width: 640px) {
                 padding-left: 32px;
             }
         }
@@ -108,10 +108,10 @@
 
     .active {
         .popup & {
-            @include media($min-width: 641px) {
+            @media (min-width: 641px) {
                 padding-left: 28px;
-                border-left: 2px solid $link-colour;
-                background-color: $panel-colour;
+                border-left: 2px solid #005ea5;
+                background-color: #dee0e2;
             }
         }
     }
@@ -120,7 +120,7 @@
         display: block;
         font-size: 16px;
 
-        @include media($max-width: 640px) {
+        @media (max-width: 640px) {
             font-size: 14px;
         }
     }
@@ -128,15 +128,15 @@
 
 .help-sections {
     .popup & {
-        padding: $gutter $gutter-half $gutter $gutter;
+        padding: 30px 15px 30px 30px;
 
-        @include media(mobile) {
-            padding: $gutter-half;
+        @media (max-width: 640px) {
+            padding: 15px;
         }
     }
 
     article {
-        @include media($min-width: 641px) {
+        @media (min-width: 641px) {
             font-size: 19px;
         }
 
@@ -147,7 +147,7 @@
 
     article:first-child {
         h2 {
-            @include media($min-width: 640px) {
+            @media (min-width: 640px) {
                 margin-top: 0;
             }
         }
@@ -189,7 +189,7 @@
 }
 
 .help-footer {
-    padding: $gutter 0 0;
+    padding: 30px 0 0;
 
     p {
         overflow: hidden;
@@ -206,12 +206,12 @@
     }
 
     .popup & {
-        padding: $gutter-half;
-        border-top: 1px solid $border-colour;
+        padding: 15px;
+        border-top: 1px solid #bfc1c3;
 
         hr {
             display: block;
-            margin: $gutter-half 0;
+            margin: 15px 0;
         }
 
         .button-secondary {
@@ -222,7 +222,7 @@
 
 .link-back {
     .popup & {
-        @include media($min-width: 641px) {
+        @media (min-width: 641px) {
             display: none;
         }
     }
