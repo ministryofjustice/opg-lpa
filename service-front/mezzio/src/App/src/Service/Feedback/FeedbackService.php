@@ -7,13 +7,21 @@ namespace App\Service\Feedback;
 use Application\Model\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use Application\Model\Service\Feedback\FeedbackValidationException;
+use Application\Model\Service\Mail\MailParameters;
+use Application\Model\Service\Mail\Transport\MailTransportInterface;
+use DateTime;
+use DateTimeZone;
 use Psr\Log\LoggerInterface;
 
 class FeedbackService
 {
+    public const EMAIL_FEEDBACK = 'email-feedback';
+
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly LoggerInterface $logger,
+        private readonly ?MailTransportInterface $mailTransport = null,
+        private readonly string $sendFeedbackEmailTo = '',
     ) {
     }
 
@@ -35,6 +43,32 @@ class FeedbackService
             }
 
             throw $ex;
+        }
+
+        if ($this->mailTransport !== null && $this->sendFeedbackEmailTo !== '') {
+            $email = $data['email'] ?? 'No email given';
+            $phone = $data['phone'] ?? 'No phone number given';
+
+            $now = new DateTime('now');
+            $now->setTimezone(new DateTimeZone('Europe/London'));
+
+            $templateData = [
+                'currentDateTime' => $now->format('Y/m/d H:i:s'),
+                'rating' => $data['rating'] ?? '',
+                'details' => $data['details'] ?? '',
+                'email' => $email,
+                'phone' => $phone,
+                'fromPage' => $data['fromPage'] ?? '',
+                'agent' => $data['agent'] ?? '',
+            ];
+
+            $mailParameters = new MailParameters(
+                $this->sendFeedbackEmailTo,
+                self::EMAIL_FEEDBACK,
+                $templateData
+            );
+
+            $this->mailTransport->send($mailParameters);
         }
     }
 }
