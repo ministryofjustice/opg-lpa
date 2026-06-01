@@ -47,7 +47,6 @@ const APPLICATION_JS_FILES = [
   'assets/js/moj/moj.modules/moj.dashboard.js',
   'assets/js/moj/moj.modules/moj.ui-behaviour.js',
   'assets/js/moj/moj.modules/moj.applicant.js',
-  'assets/js/moj/moj.modules/moj.polyfill.js',
   'assets/js/moj/moj.modules/moj.single-use.js',
   'assets/js/moj/moj.modules/moj.analytics.js',
   'assets/js/moj/moj.modules/moj.cookie-consent.js',
