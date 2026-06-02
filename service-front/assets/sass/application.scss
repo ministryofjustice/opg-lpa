@@ -1,4 +1,9 @@
-// Settings (must be imported first so variables are set before govuk-frontend)
+// GOVUK Frontend
+@use "../../node_modules/govuk-frontend/dist/govuk/index" as * with (
+  $govuk-assets-path: "/assets/v2/"
+);
+
+// Settings
 @import 'settings/variables';
 
 // GOVUK Frontend — loaded via @import so its helpers (govuk-font, govuk-colour,
@@ -61,9 +66,6 @@ $govuk-assets-path: "/assets/v2/";
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
 
-html {
-  font-size: 100% !important;
-}
 
 .govuk-service-navigation {
   width: 100vw !important;

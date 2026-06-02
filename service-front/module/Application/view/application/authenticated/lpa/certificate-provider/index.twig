@@ -93,7 +93,7 @@
             </div>
 
             <p>
-                <a class="js-guidance" href="/guide#topic-certificate-providers" data-analytics-click="page:link:help: Find out more about certificate providers">Find out more about certificate providers</a>
+                <a class="govuk-link js-guidance" href="/guide#topic-certificate-providers" data-analytics-click="page:link:help: Find out more about certificate providers">Find out more about certificate providers</a>
             </p>
         </div>
     </div>
@@ -107,17 +107,15 @@
             <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="govuk-link action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
                 </li>
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="govuk-link action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="visually-hidden"> Certificate Provider</span></a>
                 </li>
             </ul>
         </div>
 
-        <div class="form-group">
-            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
-        </div>
+            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="govuk-button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
 
     {% else %}
 
@@ -126,9 +124,9 @@
         {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <div class="form-group">
-            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
-            <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
+        <div class="govuk-button-group">
+            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
+            <button type="submit" name="submit" class="app-button-link govuk-link" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider">Skip this question for now</button>
         </div>
 
         {{ form().closeTag|raw }}

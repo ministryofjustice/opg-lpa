@@ -7,14 +7,14 @@
         <div class="pager-controls">
 
         {% if previousPage %}
-            <a class="pager-prev" href="{{ url(route, {page: previousPage}) }}">Prev</a>
+            <a class="govuk-link pager-prev" href="{{ url(route, {page: previousPage}) }}">Prev</a>
         {% endif %}
 
         <ul class="pager-items">
         {% for pageInRange in data['pagesInRange'] %}
             <li>
                 {% if pageInRange != currentPage %}
-                    <a href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
+                    <a class="govuk-link" href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
                 {% else %}
                     {{ pageInRange }}
                 {%  endif %}
@@ -23,7 +23,7 @@
         </ul>
 
         {% if nextPage %}
-            <a class="pager-next" href="{{ url(route, {page: nextPage}) }}">Next</a>
+            <a class="govuk-link pager-next" href="{{ url(route, {page: nextPage}) }}">Next</a>
         {% endif %}
 
         </div>
