@@ -6,9 +6,9 @@ namespace AppTest\Middleware;
 
 use App\Middleware\AuthenticationMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Model\Service\Authentication\Identity\User;
 use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;

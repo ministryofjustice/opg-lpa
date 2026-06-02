@@ -6,7 +6,7 @@ namespace App\Handler\Factory\Lpa\PeopleToNotify;
 
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
 use Application\Helper\MvcUrlHelper;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;

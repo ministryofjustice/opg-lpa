@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Authentication\AuthenticationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Psr\Container\ContainerInterface;
 
 class SessionIdentityMiddlewareFactory

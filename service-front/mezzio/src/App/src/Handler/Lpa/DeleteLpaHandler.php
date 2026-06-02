@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
+use App\View\Twig\FlashMessenger;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class DeleteLpaHandler implements RequestHandlerInterface
 {
-    private const FLASH_KEY_ERROR = 'flash_error';
-
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
     ) {
@@ -29,10 +28,9 @@ class DeleteLpaHandler implements RequestHandlerInterface
         $lpaId = $request->getAttribute('lpa-id');
 
         if ($this->lpaApplicationService->deleteApplication($lpaId) !== true) {
-            $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-            if ($session instanceof SessionInterface) {
-                $session->set(self::FLASH_KEY_ERROR, ['LPA could not be deleted']);
-            }
+            /** @var FlashMessagesInterface $flash */
+            $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+            $flash->flash(FlashMessenger::ERROR, ['LPA could not be deleted']);
         }
 
         if (is_numeric($page)) {

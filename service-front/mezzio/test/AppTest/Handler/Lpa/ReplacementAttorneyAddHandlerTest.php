@@ -6,10 +6,10 @@ namespace AppTest\Handler\Lpa;
 
 use App\Handler\Lpa\ReplacementAttorneyAddHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Diactoros\Response\HtmlResponse;

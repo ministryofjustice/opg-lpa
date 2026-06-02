@@ -7,6 +7,7 @@ namespace App\Middleware;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Csrf\CsrfMiddleware;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,6 +19,15 @@ class CsrfValidationMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        $route = $request->getAttribute(RouteResult::class);
+        if ($route instanceof RouteResult) {
+            $matchedRoute = $route->getMatchedRoute();
+            $routeOptions = $matchedRoute !== false ? ($matchedRoute->getOptions() ?: []) : [];
+            if (($routeOptions['unauthenticated_route'] ?? false) === true) {
+                return $handler->handle($request);
+            }
+        }
+
         $guard = $request->getAttribute(CsrfMiddleware::GUARD_ATTRIBUTE);
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {

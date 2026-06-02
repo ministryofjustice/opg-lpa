@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
@@ -66,7 +66,7 @@ class ForgotPasswordHandler implements RequestHandlerInterface
         $html = $this->renderer->render(
             'application/general/forgot-password/index.twig',
             [
-                'form' => $form,
+                'form'  => $form,
                 'error' => $error,
             ]
         );

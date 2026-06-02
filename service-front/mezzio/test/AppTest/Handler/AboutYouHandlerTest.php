@@ -6,12 +6,18 @@ namespace AppTest\Handler;
 
 use App\Handler\AboutYouHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Model\Service\User\Details as UserService;
+use App\Middleware\RequestAttribute;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\User\User as UserModel;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -24,7 +30,7 @@ class AboutYouHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private UserService&MockObject $userService;
     private FormInterface&MockObject $form;
-    private SessionInterface&MockObject $session;
+    private FlashMessagesInterface&MockObject $flash;
     private AboutYouHandler $handler;
 
     protected function setUp(): void
@@ -33,7 +39,7 @@ class AboutYouHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
         $this->form = $this->createMock(FormInterface::class);
-        $this->session = $this->createMock(SessionInterface::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->formElementManager
             ->method('get')
@@ -47,34 +53,21 @@ class AboutYouHandlerTest extends TestCase
         );
     }
 
-    private function createUserDetails(): array
+    private function createUserWithName(): UserModel
     {
-        return [
-            'id' => '12345678901234567890123456789012',
+        $user = new UserModel([
+            'id'        => '12345678901234567890123456789012',
             'createdAt' => '2020-01-01',
             'updatedAt' => '2020-01-02',
-            'name' => ['first' => 'Test', 'last' => 'User'],
-        ];
+        ]);
+        $user->name = new Name(['first' => 'Test', 'last' => 'User']);
+        return $user;
     }
 
-    private function createAuthenticatedSession(array $userDetails = []): SessionInterface&MockObject
+    private function createAuthenticatedSession(): SessionInterface&MockObject
     {
         $session = $this->createMock(SessionInterface::class);
-        $session->method('has')
-            ->willReturnCallback(function (string $key) use ($userDetails): bool {
-                return match ($key) {
-                    'identity' => true,
-                    'user_details' => !empty($userDetails),
-                    default => false,
-                };
-            });
-        $session->method('get')
-            ->willReturnCallback(function (string $key) use ($userDetails) {
-                return match ($key) {
-                    'user_details' => $userDetails,
-                    default => null,
-                };
-            });
+        $session->method('has')->with('identity')->willReturn(true);
         return $session;
     }
 
@@ -82,13 +75,17 @@ class AboutYouHandlerTest extends TestCase
         string $method = 'GET',
         array $postData = [],
         ?SessionInterface $session = null,
+        ?UserModel $userDetails = null,
         bool $isNew = false,
     ): ServerRequest {
-        $session = $session ?? $this->createAuthenticatedSession($this->createUserDetails());
+        $session = $session ?? $this->createAuthenticatedSession();
+        $userDetails = $userDetails ?? $this->createUserWithName();
 
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash)
+            ->withAttribute(RequestAttribute::USER_DETAILS, $userDetails)
             ->withAttribute('secondsUntilSessionExpires', 3600)
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
 
@@ -119,9 +116,7 @@ class AboutYouHandlerTest extends TestCase
 
     public function testMissingSessionAttributeRedirectsToLogin(): void
     {
-        $request = new ServerRequest();
-
-        $response = $this->handler->handle($request);
+        $response = $this->handler->handle(new ServerRequest());
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
@@ -129,8 +124,6 @@ class AboutYouHandlerTest extends TestCase
 
     public function testGetRequestRendersForm(): void
     {
-        $userDetails = $this->createUserDetails();
-
         $this->form->expects($this->once())
             ->method('setAttribute')
             ->with('action', '/user/about-you');
@@ -147,22 +140,39 @@ class AboutYouHandlerTest extends TestCase
             )
             ->willReturn('<html>about you form</html>');
 
-        $session = $this->createAuthenticatedSession($userDetails);
-        $response = $this->handler->handle($this->createRequest('GET', [], $session));
+        $response = $this->handler->handle($this->createRequest());
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testUserWithoutNameIsRedirectedToNewRoute(): void
     {
-        $userDetailsWithoutName = [
-            'id' => '12345678901234567890123456789012',
+        $userWithoutName = new UserModel([
+            'id'        => '12345678901234567890123456789012',
             'createdAt' => '2020-01-01',
             'updatedAt' => '2020-01-02',
-        ];
+        ]);
 
-        $session = $this->createAuthenticatedSession($userDetailsWithoutName);
-        $response = $this->handler->handle($this->createRequest('GET', [], $session));
+        $response = $this->handler->handle($this->createRequest('GET', [], null, $userWithoutName));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/user/about-you/new', $response->getHeaderLine('Location'));
+    }
+
+    public function testNullUserDetailsIsRedirectedToNewRoute(): void
+    {
+        $response = $this->handler->handle($this->createRequest('GET', [], null, null));
+
+        // createRequest sets a user with name by default; override with null
+        $session = $this->createAuthenticatedSession();
+        $request = (new ServerRequest())
+            ->withMethod('GET')
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash)
+            ->withAttribute(RequestAttribute::USER_DETAILS, null)
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
+
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/about-you/new', $response->getHeaderLine('Location'));
@@ -170,8 +180,6 @@ class AboutYouHandlerTest extends TestCase
 
     public function testGetNewRouteRendersIsNewTrue(): void
     {
-        $userDetails = $this->createUserDetails();
-
         $this->form->expects($this->once())
             ->method('setAttribute')
             ->with('action', '/user/about-you/new');
@@ -187,8 +195,7 @@ class AboutYouHandlerTest extends TestCase
             )
             ->willReturn('<html>new user form</html>');
 
-        $session = $this->createAuthenticatedSession($userDetails);
-        $response = $this->handler->handle($this->createRequest('GET', [], $session, true));
+        $response = $this->handler->handle($this->createRequest('GET', [], null, null, true));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -221,11 +228,11 @@ class AboutYouHandlerTest extends TestCase
             ->method('updateAllDetails')
             ->with($postData);
 
-        $session = $this->createAuthenticatedSession($this->createUserDetails());
-        $session->expects($this->once())->method('unset')->with('user_details');
-        $session->expects($this->once())->method('set')->with('flash_success', ['Your details have been updated.']);
+        $this->flash->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['Your details have been updated.']);
 
-        $response = $this->handler->handle($this->createRequest('POST', $postData, $session));
+        $response = $this->handler->handle($this->createRequest('POST', $postData));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
@@ -240,10 +247,9 @@ class AboutYouHandlerTest extends TestCase
 
         $this->userService->method('updateAllDetails');
 
-        $session = $this->createAuthenticatedSession($this->createUserDetails());
-        $session->expects($this->never())->method('set');
+        $this->flash->expects($this->never())->method('flash');
 
-        $response = $this->handler->handle($this->createRequest('POST', $postData, $session, true));
+        $response = $this->handler->handle($this->createRequest('POST', $postData, null, null, true));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));

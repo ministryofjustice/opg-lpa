@@ -7,7 +7,7 @@ namespace App\Handler\Factory\Lpa;
 use App\Handler\Lpa\ReplacementAttorneyAddHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Form\FormElementManager;

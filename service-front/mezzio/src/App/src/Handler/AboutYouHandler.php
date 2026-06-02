@@ -6,12 +6,17 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Model\Service\User\Details as UserService;
+use App\Middleware\RequestAttribute;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use MakeShared\DataModel\User\User as UserModel;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -22,10 +27,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class AboutYouHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-
-    private const SESSION_KEY_IDENTITY = 'identity';
-    private const SESSION_KEY_USER_DETAILS = 'user_details';
-    private const FLASH_KEY_SUCCESS = 'flash_success';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -38,9 +39,12 @@ class AboutYouHandler implements RequestHandlerInterface
     {
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
-        if (!$session instanceof SessionInterface || !$session->has(self::SESSION_KEY_IDENTITY)) {
+        if (!$session instanceof SessionInterface || !$session->has('identity')) {
             return new RedirectResponse('/login');
         }
+
+        /** @var FlashMessagesInterface $flash */
+        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
 
         $isNew = $request->getAttribute('new') !== null;
 
@@ -50,8 +54,10 @@ class AboutYouHandler implements RequestHandlerInterface
         $actionTarget = $isNew ? '/user/about-you/new' : '/user/about-you';
         $form->setAttribute('action', $actionTarget);
 
-        $userDetails = $session->get(self::SESSION_KEY_USER_DETAILS);
-        $userDetailsArr = is_array($userDetails) ? $userDetails : [];
+        // UserDetailsMiddleware fetches this from the API and sets it on every request
+        /** @var UserModel|null $userDetails */
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
+        $userDetailsArr = $userDetails instanceof UserModel ? $userDetails->flatten() : [];
 
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
@@ -68,30 +74,24 @@ class AboutYouHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $this->userService->updateAllDetails($form->getData());
 
-                // Clear old details from session
-                $session->unset(self::SESSION_KEY_USER_DETAILS);
-
                 if (!$isNew) {
-                    $session->set(self::FLASH_KEY_SUCCESS, ['Your details have been updated.']);
+                    $flash->flash(FlashMessenger::SUCCESS, ['Your details have been updated.']);
                 }
 
                 return new RedirectResponse('/user/dashboard');
             }
         } else {
-            if (!$isNew && empty($userDetailsArr['name'])) {
+            if (!$isNew && ($userDetails === null || $userDetails->name === null)) {
                 return new RedirectResponse('/user/about-you/new');
             }
 
-            if (!empty($userDetailsArr['dob'])) {
-                $dob = $userDetailsArr['dob'];
-                if (is_string($dob)) {
-                    $date = new \DateTime($dob);
-                    $userDetailsArr['dob-date'] = [
-                        'day' => $date->format('d'),
-                        'month' => $date->format('m'),
-                        'year' => $date->format('Y'),
-                    ];
-                }
+            if ($userDetails instanceof UserModel && $userDetails->dob !== null) {
+                $dob = $userDetails->dob->date;
+                $userDetailsArr['dob-date'] = [
+                    'day'   => $dob->format('d'),
+                    'month' => $dob->format('m'),
+                    'year'  => $dob->format('Y'),
+                ];
             }
 
             $form->setData($userDetailsArr);

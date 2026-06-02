@@ -7,7 +7,7 @@ namespace AppTest\Handler\Lpa;
 use App\Handler\Lpa\ReuseDetailsHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use Application\Form\Lpa\ReuseDetailsForm;
-use Application\Middleware\RequestAttribute;
+use App\Middleware\RequestAttribute;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
