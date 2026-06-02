@@ -22,9 +22,9 @@
 
     <p>Update your details.</p>
 
-    <p><a href="{{ url('user/change-password') }}">Change Password</a></p>
-    <p><a href="{{ url('user/change-email-address') }}">Change Email Address</a></p>
-    <p><a href="{{ url('user/delete') }}">Delete Account</a></p>
+    <p><a class="govuk-link" href="{{ url('user/change-password') }}">Change Password</a></p>
+    <p><a class="govuk-link" href="{{ url('user/change-email-address') }}">Change Email Address</a></p>
+    <p><a class="govuk-link" href="{{ url('user/delete') }}">Delete Account</a></p>
 
 {% endif %}
 
@@ -190,10 +190,12 @@
 
     </fieldset>
 
-    <input type="submit" name="save" id="save" data-cy="save" class="govuk-button" value="Save and continue">
-    {%- if not isNew -%}
-    <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
-    {%- endif -%}
+    <div class="govuk-button-group">
+        <input type="submit" name="save" id="save" data-cy="save" class="govuk-button" value="Save and continue">
+        {%- if not isNew -%}
+        <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        {%- endif -%}
+    </div>
 
 {{ form().closeTag|raw }}
 
