@@ -7,7 +7,7 @@ namespace App\Handler\Factory\Lpa;
 use App\Handler\Lpa\DonorEditHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;

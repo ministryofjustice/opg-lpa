@@ -6,7 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
+use App\Middleware\RequestAttribute;
 use Application\Model\Service\Signatures\DateCheck;
 use Application\Service\DateCheckViewModelHelper;
 use Fig\Http\Message\RequestMethodInterface;
