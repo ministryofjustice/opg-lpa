@@ -3,19 +3,19 @@
 // Page wide large panel with status messages
 
 .appstatus {
-    margin: $gutter 0;
-    padding: ($gutter*1.5);
+    margin: govuk-spacing(6) 0;
+    padding: (govuk-spacing(6) * 1.5);
     background-color: $turquoise-with-contrast;
     color: $white;
     text-align: center;
 
-    @include media(mobile) {
+    @media (max-width: 640px) {
         padding: 30px;
     }
 
     &.warning {
-        background-color: $yellow;
-        color: $black;
+        background-color: govuk-colour("yellow");
+        color: govuk-colour("black");
     }
 
     .heading-xlarge,
