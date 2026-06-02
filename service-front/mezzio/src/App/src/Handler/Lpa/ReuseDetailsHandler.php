@@ -8,7 +8,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
-use Application\Middleware\RequestAttribute;
+use App\Middleware\RequestAttribute;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;

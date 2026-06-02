@@ -9,7 +9,7 @@ use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use Application\Form\Lpa\TypeForm;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;

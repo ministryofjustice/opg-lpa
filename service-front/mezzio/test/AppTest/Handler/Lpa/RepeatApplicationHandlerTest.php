@@ -6,10 +6,10 @@ namespace AppTest\Handler\Lpa;
 
 use App\Handler\Lpa\RepeatApplicationHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Form\Lpa\RepeatApplicationForm;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Metadata;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;

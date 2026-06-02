@@ -6,7 +6,7 @@ namespace App\Handler\Factory\Lpa;
 
 use App\Handler\Lpa\CheckoutPayHandler;
 use Application\Helper\MvcUrlHelper;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Form\FormElementManager;
 use Psr\Container\ContainerInterface;
 

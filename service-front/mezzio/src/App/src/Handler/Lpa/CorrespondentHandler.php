@@ -6,9 +6,9 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

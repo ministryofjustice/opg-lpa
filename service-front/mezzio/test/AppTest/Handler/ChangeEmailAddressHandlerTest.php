@@ -6,11 +6,11 @@ namespace AppTest\Handler;
 
 use App\Handler\ChangeEmailAddressHandler;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User as UserIdentity;
-use Application\Model\Service\User\Details as UserService;
+use App\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Model\Service\Authentication\Identity\User as UserIdentity;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
@@ -39,7 +39,7 @@ class ChangeEmailAddressHandlerTest extends TestCase
 
         $this->formElementManager
             ->method('get')
-            ->with('Application\Form\User\ChangeEmailAddress')
+            ->with(ChangeEmailAddressForm::class)
             ->willReturn($this->form);
 
         $this->handler = new ChangeEmailAddressHandler(

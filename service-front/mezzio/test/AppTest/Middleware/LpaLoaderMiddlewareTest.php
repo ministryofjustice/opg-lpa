@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AppTest\Middleware;
 
 use App\Middleware\LpaLoaderMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
-use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
+use App\Model\Service\Authentication\Identity\User;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
