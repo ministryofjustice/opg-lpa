@@ -1,76 +1,19 @@
-#global-cookie-message {
-  background-color: #f3f2f1;
+// =======================================================
+// COOKIE BANNER
+//
+// The banner now uses official GOV.UK Design System classes.
+// Only overrides not covered by govuk classes are needed here.
 
-  .global-cookie-message__heading {
-    font-size: 24px;
-    max-width: 960px;
-    margin: 0 auto 20px auto;
-    font-weight: 700;
-  }
-
-  .global-cookie-message__content {
-    max-width: 960px;
-    margin: 0 auto;
-
-    .global-cookie-message__text {
-      font-size: 19px;
-      max-width: 66%;
-      line-height: 1.315;
-      margin: 0 auto 19px 0;
-    }
-  }
-
-  .global-cookie-message__buttons {
-    max-width: 960px;
-    margin: 0 auto 19px auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-
-  .global-cookie-message__button {
-    margin-right: 15px;
-    font-size: 19px;
-  }
-
-  .global-cookie-message__button-link {
-    font-size: 19px;
-    display: block;
-  }
-}
-
-@media (max-width: 1041px) {
-  #global-cookie-message {
-    .global-cookie-message__heading,
-    .global-cookie-message__text,
-    .global-cookie-message__buttons {
-      margin-right: 19px;
-      margin-left: 19px;
+// Our global .govuk-button margin-bottom reduction doesn't apply inside
+// govuk-button-group, but reset explicitly here to be safe.
+.govuk-cookie-banner {
+    .govuk-button {
+        margin-bottom: 0;
     }
 
-    .global-cookie-message__content {
-      .global-cookie-message__text {
-        margin: 0 19px 19px 19px;
-      }
+    // Ensure paragraph spacing is correct — legacy govuk-elements CSS can
+    // zero out the last-child margin inside certain containers.
+    .govuk-body {
+        margin-bottom: govuk-spacing(4);
     }
-  }
-}
-
-@media (max-width: 665px) {
-  #global-cookie-message {
-    .global-cookie-message__content {
-      .global-cookie-message__text {
-        max-width: 100%;
-      }
-    }
-
-    .global-cookie-message__buttons {
-      justify-content: center;
-    }
-
-    .global-cookie-message__button-link {
-      margin-top: 19px;
-    }
-  }
 }
