@@ -6,7 +6,7 @@ namespace App\Handler\Factory\Lpa\Download;
 
 use App\Handler\Lpa\Download\DownloadHandler;
 use Application\Helper\MvcUrlHelper;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Model\Service\Authentication\Identity\User;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;

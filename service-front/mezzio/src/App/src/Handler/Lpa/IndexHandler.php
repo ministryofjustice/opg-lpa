@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Application\Model\Service\Lpa\Metadata;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;

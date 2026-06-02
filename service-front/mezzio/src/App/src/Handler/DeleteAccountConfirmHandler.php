@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Model\Service\Authentication\AuthenticationService;
+use App\Authentication\AuthenticationService;
 use Application\Model\Service\User\Details as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

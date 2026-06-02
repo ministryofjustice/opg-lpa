@@ -39,21 +39,17 @@ You are an expert PHP developer working on the `opg-lpa` project. The project is
 - `PersistentSessionDetails` – Tracks current/previous route. Refreshed per-request by `PersistentSessionDetailsMiddleware` (runs after `RouteMiddleware`).
 
 ### Pipeline order
-```
-ErrorHandler → ServerUrlMiddleware → SessionMiddleware → CsrfMiddleware
-→ IdentityTokenRefreshMiddleware → RouteMiddleware → ImplicitHeadMiddleware
-→ ImplicitOptionsMiddleware → MethodNotAllowedMiddleware → UrlHelperMiddleware
-→ PersistentSessionDetailsMiddleware → AuthenticationMiddleware → DispatchMiddleware
-→ NotFoundHandler
-```
+The authoritative pipeline order is defined in `service-front/mezzio/config/pipeline.php`. Read that file when you need to know the exact middleware sequence or when inserting new middleware at the correct position.
 
 ### CSRF
 - `CsrfMiddleware` (global) creates a `SessionCsrfGuard` per request via `SessionCsrfGuardFactory`
-- `CsrfValidationMiddleware` (`App\Middleware\CsrfValidationMiddleware`) is added **per-route** for form routes:
+- `CsrfValidationMiddleware` (`App\Middleware\CsrfValidationMiddleware`) runs **globally** in the pipeline (after `RouteMiddleware`, before `AuthenticationMiddleware`):
   - On POST: reads `__csrf` from parsed body, calls `$guard->validateToken($token)`, redirects to same path on failure
   - On all requests: generates a fresh token via `$guard->generateToken()`, sets it on the request as `CsrfValidationMiddleware::TOKEN_ATTRIBUTE` (`'csrfToken'`)
 - Handlers read `$request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE)` and pass `csrfToken` to the template
 - Templates render: `<input type="hidden" name="__csrf" value="{{ csrfToken }}">`
+- **Do not** add `CsrfValidationMiddleware` to per-route pipelines — it is already applied globally
+- Routes marked `->setOptions(['unauthenticated_route' => true])` are **exempt** from CSRF validation and token generation (the middleware reads `RouteResult` to check this)
 
 ### Authentication
 - `AuthenticationMiddleware` reads identity from `LpaApplicationService`'s auth service, sets `RequestAttribute::IDENTITY` on the request, redirects unauthenticated users to `'application.login'`
@@ -66,21 +62,21 @@ Mezzio routes use the same names as the legacy MVC routes (e.g. `'lpa/form-type'
 ## Development practices
 
 ### The most important rule: duplicate, never reference
-**Never reference classes under `Application\` namespace directly in handlers, middleware, or Twig extensions.** Instead, duplicate the class into the `App\` namespace under `service-front/mezzio/src/App/src/`.
+**Never reference classes under `Application\` namespace directly in handlers, middleware, Twig extensions, or service classes.** Instead, duplicate the class into the `App\` namespace under `service-front/mezzio/src/App/src/`.
 
-- Copy the file and update its `namespace` from `Application\X` to `App\X`
-- Update any internal `use Application\Y` statements to `use App\Y` if those classes have also been ported
+#### Porting rules
+- Copy the file, update `namespace` from `Application\X` to `App\X`
+- **Recursively port all `Application\` dependencies** — if the class you are porting itself `use`s `Application\Y`, port `Application\Y` to `App\Y` too (and so on transitively), then update the `use` statement
 - Leave `use MakeShared\` references unchanged — shared data models are not duplicated
-- Exception: **factory files** (in `Handler/Factory/` and `Service/`) may reference `Application\` service infrastructure classes (e.g. `LpaAuthAdapter`, `ApiClient`, `AuthenticationService`, `Application as LpaApplicationService`) since these are container wiring, not business logic in handlers
+- **Do not introduce any new `Application\` `use` statements** in ported `App\` classes. A fully ported class must have zero `use Application\` imports in its business logic
 
-Already ported to `App\` namespace:
-- `App\Model\FormFlowChecker` (from `Application\Model\FormFlowChecker`)
-- `App\Service\AccordionService` (from `Application\Service\AccordionService`)
-- `App\Model\Service\Session\PersistentSessionDetails` (Mezzio-native, no MVC equivalent)
-- `App\Form\Error\FormLinkedErrors` (from `Application\Form\Error\FormLinkedErrors`)
-- `App\View\Twig\Traits\ConcatNamesTrait` (from `Application\View\Helper\Traits\ConcatNamesTrait`)
-- `App\View\Twig\Traits\MoneyFormatterTrait` (from `Application\View\Helper\Traits\MoneyFormatterTrait`)
-- `App\Middleware\RequestAttribute` (from `Application\Middleware\RequestAttribute`)
+#### Session utility
+The legacy `Application\Model\Service\Session\SessionUtility::getFromMvc()` / `setInMvc()` / `unsetInMvc()` use `Laminas\Session\Container` which is unavailable in Mezzio. When porting a class that calls these methods, replace them with direct Mezzio session access:
+- `getFromMvc($ns, $key)` → `$session->get($key)`
+- `setInMvc($ns, $key, $value)` → `$session->set($key, $value)`
+- `unsetInMvc($ns, $key)` → `$session->unset($key)`
+
+Inject the Mezzio session (`SessionInterface`) or `MezzioSessionStorage` via a setter, and call `setSession()` / `setStorage()` from the factory.
 
 ### Wiring checklist
 When adding a new handler, always:
@@ -91,21 +87,23 @@ When adding a new handler, always:
 5. Mark public/unauthenticated routes with `->setOptions(['unauthenticated_route' => true])`
 6. **Check for existing legacy tests** in `service-front/module/Application/tests/` for the ported class. If found, port them to `service-front/mezzio/test/AppTest/` — update the namespace from `ApplicationTest\` to `AppTest\`, swap all `Application\` class references to their `App\` equivalents (e.g. `Application\Middleware\RequestAttribute` → `App\Middleware\RequestAttribute`, `MvcUrlHelper` → `Mezzio\Helper\UrlHelper`), and run `make dc-mezzio-unit-tests` to verify.
 
-### Per-route CSRF pipeline pattern
+### Per-route pipeline pattern
+Use `$factory->pipeline(...)` when `LpaLoaderMiddleware` is needed for LPA-scoped routes:
+
 ```php
 $app->route(
     '/some/path',
-    $factory->pipeline(CsrfValidationMiddleware::class, MyHandler::class),
+    MyHandler::class,
     ['GET', 'POST'],
     'route-name',
 );
 ```
 
-For LPA-scoped routes that also load the LPA:
+For LPA-scoped routes that need to load the LPA:
 ```php
 $app->route(
     '/lpa/{lpa-id:\d+}/some-path',
-    $factory->pipeline(LpaLoaderMiddleware::class, CsrfValidationMiddleware::class, MyHandler::class),
+    $factory->pipeline(LpaLoaderMiddleware::class, MyHandler::class),
     ['GET', 'POST'],
     'lpa/some-path',
 );
@@ -123,6 +121,7 @@ Use `Mezzio\Helper\UrlHelper` in all handlers (not `Application\Helper\MvcUrlHel
 New Twig functions and filters are added to `LegacyCompatExtension`. When porting a function that uses a service:
 - Inject the service into `LegacyCompatExtension` via its constructor
 - Update `LegacyCompatExtensionFactory` to pass the new dependency
+- Update tests in `LegacyCompatExtensionTest` to cover the new function/filter
 
 ### FormFlowChecker
 Use `App\Model\FormFlowChecker` (not `Application\Model\FormFlowChecker`) in all Mezzio handler code.
@@ -141,6 +140,21 @@ Use Mezzio equivalents: `Mezzio\Router\RouteResult`, `Mezzio\Session\SessionInte
 - `make dc-mezzio-unit-tests` – Run PHPUnit tests for the Mezzio app (requires the container to be running)
 - `make dc-front-unit-tests` – Run PHPUnit tests for the legacy service-front module
 
+## After installing a new Composer package
+
+`make mezzio-dc-build` uses Docker layer caching and may not pick up the updated `vendor/`. Always do a **no-cache rebuild** followed by a **force-recreate** and **PHP-FPM reload**:
+
+```bash
+# 1. Rebuild without cache so composer install re-runs with the updated lock file
+docker compose -f docker-compose.mezzio.yml build --no-cache mezzio-app
+
+# 2. Recreate the container from the new image
+docker compose -f docker-compose.mezzio.yml up -d --force-recreate mezzio-app
+
+# 3. Reload PHP-FPM to clear OPcache (graceful reload via SIGUSR2)
+docker exec lpa-mezzio-app kill -USR2 1
+```
+
 ## Standards
 - All new files: `declare(strict_types=1);`, PSR-12 coding standards, newline at end of file
 - Type-hint all constructor parameters as `readonly`
@@ -152,7 +166,9 @@ Prefer inline closures in `dependencies.global.php` over separate factory class 
 
 ## Removing `Application\` namespace references
 
-Many existing Mezzio source files (handlers, middleware, factories) still reference `Application\` namespace classes directly — this is **known technical debt** being addressed in follow-up PRs. Do **not** bulk-fix `Application\` references across files that are not in scope for the current PR. Only remove `Application\` references in files you are actively adding or modifying as part of the current task.
+Many existing Mezzio source files (handlers, middleware, factories) still reference `Application\` namespace classes directly — this is **known technical debt** being addressed in follow-up PRs. Do **not** bulk-fix `Application\` references across files that are not in scope for the current PR.
+
+**However:** when you are actively porting a class, you **must** port it completely — including all its `Application\` dependencies transitively. A ported class is not done until it has zero `use Application\` imports in its own code.
 
 ## Git operations
 
@@ -164,6 +180,6 @@ git --no-pager log --oneline -10
 ```
 
 ## Boundaries
-- ✅ **Always do:** Duplicate `Application\` classes into `App\` namespace for new files you create; wire routes, factories and dependencies together; validate edits with get_errors; use `git --no-pager` for all git commands
-- ⚠️ **Ask first:** Before running `make mezzio-dc-build` (takes ~30s), before modifying shared code under `shared/`, before bulk-refactoring `Application\` references across many files
-- 🚫 **Never do:** Bulk-replace `Application\` references across files not in scope for the current PR; install laminas-mvc packages; use `NonPersistentStorage` for authentication; commit secrets
+- ✅ **Always do:** Duplicate `Application\` classes into `App\` namespace for new files you create; port all `Application\` dependencies transitively when porting a class; wire routes, factories and dependencies together; validate edits with get_errors; use `git --no-pager` for all git commands
+- ⚠️ **Ask first:** Before running `make mezzio-dc-build` (takes ~30s), before modifying shared code under `shared/`, before bulk-refactoring `Application\` references across many files not in scope
+- 🚫 **Never do:** Leave `use Application\` imports in a newly ported `App\` class body (factories excluded); bulk-replace `Application\` references across files not in scope for the current PR; install laminas-mvc packages; use `NonPersistentStorage` for authentication; use `SessionUtility::getFromMvc()` — use Mezzio session directly; commit secrets

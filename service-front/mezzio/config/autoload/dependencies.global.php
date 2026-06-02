@@ -6,6 +6,7 @@ use App\Authentication\AuthenticationService;
 use App\Handler;
 use App\Middleware\AuthenticationMiddleware;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddlewareFactory;
 use App\Middleware\LpaLoaderMiddleware;
@@ -13,6 +14,7 @@ use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
 use App\Model\UserDetailsHolder;
+use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Service\Date\DateService;
 use App\Service\Feedback\FeedbackService;
@@ -20,19 +22,21 @@ use App\Service\Guidance\GuidanceService;
 use App\Service\LpaApplicationServiceFactory;
 use App\Service\Stats\StatsService;
 use App\Service\System\StatusService;
+use App\Service\UserDetails;
+use App\Service\UserDetailsFactory;
 use App\Storage\MezzioSessionStorage;
 use App\View;
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Authentication\Adapter\LpaAuthAdapter;
+use App\Service\ApiClient\Client as ApiClient;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
+use MakeShared\Logging\LoggerFactory;
 use Mezzio\Csrf\CsrfGuardFactoryInterface;
 use Mezzio\Csrf\CsrfMiddleware;
 use Mezzio\Csrf\CsrfMiddlewareFactory;
 use Mezzio\Csrf\SessionCsrfGuardFactory;
 use Mezzio\Helper\UrlHelper;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
+use Monolog\Level;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
@@ -54,11 +58,12 @@ return [
                 $client = new ApiClient(new GuzzleClient(), (string) $apiUri);
                 $client->setLogger($c->get(LoggerInterface::class));
                 return $client;
-            },
-            // PersistentSessionDetails — shared instance; refreshed per-request by PersistentSessionDetailsMiddleware
+            },            // PersistentSessionDetails — shared instance; refreshed per-request by PersistentSessionDetailsMiddleware
             PersistentSessionDetails::class => static fn() => new PersistentSessionDetails(),
             // UserDetailsHolder — shared instance; populated per-request by UserDetailsMiddleware
             UserDetailsHolder::class => static fn() => new UserDetailsHolder(),
+            // FlashMessagesHolder — shared instance; populated per-request by FlashMessagesHolderMiddleware
+            FlashMessagesHolder::class => static fn() => new FlashMessagesHolder(),
 
             Handler\HomeRedirectHandler::class => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
                 $c->get('config'),
@@ -212,11 +217,50 @@ return [
                 ]);
                 return new \Application\Model\Service\Mail\Transport\NotifyMailTransport($notifyClient);
             },
+            Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\ChangePasswordHandler::class => static fn(ContainerInterface $c) => new Handler\ChangePasswordHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(AuthenticationService::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\RegisterHandler::class => static fn(ContainerInterface $c) => new Handler\RegisterHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(UserDetails::class),
+                $c->get(LoggerInterface::class),
+            ),
+            Handler\ConfirmRegistrationHandler::class => static fn(ContainerInterface $c) => new Handler\ConfirmRegistrationHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\ResendActivationEmailHandler::class => static fn(ContainerInterface $c) => new Handler\ResendActivationEmailHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\ForgotPasswordHandler::class => static fn(ContainerInterface $c) => new Handler\ForgotPasswordHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\ResetPasswordHandler::class => static fn(ContainerInterface $c) => new Handler\ResetPasswordHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(UserDetails::class),
+            ),
+
+            // Services
+            LpaApplicationService::class => LpaApplicationServiceFactory::class,
+            UserDetails::class => UserDetailsFactory::class,
 
             // Middleware
             AuthenticationMiddleware::class => static function (ContainerInterface $c): AuthenticationMiddleware {
-                $authService = $c->get(LpaApplicationService::class)->getAuthenticationService();
-                return new AuthenticationMiddleware($authService, $c->get(UrlHelper::class));
+                return new AuthenticationMiddleware($c->get(AuthenticationService::class), $c->get(UrlHelper::class));
             },
             IdentityTokenRefreshMiddleware::class  => IdentityTokenRefreshMiddlewareFactory::class,
             LpaLoaderMiddleware::class => static fn(ContainerInterface $c) => new LpaLoaderMiddleware(
@@ -225,6 +269,9 @@ return [
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
             CsrfValidationMiddleware::class        => static fn() => new CsrfValidationMiddleware(),
+            FlashMessagesHolderMiddleware::class    => static fn(ContainerInterface $c) => new FlashMessagesHolderMiddleware(
+                $c->get(FlashMessagesHolder::class),
+            ),
             PersistentSessionDetailsMiddleware::class => static fn(ContainerInterface $c) => new PersistentSessionDetailsMiddleware(
                 $c->get(PersistentSessionDetails::class),
             ),
@@ -237,19 +284,14 @@ return [
 
             // Mezzio-native authentication service
             AuthenticationService::class => static function (ContainerInterface $c): AuthenticationService {
-                $config    = $c->get('config');
-                $apiUri    = $config['api_client']['api_uri'] ?? null;
-                $apiClient = new ApiClient(new GuzzleClient(), (string) $apiUri);
-                $apiClient->setLogger($c->get(LoggerInterface::class));
-                return new AuthenticationService(new LpaAuthAdapter($apiClient));
+                $service = new AuthenticationService(new LpaAuthAdapter($c->get(ApiClient::class)));
+                $service->setStorage($c->get(MezzioSessionStorage::class));
+                return $service;
             },
 
-            // Logger — writes to stderr so output appears in `make mezzio-dc-logs`
-            LoggerInterface::class => static function (): LoggerInterface {
-                $logger = new Logger('mezzio');
-                $logger->pushHandler(new StreamHandler('php://stderr'));
-                return $logger;
-            },
+            // Logger — uses shared LoggerFactory for consistent JSON output, trace-id injection,
+            // and header scrubbing across all OPG services.
+            LoggerInterface::class => LoggerFactory::class,
         ],
     ],
 
@@ -292,5 +334,8 @@ return [
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],
+    'logging' => [
+        'serviceName' => 'opg-lpa/front',
+        'minLevel'    => Level::fromName('DEBUG'),
     ],
 ];

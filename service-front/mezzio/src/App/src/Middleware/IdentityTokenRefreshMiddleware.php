@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Storage\MezzioSessionStorage;
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\ApiClient\Exception\ApiException;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Authentication\Identity\User as Identity;
-use Application\Model\Service\User\Details as UserService;
+use App\Service\ApiClient\Client as ApiClient;
+use App\Service\ApiClient\Exception\ApiException;
+use App\Authentication\AuthenticationService;
+use App\Model\Service\Authentication\Identity\User as Identity;
+use App\Service\UserDetails as UserService;
 use MakeShared\Logging\LoggerTrait;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;

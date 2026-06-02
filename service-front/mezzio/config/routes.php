@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Handler\AccessibilityHandler;
 use App\Handler\ContactHandler;
 use App\Handler\CookiesHandler;
+use App\Handler\AboutYouHandler;
+use App\Handler\ChangePasswordHandler;
 use App\Handler\DashboardHandler;
 use App\Handler\EnableCookieHandler;
 use App\Handler\FeedbackHandler;
@@ -14,6 +16,11 @@ use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
+use App\Handler\ConfirmRegistrationHandler;
+use App\Handler\ForgotPasswordHandler;
+use App\Handler\RegisterHandler;
+use App\Handler\ResendActivationEmailHandler;
+use App\Handler\ResetPasswordHandler;
 use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DonorIndexHandler;
 use App\Handler\LpaTypeHandler;
@@ -26,7 +33,6 @@ use App\Handler\SessionExpiryHandler;
 use App\Handler\StatsHandler;
 use App\Handler\TermsHandler;
 use App\Handler\TypeHandler;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\LpaLoaderMiddleware;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
@@ -58,34 +64,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/cookies', CookiesHandler::class, ['GET', 'POST'], 'application.cookies')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route(
-        '/user/dashboard',
-        $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class),
-        ['GET'],
-        'user/dashboard',
-    );
-    $app->route(
-        '/user/dashboard/page/{page:\d+}',
-        $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class),
-        ['GET'],
-        'user/dashboard/pagination',
-    );
-    $app->route(
-        '/user/dashboard/create[/{lpa-id:\d+}]',
-        $factory->pipeline(LpaLoaderMiddleware::class, CreateLpaHandler::class),
-        ['GET', 'POST'],
-        'user/dashboard/create-lpa',
-    );
+    $app->route('/signup', RegisterHandler::class, ['GET', 'POST'], 'register')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/signup/confirm/{token:[a-zA-Z0-9]+}', ConfirmRegistrationHandler::class, 'register/confirm')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->route('/signup/resend-email', ResendActivationEmailHandler::class, ['GET', 'POST'], 'register/resend-email')
+        ->setOptions(['unauthenticated_route' => true]);
 
+    $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->route(
-        '/lpa/type',
-        $factory->pipeline(CsrfValidationMiddleware::class, LpaTypeHandler::class),
-        ['GET', 'POST'],
-        'lpa-type-no-id',
-    );
-    $app->route(
-        '/lpa/{lpa-id:\d+}/type',
-        $factory->pipeline(LpaLoaderMiddleware::class, CsrfValidationMiddleware::class, TypeHandler::class),
+        '/forgot-password/reset/{token:[a-zA-Z0-9]+}',
+        ResetPasswordHandler::class,
         ['GET', 'POST'],
         'lpa/form-type',
     );
@@ -123,4 +113,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/pingdom', PingHandlerPingdom::class, 'ping/pingdom')
         ->setOptions(['unauthenticated_route' => true]);
+        'forgot-password/callback',
+    )->setOptions(['unauthenticated_route' => true]);
+
+    $app->get('/user/dashboard', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard');
+    $app->get('/user/dashboard/page/{page:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard/pagination');
+    $app->route('/user/dashboard/create[/{lpa-id:\d+}]', $factory->pipeline(LpaLoaderMiddleware::class, CreateLpaHandler::class), ['GET', 'POST'], 'user/dashboard/create-lpa');
+    $app->route('/user/about-you[/{new}]', AboutYouHandler::class, ['GET', 'POST'], 'user/about-you')
+        ->setOptions(['allowIncompleteUser' => true]);
+
+    $app->route('/user/change-password', ChangePasswordHandler::class, ['GET', 'POST'], 'user/change-password');
+
+    $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
+    $app->route('/lpa/{lpa-id:\d+}/type', $factory->pipeline(LpaLoaderMiddleware::class, TypeHandler::class), ['GET', 'POST'], 'lpa/form-type');
+    $app->get('/lpa/{lpa-id:\d+}/donor', $factory->pipeline(LpaLoaderMiddleware::class, DonorIndexHandler::class), 'lpa/donor');
 };

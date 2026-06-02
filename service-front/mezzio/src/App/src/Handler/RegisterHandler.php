@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use Application\Form\User\Registration;
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
@@ -52,9 +52,7 @@ class RegisterHandler implements RequestHandlerInterface
         $form = $this->formElementManager->get(Registration::class);
         $form->setAttribute('action', '/signup');
 
-        $data = [
-            'form' => $form,
-        ];
+        $data = ['form' => $form];
 
         // Handle POST request
         if ($request->getMethod() === 'POST') {

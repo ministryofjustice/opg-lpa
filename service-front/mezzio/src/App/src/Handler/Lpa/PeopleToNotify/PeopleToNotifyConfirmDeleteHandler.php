@@ -7,7 +7,7 @@ namespace App\Handler\Lpa\PeopleToNotify;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
+use App\Middleware\RequestAttribute;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Router\RouteResult;
