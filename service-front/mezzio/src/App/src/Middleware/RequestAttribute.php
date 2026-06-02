@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Authentication\Identity\User as IdentityUser;
+use App\Model\Service\Authentication\Identity\User as IdentityUser;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 

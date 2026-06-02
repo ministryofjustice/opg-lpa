@@ -6,8 +6,8 @@ namespace AppTest\Handler;
 
 use App\Handler\SessionExpiryHandler;
 use App\Storage\MezzioSessionStorage;
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
-use Application\Model\Service\Authentication\Identity\User;
+use App\Authentication\Adapter\LpaAuthAdapter;
+use App\Model\Service\Authentication\Identity\User;
 use DateTime;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\JsonResponse;

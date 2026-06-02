@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\User\ChangePassword as ChangePasswordForm;
+use App\Authentication\AuthenticationService;
+use App\Form\User\ChangePassword as ChangePasswordForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Middleware\RequestAttribute;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,7 +26,6 @@ class ChangePasswordHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
-    private const FLASH_KEY_SUCCESS = 'flash_success';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -79,13 +79,12 @@ class ChangePasswordHandler implements RequestHandlerInterface
                 $result = $this->userService->updatePassword($currentPassword, $newPassword);
 
                 if ($result === true) {
-                    $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-                    if ($session instanceof SessionInterface) {
-                        $session->set(self::FLASH_KEY_SUCCESS, [
-                            'Your new password has been saved. ' .
-                            'Please remember to use this new password to sign in from now on.',
-                        ]);
-                    }
+                    /** @var FlashMessagesInterface $flash */
+                    $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                    $flash->flash(FlashMessenger::SUCCESS, [
+                        'Your new password has been saved. ' .
+                        'Please remember to use this new password to sign in from now on.',
+                    ]);
                     return new RedirectResponse('/user/about-you');
                 } else {
                     $error = $result;

@@ -6,12 +6,12 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PaginationTrait;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\Identity\User;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Middleware\RequestAttribute;
+use App\Model\Service\Authentication\Identity\User;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Laminas\Router\RouteMatch;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
@@ -33,14 +33,14 @@ class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $routeMatch = $request->getAttribute(RouteMatch::class);
+        $routeResult = $request->getAttribute(RouteResult::class);
 
         /** @var User $identity */
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;
-        $page = (int) $routeMatch?->getParam('page', 1);
+        $page = (int) ($routeResult?->getMatchedParams()['page'] ?? 1);
 
         $lpasPerPage = 50;
 

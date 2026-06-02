@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Factory\Lpa;
 
 use App\Handler\Lpa\ConfirmDeleteLpaHandler;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;

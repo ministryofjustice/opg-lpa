@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -21,7 +24,6 @@ class LoginHandler implements RequestHandlerInterface
 {
     private const SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
     private const SESSION_KEY_IDENTITY = 'identity';
-    private const FLASH_KEY_WARNING = 'flash_warning';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -83,7 +85,9 @@ class LoginHandler implements RequestHandlerInterface
                     }
 
                     if (in_array('inactivity-flags-cleared', $result->getMessages(), true)) {
-                        $session->set(self::FLASH_KEY_WARNING, [
+                        /** @var FlashMessagesInterface $flash */
+                        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                        $flash->flash(FlashMessenger::WARNING, [
                             'Thanks for logging in. Your LPA account will stay open for another 9 months.',
                         ]);
                     }
