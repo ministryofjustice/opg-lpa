@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppTest\Storage;
 
 use App\Storage\MezzioSessionStorage;
-use Application\Model\Service\Authentication\Identity\User;
+use App\Model\Service\Authentication\Identity\User;
 use DateTime;
 use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\MockObject\MockObject;

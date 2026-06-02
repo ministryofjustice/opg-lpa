@@ -6,8 +6,8 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use Application\Helper\MvcUrlHelper;
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;

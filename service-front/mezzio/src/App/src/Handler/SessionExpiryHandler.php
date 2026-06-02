@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\Authentication\Adapter\LpaAuthAdapter;
+use App\Authentication\Adapter\LpaAuthAdapter;
 use App\Storage\MezzioSessionStorage;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\JsonResponse;

@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -19,7 +22,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class ResetPasswordHandler implements RequestHandlerInterface
 {
     private const SESSION_KEY_IDENTITY = 'identity';
-    private const FLASH_KEY_SUCCESS = 'flash_success';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -69,7 +71,9 @@ class ResetPasswordHandler implements RequestHandlerInterface
                 $result = $this->userService->setNewPassword($token, $password);
 
                 if ($result === true) {
-                    $session->set(self::FLASH_KEY_SUCCESS, ['Password successfully reset']);
+                    /** @var FlashMessagesInterface $flash */
+                    $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                    $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
                     return new RedirectResponse('/login');
                 }
 
@@ -87,7 +91,7 @@ class ResetPasswordHandler implements RequestHandlerInterface
             $this->renderer->render(
                 'application/general/forgot-password/reset-password.twig',
                 [
-                    'form' => $form,
+                    'form'  => $form,
                     'error' => $error,
                 ]
             )

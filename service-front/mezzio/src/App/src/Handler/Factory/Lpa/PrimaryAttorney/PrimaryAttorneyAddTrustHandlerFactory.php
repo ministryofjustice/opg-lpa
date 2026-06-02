@@ -7,7 +7,7 @@ namespace App\Handler\Factory\Lpa\PrimaryAttorney;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Model\Service\Lpa\Applicant;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;

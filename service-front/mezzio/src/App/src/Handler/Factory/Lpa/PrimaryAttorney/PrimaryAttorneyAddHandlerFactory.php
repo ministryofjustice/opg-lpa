@@ -8,7 +8,7 @@ use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Model\Service\Lpa\Applicant;
 use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;

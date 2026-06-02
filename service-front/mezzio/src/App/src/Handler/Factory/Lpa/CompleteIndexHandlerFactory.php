@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Factory\Lpa;
 
 use App\Handler\Lpa\CompleteIndexHandler;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Service\CompleteViewParamsHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\Traits;
 
-use Application\Middleware\RequestAttribute;
-use Application\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\Communication;
 use Application\Helper\MvcUrlHelper;
 use Laminas\Diactoros\Response\RedirectResponse;

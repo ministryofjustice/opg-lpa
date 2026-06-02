@@ -7,7 +7,7 @@ namespace App\Handler\Factory\Lpa\PrimaryAttorney;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use Application\Helper\MvcUrlHelper;
 use Application\Model\Service\Lpa\Applicant;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use Psr\Container\ContainerInterface;
 

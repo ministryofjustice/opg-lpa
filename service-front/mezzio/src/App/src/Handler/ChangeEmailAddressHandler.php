@@ -6,9 +6,9 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
-use Application\Middleware\RequestAttribute;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Service\UserDetails as UserService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Form\FormElementManager;
@@ -16,7 +16,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Application\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
+use App\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
 
 class ChangeEmailAddressHandler implements RequestHandlerInterface
 {
@@ -34,8 +34,7 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
     {
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
-        /** @var ChangeEmailAddressForm $form */
-        $form = $this->formElementManager->get('Application\Form\User\ChangeEmailAddress');
+        $form = $this->formElementManager->get(ChangeEmailAddressForm::class);
         $form->setAttribute('action', '/user/change-email-address');
 
         $error = null;
