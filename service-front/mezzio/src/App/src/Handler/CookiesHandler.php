@@ -7,7 +7,6 @@ namespace App\Handler;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\FormElementManager;
-use Laminas\Http\Request as HttpRequest;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,9 +18,8 @@ class CookiesHandler implements RequestHandlerInterface
     public const COOKIE_POLICY_NAME = 'cookie_policy';
 
     public function __construct(
-        private TemplateRendererInterface $renderer,
-        private FormElementManager $formElementManager,
-        private HttpRequest $httpRequest,
+        private readonly TemplateRendererInterface $renderer,
+        private readonly FormElementManager $formElementManager,
     ) {
     }
 
@@ -32,7 +30,7 @@ class CookiesHandler implements RequestHandlerInterface
 
         $form->setAttribute('action', '/cookies');
 
-        $cookiePolicy = $this->fetchPolicyCookie($this->httpRequest);
+        $cookiePolicy = $this->fetchPolicyCookie($request);
 
         if ($cookiePolicy !== null && array_key_exists('usage', $cookiePolicy)) {
             /** @var Radio $ucElement */
@@ -48,10 +46,10 @@ class CookiesHandler implements RequestHandlerInterface
         return new HtmlResponse($html);
     }
 
-    private function fetchPolicyCookie(HttpRequest $request): ?array
+    private function fetchPolicyCookie(ServerRequestInterface $request): ?array
     {
-        $cookies = $request->getCookie();
-        if ($cookies !== false && $cookies->offsetExists(self::COOKIE_POLICY_NAME)) {
+        $cookies = $request->getCookieParams();
+        if (isset($cookies[self::COOKIE_POLICY_NAME])) {
             $cookiePolicy = json_decode($cookies[self::COOKIE_POLICY_NAME], true);
 
             return is_array($cookiePolicy) ? $cookiePolicy : null;

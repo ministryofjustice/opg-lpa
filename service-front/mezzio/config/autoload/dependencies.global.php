@@ -16,7 +16,12 @@ use App\Middleware\UserDetailsMiddlewareFactory;
 use App\Model\UserDetailsHolder;
 use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
+use App\Service\Date\DateService;
+use App\Service\Feedback\FeedbackService;
+use App\Service\Guidance\GuidanceService;
 use App\Service\LpaApplicationServiceFactory;
+use App\Service\Stats\StatsService;
+use App\Service\System\StatusService;
 use App\Service\UserDetails;
 use App\Service\UserDetailsFactory;
 use App\Storage\MezzioSessionStorage;
@@ -60,7 +65,29 @@ return [
             // FlashMessagesHolder — shared instance; populated per-request by FlashMessagesHolderMiddleware
             FlashMessagesHolder::class => static fn() => new FlashMessagesHolder(),
 
-            // Handlers
+            Handler\HomeRedirectHandler::class => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
+                $c->get('config'),
+            ),
+            Handler\TermsHandler::class => static fn(ContainerInterface $c) => new Handler\TermsHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\AccessibilityHandler::class => static fn(ContainerInterface $c) => new Handler\AccessibilityHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\PrivacyHandler::class => static fn(ContainerInterface $c) => new Handler\PrivacyHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\ContactHandler::class => static fn(ContainerInterface $c) => new Handler\ContactHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\EnableCookieHandler::class => static fn(ContainerInterface $c) => new Handler\EnableCookieHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\CookiesHandler::class => static fn(ContainerInterface $c) => new Handler\CookiesHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+            ),
+
             Handler\HomeHandler::class => static fn(ContainerInterface $c) => new Handler\HomeHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get('config'),
@@ -100,6 +127,96 @@ return [
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(UrlHelper::class),
             ),
+            Handler\FeedbackHandler::class => static fn(ContainerInterface $c) => new Handler\FeedbackHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(FeedbackService::class),
+                $c->get(LoggerInterface::class),
+                $c->get(DateService::class),
+            ),
+            Handler\FeedbackThanksHandler::class => static fn(ContainerInterface $c) => new Handler\FeedbackThanksHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\GuidanceHandler::class => static fn(ContainerInterface $c) => new Handler\GuidanceHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(GuidanceService::class),
+            ),
+            Handler\StatsHandler::class => static fn(ContainerInterface $c) => new Handler\StatsHandler(
+                $c->get(StatsService::class),
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\PingHandler::class => static fn(ContainerInterface $c) => new Handler\PingHandler(
+                $c->get(StatusService::class),
+            ),
+            Handler\PingHandlerJson::class => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
+                $c->get('config'),
+                $c->get(StatusService::class),
+            ),
+            Handler\PingHandlerPingdom::class => static fn(ContainerInterface $c) => new Handler\PingHandlerPingdom(
+                $c->get(StatusService::class),
+                $c->get(DateService::class),
+            ),
+            Handler\PingHandlerElb::class => static fn() => new Handler\PingHandlerElb(),
+
+            // Services
+            LpaApplicationService::class => LpaApplicationServiceFactory::class,
+            DateService::class => static fn() => new DateService(),
+            FeedbackService::class => static function (ContainerInterface $c): FeedbackService {
+                $config = $c->get('config');
+                return new FeedbackService(
+                    $c->get(ApiClient::class),
+                    $c->get(LoggerInterface::class),
+                    $c->has(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) ? $c->get(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) : null,
+                    $config['email']['sendFeedbackEmailTo'] ?? (getenv('OPG_LPA_FRONT_EMAIL_SENDTO') ?: ''),
+                );
+            },
+            GuidanceService::class => static fn() => new GuidanceService(),
+            StatsService::class => static fn(ContainerInterface $c) => new StatsService(
+                $c->get(ApiClient::class),
+            ),
+            StatusService::class => static function (ContainerInterface $c): StatusService {
+                $config = $c->get('config');
+                return new StatusService(
+                    $c->get(ApiClient::class),
+                    $c->has(\Aws\DynamoDb\DynamoDbClient::class) ? $c->get(\Aws\DynamoDb\DynamoDbClient::class) : null,
+                    $c->has(\Laminas\Session\SaveHandler\SaveHandlerInterface::class) ? $c->get(\Laminas\Session\SaveHandler\SaveHandlerInterface::class) : null,
+                    $c->has(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) ? $c->get(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) : null,
+                    $c->has(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class) ? $c->get(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class) : null,
+                    $c->has(\Application\Model\Service\Redis\RedisClient::class) ? $c->get(\Application\Model\Service\Redis\RedisClient::class) : null,
+                    $config,
+                );
+            },
+
+            // Infrastructure services for StatusService health checks
+            \Aws\DynamoDb\DynamoDbClient::class => static function (ContainerInterface $c): \Aws\DynamoDb\DynamoDbClient {
+                $config = $c->get('config');
+                return new \Aws\DynamoDb\DynamoDbClient($config['admin']['dynamodb']['client'] ?? [
+                    'region' => 'eu-west-1',
+                    'version' => '2012-08-10',
+                    'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+                ]);
+            },
+            \Application\Model\Service\Redis\RedisClient::class => static function (ContainerInterface $c): \Application\Model\Service\Redis\RedisClient {
+                $config = $c->get('config');
+                $redisUrl = $config['redis']['url'] ?? (getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: '');
+                $ttlMs = $config['redis']['ttlMs'] ?? (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000);
+                return new \Application\Model\Service\Redis\RedisClient($redisUrl, $ttlMs, new \Redis());
+            },
+            \Laminas\Session\SaveHandler\SaveHandlerInterface::class => static function (ContainerInterface $c): \Laminas\Session\SaveHandler\SaveHandlerInterface {
+                $redisClient = $c->get(\Application\Model\Service\Redis\RedisClient::class);
+                return new \Application\Model\Service\Session\FilteringSaveHandler($redisClient, [
+                    static fn() => empty($_SERVER['HTTP_X_SESSIONREADONLY']),
+                ]);
+            },
+            \Application\Model\Service\Mail\Transport\MailTransportInterface::class => static function (ContainerInterface $c): \Application\Model\Service\Mail\Transport\MailTransportInterface {
+                $config = $c->get('config');
+                $notifyKey = $config['email']['notify']['key'] ?? (getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: '');
+                $notifyClient = new \Alphagov\Notifications\Client([
+                    'apiKey' => $notifyKey,
+                    'httpClient' => new \Http\Adapter\Guzzle7\Client(),
+                ]);
+                return new \Application\Model\Service\Mail\Transport\NotifyMailTransport($notifyClient);
+            },
             Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(\Laminas\Form\FormElementManager::class),
@@ -197,8 +314,28 @@ return [
         'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
     ],
 
-    'logging' => [
+    'admin' => [
+        'dynamodb' => [
+            'client' => [
+                'region' => 'eu-west-1',
+                'version' => '2012-08-10',
+                'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
+            ],
+            'settings' => [
+                'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
+            ],
+            'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+        ],
+    ],
+
+    'redis' => [
+        'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
+        'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000),
+        'ordnance_survey' => [
+            'max_call_per_min' => 6,
+        ],
+        'logging' => [
         'serviceName' => 'opg-lpa/front',
         'minLevel'    => Level::fromName('DEBUG'),
-    ],
-];
+        ],
+    ];

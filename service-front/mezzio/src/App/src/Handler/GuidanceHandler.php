@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\Guidance\Guidance;
+use App\Service\Guidance\GuidanceService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -15,7 +15,7 @@ class GuidanceHandler implements RequestHandlerInterface
 {
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
-        private readonly Guidance $guidanceService,
+        private readonly GuidanceService $guidanceService,
     ) {
     }
 
