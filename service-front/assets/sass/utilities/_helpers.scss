@@ -28,24 +28,24 @@
 
 // Adding spacing
 // Add margins
-.push           { margin:       $gutter !important; }
-.push--top      { margin-top:   $gutter !important; }
-.push--right    { margin-right: $gutter !important; }
-.push--bottom   { margin-bottom:$gutter !important; }
-.push--left     { margin-left:  $gutter !important; }
-.push--ends     { margin-top:   $gutter !important; margin-bottom:$gutter !important; }
-.push--sides    { margin-right: $gutter !important; margin-left:  $gutter !important; }
+.push           { margin:       govuk-spacing(6) !important; }
+.push--top      { margin-top:   govuk-spacing(6) !important; }
+.push--right    { margin-right: govuk-spacing(6) !important; }
+.push--bottom   { margin-bottom:govuk-spacing(6) !important; }
+.push--left     { margin-left:  govuk-spacing(6) !important; }
+.push--ends     { margin-top:   govuk-spacing(6) !important; margin-bottom:govuk-spacing(6) !important; }
+.push--sides    { margin-right: govuk-spacing(6) !important; margin-left:  govuk-spacing(6) !important; }
 
 // scss-lint:enable SpaceBeforeBrace, SpaceAfterPropertyColon
 
 //Further down
 .divorced {
-    margin-top: $gutter;
+    margin-top: govuk-spacing(6);
 }
 
 // Simple handling of overflowing tables on mobile
 .mobile-scroll {
-    @include media(mobile) {
+    @media (max-width: 640px) {
         overflow: auto;
 
         table {
@@ -56,13 +56,13 @@
 
 // Responsive helper classes
 .mobile {
-    @include media(tablet) {
+    @media (min-width: 641px) {
         display: none !important;
     }
 }
 
 .tablet-and-up {
-    @include media(mobile) {
+    @media (max-width: 640px) {
         display: none !important;
     }
 }
