@@ -182,7 +182,7 @@ def setDonor(lpaId):
             "postcode": "PO38 1UL",
         },
         "dob": {"date": "1988-10-22T00:00:00.000000+0000"},
-        "email": {"address": "opglpademo+NancyGarrison@gmail.com"},
+        "email": {"address": "opglpademo+nancygarrison@gmail.com"},
         "canSign": False,
     }
     putToAPI(lpaId, donorDetails, "donor")
@@ -288,7 +288,7 @@ def addPrimaryAttorney(lpaId):
             "address3": "Marchington, Uttoxeter, Staffordshire",
             "postcode": "ST14 8NX",
         },
-        "email": {"address": "opglpademo+AmyWheeler@gmail.com"},
+        "email": {"address": "opglpademo+amywheeler@gmail.com"},
         "type": "human",
     }
     postToAPI(lpaId, primaryAttorneyDetails, "primary-attorneys")
@@ -306,7 +306,7 @@ def addSecondPrimaryAttorney(lpaId, lpaType="health-and-welfare"):
                 "address3": "Marchington, Uttoxeter, Staffordshire",
                 "postcode": "ST14 8NX",
             },
-            "email": {"address": "opglpademo+DavidWheeler@gmail.com"},
+            "email": {"address": "opglpademo+davidwheeler@gmail.com"},
             "type": "human",
         }
     else:
@@ -422,7 +422,7 @@ def addCorrespondent(lpaId):
             "address3": "Ventnor, Isle of Wight",
             "postcode": "PO38 1UL",
         },
-        "email": {"address": "opglpademo+NancyGarrison@gmail.com"},
+        "email": {"address": "opglpademo+nancygarrison@gmail.com"},
         "phone": None,
         "contactByPost": False,
         "contactInWelsh": False,
