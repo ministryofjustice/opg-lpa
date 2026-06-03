@@ -334,8 +334,8 @@ return [
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],
-    'logging' => [
+        'logging' => [
         'serviceName' => 'opg-lpa/front',
         'minLevel'    => Level::fromName('DEBUG'),
-    ],
-];
+        ],
+    ];
