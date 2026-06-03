@@ -4,28 +4,24 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\Date\IDateService;
-use Application\Model\Service\Feedback\Feedback;
+use App\Service\Date\DateService;
+use App\Service\Feedback\FeedbackService;
 use Application\Model\Service\Feedback\FeedbackValidationException;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Throwable;
 
-class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
+class FeedbackHandler implements RequestHandlerInterface
 {
-    use LoggerTrait;
-
     private const int MIN_SUBMISSION_TIME_SECONDS = 3;
     private const SESSION_KEY_FORM_GENERATED_TIME = 'feedback_form_generated_time';
     private const SESSION_KEY_FROM_PAGE = 'feedback_from_page';
@@ -33,11 +29,10 @@ class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
-        private readonly Feedback $feedbackService,
-        LoggerInterface $logger,
-        private readonly ?IDateService $dateService = null,
+        private readonly FeedbackService $feedbackService,
+        private readonly LoggerInterface $logger,
+        private readonly DateService $dateService,
     ) {
-        $this->setLogger($logger);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -60,7 +55,7 @@ class FeedbackHandler implements RequestHandlerInterface, LoggerAwareInterface
             $session->unset(self::SESSION_KEY_FORM_GENERATED_TIME);
 
             if ($this->dateService->getNow()->getTimestamp() - $formGeneratedTime < self::MIN_SUBMISSION_TIME_SECONDS) {
-                $this->getLogger()->error('Feedback form submitted too quickly, possible bot submission');
+                $this->logger->error('Feedback form submitted too quickly, possible bot submission');
 
                 $html = $this->renderer->render(
                     'application/general/feedback/index.twig',
