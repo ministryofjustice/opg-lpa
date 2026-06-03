@@ -26,7 +26,7 @@
     display: block;
     padding-left: 35px;
 
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         padding-right: 40px;
     }
 }
@@ -43,7 +43,7 @@
             width: 70%;
         }
 
-        @media (max-width: 640px) {
+        @include govuk-media-query($until: tablet) {
             width: 100%;
             float: none;
         }
@@ -65,7 +65,7 @@
             width: 30%;
         }
 
-        @media (max-width: 640px) {
+        @include govuk-media-query($until: tablet) {
             width: 100%;
             float: none;
         }
@@ -83,7 +83,7 @@
     .popup & {
         padding-left: 30px;
 
-        @media (max-width: 640px) {
+        @include govuk-media-query($until: tablet) {
             padding-left: 32px;
         }
     }
@@ -100,7 +100,7 @@
         .popup & {
             padding: 4px 30px;
 
-            @media (max-width: 640px) {
+            @include govuk-media-query($until: tablet) {
                 padding-left: 32px;
             }
         }
@@ -108,7 +108,7 @@
 
     .active {
         .popup & {
-            @media (min-width: 641px) {
+            @include govuk-media-query($from: tablet) {
                 padding-left: 28px;
                 border-left: 2px solid $govuk-link-colour;
                 background-color: #dee0e2;
@@ -120,7 +120,7 @@
         display: block;
         font-size: 16px;
 
-        @media (max-width: 640px) {
+        @include govuk-media-query($until: tablet) {
             font-size: 14px;
         }
     }
@@ -130,13 +130,13 @@
     .popup & {
         padding: govuk-spacing(6) govuk-spacing(3) govuk-spacing(6) govuk-spacing(6);
 
-        @media (max-width: 640px) {
+        @include govuk-media-query($until: tablet) {
             padding: govuk-spacing(3);
         }
     }
 
     article {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             font-size: 19px;
         }
 
@@ -222,7 +222,7 @@
 
 .link-back {
     .popup & {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             display: none;
         }
     }

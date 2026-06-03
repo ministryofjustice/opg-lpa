@@ -1,6 +1,6 @@
 .session-timeout {
 	// Sizing/positioning handled by browser top-layer for native <dialog>
-	@include core-19();
+	@include govuk-font($size: 19);
 	border: none;
 	padding: 0;
 
@@ -9,10 +9,10 @@
 	}
 
 	&-dialog {
-		@include core-19();
+		@include govuk-font($size: 19);
 		width: 480px;
 		padding: 30px;
-		border: 10px solid $black;
+		border: 10px solid govuk-colour("black");
 		background-color: $white;
 
 		.button {
