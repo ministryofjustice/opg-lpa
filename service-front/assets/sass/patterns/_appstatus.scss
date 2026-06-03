@@ -9,7 +9,7 @@
     color: $white;
     text-align: center;
 
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         padding: 30px;
     }
 
