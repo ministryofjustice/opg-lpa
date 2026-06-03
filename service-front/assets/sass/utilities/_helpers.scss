@@ -45,7 +45,7 @@
 
 // Simple handling of overflowing tables on mobile
 .mobile-scroll {
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         overflow: auto;
 
         table {
@@ -56,13 +56,13 @@
 
 // Responsive helper classes
 .mobile {
-    @media (min-width: 641px) {
+    @include govuk-media-query($from: tablet) {
         display: none !important;
     }
 }
 
 .tablet-and-up {
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         display: none !important;
     }
 }
