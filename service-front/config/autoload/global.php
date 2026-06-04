@@ -112,7 +112,7 @@ return [
 
         'ordnancesurvey' => [
             'key' => getenv('OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY') ?: null,
-            'endpoint' => getenv('OPG_LPA_OS_PLACES_HUB_ENDPOINT') ?: null,
+            'endpoint' => 'https://api.os.uk/search/places/v1/postcode-test',
         ],
 
     ], // address
