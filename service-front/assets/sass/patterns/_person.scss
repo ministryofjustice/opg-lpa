@@ -3,16 +3,16 @@
 
 .person {
     position: relative;
-    margin-bottom: $gutter;
+    margin-bottom: govuk-spacing(6);
     padding: 7px 0 28px 75px;
-    border-bottom: 1px solid $border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
     background-image: url('../images/custom/person.svg');
     background-repeat: no-repeat;
     background-size: 60px;
     overflow: hidden;
 
-    @include media(mobile) {
-        padding: 0 0 $gutter 55px;
+    @media (max-width: 640px) {
+        padding: 0 0 govuk-spacing(6) 55px;
         background-size: 40px;
     }
 
@@ -24,12 +24,12 @@
 
 .person-name,
 .person-address {
-    @include media(tablet) {
+    @media (min-width: 641px) {
         padding-right: 300px;
     }
 
     .person--wider & {
-        @include media(tablet) {
+        @media (min-width: 641px) {
             padding-right: 175px;
         }
     }
@@ -40,22 +40,28 @@
 }
 
 .person-actions {
-    @include media(tablet) {
+    @media (min-width: 641px) {
         position: absolute;
         top: 10px;
         right: 0;
     }
 
     .action-item {
-        @include media(tablet) {
+        @media (min-width: 641px) {
             margin-left: 8px;
             float: left;
         }
     }
 
     .action-edit {
-        @include media(tablet) {
-            @include button($grey-3);
+        @media (min-width: 641px) {
+            background-color: #bfc1c3;
+            box-shadow: 0 2px 0 #a0a4a7;
+            display: inline-block;
+            padding: 0.526315em 0.789473em 0.263157em;
+            border: none;
+            -webkit-appearance: none;
+            cursor: pointer;
             + .spinner {
                 margin-bottom: -3px;
             }
@@ -63,14 +69,14 @@
         }
 
         &:focus {
-            outline: 3px solid $focus-colour;
+            outline: 3px solid $govuk-focus-colour;
         }
     }
 
     .action-delete {
-        @include media(tablet) {
+        @media (min-width: 641px) {
             display: inline-block;
-            margin: 6px $gutter 0 0;
+            margin: 6px govuk-spacing(6) 0 0;
             + .spinner {
                 margin: 0 16px -3px -16px;
             }
