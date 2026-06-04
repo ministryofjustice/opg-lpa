@@ -9,9 +9,9 @@
         margin-bottom: -3px;
     }
 
-    @include media(mobile) {
+    @media (max-width: 640px) {
         display: block;
-        margin: $gutter-half auto $gutter-half;
+        margin: govuk-spacing(3) auto govuk-spacing(3);
         // special cases with action links - needs to be
         // next to the link instead of under
         .action-item & {

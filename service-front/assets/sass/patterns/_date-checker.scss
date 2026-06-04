@@ -3,7 +3,7 @@
 
 // Custom form styling
 
-@include media(desktop) {
+@media (min-width: 769px) {
     .date-check-dates{
         width: auto;
         position: absolute;

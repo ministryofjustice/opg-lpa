@@ -3,14 +3,14 @@
 // Borrowed from RPA Styleguide (http://rural-payments-styleguide.herokuapp.com/pagination/)
 
 .pager {
-    margin-top: $gutter-half;
-    margin-bottom: $gutter;
+    margin-top: govuk-spacing(3);
+    margin-bottom: govuk-spacing(6);
 }
 
 .pager-items {
     display: none;
 
-    @include media($min-width: 641px) {
+    @media (min-width: 641px) {
         display: inline;
 
         li {
@@ -32,25 +32,25 @@
 .pager-next {
     margin-right: 10px;
     
-    @include media($min-width: 641px) {
+    @media (min-width: 641px) {
         margin-right: 0;
     }  
 }
 
 .pager-prev {
-    @include media($min-width: 641px) {
+    @media (min-width: 641px) {
         margin-right: 10px;
     }
 }
 
 .pager-next {
-    @include media($min-width: 641px) {
+    @media (min-width: 641px) {
         margin-left: 10px;
     }
 }
 
 .pager-controls {
-    @include media($min-width: 641px) {
+    @media (min-width: 641px) {
         float: right;
     }
 }
