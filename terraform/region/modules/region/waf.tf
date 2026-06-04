@@ -318,7 +318,7 @@ resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns" {
 }
 
 resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns_candidates" {
-  name        = "suspicious-uri-patterns"
+  name        = "suspicious-uri-patterns-candidates"
   description = "Regex pattern set for suspicious URI patterns"
   scope       = "REGIONAL"
 
