@@ -54,5 +54,3 @@ jobs:
           name: ${{ matrix.scan.service }}-coverage-html
           path: ./coverage-html/
           overwrite: true
-
-# testing PHP run locally - radhia
