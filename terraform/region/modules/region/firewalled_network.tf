@@ -92,3 +92,28 @@ resource "aws_db_subnet_group" "data" {
   name       = "data"
   subnet_ids = module.network.data_subnets[*].id
 }
+
+# DNS logs
+
+data "aws_kms_alias" "application_log_group_encryption_key" {
+  name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+}
+
+resource "aws_cloudwatch_log_group" "route_53_resolver_logs" {
+  name              = "${data.aws_default_tags.current.tags.environment-name}-route53-resolver-logs-${data.aws_region.current.region}"
+  retention_in_days = 400
+  kms_key_id        = data.aws_kms_alias.application_log_group_encryption_key.target_key_arn
+  provider          = aws.region
+}
+
+resource "aws_route53_resolver_query_log_config" "main" {
+  name            = "main"
+  destination_arn = aws_cloudwatch_log_group.route_53_resolver_logs.arn
+  provider        = aws.region
+}
+
+resource "aws_route53_resolver_query_log_config_association" "main" {
+  resolver_query_log_config_id = aws_route53_resolver_query_log_config.main.id
+  resource_id                  = module.network.vpc.id
+  provider                     = aws.region
+}
