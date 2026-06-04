@@ -5,7 +5,7 @@
 .iconlinks {
     padding: govuk-spacing(6) govuk-spacing(3);
 
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         padding: govuk-spacing(3) 0;
     }
 
@@ -23,7 +23,7 @@
         .iconlinks-item {
             float: right;
 
-            @media (max-width: 640px) {
+            @include govuk-media-query($until: tablet) {
                 float: none;
             }
         }

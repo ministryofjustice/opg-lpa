@@ -9,7 +9,7 @@
         margin-bottom: -3px;
     }
 
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         display: block;
         margin: govuk-spacing(3) auto govuk-spacing(3);
         // special cases with action links - needs to be

@@ -11,7 +11,7 @@
     background-size: 60px;
     overflow: hidden;
 
-    @media (max-width: 640px) {
+    @include govuk-media-query($until: tablet) {
         padding: 0 0 govuk-spacing(6) 55px;
         background-size: 40px;
     }
@@ -24,12 +24,12 @@
 
 .person-name,
 .person-address {
-    @media (min-width: 641px) {
+    @include govuk-media-query($from: tablet) {
         padding-right: 300px;
     }
 
     .person--wider & {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             padding-right: 175px;
         }
     }
@@ -40,21 +40,21 @@
 }
 
 .person-actions {
-    @media (min-width: 641px) {
+    @include govuk-media-query($from: tablet) {
         position: absolute;
         top: 10px;
         right: 0;
     }
 
     .action-item {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             margin-left: 8px;
             float: left;
         }
     }
 
     .action-edit {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             background-color: #bfc1c3;
             box-shadow: 0 2px 0 #a0a4a7;
             display: inline-block;
@@ -74,7 +74,7 @@
     }
 
     .action-delete {
-        @media (min-width: 641px) {
+        @include govuk-media-query($from: tablet) {
             display: inline-block;
             margin: 6px govuk-spacing(6) 0 0;
             + .spinner {

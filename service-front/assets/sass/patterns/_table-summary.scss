@@ -5,7 +5,7 @@
 // Recommended - Use these styles for the check your answers pattern
 .govuk-check-your-answers {
 
-    @media (min-width: 769px) {
+    @include govuk-media-query($from: desktop) {
         display: table;
     }
 
@@ -13,7 +13,7 @@
         position: relative;
         border-bottom: 1px solid $govuk-border-colour;
 
-        @media (min-width: 769px) {
+        @include govuk-media-query($from: desktop) {
             display: table-row;
             border-bottom-width: 0;
         }
@@ -21,7 +21,7 @@
         > * {
             display: block;
 
-            @media (min-width: 769px) {
+            @include govuk-media-query($from: desktop) {
                 display: table-cell;
                 border-bottom: 1px solid $govuk-border-colour;
                 padding: em(12, 19) em(20, 19) em(9, 19) 0; // copied from Elements' td padding
@@ -29,7 +29,7 @@
             }
         }
 
-        @media (min-width: 769px) {
+        @include govuk-media-query($from: desktop) {
             &:first-child > * {
                 padding-top: 0;
             }
@@ -49,7 +49,7 @@
         margin-top: 0;
     }
 
-    @media (min-width: 769px) {
+    @include govuk-media-query($from: desktop) {
         .cya-question {
             width: 35%;
         }
@@ -65,7 +65,7 @@
         top: 0;
         right: 0;
 
-        @media (min-width: 769px) {
+        @include govuk-media-query($from: desktop) {
             position: static;
             padding-right: 0;
         }
