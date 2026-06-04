@@ -118,4 +118,4 @@ resource "aws_route53_resolver_query_log_config_association" "main" {
   provider                     = aws.region
 }
 
-# testing dns resolver group logs  is enabled - spinning up new PR env
+# testing dns resolver group logs  is enabled - pushing pr env after secret import - test
