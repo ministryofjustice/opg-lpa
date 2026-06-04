@@ -41,20 +41,20 @@
     @include icon(icon-question, 52, 50);
     margin-right: 10px;
 
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-question, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
 
-    @include media($max-width: 360px) {
+    @media (max-width: 360px) {
         display: none;
     }
 }
 
 .icon-tick {
     @include icon(icon-tick, 22, 22);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-tick, 16, 16);
         margin-right: 6px;
         background-size: contain;
@@ -63,7 +63,7 @@
 
 .icon-cross {
     @include icon(icon-cross, 22, 22);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-cross, 16, 16);
         margin-right: 6px;
         background-size: contain;
@@ -77,7 +77,7 @@
 
 .icon-person {
     @include icon(icon-person, 27, 27);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-person, 27, 27);
         margin-right: 6px;
         background-size: contain;
@@ -86,7 +86,7 @@
 
 .icon-phone {
     @include icon(icon-phone, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-phone, 27, 27);
         background-size: contain;
     }
@@ -94,7 +94,7 @@
 
 .icon-email {
     @include icon(icon-email, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-email, 27, 27);
         background-size: contain;
     }
@@ -102,7 +102,7 @@
 
 .icon-post {
     @include icon(icon-post, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-post, 27, 27);
         background-size: contain;
     }
@@ -110,7 +110,7 @@
 
 .icon-fax {
     @include icon(icon-fax, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-fax, 27, 27);
         background-size: contain;
     }
@@ -118,7 +118,7 @@
 
 .icon-bin {
     @include icon(icon-bin, 27, 27);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-bin, 27, 27);
         background-size: contain;
     }
@@ -126,7 +126,7 @@
 
 .icon-print {
     @include icon(icon-print, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-print, 27, 27);
         background-size: contain;
     }

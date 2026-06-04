@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\Date\DateService;
-use Application\Model\Service\System\Status;
+use App\Service\Date\DateService;
+use App\Service\System\StatusService;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response\XmlResponse;
 use MakeShared\Constants;
@@ -17,7 +17,7 @@ use RuntimeException;
 class PingHandlerPingdom implements RequestHandlerInterface
 {
     public function __construct(
-        private readonly Status $statusService,
+        private readonly StatusService $statusService,
         private readonly DateService $dateService,
         private string $xmlTemplate = '',
     ) {
