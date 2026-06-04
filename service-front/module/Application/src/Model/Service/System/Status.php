@@ -224,7 +224,12 @@ class Status extends AbstractService implements ApiClientAwareInterface
 
     private function callOrdnanceSurvey(int $currentUnixTime)
     {
-        $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        $os = null;
+        try {
+            $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        } catch (Exception $e) {
+            $this->getLogger()->error('Error calling Ordnance Survey API: ' . $e->getMessage());
+        }
 
         // Update redis with timestamp of the call to os
         $this->redisClient->write('os_last_call', strval($currentUnixTime));
@@ -233,7 +238,7 @@ class Status extends AbstractService implements ApiClientAwareInterface
         $alive = false;
         $details = '';
 
-        if ($this->ordnanceSurveyClient->verify($os)) {
+        if (!is_null($os) && $this->ordnanceSurveyClient->verify($os)) {
             $alive = true;
             $details = $os[0];
         }

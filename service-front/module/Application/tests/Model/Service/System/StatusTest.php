@@ -18,6 +18,8 @@ use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
 use Mockery;
 use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 final class StatusTest extends AbstractServiceTest
 {
@@ -628,6 +630,74 @@ final class StatusTest extends AbstractServiceTest
                 'status' => Constants::STATUS_FAIL,
                 'cached' => false,
                 'details' => ''
+            ],
+            'mail' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            // Unlike the other tests, when os fails it doesn't fail the overall health check as it's not vital to the service
+            'ok' => true,
+            'status' => Constants::STATUS_WARN,
+        ], $result);
+    }
+
+    public function testCheckOrdnanceSurveyException(): void
+    {
+        $this->apiClient
+            ->shouldReceive('httpGet')
+            ->withArgs(['/ping'])
+            ->once()
+            ->andReturn([
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ]);
+
+        $this->dynamoDbClient
+            ->shouldReceive('describeTable')
+            ->withArgs([['TableName' => 'admin-test-table']])
+            ->once()
+            ->andReturn(new AwsResult(['@metadata' => ['statusCode' => 200],'Table' => ['TableStatus' => 'ACTIVE']]));
+
+        $this->sessionSaveHandler->shouldReceive('open')->once()->andReturn(true);
+
+        $this->redisClient->shouldReceive('open')->once()->andReturn(true);
+        $this->redisClient->shouldReceive('read')->once()->andReturn('');
+        $this->redisClient->shouldReceive('write')->times(3)->andReturn(true);
+        $this->redisClient->shouldReceive('close')->once()->andReturn(true);
+        $this->ordnanceSurveyClient->shouldReceive('lookupPostcode')->once()->andThrow(new RuntimeException('hostname not found'));
+
+        $logger = Mockery::mock(LoggerInterface::class);
+        $logger->shouldReceive('error')
+            ->withArgs(['Error calling Ordnance Survey API: hostname not found'])
+            ->once();
+        $this->service->setLogger($logger);
+
+        $this->mailTransport->shouldReceive('healthcheck')
+            ->andReturn(['ok' => true, 'status' => Constants::STATUS_PASS]);
+
+        $result = $this->service->check();
+
+        $this->assertEquals([
+            'dynamo' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'api' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'details' => [
+                    'response_code' => '200',
+                ]
+            ],
+            'sessionSaveHandler' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+            ],
+            'ordnanceSurvey' => [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+                'cached' => false,
+                'details' => '',
             ],
             'mail' => [
                 'ok' => true,
