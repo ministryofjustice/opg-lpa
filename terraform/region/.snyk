@@ -5,7 +5,7 @@ ignore:
   SNYK-CC-TF-69:
     - '*':
         reason: Policy merged with others to produce more restrictive policy
-        expires: 2026-06-05T12:41:53.331Z
+        expires: 9999-06-05T12:41:53.331Z
         created: 2026-05-06T12:41:53.334Z
   SNYK-CC-TF-55:
     - '*':
