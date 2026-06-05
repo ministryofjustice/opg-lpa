@@ -290,7 +290,6 @@ resource "aws_wafv2_web_acl" "main" {
       metric_name                = "RateLimitByIP"
       sampled_requests_enabled   = true
     }
-
   }
 
   visibility_config {
