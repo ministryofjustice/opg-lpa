@@ -245,27 +245,30 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
-  rule {
-    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 50
 
-    override_action {
-      none {}
-    }
+  dynamic "rule" {
+    for_each = var.aws_waf_amazon_managed_ip_reputation_list_rule_enabled ? [1] : []
+    content {
+      name     = "AWS-AWSManagedRulesAmazonIpReputationList"
+      priority = 50
+      override_action {
+        none {}
+      }
+      statement {
+        managed_rule_group_statement {
+          name        = "AWSManagedRulesAmazonIpReputationList"
+          vendor_name = "AWS"
+        }
+      }
 
-    statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
+        sampled_requests_enabled   = true
       }
     }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
-      sampled_requests_enabled   = true
-    }
   }
+
   rule {
     name     = "RateLimitByIP"
     priority = 60
