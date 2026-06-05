@@ -36,35 +36,7 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
-  rule {
-    name     = "BlockSuspiciousURIPatternsCandidates"
-    priority = 5
 
-    action {
-      count {}
-    }
-
-    statement {
-      regex_pattern_set_reference_statement {
-        arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns_candidates.arn
-
-        field_to_match {
-          uri_path {}
-        }
-
-        text_transformation {
-          priority = 0
-          type     = "LOWERCASE"
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "RateLimitSuspiciousURIPatterns"
-      sampled_requests_enabled   = true
-    }
-  }
   rule {
     name     = "RateLimitSuspiciousURIPatterns"
     priority = 6
@@ -276,8 +248,9 @@ resource "aws_wafv2_web_acl" "main" {
 
     statement {
       rate_based_statement {
-        limit              = 200
-        aggregate_key_type = "IP"
+        limit                 = 200
+        aggregate_key_type    = "IP"
+        evaluation_window_sec = 60
       }
     }
 
@@ -313,17 +286,7 @@ resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns" {
   scope       = "REGIONAL"
 
   regular_expression {
-    regex_string = "(?i)\\.(env|git|sql|bak|php|asp|aspx|cgi|sh|exe|tar|gz|tgz|zip|rar|7z|z|bz2|lz|xz|db|sqlite|sqlitedb|war|jar|config|conf|ini|log|pem|key|p12|pfx|crt|ovpn|htaccess|htpasswd|DS_Store|swp)$"
-  }
-}
-
-resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns_candidates" {
-  name        = "suspicious-uri-patterns-candidates"
-  description = "Regex pattern set for suspicious URI patterns"
-  scope       = "REGIONAL"
-
-  regular_expression {
-    regex_string = "(?i)\\.(dump|aws|xml|json|c|err|staging)$"
+    regex_string = "(?i)\\.(env|git|sql|bak|php|asp|aspx|cgi|sh|exe|tar|gz|tgz|zip|rar|7z|z|bz2|lz|xz|db|sqlite|sqlitedb|war|jar|config|conf|ini|log|pem|key|p12|pfx|crt|ovpn|htaccess|htpasswd|DS_Store|swp|dump|aws|xml|c|err|staging)$"
   }
 }
 
