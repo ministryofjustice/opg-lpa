@@ -36,38 +36,10 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
-  rule {
-    name     = "BlockSuspiciousURIPatterns2"
-    priority = 5
 
-    action {
-      block {}
-    }
-
-    statement {
-      regex_pattern_set_reference_statement {
-        arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns_2.arn
-
-        field_to_match {
-          uri_path {}
-        }
-
-        text_transformation {
-          priority = 0
-          type     = "LOWERCASE"
-        }
-      }
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "RateLimitSuspiciousURIPatterns"
-      sampled_requests_enabled   = true
-    }
-  }
   rule {
     name     = "RateLimitSuspiciousURIPatterns"
-    priority = 6
+    priority = 5
 
     action {
       block {}
@@ -101,7 +73,7 @@ resource "aws_wafv2_web_acl" "main" {
   }
   rule {
     name     = "BlockSuspiciousURIPatterns"
-    priority = 7
+    priority = 6
 
     action {
       block {}
@@ -125,6 +97,35 @@ resource "aws_wafv2_web_acl" "main" {
     visibility_config {
       cloudwatch_metrics_enabled = true
       metric_name                = "BlockSuspiciousURIPatterns"
+      sampled_requests_enabled   = true
+    }
+  }
+  rule {
+    name     = "BlockSuspiciousURIPatterns2"
+    priority = 7
+
+    action {
+      block {}
+    }
+
+    statement {
+      regex_pattern_set_reference_statement {
+        arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns_2.arn
+
+        field_to_match {
+          uri_path {}
+        }
+
+        text_transformation {
+          priority = 0
+          type     = "LOWERCASE"
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "RateLimitSuspiciousURIPatterns"
       sampled_requests_enabled   = true
     }
   }
