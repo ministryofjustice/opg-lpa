@@ -71,6 +71,7 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
+
   rule {
     name     = "BlockSuspiciousURIPatterns"
     priority = 6
