@@ -2,15 +2,15 @@
 // PROCESS ACCORDION
 
 .accordion {
-    @extend %contain-floats;
+    @include govuk-clearfix;
 
     > .incomplete {
-        color: $red;
+        color: govuk-colour("red");
 
         .accordion-summary {
             .label {
-                color: $red;
-                border-color: $red;
+                color: govuk-colour("red");
+                border-color: govuk-colour("red");
             }
         }
     }
@@ -18,45 +18,45 @@
     .not-started {
         .accordion-summary {
             .label {
-                color: $white;
-                border-color: $grey-1;
+                color: govuk-colour("white");
+                border-color: $govuk-secondary-text-colour;
             }
         }
     }
 
     .accordion-header {
         display: block;
-        padding: $gutter-half;
+        padding: govuk-spacing(3);
         background-color: $turquoise-with-contrast;
-        color: $white;
+        color: govuk-colour("white");
 
-        @include media(mobile) {
-            padding-left: $gutter-half;
+        @include govuk-media-query($until: tablet) {
+            padding-left: govuk-spacing(3);
         }
     }
 
     .accordion-info {
-        @extend %contain-floats;
-        margin-bottom: $gutter;
-        border-bottom: 1px solid $border-colour;
+        @include govuk-clearfix;
+        margin-bottom: govuk-spacing(6);
+        border-bottom: 1px solid $govuk-border-colour;
     }
 
     .accordion-summary {
         position: relative;
-        margin-bottom: $gutter-half;
-        background-color: $highlight-colour;
+        margin-bottom: govuk-spacing(3);
+        background-color: govuk-colour("light-grey");
         overflow: hidden;
 
-        @include media(mobile) {
-            padding-left: $gutter-half;
+        @include govuk-media-query($until: tablet) {
+            padding-left: govuk-spacing(3);
         }
 
         .title {
             display: inline-block;
-            padding: $gutter-half;
+            padding: govuk-spacing(3);
 
-            @include media(mobile) {
-                padding: $gutter-half;
+            @include govuk-media-query($until: tablet) {
+                padding: govuk-spacing(3);
             }
         }
 
@@ -67,13 +67,13 @@
             border: 2px solid $turquoise-with-contrast;
             background: $turquoise-with-contrast;
             border-radius: 5px;
-            color: $white;
+            color: govuk-colour("white");
             font-size: 13px;
             font-weight: 700;
             text-align: center;
             text-transform: uppercase;
 
-            @include media(mobile) {
+            @include govuk-media-query($until: tablet) {
                 position: absolute;
                 top: 14px;
                 right: 14px;
@@ -83,14 +83,14 @@
 
         &.wide-label {
             .label {
-                @include media($max-width: 750px) {
+                @media (max-width: 750px) {
                     width: 103px;
                     line-height: 1;
                 }
             }
 
             .title-box {
-                @include media($min-width: 750px) {
+                @media (min-width: 750px) {
                     padding-right: 215px;
                 }
             }
@@ -100,7 +100,7 @@
             display: inline-block;
             float: right;
 
-            @include media(mobile) {
+            @include govuk-media-query($until: tablet) {
                 padding-right: 130px;
                 float: left;
             }
@@ -108,10 +108,10 @@
 
         .link-edit {
             display: block;
-            padding: $gutter-half $gutter-half;
+            padding: govuk-spacing(3) govuk-spacing(3);
             float: right;
 
-            @include media(mobile) {
+            @include govuk-media-query($until: tablet) {
                 padding-left: 0;
             }
         }
@@ -119,7 +119,7 @@
         .title-box {
             margin-right: 92px;
             padding-right: 130px;
-            border-right: 6px solid $white;
+            border-right: 6px solid govuk-colour("white");
 
             &--full {
                 margin-right: 0;
@@ -133,7 +133,7 @@
             top: 0;
             right: 0;
 
-            @include media(mobile) {
+            @include govuk-media-query($until: tablet) {
                 position: relative;
             }
         }
