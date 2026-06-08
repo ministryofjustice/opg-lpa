@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\PrimaryAttorney;
 
-use Application\Form\Lpa\AbstractActorForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
@@ -19,6 +17,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -35,7 +34,7 @@ class PrimaryAttorneyEditHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
@@ -68,12 +67,10 @@ class PrimaryAttorneyEditHandler implements RequestHandlerInterface
 
         // Determine form type based on attorney type
         if ($attorney instanceof Human) {
-            /** @var AbstractActorForm $form */
             $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
             $form->setActorData('attorney', $this->getActorsList($lpa, (int) $attorneyIdx));
             $template = 'application/authenticated/lpa/primary-attorney/person-form.twig';
         } else {
-            /** @var AbstractActorForm $form */
             $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
             $template = 'application/authenticated/lpa/primary-attorney/trust-form.twig';
         }

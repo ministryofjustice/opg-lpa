@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\User\ConfirmEmail;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -32,8 +31,8 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
             return new RedirectResponse('/user/dashboard');
         }
 
-        /** @var ConfirmEmail $form */
-        $form = $this->formElementManager->get(ConfirmEmail::class);
+        /** @var \Application\Form\User\ConfirmEmail $form */
+        $form = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
         $form->setAttribute('action', '/signup/resend-email');
 
         $data = ['form' => $form];
@@ -51,7 +50,7 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
 
                 if ($result === true) {
                     // Set up form for another resend email if needed
-                    $resendForm = $this->formElementManager->get(ConfirmEmail::class);
+                    $resendForm = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
                     assert($resendForm instanceof FormInterface);
                     $resendForm->setAttribute('action', '/signup/resend-email');
                     $resendForm->setData([

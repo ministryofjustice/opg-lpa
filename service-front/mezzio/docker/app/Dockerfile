@@ -32,6 +32,7 @@ COPY --chown=root:root service-front/mezzio/config /service-front/mezzio/config
 COPY --chown=root:root service-front/mezzio/src /service-front/mezzio/src
 COPY --chown=root:root service-front/mezzio/public /service-front/mezzio/public
 COPY --chown=root:root service-front/mezzio/data /service-front/mezzio/data
+COPY --chown=root:root service-front/content /service-front/mezzio/content
 
 
 # PHP config files (reuse the shared service config)

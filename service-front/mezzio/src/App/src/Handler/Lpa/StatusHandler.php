@@ -7,7 +7,7 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\View\StatusViewDataBuilder;
+use App\View\StatusViewDataBuilder;
 use DateTime;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -47,7 +47,7 @@ class StatusHandler implements RequestHandlerInterface
                     intval($this->config['processing-status']['expected-working-days-before-receipt']);
             }
 
-            $lpaStatusDetails = $this->lpaApplicationService->getStatuses($lpa->getId());
+            $lpaStatusDetails = $this->lpaApplicationService->getStatuses((string) $lpa->getId());
 
             $builder = new StatusViewDataBuilder();
 

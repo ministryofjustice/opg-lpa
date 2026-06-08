@@ -7,7 +7,7 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Router\RouteMatch;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,11 +25,11 @@ class ConfirmDeleteLpaHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $routeMatch = $request->getAttribute(RouteMatch::class);
+        $routeResult = $request->getAttribute(RouteResult::class);
         $queryParams = $request->getQueryParams();
 
         $page = $queryParams['page'] ?? null;
-        $lpaId = $routeMatch?->getParam('lpa-id');
+        $lpaId = $routeResult?->getMatchedParams()['lpa-id'] ?? null;
 
         $lpa = $this->lpaApplicationService->getApplication($lpaId);
 

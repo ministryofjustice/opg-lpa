@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler\Factory\Lpa;
 
 use App\Handler\Lpa\IndexHandler;
-use Application\Helper\MvcUrlHelper;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
+use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
 
 class IndexHandlerFactory
@@ -15,7 +15,7 @@ class IndexHandlerFactory
     {
         return new IndexHandler(
             $container->get(Metadata::class),
-            $container->get(MvcUrlHelper::class),
+            $container->get(UrlHelper::class),
         );
     }
 }
