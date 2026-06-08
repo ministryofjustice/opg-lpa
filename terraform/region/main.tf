@@ -8,6 +8,7 @@ module "eu-west-1" {
   providers = {
     aws            = aws
     aws.management = aws.management
+    aws.region     = aws.eu-west-1
   }
 }
 
@@ -21,5 +22,6 @@ module "eu-west-2" {
   providers = {
     aws            = aws.eu-west-2
     aws.management = aws.management_eu_west_2
+    aws.region     = aws.eu-west-2
   }
 }
