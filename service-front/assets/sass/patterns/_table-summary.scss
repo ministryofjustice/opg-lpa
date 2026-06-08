@@ -5,15 +5,15 @@
 // Recommended - Use these styles for the check your answers pattern
 .govuk-check-your-answers {
 
-    @include media(desktop) {
+    @include govuk-media-query($from: desktop) {
         display: table;
     }
 
     > * {
         position: relative;
-        border-bottom: 1px solid $border-colour;
+        border-bottom: 1px solid $govuk-border-colour;
 
-        @include media(desktop) {
+        @include govuk-media-query($from: desktop) {
             display: table-row;
             border-bottom-width: 0;
         }
@@ -21,15 +21,15 @@
         > * {
             display: block;
 
-            @include media(desktop) {
+            @include govuk-media-query($from: desktop) {
                 display: table-cell;
-                border-bottom: 1px solid $border-colour;
+                border-bottom: 1px solid $govuk-border-colour;
                 padding: em(12, 19) em(20, 19) em(9, 19) 0; // copied from Elements' td padding
                 margin: 0;
             }
         }
 
-        @include media(desktop) {
+        @include govuk-media-query($from: desktop) {
             &:first-child > * {
                 padding-top: 0;
             }
@@ -49,7 +49,7 @@
         margin-top: 0;
     }
 
-    @include media(desktop) {
+    @include govuk-media-query($from: desktop) {
         .cya-question {
             width: 35%;
         }
@@ -65,7 +65,7 @@
         top: 0;
         right: 0;
 
-        @include media(desktop) {
+        @include govuk-media-query($from: desktop) {
             position: static;
             padding-right: 0;
         }
