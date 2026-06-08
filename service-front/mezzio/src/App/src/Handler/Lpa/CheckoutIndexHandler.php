@@ -6,15 +6,15 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Communication;
+use App\Service\Lpa\Communication;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,7 +30,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         LpaApplicationService $lpaApplicationService,
         Communication $communicationService,
-        MvcUrlHelper $urlHelper,
+        UrlHelper $urlHelper,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService = $communicationService;

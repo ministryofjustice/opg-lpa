@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -30,7 +30,7 @@ class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
     ) {
     }
