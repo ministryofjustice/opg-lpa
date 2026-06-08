@@ -1,5 +1,5 @@
 details[data-role=details-instructions]:not([open]) {
-    padding-bottom: $gutter-half;
+    padding-bottom: govuk-spacing(3);
 }
 
 // reset top margin on headings used inside a <details> element
@@ -7,7 +7,7 @@ details[data-role=details-instructions]:not([open]) {
 details {
     .heading-medium,
     .govuk-heading-m {
-        margin-top: em(10, 20);
+        margin-top: govuk-spacing(2);
     }
 }
 
