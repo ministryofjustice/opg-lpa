@@ -6,7 +6,7 @@
     "build": "npm run build:js && npm run build:css && npm run build:images && npm run build:fonts",
     "build:js": "node_modules/.bin/esbuild --bundle web/assets/main.js --minify --outdir=public/assets/javascript --sourcemap --resolve-extensions=.mjs,.js",
     "build:css": "node_modules/.bin/sass --load-path . --style compressed --no-source-map web/assets/main.scss public/assets/stylesheets/all.css",
-    "build:images": "mkdir -p public/assets/images public/assets/rebrand && cp node_modules/govuk-frontend/dist/govuk/assets/images/* node_modules/@ministryofjustice/frontend/moj/assets/images/* public/assets/images && cp -R node_modules/govuk-frontend/dist/govuk/assets/rebrand/* public/assets/rebrand",
+    "build:images": "mkdir -p public/assets/images public/assets/rebrand && cp node_modules/govuk-frontend/dist/govuk/assets/images/* public/assets/images && cp -R node_modules/govuk-frontend/dist/govuk/assets/rebrand/* public/assets/rebrand",
     "build:fonts": "mkdir -p public/assets/fonts && cp node_modules/govuk-frontend/dist/govuk/assets/fonts/* public/assets/fonts"
   },
   "dependencies": {
