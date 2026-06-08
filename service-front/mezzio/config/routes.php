@@ -22,8 +22,6 @@ use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
-use App\Handler\ConfirmRegistrationHandler;
-use App\Handler\ForgotPasswordHandler;
 use App\Handler\PostcodeHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
@@ -40,14 +38,9 @@ use App\Handler\PingHandler;
 use App\Handler\PingHandlerElb;
 use App\Handler\PingHandlerJson;
 use App\Handler\PingHandlerPingdom;
-use App\Handler\PostcodeHandler;
 use App\Handler\PrivacyHandler;
-use App\Handler\RegisterHandler;
-use App\Handler\ResendActivationEmailHandler;
-use App\Handler\ResetPasswordHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\StatsHandler;
-use App\Handler\StatusesHandler;
 use App\Handler\TermsHandler;
 use App\Handler\TypeHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
@@ -60,12 +53,10 @@ use App\Handler\Lpa\CompleteViewDocsHandler;
 use App\Handler\Lpa\ConfirmDeleteLpaHandler;
 use App\Handler\Lpa\CorrespondentEditHandler;
 use App\Handler\Lpa\CorrespondentHandler;
-use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DateCheckHandler;
 use App\Handler\Lpa\DateCheckValidHandler;
 use App\Handler\Lpa\DonorAddHandler;
 use App\Handler\Lpa\DonorEditHandler;
-use App\Handler\Lpa\DonorIndexHandler;
 use App\Handler\Lpa\Download\DownloadCheckHandler;
 use App\Handler\Lpa\Download\DownloadFileHandler;
 use App\Handler\Lpa\Download\DownloadHandler;
@@ -99,7 +90,6 @@ use App\Handler\Lpa\SummaryHandler;
 use App\Handler\Lpa\WhenLpaStartsHandler;
 use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\LpaLoaderMiddleware;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
@@ -157,13 +147,9 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ResetPasswordHandler::class,
         ['GET', 'POST'],
         'forgot-password/callback',
-    )->setOptions(['unauthenticated_route' => true]);
-    $app->route('/forgot-password/reset/{token:[a-zA-Z0-9]+}', ResetPasswordHandler::class, ['GET', 'POST'], 'forgot-password/callback');
-
-    // Feedback
-    $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
+    )
         ->setOptions(['unauthenticated_route' => true]);
-    $app->route('/send-feedback', $factory->pipeline(CsrfValidationMiddleware::class, FeedbackHandler::class), ['GET', 'POST'], 'send-feedback')
+    $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
@@ -172,7 +158,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['allowIncompleteUser' => true]);
     $app->get('/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'statuses');
 
-    // Unauthenticated routes
     $app->get('/deleted', DeletedAccountHandler::class, 'deleted')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/user/change-email-address/verify/{token:[a-zA-Z0-9]+}', VerifyEmailAddressHandler::class, 'user/change-email-address/verify')
@@ -193,7 +178,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
 
     $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive');
     $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry');
-    $app->get('/address-lookup', PostcodeHandler::class, 'postcode');
 
     $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
     $app->get('/confirm-delete-lpa/{lpa-id:\d+}', ConfirmDeleteLpaHandler::class, 'lpa/confirm-delete-lpa');
