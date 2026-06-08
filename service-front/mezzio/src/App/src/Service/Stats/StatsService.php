@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Service\Stats;
 
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\ApiClient\Exception\ApiException;
+use App\Service\ApiClient\Client as ApiClient;
+use App\Service\ApiClient\Exception\ApiException;
 
 class StatsService
 {

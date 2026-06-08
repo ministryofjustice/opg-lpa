@@ -8,7 +8,7 @@ use App\Handler\Lpa\ReuseDetailsHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use Application\Form\Lpa\ReuseDetailsForm;
 use App\Middleware\RequestAttribute;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
