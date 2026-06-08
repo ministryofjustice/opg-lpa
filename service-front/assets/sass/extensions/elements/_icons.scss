@@ -1,3 +1,26 @@
+// Icon mixin — previously provided by govuk-elements-sass, now defined locally.
+// Depends on $path from settings/_variables.scss (e.g. '/assets/v2/images/icons/').
+@mixin icon($icon-name, $icon-width, $icon-height, $icon-sub-folder: false) {
+  width: #{$icon-width}px;
+  height: #{$icon-height}px;
+
+  @if $icon-sub-folder {
+    background-image: url("#{$path}#{$icon-sub-folder}/#{$icon-name}.png");
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      background-image: url("#{$path}#{$icon-sub-folder}/#{$icon-name}-2x.png");
+      background-size: 100%;
+    }
+  } @else {
+    background-image: url("#{$path}#{$icon-name}.png");
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      background-image: url("#{$path}#{$icon-name}-2x.png");
+      background-size: 100%;
+    }
+  }
+}
+
 // Icons
 // ==========================================================================
 // Information (27x27)
