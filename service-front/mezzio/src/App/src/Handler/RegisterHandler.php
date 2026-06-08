@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Form\User\Registration;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -48,8 +47,8 @@ class RegisterHandler implements RequestHandlerInterface
             return new RedirectResponse('/user/dashboard');
         }
 
-        /** @var Registration $form */
-        $form = $this->formElementManager->get(Registration::class);
+        /** @var \Application\Form\User\Registration $form */
+        $form = $this->formElementManager->get('Application\Form\User\Registration');
         $form->setAttribute('action', '/signup');
 
         $data = ['form' => $form];
