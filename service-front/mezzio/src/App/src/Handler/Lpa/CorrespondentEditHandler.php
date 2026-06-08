@@ -6,11 +6,11 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
+use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -35,7 +35,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
     ) {
     }

@@ -9,7 +9,7 @@ use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

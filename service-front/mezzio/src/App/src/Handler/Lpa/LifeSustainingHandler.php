@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Form\Lpa\LifeSustainingForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
@@ -47,7 +46,7 @@ class LifeSustainingHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var LifeSustainingForm $form */
+        /** @var \Application\Form\Lpa\LifeSustainingForm $form */
         $form = $this->formElementManager->get(
             'Application\Form\Lpa\LifeSustainingForm',
             ['lpa' => $lpa]

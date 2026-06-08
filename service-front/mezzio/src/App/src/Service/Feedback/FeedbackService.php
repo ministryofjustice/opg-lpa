@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\Feedback;
 
-use Application\Model\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\ApiClient\Exception\ApiException;
-use Application\Model\Service\Feedback\FeedbackValidationException;
+use App\Service\ApiClient\Client as ApiClient;
+use App\Service\ApiClient\Exception\ApiException;
+use App\Service\Feedback\FeedbackValidationException;
 use Application\Model\Service\Mail\MailParameters;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use DateTime;

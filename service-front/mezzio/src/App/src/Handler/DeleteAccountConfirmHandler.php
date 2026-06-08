@@ -6,7 +6,7 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Authentication\AuthenticationService;
-use App\Service\UserDetails;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Template\TemplateRendererInterface;
@@ -21,7 +21,7 @@ class DeleteAccountConfirmHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly AuthenticationService $authenticationService,
-        private readonly UserDetails $userService,
+        private readonly UserService $userService,
     ) {
     }
 

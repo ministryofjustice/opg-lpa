@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
+use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
@@ -33,7 +33,7 @@ class CorrespondentHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 

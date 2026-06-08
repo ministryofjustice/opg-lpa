@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Helper\MvcUrlHelper;
+use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Session\SessionInterface;
@@ -22,7 +22,7 @@ class IndexHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly Metadata $metadata,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 

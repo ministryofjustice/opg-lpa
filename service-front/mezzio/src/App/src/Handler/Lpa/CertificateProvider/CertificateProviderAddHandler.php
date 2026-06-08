@@ -4,16 +4,15 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\CertificateProvider;
 
-use Application\Form\Lpa\AbstractActorForm;
 use App\Handler\Traits\CertificateProviderHandlerTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
+use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -38,7 +37,7 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly Metadata $metadata,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
     ) {
@@ -109,7 +108,7 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var AbstractActorForm $form */
+        /** @var \Application\Form\Lpa\AbstractActorForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\CertificateProviderForm');
         $form->setAttribute(
             'action',

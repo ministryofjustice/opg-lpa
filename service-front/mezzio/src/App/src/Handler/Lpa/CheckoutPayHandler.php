@@ -7,12 +7,11 @@ namespace App\Handler\Lpa;
 use Alphagov\Pay\Client as GovPayClient;
 use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Communication;
-use Application\Model\Service\Payment\Helper\LpaIdHelper;
+use App\Service\Lpa\Communication;
+use App\Service\Payment\Helper\LpaIdHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -20,6 +19,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -45,7 +45,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
         LpaApplicationService $lpaApplicationService,
         Communication $communicationService,
         private readonly GovPayClient $paymentClient,
-        MvcUrlHelper $urlHelper,
+        UrlHelper $urlHelper,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService = $communicationService;
@@ -111,7 +111,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
 
                 $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-                return $this->finishCheckout($lpa);
+                return $this->finishCheckout($lpa, $request);
             }
 
             if (!$payment->isFinished()) {

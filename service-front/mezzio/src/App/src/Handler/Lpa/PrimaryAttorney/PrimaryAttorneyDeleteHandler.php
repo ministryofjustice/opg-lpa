@@ -6,16 +6,16 @@ namespace App\Handler\Lpa\PrimaryAttorney;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Applicant as ApplicantService;
+use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -29,7 +29,7 @@ class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ApplicantService $applicantService,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
     ) {
