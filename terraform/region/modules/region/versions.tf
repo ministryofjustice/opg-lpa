@@ -4,7 +4,8 @@ terraform {
       source  = "hashicorp/aws"
       version = "6.28.0"
       configuration_aliases = [
-        aws.management
+        aws.management,
+        aws.region,
       ]
     }
     pagerduty = {

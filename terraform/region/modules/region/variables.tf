@@ -40,3 +40,9 @@ variable "firewalled_vpc_cidr_range" {
   type        = string
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length."
 }
+
+variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
+  type        = bool
+  description = "enable AWSManagedRulesAmazonIpReputationList in this account"
+  default     = false
+}
