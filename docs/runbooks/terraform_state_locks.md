@@ -36,7 +36,7 @@ When you have the workspace variable set, you can now run `direnv allow` within 
 
 After that has been run, you can now initialise terraform:
 
-```aws-vault exec identity -- terraform init```
+`aws-vault exec identity -- terraform init`
 
 You may have part of this command aliased to `tf`
 
@@ -50,13 +50,13 @@ This will be displayed under a section called `Lock Info` and a key of `ID`. Cop
 
 From your configured terminal run the following:
 
-```aws-vault exec identity -- terraform force-unlock ${LOCK_ID}```
+`aws-vault exec identity -- terraform force-unlock ${LOCK_ID}`
 
 Replacing the `${LOCK_ID}` with the details from the above step.
 
 The command will then ask you to confirm by typing `yes` and when complete will output a message:
 
-```Terraform state has been successfully unlocked```
+`Terraform state has been successfully unlocked`
 
 ### Step-by-step instructions for unblocking builds
 
@@ -112,7 +112,7 @@ Do you really want to force-unlock?
   Enter a value: yes
 ```
 
-When prompted to "Enter a value", type `yes` and press *Return*.
+When prompted to "Enter a value", type `yes` and press _Return_.
 
 If this is successful, you should see:
 
@@ -122,6 +122,19 @@ Terraform state has been successfully unlocked!
 The state has been unlocked, and Terraform commands should now be able to
 obtain a new lock on the remote state.
 ```
+
+#### Preproduction state lock
+
+The state lock for Preproduction can be removed via your local opg-lpa checkout as follows:
+
+1.  Make sure there are no running builds in the merge queue; if there are, wait for them to fail or finish, or cancel them.
+2.  `cd terraform/region`
+3.  Go into the `.envrc `file and select preproduction for your workspace. Save the file before you complete the step below.
+4.  Your workspace should automatically change but if it doesnt, type `tf workspace select preproduction` to do this manually.
+5.  Once you're in the preproduction workspace, enter `direnv allow`
+6.  Get the lock ID from the error message in CircleCI; in the above log example, it is `ef61c6bd-4030-3098-25d3-28f971e18376`
+7.  Select `aws-vault exec identity -- terraform force-unlock ef61c6bd-4030-3098-25d3-28f971e18376`; this downloads plugins/dependencies needed to run terraform and unlocks the state lock.
+8.  Go back into the `.envrc ` file and change the workspace back to development.
 
 #### Environment state lock
 
