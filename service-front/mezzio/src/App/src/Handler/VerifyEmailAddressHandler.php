@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails;
 use Laminas\Diactoros\Response\RedirectResponse;
 use App\View\Twig\FlashMessenger;
+use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -17,7 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class VerifyEmailAddressHandler implements RequestHandlerInterface
 {
     public function __construct(
-        private readonly UserService $userService,
+        private readonly UserDetails $userService,
     ) {
     }
 

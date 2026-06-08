@@ -157,6 +157,41 @@ return [
                 $c->get(DateService::class),
             ),
             Handler\PingHandlerElb::class => static fn() => new Handler\PingHandlerElb(),
+            Handler\DeletedAccountHandler::class => static fn(ContainerInterface $c) => new Handler\DeletedAccountHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
+            Handler\VerifyEmailAddressHandler::class => static fn(ContainerInterface $c) => new Handler\VerifyEmailAddressHandler(
+                $c->get(UserDetails::class),
+            ),
+            Handler\SessionKeepAliveHandler::class => static fn() => new Handler\SessionKeepAliveHandler(),
+            Handler\SessionSetExpiryHandler::class => static fn(ContainerInterface $c) => new Handler\SessionSetExpiryHandler(
+                $c->get(AuthenticationService::class),
+            ),
+            Handler\ChangeEmailAddressHandler::class => static fn(ContainerInterface $c) => new Handler\ChangeEmailAddressHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(AuthenticationService::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\DeleteAccountHandler::class => static fn(ContainerInterface $c) => new Handler\DeleteAccountHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(AuthenticationService::class),
+            ),
+            Handler\DeleteAccountConfirmHandler::class => static fn(ContainerInterface $c) => new Handler\DeleteAccountConfirmHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(AuthenticationService::class),
+                $c->get(UserDetails::class),
+            ),
+            Handler\PostcodeHandler::class => static fn(ContainerInterface $c) => new Handler\PostcodeHandler(
+                $c->get(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class),
+                $c->get(LoggerInterface::class),
+            ),
+            Handler\StatusesHandler::class => static fn(ContainerInterface $c) => new Handler\StatusesHandler(
+                $c->get(LpaApplicationService::class),
+            ),
+            Handler\TermsChangedHandler::class => static fn(ContainerInterface $c) => new Handler\TermsChangedHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+            ),
 
             // Services
             LpaApplicationService::class => LpaApplicationServiceFactory::class,
@@ -254,8 +289,6 @@ return [
                 $c->get(UserDetails::class),
             ),
 
-            // Services
-            LpaApplicationService::class => LpaApplicationServiceFactory::class,
             UserDetails::class => UserDetailsFactory::class,
 
             // Middleware
@@ -334,8 +367,10 @@ return [
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],
-        'logging' => [
+    ],
+
+    'logging' => [
         'serviceName' => 'opg-lpa/front',
         'minLevel'    => Level::fromName('DEBUG'),
-        ],
-    ];
+    ],
+];
