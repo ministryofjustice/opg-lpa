@@ -3,11 +3,15 @@
 declare(strict_types=1);
 
 use App\Handler\AccessibilityHandler;
+use App\Handler\ChangeEmailAddressHandler;
 use App\Handler\ContactHandler;
 use App\Handler\CookiesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\ChangePasswordHandler;
 use App\Handler\DashboardHandler;
+use App\Handler\DeleteAccountConfirmHandler;
+use App\Handler\DeleteAccountHandler;
+use App\Handler\DeletedAccountHandler;
 use App\Handler\EnableCookieHandler;
 use App\Handler\FeedbackHandler;
 use App\Handler\FeedbackThanksHandler;
@@ -18,9 +22,15 @@ use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\ConfirmRegistrationHandler;
 use App\Handler\ForgotPasswordHandler;
+use App\Handler\PostcodeHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
 use App\Handler\ResetPasswordHandler;
+use App\Handler\SessionKeepAliveHandler;
+use App\Handler\SessionSetExpiryHandler;
+use App\Handler\StatusesHandler;
+use App\Handler\TermsChangedHandler;
+use App\Handler\VerifyEmailAddressHandler;
 use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DonorIndexHandler;
 use App\Handler\LpaTypeHandler;
@@ -77,22 +87,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         '/forgot-password/reset/{token:[a-zA-Z0-9]+}',
         ResetPasswordHandler::class,
         ['GET', 'POST'],
-        'lpa/form-type',
-    );
-    $app->route(
-        '/lpa/{lpa-id:\d+}/donor',
-        $factory->pipeline(LpaLoaderMiddleware::class, DonorIndexHandler::class),
-        ['GET'],
-        'lpa/donor',
-    );
+        'forgot-password/callback',
+    )->setOptions(['unauthenticated_route' => true]);
 
     // Feedback
-    $app->route(
-        '/send-feedback',
-        $factory->pipeline(CsrfValidationMiddleware::class, FeedbackHandler::class),
-        ['GET', 'POST'],
-        'send-feedback',
-    )->setOptions(['unauthenticated_route' => true]);
+    $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
 
@@ -113,9 +113,14 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/pingdom', PingHandlerPingdom::class, 'ping/pingdom')
         ->setOptions(['unauthenticated_route' => true]);
-        'forgot-password/callback',
-    )->setOptions(['unauthenticated_route' => true]);
 
+    // Unauthenticated routes
+    $app->get('/deleted', DeletedAccountHandler::class, 'deleted')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/user/change-email-address/verify/{token:[a-zA-Z0-9]+}', VerifyEmailAddressHandler::class, 'user/change-email-address/verify')
+        ->setOptions(['unauthenticated_route' => true]);
+
+    // Authenticated routes
     $app->get('/user/dashboard', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard');
     $app->get('/user/dashboard/page/{page:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard/pagination');
     $app->route('/user/dashboard/create[/{lpa-id:\d+}]', $factory->pipeline(LpaLoaderMiddleware::class, CreateLpaHandler::class), ['GET', 'POST'], 'user/dashboard/create-lpa');
@@ -123,6 +128,15 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['allowIncompleteUser' => true]);
 
     $app->route('/user/change-password', ChangePasswordHandler::class, ['GET', 'POST'], 'user/change-password');
+    $app->route('/user/change-email-address', ChangeEmailAddressHandler::class, ['GET', 'POST'], 'user/change-email-address');
+    $app->route('/user/delete', DeleteAccountHandler::class, ['GET', 'POST'], 'user/delete');
+    $app->route('/user/delete/confirm', DeleteAccountConfirmHandler::class, ['GET', 'POST'], 'user/delete-confirm');
+    $app->route('/user/dashboard/new-terms', TermsChangedHandler::class, ['GET', 'POST'], 'user/dashboard/terms-changed');
+    $app->get('/user/dashboard/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'user/dashboard/statuses');
+
+    $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive');
+    $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry');
+    $app->get('/address-lookup', PostcodeHandler::class, 'postcode');
 
     $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
     $app->route('/lpa/{lpa-id:\d+}/type', $factory->pipeline(LpaLoaderMiddleware::class, TypeHandler::class), ['GET', 'POST'], 'lpa/form-type');
