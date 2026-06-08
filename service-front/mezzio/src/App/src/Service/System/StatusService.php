@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service\System;
 
 use Application\Model\Service\AddressLookup\OrdnanceSurvey;
-use Application\Model\Service\ApiClient\Client as ApiClient;
+use App\Service\ApiClient\Client as ApiClient;
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
 use Application\Model\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;

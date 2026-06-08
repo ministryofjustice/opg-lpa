@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Form\Lpa\AttorneyForm;
-use Application\Form\Lpa\TrustCorporationForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
+use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -35,7 +33,7 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
     ) {
     }
@@ -45,7 +43,7 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        /** @var \Application\Model\FormFlowChecker $flowChecker */
+        /** @var \App\Model\FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
@@ -63,7 +61,7 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
         $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
 
         if ($attorney instanceof Human) {
-            /** @var AttorneyForm $form */
+            /** @var \Application\Form\Lpa\AttorneyForm $form */
             $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
             $form->setActorData(
                 'replacement attorney',
@@ -71,7 +69,7 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
             );
             $template = 'application/authenticated/lpa/replacement-attorney/person-form.twig';
         } else {
-            /** @var TrustCorporationForm $form */
+            /** @var \Application\Form\Lpa\TrustCorporationForm $form */
             $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
             $template = 'application/authenticated/lpa/replacement-attorney/trust-form.twig';
         }

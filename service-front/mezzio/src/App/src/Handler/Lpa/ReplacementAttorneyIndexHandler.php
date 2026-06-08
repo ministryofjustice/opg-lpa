@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,7 +26,7 @@ class ReplacementAttorneyIndexHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly Metadata $metadata,
     ) {
     }

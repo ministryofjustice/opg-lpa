@@ -6,8 +6,8 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\CompleteViewParamsHelper;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Service\CompleteViewParamsHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;

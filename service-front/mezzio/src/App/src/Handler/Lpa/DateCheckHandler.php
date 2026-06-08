@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
-use Application\Model\Service\Signatures\DateCheck;
-use Application\Service\DateCheckViewModelHelper;
+use App\Service\DateCheckViewModelHelper;
+use App\Service\Signatures\DateCheck;
+use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -26,7 +26,7 @@ class DateCheckHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
