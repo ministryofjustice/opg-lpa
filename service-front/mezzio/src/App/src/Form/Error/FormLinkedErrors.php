@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Form\Error;
 
+use Laminas\Form\Element\Radio;
 use Laminas\Form\Form;
 
 class FormLinkedErrors
@@ -13,15 +14,31 @@ class FormLinkedErrors
         $out = [];
 
         foreach ($form->getMessages() as $field => $errors) {
+            $anchorId = (string) $field;
+
+            if ($form->has((string) $field)) {
+                $element = $form->get((string) $field);
+                if ($element instanceof Radio) {
+                    $valueOptions = $element->getValueOptions();
+                    if (!empty($valueOptions)) {
+                        $firstOption = reset($valueOptions);
+                        $firstValue  = is_array($firstOption)
+                            ? ($firstOption['value'] ?? (string) key($valueOptions))
+                            : (string) key($valueOptions);
+                        $anchorId = $field . '-' . $firstValue;
+                    }
+                }
+            }
+
             foreach ((array) $errors as $error) {
                 if (is_array($error)) {
                     foreach ($error as $subError) {
-                        $this->pushIfString($out, (string) $field, $subError);
+                        $this->pushIfString($out, $anchorId, $subError);
                     }
                     continue;
                 }
 
-                $this->pushIfString($out, (string) $field, $error);
+                $this->pushIfString($out, $anchorId, $error);
             }
         }
 

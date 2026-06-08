@@ -6,8 +6,8 @@ namespace App\Handler\Lpa\CertificateProvider;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
+use Mezzio\Helper\UrlHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Template\TemplateRendererInterface;
@@ -22,7 +22,7 @@ class CertificateProviderConfirmDeleteHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
