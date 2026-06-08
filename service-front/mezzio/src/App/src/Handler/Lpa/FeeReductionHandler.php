@@ -10,7 +10,7 @@ use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\View\Helper\Traits\MoneyFormatterTrait;
+use App\View\Helper\Traits\MoneyFormatterTrait;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -199,7 +199,7 @@ class FeeReductionHandler implements RequestHandlerInterface
      * @return array<string, Element>
      */
     private function buildReductionOptions(
-        \Application\Form\Lpa\FeeReductionForm $form,
+        \Laminas\Form\FormInterface $form,
         bool $isRepeatApplication,
     ): array {
         $reduction = $form->get('reductionOptions');

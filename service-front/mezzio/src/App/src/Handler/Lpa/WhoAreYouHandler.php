@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Form\Lpa\WhoAreYouForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
@@ -69,7 +68,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
             return new HtmlResponse($html);
         }
 
-        /** @var WhoAreYouForm $form */
+        /** @var \Application\Form\Lpa\WhoAreYouForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\WhoAreYouForm');
         $form->setAttribute(
             'action',

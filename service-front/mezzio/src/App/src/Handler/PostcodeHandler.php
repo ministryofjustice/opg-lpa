@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use Application\Model\Service\AddressLookup\OrdnanceSurvey;
+use App\Service\AddressLookup\OrdnanceSurvey;
 use Laminas\Diactoros\Response\JsonResponse;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
