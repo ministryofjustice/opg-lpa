@@ -2,8 +2,8 @@
 // PANELS
 
 .panel-cta {
-    padding: $gutter $gutter-half;
-    background-color: $panel-colour;
+    padding: govuk-spacing(6) govuk-spacing(3);
+    background-color: #dee0e2;
     text-align: center;
     margin-bottom: 20px;
 
@@ -22,8 +22,8 @@
 
 .panel-actions {
     .js-enabled & {
-        padding: $gutter-half;
-        border-bottom: 1px solid $border-colour;
-        background-color: $grey-4;
+        padding: govuk-spacing(3);
+        border-bottom: 1px solid $govuk-border-colour;
+        background-color: #f8f8f8;
     }
 }
