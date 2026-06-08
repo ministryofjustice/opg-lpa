@@ -7,12 +7,14 @@ namespace App\Handler\Lpa\Traits;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Communication;
-use Application\Helper\MvcUrlHelper;
+use App\Service\Lpa\Communication;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use Mezzio\Helper\UrlHelper;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -21,7 +23,7 @@ trait CheckoutTrait
 {
     private LpaApplicationService $lpaApplicationService;
     private Communication $communicationService;
-    private MvcUrlHelper $urlHelper;
+    private UrlHelper $urlHelper;
 
     private function isLpaComplete(Lpa $lpa, ServerRequestInterface $request): bool
     {
@@ -47,8 +49,13 @@ trait CheckoutTrait
         );
     }
 
-    private function finishCheckout(Lpa $lpa): ResponseInterface
+    private function finishCheckout(Lpa $lpa, ServerRequestInterface $request): ResponseInterface
     {
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+        if ($session instanceof SessionInterface) {
+            $this->communicationService->setSession($session);
+        }
+
         $this->lpaApplicationService->lockLpa($lpa);
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 

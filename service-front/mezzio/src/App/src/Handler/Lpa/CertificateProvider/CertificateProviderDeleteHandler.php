@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Handler\Lpa\CertificateProvider;
 
 use App\Handler\Traits\CertificateProviderHandlerTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
+use Mezzio\Helper\UrlHelper;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Http\Message\ResponseInterface;
@@ -21,7 +21,7 @@ class CertificateProviderDeleteHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 

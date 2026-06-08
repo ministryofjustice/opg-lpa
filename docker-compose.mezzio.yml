@@ -172,6 +172,7 @@ services:
       - ./service-front/mezzio/test:/app/test
       - ./service-front/mezzio/phpunit.xml.dist:/app/phpunit.xml.dist
       - ./service-front/module:/service-front/module
+      - ./service-front/content:/app/content
       - ./shared:/shared
     depends_on:
       api-app:
