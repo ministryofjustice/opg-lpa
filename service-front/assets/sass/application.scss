@@ -6,6 +6,11 @@
 // Settings
 @import 'settings/variables';
 
+// GOVUK Frontend — loaded via @import so its helpers (govuk-font, govuk-colour,
+// govuk-spacing, govuk-media-query) are available in the global scope for
+// @import-ed pattern partials.
+$govuk-assets-path: "/assets/v2/";
+@import "../../node_modules/govuk-frontend/dist/govuk/index";
 
 // Extensions
 @import 'extensions/elements/elements-typography';
