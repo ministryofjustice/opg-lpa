@@ -8,8 +8,8 @@
 
 {% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
-<div class="grid-row">
-    <div class="column-two-thirds">
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
         <div class="govuk-body">
             <p class="govuk-body-l">On this page you'll find all the LPAs that you've made. As well as making a new LPA from scratch, you can:</p>
             <ul class="govuk-list govuk-list--bullet">
@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="column-one-third">
+    <div class="govuk-grid-column-one-third">
         <div class="panel-cta tablet-and-up">
             <div class="panel-heading govuk-heading-m">Make another LPA</div>
             <div class="panel-body">
@@ -43,8 +43,8 @@
 {% else %}
 {# Over 6 LPAs and search is presented #}
 <div class="dashboard-search">
-    <div class="grid-row">
-        <div class="column-one-half tablet-and-up">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-one-half tablet-and-up">
         {% if isSearch %}
             <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
             <p class="flush--bottom">
@@ -63,7 +63,7 @@
             {% endif %}
         {% endif %}
         </div>
-        <div class="column-one-half">
+        <div class="govuk-grid-column-one-half">
             <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
                 <fieldset>
                     <legend class="govuk-visually-hidden">Search for LPAs</legend>
@@ -73,7 +73,7 @@
                 </fieldset>
             </form>
         </div>
-        <div class="column-one-half mobile">
+        <div class="govuk-grid-column-one-half mobile">
         {# This is only displayed on mobile #}
             {% if isSearch %}
                 <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
