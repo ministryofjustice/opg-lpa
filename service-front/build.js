@@ -17,7 +17,6 @@ const APPLICATION_JS_FILES = [
   'node_modules/handlebars/dist/handlebars.js',
   'node_modules/lodash/lodash.js',
   'node_modules/urijs/src/URI.min.js',
-  'node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js',
 
   // OPG Scripts
   'assets/js/opg/jquery-plugin-opg-spinner.js',
