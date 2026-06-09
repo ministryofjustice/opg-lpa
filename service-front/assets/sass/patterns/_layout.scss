@@ -1,6 +1,25 @@
 // =======================================================
 // LAYOUT
 
+// Width constraint for the main content element.
+// Previously applied via govuk-elements %site-width-container on #content.
+// Mirrors the govuk-frontend .govuk-width-container behaviour.
+// scss-lint:disable IdSelector
+#content {
+    max-width: $govuk-page-width;
+    margin: 0 govuk-spacing(3); // 15px each side on mobile
+
+    @include govuk-media-query($from: tablet) {
+        margin: 0 govuk-spacing(6); // 30px each side on tablet
+    }
+
+    @include govuk-media-query($from: desktop) {
+        margin: 0 auto;
+    }
+
+    outline: none;
+}
+
 // General layout
 .content-body {
     @media (min-width: 641px) {
