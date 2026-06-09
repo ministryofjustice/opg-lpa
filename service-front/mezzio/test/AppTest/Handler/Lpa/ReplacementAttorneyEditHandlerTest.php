@@ -132,7 +132,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
     public function testGetHumanAttorneyRendersPersonForm(): void
     {
         $lpa = $this->createLpa();
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $this->formElementManager->method('get')->willReturn($form);
         $form->expects($this->once())->method('bind');
 
@@ -152,7 +152,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
         $idx = 0;
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $this->formElementManager->method('get')->willReturn($form);
 
         $this->actorReuseDetailsService->expects($this->once())
@@ -170,7 +170,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
         $lpa = $this->createLpa(true);
         $trustIdx = count($lpa->document->replacementAttorneys) - 1;
 
-        $form = $this->createMock(\Application\Form\Lpa\TrustCorporationForm::class);
+        $form = $this->createMock(\App\Form\Lpa\TrustCorporationForm::class);
         $this->formElementManager->method('get')->willReturn($form);
         $form->expects($this->once())->method('bind');
 
@@ -185,7 +185,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
 
     public function testGetPopupAddsIsPopupParam(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $this->formElementManager->method('get')->willReturn($form);
 
         $this->renderer->expects($this->once())->method('render')
@@ -199,7 +199,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
 
     public function testPostInvalidRendersForm(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $form->method('isValid')->willReturn(false);
         $this->formElementManager->method('get')->willReturn($form);
 
@@ -212,7 +212,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
 
     public function testPostValidThrowsExceptionWhenApiCallFails(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn($this->postDataHuman);
         $this->formElementManager->method('get')->willReturn($form);
@@ -226,7 +226,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
 
     public function testPostValidRedirectsOnSuccess(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn($this->postDataHuman);
         $this->formElementManager->method('get')->willReturn($form);
@@ -239,7 +239,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
 
     public function testPostValidReturnsJsonForPopup(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn($this->postDataHuman);
         $this->formElementManager->method('get')->willReturn($form);
@@ -256,7 +256,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
         $lpa = $this->createLpa(true);
         $trustIdx = count($lpa->document->replacementAttorneys) - 1;
 
-        $form = $this->createMock(\Application\Form\Lpa\TrustCorporationForm::class);
+        $form = $this->createMock(\App\Form\Lpa\TrustCorporationForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn($this->postDataTrust);
         $this->formElementManager->method('get')->willReturn($form);

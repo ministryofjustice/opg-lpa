@@ -6,6 +6,7 @@ namespace App\Handler\Lpa\PrimaryAttorney;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
+use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Applicant as ApplicantService;
@@ -45,6 +46,8 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -58,6 +61,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
         $templateParams = [
             'isPopup' => $isPopup,
+            'csrfToken' => $csrfToken,
         ];
 
         /** @var User|null $userDetails */
@@ -80,11 +84,9 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
                         'lpa-id' => $lpa->id,
                     ], [
-                        'query' => [
-                            'calling-url' => $request->getUri()->getPath(),
-                            'include-trusts' => true,
-                            'actor-name' => 'Attorney',
-                        ],
+                        'calling-url' => $request->getUri()->getPath(),
+                        'include-trusts' => true,
+                        'actor-name' => 'Attorney',
                     ]);
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -92,7 +94,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])

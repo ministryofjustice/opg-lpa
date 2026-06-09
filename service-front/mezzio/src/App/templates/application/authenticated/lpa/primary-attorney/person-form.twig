@@ -174,7 +174,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink('Primary attorney - Use my details') }}
+    {{ macros.displayUseMyDetailsLink('Primary attorney - Use my details', csrfToken) }}
 {% endif %}
 
 {# Add switch attorney type link #}

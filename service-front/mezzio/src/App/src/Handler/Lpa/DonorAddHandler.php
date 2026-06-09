@@ -75,11 +75,11 @@ class DonorAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate(
                         'lpa/reuse-details',
                         ['lpa-id' => $lpa->id],
-                        ['query' => [
+                        [
                             'calling-url'    => $request->getUri()->getPath(),
                             'include-trusts' => false,
                             'actor-name'     => 'Donor',
-                        ]]
+                        ]
                     );
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -104,8 +104,8 @@ class DonorAddHandler implements RequestHandlerInterface
             );
         }
 
-        /** @var \Application\Form\Lpa\DonorForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\DonorForm');
+        /** @var \\App\\Form\\Lpa\\DonorForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/add', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));
 

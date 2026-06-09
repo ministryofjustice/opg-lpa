@@ -32,7 +32,7 @@ class DateCheckHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\DateCheckForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\DateCheckForm::class);
 
         $this->formElementManager
             ->method('get')

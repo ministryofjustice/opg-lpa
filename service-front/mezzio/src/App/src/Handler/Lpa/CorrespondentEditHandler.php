@@ -74,11 +74,11 @@ class CorrespondentEditHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate(
                         'lpa/reuse-details',
                         ['lpa-id' => $lpa->id],
-                        ['query' => [
+                        [
                             'calling-url'    => $request->getUri()->getPath(),
                             'include-trusts' => false,
                             'actor-name'     => 'Correspondent',
-                        ]]
+                        ]
                     );
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -86,8 +86,8 @@ class CorrespondentEditHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\CorrespondentForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\CorrespondentForm');
+        /** @var \\App\\Form\\Lpa\\CorrespondentForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\CorrespondentForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/correspondent/edit', ['lpa-id' => $lpa->id])

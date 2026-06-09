@@ -116,7 +116,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink('Certificate provider - Use my details') }}
+    {{ macros.displayUseMyDetailsLink('Certificate provider - Use my details', csrfToken) }}
 {% endif %}
 
 {# begin form #}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Service\Lpa;
 
-use Application\Model\Service\Lpa\ContinuationSheets;
+use App\Service\Lpa\ContinuationSheets;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,6 @@ final class ContinuationSheetsTest extends TestCase
 
     public function setUp(): void
     {
-
         $this->service = new ContinuationSheets();
     }
 
@@ -28,9 +27,9 @@ final class ContinuationSheetsTest extends TestCase
                     ['type' => 'human'],
                     ['type' => 'human'],
                     ['type' => 'human'],
-                    ['type' => 'human']
-                ]
-            ]
+                    ['type' => 'human'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
@@ -43,8 +42,8 @@ final class ContinuationSheetsTest extends TestCase
     {
         $mockLpa = new Lpa([
             'document' => [
-                'peopleToNotify' => [[], [], [], [], []]
-            ]
+                'peopleToNotify' => [[], [], [], [], []],
+            ],
         ]);
 
         $this->assertEquals(
@@ -62,8 +61,8 @@ final class ContinuationSheetsTest extends TestCase
                     exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
                     dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                     Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                    mollit anim id est laborum.'
-            ]
+                    mollit anim id est laborum.',
+            ],
         ]);
 
         $this->assertEquals(['LONG_INSTRUCTIONS_OR_PREFERENCES'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -73,10 +72,8 @@ final class ContinuationSheetsTest extends TestCase
     {
         $mockLpa = new Lpa([
             'document' => [
-                'donor' => [
-                    'canSign' => false
-                ]
-            ]
+                'donor' => ['canSign' => false],
+            ],
         ]);
 
         $this->assertEquals(['CANT_SIGN'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -87,9 +84,9 @@ final class ContinuationSheetsTest extends TestCase
         $mockLpa = new Lpa([
             'document' => [
                 'primaryAttorneys' => [
-                    ['type' => 'corporation', 'number' => '123']
-                ]
-            ]
+                    ['type' => 'corporation', 'number' => '123'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(['HAS_TRUST_CORP'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -117,15 +114,15 @@ final class ContinuationSheetsTest extends TestCase
                 ],
                 'primaryAttorneyDecisions' => [
                     'how' => AbstractDecisions::LPA_DECISION_HOW_DEPENDS,
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $expectedResult = [
             'LONG_INSTRUCTIONS_OR_PREFERENCES',
             'REPLACEMENT_ATTORNEY_OVERFLOW',
             'ANY_PEOPLE_OVERFLOW',
-            'HAS_ATTORNEY_DECISIONS'
+            'HAS_ATTORNEY_DECISIONS',
         ];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
     }
