@@ -61,16 +61,16 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
         $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
 
         if ($attorney instanceof Human) {
-            /** @var \Application\Form\Lpa\AttorneyForm $form */
-            $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
+            /** @var \\App\\Form\\Lpa\\AttorneyForm $form */
+            $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
             $form->setActorData(
                 'replacement attorney',
                 $this->actorReuseDetailsService->getActorsList($lpa, false, (int) $attorneyIdx)
             );
             $template = 'application/authenticated/lpa/replacement-attorney/person-form.twig';
         } else {
-            /** @var \Application\Form\Lpa\TrustCorporationForm $form */
-            $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
+            /** @var \\App\\Form\\Lpa\\TrustCorporationForm $form */
+            $form = $this->formElementManager->get('App\Form\Lpa\TrustCorporationForm');
             $template = 'application/authenticated/lpa/replacement-attorney/trust-form.twig';
         }
 

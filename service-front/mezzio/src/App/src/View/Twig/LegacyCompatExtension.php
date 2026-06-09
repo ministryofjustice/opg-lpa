@@ -76,6 +76,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('formText', [$this, 'formInput'], ['is_safe' => ['html']]),
             new TwigFunction('formCheckbox', [$this, 'formCheckbox'], ['is_safe' => ['html']]),
             new TwigFunction('formRadio', [$this, 'formRadio'], ['is_safe' => ['html']]),
+            new TwigFunction('formRadioOption', [$this, 'formRadioOption'], ['is_safe' => ['html']]),
             // Ported from AppFunctionsExtension — renders via layout/partials/form-element-errors.twig
             new TwigFunction('formElementErrorsV2', [$this, 'formElementErrorsV2'], ['is_safe' => ['html']]),
             new TwigFunction('formErrorTextExchange', [$this, 'formErrorTextExchange']),
@@ -346,12 +347,22 @@ class LegacyCompatExtension extends AbstractExtension
 
     /**
      * Renders a checkbox input element.
+     *
+     * For MultiCheckbox elements, renders one wrapped checkbox item per value
+     * option (matching the legacy FormMultiCheckbox view helper behaviour).
+     * For plain Checkbox elements, renders a single input.
      */
     public function formCheckbox(ElementInterface $element): string
     {
-        // Use the checked value ('1' by default) as the submitted value, and
-        // determine checked state via isChecked() so the value attribute is
-        // always correct regardless of current element state.
+        // MultiCheckbox — render one wrapped item per value option.
+        // Radio extends MultiCheckbox, but Radio is handled by formRadio() before
+        // this method is ever called (see formElement()), so we can safely
+        // treat any MultiCheckbox here as a real multi-checkbox.
+        if ($element instanceof MultiCheckbox) {
+            return $this->renderMultiCheckbox($element);
+        }
+
+        // Plain Checkbox — single input.
         if ($element instanceof Checkbox) {
             $value   = $element->getCheckedValue();
             $checked = $element->isChecked();
@@ -369,6 +380,86 @@ class LegacyCompatExtension extends AbstractExtension
         $attrString = $this->buildAttributeString($attrs);
 
         return sprintf('<input %s%s>', $attrString, $checked ? ' checked' : '');
+    }
+
+    /**
+     * Renders all options of a MultiCheckbox element as individual checkbox items.
+     * Each option is wrapped in a <div class="govuk-checkboxes__item"> with a <label>.
+     *
+     * The legacy Laminas FormMultiCheckbox view helper set `$inputAttributes['checked']`
+     * as a boolean value inside the attributes array and passed it to
+     * createAttributesString().  That meant `value` and `checked` were always the last
+     * two attributes in the rendered string, producing `value="X" checked`.
+     *
+     * We replicate that ordering here by explicitly appending `value` and `checked` last
+     * to the $attrs array before handing it to buildAttributeString().  `checked = false`
+     * is skipped by buildAttributeString(), so unchecked options emit no `checked` token.
+     */
+    private function renderMultiCheckbox(MultiCheckbox $element): string
+    {
+        $name           = (string) ($element->getName() ?? '');
+        $inputName      = $name . '[]';
+        $valueOptions   = $element->getValueOptions();
+        $selectedValues = array_map('strval', (array) ($element->getValue() ?? []));
+        $html           = '';
+
+        foreach ($valueOptions as $optKey => $optSpec) {
+            if (is_scalar($optSpec)) {
+                $optSpec = ['label' => (string) $optSpec, 'value' => $optKey];
+            }
+
+            $optValue   = (string) ($optSpec['value'] ?? $optKey);
+            $label      = (string) ($optSpec['label'] ?? $optValue);
+            $extraAttrs = $optSpec['attributes'] ?? [];
+            $labelAttrs = $optSpec['label_attributes'] ?? [];
+
+            // Strip internal structure hints that are not valid HTML attributes.
+            unset($extraAttrs['div-attributes']);
+
+            $inputId = (string) ($extraAttrs['id'] ?? ($name . '-' . $optValue));
+            $checked = in_array($optValue, $selectedValues, true);
+
+            // Build core attributes first.  value and checked are appended last so
+            // buildAttributeString() produces `... value="X" checked` — matching the
+            // legacy FormMultiCheckbox helper and keeping `value` immediately adjacent
+            // to `checked` in the output.
+            $attrs = [
+                'id'    => $inputId,
+                'type'  => 'checkbox',
+                'name'  => $inputName,
+                'class' => $extraAttrs['class'] ?? 'govuk-checkboxes__input',
+            ];
+
+            // Carry through any extra per-option attributes (excluding those we set).
+            foreach ($extraAttrs as $k => $v) {
+                if (!array_key_exists($k, $attrs)) {
+                    $attrs[$k] = $v;
+                }
+            }
+
+            // value and checked must be last — see docblock above.
+            $attrs['value']   = $optValue;
+            $attrs['checked'] = $checked; // false → skipped by buildAttributeString
+
+            $attrString = $this->buildAttributeString($attrs);
+            $labelFor   = htmlspecialchars($inputId, ENT_QUOTES);
+            $labelClass = htmlspecialchars($labelAttrs['class'] ?? 'govuk-label govuk-checkboxes__label', ENT_QUOTES);
+            $labelText  = htmlspecialchars((string) $label, ENT_QUOTES);
+
+            $html .= sprintf(
+                '<div class="govuk-checkboxes__item%s">'
+                . '<input %s>'
+                . '<label class="%s" for="%s">%s</label>'
+                . '</div>',
+                $checked ? ' selected' : '',
+                $attrString,
+                $labelClass,
+                $labelFor,
+                $labelText,
+            );
+        }
+
+        return $html;
     }
 
     /**
@@ -396,8 +487,8 @@ class LegacyCompatExtension extends AbstractExtension
 
             $optAttrs            = array_merge($baseAttrs, $optionAttributes);
             $optAttrs['id']      = $name . '-' . $optValue;
-            $optAttrs['value']   = (string) $optValue;
             $optAttrs['data-cy'] = $optAttrs['id'];
+            $optAttrs['value']   = (string) $optValue;
 
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';
@@ -415,6 +506,38 @@ class LegacyCompatExtension extends AbstractExtension
         }
 
         return $html;
+    }
+
+    /**
+     * Renders a single named option from a Radio element.
+     *
+     * Root-cause context
+     * ------------------
+     * The legacy FormRadio view helper exposed an outputOption(Radio $element, $option)
+     * method which templates called as formRadio().outputOption(element, 'key').
+     * In Twig, functions return values not objects, so that chained-call pattern is a
+     * SyntaxError.  This function replicates outputOption() faithfully: it clones the
+     * element, restricts its value options to the single requested key, then delegates
+     * to formRadio() — producing identical HTML to the legacy helper.
+     *
+     * @param ElementInterface $element   A Radio element with value_options
+     * @param string           $optionKey The key in value_options to render
+     */
+    public function formRadioOption(ElementInterface $element, string $optionKey): string
+    {
+        $valueOptions = method_exists($element, 'getValueOptions') ? $element->getValueOptions() : [];
+
+        if (!isset($valueOptions[$optionKey])) {
+            return '';
+        }
+
+        // Clone to avoid mutating the original element (matches outputOption's clone).
+        $single = clone $element;
+        if (method_exists($single, 'setValueOptions')) {
+            $single->setValueOptions([$optionKey => $valueOptions[$optionKey]]);
+        }
+
+        return $this->formRadio($single);
     }
 
     // -------------------------------------------------------------------------

@@ -28,7 +28,7 @@ class LifeSustainingHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\LifeSustainingForm&MockObject */
+    /** @var \App\Form\Lpa\LifeSustainingForm&MockObject */
     private $form;
     private LifeSustainingHandler $handler;
 
@@ -38,7 +38,7 @@ class LifeSustainingHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\LifeSustainingForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\LifeSustainingForm::class);
 
         $this->formElementManager
             ->method('get')

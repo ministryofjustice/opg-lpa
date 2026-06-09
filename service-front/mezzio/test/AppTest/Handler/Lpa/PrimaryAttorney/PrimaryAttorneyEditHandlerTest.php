@@ -35,9 +35,9 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\AttorneyForm&MockObject */
+    /** @var \App\Form\Lpa\AttorneyForm&MockObject */
     private $attorneyForm;
-    /** @var \Application\Form\Lpa\TrustCorporationForm&MockObject */
+    /** @var \App\Form\Lpa\TrustCorporationForm&MockObject */
     private $trustForm;
     private PrimaryAttorneyEditHandler $handler;
 
@@ -47,12 +47,12 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->attorneyForm = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
-        $this->trustForm = $this->createMock(\Application\Form\Lpa\TrustCorporationForm::class);
+        $this->attorneyForm = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
+        $this->trustForm = $this->createMock(\App\Form\Lpa\TrustCorporationForm::class);
 
         $this->formElementManager->method('get')
             ->willReturnCallback(function (string $name) {
-                if ($name === 'Application\Form\Lpa\TrustCorporationForm') {
+                if ($name === 'App\Form\Lpa\TrustCorporationForm') {
                     return $this->trustForm;
                 }
                 return $this->attorneyForm;

@@ -75,12 +75,49 @@ use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 return [
+    'form_elements' => [
+        'invokables' => [
+            \App\Form\Lpa\AbstractLpaForm::class              => \App\Form\Lpa\AbstractLpaForm::class,
+            \App\Form\Lpa\AbstractActorForm::class            => \App\Form\Lpa\AbstractActorForm::class,
+            \App\Form\Lpa\AbstractMainFlowForm::class         => \App\Form\Lpa\AbstractMainFlowForm::class,
+            \App\Form\Lpa\BlankMainFlowForm::class            => \App\Form\Lpa\BlankMainFlowForm::class,
+            \App\Form\Lpa\AttorneyForm::class                 => \App\Form\Lpa\AttorneyForm::class,
+            \App\Form\Lpa\TrustCorporationForm::class         => \App\Form\Lpa\TrustCorporationForm::class,
+            \App\Form\Lpa\DonorForm::class                    => \App\Form\Lpa\DonorForm::class,
+            \App\Form\Lpa\CertificateProviderForm::class      => \App\Form\Lpa\CertificateProviderForm::class,
+            \App\Form\Lpa\PeopleToNotifyForm::class           => \App\Form\Lpa\PeopleToNotifyForm::class,
+            \App\Form\Lpa\CorrespondentForm::class            => \App\Form\Lpa\CorrespondentForm::class,
+            \App\Form\Lpa\CorrespondenceForm::class           => \App\Form\Lpa\CorrespondenceForm::class,
+            \App\Form\Lpa\TypeForm::class                     => \App\Form\Lpa\TypeForm::class,
+            \App\Form\Lpa\WhoAreYouForm::class                => \App\Form\Lpa\WhoAreYouForm::class,
+            \App\Form\Lpa\HowAttorneysMakeDecisionForm::class => \App\Form\Lpa\HowAttorneysMakeDecisionForm::class,
+            \App\Form\Lpa\WhenLpaStartsForm::class            => \App\Form\Lpa\WhenLpaStartsForm::class,
+            \App\Form\Lpa\FeeReductionForm::class             => \App\Form\Lpa\FeeReductionForm::class,
+            \App\Form\Lpa\RepeatApplicationForm::class        => \App\Form\Lpa\RepeatApplicationForm::class,
+            \App\Form\Lpa\ReuseDetailsForm::class             => \App\Form\Lpa\ReuseDetailsForm::class,
+            \App\Form\Lpa\InstructionsAndPreferencesForm::class => \App\Form\Lpa\InstructionsAndPreferencesForm::class,
+            \App\Form\Lpa\LifeSustainingForm::class           => \App\Form\Lpa\LifeSustainingForm::class,
+            \App\Form\Lpa\WhenReplacementAttorneyStepInForm::class => \App\Form\Lpa\WhenReplacementAttorneyStepInForm::class,
+            \App\Form\Lpa\ApplicantForm::class                => \App\Form\Lpa\ApplicantForm::class,
+            \App\Form\Lpa\DateCheckForm::class                => \App\Form\Lpa\DateCheckForm::class,
+            \App\Form\General\CookieConsentForm::class        => \App\Form\General\CookieConsentForm::class,
+            \App\Form\General\FeedbackForm::class             => \App\Form\General\FeedbackForm::class,
+            \App\Form\User\AboutYou::class                    => \App\Form\User\AboutYou::class,
+            \App\Form\Fieldset\Dob::class                     => \App\Form\Fieldset\Dob::class,
+            \App\Form\Fieldset\Correspondence::class          => \App\Form\Fieldset\Correspondence::class,
+        ],
+    ],
+
     'dependencies' => [
         'aliases' => [
             'Communication' => CommunicationService::class,
             'GovPayClient'  => \Alphagov\Pay\Client::class,
+            'EventManager'  => \Laminas\EventManager\EventManager::class,
         ],
-        'invokables' => [],
+        'invokables' => [
+            \Laminas\EventManager\EventManager::class => \Laminas\EventManager\EventManager::class,
+            \App\Middleware\RouteNameMiddleware::class => \App\Middleware\RouteNameMiddleware::class,
+        ],
         'factories' => [
             // Storage — registered as a factory (not invokable) to guarantee
             // the container returns the same shared instance to both
@@ -150,6 +187,12 @@ return [
                 $c->get(ReplacementAttorneyCleanupService::class),
             ),
             Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler(
+                $c->get(\Mezzio\Template\TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(LpaApplicationService::class),
+                $c->get(UrlHelper::class),
+            ),
+            Handler\Lpa\ApplicantHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\ApplicantHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(\Laminas\Form\FormElementManager::class),
                 $c->get(LpaApplicationService::class),
@@ -337,6 +380,10 @@ return [
                 new LpaAuthAdapter($c->get(ApiClient::class)),
                 $c->get(MezzioSessionStorage::class),
             ),
+            Handler\Lpa\IndexHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\IndexHandler(
+                $c->get(LpaMetadata::class),
+                $c->get(UrlHelper::class),
+            ),
             Handler\Lpa\DonorIndexHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\DonorIndexHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(UrlHelper::class),
@@ -493,6 +540,9 @@ return [
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),
             ),
+            Handler\Lpa\DeleteLpaHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\DeleteLpaHandler(
+                $c->get(LpaApplicationService::class),
+            ),
             Handler\GuidanceHandler::class => static fn(ContainerInterface $c) => new Handler\GuidanceHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(GuidanceService::class),
@@ -539,7 +589,7 @@ return [
                 $c->get(UserDetails::class),
             ),
             Handler\PostcodeHandler::class => static fn(ContainerInterface $c) => new Handler\PostcodeHandler(
-                $c->get(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class),
+                $c->get(OrdnanceSurveyService::class),
                 $c->get(LoggerInterface::class),
             ),
             Handler\StatusesHandler::class => static fn(ContainerInterface $c) => new Handler\StatusesHandler(
@@ -620,11 +670,13 @@ return [
                 return new FeedbackService(
                     $c->get(ApiClient::class),
                     $c->get(LoggerInterface::class),
-                    $c->has(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) ? $c->get(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) : null,
+                    $c->has(AppMailTransportInterface::class) ? $c->get(AppMailTransportInterface::class) : null,
                     $config['email']['sendFeedbackEmailTo'] ?? (getenv('OPG_LPA_FRONT_EMAIL_SENDTO') ?: ''),
                 );
             },
-            GuidanceService::class => static fn() => new GuidanceService(),
+            GuidanceService::class => static fn() => new GuidanceService(
+                dirname(__DIR__, 3) . '/content/guidance',
+            ),
             OrdnanceSurveyService::class => static function (ContainerInterface $c): OrdnanceSurveyService {
                 $config = $c->get('config');
                 return new OrdnanceSurveyService(
@@ -638,13 +690,20 @@ return [
             ),
             StatusService::class => static function (ContainerInterface $c): StatusService {
                 $config = $c->get('config');
+                $getOrNull = static function (string $service) use ($c): mixed {
+                    try {
+                        return $c->get($service);
+                    } catch (\Throwable) {
+                        return null;
+                    }
+                };
                 return new StatusService(
                     $c->get(ApiClient::class),
-                    $c->has(\Aws\DynamoDb\DynamoDbClient::class) ? $c->get(\Aws\DynamoDb\DynamoDbClient::class) : null,
-                    $c->has(\Laminas\Session\SaveHandler\SaveHandlerInterface::class) ? $c->get(\Laminas\Session\SaveHandler\SaveHandlerInterface::class) : null,
-                    $c->has(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) ? $c->get(\Application\Model\Service\Mail\Transport\MailTransportInterface::class) : null,
-                    $c->has(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class) ? $c->get(\Application\Model\Service\AddressLookup\OrdnanceSurvey::class) : null,
-                    $c->has(\Application\Model\Service\Redis\RedisClient::class) ? $c->get(\Application\Model\Service\Redis\RedisClient::class) : null,
+                    $getOrNull(\Aws\DynamoDb\DynamoDbClient::class),
+                    $getOrNull(\Laminas\Session\SaveHandler\SaveHandlerInterface::class),
+                    $getOrNull(AppMailTransportInterface::class),
+                    $getOrNull(OrdnanceSurveyService::class),
+                    $getOrNull(\App\Service\Redis\RedisClient::class),
                     $config,
                 );
             },
@@ -658,25 +717,25 @@ return [
                     'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
                 ]);
             },
-            \Application\Model\Service\Redis\RedisClient::class => static function (ContainerInterface $c): \Application\Model\Service\Redis\RedisClient {
+            \App\Service\Redis\RedisClient::class => static function (ContainerInterface $c): \App\Service\Redis\RedisClient {
                 $config = $c->get('config');
                 $redisUrl = $config['redis']['url'] ?? (getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: '');
                 $ttlMs = $config['redis']['ttlMs'] ?? (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000);
-                return new \Application\Model\Service\Redis\RedisClient($redisUrl, $ttlMs, new \Redis());
+                return new \App\Service\Redis\RedisClient($redisUrl, $ttlMs, new \Redis());
             },
             \Laminas\Session\SaveHandler\SaveHandlerInterface::class => static function (ContainerInterface $c): \Laminas\Session\SaveHandler\SaveHandlerInterface {
-                $redisClient = $c->get(\Application\Model\Service\Redis\RedisClient::class);
-                return new \Application\Model\Service\Session\FilteringSaveHandler($redisClient, [
+                $redisClient = $c->get(\App\Service\Redis\RedisClient::class);
+                return new \App\Service\Session\FilteringSaveHandler($redisClient, [
                     static fn() => empty($_SERVER['HTTP_X_SESSIONREADONLY']),
                 ]);
             },
-            \Application\Model\Service\Mail\Transport\MailTransportInterface::class => static function (ContainerInterface $c): \Application\Model\Service\Mail\Transport\MailTransportInterface {
+            AppMailTransportInterface::class => static function (ContainerInterface $c): AppMailTransportInterface {
                 $config = $c->get('config');
                 $notifyKey = $config['email']['notify']['key'] ?? (getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: '');
 
                 if (!$notifyKey) {
-                    return new class implements \Application\Model\Service\Mail\Transport\MailTransportInterface {
-                        public function send(\Application\Model\Service\Mail\MailParameters $mailParameters): void
+                    return new class implements AppMailTransportInterface {
+                        public function send(AppMailParameters $mailParameters): void
                         {
                         }
                         public function healthcheck(): array
@@ -690,7 +749,7 @@ return [
                     'apiKey' => $notifyKey,
                     'httpClient' => new \Http\Adapter\Guzzle7\Client(),
                 ]);
-                return new \Application\Model\Service\Mail\Transport\NotifyMailTransport($notifyClient);
+                return new AppNotifyMailTransport($notifyClient);
             },
             Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),

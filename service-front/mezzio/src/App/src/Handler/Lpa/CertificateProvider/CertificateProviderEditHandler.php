@@ -50,8 +50,8 @@ class CertificateProviderEditHandler implements RequestHandlerInterface
 
         $isPopup = $this->isXmlHttpRequest($request);
 
-        /** @var \Application\Form\Lpa\AbstractActorForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\CertificateProviderForm');
+        /** @var \\App\\Form\\Lpa\\AbstractActorForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\CertificateProviderForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/certificate-provider/edit', ['lpa-id' => $lpa->id])

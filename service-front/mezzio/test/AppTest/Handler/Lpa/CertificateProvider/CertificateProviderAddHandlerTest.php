@@ -106,9 +106,9 @@ class CertificateProviderAddHandlerTest extends TestCase
         return $request;
     }
 
-    private function createForm(): \Application\Form\Lpa\AbstractActorForm&MockObject
+    private function createForm(): \App\Form\Lpa\AbstractActorForm&MockObject
     {
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $form->method('setActorData')->willReturnSelf();
         return $form;

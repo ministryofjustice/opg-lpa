@@ -87,8 +87,8 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\TrustCorporationForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
+        /** @var \\App\\Form\\Lpa\\TrustCorporationForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\TrustCorporationForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/replacement-attorney/add-trust', ['lpa-id' => $lpa->id])

@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace App\Form\User;
 
 use App\Authentication\AuthenticationService;
-use Application\Form\AbstractCsrfForm;
+use App\Form\AbstractForm;
+use App\Form\Validator\EmailAddress as EmailAddressValidator;
 use Laminas\Authentication\Exception\InvalidArgumentException;
 use Laminas\Validator\Callback;
 use Laminas\Validator\Identical;
@@ -16,9 +17,9 @@ use Laminas\Validator\NotEmpty;
  * Uses App\Authentication\AuthenticationService instead of the MVC version.
  *
  * @template T
- * @template-extends AbstractCsrfForm<T>
+ * @template-extends AbstractForm<T>
  */
-class ChangeEmailAddress extends AbstractCsrfForm
+class ChangeEmailAddress extends AbstractForm
 {
     private ?AuthenticationService $authenticationService = null;
 
@@ -83,7 +84,7 @@ class ChangeEmailAddress extends AbstractCsrfForm
                     ],
                 ],
                 [
-                    'name' => 'Application\Form\Validator\EmailAddress',
+                    'name' => EmailAddressValidator::class,
                 ],
             ],
         ]);

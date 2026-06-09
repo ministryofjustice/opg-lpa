@@ -150,7 +150,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
             ['label' => 'Person 1', 'data' => []],
         ]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $this->formElementManager->method('get')->willReturn($form);
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->expects($this->once())->method('render')->willReturn('<html>form</html>');
@@ -169,7 +169,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
         ];
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn($reuseData);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->expects($this->once())->method('bind')->with(['name-first' => 'Test']);
         $this->formElementManager->method('get')->willReturn($form);
         $this->urlHelper->method('generate')->willReturn('/some-url');
@@ -188,7 +188,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'New', 'last' => 'Person'],
@@ -216,7 +216,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'New', 'last' => 'Person'],
@@ -240,7 +240,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'New', 'last' => 'Person'],
@@ -261,7 +261,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(false);
         $this->formElementManager->method('get')->willReturn($form);
         $this->urlHelper->method('generate')->willReturn('/some-url');
@@ -279,7 +279,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'New', 'last' => 'Person'],

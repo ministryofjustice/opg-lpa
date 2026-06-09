@@ -51,8 +51,8 @@ class FeeReductionHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\FeeReductionForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\FeeReductionForm', [
+        /** @var \\App\\Form\\Lpa\\FeeReductionForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\FeeReductionForm', [
             'lpa' => $lpa,
         ]);
 

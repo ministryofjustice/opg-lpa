@@ -7,6 +7,7 @@ namespace App\Handler\Lpa\CertificateProvider;
 use App\Handler\Traits\CertificateProviderHandlerTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
+use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\ActorReuseDetailsService;
@@ -45,6 +46,8 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -70,6 +73,7 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
 
         $templateParams = [
             'isPopup' => $isPopup,
+            'csrfToken' => $csrfToken,
         ];
 
         // If a certificate provider already exists, redirect to index
@@ -96,11 +100,9 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
                         'lpa-id' => $lpa->id,
                     ], [
-                        'query' => [
-                            'calling-url' => $request->getUri()->getPath(),
-                            'include-trusts' => false,
-                            'actor-name' => 'Certificate provider',
-                        ],
+                        'calling-url' => $request->getUri()->getPath(),
+                        'include-trusts' => false,
+                        'actor-name' => 'Certificate provider',
                     ]);
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -108,8 +110,8 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\AbstractActorForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\CertificateProviderForm');
+        /** @var \\App\\Form\\Lpa\\AbstractActorForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\CertificateProviderForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/certificate-provider/add', ['lpa-id' => $lpa->id])

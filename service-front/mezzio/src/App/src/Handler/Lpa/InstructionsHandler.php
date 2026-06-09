@@ -45,7 +45,7 @@ class InstructionsHandler implements RequestHandlerInterface
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         $form = $this->formElementManager->get(
-            'Application\Form\Lpa\InstructionsAndPreferencesForm',
+            'App\Form\Lpa\InstructionsAndPreferencesForm',
             ['lpa' => $lpa]
         );
 

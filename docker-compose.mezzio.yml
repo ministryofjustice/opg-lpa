@@ -71,6 +71,8 @@ services:
     build:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
+    ports:
+      - 7001:8080
     environment:
       APP_HOST: api-app
       APP_PORT: 9000

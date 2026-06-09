@@ -62,8 +62,8 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         $paymentResponse = $this->paymentClient->getPayment($lpa->payment->gatewayReference);
 
         if (!$paymentResponse->isSuccess()) {
-            /** @var \Application\Form\Lpa\BlankMainFlowForm $form */
-            $form = $this->formElementManager->get('Application\Form\Lpa\BlankMainFlowForm', [
+            /** @var \\App\\Form\\Lpa\\BlankMainFlowForm $form */
+            $form = $this->formElementManager->get('App\Form\Lpa\BlankMainFlowForm', [
                 'lpa' => $lpa,
             ]);
 
