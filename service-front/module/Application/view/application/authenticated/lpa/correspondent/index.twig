@@ -109,11 +109,11 @@
 
         <div class="text">
 
-            <p>The person below will be the ‘correspondent’. We’ll send them the registered LPA and contact them if we have any questions about the LPA application.</p>
+            <p class="govuk-body">The person below will be the ‘correspondent’. We’ll send them the registered LPA and contact them if we have any questions about the LPA application.</p>
 
-            <p>If you want someone else to be the correspondent, change the details below.</p>
+            <p class="govuk-body">If you want someone else to be the correspondent, change the details below.</p>
 
-            <p><a href="/guide#topic-correspondent" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the correspondent">Find out more about the role of the correspondent</a></p>
+            <p class="govuk-body"><a href="/guide#topic-correspondent" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the correspondent">Find out more about the role of the correspondent</a></p>
         </div>
     </div>
 
@@ -121,7 +121,7 @@
 
     <div class="person">
         <h3 class="person-name heading-small flush--ends">{{ correspondentName }}</h3>
-        <p class="person-address flush--ends">{{ correspondentAddress }}</p>
+        <p class="govuk-body person-address flush--ends">{{ correspondentAddress }}</p>
         <ul class="person-actions">
             {% if allowEditButton %}
                 <li class="action-item">
@@ -148,7 +148,7 @@
                 <legend class="visually-hidden">Contact options</legend>
                 <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
 
-                <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
+                <p class="govuk-body">Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
                 {% if topLevelError %}
                     {{ formElementErrorsV2(correspondence) }}
