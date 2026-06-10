@@ -10,11 +10,6 @@ use Psr\Log\LoggerAwareInterface;
 use Redis as BaseRedisClient;
 use RedisException;
 
-/**
- * Basic save handler to connect, write to and read from Redis.
- *
- * Mezzio port of Application\Model\Service\Redis\RedisClient.
- */
 class RedisClient implements LoggerAwareInterface
 {
     use LoggerTrait;

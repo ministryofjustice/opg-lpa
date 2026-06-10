@@ -121,6 +121,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
     <h2 class="heading-medium popup-exclude">What is the certificate provider's name?</h2>
 

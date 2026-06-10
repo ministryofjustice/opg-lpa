@@ -21,13 +21,6 @@ use Mezzio\Helper\UrlHelper;
 use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
-/**
- * Mezzio port of Application\Model\Service\User\Details.
- *
- * All SessionUtility::getFromMvc() calls are replaced with direct Mezzio
- * session access via MezzioSessionStorage. url() uses UrlHelper instead of
- * the MVC view helper plugin manager.
- */
 class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 {
     use ApiClientTrait;

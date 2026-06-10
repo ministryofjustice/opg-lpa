@@ -13,9 +13,6 @@ use Laminas\Validator\Identical;
 use Laminas\Validator\NotEmpty;
 
 /**
- * Mezzio port of Application\Form\User\ChangeEmailAddress.
- * Uses App\Authentication\AuthenticationService instead of the MVC version.
- *
  * @template T
  * @template-extends AbstractForm<T>
  */

@@ -182,6 +182,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
     <fieldset>
         {{ macros.formGroup(title) }}

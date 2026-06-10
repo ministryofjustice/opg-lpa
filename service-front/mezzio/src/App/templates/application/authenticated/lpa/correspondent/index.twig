@@ -138,6 +138,7 @@
     {{ form.prepare() ? '' }}
 
     {{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         {{ macros.formErrorSummary(error,form) }}
 

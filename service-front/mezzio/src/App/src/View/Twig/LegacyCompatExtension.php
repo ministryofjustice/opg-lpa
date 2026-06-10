@@ -589,8 +589,12 @@ class LegacyCompatExtension extends AbstractExtension
         $attrs = $element->getAttributes();
 
         $attrs['type']  = $attrs['type'] ?? 'text';
-        $attrs['value'] = $element->getValue() ?? '';
         $attrs['class'] = $attrs['class'] ?? 'govuk-input';
+
+        $value = $element->getValue();
+        if ($value !== null && $value !== '') {
+            $attrs['value'] = $value;
+        }
 
         if (!empty($element->getMessages()) && strpos((string) $attrs['class'], 'govuk-input--error') === false) {
             $attrs['class'] .= ' govuk-input--error';

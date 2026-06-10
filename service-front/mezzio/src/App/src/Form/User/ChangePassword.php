@@ -10,9 +10,6 @@ use Laminas\Validator\Callback;
 use Laminas\Validator\NotEmpty;
 
 /**
- * Mezzio port of Application\Form\User\ChangePassword.
- * Uses App\Authentication\AuthenticationService instead of the MVC version.
- *
  * @template T
  * @template-extends SetPassword<T>
  */

@@ -553,7 +553,7 @@ final class LegacyCompatExtensionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // formInput error class
+    // formInput / buildInputAttributes
     // -------------------------------------------------------------------------
 
     public function testFormInputAddsErrorClassWhenElementHasMessages(): void
@@ -565,6 +565,84 @@ final class LegacyCompatExtensionTest extends TestCase
         $html = $this->extension->formInput($el);
 
         $this->assertStringContainsString('govuk-input--error', $html);
+    }
+
+    public function testFormInputDoesNotDuplicateErrorClassWhenAlreadyPresent(): void
+    {
+        $el = new Element\Text('email');
+        $el->setAttributes(['id' => 'email', 'name' => 'email', 'class' => 'govuk-input govuk-input--error']);
+        $el->setMessages(['isEmpty' => 'Required']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertSame(1, substr_count($html, 'govuk-input--error'));
+    }
+
+    public function testFormInputRendersValueWhenPresent(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        $el->setValue('John');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('value="John"', $html);
+    }
+
+    public function testFormInputOmitsValueAttributeWhenNull(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        // Value is null by default
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringNotContainsString('value=', $html);
+    }
+
+    public function testFormInputOmitsValueAttributeWhenEmptyString(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        $el->setValue('');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringNotContainsString('value=', $html);
+    }
+
+    public function testFormInputRendersValueZeroString(): void
+    {
+        $el = new Element\Text('quantity');
+        $el->setAttributes(['id' => 'quantity', 'name' => 'quantity']);
+        $el->setValue('0');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('value="0"', $html);
+    }
+
+    public function testFormInputUsesDefaultTypeAndClass(): void
+    {
+        $el = new Element\Text('field');
+        $el->setAttributes(['id' => 'field', 'name' => 'field']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('type="text"', $html);
+        $this->assertStringContainsString('class="govuk-input"', $html);
+    }
+
+    public function testFormInputRespectsCustomTypeAndClass(): void
+    {
+        $el = new Element\Text('email');
+        $el->setAttributes(['id' => 'email', 'name' => 'email', 'type' => 'email', 'class' => 'custom-class']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('type="email"', $html);
+        $this->assertStringContainsString('class="custom-class"', $html);
+        $this->assertStringNotContainsString('govuk-input', $html);
     }
 
     // -------------------------------------------------------------------------
