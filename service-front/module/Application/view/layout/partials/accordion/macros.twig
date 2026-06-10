@@ -7,11 +7,11 @@
 <li class="section {{ data.status == 'Incomplete' ? 'incomplete' : data.status == 'Not Started' ? 'not-started' : 'complete' }}">
     <div class="accordion-summary {% if data.cssClass is defined %}{{ data.cssClass }}{% endif %}">
         <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %}">
-            <p class="title flush--ends tablet-and-up {% if data.titleCssClass is defined %}{{ data.titleCssClass }}{% endif %}">{{ data.text|raw }}</p>
+            <p class="govuk-body title flush--ends tablet-and-up {% if data.titleCssClass is defined %}{{ data.titleCssClass }}{% endif %}">{{ data.text|raw }}</p>
         </div>
         {% if data.edit is defined %}
             <div class="label-and-edit-box">
-                <p class="link flush--ends">
+                <p class="govuk-body link flush--ends">
                     <a href="{{ data.edit|raw }}" class="govuk-link link-edit" data-cy="accordion-view-change" data-analytics-click="accordion:link:{{ data.journeyClick }}" {%  if data.ariaLabel %}aria-label="{{ data.readOnly ? 'View' : 'Change' }} {{ data.ariaLabel }}{% endif %}">
                         {% if data.readOnly is defined and data.readOnly == true %}
                             <span class="tablet-and-up">View</span>
@@ -29,7 +29,7 @@
         {% else %}
             {# No edit link. This is currently only for the 'review the LPA' bar #}
             <div class="title-box {% if data.titleBoxCssClass is defined %}{{ data.titleBoxCssClass }}{% endif %} mobile">
-                <p class="title flush--ends hard--left">{{ data.text|raw }}</p>
+                <p class="govuk-body title flush--ends hard--left">{{ data.text|raw }}</p>
             </div>
         {% endif %}
     </div>
