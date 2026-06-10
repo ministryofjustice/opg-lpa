@@ -10,28 +10,14 @@ use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 
-/**
- * Custom save handler to which write filters can be applied.
- * If any filter in the chain returns FALSE, the session will not be written.
- *
- * Mezzio port of Application\Model\Service\Session\FilteringSaveHandler.
- */
 class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 
-    /**
-     * Prefix for session keys in Redis; this ensures parity with the prefix
-     * used by the stock Redis save handler so sessions are not lost in the
-     * transition between the stock handler and this one.
-     */
     public const SESSION_PREFIX = 'PHPREDIS_SESSION:';
 
     private RedisClient $redisClient;
 
-    /**
-     * Array of closures, called in order to determine whether to write a session or not.
-     */
     private array $filters;
 
     private function getKey(string $id): string
@@ -49,9 +35,6 @@ class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
         $this->redisClient = $redisClient;
     }
 
-    /**
-     * Add a filter to the chain. Filters in the chain are checked in the order they were added.
-     */
     public function addFilter(callable $closure): self
     {
         $this->filters[] = $closure;
@@ -76,11 +59,6 @@ class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
         return $value instanceof Redis ? false : $value;
     }
 
-    /**
-     * Filtered session write. If any filter in the chain returns FALSE, the session
-     * is not written. We still return TRUE so PHP's session machinery knows the save
-     * handler has done its job.
-     */
     public function write(string $id, string $data): bool
     {
         $doWrite = true;

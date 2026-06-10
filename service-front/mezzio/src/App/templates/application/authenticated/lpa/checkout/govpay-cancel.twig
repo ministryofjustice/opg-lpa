@@ -17,6 +17,7 @@
             {# begin form #}
             {{ form.prepare() ? '' }}
             {{ form().openTag( form )|raw }}
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
             <div class="form-group">
                 {{ formElement(form.get('submit')) }}

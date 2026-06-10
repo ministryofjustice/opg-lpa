@@ -20,16 +20,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 
 /**
- * Mezzio port of Application\Middleware\UserDetailsMiddleware.
- *
  * Fetches the authenticated user's details from the API and stores them on
  * the request as RequestAttribute::USER_DETAILS. Redirects to /user/about-you/new
  * if the user's profile is incomplete, or to /login?state=timeout if the user
  * record is corrupt/cannot be reconstructed.
- *
- * MVC session concerns (SessionManager, SessionUtility, ContainerNamespace) are
- * dropped — Mezzio handlers read user details directly from the request attribute.
- *
  * Must run after AuthenticationMiddleware (which ensures the identity is set).
  */
 class UserDetailsMiddleware implements MiddlewareInterface, LoggerAwareInterface

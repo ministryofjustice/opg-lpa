@@ -6,9 +6,7 @@ use App\Authentication\AuthenticationService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Communication as CommunicationService;
 use App\Service\Lpa\Metadata as LpaMetadata;
-use App\Service\Mail\MailParameters as AppMailParameters;
 use App\Service\Mail\Transport\MailTransportInterface as AppMailTransportInterface;
-use App\Service\Mail\Transport\NotifyMailTransport as AppNotifyMailTransport;
 use App\Handler;
 use App\Handler\Lpa\CompleteViewDocsHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
@@ -119,24 +117,16 @@ return [
             \App\Middleware\RouteNameMiddleware::class => \App\Middleware\RouteNameMiddleware::class,
         ],
         'factories' => [
-            // Storage — registered as a factory (not invokable) to guarantee
-            // the container returns the same shared instance to both
-            // LpaApplicationServiceFactory and IdentityTokenRefreshMiddlewareFactory,
-            // so setSession() on the storage is visible to getIdentity().
             MezzioSessionStorage::class => static fn() => new MezzioSessionStorage(),
-            // Shared ApiClient — single instance so IdentityTokenRefreshMiddleware's
-            // updateToken() call is visible to LpaApplicationService on every request.
             ApiClient::class => static function (ContainerInterface $c): ApiClient {
                 $config = $c->get('config');
                 $apiUri = $config['api_client']['api_uri'] ?? '';
                 $client = new ApiClient(new GuzzleClient(), (string) $apiUri);
                 $client->setLogger($c->get(LoggerInterface::class));
                 return $client;
-            },            // PersistentSessionDetails — shared instance; refreshed per-request by PersistentSessionDetailsMiddleware
+            },
             PersistentSessionDetails::class => static fn() => new PersistentSessionDetails(),
-            // UserDetailsHolder — shared instance; populated per-request by UserDetailsMiddleware
             UserDetailsHolder::class => static fn() => new UserDetailsHolder(),
-            // FlashMessagesHolder — shared instance; populated per-request by FlashMessagesHolderMiddleware
             FlashMessagesHolder::class => static fn() => new FlashMessagesHolder(),
 
             Handler\HomeRedirectHandler::class => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
@@ -527,15 +517,6 @@ return [
             Handler\FeedbackThanksHandler::class => static fn(ContainerInterface $c) => new Handler\FeedbackThanksHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
             ),
-            Handler\PostcodeHandler::class => static function (ContainerInterface $c): Handler\PostcodeHandler {
-                return new Handler\PostcodeHandler(
-                    $c->get(OrdnanceSurveyService::class),
-                    $c->get(LoggerInterface::class),
-                );
-            },
-            Handler\StatusesHandler::class => static fn(ContainerInterface $c) => new Handler\StatusesHandler(
-                $c->get(LpaApplicationService::class),
-            ),
             Handler\Lpa\ConfirmDeleteLpaHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\ConfirmDeleteLpaHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),
@@ -599,35 +580,9 @@ return [
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
             ),
 
-            // Services
             LpaApplicationService::class => LpaApplicationServiceFactory::class,
             CommunicationService::class => static function (ContainerInterface $c): CommunicationService {
-                $config = $c->get('config');
-                $emailConfig = $config['email'] ?? [];
-                $notifyKey = $emailConfig['notify']['key'] ?? null;
-                $smokeTestEmail = $emailConfig['notify']['smokeTestEmailAddress'] ?? null;
-
-                if ($notifyKey) {
-                    $mailTransport = new AppNotifyMailTransport(
-                        new \Alphagov\Notifications\Client([
-                            'apiKey'     => $notifyKey,
-                            'httpClient' => new \Http\Adapter\Guzzle7\Client(),
-                        ]),
-                        $smokeTestEmail,
-                    );
-                } else {
-                    $mailTransport = new class implements AppMailTransportInterface {
-                        public function send(AppMailParameters $mailParameters): void
-                        {
-                        }
-                        public function healthcheck(): array
-                        {
-                            return ['ok' => true, 'status' => 'ok'];
-                        }
-                    };
-                }
-
-                $service = new CommunicationService($mailTransport);
+                $service = new CommunicationService($c->get(AppMailTransportInterface::class));
                 $service->setUrlHelper($c->get(UrlHelper::class));
                 return $service;
             },
@@ -670,7 +625,7 @@ return [
                 return new FeedbackService(
                     $c->get(ApiClient::class),
                     $c->get(LoggerInterface::class),
-                    $c->has(AppMailTransportInterface::class) ? $c->get(AppMailTransportInterface::class) : null,
+                    $c->get(AppMailTransportInterface::class),
                     $config['email']['sendFeedbackEmailTo'] ?? (getenv('OPG_LPA_FRONT_EMAIL_SENDTO') ?: ''),
                 );
             },
@@ -708,7 +663,6 @@ return [
                 );
             },
 
-            // Infrastructure services for StatusService health checks
             \Aws\DynamoDb\DynamoDbClient::class => static function (ContainerInterface $c): \Aws\DynamoDb\DynamoDbClient {
                 $config = $c->get('config');
                 return new \Aws\DynamoDb\DynamoDbClient($config['admin']['dynamodb']['client'] ?? [
@@ -729,28 +683,7 @@ return [
                     static fn() => empty($_SERVER['HTTP_X_SESSIONREADONLY']),
                 ]);
             },
-            AppMailTransportInterface::class => static function (ContainerInterface $c): AppMailTransportInterface {
-                $config = $c->get('config');
-                $notifyKey = $config['email']['notify']['key'] ?? (getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: '');
-
-                if (!$notifyKey) {
-                    return new class implements AppMailTransportInterface {
-                        public function send(AppMailParameters $mailParameters): void
-                        {
-                        }
-                        public function healthcheck(): array
-                        {
-                            return ['ok' => true, 'status' => 'ok'];
-                        }
-                    };
-                }
-
-                $notifyClient = new \Alphagov\Notifications\Client([
-                    'apiKey' => $notifyKey,
-                    'httpClient' => new \Http\Adapter\Guzzle7\Client(),
-                ]);
-                return new AppNotifyMailTransport($notifyClient);
-            },
+            AppMailTransportInterface::class => \App\Service\Mail\Transport\MailTransportFactory::class,
             Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
                 $c->get(\Mezzio\Template\TemplateRendererInterface::class),
                 $c->get(\Laminas\Form\FormElementManager::class),
@@ -788,9 +721,6 @@ return [
                 $c->get(UserDetails::class),
             ),
 
-            UserDetails::class => UserDetailsFactory::class,
-
-            // Middleware
             AuthenticationMiddleware::class => static function (ContainerInterface $c): AuthenticationMiddleware {
                 return new AuthenticationMiddleware($c->get(AuthenticationService::class), $c->get(UrlHelper::class));
             },
@@ -807,22 +737,18 @@ return [
             PersistentSessionDetailsMiddleware::class => static fn(ContainerInterface $c) => new PersistentSessionDetailsMiddleware(
                 $c->get(PersistentSessionDetails::class),
             ),
-            // CSRF — session-backed guard, wired via CsrfMiddleware in the pipeline
+
             CsrfMiddleware::class              => CsrfMiddlewareFactory::class,
             CsrfGuardFactoryInterface::class   => static fn() => new SessionCsrfGuardFactory(),
 
-            // View extensions
             View\Twig\LegacyCompatExtension::class => View\Twig\LegacyCompatExtensionFactory::class,
 
-            // Mezzio-native authentication service
             AuthenticationService::class => static function (ContainerInterface $c): AuthenticationService {
                 $service = new AuthenticationService(new LpaAuthAdapter($c->get(ApiClient::class)));
                 $service->setStorage($c->get(MezzioSessionStorage::class));
                 return $service;
             },
 
-            // Logger — uses shared LoggerFactory for consistent JSON output, trace-id injection,
-            // and header scrubbing across all OPG services.
             LoggerInterface::class => LoggerFactory::class,
         ],
     ],

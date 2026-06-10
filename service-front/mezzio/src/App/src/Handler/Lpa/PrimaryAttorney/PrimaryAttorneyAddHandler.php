@@ -6,7 +6,6 @@ namespace App\Handler\Lpa\PrimaryAttorney;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Applicant as ApplicantService;
@@ -46,8 +45,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -61,7 +58,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
         $templateParams = [
             'isPopup' => $isPopup,
-            'csrfToken' => $csrfToken,
         ];
 
         /** @var User|null $userDetails */
