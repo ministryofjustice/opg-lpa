@@ -387,9 +387,17 @@ class LegacyCompatExtension extends AbstractExtension
         $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
 
         foreach ($valueOptions as $optValue => $optLabel) {
-            $optAttrs        = $baseAttrs;
-            $optAttrs['id']  = htmlspecialchars($name . '-' . $optValue, ENT_QUOTES);
-            $optAttrs['value'] = (string) $optValue;
+            $optionAttributes = [];
+            if (is_array($optLabel)) {
+                $optionAttributes = $optLabel['attributes'] ?? [];
+                $optValue = $optLabel['value'] ?? $optValue;
+                $optLabel = $optLabel['label'] ?? (string) $optValue;
+            }
+
+            $optAttrs            = array_merge($baseAttrs, $optionAttributes);
+            $optAttrs['id']      = $name . '-' . $optValue;
+            $optAttrs['value']   = (string) $optValue;
+            $optAttrs['data-cy'] = $optAttrs['id'];
 
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';

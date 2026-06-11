@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Application\Form\Lpa\InstructionsAndPreferencesForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -31,7 +30,7 @@ class InstructionsHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly Metadata $metadata,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
@@ -45,7 +44,6 @@ class InstructionsHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var InstructionsAndPreferencesForm $form */
         $form = $this->formElementManager->get(
             'Application\Form\Lpa\InstructionsAndPreferencesForm',
             ['lpa' => $lpa]

@@ -6,7 +6,7 @@ namespace App\Handler\Lpa\PeopleToNotify;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Application\Helper\MvcUrlHelper;
+use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -23,7 +23,7 @@ class PeopleToNotifyConfirmDeleteHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 

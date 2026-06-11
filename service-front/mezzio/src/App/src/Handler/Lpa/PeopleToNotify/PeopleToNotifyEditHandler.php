@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\PeopleToNotify;
 
-use Application\Form\Lpa\AbstractActorForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PeopleToNotifyHandlerTrait;
 use App\Handler\Traits\RequestInspectorTrait;
@@ -66,7 +65,6 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
         $personIdx = (int) $personIdx;
         $notifiedPerson = $lpa->document->peopleToNotify[$personIdx];
 
-        /** @var AbstractActorForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute(
             'action',

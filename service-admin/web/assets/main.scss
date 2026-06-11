@@ -1,7 +1,6 @@
 $govuk-assets-path: "/assets/";
 
 @import "node_modules/govuk-frontend/dist/govuk/index";
-@import "node_modules/@ministryofjustice/frontend/moj/all";
 
 .app-break-word {
   overflow-wrap: break-word;

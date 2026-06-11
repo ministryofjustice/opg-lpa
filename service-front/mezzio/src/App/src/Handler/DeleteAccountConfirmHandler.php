@@ -6,7 +6,7 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Authentication\AuthenticationService;
-use Application\Model\Service\User\Details as UserService;
+use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Template\TemplateRendererInterface;
