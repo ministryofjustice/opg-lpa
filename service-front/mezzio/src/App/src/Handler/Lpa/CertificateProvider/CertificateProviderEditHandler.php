@@ -50,7 +50,7 @@ class CertificateProviderEditHandler implements RequestHandlerInterface
 
         $isPopup = $this->isXmlHttpRequest($request);
 
-        /** @var \\App\\Form\\Lpa\\AbstractActorForm $form */
+        /** @var \App\Form\Lpa\AbstractActorForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\CertificateProviderForm');
         $form->setAttribute(
             'action',

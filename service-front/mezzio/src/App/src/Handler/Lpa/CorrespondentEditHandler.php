@@ -86,7 +86,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \\App\\Form\\Lpa\\CorrespondentForm $form */
+        /** @var \App\Form\Lpa\CorrespondentForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\CorrespondentForm');
         $form->setAttribute(
             'action',

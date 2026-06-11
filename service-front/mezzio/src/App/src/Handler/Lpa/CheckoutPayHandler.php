@@ -64,7 +64,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
             return $this->redirectToMoreInfoRequired($lpa, $request);
         }
 
-        /** @var \\App\\Form\\Lpa\\BlankMainFlowForm $form */
+        /** @var \App\Form\Lpa\BlankMainFlowForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa,
         ]);

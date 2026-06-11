@@ -70,7 +70,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             );
         }
 
-        /** @var \\App\\Form\\Lpa\\ReuseDetailsForm $form */
+        /** @var \App\Form\Lpa\ReuseDetailsForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\ReuseDetailsForm', [
             'actorReuseDetails' => $actorReuseDetails,
         ]);

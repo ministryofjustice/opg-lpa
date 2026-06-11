@@ -53,7 +53,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
         $fullFee = Calculator::getFullFee($isRepeatApplication);
 
-        /** @var \\App\\Form\\Lpa\\BlankMainFlowForm $form */
+        /** @var \App\Form\Lpa\BlankMainFlowForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\BlankMainFlowForm', [
             'lpa' => $lpa,
         ]);

@@ -50,7 +50,7 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \\App\\Form\\Lpa\\HowAttorneysMakeDecisionForm $form */
+        /** @var \App\Form\Lpa\HowAttorneysMakeDecisionForm $form */
         $form = $this->formElementManager->get(
             'App\Form\Lpa\HowAttorneysMakeDecisionForm',
             ['lpa' => $lpa]
