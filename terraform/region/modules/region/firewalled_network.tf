@@ -83,6 +83,7 @@ module "vpc_endpoints" {
   application_subnets_id          = module.network.application_subnets[*].id
   public_subnets_cidr_blocks      = module.network.public_subnets[*].cidr_block
   application_route_tables        = data.aws_route_tables.firewalled_network_application
+  codecatalyst_endpoints_enabled  = data.aws_region.current.region == "eu-west-1" ? true : false
   providers = {
     aws.region = aws
   }
