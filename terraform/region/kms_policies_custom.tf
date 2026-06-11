@@ -6,8 +6,11 @@ data "aws_iam_policy_document" "application_log_group_kms_policy" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["logs.${data.aws_region.current.region}.amazonaws.com"]
+      type = "Service"
+      identifiers = [
+        "logs.${data.aws_region.current.region}.amazonaws.com",
+        "logs.${data.aws_region.eu_west_2.region}.amazonaws.com"
+      ]
     }
 
     actions = [

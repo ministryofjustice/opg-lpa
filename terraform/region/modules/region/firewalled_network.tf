@@ -95,9 +95,9 @@ resource "aws_db_subnet_group" "data" {
 }
 
 # DNS logs
-
 data "aws_kms_alias" "application_log_group_encryption_key" {
-  name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+  name     = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+  provider = aws.region
 }
 
 resource "aws_cloudwatch_log_group" "route_53_resolver_logs" {
