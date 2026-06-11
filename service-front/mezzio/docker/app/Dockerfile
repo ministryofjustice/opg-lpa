@@ -1,6 +1,6 @@
 FROM composer:2.9.7@sha256:02062f7719ec9433a9d4256cfba1c792db96dc9db60a4a92e48264c9e166b877 AS composer
 
-FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3
+FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3 AS base
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -32,6 +32,7 @@ COPY --chown=root:root service-front/mezzio/config /service-front/mezzio/config
 COPY --chown=root:root service-front/mezzio/src /service-front/mezzio/src
 COPY --chown=root:root service-front/mezzio/public /service-front/mezzio/public
 COPY --chown=root:root service-front/mezzio/data /service-front/mezzio/data
+COPY --chown=root:root service-front/mezzio/test /service-front/mezzio/test
 COPY --chown=root:root service-front/content /service-front/mezzio/content
 
 
@@ -68,3 +69,26 @@ USER appuser
 VOLUME [ "/tmp" ]
 
 CMD ["php-fpm"]
+
+FROM base AS test-runner
+
+USER "root"
+RUN chown -R appuser:appuser /app/vendor
+
+COPY --chown=root:root service-front/mezzio/composer.json /app/composer.json
+COPY --chown=root:root service-front/mezzio/composer.lock /app/composer.lock
+COPY --from=composer /usr/bin/composer /usr/bin/
+
+RUN composer check-platform-reqs -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
+    && chown -R root:root /app/vendor \
+    && rm /app/composer.json \
+    && rm /usr/bin/composer
+
+RUN chmod -R a+w /tmp
+RUN mkdir -m a+w build
+
+USER appuser
+
+COPY --chown=root:root service-front/mezzio/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-front/mezzio/psalm.xml /app/psalm.xml

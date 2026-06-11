@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace AppTest\Service\Lpa;
 
-use Application\Model\Service\Lpa\Applicant;
-use Application\Model\Service\Lpa\Application;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use App\Service\Lpa\Applicant;
+use App\Service\Lpa\Application;
+use AppTest\Service\AbstractServiceTest;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -26,7 +26,7 @@ final class ApplicantTest extends AbstractServiceTest
 
         $this->applicationService = Mockery::mock(Application::class);
 
-        $this->service = new Applicant($this->authenticationService, []);
+        $this->service = new Applicant();
         $this->service->setLpaApplicationService($this->applicationService);
     }
 

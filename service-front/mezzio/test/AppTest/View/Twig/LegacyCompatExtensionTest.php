@@ -324,7 +324,8 @@ final class LegacyCompatExtensionTest extends TestCase
 
         // Should have exactly one checked
         $this->assertSame(1, substr_count($html, 'checked'));
-        $this->assertStringContainsString('value="health-welfare" checked', $html);
+        // checked attribute appears on the health-welfare input (attribute order may vary)
+        $this->assertMatchesRegularExpression('/value="health-welfare"[^>]*\bchecked\b/', $html);
     }
 
     // -------------------------------------------------------------------------
