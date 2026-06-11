@@ -41,7 +41,7 @@ jobs:
       - name: Run phpunit
         run: |
           mkdir -m 0777 ./coverage-html ./coverage-xml
-          docker compose run --rm \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm \
             --env XDEBUG_MODE=coverage \
             --volume ./coverage-html:/tmp/coverage-html \
             --volume ./coverage-xml:/tmp/coverage-xml \
@@ -52,7 +52,7 @@ jobs:
       - name: Check coverage
         if: ${{ matrix.scan.ignoreFailures != true }}
         run: |
-          docker compose run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
           php /shared/src/functions/check_coverage.php /tmp/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
 
       - name: Upload Coverage Artifacts

@@ -117,7 +117,7 @@ jobs:
             dockerfile_target: test-runner
             snyk_policy_path: service-front/mezzio/docker/app/.snyk
             scan_id: front_app_mezziotest
-            archive_name: front-app-mezziotest
+            archive_name: front-app-mezzio-test
             with_xdebug: true
 
           - image_name: lpa-pdf-app-test
