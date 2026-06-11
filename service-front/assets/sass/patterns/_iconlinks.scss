@@ -3,14 +3,14 @@
 // List of links with icons (downloads, documents, etc)
 
 .iconlinks {
-    padding: $gutter $gutter-half;
+    padding: govuk-spacing(6) govuk-spacing(3);
 
-    @include media(mobile) {
-        padding: $gutter-half 0;
+    @include govuk-media-query($until: tablet) {
+        padding: govuk-spacing(3) 0;
     }
 
     .iconlinks-item {
-        margin-bottom: $gutter;
+        margin-bottom: govuk-spacing(6);
 
         &:last-child {
             margin-bottom: 0;
@@ -18,12 +18,12 @@
     }
 
     &--right {
-        @extend %contain-floats;
+        &::after { content: ""; display: block; clear: both; }
 
         .iconlinks-item {
             float: right;
 
-            @include media(mobile) {
+            @include govuk-media-query($until: tablet) {
                 float: none;
             }
         }
@@ -42,7 +42,7 @@
 
     .iconlinks-link {
         width: 100%;
-        margin-bottom: $gutter;
+        margin-bottom: govuk-spacing(6);
     }
 
     .iconlinks-text {

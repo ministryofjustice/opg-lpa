@@ -6,12 +6,12 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Communication;
+use App\Service\Lpa\Communication;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -25,7 +25,7 @@ class CheckoutChequeHandler implements RequestHandlerInterface
     public function __construct(
         LpaApplicationService $lpaApplicationService,
         Communication $communicationService,
-        MvcUrlHelper $urlHelper,
+        UrlHelper $urlHelper,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService = $communicationService;
@@ -51,6 +51,6 @@ class CheckoutChequeHandler implements RequestHandlerInterface
             );
         }
 
-        return $this->finishCheckout($lpa);
+        return $this->finishCheckout($lpa, $request);
     }
 }

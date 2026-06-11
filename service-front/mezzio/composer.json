@@ -47,6 +47,7 @@
     },
     "require": {
         "php": "8.4.*",
+        "alphagov/notifications-php-client": "^7.0.0",
         "composer/package-versions-deprecated": "^1.11.99.5",
         "egulias/email-validator": "^4.0",
         "ezyang/htmlpurifier": "^4.19",
@@ -90,6 +91,7 @@
         "psr-4": {
             "App\\": "src/App/src/",
             "Application\\": "../module/Application/src/",
+            "Alphagov\\Pay\\": "../module/Alphagov/Pay/src/",
             "MakeShared\\": "../../shared/module/MakeShared/src/"
         }
     },

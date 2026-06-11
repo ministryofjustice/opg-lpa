@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\PrimaryAttorney;
 
-use Application\Form\Lpa\AbstractActorForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
-use Application\Helper\MvcUrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\Applicant as ApplicantService;
+use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ReplacementAttorneyCleanup;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -22,6 +20,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,7 +36,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly MvcUrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly ApplicantService $applicantService,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
@@ -93,7 +92,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var AbstractActorForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
         $form->setAttribute(
             'action',

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa\PeopleToNotify;
 
-use Application\Form\Lpa\AbstractActorForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PeopleToNotifyHandlerTrait;
 use App\Handler\Traits\RequestInspectorTrait;
@@ -12,9 +11,9 @@ use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\Metadata;
+use App\Service\Lpa\Metadata;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -112,7 +111,6 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var AbstractActorForm $form */
         $form = $this->formElementManager->get('Application\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute(
             'action',

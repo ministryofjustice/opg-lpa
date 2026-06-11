@@ -4,10 +4,10 @@
 .search-form {
     position: relative;
 
-    @include media(mobile) {
-        margin-bottom: $gutter-half;
-        padding-bottom: $gutter;
-        border-bottom: 1px solid $border-colour;
+    @media (max-width: 640px) {
+        margin-bottom: govuk-spacing(3);
+        padding-bottom: govuk-spacing(6);
+        border-bottom: 1px solid $govuk-border-colour;
     }
 
     [type='text'] {
@@ -18,12 +18,12 @@
 .search-label {
     position: absolute;
     top: 1px;
-    color: $secondary-text-colour;
+    color: $govuk-secondary-text-colour;
     line-height: 42px;
     text-indent: 10px;
     z-index: 1;
 
-    @include media(mobile) {
+    @media (max-width: 640px) {
         line-height: 36px;
     }
 }
@@ -59,12 +59,12 @@
 }
 
 .dashboard-search {
-    margin: $gutter 0;
-    padding: $gutter-half 0;
-    border-top: 1px solid $border-colour;
-    border-bottom: 1px solid $border-colour;
+    margin: govuk-spacing(6) 0;
+    padding: govuk-spacing(3) 0;
+    border-top: 1px solid $govuk-border-colour;
+    border-bottom: 1px solid $govuk-border-colour;
 
-    @include media(mobile) {
+    @media (max-width: 640px) {
         padding-top: 0;
         border-top: 0;
     }
