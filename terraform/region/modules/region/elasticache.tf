@@ -21,7 +21,7 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   engine               = "redis"
   engine_version       = "6.2"
   # cache.t2.micro is an invalid node type for the london eu-west-2 region
-  node_type                  = local.region_name == "eu-west-1" ? "cache.t2.micro" : "cache.t3.micro"
+  node_type                  = local.account.regions[data.aws_region.current.region].elasticache_node_type
   num_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled = true
   at_rest_encryption_enabled = true
