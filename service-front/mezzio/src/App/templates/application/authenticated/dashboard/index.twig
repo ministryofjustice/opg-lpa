@@ -47,7 +47,7 @@
         <div class="column-one-half tablet-and-up">
         {% if isSearch %}
             <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
-            <p class="govuk-body flush--bottom">
+            <p class="govuk-body govuk-!-margin-bottom-0">
                 {% if lpaTotalCount == 0 %}
                     Your search has found no results.<br>
                 {% else %}
@@ -77,7 +77,7 @@
         {# This is only displayed on mobile #}
             {% if isSearch %}
                 <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
-                <p class="govuk-body flush--bottom">
+                <p class="govuk-body govuk-!-margin-bottom-0">
                     {% if lpaTotalCount == 0 %}
                         Your search has found no results.<br>
                     {% else %}

@@ -104,7 +104,7 @@
 
         <div class="person">
             <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
-            <p class="govuk-body person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
+            <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
                     <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="govuk-link action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
