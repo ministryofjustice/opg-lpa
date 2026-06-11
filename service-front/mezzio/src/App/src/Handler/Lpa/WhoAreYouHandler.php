@@ -68,7 +68,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
             return new HtmlResponse($html);
         }
 
-        /** @var \\App\\Form\\Lpa\\WhoAreYouForm $form */
+        /** @var \App\Form\Lpa\WhoAreYouForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\WhoAreYouForm');
         $form->setAttribute(
             'action',

@@ -53,7 +53,7 @@ class DonorEditHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \\App\\Form\\Lpa\\DonorForm $form */
+        /** @var \App\Form\Lpa\DonorForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/edit', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));

@@ -96,7 +96,7 @@ class ReplacementAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \\App\\Form\\Lpa\\AttorneyForm $form */
+        /** @var \App\Form\Lpa\AttorneyForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
         $form->setAttribute(
             'action',

@@ -104,7 +104,7 @@ class DonorAddHandler implements RequestHandlerInterface
             );
         }
 
-        /** @var \\App\\Form\\Lpa\\DonorForm $form */
+        /** @var \App\Form\Lpa\DonorForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\DonorForm');
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/add', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));

@@ -47,7 +47,7 @@ class CorrespondentHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \\App\\Form\\Lpa\\CorrespondenceForm $form */
+        /** @var \App\Form\Lpa\CorrespondenceForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\CorrespondenceForm', [
             'lpa' => $lpa,
         ]);
