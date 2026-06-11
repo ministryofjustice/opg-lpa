@@ -15,12 +15,13 @@ resource "aws_elasticache_subnet_group" "application_subnets" {
 }
 
 resource "aws_elasticache_replication_group" "new_front_cache" {
-  replication_group_id       = "${local.account_name_short}-${local.region_name}-new-front-cache-rg"
-  description                = "front cache replication group"
-  parameter_group_name       = "default.redis6.x"
-  engine                     = "redis"
-  engine_version             = "6.x"
-  node_type                  = "cache.t2.micro"
+  replication_group_id = "${local.account_name_short}-${local.region_name}-new-front-cache-rg"
+  description          = "front cache replication group"
+  parameter_group_name = "default.redis6.x"
+  engine               = "redis"
+  engine_version       = "6.2"
+  # cache.t2.micro is an invalid node type for the london eu-west-2 region
+  node_type                  = local.region_name == "eu-west-1" ? "cache.t2.micro" : "cache.t3.micro"
   num_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled = true
   at_rest_encryption_enabled = true
@@ -32,6 +33,11 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   security_group_ids         = [aws_security_group.new_front_cache.id]
 
   tags = local.front_component_tag
+  lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
+  }
 }
 
 locals {
