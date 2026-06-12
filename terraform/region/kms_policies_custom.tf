@@ -6,8 +6,11 @@ data "aws_iam_policy_document" "application_log_group_kms_policy" {
     effect = "Allow"
 
     principals {
-      type        = "Service"
-      identifiers = ["logs.${data.aws_region.current.region}.amazonaws.com"]
+      type = "Service"
+      identifiers = [
+        "logs.${data.aws_region.current.region}.amazonaws.com",
+        "logs.${data.aws_region.eu_west_2.region}.amazonaws.com"
+      ]
     }
 
     actions = [
@@ -22,7 +25,10 @@ data "aws_iam_policy_document" "application_log_group_kms_policy" {
     condition {
       test     = "ArnLike"
       variable = "kms:EncryptionContext:aws:logs:arn"
-      values   = ["arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:*"]
+      values = [
+        "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:*",
+        "arn:aws:logs:${data.aws_region.eu_west_2.region}:${data.aws_caller_identity.current.account_id}:log-group:*",
+      ]
     }
   }
 }
