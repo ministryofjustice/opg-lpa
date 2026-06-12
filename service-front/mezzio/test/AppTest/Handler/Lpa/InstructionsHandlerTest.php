@@ -29,7 +29,7 @@ class InstructionsHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private Metadata&MockObject $metadata;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\InstructionsAndPreferencesForm&MockObject */
+    /** @var \App\Form\Lpa\InstructionsAndPreferencesForm&MockObject */
     private $form;
     private InstructionsHandler $handler;
 
@@ -45,7 +45,7 @@ class InstructionsHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->metadata = $this->createMock(Metadata::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\InstructionsAndPreferencesForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\InstructionsAndPreferencesForm::class);
 
         $this->formElementManager
             ->method('get')

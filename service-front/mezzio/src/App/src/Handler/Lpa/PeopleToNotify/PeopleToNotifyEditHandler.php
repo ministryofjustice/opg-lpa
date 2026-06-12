@@ -65,7 +65,7 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
         $personIdx = (int) $personIdx;
         $notifiedPerson = $lpa->document->peopleToNotify[$personIdx];
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/people-to-notify/edit', ['lpa-id' => $lpa->id, 'idx' => $personIdx])

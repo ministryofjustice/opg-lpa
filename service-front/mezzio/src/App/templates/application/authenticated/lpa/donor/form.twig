@@ -187,7 +187,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink('Donor - Use my details') }}
+    {{ macros.displayUseMyDetailsLink('Donor - Use my details', csrfToken) }}
 {% endif %}
 
 {# begin form #}

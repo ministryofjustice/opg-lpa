@@ -20,12 +20,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerAwareInterface;
 
 /**
- * Mezzio port of Application\Middleware\IdentityTokenRefreshMiddleware.
- *
  * Reads the authenticated identity from the Mezzio session, populates the
  * LPA auth service storage (so AbstractService::getUserId() works), then
- * refreshes the API token. Failure codes are written back to the Mezzio
- * session instead of the Laminas MVC session containers.
+ * refreshes the API token.
  *
  * Must run after Mezzio\Session\SessionMiddleware.
  */
@@ -57,12 +54,7 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAware
             $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
             if ($session instanceof SessionInterface) {
-                // Wire the session into the shared storage so read()/write()/clear()
-                // operate on the real Mezzio session for this request.
                 $this->storage->setSession($session);
-
-                // Propagate the current user's token onto the shared ApiClient so all
-                // API calls on this request include the correct Token header.
                 $identity = $this->storage->read();
                 if ($identity !== null) {
                     $this->apiClient->updateToken($identity->token());
@@ -94,7 +86,6 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAware
 
             if ($info['success'] && $info['expiresIn'] !== null) {
                 $identity->tokenExpiresIn($info['expiresIn']);
-                // Persist the refreshed expiry back via storage (writes to Mezzio session).
                 $this->storage->write($identity);
             } else {
                 $this->getLogger()->warning('Token refresh failed, clearing identity', [

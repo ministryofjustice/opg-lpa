@@ -44,7 +44,7 @@ class LoginHandlerTest extends TestCase
 
         $this->formElementManager
             ->method('get')
-            ->with('Application\Form\User\Login')
+            ->with(\App\Form\User\Login::class)
             ->willReturn($this->form);
 
         $this->handler = new LoginHandler(

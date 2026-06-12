@@ -8,7 +8,7 @@ use App\Handler\Lpa\WhoAreYouHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Form\Lpa\WhoAreYouForm;
+use App\Form\Lpa\WhoAreYouForm;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

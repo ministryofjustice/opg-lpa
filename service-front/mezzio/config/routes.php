@@ -31,8 +31,15 @@ use App\Handler\SessionSetExpiryHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
 use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\Lpa\ApplicantHandler;
+use App\Handler\Lpa\CheckoutChequeHandler;
+use App\Handler\Lpa\CheckoutConfirmHandler;
+use App\Handler\Lpa\CheckoutIndexHandler;
+use App\Handler\Lpa\CheckoutPayHandler;
+use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DonorIndexHandler;
+use App\Handler\Lpa\IndexHandler;
 use App\Handler\LpaTypeHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerElb;
@@ -51,6 +58,7 @@ use App\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
 use App\Handler\Lpa\CompleteIndexHandler;
 use App\Handler\Lpa\CompleteViewDocsHandler;
 use App\Handler\Lpa\ConfirmDeleteLpaHandler;
+use App\Handler\Lpa\DeleteLpaHandler;
 use App\Handler\Lpa\CorrespondentEditHandler;
 use App\Handler\Lpa\CorrespondentHandler;
 use App\Handler\Lpa\DateCheckHandler;
@@ -166,7 +174,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     // Authenticated routes
     $app->get('/user/dashboard', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard');
     $app->get('/user/dashboard/page/{page:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, DashboardHandler::class), 'user/dashboard/pagination');
-    $app->route('/user/dashboard/create[/{lpa-id:\d+}]', $factory->pipeline(LpaLoaderMiddleware::class, CreateLpaHandler::class), ['GET', 'POST'], 'user/dashboard/create-lpa');
+    $app->route('/user/dashboard/create[/{lpa-id:\d+}]', CreateLpaHandler::class, ['GET', 'POST'], 'user/dashboard/create-lpa');
     $app->route('/user/about-you[/{new}]', AboutYouHandler::class, ['GET', 'POST'], 'user/about-you')
         ->setOptions(['allowIncompleteUser' => true]);
     $app->route('/user/change-password', ChangePasswordHandler::class, ['GET', 'POST'], 'user/change-password');
@@ -180,7 +188,9 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry');
 
     $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
-    $app->get('/confirm-delete-lpa/{lpa-id:\d+}', ConfirmDeleteLpaHandler::class, 'lpa/confirm-delete-lpa');
+    $app->get('/user/dashboard/confirm-delete-lpa/{lpa-id:\d+}', ConfirmDeleteLpaHandler::class, 'user/dashboard/confirm-delete-lpa');
+    $app->get('/user/dashboard/delete-lpa/{lpa-id:\d+}', DeleteLpaHandler::class, 'user/dashboard/delete-lpa');
+    $app->get('/lpa/{lpa-id:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, IndexHandler::class), 'lpa');
 
     $app->route('/lpa/{lpa-id:\d+}/type', $factory->pipeline(LpaLoaderMiddleware::class, TypeHandler::class), ['GET', 'POST'], 'lpa/form-type');
     $app->route('/lpa/{lpa-id:\d+}/when-lpa-starts', $factory->pipeline(LpaLoaderMiddleware::class, WhenLpaStartsHandler::class), ['GET', 'POST'], 'lpa/when-lpa-starts');
@@ -228,6 +238,14 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/repeat-application', $factory->pipeline(LpaLoaderMiddleware::class, RepeatApplicationHandler::class), ['GET', 'POST'], 'lpa/repeat-application');
     $app->route('/lpa/{lpa-id:\d+}/who-are-you', $factory->pipeline(LpaLoaderMiddleware::class, WhoAreYouHandler::class), ['GET', 'POST'], 'lpa/who-are-you');
 
+    $app->route('/lpa/{lpa-id:\d+}/applicant', $factory->pipeline(LpaLoaderMiddleware::class, ApplicantHandler::class), ['GET', 'POST'], 'lpa/applicant');
+
+    $app->route('/lpa/{lpa-id:\d+}/checkout', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutIndexHandler::class), ['GET', 'POST'], 'lpa/checkout');
+    $app->route('/lpa/{lpa-id:\d+}/checkout/cheque', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutChequeHandler::class), ['GET', 'POST'], 'lpa/checkout/cheque');
+    $app->route('/lpa/{lpa-id:\d+}/checkout/pay', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayHandler::class), ['GET', 'POST'], 'lpa/checkout/pay');
+    $app->route('/lpa/{lpa-id:\d+}/checkout/pay/response', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayResponseHandler::class), ['GET', 'POST'], 'lpa/checkout/pay/response');
+    $app->route('/lpa/{lpa-id:\d+}/checkout/confirm', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutConfirmHandler::class), ['GET', 'POST'], 'lpa/checkout/confirm');
+
     $app->route('/lpa/{lpa-id:\d+}/date-check', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check');
     $app->route('/lpa/{lpa-id:\d+}/date-check/complete', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check/complete');
     $app->get('/lpa/{lpa-id:\d+}/date-check/valid', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckValidHandler::class), 'lpa/date-check/valid');
@@ -239,6 +257,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/lpa/{lpa-id:\d+}/view-docs', $factory->pipeline(LpaLoaderMiddleware::class, CompleteViewDocsHandler::class), 'lpa/view-docs');
 
     $app->get('/lpa/{lpa-id:\d+}/download/{pdf-type:lp1|lp3|lpa120}', $factory->pipeline(LpaLoaderMiddleware::class, DownloadHandler::class), 'lpa/download');
+    $app->get('/lpa/{lpa-id:\d+}/download/{pdf-type:lp1|lp3|lpa120}/draft', $factory->pipeline(LpaLoaderMiddleware::class, DownloadHandler::class), 'lpa/download/draft');
     $app->get('/lpa/{lpa-id:\d+}/download/{pdf-type:lp1|lp3|lpa120}/{pdf-filename:[a-zA-Z0-9-]+\.pdf}', $factory->pipeline(LpaLoaderMiddleware::class, DownloadFileHandler::class), 'lpa/download/file');
     $app->get('/lpa/{lpa-id:\d+}/download/{pdf-type:lp1|lp3|lpa120}/check', $factory->pipeline(LpaLoaderMiddleware::class, DownloadCheckHandler::class), 'lpa/download/check');
 };
