@@ -8,7 +8,6 @@
     findUnusedPsalmSuppress="true"
     findUnusedCode="true"
     findUnusedBaselineEntry="true"
-    errorBaseline="psalm-baseline.xml"
 >
     <issueHandlers>
         <MissingOverrideAttribute>
