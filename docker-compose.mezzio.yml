@@ -258,3 +258,13 @@ services:
     volumes:
       - ./cypress:/app/cypress
       - ./cypress/screenshots:/app/cypress/screenshots
+
+  front-app-mezzio-test:
+    profiles: ["test"]
+    image: lpa-front-app-mezzio-test
+    build:
+      context: ./
+      dockerfile: service-front/mezzio/docker/app/Dockerfile
+      target: test-runner
+      args:
+        ENABLE_XDEBUG: "1"

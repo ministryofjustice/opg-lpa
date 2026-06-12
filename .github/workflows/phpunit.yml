@@ -17,6 +17,9 @@ jobs:
             minCoverage: 3
           - service: front-app-test
             minCoverage: 85
+          - service: front-app-mezzio-test
+            minCoverage: 85
+            ignoreFailures: true
           - service: api-app-test
             minCoverage: 74
           - service: pdf-app-test
@@ -38,17 +41,22 @@ jobs:
       - name: Run phpunit
         run: |
           mkdir -m 0777 ./coverage-html ./coverage-xml
-          docker compose run --rm \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm \
             --env XDEBUG_MODE=coverage \
             --volume ./coverage-html:/tmp/coverage-html \
             --volume ./coverage-xml:/tmp/coverage-xml \
             ${{ matrix.scan.service }} \
             vendor/bin/phpunit --coverage-html /tmp/coverage-html --coverage-xml /tmp/coverage-xml
+        continue-on-error: ${{ matrix.scan.ignoreFailures == true }}
+
       - name: Check coverage
+        if: ${{ matrix.scan.ignoreFailures != true }}
         run: |
-          docker compose run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
           php /shared/src/functions/check_coverage.php /tmp/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
+
       - name: Upload Coverage Artifacts
+        if: ${{ matrix.scan.ignoreFailures != true }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: ${{ matrix.scan.service }}-coverage-html
