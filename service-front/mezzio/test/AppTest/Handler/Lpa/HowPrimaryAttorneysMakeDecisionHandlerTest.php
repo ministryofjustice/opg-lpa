@@ -8,7 +8,7 @@ use App\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Form\Lpa\HowAttorneysMakeDecisionForm;
+use App\Form\Lpa\HowAttorneysMakeDecisionForm;
 use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\ReplacementAttorneyCleanup;

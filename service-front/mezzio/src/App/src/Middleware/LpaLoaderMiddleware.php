@@ -18,13 +18,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Mezzio port of Application\Middleware\LpaLoaderMiddleware.
- *
- * Loads the LPA for the current request, validates ownership, and checks the
- * form flow. Uses Mezzio\Helper\UrlHelper for URL generation instead of the
- * legacy MvcUrlHelper wrapper.
- */
 class LpaLoaderMiddleware implements MiddlewareInterface
 {
     public function __construct(

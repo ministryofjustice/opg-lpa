@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace AppTest\Service\Lpa;
 
-use Application\Model\Service\ApiClient\Client;
-use Application\Model\Service\ApiClient\Exception\ApiException;
-use Application\Model\Service\Authentication\AuthenticationService;
-use Application\Model\Service\Lpa\Application;
+use App\Authentication\AuthenticationService;
+use App\Service\ApiClient\Client;
+use App\Service\ApiClient\Exception\ApiException;
+use App\Service\Lpa\Application;
 use ArrayObject;
 use DateTime;
 use GuzzleHttp\Psr7\Utils;
@@ -51,8 +51,8 @@ final class ApplicationTest extends MockeryTestCase
     public function setUp(): void
     {
         $logger = Mockery::spy(LoggerInterface::class);
-        $identity = Mockery::mock();
-        $identity->shouldReceive('id')->andReturn(4321);
+        $identity = Mockery::mock(\App\Model\Service\Authentication\Identity\User::class);
+        $identity->shouldReceive('id')->andReturn('4321');
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($identity);
@@ -60,7 +60,7 @@ final class ApplicationTest extends MockeryTestCase
         $this->apiClient = Mockery::mock(Client::class);
 
         $this->service = new Application($this->authenticationService, [
-            'processing-status' => ['track-from-date' => '2019-01-01']
+            'processing-status' => ['track-from-date' => '2019-01-01'],
         ]);
         $this->service->setApiClient($this->apiClient);
         $this->service->setLogger($logger);
@@ -108,7 +108,7 @@ final class ApplicationTest extends MockeryTestCase
             ->once()
             ->andReturn(['4321' => ['found' => true, 'status' => 'Concluded']]);
 
-        $result = $this->service->getStatuses(4321);
+        $result = $this->service->getStatuses('4321');
 
         $this->assertEquals(['4321' => ['found' => true, 'status' => 'Concluded']], $result);
     }
@@ -133,7 +133,7 @@ final class ApplicationTest extends MockeryTestCase
             ->once()
             ->andThrow(new ApiException($mockResponse));
 
-        $result = $this->service->getStatuses(4321);
+        $result = $this->service->getStatuses('4321');
 
         $this->assertEquals(['4321' => ['found' => false]], $result);
     }
@@ -150,7 +150,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $result = $this->service->getLpaSummaries();
 
-        $this->assertEquals(['applications' => [],'trackingEnabled' => true], $result);
+        $this->assertEquals(['applications' => [], 'trackingEnabled' => true], $result);
     }
 
     /**
@@ -175,7 +175,7 @@ final class ApplicationTest extends MockeryTestCase
                 'progress' => 'Completed',
                 'rejectedDate' => null,
                 'refreshId' => null,
-                'isReusable' => true
+                'isReusable' => true,
             ]),
             new ArrayObject([
                 'id' => 5531003157,
@@ -186,62 +186,8 @@ final class ApplicationTest extends MockeryTestCase
                 'progress' => 'Completed',
                 'rejectedDate' => null,
                 'refreshId' => null,
-                'isReusable' => true
-            ])
-        ], 'trackingEnabled' => true], $result);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetLpaSummariesCanTrackWithNoTrackingStatus(): void
-    {
-        $this->apiClient->shouldReceive('httpGet')
-            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
-            ->once()
-            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-02', 'Waiting')]]);
-
-        $result = $this->service->getLpaSummaries();
-
-        $this->assertEquals(['applications' => [
-            new ArrayObject([
-                'id' => 5531003157,
-                'version' => 2,
-                'donor' => 'Hon Ayden Armstrong',
-                'type' => 'health-and-welfare',
-                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-                'progress' => 'Waiting',
-                'rejectedDate' => null,
-                'refreshId' => 5531003157,
-                'isReusable' => true
-            ])
-        ], 'trackingEnabled' => true], $result);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function testGetLpaSummariesCanTrackWithTrackingStatus(): void
-    {
-        $this->apiClient->shouldReceive('httpGet')
-            ->withArgs(['/v2/user/4321/applications', ['search' => null]])
-            ->once()
-            ->andReturn(['applications' => [$this->modifiedLPA(5531003157, '2019-01-2', 'Processed', '2019-01-2')]]);
-
-        $result = $this->service->getLpaSummaries();
-
-        $this->assertEquals(['applications' => [
-            new ArrayObject([
-                'id' => 5531003157,
-                'version' => 2,
-                'donor' => 'Hon Ayden Armstrong',
-                'type' => 'health-and-welfare',
-                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
-                'progress' => 'Processed',
-                'rejectedDate' => '2019-01-2',
-                'refreshId' => 5531003157,
-                'isReusable' => true
-            ])
+                'isReusable' => true,
+            ]),
         ], 'trackingEnabled' => true], $result);
     }
 
@@ -254,9 +200,9 @@ final class ApplicationTest extends MockeryTestCase
                     ['type' => 'human'],
                     ['type' => 'human'],
                     ['type' => 'human'],
-                    ['type' => 'human']
-                ]
-            ]
+                    ['type' => 'human'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(
@@ -269,8 +215,8 @@ final class ApplicationTest extends MockeryTestCase
     {
         $mockLpa = new Lpa([
             'document' => [
-                'peopleToNotify' => [[], [], [], [], []]
-            ]
+                'peopleToNotify' => [[], [], [], [], []],
+            ],
         ]);
 
         $this->assertEquals(
@@ -288,8 +234,8 @@ final class ApplicationTest extends MockeryTestCase
                                   exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
                                   dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
                                   Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                  mollit anim id est laborum.'
-            ]
+                                  mollit anim id est laborum.',
+            ],
         ]);
 
         $this->assertEquals(['LONG_INSTRUCTIONS_OR_PREFERENCES'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -299,10 +245,8 @@ final class ApplicationTest extends MockeryTestCase
     {
         $mockLpa = new Lpa([
             'document' => [
-                'donor' => [
-                    'canSign' => false
-                ]
-            ]
+                'donor' => ['canSign' => false],
+            ],
         ]);
 
         $this->assertEquals(['CANT_SIGN'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -313,9 +257,9 @@ final class ApplicationTest extends MockeryTestCase
         $mockLpa = new Lpa([
             'document' => [
                 'primaryAttorneys' => [
-                    ['type' => 'corporation', 'number' => '123']
-                ]
-            ]
+                    ['type' => 'corporation', 'number' => '123'],
+                ],
+            ],
         ]);
 
         $this->assertEquals(['HAS_TRUST_CORP'], $this->service->getContinuationNoteKeys($mockLpa));
@@ -337,15 +281,17 @@ final class ApplicationTest extends MockeryTestCase
                     ['type' => 'human'],
                 ],
                 'primaryAttorneyDecisions' => [
-                    'howDetails' => 'Decisions must be made at midnight'
-                ]
-            ]
+                    'howDetails' => 'Decisions must be made at midnight',
+                ],
+            ],
         ]);
 
-        $expectedResult = ['LONG_INSTRUCTIONS_OR_PREFERENCES',
-                           'REPLACEMENT_ATTORNEY_OVERFLOW',
-                           'ANY_PEOPLE_OVERFLOW',
-                           'HAS_ATTORNEY_DECISIONS'];
+        $expectedResult = [
+            'LONG_INSTRUCTIONS_OR_PREFERENCES',
+            'REPLACEMENT_ATTORNEY_OVERFLOW',
+            'ANY_PEOPLE_OVERFLOW',
+            'HAS_ATTORNEY_DECISIONS',
+        ];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
     }
 }

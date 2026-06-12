@@ -45,7 +45,7 @@ class LpaTypeHandlerTest extends TestCase
 
         $this->formElementManager
             ->method('get')
-            ->with('Application\Form\Lpa\TypeForm')
+            ->with('App\Form\Lpa\TypeForm')
             ->willReturn($this->form);
 
         $this->handler = new LpaTypeHandler(

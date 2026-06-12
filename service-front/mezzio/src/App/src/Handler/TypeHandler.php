@@ -52,7 +52,7 @@ class TypeHandler implements RequestHandlerInterface
         // CSRF is validated by CsrfValidationMiddleware before this handler runs.
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\TypeForm');
 
         $isChangeAllowed = true;
 

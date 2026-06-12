@@ -373,7 +373,7 @@ mezzio-cypress-open: npm-install
 
 .PHONY: mezzio-unit-tests
 mezzio-unit-tests:
-	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml.dist
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml
 
 .PHONY: mezzio-psalm
 mezzio-psalm:
