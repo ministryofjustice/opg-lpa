@@ -83,6 +83,8 @@ module "vpc_endpoints" {
   application_subnets_id          = module.network.application_subnets[*].id
   public_subnets_cidr_blocks      = module.network.public_subnets[*].cidr_block
   application_route_tables        = data.aws_route_tables.firewalled_network_application
+  # codecatalyst endpoints were not available in eu-west-2
+  codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
   providers = {
     aws.region = aws
   }
@@ -94,9 +96,9 @@ resource "aws_db_subnet_group" "data" {
 }
 
 # DNS logs
-
 data "aws_kms_alias" "application_log_group_encryption_key" {
-  name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+  name     = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+  provider = aws.region
 }
 
 resource "aws_cloudwatch_log_group" "route_53_resolver_logs" {
