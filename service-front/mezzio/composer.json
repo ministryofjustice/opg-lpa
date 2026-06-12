@@ -48,7 +48,6 @@
     "require": {
         "php": "8.4.*",
         "alphagov/notifications-php-client": "^7.0.0",
-        "aws/aws-sdk-php": "^3.204.5",
         "composer/package-versions-deprecated": "^1.11.99.5",
         "egulias/email-validator": "^4.0",
         "ezyang/htmlpurifier": "^4.19",
