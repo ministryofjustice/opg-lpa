@@ -41,6 +41,11 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
         parent::init();
     }
 
+    /**
+     * @return (array|bool|mixed)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array<never, never>|mixed}
+     */
     protected function validateByModel()
     {
         $decisions  = new PrimaryAttorneyDecisions($this->data);
