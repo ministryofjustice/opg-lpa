@@ -206,8 +206,10 @@ class LegacyCompatExtension extends AbstractExtension
     /**
      * Ported from AppFunctionsExtension::formElementErrorsV2().
      * Inlined from layout/partials/form-element-errors.twig — no renderer needed.
+     *
+     * @param array|string|object|null $errors
      */
-    public function formElementErrorsV2(mixed $errors): string
+    public function formElementErrorsV2(array|string|object|null $errors): string
     {
         if ($errors === null) {
             return '';

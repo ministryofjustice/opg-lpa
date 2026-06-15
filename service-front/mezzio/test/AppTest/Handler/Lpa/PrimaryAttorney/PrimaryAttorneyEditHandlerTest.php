@@ -88,7 +88,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         return $attorney;
     }
 
-    private function createLpaWithAttorney($attorney): Lpa
+    private function createLpaWithAttorney(Human|TrustCorporation $attorney): Lpa
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
