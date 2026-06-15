@@ -18,6 +18,7 @@ use Mezzio\Helper\UrlHelper;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Textarea;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\FormInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -319,6 +320,10 @@ class LegacyCompatExtension extends AbstractExtension
             return $this->formCheckbox($element);
         }
 
+        if ($element instanceof Textarea) {
+            return $this->formTextarea($element);
+        }
+
         $type = $element->getAttribute('type') ?? 'text';
 
         if ($type === 'hidden') {
@@ -326,6 +331,20 @@ class LegacyCompatExtension extends AbstractExtension
         }
 
         return $this->formInput($element);
+    }
+
+    /**
+     * Renders a textarea element, with the current value as text content.
+     */
+    public function formTextarea(ElementInterface $element): string
+    {
+        $attrs = $element->getAttributes();
+        unset($attrs['type']); // textarea has no type attribute
+
+        $attrString = $this->buildAttributeString($attrs);
+        $value      = htmlspecialchars((string) ($element->getValue() ?? ''), ENT_QUOTES);
+
+        return sprintf('<textarea %s>%s</textarea>', $attrString, $value);
     }
 
     /**

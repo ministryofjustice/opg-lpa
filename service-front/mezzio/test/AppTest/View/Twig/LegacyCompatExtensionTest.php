@@ -552,6 +552,48 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->assertStringContainsString('value="test@example.com"', $html);
     }
 
+    public function testFormElementDispatchesToFormTextareaForTextarea(): void
+    {
+        $el = new Element\Textarea('instruction');
+        $el->setAttributes(['id' => 'instruction', 'name' => 'instruction', 'rows' => '10']);
+        $el->setValue('Some instructions');
+
+        $html = $this->extension->formElement($el);
+
+        // Must render as <textarea>, not <input>
+        $this->assertStringContainsString('<textarea', $html);
+        $this->assertStringContainsString('</textarea>', $html);
+        $this->assertStringNotContainsString('<input', $html);
+        // Value must appear as text content, not as an attribute
+        $this->assertStringContainsString('Some instructions', $html);
+        $this->assertStringNotContainsString('value=', $html);
+    }
+
+    public function testFormTextareaRendersValueAsTextContent(): void
+    {
+        $el = new Element\Textarea('preference');
+        $el->setAttributes(['id' => 'preference', 'name' => 'preference', 'rows' => '5']);
+        $el->setValue('<b>Bold</b> text');
+
+        $html = $this->extension->formTextarea($el);
+
+        $this->assertStringContainsString('<textarea', $html);
+        $this->assertStringContainsString('</textarea>', $html);
+        // Value must be HTML-escaped in text content
+        $this->assertStringContainsString('&lt;b&gt;Bold&lt;/b&gt; text', $html);
+    }
+
+    public function testFormTextareaWithEmptyValueRendersEmptyContent(): void
+    {
+        $el = new Element\Textarea('notes');
+        $el->setAttributes(['id' => 'notes', 'name' => 'notes']);
+
+        $html = $this->extension->formTextarea($el);
+
+        $this->assertStringContainsString('<textarea', $html);
+        $this->assertStringContainsString('</textarea>', $html);
+    }
+
     // -------------------------------------------------------------------------
     // formInput / buildInputAttributes
     // -------------------------------------------------------------------------
