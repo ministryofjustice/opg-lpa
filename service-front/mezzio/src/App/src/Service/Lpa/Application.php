@@ -603,7 +603,7 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
         return false;
     }
 
-    public function setWhoIsRegistering(Lpa $lpa, array|null $whoIsRegistering): bool
+    public function setWhoIsRegistering(Lpa $lpa, array|string|null $whoIsRegistering): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id),

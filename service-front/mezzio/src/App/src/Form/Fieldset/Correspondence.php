@@ -56,11 +56,11 @@ class Correspondence extends Fieldset
     }
 
     /**
-     * @param string[][] $messages
+     * @param Traversable|array $messages
      *
      * @psalm-param array{contactByEmail: list{'error message'}} $messages
      */
-    public function setMessages(array $messages)
+    public function setMessages(iterable $messages)
     {
         $this->messages = $messages;
         parent::setMessages($messages);

@@ -29,11 +29,11 @@ class Dob extends Fieldset
     }
 
     /**
-     * @param string[][] $messages
+     * @param iterable $messages
      *
      * @psalm-param array{day?: list{'Value is required'}, year?: list{'Invalid year'}} $messages
      */
-    public function setMessages(array $messages)
+    public function setMessages(iterable $messages)
     {
         $this->messages = $messages;
 
