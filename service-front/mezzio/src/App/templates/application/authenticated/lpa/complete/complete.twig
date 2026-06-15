@@ -41,7 +41,7 @@
 
     <p class="govuk-body">You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian.</p>
 
-    <p class="govuk-body">You can access this page at any time from <a href="/user/dashboard">Your LPAs</a>.</p>
+    <p class="govuk-body">You can access this page at any time from <a class="govuk-link" href="/user/dashboard">Your LPAs</a>.</p>
 
     <h2 class="govuk-heading-m">What you need to do</h2>
 
@@ -140,7 +140,7 @@
 
     <p class="govuk-body">These documents are PDF files and each should be no larger than 4MB.</p>
 
-    <p class="govuk-body">If you cannot view the documents, you'll need to <a rel="noreferrer noopener" target="_blank" href="https://get.adobe.com/uk/reader/" data-analytics-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
+    <p class="govuk-body">If you cannot view the documents, you'll need to <a class="govuk-link" rel="noreferrer noopener" target="_blank" href="https://get.adobe.com/uk/reader/" data-analytics-click="page:link:external: Acrobat Reader">download Acrobat Reader from the Adobe website (opens in new tab)</a>.</p>
 
     {% block continuationSheetNotes %}
     {{ macros.continuationNotes(continuationNoteKeys) }}
@@ -152,7 +152,7 @@
 
     <p class="govuk-body"><a class="js-guidance" href="/guide#topic-signing-the-lpa" data-analytics-click="page:link:help: -This guide- shows you how to sign">This guide</a> shows you how to sign in the right order.</p>
 
-    <p class="govuk-body">Once the LPA has been signed, you can <a href="{{ dateCheckUrl }}" data-analytics-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
+    <p class="govuk-body">Once the LPA has been signed, you can <a class="govuk-link" href="{{ dateCheckUrl }}" data-analytics-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
 
 
     <h2 class="heading-large">Found a mistake in the LPA?</h2>
@@ -226,10 +226,10 @@
 
     <ul class="list">
         <li>
-            <a href="{{ cloneUrl }}" data-analytics-click="page:link:reuse: Make an LPA based on this one">Make an LPA based on this one</a> (you'll be able to add people in a single click).
+            <a class="govuk-link" href="{{ cloneUrl }}" data-analytics-click="page:link:reuse: Make an LPA based on this one">Make an LPA based on this one</a> (you'll be able to add people in a single click).
         </li>
         <li>
-            <a href="/user/dashboard/create" data-analytics-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
+            <a class="govuk-link" href="/user/dashboard/create" data-analytics-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
         </li>
     </ul>
 

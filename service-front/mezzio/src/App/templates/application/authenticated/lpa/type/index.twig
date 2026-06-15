@@ -10,7 +10,7 @@
     </div>
     <div class="govuk-details__text">
         If you already have a registered LPA and want to use it online, go to the<br>
-        <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+        <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
     </div>
 {%- endblock -%}
 
@@ -77,7 +77,7 @@
         <div class="text">
             <p class="govuk-body">You cannot change the type of your lasting power of attorney at this stage. If you want to make a
             {{ (lpa.document.type == 'health-and-welfare' ? 'property and financial affairs' : 'health and welfare') }}
-            LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
+            LPA based on the current one, click <a class="govuk-link" href="{{ cloneUrl }}">here</a>.</p>
         </div>
         {% endif %}
 

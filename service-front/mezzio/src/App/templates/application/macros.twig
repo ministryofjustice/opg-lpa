@@ -10,11 +10,11 @@
             <div class="govuk-error-summary__body" data-tracking-context="API error">
                 {% if error == 'user-not-found' %}
                     <p class="govuk-body" data-tracking-summary="User not found">
-                        We could not find an LPA account for this email address.<br><a href="signup">Create an LPA account now.</a>
+                        We could not find an LPA account for this email address.<br><a class="govuk-link" href="signup">Create an LPA account now.</a>
                     </p>
                 {% elseif error == 'address-already-registered' %}
                     <p class="govuk-body" data-tracking-summary="Email address already registered">
-                        This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
+                        This email address has already been registered. Please <a class="govuk-link" href="{{ url('login') }}">sign in</a> or <a class="govuk-link" href="{{ url('forgot-password') }}">reset your password</a>.
                     </p>
                 {% elseif error == 'user-already-has-email' %}
                     <p class="govuk-body" data-tracking-summary="User already has email address">
@@ -38,7 +38,7 @@
             <ul class="govuk-error-summary__list">
                 {% for e in form_linked_errors(form) %}
                     <li>
-                        <a href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
+                        <a class="govuk-link" href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
                     </li>
                 {% endfor %}
             </ul>
