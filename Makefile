@@ -409,10 +409,19 @@ mezzio-cypress-open: npm-install python-api-venv
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
+.PHONY: mezzio-cypress-run-stitched-suites
+mezzio-cypress-run-stitched-suites:
+	@pushd cypress && python3 stitch.py && popd
+	$(info ${YELLOW}running mezzio stitched cypress suites${RESET})
+	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
+	${MEZZIO_COMPOSE} run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	${MEZZIO_COMPOSE} run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_visualRegressionEnabled="1" -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
+
 .PHONY: mezzio-unit-tests
 mezzio-unit-tests:
-	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml $(ARGS)
 
 .PHONY: mezzio-psalm
 mezzio-psalm:
-	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/psalm -c /app/psalm.xml --no-cache
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/psalm -c /app/psalm.xml --no-cache $(ARGS)
