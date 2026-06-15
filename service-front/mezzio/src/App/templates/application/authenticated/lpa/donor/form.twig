@@ -175,7 +175,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title" data-cy="dialog-title">Donor details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title" data-cy="dialog-title">Donor details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -194,7 +194,7 @@
 {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-    <h2 class="heading-medium popup-exclude">What is the donor's name?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the donor's name?</h2>
     <fieldset>
         <legend class="visually-hidden">Add donor details</legend>
 
@@ -221,7 +221,7 @@
         </div>
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the donor's date of birth?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the donor's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label dob-label">Date of birth</legend>
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
@@ -256,13 +256,13 @@
         </div>
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the donor's email address?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the donor's email address?</h2>
     <fieldset>
         <legend class="visually-hidden">Email address</legend>
         {{ macros.formGroup(email) }}
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the donor's address?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the donor's address?</h2>
     <fieldset class="postcodelookup">
         <legend class="visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
