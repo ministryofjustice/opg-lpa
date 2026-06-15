@@ -43,6 +43,11 @@ class WhoAreYouForm extends AbstractMainFlowForm
         parent::init();
     }
 
+    /**
+     * @return (array|bool|mixed)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array<never, never>|mixed}
+     */
     protected function validateByModel()
     {
         $whoAreYou  = new WhoAreYou($this->convertFormDataForModel($this->data));
@@ -60,7 +65,12 @@ class WhoAreYouForm extends AbstractMainFlowForm
         ];
     }
 
-    protected function convertFormDataForModel($formData)
+    /**
+     * @return (mixed|null)[]
+     *
+     * @psalm-return array{who?: mixed, qualifier?: mixed|null}
+     */
+    protected function convertFormDataForModel(array|null $formData)
     {
         $modelData = [];
 
@@ -81,7 +91,10 @@ class WhoAreYouForm extends AbstractMainFlowForm
         return $modelData;
     }
 
-    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context = null)
+    /**
+     * @return array
+     */
+    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, array|null $context = null)
     {
         $messages = [];
 

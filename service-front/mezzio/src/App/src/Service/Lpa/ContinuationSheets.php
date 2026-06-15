@@ -57,7 +57,7 @@ class ContinuationSheets
     21. Multiple pas how=js, no ra; cs2=no
     22. Multiple pas how=jsjso, no ra; cs2=yes
     */
-    private function hasAttorneyDecisions(Lpa $lpa)
+    private function hasAttorneyDecisions(Lpa $lpa): bool
     {
         // attorney-related criteria we use to figure out whether a cs2 is present
         $paHow = null;
