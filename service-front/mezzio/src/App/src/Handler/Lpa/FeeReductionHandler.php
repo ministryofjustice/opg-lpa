@@ -214,7 +214,7 @@ class FeeReductionHandler implements RequestHandlerInterface
             'reducedFeeReceivesBenefits' => [
                 'id' => 'reductionOptions',
                 'value' => $valueOptions['reducedFeeReceivesBenefits']['value'],
-                'label' => "The donor currently claims one of <a class=\"js-guidance\" "
+                'label' => "The donor currently claims one of <a class=\"govuk-link\" "
                     . "href=\"/guide#topic-fees-reductions-and-exemptions\" "
                     . "data-analytics-click=\"page:link:help: these means-tested benefits\">"
                     . "these means-tested benefits</a> and has not been awarded personal injury damages "

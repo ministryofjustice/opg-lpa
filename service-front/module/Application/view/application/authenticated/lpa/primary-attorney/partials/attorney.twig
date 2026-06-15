@@ -1,7 +1,7 @@
 <li>
     <div class="person">
         <h3 class="person-name heading-small flush--ends">{{ attorney['name'] }}</h3>
-        <p class="person-address flush--ends">{{ attorney['address'] }}</p>
+        <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ attorney['address'] }}</p>
         <ul class="person-actions">
             <li class="action-item">
                 <a href="{{ confirmDeleteUrl }}" class="govuk-link action-delete js-form-popup" data-cy="delete-attorney" aria-label="Delete Attorney {{ attorney['name'] }}">Delete<span class="visually-hidden"> Attorney {{ attorney['name'] }}</span></a>

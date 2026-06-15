@@ -17,8 +17,8 @@
             No donor added
         {% endif %}
     </h2>
-    <p>{{ lpa.id | format_lpa_id }}</p>
-    <p>This will only delete the information on this website. It will not delete any LPA application you've sent to OPG already, or any registered LPA.</p>
+    <p class="govuk-body">{{ lpa.id | format_lpa_id }}</p>
+    <p class="govuk-body">This will only delete the information on this website. It will not delete any LPA application you've sent to OPG already, or any registered LPA.</p>
     <a href="/user/dashboard/delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" data-cy="delete" class="govuk-button govuk-button--warning flush--left js-single-use">Delete</a>
     <a href="/user/dashboard" data-cy="cancel" class="govuk-button govuk-button--secondary js-cancel">Cancel</a>
 </div>

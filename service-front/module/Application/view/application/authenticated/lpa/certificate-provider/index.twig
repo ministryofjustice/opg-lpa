@@ -12,18 +12,18 @@
 
         <div class="text">
 
-            <p>Every LPA must have a certificate provider.</p>
+            <p class="govuk-body">Every LPA must have a certificate provider.</p>
 
-            <p>The certificate provider is an independent person who helps to protect the donor’s interests.</p>
+            <p class="govuk-body">The certificate provider is an independent person who helps to protect the donor’s interests.</p>
 
-            <p>Before the donor signs the LPA, the certificate provider must discuss the LPA with the donor. This is to make sure:</p>
+            <p class="govuk-body">Before the donor signs the LPA, the certificate provider must discuss the LPA with the donor. This is to make sure:</p>
 
             <ul class="list list-bullet">
                 <li>the donor understands their LPA and the power it gives their attorneys</li>
                 <li>no one is putting the donor under pressure to make the LPA</li>
             </ul>
 
-            <p>The certificate provider must:</p>
+            <p class="govuk-body">The certificate provider must:</p>
 
             <ul class="list list-bullet">
                 <li>be able to have an honest conversation with the donor</li>
@@ -31,7 +31,7 @@
                 <li>be independent</li>
             </ul>
 
-            <p>The certificate provider signs the LPA after the donor.</p>
+            <p class="govuk-body">The certificate provider signs the LPA after the donor.</p>
 
             <style>
 
@@ -54,14 +54,14 @@
                     <div class="panel">
                         <h2 class="heading-medium">Who can be a certificate provider</h2>
 
-                        <p>The certificate provider must be either:</p>
+                        <p class="govuk-body">The certificate provider must be either:</p>
 
                         <ul class="list list-bullet">
                             <li>someone who has known the donor well for at least 2 years, for example, you’re a friend or neighbour (but not a relative)</li>
                             <li>a doctor, lawyer or someone with the professional skills to judge whether the donor understands the LPA</li>
                         </ul>
 
-                        <p>The certificate provider must:</p>
+                        <p class="govuk-body">The certificate provider must:</p>
 
                         <ul class="list list-bullet">
                             <li>be 18 or over</li>
@@ -70,9 +70,9 @@
 
                         <h2 class="heading-medium">Who cannot be a certificate provider</h2>
 
-                        <p>It’s important that the certificate provider is someone independent.</p>
+                        <p class="govuk-body">It’s important that the certificate provider is someone independent.</p>
 
-                        <p>This means the certificate provider cannot be:</p>
+                        <p class="govuk-body">This means the certificate provider cannot be:</p>
 
                         <ul class="list list-bullet">
                             <li>an attorney or replacement attorney on this LPA, or any other power of attorney the donor has made</li>
@@ -92,7 +92,7 @@
                 </details>
             </div>
 
-            <p>
+            <p class="govuk-body">
                 <a class="govuk-link js-guidance" href="/guide#topic-certificate-providers" data-analytics-click="page:link:help: Find out more about certificate providers">Find out more about certificate providers</a>
             </p>
         </div>
@@ -104,7 +104,7 @@
 
         <div class="person">
             <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
-            <p class="person-address flush--ends">{{ lpa.document.certificateProvider.address }}</p>
+            <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
                     <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="govuk-link action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
