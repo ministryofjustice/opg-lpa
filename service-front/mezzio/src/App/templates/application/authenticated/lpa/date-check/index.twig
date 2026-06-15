@@ -196,9 +196,9 @@
     <div class="accordion-info">
         <div class="text">
 
-            <p>This page is optional. You can use it to check that your {{ lpa.document.type == 'health-and-welfare' ? 'health and welfare' : 'property and finance' }} LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-analytics-click="page:link:help: has been -signed in the correct order- before">signed in the correct order</a> before you send it to us.</p>
+            <p class="govuk-body">This page is optional. You can use it to check that your {{ lpa.document.type == 'health-and-welfare' ? 'health and welfare' : 'property and finance' }} LPA has been <a href="/guide#topic-signing-the-lpa" class="js-guidance" data-analytics-click="page:link:help: has been -signed in the correct order- before">signed in the correct order</a> before you send it to us.</p>
 
-            <p>Please give the date each person below signed the LPA.</p>
+            <p class="govuk-body">Please give the date each person below signed the LPA.</p>
         </div>
     </div>
 
@@ -226,7 +226,7 @@
                     {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
                     {{ formElementErrorsV2(donorLifeSustainingElement) }}
 
-                    <p>
+                    <p class="govuk-body">
                     {% if lpa.document.donor.canSign %}
                         This person signed section 5 of the LPA on
                     {% else %}
@@ -273,7 +273,7 @@
                     {{ formElementErrorsV2(donorElementYear) }}
                     {{ formElementErrorsV2(donorElement) }}
 
-                    <p data-cy="donor-check-signature-date-prompt">
+                    <p class="govuk-body" data-cy="donor-check-signature-date-prompt">
                     {% if lpa.document.donor.canSign %}
                         This person signed section 9 of the LPA on
                     {% else %}
@@ -313,48 +313,48 @@
                 {# cs1 cs2 cs3 #}
                 {% if 1 in continuationSheets and 2 in continuationSheets and 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed section 5.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed section 5.</p>
                     {% endif %}
 
                 {# cs1 cs2 #}
                 {% elseif 1 in continuationSheets and 2 in continuationSheets %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
 
                 {# cs1 cs3 #}
                 {% elseif 1 in continuationSheets and 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed section 5.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed section 5.</p>
                     {% endif %}
 
                 {# cs2 cs3 #}
                 {% elseif 2 in continuationSheets and 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
-                        <p data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed section 5.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed section 5.</p>
                     {% endif %}
 
                 {# cs1 #}
                 {% elseif 1 in continuationSheets %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
                 {# cs2 #}
                 {% elseif 2 in continuationSheets %}
-                    <p data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
                 {# cs3 #}
                 {% elseif 3 in continuationSheets %}
                     {% if lpa.document.type == 'property-and-financial' %}
-                        <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
                     {% elseif lpa.document.type == 'health-and-welfare' %}
-                        <p data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
+                        <p class="govuk-body" data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
                     {% endif %}
                 {% endif %}
 
                 {% if (1 in continuationSheets or 2 in continuationSheets) and 3 in continuationSheets and lpa.document.type == 'health-and-welfare' %}
-                    <p data-cy="continuation-sheet-info">Section 5 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                    <p class="govuk-body" data-cy="continuation-sheet-info">Section 5 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
                 {% endif %}
             </div>
             {% endif %}
@@ -370,7 +370,7 @@
                 {{ formElementErrorsV2(certificateProviderElementYear) }}
                 {{ formElementErrorsV2(certificateProviderElement) }}
 
-                <p>This person signed section 10 of the LPA on</p>
+                <p class="govuk-body">This person signed section 10 of the LPA on</p>
 
                 <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-certificate-provider-date date-check-dates">
                     <legend class="visually-hidden">Check signature dates for certificate provider</legend>
@@ -442,7 +442,7 @@
                     {{ formElementErrorsV2(elementYear) }}
                     {{ formElementErrorsV2(element) }}
 
-                    <p>
+                    <p class="govuk-body">
                         {% if attorney.dob is defined %}
                             This person signed section 11 of the LPA on
                         {% else %}
@@ -524,7 +524,7 @@
                     {{ formElementErrorsV2(elementYear) }}
                     {{ formElementErrorsV2(element) }}
 
-                    <p>
+                    <p class="govuk-body">
                         {% if attorney.dob is defined %}
                             This person signed section 11 of the LPA on
                         {% else %}
@@ -612,7 +612,7 @@
                     {{ formElementErrorsV2(elementYear) }}
                     {{ formElementErrorsV2(element) }}
 
-                    <p>
+                    <p class="govuk-body">
                     {% if applicant['isHuman'] and applicant['isDonor'] and not lpa.document.donor.canSign %}
                         This person signed section 15 of the LPA on behalf of the applicant on
                     {% elseif applicant['isHuman'] %}

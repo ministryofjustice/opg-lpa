@@ -1,7 +1,7 @@
 <li>
     <div class="person">
         <h3 class="person-name heading-small flush--ends">{{ notifiedPerson.name }}</h3>
-        <p class="person-address flush--ends">{{ notifiedPerson.address }}</p>
+        <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ notifiedPerson.address }}</p>
         <ul class="person-actions">
             <li class="action-item">
                 <a href="{{ confirmDeleteRoute }}" class="govuk-link action-delete js-form-popup" data-cy="delete" aria-label="Delete Person to Notify {{ notifiedPerson.name }}">Delete<span class="visually-hidden"> Person to Notify {{ notifiedPerson.name }}</span></a>

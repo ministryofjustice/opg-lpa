@@ -31,7 +31,7 @@
 {{ email.setOptions({ label: 'Email address' }) ? '' }}
 {{ password.setOptions( { label: 'Password' }) ? '' }}
 
-<p>Sign in or <a class="govuk-link" href="{{ url('register') }}">create an account</a> to get started.</p>
+<p class="govuk-body">Sign in or <a class="govuk-link" href="{{ url('register') }}">create an account</a> to get started.</p>
 
 <div class="govuk-details__text">
     If you already have a registered LPA and want to use it online, go to the<br>
@@ -67,7 +67,7 @@
 
 {{ form().closeTag|raw }}
 
-<p>
+<p class="govuk-body">
     <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
 </p>
 
