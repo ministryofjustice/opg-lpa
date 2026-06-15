@@ -45,7 +45,7 @@ class LpaTypeHandler implements RequestHandlerInterface
     {
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\TypeForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\TypeForm');
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];

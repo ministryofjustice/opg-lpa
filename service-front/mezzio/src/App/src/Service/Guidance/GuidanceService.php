@@ -11,6 +11,11 @@ class GuidanceService
     public const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
     public const GUIDANCE_ROUTE = 'guide';
 
+    public function __construct(
+        private readonly string $markdownFolder = self::GUIDANCE_MARKDOWN_FOLDER,
+    ) {
+    }
+
     /**
      * Generate guidance sections and navigation from the guidance markdown files.
      *
@@ -20,7 +25,7 @@ class GuidanceService
     {
         $sectionArray = [];
         $orderFileName = '/order.md';
-        $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . $orderFileName);
+        $lines = file($this->markdownFolder . $orderFileName);
 
         $sectionTitle = '';
 
@@ -53,7 +58,7 @@ class GuidanceService
 
     public function processSection(string $filename, string $sectionId): string
     {
-        $md = Markdown::defaultTransform(file_get_contents(self::GUIDANCE_MARKDOWN_FOLDER . '/' . $filename));
+        $md = Markdown::defaultTransform(file_get_contents($this->markdownFolder . '/' . $filename));
 
         $html = '<article id="topic-' . $sectionId . '">';
 

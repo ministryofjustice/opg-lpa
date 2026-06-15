@@ -67,6 +67,7 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
             <summary data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>

@@ -40,7 +40,7 @@ class ApplicantHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\ApplicantForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\ApplicantForm::class);
 
         $this->formElementManager
             ->method('get')

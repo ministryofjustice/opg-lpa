@@ -31,7 +31,7 @@ class ForgotPasswordHandler implements RequestHandlerInterface
         }
 
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
+        $form = $this->formElementManager->get(\App\Form\User\ConfirmEmail::class);
         $form->setAttribute('action', '/forgot-password');
 
         $error = null;

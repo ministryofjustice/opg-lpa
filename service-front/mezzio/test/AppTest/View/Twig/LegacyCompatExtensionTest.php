@@ -14,6 +14,7 @@ use App\Storage\MezzioSessionStorage;
 use App\View\Twig\LegacyCompatExtension;
 use Laminas\Form\Element;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -295,6 +296,112 @@ final class LegacyCompatExtensionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
+    // formCheckbox — MultiCheckbox
+    // -------------------------------------------------------------------------
+
+    public function testFormCheckboxRendersOneItemPerValueOption(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler',   'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+            2 => ['label' => 'David Wheeler', 'value' => 2, 'attributes' => ['id' => 'attorney-2']],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertSame(2, substr_count($html, 'type="checkbox"'));
+        $this->assertStringContainsString('value="1"', $html);
+        $this->assertStringContainsString('value="2"', $html);
+        $this->assertStringContainsString('Amy Wheeler', $html);
+        $this->assertStringContainsString('David Wheeler', $html);
+    }
+
+    public function testFormCheckboxMultiUsesArrayNameForSubmission(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('name="attorneyList[]"', $html);
+    }
+
+    public function testFormCheckboxMultiWrapsEachOptionInGovukItem(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('class="govuk-checkboxes__item"', $html);
+        $this->assertStringContainsString('<label', $html);
+        $this->assertStringContainsString('for="attorney-1"', $html);
+    }
+
+    public function testFormCheckboxMultiMarksSelectedValuesAsChecked(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler',   'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+            2 => ['label' => 'David Wheeler', 'value' => 2, 'attributes' => ['id' => 'attorney-2']],
+        ]);
+        $multi->setValue([1]); // only attorney 1 selected
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertSame(1, substr_count($html, ' checked'));
+        // value and checked must be adjacent — matching the legacy FormMultiCheckbox
+        // view helper which set checked as a boolean in the attributes array so that
+        // createAttributesString() produced `value="X" checked` as adjacent tokens.
+        $this->assertStringContainsString('value="1" checked', $html);
+        $this->assertStringNotContainsString('value="2" checked', $html);
+    }
+
+    public function testFormCheckboxMultiAddsSelectedClassWhenChecked(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]);
+        $multi->setValue([1]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('govuk-checkboxes__item selected', $html);
+    }
+
+    public function testFormCheckboxMultiStripsInternalDivAttributes(): void
+    {
+        $multi = new MultiCheckbox('attorneyList');
+        $multi->setValueOptions([
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => [
+                'id' => 'attorney-1',
+                'div-attributes' => ['class' => 'multiple-choice'],
+            ]],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringNotContainsString('div-attributes', $html);
+        $this->assertStringNotContainsString('multiple-choice', $html);
+    }
+
+    public function testFormElementDispatchesToFormCheckboxForMultiCheckbox(): void
+    {
+        $multi = new MultiCheckbox('items');
+        $multi->setValueOptions(['a' => ['label' => 'Option A', 'value' => 'a']]);
+
+        $html = $this->extension->formElement($multi);
+
+        $this->assertStringContainsString('type="checkbox"', $html);
+        $this->assertStringContainsString('name="items[]"', $html);
+    }
+
+    // -------------------------------------------------------------------------
     // formRadio
     // -------------------------------------------------------------------------
 
@@ -324,7 +431,72 @@ final class LegacyCompatExtensionTest extends TestCase
 
         // Should have exactly one checked
         $this->assertSame(1, substr_count($html, 'checked'));
-        $this->assertStringContainsString('value="health-welfare" checked', $html);
+        // checked attribute appears on the health-welfare input (attribute order may vary)
+        $this->assertMatchesRegularExpression('/value="health-welfare"[^>]*\bchecked\b/', $html);
+    }
+
+    // -------------------------------------------------------------------------
+    // formRadioOption
+    // -------------------------------------------------------------------------
+
+    public function testFormRadioOptionRendersOnlyTheRequestedOption(): void
+    {
+        $radio = new Radio('contactInWelsh');
+        $radio->setAttributes(['name' => 'contactInWelsh']);
+        $radio->setValueOptions([
+            'english' => ['label' => 'English', 'value' => 'false'],
+            'welsh'   => ['label' => 'Welsh',   'value' => 'true'],
+        ]);
+
+        $html = $this->extension->formRadioOption($radio, 'english');
+
+        $this->assertSame(1, substr_count($html, 'type="radio"'));
+        $this->assertStringContainsString('value="false"', $html);
+        $this->assertStringContainsString('>English<', $html);
+        $this->assertStringNotContainsString('>Welsh<', $html); // Welsh label absent; 'contactInWelsh' name is fine
+    }
+
+    public function testFormRadioOptionDoesNotMutateOriginalElement(): void
+    {
+        $radio = new Radio('when');
+        $radio->setAttributes(['name' => 'when']);
+        $radio->setValueOptions([
+            'now'         => ['label' => 'Now',         'value' => 'now'],
+            'no-capacity' => ['label' => 'No capacity', 'value' => 'no-capacity'],
+        ]);
+
+        $this->extension->formRadioOption($radio, 'now');
+
+        // Original element still has both options
+        $this->assertCount(2, $radio->getValueOptions());
+    }
+
+    public function testFormRadioOptionReturnsEmptyStringForUnknownKey(): void
+    {
+        $radio = new Radio('when');
+        $radio->setAttributes(['name' => 'when']);
+        $radio->setValueOptions([
+            'now' => ['label' => 'Now', 'value' => 'now'],
+        ]);
+
+        $this->assertSame('', $this->extension->formRadioOption($radio, 'nonexistent'));
+    }
+
+    public function testFormRadioOptionMarksCheckedWhenValueMatches(): void
+    {
+        $radio = new Radio('contactInWelsh');
+        $radio->setAttributes(['name' => 'contactInWelsh']);
+        $radio->setValueOptions([
+            'english' => ['label' => 'English', 'value' => 'false'],
+            'welsh'   => ['label' => 'Welsh',   'value' => 'true'],
+        ]);
+        $radio->setValue('true'); // Welsh selected
+
+        $htmlWelsh   = $this->extension->formRadioOption($radio, 'welsh');
+        $htmlEnglish = $this->extension->formRadioOption($radio, 'english');
+
+        $this->assertStringContainsString('checked', $htmlWelsh);
+        $this->assertStringNotContainsString('checked', $htmlEnglish);
     }
 
     // -------------------------------------------------------------------------
@@ -381,7 +553,7 @@ final class LegacyCompatExtensionTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // formInput error class
+    // formInput / buildInputAttributes
     // -------------------------------------------------------------------------
 
     public function testFormInputAddsErrorClassWhenElementHasMessages(): void
@@ -393,6 +565,84 @@ final class LegacyCompatExtensionTest extends TestCase
         $html = $this->extension->formInput($el);
 
         $this->assertStringContainsString('govuk-input--error', $html);
+    }
+
+    public function testFormInputDoesNotDuplicateErrorClassWhenAlreadyPresent(): void
+    {
+        $el = new Element\Text('email');
+        $el->setAttributes(['id' => 'email', 'name' => 'email', 'class' => 'govuk-input govuk-input--error']);
+        $el->setMessages(['isEmpty' => 'Required']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertSame(1, substr_count($html, 'govuk-input--error'));
+    }
+
+    public function testFormInputRendersValueWhenPresent(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        $el->setValue('John');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('value="John"', $html);
+    }
+
+    public function testFormInputOmitsValueAttributeWhenNull(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        // Value is null by default
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringNotContainsString('value=', $html);
+    }
+
+    public function testFormInputOmitsValueAttributeWhenEmptyString(): void
+    {
+        $el = new Element\Text('name');
+        $el->setAttributes(['id' => 'name', 'name' => 'name']);
+        $el->setValue('');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringNotContainsString('value=', $html);
+    }
+
+    public function testFormInputRendersValueZeroString(): void
+    {
+        $el = new Element\Text('quantity');
+        $el->setAttributes(['id' => 'quantity', 'name' => 'quantity']);
+        $el->setValue('0');
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('value="0"', $html);
+    }
+
+    public function testFormInputUsesDefaultTypeAndClass(): void
+    {
+        $el = new Element\Text('field');
+        $el->setAttributes(['id' => 'field', 'name' => 'field']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('type="text"', $html);
+        $this->assertStringContainsString('class="govuk-input"', $html);
+    }
+
+    public function testFormInputRespectsCustomTypeAndClass(): void
+    {
+        $el = new Element\Text('email');
+        $el->setAttributes(['id' => 'email', 'name' => 'email', 'type' => 'email', 'class' => 'custom-class']);
+
+        $html = $this->extension->formInput($el);
+
+        $this->assertStringContainsString('type="email"', $html);
+        $this->assertStringContainsString('class="custom-class"', $html);
+        $this->assertStringNotContainsString('govuk-input', $html);
     }
 
     // -------------------------------------------------------------------------

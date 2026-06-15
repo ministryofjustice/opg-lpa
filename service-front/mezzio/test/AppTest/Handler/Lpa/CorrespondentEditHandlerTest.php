@@ -44,7 +44,7 @@ class CorrespondentEditHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\CorrespondentForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\CorrespondentForm::class);
 
         $this->formElementManager
             ->method('get')

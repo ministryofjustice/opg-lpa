@@ -8,7 +8,7 @@ use App\Handler\Lpa\RepeatApplicationHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Form\Lpa\RepeatApplicationForm;
+use App\Form\Lpa\RepeatApplicationForm;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
 use Laminas\Diactoros\Response\HtmlResponse;

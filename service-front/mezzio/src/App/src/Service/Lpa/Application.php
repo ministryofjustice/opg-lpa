@@ -27,10 +27,6 @@ use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * Mezzio port of Application\Model\Service\Lpa\Application.
- * Inlines AbstractService and AbstractEmailService; uses App\ ApiClient/Auth classes.
- */
 class Application implements ApiClientAwareInterface, LoggerAwareInterface
 {
     use ApiClientTrait;

@@ -46,9 +46,9 @@ class LifeSustainingHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\LifeSustainingForm $form */
+        /** @var \App\Form\Lpa\LifeSustainingForm $form */
         $form = $this->formElementManager->get(
-            'Application\Form\Lpa\LifeSustainingForm',
+            'App\Form\Lpa\LifeSustainingForm',
             ['lpa' => $lpa]
         );
 

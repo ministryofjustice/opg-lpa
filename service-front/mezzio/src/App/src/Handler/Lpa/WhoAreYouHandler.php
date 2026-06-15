@@ -68,8 +68,8 @@ class WhoAreYouHandler implements RequestHandlerInterface
             return new HtmlResponse($html);
         }
 
-        /** @var \Application\Form\Lpa\WhoAreYouForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\WhoAreYouForm');
+        /** @var \App\Form\Lpa\WhoAreYouForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\WhoAreYouForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate($currentRoute, ['lpa-id' => $lpa->id])

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Traits;
 
+use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -16,6 +17,7 @@ trait CommonTemplateVariablesTrait
             'secondsUntilSessionExpires' => $request->getAttribute('secondsUntilSessionExpires'),
             'lpa' => $request->getAttribute(RequestAttribute::LPA),
             'currentRouteName' => $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME),
+            'csrfToken' => $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE),
         ];
     }
 }
