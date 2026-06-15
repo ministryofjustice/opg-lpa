@@ -138,6 +138,7 @@
     {{ form.prepare() ? '' }}
 
     {{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         {{ macros.formErrorSummary(error,form) }}
 
@@ -211,8 +212,8 @@
                 <legend class="govuk-visually-hidden">Language options</legend>
 
 
-                {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
-                {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
+                {{ formRadioOption(contactInWelsh, 'english')|raw }}
+                {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
             </fieldset>
         </div>
 

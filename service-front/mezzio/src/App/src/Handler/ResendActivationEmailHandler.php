@@ -31,8 +31,7 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
             return new RedirectResponse('/user/dashboard');
         }
 
-        /** @var \Application\Form\User\ConfirmEmail $form */
-        $form = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
+        $form = $this->formElementManager->get(\App\Form\User\ConfirmEmail::class);
         $form->setAttribute('action', '/signup/resend-email');
 
         $data = ['form' => $form];
@@ -50,7 +49,7 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
 
                 if ($result === true) {
                     // Set up form for another resend email if needed
-                    $resendForm = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
+                    $resendForm = $this->formElementManager->get(\App\Form\User\ConfirmEmail::class);
                     assert($resendForm instanceof FormInterface);
                     $resendForm->setAttribute('action', '/signup/resend-email');
                     $resendForm->setData([

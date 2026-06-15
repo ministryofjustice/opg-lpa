@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Form\Validator;
+
+use Laminas\Validator\AbstractValidator;
+use Laminas\Validator\EmailAddress as LaminasEmailAddressValidator;
+
+class EmailAddress extends AbstractValidator
+{
+    private LaminasEmailAddressValidator $validator;
+
+    public const string INVALID_EMAIL = 'invalidEmailAddress';
+
+    protected $messageTemplates = [
+        self::INVALID_EMAIL => 'Enter a valid email address',
+    ];
+
+    public function __construct(array $options = [])
+    {
+        parent::__construct($options);
+        $this->validator = new LaminasEmailAddressValidator();
+    }
+
+    public function isValid($value): bool
+    {
+        $valid = $this->validator->isValid($value);
+
+        if ($valid === false && count($this->validator->getMessages()) > 0) {
+            $this->abstractOptions['messages'] = $this->messageTemplates;
+        }
+
+        return $valid;
+    }
+}

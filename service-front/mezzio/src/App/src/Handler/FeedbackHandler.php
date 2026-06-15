@@ -41,7 +41,7 @@ class FeedbackHandler implements RequestHandlerInterface
         assert($session instanceof SessionInterface);
 
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('Application\Form\General\FeedbackForm');
+        $form = $this->formElementManager->get('App\Form\General\FeedbackForm');
 
         if (strtoupper($request->getMethod()) === 'POST') {
             $data = $request->getParsedBody() ?? [];

@@ -30,7 +30,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\HowAttorneysMakeDecisionForm&MockObject */
+    /** @var \App\Form\Lpa\HowAttorneysMakeDecisionForm&MockObject */
     private $form;
     private HowReplacementAttorneysMakeDecisionHandler $handler;
 
@@ -40,7 +40,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\HowAttorneysMakeDecisionForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\HowAttorneysMakeDecisionForm::class);
 
         $this->formElementManager
             ->method('get')

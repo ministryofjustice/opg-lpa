@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\ResendActivationEmailHandler;
-use Application\Form\User\ConfirmEmail;
+use App\Form\User\ConfirmEmail;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

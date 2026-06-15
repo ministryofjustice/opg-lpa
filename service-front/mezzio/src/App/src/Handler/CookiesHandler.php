@@ -26,7 +26,7 @@ class CookiesHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('Application\Form\General\CookieConsentForm');
+        $form = $this->formElementManager->get('App\Form\General\CookieConsentForm');
 
         $form->setAttribute('action', '/cookies');
 

@@ -117,7 +117,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
 
         $submitElement = $this->createMock(Submit::class);
         $submitElement->method('setAttribute')->willReturnSelf();
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $form->method('get')->with('submit')->willReturn($submitElement);
         $this->formElementManager->method('get')->willReturn($form);

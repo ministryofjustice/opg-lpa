@@ -18,11 +18,8 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 /**
- * Mezzio port of Application\Middleware\AuthenticationMiddleware.
- *
  * Checks that the user is authenticated before allowing access to protected
  * routes, redirecting to the login page with an appropriate reason if not.
- * Uses the Mezzio session directly instead of Laminas MVC session containers.
  *
  * Must run after IdentityTokenRefreshMiddleware (which populates the auth
  * service storage from the Mezzio session).

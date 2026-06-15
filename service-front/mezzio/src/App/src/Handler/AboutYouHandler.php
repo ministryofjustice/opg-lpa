@@ -49,7 +49,7 @@ class AboutYouHandler implements RequestHandlerInterface
         $isNew = $request->getAttribute('new') !== null;
 
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('Application\Form\User\AboutYou');
+        $form = $this->formElementManager->get('App\Form\User\AboutYou');
 
         $actionTarget = $isNew ? '/user/about-you/new' : '/user/about-you';
         $form->setAttribute('action', $actionTarget);

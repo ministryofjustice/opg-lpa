@@ -14,13 +14,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-/**
- * Mezzio port of the legacy SessionExpiryHandler.
- *
- * Calls the API /v2/session-expiry endpoint using the current user's token.
- * Returns JSON { remainingSeconds: N } if the session is still valid,
- * or 204 (and clears the session) if it has expired.
- */
 class SessionExpiryHandler implements RequestHandlerInterface
 {
     public function __construct(

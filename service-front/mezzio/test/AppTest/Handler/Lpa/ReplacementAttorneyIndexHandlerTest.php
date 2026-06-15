@@ -25,7 +25,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private UrlHelper&MockObject $urlHelper;
     private Metadata&MockObject $metadata;
-    /** @var \Application\Form\Lpa\BlankMainFlowForm&MockObject */
+    /** @var \App\Form\Lpa\BlankMainFlowForm&MockObject */
     private $form;
     private ReplacementAttorneyIndexHandler $handler;
 
@@ -35,7 +35,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->metadata = $this->createMock(Metadata::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
 
         $this->formElementManager->method('get')->willReturn($this->form);
         $this->urlHelper->method('generate')->willReturnCallback(

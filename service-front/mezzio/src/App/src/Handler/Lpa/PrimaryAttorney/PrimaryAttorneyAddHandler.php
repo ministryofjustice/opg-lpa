@@ -80,11 +80,9 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
                         'lpa-id' => $lpa->id,
                     ], [
-                        'query' => [
-                            'calling-url' => $request->getUri()->getPath(),
-                            'include-trusts' => true,
-                            'actor-name' => 'Attorney',
-                        ],
+                        'calling-url' => $request->getUri()->getPath(),
+                        'include-trusts' => true,
+                        'actor-name' => 'Attorney',
                     ]);
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -92,7 +90,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/primary-attorney/add', ['lpa-id' => $lpa->id])

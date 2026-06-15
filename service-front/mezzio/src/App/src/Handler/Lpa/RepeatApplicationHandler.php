@@ -50,8 +50,8 @@ class RepeatApplicationHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\RepeatApplicationForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\RepeatApplicationForm', [
+        /** @var \App\Form\Lpa\RepeatApplicationForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\RepeatApplicationForm', [
             'lpa' => $lpa,
         ]);
 

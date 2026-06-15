@@ -12,9 +12,6 @@ use DateTime;
 use Laminas\Authentication\Adapter\Exception\RuntimeException;
 use Laminas\Authentication\Result;
 
-/**
- * Mezzio port of Application\Model\Service\Authentication\Adapter\LpaAuthAdapter.
- */
 class LpaAuthAdapter implements AdapterInterface
 {
     private ?string $email = null;

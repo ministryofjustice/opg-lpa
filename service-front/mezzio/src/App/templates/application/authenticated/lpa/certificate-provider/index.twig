@@ -124,6 +124,7 @@
         {# begin form #}
         {{ form.prepare() ? '' }}
         {{ form().openTag( form )|raw }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
