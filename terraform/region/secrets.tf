@@ -62,7 +62,6 @@ resource "aws_secretsmanager_secret" "opg_lpa_api_auth_log_salt" {
   }
 }
 
-
 # admin secrets
 resource "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
   name                           = "${local.account_name}/opg_lpa_admin_jwt_secret"

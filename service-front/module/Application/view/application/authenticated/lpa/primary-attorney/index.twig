@@ -37,8 +37,8 @@
         </ul>
     {% endif %}
 
-    <div class="{% if (attorneys) %}action-item{% endif %}">
-        <a href="{{ addUrl }}" role="button" data-cy="add-attorney" class="{% if not (attorneys) %}govuk-button{% endif %} js-form-popup" >
+    <div class="{% if (attorneys) %}action-item{% endif %} govuk-!-margin-bottom-3">
+        <a href="{{ addUrl }}" role="button" data-cy="add-attorney" class="{% if not (attorneys) %}govuk-button{% else %}govuk-link{% endif %} js-form-popup" >
             {% if (attorneys) %}
                 Add another attorney?
             {% else %}
@@ -48,7 +48,9 @@
     </div>
 
     {% if (attorneys) %}
-        <a href="{{ nextUrl }}" role="button" data-cy="save" class="govuk-button">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+        <div class="govuk-!-margin-bottom-3">
+          <a href="{{ nextUrl }}" role="button" data-cy="save" class="govuk-button">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+        </div>
     {% endif %}
 
 </li>
