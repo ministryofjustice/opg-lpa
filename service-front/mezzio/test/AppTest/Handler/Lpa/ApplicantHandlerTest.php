@@ -54,8 +54,13 @@ class ApplicantHandlerTest extends TestCase
         );
     }
 
+    /**
+     * @param int[]|null|string $whoIsRegistering
+     *
+     * @psalm-param 'donor'|list{0: 1, 1?: 2}|null $whoIsRegistering
+     */
     private function createLpa(
-        mixed $whoIsRegistering = null,
+        array|string|null $whoIsRegistering = null,
         int $primaryAttorneyCount = 1,
         string $howDecision = AbstractDecisions::LPA_DECISION_HOW_JOINTLY
     ): Lpa {
