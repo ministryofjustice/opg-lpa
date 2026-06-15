@@ -66,7 +66,7 @@ class CorrespondentForm extends AbstractActorForm
         parent::init();
     }
 
-    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind(array $object, $flags = FormInterface::VALUES_NORMALIZED)
     {
         $who  = (isset($object['who']) ? $object['who'] : null);
         $type = (isset($object['type']) ? $object['type'] : null);

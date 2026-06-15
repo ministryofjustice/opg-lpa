@@ -37,6 +37,11 @@ class TypeForm extends AbstractMainFlowForm
         parent::init();
     }
 
+    /**
+     * @return (array|bool|mixed)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array<never, never>|mixed}
+     */
     protected function validateByModel()
     {
         $document = new Document($this->data);

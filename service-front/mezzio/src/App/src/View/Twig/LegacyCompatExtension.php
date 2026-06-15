@@ -206,8 +206,12 @@ class LegacyCompatExtension extends AbstractExtension
     /**
      * Ported from AppFunctionsExtension::formElementErrorsV2().
      * Inlined from layout/partials/form-element-errors.twig — no renderer needed.
+     *
+     * @param (string|string[])[]|\PHPUnit\Framework\MockObject\MockObject&\Laminas\Form\Element|null|string $errors
+     *
+     * @psalm-param 'not-an-array'|\PHPUnit\Framework\MockObject\MockObject&\Laminas\Form\Element|array{isEmpty?: 'Enter a value'|'Required', length?: array{tooShort: 'Too short'}}|null $errors
      */
-    public function formElementErrorsV2(mixed $errors): string
+    public function formElementErrorsV2(array|string|\PHPUnit\Framework\MockObject\MockObject&\Laminas\Form\Element|null $errors): string
     {
         if ($errors === null) {
             return '';

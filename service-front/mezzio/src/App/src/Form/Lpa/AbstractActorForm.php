@@ -44,6 +44,11 @@ abstract class AbstractActorForm extends AbstractLpaForm
         parent::init();
     }
 
+    /**
+     * @return (array|bool|mixed)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array<never, never>|mixed}
+     */
     protected function validateByModel()
     {
         if (!$this->actorModel instanceof AbstractData) {
@@ -97,7 +102,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
         ];
     }
 
-    protected function convertFormDataForModel($formData)
+    protected function convertFormDataForModel(array $formData)
     {
         $formDataAsArray = (array) $formData;
         if (array_key_exists('dob-date', $formDataAsArray) && is_array($formDataAsArray['dob-date'])) {
@@ -150,7 +155,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
         return parent::bind($object, $flags);
     }
 
-    public function setActorData($actorType, array $actorNames)
+    public function setActorData(string $actorType, array $actorNames): void
     {
         $this->setAttribute('data-actor-type', $actorType);
         $this->setAttribute('data-actor-names', json_encode($actorNames));
