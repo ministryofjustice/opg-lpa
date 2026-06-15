@@ -56,6 +56,11 @@ class CorrespondenceForm extends AbstractMainFlowForm
         parent::init();
     }
 
+    /**
+     * @return ((array|mixed)[]|bool)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array{correspondence: array<never, never>|mixed}}
+     */
     protected function validateByModel()
     {
         $correspondenceData = $this->data['correspondence'];

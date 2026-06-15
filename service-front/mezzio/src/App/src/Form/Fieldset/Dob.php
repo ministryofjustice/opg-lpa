@@ -28,14 +28,24 @@ class Dob extends Fieldset
         ]);
     }
 
-    public function setMessages($messages)
+    /**
+     * @param string[][] $messages
+     *
+     * @psalm-param array{day?: list{'Value is required'}, year?: list{'Invalid year'}} $messages
+     */
+    public function setMessages(array $messages)
     {
         $this->messages = $messages;
 
         return parent::setMessages($messages);
     }
 
-    public function getMessages($elementName = null): array
+    /**
+     * @param null|string $elementName
+     *
+     * @psalm-param 'year'|null $elementName
+     */
+    public function getMessages(string|null $elementName = null): array
     {
         return $this->messages;
     }

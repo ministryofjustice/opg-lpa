@@ -63,6 +63,11 @@ class RepeatApplicationForm extends AbstractMainFlowForm
         parent::init();
     }
 
+    /**
+     * @return (array|bool|mixed)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array<never, never>|mixed}
+     */
     protected function validateByModel()
     {
         $isValid  = true;

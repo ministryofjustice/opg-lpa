@@ -84,7 +84,15 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         $this->sessionStorage = $storage;
     }
 
-    public function url($name = null, $params = [], $options = []): string
+    /**
+     * @param null|string $name
+     * @param (mixed|string)[] $params
+     * @param true[] $options
+     *
+     * @psalm-param array{token?: mixed|string, id?: '1'} $params
+     * @psalm-param array{force_canonical?: true} $options
+     */
+    public function url(string|null $name = null, array $params = [], array $options = []): string
     {
         $path = $this->urlHelper->generate((string) $name, $params);
 

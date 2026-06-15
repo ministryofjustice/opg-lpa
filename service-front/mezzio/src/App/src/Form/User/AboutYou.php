@@ -48,7 +48,10 @@ class AboutYou extends AbstractActorForm
         parent::init();
     }
 
-    public function setData($data)
+    /**
+     * @psalm-param array<string, mixed> $data
+     */
+    public function setData(array $data)
     {
         $dataArray = (array) $data;
         $this->filterData($dataArray);

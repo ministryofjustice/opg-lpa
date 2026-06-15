@@ -91,7 +91,12 @@ abstract class AbstractLpaForm extends AbstractForm
         return $result;
     }
 
-    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, $context = null)
+    /**
+     * @return (mixed|string[])[]
+     *
+     * @psalm-return array<array<string>|string, array<string>|mixed>
+     */
+    protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, array|null $context = null)
     {
         $messages = [];
 
@@ -134,6 +139,11 @@ abstract class AbstractLpaForm extends AbstractForm
         return $messages;
     }
 
+    /**
+     * @param array|mixed|null|object $formData
+     *
+     * @psalm-param T|array|null|object $formData
+     */
     protected function convertFormDataForModel($formData)
     {
         $modelData = [];
@@ -163,7 +173,7 @@ abstract class AbstractLpaForm extends AbstractForm
         return $modelData;
     }
 
-    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind(array $object, $flags = FormInterface::VALUES_NORMALIZED)
     {
         return parent::bind(new \ArrayObject($object));
     }
