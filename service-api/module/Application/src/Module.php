@@ -174,7 +174,10 @@ class Module
                 },
 
                 'AppAuthenticationService' => function ($sm) {
-                    return new AppAuthenticationService($sm->get('config')['session']['token_ttl']);
+                    return new AppAuthenticationService(
+                        $sm->get('config')['session']['token_ttl'],
+                        $sm->get('config')['session']['log_salt']
+                    );
                 },
 
                 'FeedbackValidator' => function () {
