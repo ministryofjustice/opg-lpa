@@ -71,8 +71,8 @@
         </ul>
     {% endif %}
 
-    <div class="{% if (attorneys) %}action-item{% endif %}">
-        <a href="{{ addRoute }}" role="{% if not (attorneys)  %}button{% endif %}" class="{% if not (attorneys) %}govuk-button{% endif %} js-form-popup" data-cy="add-replacement-attorney">
+    <div class="{% if (attorneys) %}action-item{% endif %} govuk-!-margin-bottom-3">
+        <a href="{{ addRoute }}" {% if not (attorneys)  %}role="button"{% endif %} data-cy="add-replacement-attorney" class="{% if not (attorneys) %}govuk-button{% else %}govuk-link{% endif %} js-form-popup">
             {% if (attorneys) %}
                 Add another replacement attorney?
             {% else %}
@@ -85,7 +85,13 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
-        {{ formElement(form.get('save')) }}
+        {% if (attorneys) %}
+            <div class="govuk-!-margin-bottom-3">
+                {{ formElement(form.get('save')) }}
+            </div>
+        {% else %}
+            {{ formElement(form.get('save')) }}
+        {% endif %}
     {{ form().closeTag|raw }}
 
 </li>
