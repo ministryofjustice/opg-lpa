@@ -7,13 +7,12 @@ namespace App\Handler;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 
 use function assert;
 
 final class HomePageHandlerFactory
 {
-    public function __invoke(ContainerInterface $container): RequestHandlerInterface
+    public function __invoke(ContainerInterface $container): HomePageHandler
     {
         $router = $container->get(RouterInterface::class);
         assert($router instanceof RouterInterface);

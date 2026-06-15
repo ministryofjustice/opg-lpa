@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Session;
 
 use App\Service\Redis\RedisClient;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use Psr\Container\ContainerInterface;
 
 class SaveHandlerFactory
 {
-    public function __invoke(ContainerInterface $container): SaveHandlerInterface
+    public function __invoke(ContainerInterface $container): FilteringSaveHandler
     {
         $redisClient = $container->get(RedisClient::class);
 
