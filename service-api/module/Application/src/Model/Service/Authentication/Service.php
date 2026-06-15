@@ -24,18 +24,21 @@ class Service extends AbstractService
     public const TOKEN_TTL = 4500; // 75 minutes
 
     /**
-     * The actual number of seconds before an auth token expires.
-     */
-    private $tokenTtl;
-
-    /**
      * The number of minutes to lock an account for after x failed login consecutive attempts.
      */
     public const ACCOUNT_LOCK_TIME = 900; // 15 minutes
 
-    public function __construct($tokenTtl = self::TOKEN_TTL)
+    public function __construct(
+        // The actual number of seconds before an auth token expires.
+        private $tokenTtl = self::TOKEN_TTL,
+        // Salt used when hashing user identifiers for audit logs.
+        private readonly string $logSalt = ''
+    ) {
+    }
+
+    private function hashUsername(string $username): string
     {
-        $this->tokenTtl = $tokenTtl;
+        return hash_hmac('sha256', $username, $this->logSalt);
     }
 
     public function withPassword(#[\SensitiveParameter] ?string $username, #[\SensitiveParameter] ?string $password, bool $createToken): array|string
@@ -47,6 +50,10 @@ class Service extends AbstractService
         $user = $this->getUserRepository()->getByUsername($username);
 
         if (!$user instanceof User) {
+            $this->log('warning', 'Sign-in attempt with unknown email address', [
+                'event' => 'auth.sign_in.user_not_found',
+                'hashed_username' => $this->hashUsername($username),
+            ]);
             return 'user-not-found';
         }
 

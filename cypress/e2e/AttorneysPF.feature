@@ -59,6 +59,7 @@ Feature: Add attorneys to a Property and Finance LPA
         And I click "form-save"
         # check attorney is listed and save points to replacement attorney page
         Then I see "Mrs Amy Wheeler" in the page text
+        Then the page matches the "add-attorney-add-another" baseline image
         And I can find save pointing to replacement attorney page
         # Casper checked for existence of delete link, here we click it then cancel, which is more thorough
         When I click "delete-attorney"

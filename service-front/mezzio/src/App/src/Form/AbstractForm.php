@@ -28,7 +28,7 @@ abstract class AbstractForm extends Form
      *
      * @param array $inputData
      */
-    protected function addToInputFilter(array $inputData)
+    protected function addToInputFilter(array $inputData): void
     {
         if (!in_array($inputData['name'], ['password', 'password_confirm', 'password_current'])) {
             $inputData = array_merge_recursive([

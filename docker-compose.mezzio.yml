@@ -182,7 +182,9 @@ services:
       - ./service-front/mezzio/config:/app/config
       - ./service-front/mezzio/src:/app/src
       - ./service-front/mezzio/test:/app/test
-      - ./service-front/mezzio/phpunit.xml.dist:/app/phpunit.xml.dist
+      - ./service-front/mezzio/phpunit.xml:/app/phpunit.xml
+      - ./service-front/mezzio/psalm.xml:/app/psalm.xml
+      - ./service-front/mezzio/phpcs.xml:/app/phpcs.xml
       - ./service-front/module:/service-front/module
       - ./service-front/mezzio/content:/app/content
       - ./shared:/shared

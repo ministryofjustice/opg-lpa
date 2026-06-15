@@ -82,6 +82,11 @@ class DateCheckForm extends AbstractLpaForm
         ]);
     }
 
+    /**
+     * @return (array|true)[]
+     *
+     * @psalm-return array{isValid: true, messages: array<never, never>}
+     */
     protected function validateByModel()
     {
         return [

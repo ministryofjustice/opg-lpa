@@ -75,7 +75,7 @@ class DonorForm extends AbstractActorForm
         parent::populateValues($data, $onlyBase);
     }
 
-    protected function convertFormDataForModel($formData)
+    protected function convertFormDataForModel(array|null $formData)
     {
         $modelData = parent::convertFormDataForModel($formData);
 
@@ -90,6 +90,11 @@ class DonorForm extends AbstractActorForm
         return $modelData;
     }
 
+    /**
+     * @return (array|bool)[]
+     *
+     * @psalm-return array{isValid: bool, messages: array}
+     */
     protected function validateByModel()
     {
         $actorValidation = parent::validateByModel();
