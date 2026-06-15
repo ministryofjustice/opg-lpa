@@ -5,7 +5,7 @@
 {% block content %}
 
 <li id="primary-attorney-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <p class="govuk-body">Attorneys are people the donor appoints to make decisions on their behalf.</p>
@@ -27,7 +27,7 @@
     </div>
 
     {% if (attorneys) %}
-        <h2 class="heading-medium flush--top">
+        <h2 class="govuk-heading-m flush--top">
             The attorney{% if attorneys|length > 1 %}s{% endif %}
         </h2>
         <ul>
