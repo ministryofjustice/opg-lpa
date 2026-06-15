@@ -66,26 +66,28 @@ class CorrespondentForm extends AbstractActorForm
         parent::init();
     }
 
-    public function bind(array $object, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind(array|object $object, int $flags = FormInterface::VALUES_NORMALIZED)
     {
-        $who  = (isset($object['who']) ? $object['who'] : null);
-        $type = (isset($object['type']) ? $object['type'] : null);
+        if ($object instanceof \ArrayAccess || is_array($object)) {
+            $who  = (isset($object['who']) ? $object['who'] : null);
+            $type = (isset($object['type']) ? $object['type'] : null);
 
-        if (
-            $who == Correspondence::WHO_DONOR ||
-            $who == Correspondence::WHO_CERTIFICATE_PROVIDER ||
-            ($who == Correspondence::WHO_ATTORNEY && $type == 'human')
-        ) {
-            $this->isEditable = false;
+            if (
+                $who == Correspondence::WHO_DONOR ||
+                $who == Correspondence::WHO_CERTIFICATE_PROVIDER ||
+                ($who == Correspondence::WHO_ATTORNEY && $type == 'human')
+            ) {
+                $this->isEditable = false;
+            }
+
+            if ($type == 'trust') {
+                $who = $object['who'] = Correspondence::WHO_ATTORNEY;
+                $object['company'] = $object['name'];
+                unset($object['name']);
+            }
+
+            $this->trustSelected = ($who == Correspondence::WHO_ATTORNEY && !empty($object['company']));
         }
-
-        if ($type == 'trust') {
-            $who = $object['who'] = Correspondence::WHO_ATTORNEY;
-            $object['company'] = $object['name'];
-            unset($object['name']);
-        }
-
-        $this->trustSelected = ($who == Correspondence::WHO_ATTORNEY && !empty($object['company']));
 
         return parent::bind($object, $flags);
     }

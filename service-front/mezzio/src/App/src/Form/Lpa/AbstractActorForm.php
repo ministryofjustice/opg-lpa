@@ -102,7 +102,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
         ];
     }
 
-    protected function convertFormDataForModel(array $formData)
+    protected function convertFormDataForModel(array|null $formData)
     {
         $formDataAsArray = (array) $formData;
         if (array_key_exists('dob-date', $formDataAsArray) && is_array($formDataAsArray['dob-date'])) {
@@ -146,9 +146,9 @@ abstract class AbstractActorForm extends AbstractLpaForm
         return $dataForModel;
     }
 
-    public function bind($object, $flags = FormInterface::VALUES_NORMALIZED)
+    public function bind(array|object $object, int $flags = FormInterface::VALUES_NORMALIZED)
     {
-        if (array_key_exists('name-title', $object) && is_null($object['name-title'])) {
+        if (is_array($object) && array_key_exists('name-title', $object) && is_null($object['name-title'])) {
             $object['name-title'] = self::PREFER_NOT_TO_SAY_TITLE;
         }
 

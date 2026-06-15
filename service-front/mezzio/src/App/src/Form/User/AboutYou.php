@@ -49,11 +49,11 @@ class AboutYou extends AbstractActorForm
     }
 
     /**
-     * @psalm-param array<string, mixed> $data
+     * @psalm-param iterable<string, mixed> $data
      */
-    public function setData(array $data)
+    public function setData(iterable $data)
     {
-        $dataArray = (array) $data;
+        $dataArray = is_array($data) ? $data : iterator_to_array($data);
         $this->filterData($dataArray);
         return parent::setData($data);
     }
