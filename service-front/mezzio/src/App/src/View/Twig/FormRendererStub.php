@@ -24,7 +24,17 @@ final class FormRendererStub
         $extraAttrs = '';
         $skipAttrs  = ['action', 'method'];
 
-        foreach ($form->getAttributes() as $name => $value) {
+        $formAttrs = $form->getAttributes();
+
+        // Laminas Form::prepare() does not auto-set 'id' from 'name', but the legacy
+        // view helper did. Many JS modules rely on selecting the form by id (e.g.
+        // $("form#form-repeat-application")), so we mirror that legacy behaviour here:
+        // if 'id' is absent but 'name' is present, promote 'name' to 'id'.
+        if (!isset($formAttrs['id']) && isset($formAttrs['name'])) {
+            $formAttrs['id'] = $formAttrs['name'];
+        }
+
+        foreach ($formAttrs as $name => $value) {
             if (in_array($name, $skipAttrs, true)) {
                 continue;
             }
