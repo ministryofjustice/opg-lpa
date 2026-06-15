@@ -89,11 +89,14 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
         return $lpa;
     }
 
+    /**
+     * @psalm-param int<-1, max> $idx
+     */
     private function createRequest(
         string $method = 'GET',
         array $postData = [],
         ?Lpa $lpa = null,
-        mixed $idx = 0,
+        int $idx = 0,
         bool $isXhr = false,
     ): ServerRequest {
         $lpa = $lpa ?? $this->createLpa();
