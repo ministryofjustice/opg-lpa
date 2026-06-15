@@ -9,6 +9,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Validator\ValidatorResponse;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\FieldsetInterface;
 use Laminas\Form\FormInterface;
 
 /**
@@ -37,6 +38,60 @@ abstract class AbstractLpaForm extends AbstractForm
         }
 
         parent::__construct($name, $options);
+    }
+
+    /**
+     * Override setData() to inject unchecked-checkbox defaults before the data
+     * reaches either the Laminas input filter or our validateByModel() methods.
+     * Browsers omit unchecked checkboxes from the POST body entirely, so without
+     * this normalisation every downstream consumer needs individual `?? '0'` guards.
+     *
+     * {@inheritDoc}
+     */
+    public function setData(iterable $data): static
+    {
+        if (is_array($data)) {
+            $data = $this->normalizeCheckboxDefaults($data, $this);
+        }
+        return parent::setData($data);
+    }
+
+    /**
+     * Recursively inject the configured unchecked_value for any Checkbox element
+     * whose key is absent from $data.  Radio buttons (which extend Checkbox in
+     * Laminas) are skipped — they are submitted as a single value and are handled
+     * by normal required-field validation.
+     *
+     * @param array<string, mixed>  $data
+     */
+    private function normalizeCheckboxDefaults(array $data, FieldsetInterface $fieldset): array
+    {
+        foreach ($fieldset->getElements() as $elementName => $element) {
+            // Radio extends MultiCheckbox extends Checkbox — skip them.
+            if ($element instanceof Radio) {
+                continue;
+            }
+
+            if ($element instanceof Checkbox) {
+                // Use the array key (short name) rather than $element->getName(), because
+                // Fieldset::prepareElement() has already prefixed the element's name attribute
+                // with the fieldset name (e.g. "correspondence[contactByEmail]") by the time
+                // setData() is called.  The $this->elements array key is still the original
+                // short name and is the correct key to look up in $data.
+                if (!array_key_exists($elementName, $data)) {
+                    $data[$elementName] = $element->getUncheckedValue();
+                }
+            }
+        }
+
+        foreach ($fieldset->getFieldsets() as $fieldsetName => $nested) {
+            if (!array_key_exists($fieldsetName, $data) || !is_array($data[$fieldsetName])) {
+                $data[$fieldsetName] = [];
+            }
+            $data[$fieldsetName] = $this->normalizeCheckboxDefaults($data[$fieldsetName], $nested);
+        }
+
+        return $data;
     }
 
     public function init()
@@ -184,7 +239,9 @@ abstract class AbstractLpaForm extends AbstractForm
     public function getModelDataFromValidatedForm()
     {
         if ($this->data != null) {
-            return $this->convertFormDataForModel($this->getData());
+            // Use VALUES_AS_ARRAY so that getData() returns the input-filter's plain
+            // PHP array rather than the bound ArrayObject when bind() was used.
+            return $this->convertFormDataForModel($this->getData(FormInterface::VALUES_AS_ARRAY));
         }
     }
 
