@@ -25,7 +25,8 @@
             padding-top: 0;
         }
 
-        > .heading-medium {
+        > .heading-medium,
+        > .govuk-heading-m {
             @include govuk-media-query($from: tablet) {
                 margin-top: 0;
                 margin-bottom: 0;
@@ -41,7 +42,8 @@
         }
 
         &.reuse-details-form {
-            .heading-medium {
+            .heading-medium,
+            .govuk-heading-m {
                 @include govuk-media-query($from: tablet) {
                     margin-top: 0;
                 }
@@ -53,6 +55,7 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
+        &:has(> .form-label),
         &:has(> .govuk-label) {
             @include govuk-media-query($from: tablet) {
                 display: flex;
@@ -76,6 +79,7 @@
         }
     }
 
+    .form-label,
     .govuk-label {
         @include govuk-media-query($from: tablet) {
             width: 150px;
@@ -133,6 +137,7 @@
             margin-bottom: 18px;
         }
 
+        .form-label,
         .govuk-label {
             @include govuk-media-query($from: tablet) {
                 width: auto;
