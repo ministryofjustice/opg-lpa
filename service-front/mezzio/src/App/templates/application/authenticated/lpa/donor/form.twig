@@ -196,7 +196,7 @@
 
     <h2 class="govuk-heading-m popup-exclude">What is the donor's name?</h2>
     <fieldset>
-        <legend class="visually-hidden">Add donor details</legend>
+        <legend class="govuk-visually-hidden">Add donor details</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -258,13 +258,13 @@
 
     <h2 class="govuk-heading-m popup-exclude">What is the donor's email address?</h2>
     <fieldset>
-        <legend class="visually-hidden">Email address</legend>
+        <legend class="govuk-visually-hidden">Email address</legend>
         {{ macros.formGroup(email) }}
     </fieldset>
 
     <h2 class="govuk-heading-m popup-exclude">What is the donor's address?</h2>
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Address</legend>
+        <legend class="govuk-visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}
@@ -275,7 +275,7 @@
 
     <div class="single-checkbox-group form-group {{ cannotSign.getMessages|length > 0 ? 'form-group-error'}}">
         <fieldset>
-            <legend class="visually-hidden"></legend>
+            <legend class="govuk-visually-hidden"></legend>
             <div class="multiple-choice">
                 {{ formElementErrorsV2(cannotSign) }}
                 {{ formElement(cannotSign) }}
