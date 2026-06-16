@@ -28,9 +28,4 @@ locals {
   front_component_tag = {
     component = "front"
   }
-
-  db_component_tag = {
-    component = "db"
-  }
-
 }
