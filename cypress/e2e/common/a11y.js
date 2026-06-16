@@ -12,7 +12,7 @@ Then(
     cy.document().then((doc) => {
       doc.querySelectorAll('a[target="_blank"]').forEach((el) => {
         let visuallyHiddenSpan = el.querySelector(
-          'span[class="visually-hidden"]',
+          'span[class="govuk-visually-hidden"]',
         );
         if (visuallyHiddenSpan !== null) {
           el = visuallyHiddenSpan;
@@ -35,7 +35,7 @@ Then(
   () => {
     cy.get("*[data-role='link-accessibility-statement']").each(
       (accessibilityStatement) => {
-        expect(accessibilityStatement).to.have.class('visually-hidden');
+        expect(accessibilityStatement).to.have.class('govuk-visually-hidden');
         expect(accessibilityStatement.text()).to.contain('open in new tabs');
       },
     );
