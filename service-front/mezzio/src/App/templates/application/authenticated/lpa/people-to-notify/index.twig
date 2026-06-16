@@ -10,10 +10,10 @@
 
     <div class="accordion-info">
         <div class="text">
-            <p>The donor can choose up to 5 people to be notified about the LPA application. These people have a chance to raise any concerns before the LPA is registered.</p>
-            <p>Having ‘people to notify’ is optional, though many donors choose family members or close friends.</p>
-            <p>You will be given a form to download and send to any people to notify once you have finished making the LPA.</p>
-            <p><a class="js-guidance" href="/guide#topic-people-to-notify" data-analytics-click="page:link:help: Find out more about 'people to notify'">Find out more about people to notify</a></p>
+            <p class="govuk-body">The donor can choose up to 5 people to be notified about the LPA application. These people have a chance to raise any concerns before the LPA is registered.</p>
+            <p class="govuk-body">Having ‘people to notify’ is optional, though many donors choose family members or close friends.</p>
+            <p class="govuk-body">You will be given a form to download and send to any people to notify once you have finished making the LPA.</p>
+            <p class="govuk-body"><a class="js-guidance" href="/guide#topic-people-to-notify" data-analytics-click="page:link:help: Find out more about 'people to notify'">Find out more about people to notify</a></p>
         </div>
     </div>
 
@@ -33,8 +33,8 @@
 
     {% if peopleToNotify|length < 5 %}
 
-        <div class="{% if (peopleToNotify) %}action-item{% endif %} form-group">
-            <a href="{{ addRoute }}" role="{% if not (peopleToNotify) %}button{% endif %}" data-cy="add" class="{% if not (peopleToNotify) %}button{% endif %} js-form-popup" >
+        <div class="{% if (peopleToNotify) %}action-item{% endif %} govuk-!-margin-bottom-3">
+            <a href="{{ addRoute }}" role="button" data-cy="add" class="{% if not (peopleToNotify) %}govuk-button{% else %}govuk-link{% endif %} js-form-popup">
                 {% if (peopleToNotify) %}
                     Add another 'person to notify'
                 {% else %}
@@ -50,10 +50,13 @@
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-        <div class="form-group">
-
+        {% if (peopleToNotify) %}
+            <div class="govuk-!-margin-bottom-3">
+                {{ formElement(form.get('save')) }}
+            </div>
+        {% else %}
             {{ formElement(form.get('save')) }}
-        </div>
+        {% endif %}
 
     {{ form().closeTag|raw }}
 

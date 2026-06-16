@@ -79,11 +79,11 @@ class ReplacementAttorneyAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate(
                         'lpa/reuse-details',
                         ['lpa-id' => $lpa->id],
-                        ['query' => [
+                        [
                             'calling-url'    => $request->getUri()->getPath(),
                             'include-trusts' => true,
                             'actor-name'     => 'Replacement attorney',
-                        ]]
+                        ]
                     );
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -96,8 +96,8 @@ class ReplacementAttorneyAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\AttorneyForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
+        /** @var \App\Form\Lpa\AttorneyForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/replacement-attorney/add', ['lpa-id' => $lpa->id])

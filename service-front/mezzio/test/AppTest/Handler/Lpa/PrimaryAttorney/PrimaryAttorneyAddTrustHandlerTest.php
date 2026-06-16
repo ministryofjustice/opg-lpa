@@ -34,7 +34,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     private ApplicantService&MockObject $applicantService;
     private ReplacementAttorneyCleanup&MockObject $replacementAttorneyCleanup;
-    /** @var \Application\Form\Lpa\TrustCorporationForm&MockObject */
+    /** @var \App\Form\Lpa\TrustCorporationForm&MockObject */
     private $form;
     private PrimaryAttorneyAddTrustHandler $handler;
 
@@ -46,7 +46,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->applicantService = $this->createMock(ApplicantService::class);
         $this->replacementAttorneyCleanup = $this->createMock(ReplacementAttorneyCleanup::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\TrustCorporationForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\TrustCorporationForm::class);
 
         $this->formElementManager->method('get')->willReturn($this->form);
 

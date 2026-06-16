@@ -7,6 +7,7 @@ use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
+use App\Middleware\RouteNameMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use Mezzio\Csrf\CsrfMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
@@ -33,6 +34,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(CsrfMiddleware::class);
     $app->pipe(IdentityTokenRefreshMiddleware::class);
     $app->pipe(RouteMiddleware::class);
+    $app->pipe(RouteNameMiddleware::class);
     $app->pipe(ImplicitHeadMiddleware::class);
     $app->pipe(ImplicitOptionsMiddleware::class);
     $app->pipe(MethodNotAllowedMiddleware::class);

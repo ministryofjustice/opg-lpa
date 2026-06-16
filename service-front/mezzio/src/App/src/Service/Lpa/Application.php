@@ -27,10 +27,6 @@ use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * Mezzio port of Application\Model\Service\Lpa\Application.
- * Inlines AbstractService and AbstractEmailService; uses App\ ApiClient/Auth classes.
- */
 class Application implements ApiClientAwareInterface, LoggerAwareInterface
 {
     use ApiClientTrait;
@@ -84,7 +80,12 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
         return false;
     }
 
-    public function getStatuses(string $ids): array
+    /**
+     * @return (false[]|mixed)[]|string
+     *
+     * @psalm-return array<array{found: false}|mixed>|string
+     */
+    public function getStatuses(string $ids): array|string
     {
         $target = sprintf('/v2/user/%s/statuses/%s', $this->getUserId(), $ids);
 
@@ -602,7 +603,7 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
         return false;
     }
 
-    public function setWhoIsRegistering(Lpa $lpa, mixed $whoIsRegistering): bool
+    public function setWhoIsRegistering(Lpa $lpa, array|string|null $whoIsRegistering): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id),

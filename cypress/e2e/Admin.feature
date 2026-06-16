@@ -39,7 +39,7 @@ Feature: Admin
     When I click "user-search-link"
     And I type "elliot@townx.org" into "email-address-input" working around cypress bug
     And I click "submit-button"
-    Then deleted user is displayed with deletion date of "5th May 2021 at 12:21:20 pm"
+    Then deleted user is displayed with deletion date of "5th May 2021 at 1:21:20 pm"
 
   Scenario: Set a system message
     Given I visit the admin sign-in page

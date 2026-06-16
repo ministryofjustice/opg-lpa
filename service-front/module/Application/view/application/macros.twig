@@ -9,27 +9,27 @@
             {# API errors #}
             <div class="error-summary-text" data-tracking-context="API error">
                 {% if error == 'user-not-found' %}
-                    <p data-tracking-summary="User not found">
+                    <p class="govuk-body" data-tracking-summary="User not found">
                         We could not find an LPA account for this email address.<br><a class="govuk-link" href="signup">Create an LPA account now.</a>
                     </p>
                 {% elseif error == 'address-already-registered' %}
-                    <p data-tracking-summary="Email address already registered">
+                    <p class="govuk-body" data-tracking-summary="Email address already registered">
                         This email address has already been registered. Please <a class="govuk-link" href="{{ url('login') }}">sign in</a> or <a class="govuk-link" href="{{ url('forgot-password') }}">reset your password</a>.
                     </p>
                 {% elseif error == 'user-already-has-email' %}
-                    <p data-tracking-summary="User already has email address">
+                    <p class="govuk-body" data-tracking-summary="User already has email address">
                         You're already using that email address for this account – please enter another email address.
                     </p>
                 {% elseif error == 'email-already-exists' %}
-                    <p data-tracking-summary="Email address already exists">
+                    <p class="govuk-body" data-tracking-summary="Email address already exists">
                         Another LPA account is already using that email address – please enter a different email address.
                     </p>
                 {% elseif error == 'api-error' %}
-                    <p data-tracking-summary="API unavailable">
+                    <p class="govuk-body" data-tracking-summary="API unavailable">
                         Sorry, the service is unavailable. Please try again later.
                     </p>
                 {% else %}
-                    <p data-tracking-summary="{{ error }}">
+                    <p class="govuk-body" data-tracking-summary="{{ error }}">
                         Unexpected error: {{ error }}
                     </p>
                 {% endif %}
@@ -116,7 +116,7 @@
 
         {%- for cnote in continuationNoteKeys -%}
             {%- if cnote != 'HAS_ATTORNEY_DECISIONS' and cnote != 'LONG_INSTRUCTIONS_OR_PREFERENCES' -%}
-            <p data-cy="continuation-sheet-notes">
+            <p class="govuk-body" data-cy="continuation-sheet-notes">
                 {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
                     An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
                 {% elseif cnote == 'ALL_ATTORNEY_OVERFLOW' %}
@@ -141,7 +141,7 @@
         {%- endfor -%}
 
         {%- if 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys or 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys -%}
-            <p data-cy="continuation-sheet-notes">
+            <p class="govuk-body" data-cy="continuation-sheet-notes">
                 As there are extra instructions for the attorneys on the LPA, the donor will need to sign 'continuation sheet 2'. The continuation sheet is included at the end of the LPA form.
             </p>
         {%- endif -%}

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Service\System;
 
-use Application\Model\Service\AddressLookup\OrdnanceSurvey;
+use App\Service\AddressLookup\OrdnanceSurvey;
 use App\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\Mail\Transport\MailTransportInterface;
-use Application\Model\Service\Redis\RedisClient;
+use App\Service\Mail\Transport\MailTransportInterface;
+use App\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;

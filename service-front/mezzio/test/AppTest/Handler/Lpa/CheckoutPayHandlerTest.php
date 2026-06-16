@@ -104,7 +104,7 @@ class CheckoutPayHandlerTest extends TestCase
 
     private function mockBlankFormInvalid(): void
     {
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $form->method('isValid')->willReturn(false);
         $this->formElementManager->method('get')->willReturn($form);
@@ -142,7 +142,7 @@ class CheckoutPayHandlerTest extends TestCase
     {
         $lpa = $this->createCompleteLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
@@ -169,7 +169,7 @@ class CheckoutPayHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $lpa->payment->gatewayReference = 'existing-ref';
 
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
@@ -186,7 +186,7 @@ class CheckoutPayHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $lpa->payment->gatewayReference = 'existing-ref';
 
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $form->method('get')->willReturn($this->createMock(Submit::class));
         $this->formElementManager->method('get')->willReturn($form);
@@ -218,7 +218,7 @@ class CheckoutPayHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $lpa->payment->gatewayReference = 'existing-ref';
 
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
@@ -241,7 +241,7 @@ class CheckoutPayHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $lpa->payment->gatewayReference = 'finished-ref';
 
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 

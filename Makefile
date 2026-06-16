@@ -317,25 +317,25 @@ psql:
 
 MEZZIO_COMPOSE := docker compose -f docker-compose.mezzio.yml
 
-.PHONY: run-mezzio-composer
-run-mezzio-composer:
+.PHONY: mezzio-run-composer
+mezzio-run-composer:
 	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
-.PHONY: mezzio-dc-build
-mezzio-dc-build: run-mezzio-composer run-api-composer
+.PHONY: mezzio-build
+mezzio-build: mezzio-run-composer run-api-composer
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
 
-.PHONY: mezzio-dc-up
-mezzio-dc-up: mezzio-dc-build
+.PHONY: mezzio-up
+mezzio-up: mezzio-build
 	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
 	@${MEZZIO_COMPOSE} up -d --remove-orphans
 
-.PHONY: mezzio-dc-down
-mezzio-dc-down:
+.PHONY: mezzio-down
+mezzio-down:
 	@${MEZZIO_COMPOSE} down --remove-orphans
 
-.PHONY: mezzio-dc-logs
-mezzio-dc-logs:
+.PHONY: mezzio-logs
+mezzio-logs:
 	@${MEZZIO_COMPOSE} logs -f
 
 .PHONY: mezzio-dev-enable
@@ -346,12 +346,12 @@ mezzio-dev-enable:
 mezzio-dev-disable:
 	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer development-disable
 
-.PHONY: mezzio-dc-reset
-mezzio-dc-reset:
-	@${MAKE} mezzio-dc-down
+.PHONY: mezzio-reset
+mezzio-reset:
+	@${MAKE} mezzio-down
 	@docker rmi lpa-mezzio-app lpa-mezzio-web lpa-mezzio-ssl 2>/dev/null || true
 	@rm -fr ./service-front/mezzio/vendor
-	@${MAKE} mezzio-dc-up
+	@${MAKE} mezzio-up
 
 .PHONY: mezzio-seed
 mezzio-seed:
@@ -361,16 +361,20 @@ mezzio-seed:
 mezzio-clear-cache:
 	@${MEZZIO_COMPOSE} exec mezzio-app rm -f /app/data/cache/config-cache.php
 
-.PHONY: cypress-run-spec-mezzio
-cypress-run-spec-mezzio:
+.PHONY: mezzio-cypress-run-spec
+mezzio-cypress-run-spec:
 	${MEZZIO_COMPOSE} run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
-.PHONY: cypress-open-mezzio
-cypress-open-mezzio: npm-install
+.PHONY: mezzio-cypress-open
+mezzio-cypress-open: npm-install
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7004" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
-.PHONY: dc-mezzio-unit-tests
-dc-mezzio-unit-tests:
-	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml.dist
+.PHONY: mezzio-unit-tests
+mezzio-unit-tests:
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml
+
+.PHONY: mezzio-psalm
+mezzio-psalm:
+	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/psalm -c /app/psalm.xml --no-cache

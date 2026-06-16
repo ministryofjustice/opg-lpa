@@ -1,0 +1,49 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Form\Lpa;
+
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
+
+/**
+ * @template T
+ * @template-extends AbstractActorForm<T>
+ */
+class PeopleToNotifyForm extends AbstractActorForm
+{
+    protected $formElements = [
+        'name-title' => [
+            'type' => 'Text',
+        ],
+        'name-first' => [
+            'type' => 'Text',
+        ],
+        'name-last' => [
+            'type' => 'Text',
+        ],
+        'address-address1' => [
+            'type' => 'Text',
+        ],
+        'address-address2' => [
+            'type' => 'Text',
+        ],
+        'address-address3' => [
+            'type' => 'Text',
+        ],
+        'address-postcode' => [
+            'type' => 'Text',
+        ],
+        'submit' => [
+            'type' => 'Submit',
+        ],
+    ];
+
+    public function init()
+    {
+        $this->setName('form-people-to-notify');
+        $this->setAttribute('data-cy', 'form-people-to-notify');
+        $this->actorModel = new NotifiedPerson();
+        parent::init();
+    }
+}

@@ -1,4 +1,3 @@
-
 #5xx Alarms
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   actions_enabled     = true
@@ -225,5 +224,171 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
   tags                = local.admin_component_tag
   dimensions = {
     ResourceArn = aws_lb.admin.arn
+  }
+}
+
+# Auth Event Anomaly Alarms
+resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
+  alarm_name          = "${var.environment_name} auth sign-in success anomaly"
+  alarm_description   = "Anomaly detection on successful sign-ins for ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "Successful Sign-ins (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-auth-sign-in-success"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Sum"
+      unit        = "Count"
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
+  alarm_name          = "${var.environment_name} auth sign-in failed anomaly"
+  alarm_description   = "Anomaly detection on failed sign-ins for ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 3)"
+    label       = "Failed Sign-ins (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-auth-sign-in-failed"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Sum"
+      unit        = "Count"
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
+  alarm_name          = "${var.environment_name} auth account locked anomaly"
+  alarm_description   = "Anomaly detection on account lockouts for ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "Account Lockouts (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-auth-account-locked"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Sum"
+      unit        = "Count"
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
+  alarm_name          = "${var.environment_name} auth sign-in against locked account anomaly"
+  alarm_description   = "Anomaly detection on sign-in attempts against locked accounts for ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "Sign-ins Against Locked Accounts (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-auth-sign-in-account-locked"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Sum"
+      unit        = "Count"
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
+  alarm_name          = "${var.environment_name} auth sign-in inactive account anomaly"
+  alarm_description   = "Anomaly detection on sign-in attempts against inactive accounts for ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 2
+  datapoints_to_alarm = 2
+  threshold_metric_id = "ad1"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "Sign-ins Against Inactive Accounts (Expected)"
+    return_data = "true"
+  }
+
+  metric_query {
+    id          = "m1"
+    return_data = "true"
+    metric {
+      metric_name = "${var.environment_name}-auth-sign-in-inactive-account"
+      namespace   = "Make/Monitoring"
+      period      = "120"
+      stat        = "Sum"
+      unit        = "Count"
+    }
   }
 }

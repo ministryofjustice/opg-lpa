@@ -51,8 +51,8 @@ class FeeReductionHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\FeeReductionForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\FeeReductionForm', [
+        /** @var \App\Form\Lpa\FeeReductionForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\FeeReductionForm', [
             'lpa' => $lpa,
         ]);
 
@@ -214,7 +214,7 @@ class FeeReductionHandler implements RequestHandlerInterface
             'reducedFeeReceivesBenefits' => [
                 'id' => 'reductionOptions',
                 'value' => $valueOptions['reducedFeeReceivesBenefits']['value'],
-                'label' => "The donor currently claims one of <a class=\"js-guidance\" "
+                'label' => "The donor currently claims one of <a class=\"govuk-link\" "
                     . "href=\"/guide#topic-fees-reductions-and-exemptions\" "
                     . "data-analytics-click=\"page:link:help: these means-tested benefits\">"
                     . "these means-tested benefits</a> and has not been awarded personal injury damages "

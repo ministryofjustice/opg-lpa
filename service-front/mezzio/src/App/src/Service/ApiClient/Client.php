@@ -13,9 +13,6 @@ use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * Mezzio port of Application\Model\Service\ApiClient\Client.
- */
 class Client implements LoggerAwareInterface
 {
     use LoggerTrait;
