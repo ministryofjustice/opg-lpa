@@ -158,11 +158,6 @@ async function setupNodeEvents(on, config) {
 }
 
 module.exports = defineConfig({
-  expose: {
-    mezzio: false,
-    updateBaseline: false,
-    visualRegressionEnabled: false,
-  },
   postLogoutUrl: "https://www.gov.uk/done/lasting-power-of-attorney",
   rootRedirectUrl: "https://www.gov.uk/power-of-attorney/make-lasting-power",
   numberOfGuidanceHelpTopics: 22,
@@ -175,6 +170,11 @@ module.exports = defineConfig({
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
     screenshotOnRunFailure: false,
+    expose: {
+      mezzio: false,
+      updateBaseline: false,
+      visualRegressionEnabled: false,
+    },
   },
   screenshotsFolder: 'cypress/screenshots',
   viewportWidth: 1280,
