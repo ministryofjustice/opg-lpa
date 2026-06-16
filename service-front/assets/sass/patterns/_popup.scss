@@ -76,6 +76,7 @@
 
     .popup-header-title {
         display: block;
+        margin-top: 0;
         padding-left: 35px;
 
         @include govuk-media-query($until: tablet) {
