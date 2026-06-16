@@ -173,7 +173,7 @@
         {% if form.trustSelected() %}
             {{ formHidden(company) }}
             <div class="form-group read-only">
-                <label class="form-label">{{ company.getOption('label') }}</label>
+                <label class="govuk-label">{{ company.getOption('label') }}</label>
                 <div class="read-only-value">{{ company.getValue() }}</div>
             </div>
         {% else %}
@@ -204,7 +204,7 @@
             {% endif %}
 
             <div class="form-group read-only">
-                <label class="form-label">Address</label>
+                <label class="govuk-label">Address</label>
                 <div class="read-only-value">{{ addressString }}</div>
             </div>
         {% else %}
