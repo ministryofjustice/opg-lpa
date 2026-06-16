@@ -25,7 +25,8 @@
             padding-top: 0;
         }
 
-        > .heading-medium {
+        > .heading-medium,
+        > .govuk-heading-m {
             @include govuk-media-query($from: tablet) {
                 margin-top: 0;
                 margin-bottom: 0;
@@ -41,7 +42,8 @@
         }
 
         &.reuse-details-form {
-            .heading-medium {
+            .heading-medium,
+            .govuk-heading-m {
                 @include govuk-media-query($from: tablet) {
                     margin-top: 0;
                 }
