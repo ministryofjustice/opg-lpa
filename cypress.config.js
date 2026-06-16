@@ -158,6 +158,11 @@ async function setupNodeEvents(on, config) {
 }
 
 module.exports = defineConfig({
+  expose: {
+    mezzio: false,
+    updateBaseline: false,
+    visualRegressionEnabled: false,
+  },
   postLogoutUrl: "https://www.gov.uk/done/lasting-power-of-attorney",
   rootRedirectUrl: "https://www.gov.uk/power-of-attorney/make-lasting-power",
   numberOfGuidanceHelpTopics: 22,
