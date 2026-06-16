@@ -493,16 +493,19 @@ class LegacyCompatExtension extends AbstractExtension
         $currentValue = $element->getValue();
         $html         = '';
 
-        // Determine the wrapper div class from element-level div-attributes, or default
+        // Determine the wrapper div class from element-level div-attributes, or default.
+        // The legacy app used 'multiple-choice' divs and 'block-label' labels (older GDS
+        // styles), not the GOV.UK Frontend v3 'govuk-radios__item' / 'govuk-radios__input'
+        // classes. Radio inputs had no class at all in the legacy output.
         $divAttributes     = $element->getAttribute('div-attributes') ?? [];
-        $defaultDivClass   = 'govuk-radios__item';
-        $defaultLabelClass = 'govuk-label govuk-radios__label';
+        $defaultDivClass   = 'multiple-choice';
+        $defaultLabelClass = 'block-label';
 
         // Base attributes from the element (excluding value/type/id which vary per option,
         // and div-attributes which are used for the wrapper div, not the input)
         $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id', 'div-attributes']));
-        $baseAttrs['type']  = 'radio';
-        $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
+        $baseAttrs['type'] = 'radio';
+        // Do not add a default class — legacy radio inputs had no class attribute.
 
         foreach ($valueOptions as $optValue => $optSpec) {
             $optionAttributes = [];
