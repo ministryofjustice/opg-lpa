@@ -51,10 +51,10 @@
     <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
     	<div class="text">
-            <p>If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
+            <p class="govuk-body">If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
 
             {% if lpa.repeatCaseNumber is defined and lpa.repeatCaseNumber is not null %}
-                <p>To apply, you will need to send us a ‘fee remissions and exemptions form’. If you applied for this reduction on the original LPA and sent that LPA to us in the current tax year (on or after 6 April), you do not need to send us proof of the donor’s income or benefits again.</p>
+                <p class="govuk-body">To apply, you will need to send us a ‘fee remissions and exemptions form’. If you applied for this reduction on the original LPA and sent that LPA to us in the current tax year (on or after 6 April), you do not need to send us proof of the donor’s income or benefits again.</p>
             {% endif %}
 
         </div>
@@ -94,11 +94,11 @@
                     </div>
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="receives-benefits">
                         <div class="govuk-form-group govuk-form-group--error">
-                            <p>To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                            <p class="govuk-body">To apply to pay no fee, you must send us a ‘fee remissions and exemptions form’ and copies of letters from the Department for Work and Pensions (DWP) or the benefit provider as proof that the donor is receiving benefits. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
 
-                            <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
+                            <p class="govuk-body">You can download the form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
 
-                            <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
+                            <p class="govuk-body">If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee.</p>
                         </div>
                     </div>
                     <div class="govuk-radios__item">
@@ -118,15 +118,15 @@
                         </label>
                     </div>
                     <div id="universal-credit" class="govuk-radios__conditional govuk-radios__conditional--hidden">
-                        <p>Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
+                        <p class="govuk-body">Because Universal Credit is in its trial phase and replaces several existing benefits, we're looking at fee reductions on a case-by-case basis.</p>
 
-                        <p>This means <strong class="bold-small">you will not be charged for this LPA now</strong>.</p>
+                        <p class="govuk-body">This means <strong class="bold-small">you will not be charged for this LPA now</strong>.</p>
 
-                        <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter.</p>
+                        <p class="govuk-body">To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and a copy of the donor's benefit award letter.</p>
 
-                        <p>You can download the form on the last page of this service. Sign and date the form and send it to us, along with the award letter and completed LPA.</p>
+                        <p class="govuk-body">You can download the form on the last page of this service. Sign and date the form and send it to us, along with the award letter and completed LPA.</p>
 
-                        <p>Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
+                        <p class="govuk-body">Once we receive your application, we’ll contact you to let you know how much the fee will be and to arrange payment.</p>
                     </div>
                     <div class="govuk-radios__item" >
                         <input
@@ -144,13 +144,13 @@
                         </label>
                     </div>
                     <div id="reduced-fee-low-income" data-cy="reduced-fee-low-income" class="govuk-radios__conditional govuk-radios__conditional--hidden">
-                        <p>To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
+                        <p class="govuk-body">To apply to pay a reduced fee, you must send us a ‘fee remissions and exemptions form’ and documents that prove the donor has a low income.</p>
 
-                        <p>The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
+                        <p class="govuk-body">The documents must have the donor’s title, full name, address and postcode printed on them and they must be from the current tax year. Tax years run from 6 April one year to 5 April the next year. <a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Low income - Find out more about acceptable proof">Find out more about acceptable proof</a>.</p>
 
-                        <p>You can download the fee remissions and exemptions form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
+                        <p class="govuk-body">You can download the fee remissions and exemptions form on the last page of this service. Sign and date the form and send it to us, along with the proof and completed LPA.</p>
 
-                        <p>If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
+                        <p class="govuk-body">If you do not send the right proof, your application will be delayed. If your application to pay a reduced fee is rejected, the donor will have to pay the rest of the fee</p>
                     </div>
                     <div class="govuk-radios__item">
                         <input
@@ -169,7 +169,7 @@
                 </div>
 	       </fieldset>
         </div>
-        <p class="push--bottom"><a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Find out more about qualifying for a reduction">Find out more about qualifying for a reduction</a></p>
+        <p class="govuk-body govuk-!-margin-bottom-4"><a class="js-guidance" href="/guide#topic-fees-reductions-and-exemptions" data-analytics-click="page:link:help: Find out more about qualifying for a reduction">Find out more about qualifying for a reduction</a></p>
 
         {{ formElement(form.get('save')) }}
 
