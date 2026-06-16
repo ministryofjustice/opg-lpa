@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AppTest\Handler\Lpa;
 
-use Alphagov\Pay\Client as GovPayClient;
-use Alphagov\Pay\Response\Payment as GovPayPayment;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use App\Handler\Lpa\CheckoutPayHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;

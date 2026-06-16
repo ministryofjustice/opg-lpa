@@ -157,6 +157,16 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
+  govpaystub:
+    container_name: lpa-govpaystub
+    image: bbyars/mountebank@sha256:32c52e77eab3e075c485e1981512ef14fe35fb59f6bc65924b646ad373489139
+    ports:
+      - 2527:2525
+      - 4547:4545
+    volumes:
+      - ./cypress/govpay-stubs:/app
+    command: --allowInjection --configfile /app/mountebank-config.ejs
+
   # ---------------------------
   # Mezzio front
 
@@ -176,7 +186,7 @@ services:
       - ./service-front/mezzio/psalm.xml:/app/psalm.xml
       - ./service-front/mezzio/phpcs.xml:/app/phpcs.xml
       - ./service-front/module:/service-front/module
-      - ./service-front/content:/app/content
+      - ./service-front/mezzio/content:/app/content
       - ./shared:/shared
     depends_on:
       api-app:
@@ -185,6 +195,8 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
+      govpaystub:
+        condition: service_started
     environment:
       PHP_IDE_CONFIG: serverName=lpa-mezzio-app
       OPG_LPA_STACK_NAME: "local"
@@ -202,6 +214,8 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+      OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://govpaystub:4545"
     healthcheck:
       test: ["CMD-SHELL", "cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
       interval: 10s
