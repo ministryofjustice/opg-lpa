@@ -73,3 +73,15 @@ removed {
 #   to = module.eu-west-2.aws_rds_cluster_parameter_group.postgresql_aurora_params["postgres14"]
 #   id = "aurora-postgresql14"
 # }
+# import {
+#   to = aws_iam_role.rds_enhanced_monitoring
+#   id = "rds-enhanced-monitoring"
+# }
+# import {
+#   to = aws_iam_role.vpc_flow_logs
+#   id = "vpc_flow_logs"
+# }
+# import {
+#   to = aws_iam_role_policy.vpc_flow_logs
+#   id = "vpc_flow_logs/vpc_flow_logs"
+# }
