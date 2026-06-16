@@ -295,22 +295,19 @@ cypress-run-stitched-suites:
 
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
-cypress-update-baselines-hw:
-	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedHW
+cypress-update-baselines-hw: _cypress-stitch
+	@${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedHW
 
-cypress-update-baselines-pf:
-	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedPF
+cypress-update-baselines-pf: _cypress-stitch
+	@${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedPF
 
-cypress-update-baselines-clone:
-	@${MAKE} _cypress-update-baselines-suite SUITE_TAG=@StitchedClone
+cypress-update-baselines-clone: _cypress-stitch
+	@${MAKE} _cypress-run-baseline-suite SUITE_TAG=@StitchedClone
 
 .PHONY: _cypress-stitch
 _cypress-stitch:
 	@pushd cypress && python3 stitch.py && popd
 
-# Internal helper - do not call directly. Expects SUITE_TAG to be set (e.g. @StitchedHW).
-.PHONY: _cypress-update-baselines-suite
-_cypress-update-baselines-suite: _cypress-stitch _cypress-run-baseline-suite
 
 # Internal helper - runs the baseline cypress commands without stitching. Expects SUITE_TAG to be set.
 .PHONY: _cypress-run-baseline-suite
@@ -400,7 +397,7 @@ mezzio-clear-cache:
 
 .PHONY: mezzio-cypress-run-spec
 mezzio-cypress-run-spec:
-	${MEZZIO_COMPOSE} run --rm --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	${MEZZIO_COMPOSE} run --rm -T --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 .PHONY: mezzio-cypress-open
 mezzio-cypress-open: npm-install python-api-venv
@@ -409,27 +406,22 @@ mezzio-cypress-open: npm-install python-api-venv
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
 .PHONY: mezzio-cypress-run-stitched-suites
-mezzio-cypress-run-stitched-suites:
-	@pushd cypress && python3 stitch.py && popd
+mezzio-cypress-run-stitched-suites: _cypress-stitch
 	$(info ${YELLOW}running mezzio stitched cypress suites${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
+	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
 
 .PHONY: mezzio-cypress-update-baselines-hw mezzio-cypress-update-baselines-pf mezzio-cypress-update-baselines-clone
-mezzio-cypress-update-baselines-hw:
-	@${MAKE} _mezzio-cypress-update-baselines-suite SUITE_TAG=@StitchedHW
+mezzio-cypress-update-baselines-hw: _cypress-stitch
+	@${MAKE} _mezzio-cypress-run-baseline-suite SUITE_TAG=@StitchedHW
 
-mezzio-cypress-update-baselines-pf:
-	@${MAKE} _mezzio-cypress-update-baselines-suite SUITE_TAG=@StitchedPF
+mezzio-cypress-update-baselines-pf: _cypress-stitch
+	@${MAKE} _mezzio-cypress-run-baseline-suite SUITE_TAG=@StitchedPF
 
-mezzio-cypress-update-baselines-clone:
-	@${MAKE} _mezzio-cypress-update-baselines-suite SUITE_TAG=@StitchedClone
-
-# Internal helper - do not call directly. Expects SUITE_TAG to be set (e.g. @StitchedHW).
-.PHONY: _mezzio-cypress-update-baselines-suite
-_mezzio-cypress-update-baselines-suite: _cypress-stitch _mezzio-cypress-run-baseline-suite
+mezzio-cypress-update-baselines-clone: _cypress-stitch
+	@${MAKE} _mezzio-cypress-run-baseline-suite SUITE_TAG=@StitchedClone
 
 # Internal helper - runs the mezzio baseline cypress commands without stitching. Expects SUITE_TAG to be set.
 .PHONY: _mezzio-cypress-run-baseline-suite
@@ -437,8 +429,8 @@ _mezzio-cypress-run-baseline-suite:
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
+	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
 
 # Update all mezzio baseline images sequentially
 .PHONY: mezzio-cypress-update-all-baselines
