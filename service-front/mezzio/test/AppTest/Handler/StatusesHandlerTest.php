@@ -8,6 +8,7 @@ use App\Handler\StatusesHandler;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -27,9 +28,12 @@ class StatusesHandlerTest extends TestCase
 
     private function createRequest(string $lpaIds): ServerRequest
     {
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedParams')->willReturn(['lpa-ids' => $lpaIds]);
+
         return (new ServerRequest())
             ->withMethod('GET')
-            ->withAttribute('lpa-ids', $lpaIds);
+            ->withAttribute(RouteResult::class, $routeResult);
     }
 
     public function testReturnsJsonResponseWithStatuses(): void

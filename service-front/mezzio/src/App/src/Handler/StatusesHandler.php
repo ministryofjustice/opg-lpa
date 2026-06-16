@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\JsonResponse;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -19,7 +20,8 @@ class StatusesHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $lpaIds = $request->getAttribute('lpa-ids');
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $lpaIds = $routeResult?->getMatchedParams()['lpa-ids'] ?? '';
 
         $statuses = $this->lpaApplicationService->getStatuses($lpaIds);
 
