@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Alphagov\Pay\Client as GovPayClient;
+use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
@@ -26,7 +26,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
 /**
- * Note: Alphagov\Pay\Response\Payment uses magic methods to
+ * Note: App\Service\Payment\GovPay\Response\Payment uses magic methods to
  * convert the response from gov pay to an array object whose
  * contents are accessible as properties. Psalm doesn't
  * understand this (it can't tell what the gov pay response
