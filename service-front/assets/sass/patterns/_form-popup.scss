@@ -55,7 +55,8 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
-        &:has(> .form-label) {
+        &:has(> .form-label),
+        &:has(> .govuk-label) {
             @include govuk-media-query($from: tablet) {
                 display: flex;
                 flex-wrap: wrap;
@@ -78,7 +79,8 @@
         }
     }
 
-    .form-label {
+    .form-label,
+    .govuk-label {
         @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
@@ -135,7 +137,8 @@
             margin-bottom: 18px;
         }
 
-        .form-label {
+        .form-label,
+        .govuk-label {
             @include govuk-media-query($from: tablet) {
                 width: auto;
                 flex-shrink: unset;
