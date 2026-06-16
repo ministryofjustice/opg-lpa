@@ -493,17 +493,27 @@ class LegacyCompatExtension extends AbstractExtension
         $currentValue = $element->getValue();
         $html         = '';
 
-        // Base attributes from the element (excluding value/type which vary per option)
-        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id']));
+        // Determine the wrapper div class from element-level div-attributes, or default
+        $divAttributes     = $element->getAttribute('div-attributes') ?? [];
+        $defaultDivClass   = 'govuk-radios__item';
+        $defaultLabelClass = 'govuk-label govuk-radios__label';
+
+        // Base attributes from the element (excluding value/type/id which vary per option,
+        // and div-attributes which are used for the wrapper div, not the input)
+        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id', 'div-attributes']));
         $baseAttrs['type']  = 'radio';
         $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
 
-        foreach ($valueOptions as $optValue => $optLabel) {
+        foreach ($valueOptions as $optValue => $optSpec) {
             $optionAttributes = [];
-            if (is_array($optLabel)) {
-                $optionAttributes = $optLabel['attributes'] ?? [];
-                $optValue = $optLabel['value'] ?? $optValue;
-                $optLabel = $optLabel['label'] ?? (string) $optValue;
+            $labelAttributes  = [];
+            if (is_array($optSpec)) {
+                $optionAttributes = $optSpec['attributes'] ?? [];
+                $labelAttributes  = $optSpec['label_attributes'] ?? [];
+                $optValue         = $optSpec['value'] ?? $optValue;
+                $optLabel         = $optSpec['label'] ?? (string) $optValue;
+            } else {
+                $optLabel = (string) $optSpec;
             }
 
             $optAttrs            = array_merge($baseAttrs, $optionAttributes);
@@ -511,17 +521,30 @@ class LegacyCompatExtension extends AbstractExtension
             $optAttrs['data-cy'] = $optAttrs['id'];
             $optAttrs['value']   = (string) $optValue;
 
+            // Per-option div-attributes override the element-level ones
+            $thisDivAttrs = $optSpec['div-attributes'] ?? $divAttributes;
+            $divClass     = $thisDivAttrs['class'] ?? $defaultDivClass;
+            $divAttrStr   = $divClass !== '' ? sprintf(' class="%s"', htmlspecialchars($divClass, ENT_QUOTES)) : '';
+
+            // Build label class from label_attributes, falling back to default
+            $labelClass    = $labelAttributes['class'] ?? $defaultLabelClass;
+            $labelAttrStr  = $this->buildAttributeString(array_merge(
+                ['class' => $labelClass, 'for' => $optAttrs['id']],
+                array_diff_key($labelAttributes, array_flip(['class', 'for'])),
+            ));
+
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';
 
             $html .= sprintf(
-                '<div class="govuk-radios__item">'
+                '<div%s>'
                 . '<input %s%s>'
-                . '<label class="govuk-label govuk-radios__label" for="%s">%s</label>'
+                . '<label %s>%s</label>'
                 . '</div>',
+                $divAttrStr,
                 $attrString,
                 $checked,
-                htmlspecialchars($optAttrs['id'], ENT_QUOTES),
+                $labelAttrStr,
                 htmlspecialchars((string) $optLabel, ENT_QUOTES),
             );
         }
