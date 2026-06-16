@@ -80,7 +80,7 @@
         <form novalidate="novalidate" method="post" action="{{ action }}">
             <input type="hidden" name="reuse-details" value="0">
             <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-            <input type="submit" name="submit" class="button-input-to-link" value="Use my details" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>
+            <button type="submit" name="submit" class="app-button-link govuk-link" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>Use my details</button>
         </form>
     </div>
 {% endmacro %}
