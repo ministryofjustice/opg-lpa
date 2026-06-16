@@ -158,7 +158,7 @@
     <h2 class="govuk-heading-m popup-exclude">Correspondent's details?</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Add correspondent's details</legend>
+        <legend class="govuk-visually-hidden">Add correspondent's details</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -184,7 +184,7 @@
     <h2 class="govuk-heading-m popup-exclude">{{ form.trustSelected() ? 'Correspondent\'s address' : 'What is the correspondent\'s address?' }}</h2>
 
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Add address details</legend>
+        <legend class="govuk-visually-hidden">Add address details</legend>
 
         {% if form.trustSelected() %}
             {{ formHidden(address1) }}

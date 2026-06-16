@@ -51,7 +51,7 @@
         {{ macros.formErrorSummary(error,form) }}
 
         <fieldset>
-            <legend class="visually-hidden">Life-sustaining treatment decision</legend>
+            <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
             <h2 class="govuk-heading-m flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
             <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
