@@ -2,7 +2,8 @@
 
 declare(strict_types=1);
 
-use Alphagov\Pay\Client as AlphagovPayClient;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Authentication\Adapter\LpaAuthAdapter;
 use App\Authentication\AuthenticationService;
 use App\Authentication\AuthenticationServiceFactory;
 use App\Service\AddressLookup\OrdnanceSurveyFactory;
@@ -131,7 +132,7 @@ return [
     'dependencies' => [
         'aliases' => [
             'Communication' => CommunicationService::class,
-            'GovPayClient'  => AlphagovPayClient::class,
+            'GovPayClient'  => GovPayClient::class,
             'EventManager'  => EventManager::class,
         ],
         'invokables' => [
@@ -273,14 +274,14 @@ return [
                 $c->get(FormElementManager::class),
                 $c->get(LpaApplicationService::class),
                 $c->get(CommunicationService::class),
-                $c->get(AlphagovPayClient::class),
+                $c->get(GovPayClient::class),
                 $c->get(UrlHelper::class),
             ),
             Handler\Lpa\CheckoutPayResponseHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\CheckoutPayResponseHandler(
                 $c->get(FormElementManager::class),
                 $c->get(LpaApplicationService::class),
                 $c->get(CommunicationService::class),
-                $c->get(AlphagovPayClient::class),
+                $c->get(GovPayClient::class),
                 $c->get(UrlHelper::class),
                 $c->get(TemplateRendererInterface::class),
             ),
@@ -598,7 +599,7 @@ return [
 
             LpaApplicationService::class => LpaApplicationServiceFactory::class,
             CommunicationService::class  => CommunicationFactory::class,
-            AlphagovPayClient::class     => AlphagovPayClientFactory::class,
+            GovPayClient::class          => AlphagovPayClientFactory::class,
             ApplicantService::class      => ApplicantFactory::class,
             ReplacementAttorneyCleanupService::class => ReplacementAttorneyCleanupFactory::class,
             CompleteViewParamsHelper::class => static fn(ContainerInterface $c) => new CompleteViewParamsHelper(
@@ -613,7 +614,7 @@ return [
             DateService::class    => static fn() => new DateService(),
             FeedbackService::class => FeedbackServiceFactory::class,
             GuidanceService::class    => static fn() => new GuidanceService(
-                dirname(__DIR__, 3) . '/content/guidance',
+                dirname(__DIR__, 2) . '/content/guidance',
             ),
             OrdnanceSurveyService::class => OrdnanceSurveyFactory::class,
             StatsService::class  => static fn(ContainerInterface $c) => new StatsService(
