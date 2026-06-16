@@ -494,12 +494,33 @@ class LegacyCompatExtension extends AbstractExtension
         $html         = '';
 
         // Determine the wrapper div class from element-level div-attributes, or default.
-        // The legacy app used 'multiple-choice' divs and 'block-label' labels (older GDS
-        // styles), not the GOV.UK Frontend v3 'govuk-radios__item' / 'govuk-radios__input'
-        // classes. Radio inputs had no class at all in the legacy output.
+        //
+        // Two distinct radio styles are used across the app:
+        //   Legacy GDS:        <div class="multiple-choice"> / <label class="block-label"> / no input class
+        //   GOV.UK Frontend v3: <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
+        //                        / <input class="govuk-radios__input">
+        //
+        // Auto-detect which style to use: if any value option explicitly sets
+        // 'govuk-radios__input' as its input class, use the GOV.UK Frontend defaults;
+        // otherwise fall back to the legacy GDS defaults.
+        $usesGovukStyle = false;
+        foreach ($valueOptions as $optSpec) {
+            $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
+            if (str_contains((string) $inputClass, 'govuk-radios__input')) {
+                $usesGovukStyle = true;
+                break;
+            }
+        }
+
         $divAttributes     = $element->getAttribute('div-attributes') ?? [];
-        $defaultDivClass   = 'multiple-choice';
-        $defaultLabelClass = 'block-label';
+        $defaultDivClass   = $usesGovukStyle ? 'govuk-radios__item' : 'multiple-choice';
+        $defaultLabelClass = $usesGovukStyle ? 'govuk-label govuk-radios__label' : 'block-label';
+
+        // Element-level label_attributes (set via setOptions(['label_attributes' => ...]))
+        // apply to all options unless overridden per-option.
+        $elementLabelAttributes = method_exists($element, 'getOption')
+            ? ($element->getOption('label_attributes') ?? [])
+            : [];
 
         // Base attributes from the element (excluding value/type/id which vary per option,
         // and div-attributes which are used for the wrapper div, not the input)
@@ -525,15 +546,16 @@ class LegacyCompatExtension extends AbstractExtension
             $optAttrs['value']   = (string) $optValue;
 
             // Per-option div-attributes override the element-level ones
-            $thisDivAttrs = $optSpec['div-attributes'] ?? $divAttributes;
+            $thisDivAttrs = (is_array($optSpec) ? ($optSpec['div-attributes'] ?? null) : null) ?? $divAttributes;
             $divClass     = $thisDivAttrs['class'] ?? $defaultDivClass;
             $divAttrStr   = $divClass !== '' ? sprintf(' class="%s"', htmlspecialchars($divClass, ENT_QUOTES)) : '';
 
-            // Build label class from label_attributes, falling back to default
-            $labelClass    = $labelAttributes['class'] ?? $defaultLabelClass;
-            $labelAttrStr  = $this->buildAttributeString(array_merge(
+            // Merge element-level label_attributes → per-option label_attributes (per-option wins)
+            $mergedLabelAttrs = array_merge($elementLabelAttributes, $labelAttributes);
+            $labelClass       = $mergedLabelAttrs['class'] ?? $defaultLabelClass;
+            $labelAttrStr     = $this->buildAttributeString(array_merge(
                 ['class' => $labelClass, 'for' => $optAttrs['id']],
-                array_diff_key($labelAttributes, array_flip(['class', 'for'])),
+                array_diff_key($mergedLabelAttrs, array_flip(['class', 'for'])),
             ));
 
             $attrString = $this->buildAttributeString($optAttrs);
