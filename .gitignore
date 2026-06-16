@@ -53,3 +53,4 @@ service-pdf/before.png
 service-pdf/after.png
 service-pdf/*.pdf
 .idea/copilotDiffState.xml
+venv/
