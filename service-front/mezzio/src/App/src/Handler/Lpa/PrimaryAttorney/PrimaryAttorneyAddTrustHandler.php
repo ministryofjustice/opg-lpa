@@ -67,7 +67,7 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
             );
         }
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\TrustCorporationForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/primary-attorney/add-trust', ['lpa-id' => $lpa->id])

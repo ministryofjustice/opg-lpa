@@ -152,6 +152,7 @@
 
 {# begin form #}
 {{ form().openTag( form )|raw }}
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
     {{ formElement(form.get('who')) }}
 
     <h2 class="heading-medium popup-exclude">Correspondent's details?</h2>

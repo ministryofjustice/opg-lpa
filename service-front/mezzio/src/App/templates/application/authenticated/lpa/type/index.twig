@@ -4,9 +4,9 @@
 
 {%- block accordionInstructions -%}
     <div class="text">
-        <p>We’ll use your answers to the questions below to make a lasting power of attorney (LPA). Once the LPA has been completed, it needs to be printed, signed and then posted to the Office of the Public Guardian (OPG) for registration.</p>
-        <p>We'll save the LPA as you progress so you do not need to do it all in one go.</p>
-        <p>If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="js-guidance" data-analytics-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="js-guidance" data-analytics-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
+        <p class="govuk-body">We’ll use your answers to the questions below to make a lasting power of attorney (LPA). Once the LPA has been completed, it needs to be printed, signed and then posted to the Office of the Public Guardian (OPG) for registration.</p>
+        <p class="govuk-body">We'll save the LPA as you progress so you do not need to do it all in one go.</p>
+        <p class="govuk-body">If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="js-guidance" data-analytics-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="js-guidance" data-analytics-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
     </div>
     <div class="govuk-details__text">
         If you already have a registered LPA and want to use it online, go to the<br>
@@ -49,8 +49,8 @@
 
     <div class="accordion-info">
         <div class="text">
-            <p>You can make an LPA to cover property and financial affairs, or health and welfare.</p>
-            <p><a class="js-guidance" href="/guide#topic-the-2-types-of-lpa" data-analytics-click="page:link:help: Find out about the 2 types of LPA">Find out about the 2 types of LPA</a></p>
+            <p class="govuk-body">You can make an LPA to cover property and financial affairs, or health and welfare.</p>
+            <p class="govuk-body"><a class="js-guidance" href="/guide#topic-the-2-types-of-lpa" data-analytics-click="page:link:help: Find out about the 2 types of LPA">Find out about the 2 types of LPA</a></p>
         </div>
     </div>
 
@@ -75,7 +75,7 @@
 
         {% if not (isChangeAllowed) %}
         <div class="text">
-            <p>You cannot change the type of your lasting power of attorney at this stage. If you want to make a
+            <p class="govuk-body">You cannot change the type of your lasting power of attorney at this stage. If you want to make a
             {{ (lpa.document.type == 'health-and-welfare' ? 'property and financial affairs' : 'health and welfare') }}
             LPA based on the current one, click <a href="{{ cloneUrl }}">here</a>.</p>
         </div>
@@ -85,9 +85,9 @@
             <details class="text">
                 <summary data-analytics-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
                 <div>
-                    <p>You can only make one LPA at a time.</p>
-                    <p>Once you’ve finished making this LPA, you can reuse the details you’ve entered to make another one. </p>
-                    <p>Remember, there is an application fee for each LPA.</p>
+                    <p class="govuk-body">You can only make one LPA at a time.</p>
+                    <p class="govuk-body">Once you’ve finished making this LPA, you can reuse the details you’ve entered to make another one. </p>
+                    <p class="govuk-body">Remember, there is an application fee for each LPA.</p>
                 </div>
             </details>
         </div>

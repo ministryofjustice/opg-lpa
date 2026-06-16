@@ -14,10 +14,6 @@ use MakeShared\Constants;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * Mezzio port of Application\Model\Service\Mail\Transport\NotifyMailTransport.
- * Uses App\Service\Mail\MailParameters and App\Service\Mail\Exception\InvalidArgumentException.
- */
 class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterface
 {
     use LoggerTrait;
@@ -72,6 +68,11 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
         }
     }
 
+    /**
+     * @return ((null|string)[]|bool|string)[]
+     *
+     * @psalm-return array{ok: bool, status: 'fail'|'pass', details: array{smokeTestEmailAddress: null|string, exception?: 'Unable to send email to smoke test address'}}
+     */
     public function healthcheck(): array
     {
         $result = [

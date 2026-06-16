@@ -9,12 +9,6 @@ use App\Storage\MezzioSessionStorage;
 use App\Model\Service\Authentication\Identity\User;
 use Laminas\Authentication\Result;
 
-/**
- * Mezzio port of Application\Model\Service\Authentication\AuthenticationService.
- *
- * Replaces LaminasAuthenticationService (which depends on laminas/laminas-session)
- * with direct MezzioSessionStorage-backed identity management.
- */
 class AuthenticationService
 {
     private ?MezzioSessionStorage $storage = null;
@@ -28,10 +22,6 @@ class AuthenticationService
         $this->storage = $storage;
     }
 
-    // -------------------------------------------------------------------------
-    // Credential proxies
-    // -------------------------------------------------------------------------
-
     public function setEmail(#[\SensitiveParameter] string $email): static
     {
         $this->adapter->setEmail($email);
@@ -43,10 +33,6 @@ class AuthenticationService
         $this->adapter->setPassword($password);
         return $this;
     }
-
-    // -------------------------------------------------------------------------
-    // Authentication
-    // -------------------------------------------------------------------------
 
     /**
      * Authenticate and, on success, persist the identity to the Mezzio session.
@@ -78,10 +64,6 @@ class AuthenticationService
         return $result->isValid();
     }
 
-    // -------------------------------------------------------------------------
-    // Identity
-    // -------------------------------------------------------------------------
-
     public function getIdentity(): ?User
     {
         if ($this->storage === null) {
@@ -100,10 +82,6 @@ class AuthenticationService
     {
         $this->storage?->clear();
     }
-
-    // -------------------------------------------------------------------------
-    // Session expiry (proxied to the adapter)
-    // -------------------------------------------------------------------------
 
     private function getToken(): ?string
     {

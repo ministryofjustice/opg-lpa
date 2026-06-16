@@ -28,7 +28,7 @@ class WhenLpaStartsHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\WhenLpaStartsForm&MockObject */
+    /** @var \App\Form\Lpa\WhenLpaStartsForm&MockObject */
     private $form;
     private WhenLpaStartsHandler $handler;
 
@@ -38,7 +38,7 @@ class WhenLpaStartsHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\WhenLpaStartsForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\WhenLpaStartsForm::class);
 
         $this->formElementManager
             ->method('get')

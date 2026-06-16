@@ -34,15 +34,15 @@
                     </div>
 
                     <div class="extra-info lpa-type">
-                        <p>LPA type:</p>
-                        <p class="main-text">
+                        <p class="govuk-body">LPA type:</p>
+                        <p class="govuk-body main-text">
                             {{- lpa.type == 'property-and-financial' ? 'Property and financial' : ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') -}}
                         </p>
                     </div>
 
                     <div class="extra-info">
-                        <p>Last saved:</p>
-                        <p class="main-text" data-cy="last-saved">{{ lpa.updatedAt|date('d/m/y') }}</p>
+                        <p class="govuk-body">Last saved:</p>
+                        <p class="govuk-body main-text" data-cy="last-saved">{{ lpa.updatedAt|date('d/m/y') }}</p>
                     </div>
 
                 </div>

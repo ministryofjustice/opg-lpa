@@ -35,7 +35,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
     private ApplicantService&MockObject $applicantService;
     private ReplacementAttorneyCleanup&MockObject $replacementAttorneyCleanup;
     private ActorReuseDetailsService&MockObject $actorReuseDetailsService;
-    /** @var \Application\Form\Lpa\AttorneyForm&MockObject */
+    /** @var \App\Form\Lpa\AttorneyForm&MockObject */
     private $form;
     private PrimaryAttorneyAddHandler $handler;
 
@@ -50,7 +50,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn([]);
         $this->actorReuseDetailsService->method('getActorsList')->willReturn([]);
-        $this->form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
 
         $this->formElementManager->method('get')->willReturn($this->form);
 

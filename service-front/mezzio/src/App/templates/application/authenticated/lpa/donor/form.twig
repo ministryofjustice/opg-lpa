@@ -187,7 +187,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink('Donor - Use my details') }}
+    {{ macros.displayUseMyDetailsLink('Donor - Use my details', csrfToken) }}
 {% endif %}
 
 {# begin form #}
@@ -225,7 +225,7 @@
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="form-label dob-label">Date of birth</legend>
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-            <p class="form-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
+            <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
                 {{ formElementErrorsV2(dobYear) }}

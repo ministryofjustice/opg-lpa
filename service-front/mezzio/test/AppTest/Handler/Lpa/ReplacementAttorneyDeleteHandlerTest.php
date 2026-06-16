@@ -53,7 +53,10 @@ class ReplacementAttorneyDeleteHandlerTest extends TestCase
         return FixturesData::getPfLpa();
     }
 
-    private function createRequest(?Lpa $lpa = null, mixed $idx = 0): ServerRequest
+    /**
+     * @psalm-param -1|0 $idx
+     */
+    private function createRequest(?Lpa $lpa = null, int $idx = 0): ServerRequest
     {
         $lpa = $lpa ?? $this->createLpa();
         $flowChecker = $this->createMock(FormFlowChecker::class);

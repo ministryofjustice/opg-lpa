@@ -12,6 +12,7 @@
 
 declare(strict_types=1);
 
+use Laminas\Diactoros\Response\EmptyResponse;
 use Mezzio\Container\WhoopsErrorResponseGeneratorFactory;
 use Mezzio\Container\WhoopsFactory;
 use Mezzio\Container\WhoopsPageHandlerFactory;
@@ -20,6 +21,16 @@ use Mezzio\Middleware\ErrorResponseGenerator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+
+/**
+ * Path prefixes that browsers probe automatically and should return a silent
+ * 404 rather than triggering the Whoops error page in development.
+ */
+const DEV_SILENT_404_PREFIXES = [
+    '/apple-touch-icon',
+    '/favicon',
+    '/.well-known',
+];
 
 return [
     'dependencies' => [
@@ -32,11 +43,21 @@ return [
 
             // Replace the 404 handler with one that throws, so Whoops catches it
             // and shows the full stack trace instead of the custom 404 template.
+            // Browser-probed asset paths (favicons, apple-touch-icon, etc.) return
+            // a plain empty 404 to avoid polluting the dev error screen.
             NotFoundHandler::class => static fn () => new class implements RequestHandlerInterface {
                 public function handle(ServerRequestInterface $request): ResponseInterface
                 {
+                    $path = $request->getUri()->getPath();
+
+                    foreach (DEV_SILENT_404_PREFIXES as $prefix) {
+                        if (str_starts_with($path, $prefix)) {
+                            return new EmptyResponse(404);
+                        }
+                    }
+
                     throw new \RuntimeException(
-                        sprintf('404 Not Found: no route matched "%s %s"', $request->getMethod(), $request->getUri()->getPath())
+                        sprintf('404 Not Found: no route matched "%s %s"', $request->getMethod(), $path)
                     );
                 }
             },

@@ -8,7 +8,7 @@
 
     <div class="govuk-body">
         <p class="govuk-body-l">Thank you. We've now activated your account.</p>
-        <p>Please <a href="{{ url('login') }}">sign in</a></p>
+        <p class="govuk-body">Please <a href="{{ url('login') }}">sign in</a></p>
     </div>
 
 {% else %}
@@ -18,17 +18,17 @@
 
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                <p class="govuk-!-font-weight-bold">You already have an active account</p>
-                <p>If so, you can sign in to the <a href="{{ url('login') }}">LPA online service</a> to create or complete an LPA.</p>
+                <p class="govuk-body govuk-!-font-weight-bold">You already have an active account</p>
+                <p class="govuk-body">If so, you can sign in to the <a href="{{ url('login') }}">LPA online service</a> to create or complete an LPA.</p>
             </li>
             <li>
-                <p class="govuk-!-font-weight-bold">You created the account more than 24 hours ago</p>
-                <p>You need to activate your account within 24 hours of creating it. If you do not activate it within that time, we'll automatically delete it.</p>
-                <p>You should return to <a href="{{ url('register') }}">create an account</a> and complete again.</p>
+                <p class="govuk-body govuk-!-font-weight-bold">You created the account more than 24 hours ago</p>
+                <p class="govuk-body">You need to activate your account within 24 hours of creating it. If you do not activate it within that time, we'll automatically delete it.</p>
+                <p class="govuk-body">You should return to <a href="{{ url('register') }}">create an account</a> and complete again.</p>
             </li>
         </ul>
 
-        <p>If you need more help activating your account, email <a href="mailto:customerservices@publicguardian.gov.uk ">customerservices@publicguardian.gov.uk</a> or call 0300 456 0300.</p>
+        <p class="govuk-body">If you need more help activating your account, email <a href="mailto:customerservices@publicguardian.gov.uk ">customerservices@publicguardian.gov.uk</a> or call 0300 456 0300.</p>
 
     </div>
 

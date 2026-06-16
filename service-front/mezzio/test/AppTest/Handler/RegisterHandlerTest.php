@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\RegisterHandler;
-use Application\Form\User\Registration;
+use App\Form\User\Registration;
+use App\Form\User\ConfirmEmail;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -125,7 +126,7 @@ final class RegisterHandlerTest extends TestCase
             'password' => 'SecurePass123!',
         ]);
 
-        $resendForm = $this->createMock(\Application\Form\User\ConfirmEmail::class);
+        $resendForm = $this->createMock(ConfirmEmail::class);
         $resendForm->expects($this->once())->method('setAttribute')->with('action', '/signup/resend-email');
         $resendForm->expects($this->once())->method('setData')->with([
             'email'         => 'test@example.com',
@@ -135,9 +136,9 @@ final class RegisterHandlerTest extends TestCase
         $this->formElementManager->method('get')->willReturnCallback(
             function ($formClass) use ($registrationForm, $resendForm) {
                 return match ($formClass) {
-                    Registration::class                    => $registrationForm,
-                    'Application\Form\User\ConfirmEmail'   => $resendForm,
-                    default                                => null,
+                    Registration::class  => $registrationForm,
+                    ConfirmEmail::class  => $resendForm,
+                    default              => null,
                 };
             }
         );
@@ -168,13 +169,13 @@ final class RegisterHandlerTest extends TestCase
         $registrationForm->method('isValid')->willReturn(true);
         $registrationForm->method('getData')->willReturn(['email' => 'test@example.com', 'password' => 'SecurePass123!']);
 
-        $resendForm = $this->createMock(\Application\Form\User\ConfirmEmail::class);
+        $resendForm = $this->createMock(ConfirmEmail::class);
 
         $this->formElementManager->method('get')->willReturnCallback(
             fn($formClass) => match ($formClass) {
-                Registration::class                  => $registrationForm,
-                'Application\Form\User\ConfirmEmail' => $resendForm,
-                default                              => null,
+                Registration::class  => $registrationForm,
+                ConfirmEmail::class  => $resendForm,
+                default              => null,
             }
         );
 

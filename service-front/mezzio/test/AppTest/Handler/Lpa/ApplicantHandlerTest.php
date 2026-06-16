@@ -40,7 +40,7 @@ class ApplicantHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\ApplicantForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\ApplicantForm::class);
 
         $this->formElementManager
             ->method('get')
@@ -54,8 +54,13 @@ class ApplicantHandlerTest extends TestCase
         );
     }
 
+    /**
+     * @param int[]|null|string $whoIsRegistering
+     *
+     * @psalm-param 'donor'|list{0: 1, 1?: 2}|null $whoIsRegistering
+     */
     private function createLpa(
-        mixed $whoIsRegistering = null,
+        array|string|null $whoIsRegistering = null,
         int $primaryAttorneyCount = 1,
         string $howDecision = AbstractDecisions::LPA_DECISION_HOW_JOINTLY
     ): Lpa {

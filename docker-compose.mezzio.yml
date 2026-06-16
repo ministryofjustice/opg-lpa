@@ -71,6 +71,8 @@ services:
     build:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
+    ports:
+      - 7001:8080
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
@@ -170,7 +172,9 @@ services:
       - ./service-front/mezzio/config:/app/config
       - ./service-front/mezzio/src:/app/src
       - ./service-front/mezzio/test:/app/test
-      - ./service-front/mezzio/phpunit.xml.dist:/app/phpunit.xml.dist
+      - ./service-front/mezzio/phpunit.xml:/app/phpunit.xml
+      - ./service-front/mezzio/psalm.xml:/app/psalm.xml
+      - ./service-front/mezzio/phpcs.xml:/app/phpcs.xml
       - ./service-front/module:/service-front/module
       - ./service-front/content:/app/content
       - ./shared:/shared
@@ -258,3 +262,13 @@ services:
     volumes:
       - ./cypress:/app/cypress
       - ./cypress/screenshots:/app/cypress/screenshots
+
+  front-app-mezzio-test:
+    profiles: ["test"]
+    image: lpa-front-app-mezzio-test
+    build:
+      context: ./
+      dockerfile: service-front/mezzio/docker/app/Dockerfile
+      target: test-runner
+      args:
+        ENABLE_XDEBUG: "1"

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace AppTest\Service\Lpa;
 
-use Application\Model\Service\Lpa\ActorReuseDetailsService;
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Session\SessionUtility;
+use App\Service\Lpa\ActorReuseDetailsService;
+use App\Service\Lpa\Application as LpaApplicationService;
 use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
@@ -18,17 +17,14 @@ use PHPUnit\Framework\TestCase;
 class ActorReuseDetailsServiceTest extends TestCase
 {
     private LpaApplicationService&MockObject $lpaApplicationService;
-    private SessionUtility&MockObject $sessionUtility;
     private ActorReuseDetailsService $service;
 
     protected function setUp(): void
     {
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->sessionUtility = $this->createMock(SessionUtility::class);
 
         $this->service = new ActorReuseDetailsService(
             $this->lpaApplicationService,
-            $this->sessionUtility,
         );
     }
 
@@ -74,7 +70,6 @@ class ActorReuseDetailsServiceTest extends TestCase
         );
 
         $this->assertCount(1, $replacementAttorneyEntries);
-        // The remaining one should be index 1 (last name '2')
         $remaining = array_values($replacementAttorneyEntries);
         $this->assertEquals('2', $remaining[0]['lastname']);
     }

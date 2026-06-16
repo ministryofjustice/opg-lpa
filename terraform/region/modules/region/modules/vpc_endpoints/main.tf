@@ -163,7 +163,7 @@ resource "aws_vpc_endpoint" "cloudshell" {
 
 resource "aws_vpc_endpoint" "codecatalyst" {
   provider            = aws.region
-  for_each            = local.codecatalyst_endpoints
+  for_each            = var.codecatalyst_endpoints_enabled ? local.codecatalyst_endpoints : []
   vpc_id              = var.vpc_id
   service_name        = "com.amazonaws.${data.aws_region.current.region}.${each.value}"
   vpc_endpoint_type   = "Interface"
@@ -174,6 +174,7 @@ resource "aws_vpc_endpoint" "codecatalyst" {
 }
 
 resource "aws_vpc_endpoint" "cloudshell_codecatalyst_global" {
+  count               = var.codecatalyst_endpoints_enabled ? 1 : 0
   provider            = aws.region
   vpc_id              = var.vpc_id
   service_name        = "aws.api.global.codecatalyst"
