@@ -15,8 +15,7 @@
 	}
 }
 
-// Override form-hint colour from govUK to meet AAA accessibility for contrast
-.form-hint,
+// Override govuk-hint colour to meet AAA accessibility for contrast
 .govuk-hint {
 	color: #555;
 }
