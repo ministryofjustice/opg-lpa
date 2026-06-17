@@ -1,0 +1,41 @@
+plugin: rest
+
+# Handles the simulated browser-facing payment pages (/card_details/*).
+# These paths are not in the GOV.UK Pay OpenAPI spec, so they live in a
+# separate REST plugin config with no spec validation — they are web pages
+# visited by the browser, not API endpoints.
+#
+# This file is named to sort before mock-pay-config.yaml alphabetically so
+# imposter-go's plugin loop handles /card_details/* requests here first,
+# before the OpenAPI plugin gets a chance to reject them as unknown paths.
+
+resources:
+  - path: /card_details/{paymentId}
+    method: GET
+    response:
+      file: card-form.html
+      template: true
+      headers:
+        Content-Type: text/html
+
+  - path: /card_details/{paymentId}
+    method: POST
+    steps:
+      - type: script
+        lang: javascript
+        file: submit-card-details.js
+
+  - path: /card_details/{paymentId}/confirm
+    method: GET
+    response:
+      file: confirm-form.html
+      template: true
+      headers:
+        Content-Type: text/html
+
+  - path: /card_details/{paymentId}/confirm
+    method: POST
+    steps:
+      - type: script
+        lang: javascript
+        file: confirm-payment.js
