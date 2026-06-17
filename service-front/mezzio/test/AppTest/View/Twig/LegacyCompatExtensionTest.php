@@ -10,6 +10,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\LegacyCompatExtension;
 use Laminas\Form\Element;
@@ -31,6 +32,7 @@ final class LegacyCompatExtensionTest extends TestCase
     private AccordionService&MockObject $accordionService;
     private UserDetailsHolder&MockObject $userDetailsHolder;
     private FlashMessagesHolder&MockObject $flashMessagesHolder;
+    private SystemMessage&MockObject $systemMessage;
 
     protected function setUp(): void
     {
@@ -40,6 +42,7 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->accordionService    = $this->createMock(AccordionService::class);
         $this->userDetailsHolder   = $this->createMock(UserDetailsHolder::class);
         $this->flashMessagesHolder = $this->createMock(FlashMessagesHolder::class);
+        $this->systemMessage       = $this->createMock(SystemMessage::class);
 
         $this->extension = new LegacyCompatExtension(
             ['version' => ['cache' => '', 'tag' => 'dev']],
@@ -50,6 +53,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->userDetailsHolder,
             $this->urlHelper,
             $this->flashMessagesHolder,
+            $this->systemMessage,
         );
     }
 
@@ -102,6 +106,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->userDetailsHolder,
             $this->urlHelper,
             $this->flashMessagesHolder,
+            $this->systemMessage,
         );
 
         $this->assertSame('/assets/abc123/app.js', $ext->assetPath('/assets/app.js'));
@@ -777,6 +782,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->userDetailsHolder,
             $this->urlHelper,
             $this->flashMessagesHolder,
+            $this->systemMessage,
         );
 
         $functions = $ext->getFunctions();

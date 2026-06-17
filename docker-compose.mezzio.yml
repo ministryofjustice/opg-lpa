@@ -263,9 +263,80 @@ services:
       TARGET_HOST: "mezzio-web"
       TARGET_PORT: "8080"
 
+  # ---------------------------
+  # Admin
+
+  admin-web:
+    container_name: lpa-admin-web
+    image: lpa-admin-web
+    depends_on:
+      - admin-app
+    build:
+      context: ./
+      dockerfile: service-admin/docker/web/Dockerfile
+    environment:
+      APP_HOST: admin-app
+      APP_PORT: 9000
+
+  admin-app:
+    container_name: lpa-admin-app
+    image: lpa-admin-app
+    build:
+      context: ./
+      dockerfile: service-admin/docker/app/Dockerfile
+      args:
+        ENABLE_XDEBUG: "0"
+    volumes:
+      - ./service-admin:/app
+      - ./shared:/shared
+    depends_on:
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+    environment:
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
+      OPG_LPA_ENDPOINTS_API: "http://api-web:8080"
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
+      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
+      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+      OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+      OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+
+  admin-ssl:
+    container_name: lpa-admin-ssl
+    image: lpa-admin-ssl
+    depends_on:
+      - admin-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
+    ports:
+      - 7003:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7003"
+      SSL_PORT: "443"
+      TARGET_HOST: "admin-web"
+      TARGET_PORT: "8080"
+
   cypress-mezzio:
     depends_on:
       - mezzio-ssl
+      - admin-ssl
     build:
       context: ./
       dockerfile: cypress/Dockerfile
