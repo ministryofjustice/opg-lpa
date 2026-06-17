@@ -1,0 +1,29 @@
+plugin: openapi
+specFile: publicapi_spec.json
+
+# The OpenAPI spec is used to validate all inbound requests to /v1/* endpoints.
+# Requests that do not match the spec (missing required fields, wrong types, etc.)
+# are rejected with a 400 before any script runs - no custom error handling needed.
+#
+# The resources below override only the *response examples* that imposter-go would
+# otherwise auto-generate from the spec. Validation still applies in full.
+
+validation:
+  request: fail
+
+resources:
+  # Custom scripted resources override the auto-generated OpenAPI examples.
+
+  - path: /v1/payments
+    method: POST
+    steps:
+      - type: script
+        lang: javascript
+        file: create-payment.js
+
+  - path: /v1/payments/{paymentId}
+    method: GET
+    steps:
+      - type: script
+        lang: javascript
+        file: get-payment.js
