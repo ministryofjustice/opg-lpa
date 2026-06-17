@@ -195,6 +195,8 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
+      pdf-app:
+        condition: service_started
       govpaystub:
         condition: service_started
     environment:
@@ -262,6 +264,33 @@ services:
       SSL_PORT: "443"
       TARGET_HOST: "mezzio-web"
       TARGET_PORT: "8080"
+
+  # ---------------------------
+  # PDF
+
+  pdf-app:
+    container_name: lpa-pdf-app
+    image: lpa-pdf-app
+    depends_on:
+      localstack:
+        condition: service_healthy
+    volumes:
+      - ./service-pdf:/app
+      - ./shared:/shared
+    tmpfs:
+      - /tmp/
+    build:
+      context: ./
+      args:
+        ENABLE_XDEBUG: "0"
+        VISUAL_TESTS: true
+      dockerfile: service-pdf/docker/app/Dockerfile
+    environment:
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
 
   # ---------------------------
   # Admin
