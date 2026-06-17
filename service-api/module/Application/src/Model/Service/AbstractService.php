@@ -36,14 +36,14 @@ abstract class AbstractService implements LoggerAwareInterface
                 'lpaid' => $lpa->id,
                 'validation_errors' => $validationErrors,
                 'context' => $context,
-                'lpa_type' => $lpa->getDocument() ? $lpa->getDocument()->getType() : null,
+                'lpa_type' => $lpa->getDocument()->getType(),
             ]);
 
             throw new RuntimeException(sprintf(
                 'A malformed LPA object (%s). LPA ID: %s. Validation errors: %s',
                 $context,
                 $lpa->id,
-                json_encode($validationErrors)
+                (string) json_encode($validationErrors)
             ));
         }
     }
