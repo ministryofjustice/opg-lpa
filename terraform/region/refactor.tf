@@ -27,3 +27,17 @@ moved {
   from = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.cloudshell["codecatalyst.git"]
   to   = module.eu-west-1.module.vpc_endpoints.aws_vpc_endpoint.codecatalyst["codecatalyst.git"]
 }
+
+removed {
+  from = module.eu-west-1.aws_ebs_snapshot_block_public_access.this
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.eu-west-2.aws_ebs_snapshot_block_public_access.this
+  lifecycle {
+    destroy = false
+  }
+}
