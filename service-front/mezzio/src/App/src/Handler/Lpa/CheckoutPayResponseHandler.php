@@ -15,27 +15,25 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
- * Note: App\Service\Payment\GovPay\Response\Payment uses magic methods to
- * convert the response from gov pay to an array object whose
- * contents are accessible as properties. Psalm doesn't
- * understand this (it can't tell what the gov pay response
- * looks like), and raises UndefinedPropertyFetch errors.
- * That's why they are suppressed throughout this class.
+ * Handles the callback from GOV.UK Pay after a user completes (or abandons) payment.
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayResponseHandler implements RequestHandlerInterface
+class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
+    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -59,7 +57,9 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
             throw new RuntimeException('Payment id needed');
         }
 
-        $paymentResponse = $this->paymentClient->getPayment($lpa->payment->gatewayReference);
+        $gatewayReference = $lpa->payment->gatewayReference;
+
+        $paymentResponse = $this->paymentClient->getPayment($gatewayReference);
 
         if (!$paymentResponse->isSuccess()) {
             /** @var \App\Form\Lpa\BlankMainFlowForm $form */
@@ -89,12 +89,34 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
             return new HtmlResponse($html);
         }
 
+        // Payment succeeded at GovPay — record it on the LPA.
         $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
         $lpa->payment->reference = $paymentResponse->reference;
         $lpa->payment->date      = new \DateTime();
-        $lpa->payment->email     = new EmailAddress(['address' => strtolower($paymentResponse->email)]);
 
-        $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+        $govPayEmail = $paymentResponse->email ?? null;
+
+        if (is_string($govPayEmail) && $govPayEmail !== '') {
+            $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
+        } else {
+            $this->getLogger()->warning('GovPay returned no email for completed payment', [
+                'lpaId'            => $lpa->id,
+                'gatewayReference' => $gatewayReference,
+                'email_raw'        => $govPayEmail,
+            ]);
+            $lpa->payment->email = null;
+        }
+
+        $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+
+        if ($result === false) {
+            $this->getLogger()->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
+                'lpaId'            => $lpa->id,
+                'gatewayReference' => $gatewayReference,
+                'govpay_status'    => $paymentResponse->state->status ?? 'unknown',
+                'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
+            ]);
+        }
 
         return $this->finishCheckout($lpa, $request);
     }
