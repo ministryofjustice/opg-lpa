@@ -16,10 +16,12 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
@@ -32,10 +34,11 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayResponseHandler implements RequestHandlerInterface
+class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
+    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -92,7 +95,19 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
         $lpa->payment->reference = $paymentResponse->reference;
         $lpa->payment->date      = new \DateTime();
-        $lpa->payment->email     = new EmailAddress(['address' => strtolower($paymentResponse->email)]);
+
+        $govPayEmail = $paymentResponse->email ?? null;
+
+        if (is_string($govPayEmail) && $govPayEmail !== '') {
+            $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
+        } else {
+            $this->getLogger()->debug('GovPay returned no email for completed payment', [
+                'lpaId'            => $lpa->id,
+                'gatewayReference' => $lpa->payment->gatewayReference,
+                'email_raw'        => $govPayEmail,
+            ]);
+            $lpa->payment->email = null;
+        }
 
         $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 

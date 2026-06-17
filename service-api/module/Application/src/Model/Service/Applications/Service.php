@@ -14,7 +14,6 @@ use Laminas\Paginator\Paginator;
 use MakeShared\DataModel\Lpa\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -55,9 +54,7 @@ class Service extends AbstractService
                 $lpa->populate($data);
             }
 
-            if ($lpa->validate()->hasErrors()) {
-                throw new RuntimeException('A malformed LPA object was created');
-            }
+            $this->assertLpaValid($lpa, 'during LPA create');
 
             $created = $this->getApplicationRepository()->insert($lpa);
         } while (!$created);
@@ -105,6 +102,13 @@ class Service extends AbstractService
         $validation = $lpa->validate();
 
         if ($validation->hasErrors()) {
+            $this->log('warning', 'LPA validation failed during patch', [
+                'lpaid' => $id,
+                'userId' => $userId,
+                'validation_errors' => $validation->getArrayCopy(),
+                'patched_keys' => array_keys($data),
+            ]);
+
             return new ValidationApiProblem($validation);
         }
 

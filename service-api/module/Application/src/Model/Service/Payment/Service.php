@@ -8,7 +8,6 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -33,9 +32,7 @@ class Service extends AbstractService
         $lpa = $this->getLpa($lpaId);
         $lpa->setPayment($payment);
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after setting payment');
 
         $this->updateLpa($lpa);
 
