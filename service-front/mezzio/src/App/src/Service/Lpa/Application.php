@@ -137,10 +137,12 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             return new Lpa($this->apiClient->httpPatch($target, $data));
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to update application', [
-                'userId'    => $this->getUserId(),
-                'lpaId'     => $lpaId,
-                'status'    => $ex->getStatusCode(),
-                'exception' => $ex,
+                'userId'           => $this->getUserId(),
+                'lpaId'            => $lpaId,
+                'status'           => $ex->getStatusCode(),
+                'validationErrors' => $ex->getBody('validation'),
+                'dataKeys'         => array_keys($data),
+                'exception'        => $ex,
             ]);
         }
 
