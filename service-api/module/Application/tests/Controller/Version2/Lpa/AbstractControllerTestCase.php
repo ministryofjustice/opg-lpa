@@ -13,7 +13,7 @@ use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
-use Laminas\Stdlib\ParametersInterface;
+use Laminas\Stdlib\Parameters;
 use Lmc\Rbac\Identity\IdentityInterface;
 use Lmc\Rbac\Mvc\Service\AuthorizationService;
 
@@ -137,8 +137,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     {
         $abstractController->setEventManager($this->eventManager);
 
-        $params = Mockery::mock(ParametersInterface::class);
-        $params->shouldReceive('toArray')->andReturn($parameters);
+        $params = new Parameters($parameters);
 
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('getQuery')->andReturn($params);
