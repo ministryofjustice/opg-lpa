@@ -233,23 +233,23 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --rm -T --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
-	@docker compose run --rm -T --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
-	@docker compose run --rm -T --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
-	@docker compose run --rm -T --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
 
 .PHONY: dc-shared-unit-tests
 dc-shared-unit-tests:
-	@docker compose run --rm -T --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+	@docker compose run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
@@ -278,20 +278,20 @@ cypress-open: npm-install python-api-venv
 # Provide name of the spec file (assuming it is in cypress/e2e/) e.g. cypress-run-spec SPEC=Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-spec:
-	docker compose run --rm -T -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	docker compose run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # This should be used in the form : make cypress-run-tags TAGS=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-tags:
-	docker compose run --rm -T -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
+	docker compose run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
 # Creates and runs stitched test suites for visual regression testing.
 cypress-run-stitched-suites:
 	@pushd cypress && python3 stitch.py && popd
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -T -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	docker compose run --rm -T -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
 
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
@@ -315,8 +315,8 @@ _cypress-run-baseline-suite:
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -T -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	docker compose run --rm -T -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
 
 # Replicates CI cypress runs locally to ensure visual regression test baseline images use the same user to keep
 # consistent page dimensions and LPA data for each stitched suite.
@@ -327,11 +327,11 @@ cypress-update-all-baselines: _cypress-stitch
 
 dc-phpcs-fix:
 	docker compose build phpcs
-	docker compose run --rm -T --no-deps -q phpcs
+	docker compose run --rm --no-deps -q phpcs
 
 dc-phpcs-check:
 	docker compose build phpcs
-	docker compose run --rm -T --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
 
 dc-clear-cache:
 	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
@@ -356,7 +356,7 @@ mezzio-run-composer:
 	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: mezzio-build
-mezzio-build: mezzio-run-composer run-api-composer run-admin-composer
+mezzio-build: mezzio-run-composer run-api-composer run-admin-composer run-pdf-composer
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
 
 .PHONY: mezzio-up
@@ -384,7 +384,7 @@ mezzio-dev-disable:
 .PHONY: mezzio-reset
 mezzio-reset:
 	@${MAKE} mezzio-down
-	@docker rmi lpa-mezzio-app lpa-mezzio-web lpa-mezzio-ssl 2>/dev/null || true
+	@docker rmi lpa-mezzio-app lpa-mezzio-web lpa-mezzio-ssl lpa-pdf-app lpa-admin-app lpa-admin-web lpa-admin-ssl 2>/dev/null || true
 	@rm -fr ./service-front/mezzio/vendor
 	@${MAKE} mezzio-up
 
@@ -398,7 +398,7 @@ mezzio-clear-cache:
 
 .PHONY: mezzio-cypress-run-spec
 mezzio-cypress-run-spec:
-	${MEZZIO_COMPOSE} run --rm -T --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	${MEZZIO_COMPOSE} run --rm --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js","
 
 .PHONY: mezzio-cypress-open
 mezzio-cypress-open: npm-install python-api-venv
@@ -411,8 +411,8 @@ mezzio-cypress-run-stitched-suites: _cypress-stitch
 	$(info ${YELLOW}running mezzio stitched cypress suites${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
+	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@StitchedHW or @StitchedPF or @StitchedClone"
 
 .PHONY: mezzio-cypress-update-baselines-hw mezzio-cypress-update-baselines-pf mezzio-cypress-update-baselines-clone
 mezzio-cypress-update-baselines-hw: _cypress-stitch
@@ -430,8 +430,8 @@ _mezzio-cypress-run-baseline-suite:
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
-	${MEZZIO_COMPOSE} run --rm -T --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
+	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup" && \
+	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/mezzio-regressions:/app/cypress/mezzio-regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false --expose mezzio=true,updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${SUITE_TAG}"
 
 # Update all mezzio baseline images sequentially
 .PHONY: mezzio-cypress-update-all-baselines
