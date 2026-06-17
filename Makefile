@@ -356,13 +356,14 @@ mezzio-run-composer:
 	@docker run --rm -v `pwd`/service-front/mezzio/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: mezzio-build
-mezzio-build: mezzio-run-composer run-api-composer
+mezzio-build: mezzio-run-composer run-api-composer run-admin-composer
 	@COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 ${MEZZIO_COMPOSE} build --build-arg ENABLE_XDEBUG=0
 
 .PHONY: mezzio-up
 mezzio-up: mezzio-build
 	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
-	@${MEZZIO_COMPOSE} up -d --remove-orphans
+	@export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	${MEZZIO_COMPOSE} up -d --remove-orphans
 
 .PHONY: mezzio-down
 mezzio-down:

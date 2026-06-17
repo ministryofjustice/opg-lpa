@@ -10,6 +10,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
 use App\View\Twig\Traits\MoneyFormatterTrait;
@@ -42,6 +43,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UserDetailsHolder $userDetailsHolder,
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
+        private readonly SystemMessage $systemMessage,
     ) {
     }
 
@@ -65,8 +67,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('url', [$this, 'url']),
             new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
-            // TODO: stub — always returns empty string; wire up SystemMessage service when available
-            new TwigFunction('systemMessage', fn () => '', ['is_safe' => ['html']]),
+            new TwigFunction('systemMessage', fn () => $this->systemMessage->fetchSanitised() ?? '', ['is_safe' => ['html']]),
             // FormRendererStub provides openTag(form) and closeTag — covers all (currently ported) template usage
             new TwigFunction('form', fn () => new FormRendererStub(), ['is_safe' => ['html']]),
             // Laminas view helper equivalent — Twig has no built-in escapeHtmlAttr function

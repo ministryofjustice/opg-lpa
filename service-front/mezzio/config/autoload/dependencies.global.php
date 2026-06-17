@@ -8,8 +8,10 @@ use App\Authentication\AuthenticationService;
 use App\Authentication\AuthenticationServiceFactory;
 use App\Service\AddressLookup\OrdnanceSurveyFactory;
 use App\Service\ApiClient\ApiClientFactory;
+use App\Adapter\DynamoDbKeyValueStore;
 use App\Service\DynamoDbClientFactory;
 use App\Service\Feedback\FeedbackServiceFactory;
+use App\Service\SystemMessage;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\ApplicantFactory;
 use App\Service\Lpa\CommunicationFactory;
@@ -631,6 +633,14 @@ return [
             StatusService::class => StatusServiceFactory::class,
 
             DynamoDbClient::class      => DynamoDbClientFactory::class,
+            SystemMessage::class => static function (ContainerInterface $c): SystemMessage {
+                $config = $c->get('config');
+                $dynamoConfig = $config['admin']['dynamodb'];
+                $dynamoConfig['keyPrefix'] = getenv('OPG_LPA_STACK_NAME') ?: 'local';
+                $store = new DynamoDbKeyValueStore($dynamoConfig);
+                $store->setDynamoDbClient($c->get(DynamoDbClient::class));
+                return new SystemMessage($store);
+            },
             RedisClient::class         => RedisClientFactory::class,
             SaveHandlerInterface::class => SaveHandlerFactory::class,
             AppMailTransportInterface::class => MailTransportFactory::class,
