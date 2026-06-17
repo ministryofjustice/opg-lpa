@@ -27,6 +27,13 @@ services:
     container_name: lpa-dynamodb
     image: amazon/dynamodb-local@sha256:d89f8fcc6b1a39cb35976c248ed42a28c66ae00dc043099210f5571e42648ab4
 
+  mock-pay:
+    container_name: lpa-mock-pay
+    build:
+      dockerfile: mock-pay/docker/Dockerfile
+    environment:
+      - IMPOSTER_LOG_LEVEL=TRACE
+
   localstack:
     container_name: lpa-localstack
     image: localstack/localstack:4.14.0@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
@@ -157,15 +164,6 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
-  govpaystub:
-    container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:32c52e77eab3e075c485e1981512ef14fe35fb59f6bc65924b646ad373489139
-    ports:
-      - 2527:2525
-      - 4547:4545
-    volumes:
-      - ./cypress/govpay-stubs:/app
-    command: --allowInjection --configfile /app/mountebank-config.ejs
 
   # ---------------------------
   # Mezzio front
@@ -197,7 +195,7 @@ services:
         condition: service_healthy
       pdf-app:
         condition: service_started
-      govpaystub:
+      mock-pay:
         condition: service_started
     environment:
       PHP_IDE_CONFIG: serverName=lpa-mezzio-app
@@ -217,7 +215,7 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
-      OPG_LPA_FRONT_GOV_PAY_URL: "http://govpaystub:4545"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:4545"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
     healthcheck:
