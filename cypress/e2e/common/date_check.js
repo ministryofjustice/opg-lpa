@@ -214,7 +214,7 @@ Then(
   'the visually-hidden legend for {string} states {string}',
   (fieldset, text) => {
     cy.get('[data-cy~=' + fieldset)
-      .find('legend.visually-hidden')
+      .find('legend.govuk-visually-hidden')
       .contains(text);
   },
 );

@@ -151,7 +151,6 @@
             }
         }
 
-        .form-hint,
         .govuk-hint {
             @include govuk-media-query($from: tablet) {
                 display: none;
