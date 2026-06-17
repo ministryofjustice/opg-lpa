@@ -210,7 +210,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectExceptionMessageMatches('/LPA object is invalid/');
 
         $this->logger->shouldReceive('info')->once();
-        $this->logger->shouldReceive('error')->once();
+        $this->logger->shouldReceive('debug')->once();
 
         $service = new TestableService();
         $service->setApplicationRepository($this->applicationRepository);

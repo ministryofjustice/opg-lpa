@@ -70,6 +70,10 @@ class Service extends AbstractService
         // Shouldn't need to check this, but just to be safe...
         $lpa = $this->getLpa($lpaId);
 
+        if (is_null($lpa)) {
+            return new ApiProblem(404, 'LPA not found');
+        }
+
         if ($seedLpa->user != $lpa->user) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
         }

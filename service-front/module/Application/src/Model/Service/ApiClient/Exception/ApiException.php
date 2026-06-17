@@ -63,7 +63,7 @@ class ApiException extends RuntimeException
     /**
      * Return the full decoded response body (or a specific top-level key).
      */
-    public function getBody(?string $key = null)
+    public function getBody(?string $key = null): mixed
     {
         if ($key !== null) {
             return $this->getBodyData($key);
