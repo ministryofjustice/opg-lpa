@@ -747,6 +747,13 @@ return [
         ],
     ],
 
+    'address' => [
+        'ordnancesurvey' => [
+            'key'      => getenv('OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY') ?: null,
+            'endpoint' => getenv('OPG_LPA_OS_PLACES_HUB_ENDPOINT') ?: 'https://api.os.uk/search/places/v1/postcode',
+        ],
+    ],
+
     'redis' => [
         'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
         'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000),
