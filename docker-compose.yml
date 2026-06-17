@@ -30,15 +30,14 @@ services:
   #    ports:
   #      - 8000:8000
 
-  govpaystub:
-    container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:32c52e77eab3e075c485e1981512ef14fe35fb59f6bc65924b646ad373489139
+  mock-pay:
+    container_name: lpa-mock-pay
+    build:
+      dockerfile: mock-pay/docker/Dockerfile
     ports:
-      - 2527:2525
-      - 4547:4545
-    volumes:
-      - ./cypress/govpay-stubs:/app
-    command: --allowInjection --configfile /app/mountebank-config.ejs
+      - "4547:8080"
+    environment:
+      - IMPOSTER_LOG_LEVEL=TRACE
 
   localstack:
     container_name: lpa-localstack
@@ -112,7 +111,7 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      govpaystub:
+      mock-pay:
         condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
@@ -142,7 +141,7 @@ services:
 
       OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
-      OPG_LPA_FRONT_GOV_PAY_URL: "http://govpaystub:4545"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
