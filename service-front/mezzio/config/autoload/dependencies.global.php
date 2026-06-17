@@ -270,21 +270,29 @@ return [
                 $c->get(CommunicationService::class),
                 $c->get(UrlHelper::class),
             ),
-            Handler\Lpa\CheckoutPayHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\CheckoutPayHandler(
-                $c->get(FormElementManager::class),
-                $c->get(LpaApplicationService::class),
-                $c->get(CommunicationService::class),
-                $c->get(GovPayClient::class),
-                $c->get(UrlHelper::class),
-            ),
-            Handler\Lpa\CheckoutPayResponseHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\CheckoutPayResponseHandler(
-                $c->get(FormElementManager::class),
-                $c->get(LpaApplicationService::class),
-                $c->get(CommunicationService::class),
-                $c->get(GovPayClient::class),
-                $c->get(UrlHelper::class),
-                $c->get(TemplateRendererInterface::class),
-            ),
+            Handler\Lpa\CheckoutPayHandler::class => static function (ContainerInterface $c) {
+                $handler = new Handler\Lpa\CheckoutPayHandler(
+                    $c->get(FormElementManager::class),
+                    $c->get(LpaApplicationService::class),
+                    $c->get(CommunicationService::class),
+                    $c->get(GovPayClient::class),
+                    $c->get(UrlHelper::class),
+                );
+                $handler->setLogger($c->get(LoggerInterface::class));
+                return $handler;
+            },
+            Handler\Lpa\CheckoutPayResponseHandler::class => static function (ContainerInterface $c) {
+                $handler = new Handler\Lpa\CheckoutPayResponseHandler(
+                    $c->get(FormElementManager::class),
+                    $c->get(LpaApplicationService::class),
+                    $c->get(CommunicationService::class),
+                    $c->get(GovPayClient::class),
+                    $c->get(UrlHelper::class),
+                    $c->get(TemplateRendererInterface::class),
+                );
+                $handler->setLogger($c->get(LoggerInterface::class));
+                return $handler;
+            },
             Handler\Lpa\CheckoutConfirmHandler::class => static fn(ContainerInterface $c) => new Handler\Lpa\CheckoutConfirmHandler(
                 $c->get(LpaApplicationService::class),
                 $c->get(CommunicationService::class),

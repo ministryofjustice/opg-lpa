@@ -98,7 +98,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         //So we expect an exception and for no document to be inserted
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A malformed LPA object was created');
+        $this->expectExceptionMessageMatches('/A malformed LPA object \(during LPA create\)/');
 
         $service = new TestableService();
         $service->setApplicationRepository($this->applicationRepository);
@@ -207,9 +207,10 @@ final class ServiceTest extends AbstractServiceTestCase
         $lpa->getDocument()->setType('invalid');
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('LPA object is invalid');
+        $this->expectExceptionMessageMatches('/LPA object is invalid/');
 
         $this->logger->shouldReceive('info')->once();
+        $this->logger->shouldReceive('error')->once();
 
         $service = new TestableService();
         $service->setApplicationRepository($this->applicationRepository);

@@ -53,8 +53,27 @@ trait ApplicationRepositoryTrait
         ]);
 
         // Check LPA is (still) valid.
-        if ($lpa->validateForApi()->hasErrors()) {
-            throw new RuntimeException('LPA object is invalid');
+        $validation = $lpa->validateForApi();
+
+        if ($validation->hasErrors()) {
+            $validationErrors = $validation->getArrayCopy();
+
+            $this->getLogger()->debug('LPA validation failed during update', [
+                'lpaid' => $lpa->id,
+                'validation_errors' => $validationErrors,
+                'lpa_type' => $lpa->getDocument() ? $lpa->getDocument()->getType() : null,
+                'lpa_has_donor' => $lpa->getDocument() && $lpa->getDocument()->getDonor() !== null,
+                'lpa_has_certificate_provider' => $lpa->getDocument() && $lpa->getDocument()->getCertificateProvider() !== null,
+                'lpa_primary_attorneys_count' => $lpa->getDocument() ? count($lpa->getDocument()->getPrimaryAttorneys()) : 0,
+                'lpa_replacement_attorneys_count' => $lpa->getDocument() ? count($lpa->getDocument()->getReplacementAttorneys()) : 0,
+                'lpa_has_correspondent' => $lpa->getDocument() && $lpa->getDocument()->getCorrespondent() !== null,
+            ]);
+
+            throw new RuntimeException(sprintf(
+                'LPA object is invalid. LPA ID: %s. Validation errors: %s',
+                $lpa->id,
+                json_encode($validationErrors)
+            ));
         }
 
         $this->getApplicationRepository()->update($lpa);
