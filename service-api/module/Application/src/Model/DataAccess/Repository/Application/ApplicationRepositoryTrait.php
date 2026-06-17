@@ -62,11 +62,6 @@ trait ApplicationRepositoryTrait
                 'lpaid' => $lpa->id,
                 'validation_errors' => $validationErrors,
                 'lpa_type' => $lpa->getDocument()->getType(),
-                'lpa_has_donor' => $lpa->getDocument()->getDonor() !== null,
-                'lpa_has_certificate_provider' => $lpa->getDocument()->getCertificateProvider() !== null,
-                'lpa_primary_attorneys_count' => count($lpa->getDocument()->getPrimaryAttorneys()),
-                'lpa_replacement_attorneys_count' => count($lpa->getDocument()->getReplacementAttorneys()),
-                'lpa_has_correspondent' => $lpa->getDocument()->getCorrespondent() !== null,
             ]);
 
             throw new RuntimeException(sprintf(
