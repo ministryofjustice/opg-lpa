@@ -176,7 +176,7 @@
         }
     }
 
-    .error-summary {
+    .govuk-error-summary {
         margin: govuk-spacing(3) govuk-spacing(3) 0;
         padding: 10px 10px 4px;
 
@@ -185,7 +185,8 @@
         }
 
         .heading-medium,
-        .govuk-heading-m {
+        .govuk-heading-m,
+        .govuk-error-summary__title {
             margin-bottom: 10px;
 
             @include govuk-media-query($from: tablet) {
