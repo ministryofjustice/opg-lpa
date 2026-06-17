@@ -53,8 +53,22 @@ trait ApplicationRepositoryTrait
         ]);
 
         // Check LPA is (still) valid.
-        if ($lpa->validateForApi()->hasErrors()) {
-            throw new RuntimeException('LPA object is invalid');
+        $validation = $lpa->validateForApi();
+
+        if ($validation->hasErrors()) {
+            $validationErrors = $validation->getArrayCopy();
+
+            $this->getLogger()->debug('LPA validation failed during update', [
+                'lpaid' => $lpa->id,
+                'validation_errors' => $validationErrors,
+                'lpa_type' => $lpa->getDocument()->getType(),
+            ]);
+
+            throw new RuntimeException(sprintf(
+                'LPA object is invalid. LPA ID: %s. Validation errors: %s',
+                $lpa->id,
+                (string) json_encode($validationErrors)
+            ));
         }
 
         $this->getApplicationRepository()->update($lpa);

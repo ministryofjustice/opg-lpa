@@ -9,7 +9,6 @@ use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -71,15 +70,17 @@ class Service extends AbstractService
         // Shouldn't need to check this, but just to be safe...
         $lpa = $this->getLpa($lpaId);
 
+        if (is_null($lpa)) {
+            return new ApiProblem(404, 'LPA not found');
+        }
+
         if ($seedLpa->user != $lpa->user) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
         }
 
         $lpa->seed = $seedLpa->id;
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after setting seed');
 
         $this->updateLpa($lpa);
 

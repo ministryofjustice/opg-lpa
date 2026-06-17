@@ -196,6 +196,37 @@ reset-api:
 	rm -fr ./service-api/vendor; \
 	docker compose build --no-cache api-app
 
+# To account for DNS changes, we need to restart the web containers so that nginx picks up the new IP addresses. This is particularly relevant when using docker-desktop on MacOS, where the IP address of the host can change.
+.PHONY: dc-restart-web
+dc-restart-web:
+	@echo "Restarting web containers to refresh nginx DNS..."
+	@docker compose restart front-web api-web admin-web
+	@echo "Waiting for api-web (http://localhost:7001)..."
+	@for i in $$(seq 1 30); do \
+		if curl -s -o /dev/null --max-time 2 http://localhost:7001/; then \
+			echo "  api-web OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  api-web did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "Waiting for front-web (https://localhost:7002)..."
+	@for i in $$(seq 1 30); do \
+		if curl -sk -o /dev/null --max-time 2 https://localhost:7002/; then \
+			echo "  front-web OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  front-web did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "Waiting for admin-web (https://localhost:7003)..."
+	@for i in $$(seq 1 30); do \
+		if curl -sk -o /dev/null --max-time 2 https://localhost:7003/; then \
+			echo "  admin-web OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  admin-web did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "All web containers are available."
+
 .PHONY: dc-down
 dc-down:
 	@docker compose down --remove-orphans
@@ -231,8 +262,15 @@ npm-install:
 	@if [ -d node_modules ] && [ "$$(stat -f '%u' node_modules)" != "$$(id -u)" ]; then sudo chown -R $$(id -u):$$(id -g) node_modules; fi
 	npm ci --ignore-scripts
 
+# Creates a local virtualenv with the python-api-client dependencies so cy.exec() calls work when
+# running cypress open locally. The Docker-based cypress image installs these via apt instead.
+.PHONY: python-api-venv
+python-api-venv:
+	@python3 -m venv venv
+	@venv/bin/pip install -q -r tests/python-api-client/requirements.txt
+
 .PHONY: cypress-open
-cypress-open: npm-install
+cypress-open: npm-install python-api-venv
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
@@ -366,7 +404,7 @@ mezzio-cypress-run-spec:
 	${MEZZIO_COMPOSE} run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 .PHONY: mezzio-cypress-open
-mezzio-cypress-open: npm-install
+mezzio-cypress-open: npm-install python-api-venv
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7004" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
