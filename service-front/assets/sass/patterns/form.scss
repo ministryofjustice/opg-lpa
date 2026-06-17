@@ -28,3 +28,12 @@
         max-width: 30em;
 }
 
+// The old .error-message (govuk-elements) had margin: 0; padding: 2px 0 —
+// no bottom gap between the red error text and the input below it.
+// govuk-error-message adds margin-bottom: govuk-spacing(3) (15px) by default,
+// which creates a visible gap. Reset to match the original spacing.
+.govuk-error-message {
+        margin-bottom: 0;
+        padding-bottom: 2px;
+}
+

@@ -7,34 +7,19 @@
 // scss-lint:disable SpaceBeforeBrace, SpaceAfterPropertyColon
 // Special formatting here
 
-// Negating spacing
+// Negating spacing — legacy GOV.UK toolkit helpers still referenced in templates.
+// Migrate each usage to the appropriate govuk-! utility class and remove from here.
 // Remove margins
-.flush          { margin:       0 !important; }
-.flush--top     { margin-top:   0 !important; }
-.flush--right   { margin-right: 0 !important; }
-.flush--bottom  { margin-bottom:0 !important; }
-.flush--left    { margin-left:  0 !important; }
-.flush--ends    { margin-top:   0 !important; margin-bottom: 0 !important; }
-.flush--sides   { margin-right: 0 !important; margin-left:  0 !important; }
+.flush--top     { margin-top:   0 !important; }  // → govuk-!-margin-top-0
+.flush--bottom  { margin-bottom:0 !important; }  // → govuk-!-margin-bottom-0
+.flush--ends    { margin-top:   0 !important; margin-bottom: 0 !important; }  // → govuk-!-margin-top-0 govuk-!-margin-bottom-0
 
 // Remove paddings
-.hard           { padding:       0 !important; }
-.hard--top      { padding-top:   0 !important; }
-.hard--right    { padding-right: 0 !important; }
-.hard--bottom   { padding-bottom:0 !important; }
-.hard--left     { padding-left:  0 !important; }
-.hard--ends     { padding-top:   0 !important; padding-bottom:0 !important; }
-.hard--sides    { padding-right: 0 !important; padding-left:  0 !important; }
+.hard--bottom   { padding-bottom:0 !important; }  // → govuk-!-padding-bottom-0
 
 // Adding spacing
 // Add margins
-.push           { margin:       govuk-spacing(6) !important; }
-.push--top      { margin-top:   govuk-spacing(6) !important; }
-.push--right    { margin-right: govuk-spacing(6) !important; }
-.push--bottom   { margin-bottom:govuk-spacing(6) !important; }
-.push--left     { margin-left:  govuk-spacing(6) !important; }
-.push--ends     { margin-top:   govuk-spacing(6) !important; margin-bottom:govuk-spacing(6) !important; }
-.push--sides    { margin-right: govuk-spacing(6) !important; margin-left:  govuk-spacing(6) !important; }
+.push--top      { margin-top:   govuk-spacing(6) !important; }  // → govuk-!-margin-top-4
 
 // scss-lint:enable SpaceBeforeBrace, SpaceAfterPropertyColon
 
