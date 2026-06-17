@@ -363,6 +363,7 @@ mezzio-build: mezzio-run-composer run-api-composer run-admin-composer run-pdf-co
 mezzio-up: mezzio-build
 	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
 	@export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
+	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY}; \
 	${MEZZIO_COMPOSE} up -d --remove-orphans
 
 .PHONY: mezzio-down
@@ -398,7 +399,7 @@ mezzio-clear-cache:
 
 .PHONY: mezzio-cypress-run-spec
 mezzio-cypress-run-spec:
-	${MEZZIO_COMPOSE} run --rm --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js","
+	${MEZZIO_COMPOSE} run --rm --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 .PHONY: mezzio-cypress-open
 mezzio-cypress-open: npm-install python-api-venv
