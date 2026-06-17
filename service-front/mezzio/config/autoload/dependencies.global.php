@@ -560,6 +560,7 @@ return [
                 $c->get(TemplateRendererInterface::class),
             ),
             Handler\PingHandler::class => static fn(ContainerInterface $c) => new Handler\PingHandler(
+                $c->get(TemplateRendererInterface::class),
                 $c->get(StatusService::class),
             ),
             Handler\PingHandlerJson::class => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
