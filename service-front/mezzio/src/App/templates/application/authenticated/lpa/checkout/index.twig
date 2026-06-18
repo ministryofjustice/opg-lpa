@@ -70,9 +70,13 @@
 
     {% if (lpaIsCompleted) %}
 
-        <div class="govuk-inset-text govuk-!-margin-top-4">
-            <p class="govuk-body"><strong class="bold-small">At the next stage your forms will be ready to download and sign with the information shown below.</strong></p>
-            <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
+        <div class="govuk-warning-text govuk-!-margin-top-4">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-visually-hidden">Warning</span>
+                <p class="govuk-body">At the next stage your forms will be ready to download and sign with the information shown below.</p>
+                <p class="govuk-body">You will not be able to change anything in the LPA once you have clicked confirm.</p>
+            </strong>
         </div>
 
         <div class="iconlinks iconlinks--right">
@@ -125,8 +129,12 @@
                 </div>
             </details>
 
-            <div class="govuk-inset-text govuk-!-margin-top-4">
-                <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
+            <div class="govuk-warning-text govuk-!-margin-top-4">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    <p class="govuk-body">You will not be able to change anything in the LPA once you have clicked confirm.</p>
+                </strong>
             </div>
 
             {# -- GDS Pay -- #}
@@ -152,8 +160,12 @@
 
     {% else %}
 
-        <div class="govuk-inset-text govuk-!-margin-top-4">
-            <p class="govuk-body"><strong class="bold-small">When you have chosen a certificate provider, you'll be able to continue.</strong></p>
+        <div class="govuk-warning-text govuk-!-margin-top-4">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-visually-hidden">Warning</span>
+                <p class="govuk-body">When you have chosen a certificate provider, you'll be able to continue.</p>
+            </strong>
         </div>
 
         <a class="govuk-button" disabled="disabled">Confirm</a>
