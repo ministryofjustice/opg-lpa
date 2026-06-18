@@ -14,6 +14,7 @@ module "eu-west-1" {
     seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
+  rds_proxy_iam_role = aws_iam_role.rds_proxy
   providers = {
     aws            = aws.eu_west_1
     aws.management = aws.management
@@ -37,6 +38,7 @@ module "eu-west-2" {
     seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
+  rds_proxy_iam_role = aws_iam_role.rds_proxy
 
   providers = {
     aws            = aws.eu_west_2

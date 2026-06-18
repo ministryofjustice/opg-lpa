@@ -118,3 +118,7 @@ variable "container_version" {
   type    = string
   default = "latest"
 }
+
+variable "rds_proxy_iam_role" {
+  type = any
+}
