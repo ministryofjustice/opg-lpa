@@ -32,7 +32,7 @@
             <summary role="button" data-analytics-click="page:link.reveal:help: What do I need to do next?">
                 <span class="summary">What do I need to do next?</span>
             </summary>
-            <div class="panel text">
+            <div class="govuk-inset-text">
                 <ul class="list list-number">
                     <li>Click to confirm all the details on this page are correct</li>
 
@@ -70,12 +70,9 @@
 
     {% if (lpaIsCompleted) %}
 
-        <div class="alert text govuk-!-margin-top-4" role="alert">
-            <i class="icon icon-important-small" role="presentation"></i>
-            <div class="alert-message">
-                <p class="govuk-body"><strong class="bold-small">At the next stage your forms will be ready to download and sign with the information shown below.</strong></p>
-                <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
-            </div>
+        <div class="govuk-inset-text govuk-!-margin-top-4">
+            <p class="govuk-body"><strong class="bold-small">At the next stage your forms will be ready to download and sign with the information shown below.</strong></p>
+            <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
         </div>
 
         <div class="iconlinks iconlinks--right">
@@ -117,7 +114,7 @@
                 <summary data-analytics-click="page:link.reveal:help: Why are you asking me to pay now?">
                     <span class="summary">Why are you asking me to pay now?</span>
                 </summary>
-                <div class="panel panel-border-narrow text">
+                <div class="govuk-inset-text">
                     <p class="govuk-body">The fee covers the cost of processing your application, not just registering the LPA.</p>
 
                     <p class="govuk-body">If you pay by card but do not send it to OPG for registration within 42 days, we will automatically give you a refund.</p>
@@ -128,11 +125,8 @@
                 </div>
             </details>
 
-            <div class="alert text govuk-!-margin-top-4" role="alert">
-                <i class="icon icon-important-small" role="presentation"></i>
-                <div class="alert-message">
-                    <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
-                </div>
+            <div class="govuk-inset-text govuk-!-margin-top-4">
+                <p class="govuk-body"><strong class="bold-small">You will not be able to change anything in the LPA once you have clicked confirm.</strong></p>
             </div>
 
             {# -- GDS Pay -- #}
@@ -158,11 +152,8 @@
 
     {% else %}
 
-        <div class="alert text govuk-!-margin-top-4" role="alert">
-            <i class="icon icon-important-small" role="presentation"></i>
-            <div class="alert-message">
-                <p class="govuk-body"><strong class="bold-small">When you have chosen a certificate provider, you'll be able to continue.</strong></p>
-            </div>
+        <div class="govuk-inset-text govuk-!-margin-top-4">
+            <p class="govuk-body"><strong class="bold-small">When you have chosen a certificate provider, you'll be able to continue.</strong></p>
         </div>
 
         <div class="govuk-button-group">
