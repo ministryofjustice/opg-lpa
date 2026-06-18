@@ -154,9 +154,9 @@
                     {{ formElementErrorsV2(correspondence) }}
                 {% endif %}
                 <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                    <div class="multiple-choice">
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByPost) }}
-                        <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPost.getAttribute('id') }}">
                             {{ contactByPost.getOption('label')|raw }}
                         </label>
                     </div>
@@ -181,9 +181,9 @@
                     See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
                     for the offending code which applies the attribute.
                     #}
-                    <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                    <div class="govuk-checkboxes__item" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
                         {{ formElement(contactByPhone) }}
-                        <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPhone.getAttribute('id') }}">
                         {{ contactByPhone.getOption('label')|raw }}
                         </label>
                     </div>
@@ -192,9 +192,9 @@
                         {{ macros.formGroup(phone) }}
                     </div>
 
-                    <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                    <div class="govuk-checkboxes__item" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
                         {{ formElement(contactByEmail) }}
-                        <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByEmail.getAttribute('id') }}">
                         {{ contactByEmail.getOption('label')|raw }}</label>
                     </div>
 
