@@ -22,7 +22,7 @@
 
 {{ submit.setAttributes({
     value: 'Continue',
-    class: 'button flush--left reuse-details-button',
+    class: 'govuk-button govuk-!-margin-left-0 reuse-details-button',
     'data-cy': 'continue',
 }) ? '' }}
 
@@ -50,7 +50,7 @@
 
         {{ formElement(submit) }}
 
-        <a data-cy="cancel" href="{{ cancelUrl }}" class="button button-secondary js-cancel">Cancel</a>
+        <a data-cy="cancel" href="{{ cancelUrl }}" class="govuk-button button-secondary js-cancel">Cancel</a>
 
     {{ form().closeTag|raw }}
 
