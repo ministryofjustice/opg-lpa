@@ -52,27 +52,11 @@ import {
 }
 import {
   to = module.eu-west-1.aws_rds_cluster_parameter_group.postgresql_aurora_params["postgres13"]
-  id = "aurora-postgresql13"
+  id = "postgres13-cluster-params"
 }
 import {
   to = module.eu-west-1.aws_rds_cluster_parameter_group.postgresql_aurora_params["postgres14"]
-  id = "aurora-postgresql14"
-}
-import {
-  to = module.eu-west-2.aws_db_parameter_group.postgres_db_params["postgres13"]
-  id = "postgres13-db-params"
-}
-import {
-  to = module.eu-west-2.aws_db_parameter_group.postgres_db_params["postgres14"]
-  id = "postgres14-db-params"
-}
-import {
-  to = module.eu-west-2.aws_rds_cluster_parameter_group.postgresql_aurora_params["postgres13"]
-  id = "aurora-postgresql13"
-}
-import {
-  to = module.eu-west-2.aws_rds_cluster_parameter_group.postgresql_aurora_params["postgres14"]
-  id = "aurora-postgresql14"
+  id = "postgres14-cluster-params"
 }
 import {
   to = aws_iam_role.rds_enhanced_monitoring
