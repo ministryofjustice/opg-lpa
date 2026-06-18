@@ -68,5 +68,5 @@ import {
 }
 import {
   to = aws_iam_role_policy.vpc_flow_logs
-  id = "vpc_flow_logs/vpc_flow_logs"
+  id = "vpc_flow_logs:vpc_flow_logs"
 }
