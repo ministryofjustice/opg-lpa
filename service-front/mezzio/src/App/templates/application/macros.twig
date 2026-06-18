@@ -94,18 +94,20 @@
 {% endmacro %}
 
 {% macro renderFormButtons(cancelUrl, backButtonUrl) %}
-    {# Submit govuk-button #}
-    <input type="submit" name="submit" id="form-save" value="Save details" class="govuk-button" data-cy="form-save">
+    <div class="govuk-button-group">
+        {# Submit button #}
+        <input type="submit" name="submit" id="form-save" value="Save details" class="govuk-button" data-cy="form-save">
 
-    {# Back govuk-button - if necessary #}
-    {% if (backButtonUrl) %}
-        <a href="{{ backButtonUrl }}" class="govuk-button button-secondary js-form-popup" data-cy="form-back" >Back</a>
-    {% endif %}
+        {# Back button - if necessary #}
+        {% if (backButtonUrl) %}
+            <a href="{{ backButtonUrl }}" class="govuk-button govuk-button--secondary js-form-popup" data-cy="form-back">Back</a>
+        {% endif %}
 
-    {# Cancel govuk-button #}
-    {% if cancelUrl %}
-        <a href="{{ cancelUrl }}" class="govuk-button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
-    {% endif %}
+        {# Cancel button #}
+        {% if cancelUrl %}
+            <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro continuationNotes(continuationNoteKeys) %}
