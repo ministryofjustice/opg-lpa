@@ -41,6 +41,31 @@ Feature: Admin
     And I click "submit-button"
     Then deleted user is displayed with deletion date of "5th May 2021 at 1:21:20 pm"
 
+  Scenario: Search for user by email address
+    When I search for user "seeded_test_user@digital.justice.gov.uk" by "Email"
+    Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
+    And the user account status is "Activated"
+
+  Scenario: Search for user by user ID
+    When I search for user "082347fe0f7da026fa6187fc00b05c55" by "User ID"
+    Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
+    And the user account status is "Activated"
+    And the user ID displayed is "082347fe0f7da026fa6187fc00b05c55"
+
+  Scenario: Search for user by A Reference
+    When I search for user "A033718377316" by "A Reference"
+    Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
+    And the user account status is "Activated"
+
+  Scenario: Search for second user by A Reference
+    When I search for user "A033718377327" by "A Reference"
+    Then I see "seeded_test_user2@digital.justice.gov.uk" in the page text
+    And the user account status is "Activated"
+
+  Scenario: Show error when searching by A Reference with no match
+    When I search for user "A000000000001" by "A Reference"
+    Then I see "No user found for A Reference" in the page text
+
   Scenario: Set a system message
     Given I visit the admin sign-in page
     And I click "system-message-link"

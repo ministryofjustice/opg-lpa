@@ -34,7 +34,7 @@ $formGroup .= (isset($additionalFormGroupClasses)) ? " {$additionalFormGroupClas
     <label class="govuk-label" for="<?= $formId ?>">
         <?= $this->e($formLabel) ?>
     </label>
-    <select class="govuk-select" id="<?= $formId ?>" name="<?=$this->e($formName)?>">
+    <select class="govuk-select" id="<?= $formId ?>" name="<?=$this->e($formName)?>"<?= $attrsString ?>>
         <?php foreach($valueOptions as $value => $label): ?>
             <option value="<?=$value?>"<?= $value === $formValue ? ' selected' : ''?>><?=$label?></option>
         <?php endforeach ?>

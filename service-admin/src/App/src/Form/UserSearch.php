@@ -15,7 +15,7 @@ use Laminas\InputFilter\Input;
 
 class UserSearch extends AbstractForm
 {
-    public const SEARCH_TYPE_OPTIONS = [
+    public const array SEARCH_TYPE_OPTIONS = [
         'email'      => 'Email',
         'userId'     => 'User ID',
         'aReference' => 'A Reference',
