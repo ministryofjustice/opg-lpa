@@ -239,8 +239,8 @@ class LegacyCompatExtension extends AbstractExtension
         ));
 
         return sprintf(
-            '<span class="error-message text" data-cy="form-error">'
-            . '<span class="visually-hidden">Error:</span> %s'
+            '<span class="govuk-error-message text" data-cy="form-error">'
+            . '<span class="govuk-visually-hidden">Error:</span> %s'
             . '</span>',
             $escaped,
         );

@@ -15,8 +15,25 @@
 	}
 }
 
-// Override form-hint colour from govUK to meet AAA accessibility for contrast
-.form-hint,
+// Override govuk-hint colour to meet AAA accessibility for contrast
 .govuk-hint {
-	color: #555;
+        color: #555;
 }
+
+// The old error-summary always carried the .text class which imposed
+// max-width: 30em (from govuk-elements-sass _elements-typography.scss).
+// govuk-error-summary has no built-in max-width, so restore the constraint
+// here to prevent it spanning the full page width on accordion form pages.
+.govuk-error-summary {
+        max-width: 30em;
+}
+
+// The old .error-message (govuk-elements) had margin: 0; padding: 2px 0 —
+// no bottom gap between the red error text and the input below it.
+// govuk-error-message adds margin-bottom: govuk-spacing(3) (15px) by default,
+// which creates a visible gap. Reset to match the original spacing.
+.govuk-error-message {
+        margin-bottom: 0;
+        padding-bottom: 2px;
+}
+

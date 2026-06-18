@@ -72,7 +72,7 @@
 }) ? '' }}
 
 <li id="repeat-application-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
             <details class="form-group">
@@ -95,7 +95,7 @@
 
         <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset class="govuk-fieldset">
-                <legend class="visually-hidden">Is this a repeat application?</legend>
+                <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
 
                     {{ formElementErrorsV2(isRepeatApplication) }}
 
@@ -103,7 +103,7 @@
                     {{ formRadio(isRepeatApplication) }}
 
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-repeat-application">
-                        <h2 class="visually-hidden">Repeat application details</h2>
+                        <h2 class="govuk-visually-hidden">Repeat application details</h2>
 
                         <div class="govuk-form-group">
                             {{ macros.formGroup(repeatCaseNumber) }}

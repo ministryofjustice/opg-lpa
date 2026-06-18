@@ -62,6 +62,7 @@ class UserControllerTest extends AbstractControllerTestCase
         $service->shouldReceive('fetch')->andReturn($this->createEntity(['key' => 'value']));
 
         $identity = Mockery::mock(UserIdentity::class);
+        $identity->shouldReceive('id')->andReturn(10);
         $identity->shouldReceive('email')->andReturn('identity@email.address');
 
         $authorizationService = Mockery::mock(AuthorizationService::class);
@@ -85,6 +86,42 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $responseArray = json_decode($response->getContent(), true);
         $this->assertEquals('identity@email.address', $responseArray['email']['address']);
+    }
+
+    public function testGetDoesNotInjectEmailWhenCallerIsNotTheUser()
+    {
+        // Simulates an admin fetching a different user's record.
+        // The DB email should be preserved — not overwritten with the admin's email.
+        $service = Mockery::mock(Service::class);
+        $service->shouldReceive('fetch')->andReturn(
+            $this->createEntity(['email' => ['address' => 'real-user@example.com']])
+        );
+
+        $identity = Mockery::mock(UserIdentity::class);
+        $identity->shouldReceive('id')->andReturn(99);
+
+        $authorizationService = Mockery::mock(AuthorizationService::class);
+        $authorizationService->shouldReceive('isGranted')->withArgs(['authenticated'])
+            ->andReturn(true);
+        $authorizationService->shouldReceive('isGranted')
+            ->withArgs(['isAuthorizedToManageUser', $this->userId])
+            ->andReturn(false);
+        $authorizationService->shouldReceive('isGranted')
+            ->withArgs(['admin'])
+            ->andReturn(true);
+        $authorizationService->shouldReceive('getIdentity')->andReturn($identity);
+
+        $controller = new UserController($authorizationService, $service);
+        $this->callDispatch($controller);
+        $this->callOnDispatch($controller);
+
+        $response = $controller->get(10);
+
+        $this->assertInstanceOf(Json::class, $response);
+
+        $responseArray = json_decode($response->getContent(), true);
+        // Email must be the one from the DB, not the admin identity's email
+        $this->assertEquals('real-user@example.com', $responseArray['email']['address']);
     }
 
     public function testGetApiProblemFromService()

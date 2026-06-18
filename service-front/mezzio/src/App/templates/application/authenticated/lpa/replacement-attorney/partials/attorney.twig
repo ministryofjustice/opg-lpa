@@ -1,13 +1,13 @@
 <li>
     <div class="person">
-        <h3 class="person-name heading-small flush--ends">{{ attorney.name }}</h3>
+        <h3 class="person-name govuk-heading-s flush--ends">{{ attorney.name }}</h3>
         <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ attorney.address }}</p>
         <ul class="person-actions">
             <li class="action-item">
-                <a href="{{ confirmDeleteRoute }}" class="action-delete js-form-popup" data-cy="delete-attorney" aria-label="Delete Replacement Attorney {{ attorney.name }}">Delete<span class="visually-hidden"> Replacement Attorney {{ attorney.name }}</span></a>
+                <a href="{{ confirmDeleteRoute }}" class="action-delete js-form-popup" data-cy="delete-attorney" aria-label="Delete Replacement Attorney {{ attorney.name }}">Delete<span class="govuk-visually-hidden"> Replacement Attorney {{ attorney.name }}</span></a>
             </li>
             <li class="action-item">
-                <a href="{{ editRoute }}" role="button" class="action-edit js-form-popup" data-cy="view-change-attorney" aria-label="View/Change Replacement Attorney {{ attorney.name }}">View/Change<span class="visually-hidden"> Replacement Attorney {{ attorney.name }}</span></a>
+                <a href="{{ editRoute }}" role="button" class="action-edit js-form-popup" data-cy="view-change-attorney" aria-label="View/Change Replacement Attorney {{ attorney.name }}">View/Change<span class="govuk-visually-hidden"> Replacement Attorney {{ attorney.name }}</span></a>
             </li>
         </ul>
     </div>

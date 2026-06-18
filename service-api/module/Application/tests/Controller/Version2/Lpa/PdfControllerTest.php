@@ -8,7 +8,7 @@ use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Pdfs\Service;
 use Laminas\Http\Request;
-use Laminas\Stdlib\ParametersInterface;
+use Laminas\Stdlib\Parameters;
 use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
@@ -112,8 +112,7 @@ class PdfControllerTest extends AbstractControllerTestCase
 
         $controller = new PdfController($this->authorizationService, $this->service);
 
-        $params = Mockery::mock(ParametersInterface::class);
-        $params->shouldReceive('toArray')->andReturn([]);
+        $params = new Parameters([]);
 
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('getQuery')->andReturn($params);

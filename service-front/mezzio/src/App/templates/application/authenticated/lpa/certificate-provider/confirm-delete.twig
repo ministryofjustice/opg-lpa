@@ -5,16 +5,16 @@
 
 <header class="popup-header">
     <i class="icon icon-bin"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">
         Are you sure you want to delete your certificate provider?
     </h2>
 </header>
 
 <div class="form">
-    <h2 class="heading-medium">{{ certificateProviderName }}</h2>
+    <h2 class="govuk-heading-m">{{ certificateProviderName }}</h2>
     <p class="govuk-body">{{ certificateProviderAddress }}</p>
-    <a href="{{ deleteRoute }}" data-cy="delete" class="button button-warning flush--left">Delete</a>
-    <a href="{{ cancelUrl }}" data-cy="cancel" class="button button-secondary js-cancel">Cancel</a>
+    <a href="{{ deleteRoute }}" data-cy="delete" class="govuk-button govuk-button--warning govuk-!-margin-left-0">Delete</a>
+    <a href="{{ cancelUrl }}" data-cy="cancel" class="govuk-button button-secondary js-cancel">Cancel</a>
 </div>
 
 {% endblock %}

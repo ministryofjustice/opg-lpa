@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirm payment</title>
+</head>
+<body>
+  <h1>Confirm your payment</h1>
+  <form id="confirmation" method="POST" action="/card_details/${context.request.pathParams.paymentId}/confirm">
+    <button id="confirm" type="submit">Confirm payment</button>
+  </form>
+</body>
+</html>
