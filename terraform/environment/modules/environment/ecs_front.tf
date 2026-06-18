@@ -132,7 +132,19 @@ data "aws_ecr_repository" "lpa_front_mezzio_app" {
   name     = "online-lpa/front_mezzio_app"
 }
 
+data "aws_ecr_image" "lpa_front_mezzio_app" {
+  count           = var.mezzio_frontend_enabled ? 1 : 0
+  repository_name = data.aws_ecr_repository.lpa_front_mezzio_app.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+locals {
 
+  current_front_app_image = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}"
+  mezzio_front_app_image  = "${data.aws_ecr_repository.lpa_front_mezzio_app.repository_url}@${data.aws_ecr_image.lpa_front_mezzio_app[0].image_digest}"
+  front_app_image         = var.mezzio_frontend_enabled ? local.mezzio_front_app_image : local.current_front_app_image
+
+}
 //-----------------------------------------------
 // front ECS Service Task Container level config
 
@@ -186,11 +198,10 @@ locals {
 
   front_app = jsonencode(
     {
-      front_ecr_url          = var.mezzio_frontend_enabled ? data.aws_ecr_repository.lpa_front_mezzio_app.repository_url : data.aws_ecr_repository.lpa_front_app.repository_url
       cpu                    = 1,
       essential              = true,
       readonlyRootFilesystem = true,
-      image                  = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}",
+      image                  = local.front_app_image
       mountPoints = [
         {
           containerPath = "/tmp",
