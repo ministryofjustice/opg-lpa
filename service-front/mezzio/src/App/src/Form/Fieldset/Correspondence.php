@@ -20,6 +20,7 @@ class Correspondence extends Fieldset
         $this->add([
             'name' => 'contactByEmail',
             'type' => 'Checkbox',
+            'attributes' => ['class' => 'govuk-checkboxes__input'],
             'options' => [
                 'checked_value' => '1',
                 'unchecked_value' => '0',
@@ -29,6 +30,7 @@ class Correspondence extends Fieldset
         $this->add([
             'name' => 'contactByPhone',
             'type' => 'Checkbox',
+            'attributes' => ['class' => 'govuk-checkboxes__input'],
             'options' => [
                 'checked_value' => '1',
                 'unchecked_value' => '0',
@@ -38,6 +40,7 @@ class Correspondence extends Fieldset
         $this->add([
             'name' => 'contactByPost',
             'type' => 'Checkbox',
+            'attributes' => ['class' => 'govuk-checkboxes__input'],
             'options' => [
                 'checked_value' => '1',
                 'unchecked_value' => '0',
