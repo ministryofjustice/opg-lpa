@@ -441,6 +441,36 @@ mezzio-cypress-update-all-baselines: _cypress-stitch
 	@${MAKE} _mezzio-cypress-run-baseline-suite SUITE_TAG=@StitchedPF
 	@${MAKE} _mezzio-cypress-run-baseline-suite SUITE_TAG=@StitchedClone
 
+.PHONY: mezzio-restart-web
+mezzio-restart-web:
+	@echo "Restarting mezzio web containers to refresh nginx DNS..."
+	@${MEZZIO_COMPOSE} restart mezzio-web api-web admin-web
+	@echo "Waiting for api-web (http://localhost:7001)..."
+	@for i in $$(seq 1 30); do \
+		if curl -s -o /dev/null --max-time 2 http://localhost:7001/; then \
+			echo "  api-web OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  api-web did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "Waiting for mezzio-ssl (https://localhost:7004)..."
+	@for i in $$(seq 1 30); do \
+		if curl -sk -o /dev/null --max-time 2 https://localhost:7004/; then \
+			echo "  mezzio-ssl OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  mezzio-ssl did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "Waiting for admin-ssl (https://localhost:7003)..."
+	@for i in $$(seq 1 30); do \
+		if curl -sk -o /dev/null --max-time 2 https://localhost:7003/; then \
+			echo "  admin-ssl OK"; break; \
+		fi; \
+		if [ $$i -eq 30 ]; then echo "  admin-ssl did not become available"; exit 1; fi; \
+		sleep 1; \
+	done
+	@echo "All mezzio web containers are available."
+
 .PHONY: mezzio-unit-tests
 mezzio-unit-tests:
 	@${MEZZIO_COMPOSE} exec mezzio-app php /app/vendor/bin/phpunit -c /app/phpunit.xml $(ARGS)
