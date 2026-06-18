@@ -8,7 +8,7 @@ resource "aws_db_proxy" "rds_proxy" {
   vpc_security_group_ids = [
     aws_security_group.rds_proxy.id,
   ]
-  role_arn = aws_iam_role.rds_proxy_role.arn
+  role_arn = var.rds_proxy_iam_role.arn
 
   auth {
     auth_scheme               = "SECRETS"
@@ -37,25 +37,8 @@ resource "aws_db_proxy_target" "rds" {
   db_cluster_identifier = var.db_cluster_identifier
 }
 
-resource "aws_iam_role" "rds_proxy_role" {
-  name               = lower("proxy-assume-role-${var.environment_name}")
-  assume_role_policy = data.aws_iam_policy_document.rds_proxy_assume.json
-}
-
-data "aws_iam_policy_document" "rds_proxy_assume" {
-  statement {
-    sid     = "AllowRDSServiceAssumeRole"
-    actions = ["sts:AssumeRole"]
-    effect  = "Allow"
-
-    principals {
-      type        = "Service"
-      identifiers = ["rds.amazonaws.com"]
-    }
-  }
-}
-
 data "aws_iam_policy_document" "rds_proxy_role" {
+  policy_id = "rdsproxy${var.environment_name}${replace(data.aws_region.current.region, "-", "")}"
   statement {
     sid    = "RDSSecretsManagerAccess"
     effect = "Allow"
@@ -80,7 +63,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
 
 resource "aws_iam_role_policy" "rds_proxy" {
   name   = lower("rds-proxy-role-policy-${var.environment_name}")
-  role   = aws_iam_role.rds_proxy_role.id
+  role   = var.rds_proxy_iam_role.id
   policy = data.aws_iam_policy_document.rds_proxy_role.json
 }
 
