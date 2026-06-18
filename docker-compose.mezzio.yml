@@ -31,6 +31,8 @@ services:
     container_name: lpa-mock-pay
     build:
       dockerfile: mock-pay/docker/Dockerfile
+    ports:
+      - "4547:8080"
     environment:
       - IMPOSTER_LOG_LEVEL=TRACE
 
@@ -215,7 +217,7 @@ services:
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
-      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:4545"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
     healthcheck:
@@ -242,6 +244,7 @@ services:
     volumes:
       - ./service-front/mezzio/public:/web
       - ./service-front/public/assets/v2:/web/assets/v2:ro
+      - ./service-front/docker/web/etc/nginx/templates/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     environment:
       APP_HOST: mezzio-app
       APP_PORT: 9000
@@ -376,6 +379,7 @@ services:
     volumes:
       - ./cypress:/app/cypress
       - ./cypress/screenshots:/app/cypress/screenshots
+      - ./cypress.config.js:/app/cypress.config.js
 
   front-app-mezzio-test:
     profiles: ["test"]

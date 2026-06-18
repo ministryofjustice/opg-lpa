@@ -163,6 +163,8 @@ module.exports = defineConfig({
   numberOfGuidanceHelpTopics: 22,
   defaultCommandTimeout: 12000,
   requestTimeout: 12000,
+  pageLoadTimeout: 30000,
+  chromeWebSecurity: false,
   trashAssetsBeforeRuns: false,
   injectDocumentDomain: true,
   e2e: {
