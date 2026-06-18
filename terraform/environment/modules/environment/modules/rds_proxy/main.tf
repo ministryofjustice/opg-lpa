@@ -62,7 +62,7 @@ data "aws_iam_policy_document" "rds_proxy_role" {
 }
 
 resource "aws_iam_role_policy" "rds_proxy" {
-  name   = lower("rds-proxy-role-policy-${var.environment_name}")
+  name   = lower("rds-proxy-role-policy-${var.environment_name}-${data.aws_region.current.region}")
   role   = var.rds_proxy_iam_role.id
   policy = data.aws_iam_policy_document.rds_proxy_role.json
 }
