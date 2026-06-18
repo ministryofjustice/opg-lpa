@@ -75,7 +75,7 @@ class ReuseDetailsForm extends AbstractLpaForm
                 'label' => $actor['label'],
                 'value' => $idx,
                 'label_attributes' => [
-                    'class' => 'text block-label flush--left',
+                    'class' => 'text block-label govuk-!-margin-left-0',
                 ],
             ];
         }
@@ -85,7 +85,7 @@ class ReuseDetailsForm extends AbstractLpaForm
                 'label' => 'None of the above - I want to add a new person',
                 'value' => '-1',
                 'label_attributes' => [
-                    'class' => 'text block-label flush--left',
+                    'class' => 'text block-label govuk-!-margin-left-0',
                 ],
             ];
         }
