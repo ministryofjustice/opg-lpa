@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enter card details</title>
+</head>
+<body>
+  <h1>Enter card details</h1>
+  <form id="card-details" method="POST" action="/card_details/${context.request.pathParams.paymentId}">
+    <div>
+      <label for="card-no">Card number</label>
+      <input id="card-no" type="text" name="cardNo" value="">
+    </div>
+    <div>
+      <label for="expiry-month">Expiry month</label>
+      <input id="expiry-month" type="text" name="expiryMonth" value="">
+    </div>
+    <div>
+      <label for="expiry-year">Expiry year</label>
+      <input id="expiry-year" type="text" name="expiryYear" value="">
+    </div>
+    <div>
+      <label for="cardholder-name">Name on card</label>
+      <input id="cardholder-name" type="text" name="cardholderName" value="">
+    </div>
+    <div>
+      <label for="cvc">Card security code</label>
+      <input id="cvc" type="text" name="cvc" value="">
+    </div>
+    <div>
+      <label for="address-line-1">Address line 1</label>
+      <input id="address-line-1" type="text" name="addressLine1" value="">
+    </div>
+    <div>
+      <label for="address-city">Town or city</label>
+      <input id="address-city" type="text" name="addressCity" value="">
+    </div>
+    <div>
+      <label for="address-postcode">Postcode</label>
+      <input id="address-postcode" type="text" name="addressPostcode" value="">
+    </div>
+    <div>
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" value="">
+    </div>
+    <div>
+      <button id="submit-card-details" type="submit">Continue</button>
+    </div>
+  </form>
+</body>
+</html>
