@@ -18,7 +18,7 @@
                 <h2 id=”help-title” class="help-navigation-title">Help topics</h2>
                 <ul class="help-topics">
                 {% for key,value in sections %}
-                    <li><a class="js-guidance" href="{{ value['url'] }}" data-analytics-click="{{ value['dataJourney'] }}" data-cy="{{ value['dataCy'] }}">{{ value['title'] }}</a></li>
+                    <li><a class="govuk-link js-guidance" href="{{ value['url'] }}" data-analytics-click="{{ value['dataJourney'] }}" data-cy="{{ value['dataCy'] }}">{{ value['title'] }}</a></li>
                 {% endfor %}
                 </ul>
             </nav>
