@@ -147,7 +147,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">Replacement attorney details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">Replacement attorney details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -170,9 +170,9 @@
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
 
-    <h2 class="heading-medium popup-exclude">What is the replacement attorney's name?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's name?</h2>
     <fieldset>
-        <legend class="visually-hidden">Add replacement attorney's name</legend>
+        <legend class="govuk-visually-hidden">Add replacement attorney's name</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -180,9 +180,9 @@
 
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the replacement attorney's date of birth?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="form-label dob-label">Date of birth</legend>
+        <legend class="govuk-label dob-label">Date of birth</legend>
         <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
             <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
@@ -201,25 +201,25 @@
             </div>
 
             <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
+                <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
 
             <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
+                <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
 
             <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
-                <label class="form-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
+                <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
         </div>
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the replacement attorney's address?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's address?</h2>
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Replacement attorney's address</legend>
+        <legend class="govuk-visually-hidden">Replacement attorney's address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use Alphagov\Pay\Client as GovPayClient;
+use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
@@ -19,26 +19,24 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
 /**
- * Note: Alphagov\Pay\Response\Payment uses magic methods to
- * convert the response from gov pay to an array object whose
- * contents are accessible as properties. Psalm doesn't
- * understand this (it can't tell what the gov pay response
- * looks like), and raises UndefinedPropertyFetch errors.
- * That's why they are suppressed throughout this class.
+ * Initiates a GOV.UK Pay payment or resumes an existing one.
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayHandler implements RequestHandlerInterface
+class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
+    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -94,22 +92,42 @@ class CheckoutPayHandler implements RequestHandlerInterface
 
         // Check for any existing payments in play
         if (!is_null($lpa->payment->gatewayReference)) {
-            $payment = $this->paymentClient->getPayment($lpa->payment->gatewayReference);
+            $gatewayReference = $lpa->payment->gatewayReference;
+            $payment = $this->paymentClient->getPayment($gatewayReference);
 
             if (is_null($payment)) {
                 throw new RuntimeException(
-                    'Invalid GovPay payment reference: ' . $lpa->payment->gatewayReference
+                    'Invalid GovPay payment reference: ' . $gatewayReference
                 );
             }
 
             if ($payment->isSuccess()) {
-                // Payment already completed - record it and finish
+                // Payment already completed — record it and finish.
                 $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
                 $lpa->payment->reference = $payment->reference;
                 $lpa->payment->date      = new \DateTime();
-                $lpa->payment->email     = new EmailAddress(['address' => strtolower($payment->email)]);
+                $govPayEmail = $payment->email ?? null;
 
-                $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+                if (is_string($govPayEmail) && $govPayEmail !== '') {
+                    $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
+                } else {
+                    $this->getLogger()->debug('GovPay returned no email for completed payment', [
+                        'lpaId'            => $lpa->id,
+                        'gatewayReference' => $gatewayReference,
+                        'email_raw'        => $govPayEmail,
+                    ]);
+                    $lpa->payment->email = null;
+                }
+
+                $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+
+                if ($result === false) {
+                    $this->getLogger()->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
+                        'lpaId'            => $lpa->id,
+                        'gatewayReference' => $gatewayReference,
+                        'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
+                    ]);
+                }
 
                 return $this->finishCheckout($lpa, $request);
             }

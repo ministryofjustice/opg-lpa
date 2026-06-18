@@ -25,7 +25,8 @@
             padding-top: 0;
         }
 
-        > .heading-medium {
+        > .heading-medium,
+        > .govuk-heading-m {
             @include govuk-media-query($from: tablet) {
                 margin-top: 0;
                 margin-bottom: 0;
@@ -41,7 +42,8 @@
         }
 
         &.reuse-details-form {
-            .heading-medium {
+            .heading-medium,
+            .govuk-heading-m {
                 @include govuk-media-query($from: tablet) {
                     margin-top: 0;
                 }
@@ -53,7 +55,8 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
-        &:has(> .form-label) {
+        &:has(> .form-label),
+        &:has(> .govuk-label) {
             @include govuk-media-query($from: tablet) {
                 display: flex;
                 flex-wrap: wrap;
@@ -76,7 +79,8 @@
         }
     }
 
-    .form-label {
+    .form-label,
+    .govuk-label {
         @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
@@ -133,7 +137,8 @@
             margin-bottom: 18px;
         }
 
-        .form-label {
+        .form-label,
+        .govuk-label {
             @include govuk-media-query($from: tablet) {
                 width: auto;
                 flex-shrink: unset;
@@ -146,7 +151,6 @@
             }
         }
 
-        .form-hint,
         .govuk-hint {
             @include govuk-media-query($from: tablet) {
                 display: none;
@@ -157,7 +161,8 @@
     .postcodelookup {
         position: relative;
 
-        .js-PostcodeLookup__search .error-message {
+        .js-PostcodeLookup__search .error-message,
+        .js-PostcodeLookup__search .govuk-error-message {
             @include govuk-media-query($from: tablet) {
                 width: 79%;
             }
@@ -172,7 +177,7 @@
         }
     }
 
-    .error-summary {
+    .govuk-error-summary {
         margin: govuk-spacing(3) govuk-spacing(3) 0;
         padding: 10px 10px 4px;
 
@@ -181,7 +186,8 @@
         }
 
         .heading-medium,
-        .govuk-heading-m {
+        .govuk-heading-m,
+        .govuk-error-summary__title {
             margin-bottom: 10px;
 
             @include govuk-media-query($from: tablet) {
@@ -208,7 +214,8 @@
         }
 
         .form-reuse-details {
-            .error-message {
+            .error-message,
+            .govuk-error-message {
                 left: 0;
                 padding-bottom: 15px;
             }
@@ -223,7 +230,8 @@
         }
     }
 
-    .error-message {
+    .error-message,
+    .govuk-error-message {
         @include govuk-media-query($from: tablet) {
             position: relative;
             top: 13px;
@@ -236,7 +244,8 @@
     // scss-lint:disable MergeableSelector
     .form-date {
 
-        .error-message {
+        .error-message,
+        .govuk-error-message {
             @include govuk-media-query($from: tablet) {
                 top: 3px;
                 left: 0;

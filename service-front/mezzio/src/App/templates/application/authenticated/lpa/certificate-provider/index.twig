@@ -6,7 +6,7 @@
 
 <li id="certificate-provider-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
 
@@ -40,7 +40,7 @@
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
-                    <span class="visually-hidden">Warning</span>
+                    <span class="govuk-visually-hidden">Warning</span>
                     There are strict rules on who can and cannot be a certificate provider.
                     If you do not follow them, your LPA will not be registered.
                 </strong>
@@ -52,7 +52,7 @@
                         <span class="summary">Rules on who can and cannot be the certificate provider</span>
                     </summary>
                     <div class="panel">
-                        <h2 class="heading-medium">Who can be a certificate provider</h2>
+                        <h2 class="govuk-heading-m">Who can be a certificate provider</h2>
 
                         <p class="govuk-body">The certificate provider must be either:</p>
 
@@ -68,7 +68,7 @@
                             <li>be able to make their own decisions (have ‘mental capacity’)</li>
                         </ul>
 
-                        <h2 class="heading-medium">Who cannot be a certificate provider</h2>
+                        <h2 class="govuk-heading-m">Who cannot be a certificate provider</h2>
 
                         <p class="govuk-body">It’s important that the certificate provider is someone independent.</p>
 
@@ -100,23 +100,23 @@
 
     {% if (lpa.document.certificateProvider) %}
 
-        <h2 class="heading-medium flush--top">The certificate provider</h2>
+        <h2 class="govuk-heading-m flush--top">The certificate provider</h2>
 
         <div class="person">
-            <h3 class="person-name heading-small flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
+            <h3 class="person-name govuk-heading-s flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
             <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="govuk-visually-hidden"> Certificate Provider</span></a>
                 </li>
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="govuk-visually-hidden"> Certificate Provider</span></a>
                 </li>
             </ul>
         </div>
 
         <div class="form-group">
-            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
+            <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="govuk-button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}
@@ -127,7 +127,7 @@
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="form-group">
-            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
+            <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
             <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
         </div>
 

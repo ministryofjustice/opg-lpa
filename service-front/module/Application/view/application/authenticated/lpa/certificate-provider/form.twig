@@ -104,7 +104,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">Certificate provider details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">Certificate provider details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -124,10 +124,10 @@
     {{ formElement(form.getCsrf) }}
     {{ formElementErrorsV2(form.getCsrf) }}
 
-    <h2 class="heading-medium popup-exclude">What is the certificate provider's name?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the certificate provider's name?</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Add certificate provider's name</legend>
+        <legend class="govuk-visually-hidden">Add certificate provider's name</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -135,10 +135,10 @@
 
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the certificate provider's address?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the certificate provider's address?</h2>
 
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Address</legend>
+        <legend class="govuk-visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}

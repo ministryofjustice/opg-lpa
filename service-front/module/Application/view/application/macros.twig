@@ -2,12 +2,12 @@
 {% macro formErrorSummary(error, form, message = "There is a problem") %}
 
     {% if (error is not empty or form.getMessages|length > 0) %}
-    <div class="error-summary text" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary">
-        <h2 class="heading-medium error-summary-heading" id="error-heading" data-cy="error-heading">{{ message }}</h2>
+    <div class="govuk-error-summary" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-heading" data-cy="error-heading">{{ message }}</h2>
 
         {% if error is not empty %}
             {# API errors #}
-            <div class="error-summary-text" data-tracking-context="API error">
+            <div class="govuk-error-summary__body" data-tracking-context="API error">
                 {% if error == 'user-not-found' %}
                     <p class="govuk-body" data-tracking-summary="User not found">
                         We could not find an LPA account for this email address.<br><a class="govuk-link" href="signup">Create an LPA account now.</a>
@@ -35,7 +35,7 @@
                 {% endif %}
             </div>
         {% else %}
-            <ul class="error-summary-list">
+            <ul class="govuk-error-summary__list">
                 {% for e in form_linked_errors(form) %}
                     <li>
                         <a class="govuk-link" href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
@@ -53,7 +53,7 @@
 
 <div class="form-group{{ element.getMessages|length >0 ? ' form-group-error'}}">
     {{ formElementErrorsV2(element) }}
-    <label class="form-label" for="{{ element.getAttribute('id') }}">
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
     </label>
     {{ formElement(element) }}
@@ -65,7 +65,7 @@
 {% macro formGroupCheckbox(element) %}
 
 <div class="option group">
-    <label class="form-label" for="{{ element.getAttribute('id') }}">
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label')|raw }}
     </label>
     {{ formElement(element) }}
@@ -112,7 +112,7 @@
 {% macro continuationNotes(continuationNoteKeys) %}
 
     {%- if continuationNoteKeys|length > 0 -%}
-        <h3 class="heading-medium">Continuation sheets</h3>
+        <h3 class="govuk-heading-m">Continuation sheets</h3>
 
         {%- for cnote in continuationNoteKeys -%}
             {%- if cnote != 'HAS_ATTORNEY_DECISIONS' and cnote != 'LONG_INSTRUCTIONS_OR_PREFERENCES' -%}
