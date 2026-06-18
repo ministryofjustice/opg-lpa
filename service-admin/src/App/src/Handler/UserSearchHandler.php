@@ -48,23 +48,30 @@ class UserSearchHandler extends AbstractHandler
 
             $form->setData($parsedBody);
             $email = $form->get('email')->getValue();
+            $searchType = $form->get('searchType')->getValue();
 
             if ($email !== null && $form->isValid()) {
                 $input = trim($email);
 
-                if (str_contains($input, '@')) {
-                    $result = $this->userService->search($input);
-                } else {
-                    $result = $this->userService->searchById($input);
-                }
+                $result = match ($searchType) {
+                    'userId'     => $this->userService->searchById($input),
+                    'aReference' => $this->userService->searchByAReference($input),
+                    default      => $this->userService->search($input),
+                };
 
                 if ($result === false) {
                     $formMessages = $form->getMessages();
 
+                    $notFoundMessage = match ($searchType) {
+                        'userId'     => 'No user found for user ID',
+                        'aReference' => 'No user found for A Reference',
+                        default      => 'No user found for email address',
+                    };
+
                     // Set error message
                     $messages = array_merge($formMessages, [
                         'email' => [
-                            'No user found for email address'
+                            $notFoundMessage
                         ]
                     ]);
 
