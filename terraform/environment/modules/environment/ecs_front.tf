@@ -127,11 +127,17 @@ data "aws_ecr_image" "lpa_front_app" {
   provider        = aws.management
 }
 
+data "aws_ecr_repository" "lpa_front_mezzio_app" {
+  provider = aws.management
+  name     = "online-lpa/front_mezzio_app"
+}
+
 
 //-----------------------------------------------
 // front ECS Service Task Container level config
 
 locals {
+
   front_web = jsonencode({
     cpu       = 1,
     essential = true,
@@ -180,6 +186,7 @@ locals {
 
   front_app = jsonencode(
     {
+      front_ecr_url          = var.mezzio_frontend_enabled ? data.aws_ecr_repository.lpa_front_mezzio_app.repository_url : data.aws_ecr_repository.lpa_front_app.repository_url
       cpu                    = 1,
       essential              = true,
       readonlyRootFilesystem = true,
