@@ -1,0 +1,12 @@
+[project]
+name = "locust-tests"
+version = "0.0.0"
+requires-python = ">=3.14"
+dependencies = [
+    "boto3==1.43.14",
+    "locust==2.44.0",
+    "beautifulsoup4==4.14.3",
+    "faker==40.19.1",
+]
+[tool.uv]
+package = false

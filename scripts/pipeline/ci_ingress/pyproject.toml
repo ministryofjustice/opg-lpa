@@ -1,0 +1,10 @@
+[project]
+name = "ci-ingress"
+version = "0.0.0"
+requires-python = ">=3.14"
+dependencies = [
+    "botocore==1.42.93",
+    "boto3==1.42.93",
+]
+[tool.uv]
+package = false
