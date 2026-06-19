@@ -106,22 +106,26 @@ resource "aws_ecs_task_definition" "front" {
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_web"
 }
 
 data "aws_ecr_image" "lpa_front_web" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_web.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_app"
 }
 
 data "aws_ecr_image" "lpa_front_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_app.name
   image_tag       = var.container_version
   provider        = aws.management

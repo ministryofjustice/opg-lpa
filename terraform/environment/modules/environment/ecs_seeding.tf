@@ -39,11 +39,13 @@ resource "aws_ecs_task_definition" "seeding" {
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/seeding_app"
 }
 
 data "aws_ecr_image" "lpa_seeding_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_seeding_app.name
   image_tag       = var.container_version
   provider        = aws.management
