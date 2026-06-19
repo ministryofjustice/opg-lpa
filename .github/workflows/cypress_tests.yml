@@ -82,7 +82,7 @@ jobs:
 
       - name: Add GitHub Actions runner Ingress Rule
         run: |
-          uv run --directory scripts/pipeline/ci_ingress python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
       - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
@@ -135,4 +135,4 @@ jobs:
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
         run: |
-          uv run --directory scripts/pipeline/ci_ingress python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json
