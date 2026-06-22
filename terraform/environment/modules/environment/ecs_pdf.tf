@@ -119,7 +119,7 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.pdf-app.online-lpa",
           mode                  = "non-blocking",
           max-buffer-size       = "25m",
