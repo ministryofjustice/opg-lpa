@@ -20,6 +20,8 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && install-php-extensions gmp \
     && rm /usr/bin/install-php-extensions
 
+RUN apk update && apk add --upgrade expat
+
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
