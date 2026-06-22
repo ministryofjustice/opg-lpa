@@ -266,8 +266,7 @@ npm-install:
 # running cypress open locally. The Docker-based cypress image installs these via apt instead.
 .PHONY: python-api-venv
 python-api-venv:
-	@python3 -m venv venv
-	@venv/bin/pip install -q -r tests/python-api-client/requirements.txt
+	@UV_PROJECT_ENVIRONMENT=$(CURDIR)/venv uv sync --locked --directory tests/python-api-client
 
 .PHONY: cypress-open
 cypress-open: npm-install python-api-venv
