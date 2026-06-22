@@ -9,6 +9,7 @@ ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
+RUN apk update && apk add --upgrade expat
 
 RUN apk add --no-cache icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
