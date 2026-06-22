@@ -142,7 +142,7 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ topLevelError ? 'form-group-error'}}">
+        <div class="govuk-govuk-form-group {{ topLevelError ? 'govuk-govuk-form-group--error'}}">
 
             <fieldset class="govuk-fieldset" id="{{ correspondence.getAttribute('name') }}">
                 <legend class="govuk-visually-hidden">Contact options</legend>
@@ -205,7 +205,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
         <h3 class="govuk-heading-m flush--top">Which language should we use in written correspondence?</h3>
 
             <fieldset class="inline">
@@ -217,7 +217,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

@@ -75,7 +75,7 @@
     <h1 class="govuk-heading-m accordion-header flush--top">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
-            <details class="form-group">
+            <details class="govuk-form-group">
                 <summary data-analytics-click="page:link.reveal:help: What is a repeat application?" role="button" aria-expanded="false">What is a repeat application?</summary>
                 <div>
                     <p class="govuk-body">If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
@@ -93,7 +93,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
 
@@ -105,7 +105,7 @@
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-repeat-application">
                         <h2 class="govuk-visually-hidden">Repeat application details</h2>
 
-                        <div class="govuk-form-group">
+                        <div class="govuk-govuk-form-group">
                             {{ macros.formGroup(repeatCaseNumber) }}
                         </div>
 
@@ -119,7 +119,7 @@
             </fieldset>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
     {{ form().closeTag|raw }}

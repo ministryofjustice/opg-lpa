@@ -41,13 +41,13 @@
             </ul>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ nextUrl }}" role="button" class="govuk-button" data-cy="save-and-continue">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
     {% else %}
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ addUrl }}" role="button" class="govuk-button js-form-popup" aria-label="Add Donor" data-cy="add-donor">Add donor</a>
         </div>
 

@@ -1,6 +1,6 @@
 // New form-control-error class is required instead of inheriting from form-control-group (formerly error).
 // This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
-.form-group-error {
+.govuk-form-group--error {
 
 	.form-control {
 		border: 4px solid govuk-colour("red");
@@ -9,7 +9,7 @@
 
 .form-date {
 
-	.form-group-error {
+	.govuk-form-group--error {
 		border-left: 0;
 		padding-left: 0;
 	}
