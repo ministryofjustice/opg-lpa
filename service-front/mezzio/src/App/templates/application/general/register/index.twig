@@ -95,7 +95,7 @@
 
         {% include 'application/partials/password-rules.twig' %}
 
-        <div class="govuk-govuk-form-group {{ password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
             <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
@@ -111,7 +111,7 @@
 
     </fieldset>
 
-    <div class="govuk-govuk-form-group {{ terms.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+    <div class="govuk-form-group {{ terms.getMessages|length >0 ? 'govuk-form-group--error'}}">
         <fieldset>
             <legend class="govuk-visually-hidden">Terms</legend>
             <div class="govuk-body">
@@ -128,7 +128,7 @@
         </fieldset>
     </div>
 
-    <div class="govuk-govuk-form-group">
+    <div class="govuk-form-group">
         <input type="submit" name="submit" id="signin-form-submit" data-cy="signup-submit-button" value="Create account" class="govuk-button">
     </div>
 
