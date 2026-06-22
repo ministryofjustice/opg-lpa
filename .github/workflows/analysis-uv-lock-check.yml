@@ -12,8 +12,26 @@ on:
 
 jobs:
   uv-lock-check:
-    name: uv lock --check
+    name: uv lock --check (${{ matrix.directory }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - directory: scripts/pipeline
+            python-version: "3.14.5"
+          - directory: scripts/pipeline/ci_ingress
+            python-version: "3.14.5"
+          - directory: scripts/call_api_gateway
+            python-version: "3.14.5"
+          - directory: tests/python-api-client
+            python-version: "3.14.5"
+          - directory: tests/sirius-gateway-mock/scripts
+            python-version: "3.14.5"
+          - directory: tests/load
+            python-version: "3.14.5"
+          - directory: locust
+            python-version: "3.14.5"
     steps:
       - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
 
@@ -21,35 +39,9 @@ jobs:
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
         with:
           version: "0.11.21"
+          python-version: ${{ matrix.python-version }}
           enable-cache: true
 
-      - name: Install Python
-        run: uv python install
-
-      - name: Check scripts/pipeline lock
-        working-directory: scripts/pipeline
-        run: uv lock --check
-
-      - name: Check scripts/pipeline/ci_ingress lock
-        working-directory: scripts/pipeline/ci_ingress
-        run: uv lock --check
-
-      - name: Check scripts/call_api_gateway lock
-        working-directory: scripts/call_api_gateway
-        run: uv lock --check
-
-      - name: Check tests/python-api-client lock
-        working-directory: tests/python-api-client
-        run: uv lock --check
-
-      - name: Check tests/sirius-gateway-mock/scripts lock
-        working-directory: tests/sirius-gateway-mock/scripts
-        run: uv lock --check
-
-      - name: Check tests/load lock
-        working-directory: tests/load
-        run: uv lock --check
-
-      - name: Check locust lock
-        working-directory: locust
+      - name: Check lock
+        working-directory: ${{ matrix.directory }}
         run: uv lock --check
