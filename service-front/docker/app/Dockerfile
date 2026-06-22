@@ -19,6 +19,8 @@ RUN apk add --no-cache icu fcgi \
     && docker-php-ext-install opcache \
     && docker-php-ext-install sockets
 
+RUN apk update && apk add --upgrade expat
+
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
