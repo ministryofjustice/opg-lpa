@@ -150,14 +150,14 @@
 
         if (this.query !== '') {
           $searchContainer.removeClass('error');
-          $searchContainer.removeClass('form-group-error');
+          $searchContainer.removeClass('govuk-form-group--error');
           $el.spinner();
           this.findPostcode(this.query);
         } else {
           $searchContainer.addClass('error');
 
           if (this.showErrorBar) {
-            $searchContainer.addClass('form-group-error');
+            $searchContainer.addClass('govuk-form-group--error');
           }
 
           var $errorElt = $(
@@ -252,7 +252,7 @@
           $searchContainer.addClass('error');
 
           if (this.showErrorBar) {
-            $searchContainer.addClass('form-group-error');
+            $searchContainer.addClass('govuk-form-group--error');
           }
 
           $postcodeLabel.children('.error-message').remove();

@@ -113,7 +113,7 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ whoIsRegistering.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <div class="govuk-govuk-form-group {{ whoIsRegistering.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
 
             <fieldset>
                 <legend class="govuk-heading-m flush--top">This LPA is being registered by</legend>
@@ -130,7 +130,7 @@
             {% endif %}
         </div>
 
-        <div class="govuk-form-group">
+        <div class="govuk-govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

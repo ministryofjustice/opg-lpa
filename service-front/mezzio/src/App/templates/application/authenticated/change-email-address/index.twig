@@ -49,7 +49,7 @@
     <fieldset>
         <legend class="govuk-visually-hidden">Change email address</legend>
 
-        <div class="govuk-form-group">
+        <div class="govuk-govuk-form-group">
             <label class="govuk-label" for="email_current">Current email address</label>
             <input type="text" name="email_current" id="email_current" data-cy="email_current" autocomplete="off" class="govuk-input disabled" value="{{ currentEmailAddress }}" disabled="disabled">
         </div>
@@ -58,7 +58,7 @@
         {{ macros.formGroup(email) }}
         {{ macros.formGroup(email_confirm) }}
 
-        <div class="govuk-form-group">
+        <div class="govuk-govuk-form-group">
             <input type="submit" name="submit" id="signin-form-submit" class="govuk-button" data-cy='save-new-email' value="Save new email address">
             <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
         </div>

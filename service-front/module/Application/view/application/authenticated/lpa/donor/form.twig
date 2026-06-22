@@ -202,7 +202,7 @@
         {{ macros.formGroup(firstname) }}
         {{ macros.formGroup(lastname) }}
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
                 <summary class="summary" role="button" aria-expanded="false"  data-analytics-click="page:link.reveal:data: Donor known by other names">Is the donor known by any other names?</summary>
                 <div>
@@ -224,7 +224,7 @@
     <h2 class="govuk-heading-m popup-exclude">What is the donor's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="govuk-label dob-label">Date of birth</legend>
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
             <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
@@ -241,15 +241,15 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+            <div class="govuk-form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
-            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+            <div class="govuk-form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
-            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'form-group-error'}}">
+            <div class="govuk-form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
@@ -273,7 +273,7 @@
         </div>
     </fieldset>
 
-    <div class="single-checkbox-group form-group {{ cannotSign.getMessages|length > 0 ? 'form-group-error'}}">
+    <div class="single-checkbox-group govuk-form-group {{ cannotSign.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
         <fieldset>
             <legend class="govuk-visually-hidden"></legend>
             <div class="multiple-choice">
