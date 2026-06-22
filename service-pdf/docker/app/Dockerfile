@@ -13,7 +13,7 @@ RUN apk upgrade --no-cache
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
-    && apk add --upgrade expat
+    && apk add --upgrade expat \
     && docker-php-ext-install gd
 
 
