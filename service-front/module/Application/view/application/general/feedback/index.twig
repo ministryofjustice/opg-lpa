@@ -59,7 +59,7 @@
             <p class="govuk-body">If you have a question about your LPA, please email <a class="govuk-link" href="mailto:customerservices@publicguardian.gov.uk">customerservices@publicguardian.gov.uk</a> who will be able to help.</p>
         </div>
 
-        <div class="govuk-govuk-form-group {{ rating.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ rating.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <label class="govuk-heading-m" for="{{ rating.getAttribute('id') }}">
                 How would you rate your experience with this service?
             </label>
@@ -67,7 +67,7 @@
             {{ formRadio(rating) }}
         </div>
 
-        <div class="govuk-govuk-form-group {{ details.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ details.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <label class="govuk-heading-m" for="{{ details.getAttribute('id') }}">
                 Please take a moment to tell us about your experience, what worked and what did not.
             </label>
@@ -78,7 +78,7 @@
 
         <p class="govuk-heading-m">If you're happy to take part in research about this service, please leave your preferred contact details.</p>
 
-        <div class="govuk-govuk-form-group {{ email.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ email.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <label class="govuk-label" for="{{ email.getAttribute('id') }}">
                 Your email address
             </label>
@@ -86,7 +86,7 @@
             {{ formElement(email) }}
         </div>
 
-        <div class="govuk-govuk-form-group {{ phone.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ phone.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <label class="govuk-label" for="{{ phone.getAttribute('id') }}">
                 Your phone number
             </label>

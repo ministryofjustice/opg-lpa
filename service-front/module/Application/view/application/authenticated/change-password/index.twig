@@ -53,7 +53,7 @@
     <fieldset>
         <legend class="govuk-visually-hidden">Change password</legend>
 
-        <div class="govuk-govuk-form-group {{ password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
             <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <div class="govuk-govuk-form-group {{ new_password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ new_password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(new_password) }}
             <label class="govuk-label" for="{{ new_password.getAttribute('id') }}">
                 {{ new_password.getOption('label') }}

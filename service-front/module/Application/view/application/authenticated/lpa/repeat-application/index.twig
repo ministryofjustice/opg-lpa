@@ -92,7 +92,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
 
@@ -104,7 +104,7 @@
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-repeat-application">
                         <h2 class="govuk-visually-hidden">Repeat application details</h2>
 
-                        <div class="govuk-govuk-form-group">
+                        <div class="govuk-form-group">
                             {{ macros.formGroup(repeatCaseNumber) }}
                         </div>
 

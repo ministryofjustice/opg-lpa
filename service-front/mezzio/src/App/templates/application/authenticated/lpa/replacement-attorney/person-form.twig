@@ -62,26 +62,26 @@
 
 {{ title.setAttributes({
     id: 'name-title',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-title'
 }) ? '' }}
 
 {{ firstname.setAttributes({
     id: 'name-first',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-first'
 }) ? '' }}
 
 {{ lastname.setAttributes({
     id: 'name-last',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-last'
 }) ? '' }}
 
 {{ dobDay.setAttributes({
     id: 'dob-date-day',
     type: 'text',
-    class: 'form-control',
+    class: 'govuk-input',
     inputmode: 'numeric',
     maxlength: '2',
     pattern: '[0-9]*',
@@ -91,7 +91,7 @@
 {{ dobMonth.setAttributes({
     id: 'dob-date-month',
     type: 'text',
-    class: 'form-control',
+    class: 'govuk-input',
     inputmode: 'numeric',
     maxlength: '2',
     pattern: '[0-9]*',
@@ -101,7 +101,7 @@
 {{ dobYear.setAttributes({
     id: 'dob-date-year',
     type: 'text',
-    class: 'form-control',
+    class: 'govuk-input',
     inputmode: 'numeric',
     maxlength: '4',
     pattern: '[0-9]*',
@@ -110,25 +110,25 @@
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address1'
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address2'
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address3'
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-postcode'
 }) ? ''}}
 
@@ -183,7 +183,7 @@
     <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="govuk-label dob-label">Date of birth</legend>
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
@@ -200,17 +200,17 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="govuk-form-group form-group-day {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-day {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
 
-            <div class="govuk-form-group form-group-month {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-month {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
 
-            <div class="govuk-form-group form-group-year {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-year {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>

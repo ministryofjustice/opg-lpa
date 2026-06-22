@@ -26,7 +26,7 @@
 
     {{ other.setAttributes({
         id: 'other',
-        'class': 'form-control',
+        'class': 'govuk-input',
         'data-aria-controls': 'other-input',
         'data-cy': 'other-input'
     }) ? '' }}
@@ -68,7 +68,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-govuk-form-group {{ who.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Who was using the LPA service</legend>
 

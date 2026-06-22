@@ -88,7 +88,7 @@
         }
     }
 
-    .form-control {
+    .govuk-input {
         @include govuk-media-query($from: tablet) {
             flex: 1;
             min-width: 0;
@@ -145,7 +145,7 @@
             }
         }
 
-        .form-control {
+        .govuk-input {
             @include govuk-media-query($from: tablet) {
                 flex: unset;
             }

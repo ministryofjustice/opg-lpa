@@ -27,7 +27,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'when-details'
 }) ? ''}}
 
@@ -90,7 +90,7 @@
 
 		{{ macros.formErrorSummary(error,form) }}
 
-		<div class="govuk-govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
+		<div class="govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">
 	            <legend class="govuk-visually-hidden">How should the replacement attorneys step in?</legend>
 

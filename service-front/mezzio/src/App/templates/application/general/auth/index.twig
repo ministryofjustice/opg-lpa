@@ -48,7 +48,7 @@
 
         {{ macros.formGroup(email) }}
 
-        <div class="govuk-govuk-form-group {{ password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
             <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
@@ -59,7 +59,7 @@
             </div>
         </div>
 
-        <div class="govuk-govuk-form-group">
+        <div class="govuk-form-group">
             <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="govuk-button">
         </div>
 
