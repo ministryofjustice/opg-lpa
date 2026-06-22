@@ -93,8 +93,9 @@
         }
     }
 
-    .govuk-input {
-        // Override govuk-input fixed height to match pre-migration form-control behaviour
+    .govuk-input,
+    .govuk-select {
+        // Override govuk-input/select fixed height to match pre-migration form-control behaviour
         // Popups are non-standard layout - preserve original appearance
         height: auto;
         padding: 5px 4px 4px;
