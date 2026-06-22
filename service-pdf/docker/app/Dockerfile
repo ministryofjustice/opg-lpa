@@ -13,7 +13,9 @@ RUN apk upgrade --no-cache
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
+    && apk add --upgrade expat
     && docker-php-ext-install gd
+
 
 # only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
 ARG VISUAL_TESTS=false
