@@ -57,7 +57,11 @@ abstract class AbstractActorForm extends AbstractLpaForm
             );
         }
 
-        $dataForModel = $this->convertFormDataForModel(array_merge($this->data, $this->getData()));
+        // getData() returns $this->object (e.g. ArrayObject) when a model is bound;
+        // VALUES_AS_ARRAY forces it to return the input-filter values as a plain array.
+        $dataForModel = $this->convertFormDataForModel(
+            array_merge((array) $this->data, $this->getData(FormInterface::VALUES_AS_ARRAY))
+        );
         $this->actorModel->populate($dataForModel);
         $validation = $this->actorModel->validate();
 

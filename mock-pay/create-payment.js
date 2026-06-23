@@ -20,7 +20,7 @@ paymentsStore.save('return_url_' + paymentId, returnUrl);
 paymentsStore.save('reference_' + paymentId, reference);
 paymentsStore.save('email_' + paymentId, requestBody.email || 'payer@example.org');
 
-var baseUrl = 'http://localhost:4547';
+var baseUrl = 'http://mock-pay:8080';
 
 var responseBody = JSON.stringify({
     payment_id: paymentId,

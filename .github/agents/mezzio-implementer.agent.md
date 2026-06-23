@@ -85,7 +85,7 @@ When adding a new handler, always:
 3. Register `HandlerClass::class => FactoryClass::class` in `dependencies.global.php`
 4. Add the route in `routes.php` — use `$factory->pipeline(...)` when CSRF or `LpaLoaderMiddleware` is needed
 5. Mark public/unauthenticated routes with `->setOptions(['unauthenticated_route' => true])`
-6. **Check for existing legacy tests** in `service-front/module/Application/tests/` for the ported class. If found, port them to `service-front/mezzio/test/AppTest/` — update the namespace from `ApplicationTest\` to `AppTest\`, swap all `Application\` class references to their `App\` equivalents (e.g. `Application\Middleware\RequestAttribute` → `App\Middleware\RequestAttribute`, `MvcUrlHelper` → `Mezzio\Helper\UrlHelper`), and run `make dc-mezzio-unit-tests` to verify.
+6. **Check for existing legacy tests** in `service-front/module/Application/tests/` for the ported class. If found, port them to `service-front/mezzio/test/AppTest/` — update the namespace from `ApplicationTest\` to `AppTest\`, swap all `Application\` class references to their `App\` equivalents (e.g. `Application\Middleware\RequestAttribute` → `App\Middleware\RequestAttribute`, `MvcUrlHelper` → `Mezzio\Helper\UrlHelper`), and run `make mezzio-unit-tests` to verify.
 
 ### Per-route pipeline pattern
 Use `$factory->pipeline(...)` when `LpaLoaderMiddleware` is needed for LPA-scoped routes:
@@ -135,14 +135,14 @@ Never use or install:
 Use Mezzio equivalents: `Mezzio\Router\RouteResult`, `Mezzio\Session\SessionInterface`.
 
 ## Make commands
-- `make mezzio-dc-build` – Rebuild Mezzio Docker image (run after `composer require` or Dockerfile changes)
-- `make mezzio-dc-logs` – Tail Mezzio app container logs
-- `make dc-mezzio-unit-tests` – Run PHPUnit tests for the Mezzio app (requires the container to be running)
+- `make mezzio-build` – Rebuild Mezzio Docker image (run after `composer require` or Dockerfile changes)
+- `make mezzio-logs` – Tail Mezzio app container logs
+- `make mezzio-unit-tests` – Run PHPUnit tests for the Mezzio app (requires the container to be running)
 - `make dc-front-unit-tests` – Run PHPUnit tests for the legacy service-front module
 
 ## After installing a new Composer package
 
-`make mezzio-dc-build` uses Docker layer caching and may not pick up the updated `vendor/`. Always do a **no-cache rebuild** followed by a **force-recreate** and **PHP-FPM reload**:
+`make mezzio-build` uses Docker layer caching and may not pick up the updated `vendor/`. Always do a **no-cache rebuild** followed by a **force-recreate** and **PHP-FPM reload**:
 
 ```bash
 # 1. Rebuild without cache so composer install re-runs with the updated lock file
@@ -181,5 +181,5 @@ git --no-pager log --oneline -10
 
 ## Boundaries
 - ✅ **Always do:** Duplicate `Application\` classes into `App\` namespace for new files you create; port all `Application\` dependencies transitively when porting a class; wire routes, factories and dependencies together; validate edits with get_errors; use `git --no-pager` for all git commands
-- ⚠️ **Ask first:** Before running `make mezzio-dc-build` (takes ~30s), before modifying shared code under `shared/`, before bulk-refactoring `Application\` references across many files not in scope
+- ⚠️ **Ask first:** Before running `make mezzio-build` (takes ~30s), before modifying shared code under `shared/`, before bulk-refactoring `Application\` references across many files not in scope
 - 🚫 **Never do:** Leave `use Application\` imports in a newly ported `App\` class body (factories excluded); bulk-replace `Application\` references across files not in scope for the current PR; install laminas-mvc packages; use `NonPersistentStorage` for authentication; use `SessionUtility::getFromMvc()` — use Mezzio session directly; commit secrets
