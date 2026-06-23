@@ -1,18 +1,27 @@
 // New form-control-error class is required instead of inheriting from form-control-group (formerly error).
 // This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
-.form-group-error {
+.form-group-error,
+.govuk-form-group--error {
 
-	.form-control {
-		border: 4px solid govuk-colour("red");
-	}
+        .form-control {
+                border: 4px solid govuk-colour("red");
+        }
+}
+
+// Replicate the govuk-elements form-group-error margin-right so error state
+// form groups do not span the full container width (govuk-frontend omits this).
+// The popup layout already overrides margin-right: 0 via _form-popup.scss.
+.govuk-form-group--error {
+        margin-right: 15px;
 }
 
 .form-date {
 
-	.form-group-error {
-		border-left: 0;
-		padding-left: 0;
-	}
+        .form-group-error,
+        .govuk-form-group--error {
+                border-left: 0;
+                padding-left: 0;
+        }
 }
 
 // Override govuk-hint colour to meet AAA accessibility for contrast
