@@ -51,7 +51,7 @@
         }
     }
 
-    .govuk-form-group {
+    .form-group {
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
@@ -132,7 +132,7 @@
             margin-left: 150px;
         }
 
-        .govuk-form-group {
+        .form-group {
             display: inline-block;
             margin-bottom: 18px;
         }
@@ -200,7 +200,7 @@
         }
     }
 
-    .govuk-form-group--error {
+    .form-group-error {
         border-left: 0;
 
         @include govuk-media-query($from: tablet) {
@@ -223,7 +223,7 @@
     }
 
     .form-date {
-        .govuk-form-group--error {
+        .form-group-error {
             @include govuk-media-query($from: tablet) {
                 margin-right: 20px;
             }
@@ -277,8 +277,8 @@
 
 // No-js hidden button spacing fix for reuse details
 .no-js {
-    .govuk-form-group {
-        + .govuk-form-group.js-hidden {
+    .form-group {
+        + .form-group.js-hidden {
             margin-top: 30px;
         }
 

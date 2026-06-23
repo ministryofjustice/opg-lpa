@@ -193,7 +193,7 @@
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="govuk-label dob-label">Date of birth</legend>
 
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'form-group-error'}}">
             <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
@@ -210,17 +210,17 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="govuk-form-group form-group-day {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="form-group form-group-day {{ dob.getMessages|length >0 ? 'form-group-error'}}">
                 <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
 
-            <div class="govuk-form-group form-group-month {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="form-group form-group-month {{ dob.getMessages|length >0 ? 'form-group-error'}}">
                 <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
 
-            <div class="govuk-form-group form-group-year {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="form-group form-group-year {{ dob.getMessages|length >0 ? 'form-group-error'}}">
                 <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>

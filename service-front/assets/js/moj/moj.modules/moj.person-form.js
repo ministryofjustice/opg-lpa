@@ -207,7 +207,7 @@
                 }
 
                 $('label[for="name-last"]', $form)
-                  .parents('.govuk-form-group')
+                  .parents('.form-group')
                   .after(
                     $(
                       tplAlert({

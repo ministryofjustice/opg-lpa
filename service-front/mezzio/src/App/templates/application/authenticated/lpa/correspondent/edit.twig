@@ -172,7 +172,7 @@
         <legend class="visually hidden">Add company name</legend>
         {% if form.trustSelected() %}
             {{ formHidden(company) }}
-            <div class="govuk-form-group read-only">
+            <div class="form-group read-only">
                 <label class="govuk-label">{{ company.getOption('label') }}</label>
                 <div class="read-only-value">{{ company.getValue() }}</div>
             </div>
@@ -203,7 +203,7 @@
                 {% set addressString = addressString ~ ', ' ~ postcode.getValue() %}
             {% endif %}
 
-            <div class="govuk-form-group read-only">
+            <div class="form-group read-only">
                 <label class="govuk-label">Address</label>
                 <div class="read-only-value">{{ addressString }}</div>
             </div>
