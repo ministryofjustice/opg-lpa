@@ -49,6 +49,14 @@ map $upstream_http_strict_transport_security $sts {
   default '';
 }
 
+# Set the HTTPS FastCGI param based on X-Forwarded-Proto sent by the upstream
+# SSL terminator (AWS ALB/CloudFront in production, *-ssl nginx proxy in dev).
+# This lets PHP correctly detect the request scheme via $_SERVER['HTTPS'].
+map $http_x_forwarded_proto $fastcgi_https {
+  https on;
+  default '';
+}
+
 map $upstream_http_x_xss_protection $xxssp {
   '' '1; mode=block';
   default '';
@@ -147,6 +155,10 @@ server {
         include fastcgi_params;
 
         fastcgi_param SCRIPT_FILENAME /app/public$fastcgi_script_name;
+
+        # Tell PHP whether the original connection was HTTPS, based on what the
+        # upstream SSL terminator (AWS ALB, CloudFront, or local SSL proxy) sets.
+        fastcgi_param HTTPS $fastcgi_https;
 
         # add tracing to the request
         fastcgi_param HTTP_X_TRACE_ID $trace_id;
