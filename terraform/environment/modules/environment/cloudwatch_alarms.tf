@@ -22,6 +22,32 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 }
 
 # Metric Anomaly Alarm
+resource "aws_cloudwatch_anomaly_detector" "front_5xx_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "HTTPCode_Target_5XX_Count"
+          namespace   = "AWS/ApplicationELB"
+          dimensions {
+            name  = "LoadBalancer"
+            value = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
+          }
+        }
+        period = 60
+        stat   = "Sum"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "front_5xx_anomaly" {
   alarm_name                = "${var.environment_name} public front 5XX anomaly"
   comparison_operator       = "GreaterThanUpperThreshold"
@@ -33,6 +59,8 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.front_5xx_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -98,6 +126,29 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
 }
 
 # 4XX Alarms
+resource "aws_cloudwatch_anomaly_detector" "application_4xx_errors" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-40x-errors"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Average"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "e1"
+      expression  = "ANOMALY_DETECTION_BAND(m1)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
@@ -110,6 +161,8 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   insufficient_data_actions = []
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   treat_missing_data        = "notBreaching"
+
+  depends_on = [aws_cloudwatch_anomaly_detector.application_4xx_errors]
 
   metric_query {
     id          = "e1"
@@ -132,6 +185,32 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 }
 
 # 4XX Metric Anomaly Alarm
+resource "aws_cloudwatch_anomaly_detector" "front_4xx_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "HTTPCode_Target_4XX_Count"
+          namespace   = "AWS/ApplicationELB"
+          dimensions {
+            name  = "LoadBalancer"
+            value = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
+          }
+        }
+        period = 60
+        stat   = "Sum"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 4)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
   alarm_name        = "${var.environment_name} public front 4XX anomaly"
   alarm_description = "Anomaly detection in 4XX Errors returned to users for ${var.environment_name}"
@@ -146,6 +225,8 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 
   alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.front_4xx_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -228,6 +309,29 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
 }
 
 # Auth Event Anomaly Alarms
+resource "aws_cloudwatch_anomaly_detector" "auth_sign_in_success_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-auth-sign-in-success"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Sum"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
   alarm_name          = "${var.environment_name} auth sign-in success anomaly"
   alarm_description   = "Anomaly detection on successful sign-ins for ${var.environment_name}"
@@ -240,6 +344,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.auth_sign_in_success_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -261,6 +367,29 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
   }
 }
 
+resource "aws_cloudwatch_anomaly_detector" "auth_sign_in_failed_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-auth-sign-in-failed"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Sum"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 3)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
   alarm_name          = "${var.environment_name} auth sign-in failed anomaly"
   alarm_description   = "Anomaly detection on failed sign-ins for ${var.environment_name}"
@@ -273,6 +402,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.auth_sign_in_failed_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -294,6 +425,29 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
   }
 }
 
+resource "aws_cloudwatch_anomaly_detector" "auth_account_locked_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-auth-account-locked"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Sum"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
   alarm_name          = "${var.environment_name} auth account locked anomaly"
   alarm_description   = "Anomaly detection on account lockouts for ${var.environment_name}"
@@ -306,6 +460,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.auth_account_locked_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -327,6 +483,29 @@ resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
   }
 }
 
+resource "aws_cloudwatch_anomaly_detector" "auth_sign_in_account_locked_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-auth-sign-in-account-locked"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Sum"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
   alarm_name          = "${var.environment_name} auth sign-in against locked account anomaly"
   alarm_description   = "Anomaly detection on sign-in attempts against locked accounts for ${var.environment_name}"
@@ -339,6 +518,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.auth_sign_in_account_locked_anomaly]
 
   metric_query {
     id          = "ad1"
@@ -360,6 +541,29 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
   }
 }
 
+resource "aws_cloudwatch_anomaly_detector" "auth_sign_in_inactive_account_anomaly" {
+  metric_math_anomaly_detector {
+    metric_data_queries {
+      id          = "m1"
+      return_data = false
+      metric_stat {
+        metric {
+          metric_name = "${var.environment_name}-auth-sign-in-inactive-account"
+          namespace   = "Make/Monitoring"
+        }
+        period = 120
+        stat   = "Sum"
+        unit   = "Count"
+      }
+    }
+    metric_data_queries {
+      id          = "ad1"
+      expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+      return_data = true
+    }
+  }
+}
+
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
   alarm_name          = "${var.environment_name} auth sign-in inactive account anomaly"
   alarm_description   = "Anomaly detection on sign-in attempts against inactive accounts for ${var.environment_name}"
@@ -372,6 +576,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  depends_on = [aws_cloudwatch_anomaly_detector.auth_sign_in_inactive_account_anomaly]
 
   metric_query {
     id          = "ad1"
