@@ -76,11 +76,11 @@
 
 {{ whoIsRegistering.setOptions({
     value_options: whoIsRegisteringValueOptions,
-    label_attributes: {'class': 'text block-label'}
+    label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? '' }}
 
 {{ attorneyList.setOptions({
-    label_attributes: {'class': 'text block-label'}
+    label_attributes: {'class': 'govuk-label govuk-checkboxes__label'}
 }) ? '' }}
 
 {{ whoIsRegistering.setLabelOptions({
@@ -121,7 +121,7 @@
             </fieldset>
             {% if (attorneyList) %}
                 <fieldset>
-                    <div class="panel js-attorney-list">
+                    <div class="govuk-inset-text js-attorney-list">
                         {{ formElementErrorsV2(attorneyList) }}
                         {{ formCheckbox(attorneyList) }}
                     </div>
