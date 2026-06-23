@@ -88,7 +88,8 @@ locals {
         { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
         { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
-        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name }
+        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
   })
 }
