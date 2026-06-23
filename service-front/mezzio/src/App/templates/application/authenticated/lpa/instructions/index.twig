@@ -28,7 +28,7 @@
     rows: 10,
     cols: 67,
     maxlength: 10000,
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'instruction'
 }) ? ''}}
 
@@ -37,7 +37,7 @@
     rows: 10,
     cols: 67,
     maxlength: 10000,
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'preferences'
 }) ? ''}}
 
@@ -77,7 +77,7 @@
                 </div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
-                    <div class="govuk-form-group {{ preferences.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    <div class="govuk-form-group {{ preferences.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
                         {{ formElementErrorsV2(preferences) }}
                         <label class="govuk-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
@@ -85,7 +85,7 @@
                         </label>
                         {{ formElement(preferences) }}
                     </div>
-                    <div class="govuk-form-group {{ instructions.getMessages|length >0 ? 'govuk-form-group--error'}} flush--bottom">
+                    <div class="govuk-form-group {{ instructions.getMessages|length >0 ? 'govuk-govuk-form-group--error'}} flush--bottom">
                         {{ formElementErrorsV2(instructions) }}
                         <label class="govuk-label text" for="{{ instructions.getAttribute('id') }}">
                             {{ instructions.getOption('label') }}<br>

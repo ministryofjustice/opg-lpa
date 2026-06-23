@@ -70,32 +70,32 @@
 
 {{ title.setAttributes({
     id: 'name-title',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'name-title'
 }) ? '' }}
 
 {{ firstname.setAttributes({
     id: 'name-first',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'name-first'
 }) ? '' }}
 
 {{ lastname.setAttributes({
     id: 'name-last',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'name-last'
 }) ? '' }}
 
 {{ otherNames.setAttributes({
     id: 'otherNames',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'otherNames'
 }) ? '' }}
 
 {{ dobDay.setAttributes({
     id: 'dob-date-day',
     type: 'text',
-    class: 'govuk-input',
+    class: 'form-control',
     inputmode: 'numeric',
     maxlength: '2',
     pattern: '[0-9]*',
@@ -105,7 +105,7 @@
 {{ dobMonth.setAttributes({
     id: 'dob-date-month',
     type: 'text',
-    class: 'govuk-input',
+    class: 'form-control',
     inputmode: 'numeric',
     maxlength: '2',
     pattern: '[0-9]*',
@@ -115,7 +115,7 @@
 {{ dobYear.setAttributes({
     id: 'dob-date-year',
     type: 'text',
-    class: 'govuk-input',
+    class: 'form-control',
     inputmode: 'numeric',
     maxlength: '4',
     pattern: '[0-9]*',
@@ -124,31 +124,31 @@
 
 {{ email.setAttributes({
     id: 'email-address',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'email-address'
 }) ? '' }}
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'address-address1'
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'address-address2'
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'address-address3'
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'address-postcode'
 }) ? ''}}
 
@@ -174,6 +174,7 @@
 {{ cannotSign.setOptions({label:'The donor is unable to sign or make a mark on the LPA'}) ? '' }}
 
 <header class="popup-header">
+    <i class="icon icon-person"></i>
     <h2 class="govuk-heading-s popup-header-title" id="dialog-title" data-cy="dialog-title">Donor details</h2>
 </header>
 
@@ -223,7 +224,7 @@
     <h2 class="govuk-heading-m popup-exclude">What is the donor's date of birth?</h2>
     <fieldset id="{{ dob.getAttribute('name') }}">
         <legend class="govuk-label dob-label">Date of birth</legend>
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
+        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
             <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
 
             <div class="error-group">
@@ -240,15 +241,15 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="govuk-form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
                 {{ formElement(dobDay) }}
             </div>
-            <div class="govuk-form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
                 {{ formElement(dobMonth) }}
             </div>
-            <div class="govuk-form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
                 <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
                 {{ formElement(dobYear) }}
             </div>
@@ -272,7 +273,7 @@
         </div>
     </fieldset>
 
-    <div class="single-checkbox-group govuk-form-group {{ cannotSign.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+    <div class="single-checkbox-group govuk-form-group {{ cannotSign.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
         <fieldset>
             <legend class="govuk-visually-hidden"></legend>
             <div class="multiple-choice">

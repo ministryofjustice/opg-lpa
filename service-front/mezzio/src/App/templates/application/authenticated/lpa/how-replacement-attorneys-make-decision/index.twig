@@ -26,7 +26,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'govuk-input',
+    class: 'form-control',
     'data-cy': 'how-details'
 }) ? ''}}
 
@@ -97,7 +97,7 @@
 
 	{{ macros.formErrorSummary(error,form) }}
 
-	<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+	<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
 	<fieldset>
         <legend class="govuk-visually-hidden">How should the replacement attorneys make decisions?</legend>
             <h2 class="govuk-heading-m flush--top">How should the replacement attorneys make decisions?</h2>
