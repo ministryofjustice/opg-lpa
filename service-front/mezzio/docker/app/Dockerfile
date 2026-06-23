@@ -10,7 +10,13 @@ RUN apk upgrade --no-cache
 
 
 RUN apk add --no-cache icu fcgi \
-    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-install intl \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-install opcache \
+    && docker-php-ext-install sockets
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
 
