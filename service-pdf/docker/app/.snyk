@@ -7,9 +7,4 @@ ignore:
         reason: This is an acceptable licence
         expires: 9999-04-23T14:57:38.314Z
         created: 2026-03-26T11:29:38.316Z
-  SNYK-PHP-GUZZLEHTTPGUZZLE-17400374:
-    - '*':
-        reason: None Given
-        expires: 2026-07-22T17:41:19.590Z
-        created: 2026-06-22T17:41:19.597Z
 patch: {}
