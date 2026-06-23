@@ -118,6 +118,9 @@ class FormMultiCheckbox extends LaminasFormMultiCheckbox
                 $divOpen = '<div class="' . $optionSpec['attributes']['div-attributes']['class'] . '">';
             }
 
+            // Strip non-HTML attributes from input before rendering
+            unset($inputAttributes['div-attributes']);
+
             $markup = $divOpen .
             $input .
             $labelHelper->openTag($labelAttributes) .
