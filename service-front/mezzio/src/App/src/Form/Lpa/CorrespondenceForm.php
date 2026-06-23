@@ -63,22 +63,22 @@ class CorrespondenceForm extends AbstractMainFlowForm
      */
     protected function validateByModel()
     {
-        $correspondenceData = $this->data['correspondence'];
+        $correspondenceData = $this->data['correspondence'] ?? [];
 
         $correspondent = new Correspondence([
-            'contactByPost'      => (bool)$correspondenceData['contactByPost'],
-            'contactByInWelsh'   => (bool)$this->data['contactInWelsh'],
+            'contactByPost'    => (bool) ($correspondenceData['contactByPost'] ?? false),
+            'contactByInWelsh' => (bool) ($this->data['contactInWelsh'] ?? false),
         ]);
 
-        if ($correspondenceData['contactByPhone'] == '1') {
+        if (($correspondenceData['contactByPhone'] ?? false) == '1') {
             $correspondent->setPhone(new PhoneNumber([
-                'number' => $correspondenceData['phone-number'],
+                'number' => $correspondenceData['phone-number'] ?? '',
             ]));
         }
 
-        if ($correspondenceData['contactByEmail'] == '1') {
+        if (($correspondenceData['contactByEmail'] ?? false) == '1') {
             $correspondent->setEmail(new EmailAddress([
-                'address' => $correspondenceData['email-address'],
+                'address' => $correspondenceData['email-address'] ?? '',
             ]));
         }
 

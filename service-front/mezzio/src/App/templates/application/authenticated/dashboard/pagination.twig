@@ -14,7 +14,7 @@
         {% for pageInRange in data['pagesInRange'] %}
             <li>
                 {% if pageInRange != currentPage %}
-                    <a href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
+                    <a class="govuk-link" href="{{ url(route, {page: pageInRange}) }}">{{ pageInRange }}</a>
                 {% else %}
                     {{ pageInRange }}
                 {%  endif %}

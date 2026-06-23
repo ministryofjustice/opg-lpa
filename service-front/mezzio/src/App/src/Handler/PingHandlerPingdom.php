@@ -53,6 +53,6 @@ class PingHandlerPingdom implements RequestHandlerInterface
             throw new RuntimeException('could not render XML as string', 0);
         }
 
-        return new XmlResponse($xmlString, $statusCode);
+        return new XmlResponse($xmlString, $statusCode, ['content-type' => ['text/xml; charset=utf-8']]);
     }
 }
