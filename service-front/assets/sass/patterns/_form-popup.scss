@@ -81,11 +81,6 @@
 
     .form-label,
     .govuk-label {
-        // Override govuk-label margin-bottom to match pre-migration form-label (padding-bottom: 2px)
-        // Popups are non-standard layout - preserve original appearance
-        margin-bottom: 0;
-        padding-bottom: 2px;
-
         @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
@@ -94,11 +89,6 @@
     }
 
     .govuk-input {
-        // Override govuk-input fixed height to match pre-migration form-control behaviour
-        // Popups are non-standard layout - preserve original appearance
-        height: auto;
-        padding: 5px 4px 4px;
-
         @include govuk-media-query($from: tablet) {
             flex: 1;
             min-width: 0;
@@ -242,9 +232,6 @@
 
     .error-message,
     .govuk-error-message {
-        // Reset govuk-error-message margin to match pre-migration error-message (margin: 0)
-        margin-bottom: 0;
-
         @include govuk-media-query($from: tablet) {
             position: relative;
             top: 13px;
