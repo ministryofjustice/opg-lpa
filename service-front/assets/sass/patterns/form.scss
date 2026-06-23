@@ -8,6 +8,13 @@
         }
 }
 
+// Replicate the govuk-elements form-group-error margin-right so error state
+// form groups do not span the full container width (govuk-frontend omits this).
+// The popup layout already overrides margin-right: 0 via _form-popup.scss.
+.govuk-form-group--error {
+        margin-right: 15px;
+}
+
 .form-date {
 
         .form-group-error,
