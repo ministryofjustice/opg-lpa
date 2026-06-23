@@ -21,7 +21,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.4-alpine@sha256:61ea466e4022f3803b9f019e01f7738aac694f01989aee35a013724921d8e742
+    image: library/redis:8.4-alpine@sha256:054c4e144f09447f69091fee43b7ed33ad7b9bd13d756a073675f2e711eb383c
 
   dynamodb:
     container_name: lpa-dynamodb
