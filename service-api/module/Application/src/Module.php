@@ -170,7 +170,7 @@ class Module
                 },
 
                 'AwsApiGatewaySignature' => function () {
-                    return new SignatureV4('execute-api', 'eu-west-1');
+                    return new SignatureV4('execute-api', self::awsRegion());
                 },
 
                 'AppAuthenticationService' => function ($sm) {
@@ -294,5 +294,10 @@ class Module
                 new ApiProblem(406, 'Response has a content type which is not acceptable to the client')
             ));
         }
+    }
+
+    public static function awsRegion(): string
+    {
+        return getenv('AWS_REGION') ?: 'eu-west-1';
     }
 }

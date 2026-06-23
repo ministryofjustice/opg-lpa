@@ -76,7 +76,7 @@ class LockCommand extends Command
             null,
             InputOption::VALUE_OPTIONAL,
             'AWS region; defaults to eu-west-1',
-            'eu-west-1'
+            getenv('AWS_REGION') ?: 'eu-west-1'
         );
     }
 
