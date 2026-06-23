@@ -1,3 +1,14 @@
 {% macro render(type, class, iconClass) %}
-    {{ flashMessenger().setMessageOpenFormat('<div %s role="alert"><i class="icon ' ~ iconClass ~ '" role="presentation"></i><div class="alert-message"><p class="govuk-body">').setMessageSeparatorString('</p><p class="govuk-body">').setMessageCloseString('</p></div></div>').render(type, {0:'alert panel text', 1:class})|raw }}
+    {%- set isSuccess = (type == 'success') -%}
+    {%- set bannerModifier = isSuccess ? ' govuk-notification-banner--success' : '' -%}
+    {%- set role = isSuccess ? 'alert' : 'region' -%}
+    {%- set title = (type == 'success') ? 'Success' : (type == 'error' ? 'There is a problem' : 'Important') -%}
+    {%- set titleId = 'govuk-notification-banner-title-' ~ type -%}
+    {%- set ariaAttr = isSuccess ? '' : ' aria-labelledby="' ~ titleId ~ '"' -%}
+    {%- set idAttr = isSuccess ? '' : ' id="' ~ titleId ~ '"' -%}
+    {{ flashMessenger()
+        .setMessageOpenFormat('<div class="govuk-notification-banner' ~ bannerModifier ~ '" role="' ~ role ~ '"' ~ ariaAttr ~ ' data-module="govuk-notification-banner"><div class="govuk-notification-banner__header"><h2 class="govuk-notification-banner__title"' ~ idAttr ~ '>' ~ title ~ '</h2></div><div class="govuk-notification-banner__content"><p class="govuk-body">')
+        .setMessageSeparatorString('</p><p class="govuk-body">')
+        .setMessageCloseString('</p></div></div>')
+        .render(type, {})|raw }}
 {% endmacro %}

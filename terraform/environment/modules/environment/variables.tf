@@ -117,3 +117,9 @@ variable "container_version" {
   type    = string
   default = "latest"
 }
+
+variable "mezzio_frontend_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to toggle the mezzio frontend switchover"
+}

@@ -17,7 +17,8 @@ class ApplicantForm extends AbstractMainFlowForm
             'type' => 'Laminas\Form\Element\Radio',
             'attributes' => [
                 'id' => 'whoIsRegistering',
-                'div-attributes' => ['class' => 'multiple-choice']
+                'class' => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
             ],
             'options' => [
                 'value_options' => [
@@ -67,7 +68,8 @@ class ApplicantForm extends AbstractMainFlowForm
                 ],
                 'attributes' => [
                     'id' => 'attorney-' . $attorney->id,
-                    'div-attributes' => ['class' => 'multiple-choice'],
+                    'class' => 'govuk-checkboxes__input',
+                    'div-attributes' => ['class' => 'govuk-checkboxes__item'],
                 ],
             ];
         }
