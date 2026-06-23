@@ -163,6 +163,8 @@ module.exports = defineConfig({
   numberOfGuidanceHelpTopics: 22,
   defaultCommandTimeout: 12000,
   requestTimeout: 12000,
+  pageLoadTimeout: 30000,
+  chromeWebSecurity: false,
   trashAssetsBeforeRuns: false,
   injectDocumentDomain: true,
   e2e: {
@@ -170,6 +172,11 @@ module.exports = defineConfig({
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
     screenshotOnRunFailure: false,
+    expose: {
+      mezzio: false,
+      updateBaseline: false,
+      visualRegressionEnabled: false,
+    },
   },
   screenshotsFolder: 'cypress/screenshots',
   viewportWidth: 1280,
