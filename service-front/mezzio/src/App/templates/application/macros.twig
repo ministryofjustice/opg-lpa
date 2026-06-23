@@ -10,11 +10,11 @@
             <div class="govuk-error-summary__body" data-tracking-context="API error">
                 {% if error == 'user-not-found' %}
                     <p class="govuk-body" data-tracking-summary="User not found">
-                        We could not find an LPA account for this email address.<br><a href="signup">Create an LPA account now.</a>
+                        We could not find an LPA account for this email address.<br><a class="govuk-link" href="signup">Create an LPA account now.</a>
                     </p>
                 {% elseif error == 'address-already-registered' %}
                     <p class="govuk-body" data-tracking-summary="Email address already registered">
-                        This email address has already been registered. Please <a href="{{ url('login') }}">sign in</a> or <a href="{{ url('forgot-password') }}">reset your password</a>.
+                        This email address has already been registered. Please <a class="govuk-link" href="{{ url('login') }}">sign in</a> or <a class="govuk-link" href="{{ url('forgot-password') }}">reset your password</a>.
                     </p>
                 {% elseif error == 'user-already-has-email' %}
                     <p class="govuk-body" data-tracking-summary="User already has email address">
@@ -38,7 +38,7 @@
             <ul class="govuk-error-summary__list">
                 {% for e in form_linked_errors(form) %}
                     <li>
-                        <a href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
+                        <a class="govuk-link" href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
                     </li>
                 {% endfor %}
             </ul>
@@ -80,7 +80,7 @@
         <form novalidate="novalidate" method="post" action="{{ action }}">
             <input type="hidden" name="reuse-details" value="0">
             <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-            <input type="submit" name="submit" class="button-input-to-link" value="Use my details" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>
+            <button type="submit" name="submit" class="app-button-link govuk-link" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>Use my details</button>
         </form>
     </div>
 {% endmacro %}
@@ -94,18 +94,20 @@
 {% endmacro %}
 
 {% macro renderFormButtons(cancelUrl, backButtonUrl) %}
-    {# Submit govuk-button #}
-    <input type="submit" name="submit" id="form-save" value="Save details" class="govuk-button" data-cy="form-save">
+    <div class="govuk-button-group">
+        {# Submit button #}
+        <input type="submit" name="submit" id="form-save" value="Save details" class="govuk-button" data-cy="form-save">
 
-    {# Back govuk-button - if necessary #}
-    {% if (backButtonUrl) %}
-        <a href="{{ backButtonUrl }}" class="govuk-button button-secondary js-form-popup" data-cy="form-back" >Back</a>
-    {% endif %}
+        {# Back button - if necessary #}
+        {% if (backButtonUrl) %}
+            <a href="{{ backButtonUrl }}" class="govuk-button govuk-button--secondary js-form-popup" data-cy="form-back">Back</a>
+        {% endif %}
 
-    {# Cancel govuk-button #}
-    {% if cancelUrl %}
-        <a href="{{ cancelUrl }}" class="govuk-button button-secondary js-cancel" data-cy="form-cancel">Cancel</a>
-    {% endif %}
+        {# Cancel button #}
+        {% if cancelUrl %}
+            <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        {% endif %}
+    </div>
 {% endmacro %}
 
 {% macro continuationNotes(continuationNoteKeys) %}
