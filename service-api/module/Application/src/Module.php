@@ -298,6 +298,7 @@ class Module
 
     public static function awsRegion(): string
     {
-        return getenv('AWS_REGION') ?: 'eu-west-1';
+        $region = getenv('AWS_REGION');
+        return $region !== false ? $region : 'eu-west-1';
     }
 }
