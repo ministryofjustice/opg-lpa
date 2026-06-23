@@ -96,7 +96,19 @@ class UsersController extends AbstractAuthController
      */
     public function searchAction()
     {
-        $email = $this->params()->fromQuery()['email'];
+        $queryParams = $this->params()->fromQuery();
+
+        if (isset($queryParams['aReference'])) {
+            $user = $this->getService()->searchByAReference($queryParams['aReference']);
+
+            if ($user === false) {
+                return new ApiProblem(404, 'No user found with supplied A Reference');
+            }
+
+            return new JsonModel($user);
+        }
+
+        $email = $queryParams['email'];
 
         $user = $this->getService()->searchByUsername($email);
 

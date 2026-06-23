@@ -201,6 +201,65 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals('No user found with supplied email address', $data['detail']);
     }
 
+    public function testSearchActionByAReference()
+    {
+        $aReference = 'A-99998888882';
+
+        $this->params->shouldReceive('fromQuery')
+            ->andReturn([
+                'aReference' => $aReference,
+            ])
+            ->once();
+
+        $userSearchReturnData = [
+            'userId'   => 'abc123def456',
+            'isActive' => true,
+        ];
+
+        $this->service->shouldReceive('searchByAReference')
+            ->with($aReference)
+            ->andReturn($userSearchReturnData)
+            ->once();
+
+        /** @var UsersController $controller */
+        $controller = $this->getController(UsersController::class);
+
+        /** @var JsonModel $result */
+        $result = $controller->searchAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($userSearchReturnData, $result->getVariables());
+    }
+
+    public function testSearchActionByAReferenceNotFound()
+    {
+        $aReference = 'A-00000000000';
+
+        $this->params->shouldReceive('fromQuery')
+            ->andReturn([
+                'aReference' => $aReference,
+            ])
+            ->once();
+
+        $this->service->shouldReceive('searchByAReference')
+            ->with($aReference)
+            ->andReturnFalse()
+            ->once();
+
+        /** @var UsersController $controller */
+        $controller = $this->getController(UsersController::class);
+
+        /** @var ApiProblem $result */
+        $result = $controller->searchAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $data = $result->toArray();
+
+        $this->assertEquals(404, $data['status']);
+        $this->assertEquals('No user found with supplied A Reference', $data['detail']);
+    }
+
     public function testMatchAction()
     {
         $query = 'horace';

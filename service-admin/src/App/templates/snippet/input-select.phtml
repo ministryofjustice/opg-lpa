@@ -1,0 +1,42 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * @var \Laminas\Form\ElementInterface $formElement
+ * @var string $formLabel
+ * @var string $formType
+ * @var array $attrs
+ */
+
+$formId = "id-{$formElement->getName()}";
+$formName = $formElement->getName();
+$valueOptions = $formElement->getValueOptions();
+
+$formValue = $formElement->getValue();
+if (is_null($formValue)) {
+    $formValue = array_key_first($valueOptions);
+}
+
+$attrsString = '';
+if(isset($attrs)) {
+    $attrsString .= ' ';
+    foreach ($attrs as $attrName => $attrValue) {
+        $attrsString .= "$attrName=$attrValue ";
+    }
+}
+
+$formGroup = 'govuk-form-group';
+$formGroup .= (isset($additionalFormGroupClasses)) ? " {$additionalFormGroupClasses}" : '';
+?>
+
+<div class="govuk-form-group">
+    <label class="govuk-label" for="<?= $formId ?>">
+        <?= $this->e($formLabel) ?>
+    </label>
+    <select class="govuk-select" id="<?= $formId ?>" name="<?=$this->e($formName)?>"<?= $attrsString ?>>
+        <?php foreach($valueOptions as $value => $label): ?>
+            <option value="<?=$value?>"<?= $value === $formValue ? ' selected' : ''?>><?=$label?></option>
+        <?php endforeach ?>
+    </select>
+</div>
