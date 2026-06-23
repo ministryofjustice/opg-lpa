@@ -1,4 +1,4 @@
-FROM composer:2.10.1@sha256:e8fdff913656c23e90ebbe0d7c55ab078c2aefdbb53ff79a73af5cc0921d5b81 AS composer
+FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a69007242d267 AS composer
 
 FROM php:8.4.17-fpm-alpine3.23@sha256:c0a2345e17cbb925cd49770788838f3e0fac7741d814cbf568d3dd843cfae7b3 AS base
 
@@ -10,7 +10,13 @@ RUN apk upgrade --no-cache
 
 
 RUN apk add --no-cache icu fcgi \
-    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers
+    && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-install intl \
+    && docker-php-ext-install bcmath \
+    && docker-php-ext-install opcache \
+    && docker-php-ext-install sockets
 
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
 

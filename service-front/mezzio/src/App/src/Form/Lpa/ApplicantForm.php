@@ -88,7 +88,10 @@ class ApplicantForm extends AbstractMainFlowForm
             $lpaDocument->primaryAttorneyDecisions->how != PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
         ) {
             if (array_key_exists('attorneyList', $this->data)) {
-                $lpaDocument->whoIsRegistering = $this->data['attorneyList'];
+                // null is the MultiCheckbox unchecked default — treat it the same as
+                // an empty submission so the model validator rejects it.
+                $value = $this->data['attorneyList'];
+                $lpaDocument->whoIsRegistering = ($value === null) ? [] : $value;
             } else {
                 $lpaDocument->whoIsRegistering = [];
             }

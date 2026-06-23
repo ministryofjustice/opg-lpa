@@ -8,8 +8,10 @@ use App\Authentication\AuthenticationService;
 use App\Authentication\AuthenticationServiceFactory;
 use App\Service\AddressLookup\OrdnanceSurveyFactory;
 use App\Service\ApiClient\ApiClientFactory;
+use App\Adapter\DynamoDbKeyValueStore;
 use App\Service\DynamoDbClientFactory;
 use App\Service\Feedback\FeedbackServiceFactory;
+use App\Service\SystemMessage;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\ApplicantFactory;
 use App\Service\Lpa\CommunicationFactory;
@@ -558,6 +560,7 @@ return [
                 $c->get(TemplateRendererInterface::class),
             ),
             Handler\PingHandler::class => static fn(ContainerInterface $c) => new Handler\PingHandler(
+                $c->get(TemplateRendererInterface::class),
                 $c->get(StatusService::class),
             ),
             Handler\PingHandlerJson::class => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
@@ -631,6 +634,14 @@ return [
             StatusService::class => StatusServiceFactory::class,
 
             DynamoDbClient::class      => DynamoDbClientFactory::class,
+            SystemMessage::class => static function (ContainerInterface $c): SystemMessage {
+                $config = $c->get('config');
+                $dynamoConfig = $config['admin']['dynamodb'];
+                $dynamoConfig['keyPrefix'] = getenv('OPG_LPA_STACK_NAME') ?: 'local';
+                $store = new DynamoDbKeyValueStore($dynamoConfig);
+                $store->setDynamoDbClient($c->get(DynamoDbClient::class));
+                return new SystemMessage($store);
+            },
             RedisClient::class         => RedisClientFactory::class,
             SaveHandlerInterface::class => SaveHandlerFactory::class,
             AppMailTransportInterface::class => MailTransportFactory::class,
@@ -734,6 +745,13 @@ return [
                 'table_name' => getenv('OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE') ?: 'lpa-properties-shared',
             ],
             'auto_create' => getenv('OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE') ?: false,
+        ],
+    ],
+
+    'address' => [
+        'ordnancesurvey' => [
+            'key'      => getenv('OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY') ?: null,
+            'endpoint' => getenv('OPG_LPA_OS_PLACES_HUB_ENDPOINT') ?: 'https://api.os.uk/search/places/v1/postcode',
         ],
     ],
 
