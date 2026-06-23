@@ -86,6 +86,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 
   metric_query {
     id          = "e1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
     label       = "Authentication Errors (Expected)"
     return_data = "true"
   }
