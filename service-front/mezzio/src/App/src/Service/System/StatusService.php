@@ -206,7 +206,21 @@ class StatusService
 
     private function callOrdnanceSurvey(int $currentUnixTime): array
     {
-        $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        try {
+            $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        } catch (Exception) {
+            $this->redisClient->write('os_last_call', strval($currentUnixTime));
+            $this->redisClient->write('os_last_status', '');
+            $this->redisClient->write('os_last_details', json_encode(''));
+            $this->redisClient->close();
+
+            return [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+                'cached' => false,
+                'details' => '',
+            ];
+        }
 
         $this->redisClient->write('os_last_call', strval($currentUnixTime));
 

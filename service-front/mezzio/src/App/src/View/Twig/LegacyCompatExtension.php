@@ -10,6 +10,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
 use App\View\Twig\Traits\MoneyFormatterTrait;
@@ -18,6 +19,7 @@ use Mezzio\Helper\UrlHelper;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Textarea;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\FormInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -41,6 +43,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UserDetailsHolder $userDetailsHolder,
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
+        private readonly SystemMessage $systemMessage,
     ) {
     }
 
@@ -64,8 +67,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('url', [$this, 'url']),
             new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
-            // TODO: stub — always returns empty string; wire up SystemMessage service when available
-            new TwigFunction('systemMessage', fn () => '', ['is_safe' => ['html']]),
+            new TwigFunction('systemMessage', fn () => $this->systemMessage->fetchSanitised() ?? '', ['is_safe' => ['html']]),
             // FormRendererStub provides openTag(form) and closeTag — covers all (currently ported) template usage
             new TwigFunction('form', fn () => new FormRendererStub(), ['is_safe' => ['html']]),
             // Laminas view helper equivalent — Twig has no built-in escapeHtmlAttr function
@@ -319,6 +321,10 @@ class LegacyCompatExtension extends AbstractExtension
             return $this->formCheckbox($element);
         }
 
+        if ($element instanceof Textarea) {
+            return $this->formTextarea($element);
+        }
+
         $type = $element->getAttribute('type') ?? 'text';
 
         if ($type === 'hidden') {
@@ -326,6 +332,20 @@ class LegacyCompatExtension extends AbstractExtension
         }
 
         return $this->formInput($element);
+    }
+
+    /**
+     * Renders a textarea element, with the current value as text content.
+     */
+    public function formTextarea(ElementInterface $element): string
+    {
+        $attrs = $element->getAttributes();
+        unset($attrs['type']); // textarea has no type attribute
+
+        $attrString = $this->buildAttributeString($attrs);
+        $value      = htmlspecialchars((string) ($element->getValue() ?? ''), ENT_QUOTES);
+
+        return sprintf('<textarea %s>%s</textarea>', $attrString, $value);
     }
 
     /**
@@ -474,17 +494,51 @@ class LegacyCompatExtension extends AbstractExtension
         $currentValue = $element->getValue();
         $html         = '';
 
-        // Base attributes from the element (excluding value/type which vary per option)
-        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id']));
-        $baseAttrs['type']  = 'radio';
-        $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
+        // Determine the wrapper div class from element-level div-attributes, or default.
+        //
+        // Two distinct radio styles are used across the app:
+        //   Legacy GDS:        <div class="multiple-choice"> / <label class="block-label"> / no input class
+        //   GOV.UK Frontend v3: <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
+        //                        / <input class="govuk-radios__input">
+        //
+        // Auto-detect which style to use: if any value option explicitly sets
+        // 'govuk-radios__input' as its input class, use the GOV.UK Frontend defaults;
+        // otherwise fall back to the legacy GDS defaults.
+        $usesGovukStyle = false;
+        foreach ($valueOptions as $optSpec) {
+            $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
+            if (str_contains((string) $inputClass, 'govuk-radios__input')) {
+                $usesGovukStyle = true;
+                break;
+            }
+        }
 
-        foreach ($valueOptions as $optValue => $optLabel) {
+        $divAttributes     = $element->getAttribute('div-attributes') ?? [];
+        $defaultDivClass   = $usesGovukStyle ? 'govuk-radios__item' : 'multiple-choice';
+        $defaultLabelClass = $usesGovukStyle ? 'govuk-label govuk-radios__label' : 'block-label';
+
+        // Element-level label_attributes (set via setOptions(['label_attributes' => ...]))
+        // apply to all options unless overridden per-option.
+        $elementLabelAttributes = method_exists($element, 'getOption')
+            ? ($element->getOption('label_attributes') ?? [])
+            : [];
+
+        // Base attributes from the element (excluding value/type/id which vary per option,
+        // and div-attributes which are used for the wrapper div, not the input)
+        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id', 'div-attributes']));
+        $baseAttrs['type'] = 'radio';
+        // Do not add a default class — legacy radio inputs had no class attribute.
+
+        foreach ($valueOptions as $optValue => $optSpec) {
             $optionAttributes = [];
-            if (is_array($optLabel)) {
-                $optionAttributes = $optLabel['attributes'] ?? [];
-                $optValue = $optLabel['value'] ?? $optValue;
-                $optLabel = $optLabel['label'] ?? (string) $optValue;
+            $labelAttributes  = [];
+            if (is_array($optSpec)) {
+                $optionAttributes = $optSpec['attributes'] ?? [];
+                $labelAttributes  = $optSpec['label_attributes'] ?? [];
+                $optValue         = $optSpec['value'] ?? $optValue;
+                $optLabel         = $optSpec['label'] ?? (string) $optValue;
+            } else {
+                $optLabel = (string) $optSpec;
             }
 
             $optAttrs            = array_merge($baseAttrs, $optionAttributes);
@@ -492,17 +546,31 @@ class LegacyCompatExtension extends AbstractExtension
             $optAttrs['data-cy'] = $optAttrs['id'];
             $optAttrs['value']   = (string) $optValue;
 
+            // Per-option div-attributes override the element-level ones
+            $thisDivAttrs = (is_array($optSpec) ? ($optSpec['div-attributes'] ?? null) : null) ?? $divAttributes;
+            $divClass     = $thisDivAttrs['class'] ?? $defaultDivClass;
+            $divAttrStr   = $divClass !== '' ? sprintf(' class="%s"', htmlspecialchars($divClass, ENT_QUOTES)) : '';
+
+            // Merge element-level label_attributes → per-option label_attributes (per-option wins)
+            $mergedLabelAttrs = array_merge($elementLabelAttributes, $labelAttributes);
+            $labelClass       = $mergedLabelAttrs['class'] ?? $defaultLabelClass;
+            $labelAttrStr     = $this->buildAttributeString(array_merge(
+                ['class' => $labelClass, 'for' => $optAttrs['id']],
+                array_diff_key($mergedLabelAttrs, array_flip(['class', 'for'])),
+            ));
+
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';
 
             $html .= sprintf(
-                '<div class="govuk-radios__item">'
+                '<div%s>'
                 . '<input %s%s>'
-                . '<label class="govuk-label govuk-radios__label" for="%s">%s</label>'
+                . '<label %s>%s</label>'
                 . '</div>',
+                $divAttrStr,
                 $attrString,
                 $checked,
-                htmlspecialchars($optAttrs['id'], ENT_QUOTES),
+                $labelAttrStr,
                 htmlspecialchars((string) $optLabel, ENT_QUOTES),
             );
         }
