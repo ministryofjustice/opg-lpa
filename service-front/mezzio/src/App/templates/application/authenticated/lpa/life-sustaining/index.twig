@@ -54,26 +54,26 @@
         <fieldset>
             <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
             <h2 class="govuk-heading-m flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
-            <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'form-group-error'}}">
+            <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
 
                 {{ formRadioOption(canSustainLife, "1")|raw }}
 
                 <div class="govuk-inset-text">
-                    <p class="govuk-body">The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.</p>
+                    The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.
                 </div>
 
                 {{ formRadioOption(canSustainLife, "0")|raw }}
 
                 <div class="govuk-inset-text">
-                    <p class="govuk-body">Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.</p>
+                    Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.
                 </div>
             </div>
         </fieldset>
         <div class="text">
             <p class="govuk-body">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address. If they do not,  OPG cannot register the LPA and the donor may have to pay the application fee again.</p>
         </div>
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 
