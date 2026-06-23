@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Validator;
 use App\Filter\StandardInputFilterChain;
+use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\Input;
 
@@ -14,6 +15,12 @@ use Laminas\InputFilter\Input;
 
 class UserSearch extends AbstractForm
 {
+    public const array SEARCH_TYPE_OPTIONS = [
+        'email'      => 'Email',
+        'userId'     => 'User ID',
+        'aReference' => 'A Reference',
+    ];
+
     /**
      * UserSearch constructor
      *
@@ -23,7 +30,17 @@ class UserSearch extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
-        //  Email field
+        // Search type select
+        $select = new Select('searchType');
+        $select->setValueOptions(self::SEARCH_TYPE_OPTIONS);
+
+        $selectInput = new Input($select->getName());
+        $selectInput->setRequired(true);
+
+        $this->add($select);
+        $this->getInputFilter()->add($selectInput);
+
+        //  Search value field
         $field = new Text('email');
         $input = new Input($field->getName());
 
@@ -31,8 +48,7 @@ class UserSearch extends AbstractForm
             ->attach(StandardInputFilterChain::create());
 
         $input->getValidatorChain()
-            ->attach(new Validator\NotEmpty(), true)
-            ->attach(new Validator\EmailOrUserId());
+            ->attach(new Validator\NotEmpty(), true);
 
         $input->setRequired(true);
 

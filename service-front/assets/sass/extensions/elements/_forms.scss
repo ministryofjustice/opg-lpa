@@ -23,6 +23,29 @@
     .error-group-popup {
         display: none;
     }
+
+    // Mirror the govuk-elements .form-date .form-group rule for the migrated class name
+    .govuk-form-group {
+        float: left;
+        width: 50px;
+        margin-right: 20px;
+        margin-bottom: 0;
+        clear: none;
+
+        label {
+            display: block;
+            padding-bottom: 2px;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+
+    // Restore the wider width for the year field (overrides the 50px default above)
+    .form-group-year {
+        width: 70px;
+    }
 }
 
 .form-group-day,
