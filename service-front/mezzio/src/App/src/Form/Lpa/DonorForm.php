@@ -79,12 +79,14 @@ class DonorForm extends AbstractActorForm
     {
         $modelData = parent::convertFormDataForModel($formData);
 
-        if ($formData['cannotSign'] == '1') {
+        $cannotSign = $formData['cannotSign'] ?? '0';
+
+        if ($cannotSign == '1') {
             $modelData['canSign'] = false;
-        } elseif ($formData['cannotSign'] == '0') {
+        } elseif ($cannotSign == '0') {
             $modelData['canSign'] = true;
         } else {
-            $modelData['canSign'] = $formData['cannotSign'];
+            $modelData['canSign'] = $cannotSign;
         }
 
         return $modelData;
