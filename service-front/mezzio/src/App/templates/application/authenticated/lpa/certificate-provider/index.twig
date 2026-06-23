@@ -126,9 +126,9 @@
         {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-        <div class="govuk-form-group">
+        <div class="govuk-button-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
-            <input type="submit" name="submit" class="app-button-link govuk-link" value="Skip this question for now" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
+            <button type="submit" name="submit" class="app-button-link govuk-link" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider">Skip this question for now</button>
         </div>
 
         {{ form().closeTag|raw }}

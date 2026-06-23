@@ -146,7 +146,7 @@
                 {{ form().openTag( form )|raw }}
                 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-            <div class="govuk-form-group">
+            <div class="govuk-button-group">
                 {{ formElement(form.get('submit')) }}
                 <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="govuk-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>
@@ -170,8 +170,10 @@
             </strong>
         </div>
 
-        <a class="govuk-button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="govuk-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        <div class="govuk-button-group">
+            <a class="govuk-button" disabled="disabled">Confirm</a>
+            <a href="/user/dashboard" class="govuk-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        </div>
 
     {% endif %}
 
