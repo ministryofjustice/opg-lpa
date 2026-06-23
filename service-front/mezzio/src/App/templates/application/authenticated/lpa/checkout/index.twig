@@ -148,7 +148,7 @@
 
             <div class="govuk-form-group">
                 {{ formElement(form.get('submit')) }}
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="govuk-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>
 
             {{ form().closeTag|raw }}
@@ -171,7 +171,7 @@
         </div>
 
         <a class="govuk-button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="button-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        <a href="/user/dashboard" class="govuk-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
 
     {% endif %}
 

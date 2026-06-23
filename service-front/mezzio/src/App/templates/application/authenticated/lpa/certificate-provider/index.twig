@@ -107,10 +107,10 @@
             <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="govuk-visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/confirm-delete', {'lpa-id': lpa.id}) }}" class="govuk-link action-delete js-form-popup" data-cy="delete-certificate-provider" aria-label="Delete Certificate Provider">Delete<span class="govuk-visually-hidden"> Certificate Provider</span></a>
                 </li>
                 <li class="action-item">
-                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="govuk-visually-hidden"> Certificate Provider</span></a>
+                    <a href="{{ url('lpa/certificate-provider/edit', {'lpa-id': lpa.id}) }}" data-form="certificateprovider1" role="button" class="govuk-link action-edit js-form-popup" data-cy="view-change-certificate-provider" aria-label="View/Change Certificate Provider">View/Change<span class="govuk-visually-hidden"> Certificate Provider</span></a>
                 </li>
             </ul>
         </div>
