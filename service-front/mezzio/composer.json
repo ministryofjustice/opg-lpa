@@ -48,6 +48,7 @@
     "require": {
         "php": "8.4.*",
         "alphagov/notifications-php-client": "^7.0.0",
+        "aws/aws-sdk-php": "^3.204.5",
         "composer/package-versions-deprecated": "^1.11.99.5",
         "egulias/email-validator": "^4.0",
         "ezyang/htmlpurifier": "^4.19",
@@ -68,6 +69,7 @@
         "mezzio/mezzio-session": "^1.17",
         "mezzio/mezzio-session-ext": "^1.21",
         "mezzio/mezzio-twigrenderer": "^2.15",
+        "michelf/php-markdown": "^1.9.1",
         "monolog/monolog": "^3.9",
         "php-http/guzzle7-adapter": "^1.0.0",
         "symfony/validator": "^8.0"

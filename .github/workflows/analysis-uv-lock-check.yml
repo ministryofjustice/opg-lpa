@@ -1,0 +1,47 @@
+name: Python lock-drift check
+
+on:
+  push:
+    paths:
+      - "**/*.toml"
+      - "**/uv.lock"
+  pull_request:
+    paths:
+      - "**/*.toml"
+      - "**/uv.lock"
+
+jobs:
+  uv-lock-check:
+    name: uv lock --check (${{ matrix.directory }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - directory: scripts/pipeline
+            python-version: "3.14.5"
+          - directory: scripts/pipeline/ci_ingress
+            python-version: "3.14.5"
+          - directory: scripts/call_api_gateway
+            python-version: "3.14.5"
+          - directory: tests/python-api-client
+            python-version: "3.14.5"
+          - directory: tests/sirius-gateway-mock/scripts
+            python-version: "3.14.5"
+          - directory: tests/load
+            python-version: "3.14.5"
+          - directory: locust
+            python-version: "3.14.5"
+    steps:
+      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
+        with:
+          version: "0.11.21"
+          python-version: ${{ matrix.python-version }}
+          enable-cache: true
+
+      - name: Check lock
+        working-directory: ${{ matrix.directory }}
+        run: uv lock --check

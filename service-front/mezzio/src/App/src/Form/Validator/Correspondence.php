@@ -18,7 +18,22 @@ class Correspondence extends AbstractValidator
     {
         $this->setValue($value);
 
-        if (($value['contactByPost'] | $value['contactByPhone'] | $value['contactByEmail']) == false) {
+        // The fieldset may return a hydrated model object (ClassMethodsHydrator) or a
+        // plain array depending on the processing stage — handle both forms.
+        if (is_object($value)) {
+            $byPost  = $value->contactByPost  ?? false;
+            $byPhone = $value->contactByPhone ?? false;
+            $byEmail = $value->contactByEmail ?? false;
+        } elseif (is_array($value)) {
+            $byPost  = $value['contactByPost']  ?? false;
+            $byPhone = $value['contactByPhone'] ?? false;
+            $byEmail = $value['contactByEmail'] ?? false;
+        } else {
+            $this->error(self::AT_LEAST_ONE_SELECTED);
+            return false;
+        }
+
+        if (($byPost | $byPhone | $byEmail) == false) {
             $this->error(self::AT_LEAST_ONE_SELECTED);
             return false;
         }
