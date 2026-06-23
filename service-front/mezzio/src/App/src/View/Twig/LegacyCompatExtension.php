@@ -463,10 +463,14 @@ class LegacyCompatExtension extends AbstractExtension
             $attrs['value']   = $optValue;
             $attrs['checked'] = $checked; // false → skipped by buildAttributeString
 
-            $attrString = $this->buildAttributeString($attrs);
-            $labelFor   = htmlspecialchars($inputId, ENT_QUOTES);
-            $labelClass = htmlspecialchars($labelAttrs['class'] ?? 'govuk-label govuk-checkboxes__label', ENT_QUOTES);
-            $labelText  = htmlspecialchars((string) $label, ENT_QUOTES);
+            $attrString        = $this->buildAttributeString($attrs);
+            $labelFor          = htmlspecialchars($inputId, ENT_QUOTES);
+            $labelClass        = htmlspecialchars($labelAttrs['class'] ?? 'govuk-label govuk-checkboxes__label', ENT_QUOTES);
+            $disableHtmlEscape = (bool) ($optSpec['disable_html_escape']
+                ?? ($element->getLabelOptions()['disable_html_escape'] ?? false));
+            $labelText         = $disableHtmlEscape
+                ? $label
+                : htmlspecialchars($label, ENT_QUOTES);
 
             $html .= sprintf(
                 '<div class="govuk-checkboxes__item%s">'
@@ -523,6 +527,10 @@ class LegacyCompatExtension extends AbstractExtension
             ? ($element->getOption('label_attributes') ?? [])
             : [];
 
+        // Element-level disable_html_escape (set via setLabelOptions(['disable_html_escape' => true]))
+        $elementLabelOptions      = method_exists($element, 'getLabelOptions') ? $element->getLabelOptions() : [];
+        $elementDisableHtmlEscape = (bool) ($elementLabelOptions['disable_html_escape'] ?? false);
+
         // Base attributes from the element (excluding value/type/id which vary per option,
         // and div-attributes which are used for the wrapper div, not the input)
         $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id', 'div-attributes']));
@@ -533,12 +541,14 @@ class LegacyCompatExtension extends AbstractExtension
             $optionAttributes = [];
             $labelAttributes  = [];
             if (is_array($optSpec)) {
-                $optionAttributes = $optSpec['attributes'] ?? [];
-                $labelAttributes  = $optSpec['label_attributes'] ?? [];
-                $optValue         = $optSpec['value'] ?? $optValue;
-                $optLabel         = $optSpec['label'] ?? (string) $optValue;
+                $optionAttributes     = $optSpec['attributes'] ?? [];
+                $labelAttributes      = $optSpec['label_attributes'] ?? [];
+                $optValue             = $optSpec['value'] ?? $optValue;
+                $optLabel             = $optSpec['label'] ?? (string) $optValue;
+                $disableHtmlEscape    = (bool) ($optSpec['disable_html_escape'] ?? $elementDisableHtmlEscape);
             } else {
-                $optLabel = (string) $optSpec;
+                $optLabel          = (string) $optSpec;
+                $disableHtmlEscape = $elementDisableHtmlEscape;
             }
 
             $optAttrs            = array_merge($baseAttrs, $optionAttributes);
@@ -561,6 +571,9 @@ class LegacyCompatExtension extends AbstractExtension
 
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';
+            $labelHtml  = $disableHtmlEscape
+                ? (string) $optLabel
+                : htmlspecialchars((string) $optLabel, ENT_QUOTES);
 
             $html .= sprintf(
                 '<div%s>'
@@ -571,7 +584,7 @@ class LegacyCompatExtension extends AbstractExtension
                 $attrString,
                 $checked,
                 $labelAttrStr,
-                htmlspecialchars((string) $optLabel, ENT_QUOTES),
+                $labelHtml,
             );
         }
 
