@@ -101,7 +101,7 @@
 
 		{{ macros.formErrorSummary(error,form) }}
 
-		<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'form-group-error'}}">
+		<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">
 	            <legend class="govuk-visually-hidden">How should the attorneys make decisions?</legend>
 
@@ -120,7 +120,7 @@
 	        </fieldset>
 	    </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             {{ formElement(form.get('save')) }}
         </div>
 
