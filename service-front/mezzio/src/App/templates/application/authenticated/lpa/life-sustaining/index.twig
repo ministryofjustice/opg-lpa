@@ -54,7 +54,7 @@
         <fieldset>
             <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
             <h2 class="govuk-heading-m flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
-            <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
+            <div class="form-group {{ canSustainLife.getMessages|length > 0 ? 'form-group-error'}}">
                 {{ formElementErrorsV2(canSustainLife) }}
 
                 {{ formRadioOption(canSustainLife, "1")|raw }}
@@ -73,7 +73,7 @@
         <div class="text">
             <p class="govuk-body">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address. If they do not,  OPG cannot register the LPA and the donor may have to pay the application fee again.</p>
         </div>
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

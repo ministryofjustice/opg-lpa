@@ -69,15 +69,15 @@
     {{ form().openTag( form )|raw }}
         {{ formElement(form.getCsrf) }}
 
-        <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="govuk-form-group">
+        <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
             <summary data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
             <div>
-                <div class="govuk-form-group text flush--bottom">
+                <div class="form-group text flush--bottom">
                     <p class="govuk-body">If the donor would like to add anything here, please <a class="govuk-link js-guidance" href="/guide#topic-preferences-and-instructions" data-analytics-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a> first. It contains useful examples and can help avoid mistakes.</p>
                 </div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
-                    <div class="govuk-form-group {{ preferences.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+                    <div class="form-group {{ preferences.getMessages|length >0 ? 'form-group-error'}}">
                         {{ formElementErrorsV2(preferences) }}
                         <label class="govuk-label text" for="{{ preferences.getAttribute('id') }}">
                             {{ preferences.getOption('label') }}<br>
@@ -85,7 +85,7 @@
                         </label>
                         {{ formElement(preferences) }}
                     </div>
-                    <div class="govuk-form-group {{ instructions.getMessages|length >0 ? 'govuk-govuk-form-group--error'}} flush--bottom">
+                    <div class="form-group {{ instructions.getMessages|length >0 ? 'form-group-error'}} flush--bottom">
                         {{ formElementErrorsV2(instructions) }}
                         <label class="govuk-label text" for="{{ instructions.getAttribute('id') }}">
                             {{ instructions.getOption('label') }}<br>

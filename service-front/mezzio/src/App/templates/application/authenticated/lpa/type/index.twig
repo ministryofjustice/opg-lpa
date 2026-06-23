@@ -62,7 +62,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ type.getMessages|length > 0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="form-group {{ type.getMessages|length > 0 ? 'form-group-error'}}">
             <fieldset>
                 <legend class="govuk-visually-hidden">Choose type of LPA</legend>
 
@@ -81,7 +81,7 @@
         </div>
         {% endif %}
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             <details class="text">
                 <summary data-analytics-click="page:link.reveal:help: What if I want to make more than one LPA?" role="button" aria-expanded="false">What if I want to make both types of LPA?</summary>
                 <div>
@@ -94,7 +94,7 @@
 
 
 
-        <div class="govuk-form-group">
+        <div class="form-group">
             {% if (isChangeAllowed) %}
                 {{ formElement(form.get('save')) }}
             {% else %}

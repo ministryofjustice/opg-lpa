@@ -48,7 +48,7 @@
                 <p class="govuk-body">Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
             </div>
         </div>
-        <div class="govuk-form-group">
+        <div class="form-group">
             <a href="{{ nextUrl }}" role="button" class="govuk-button" data-cy="continue">{{ (final_check_accessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
         </div>
     {% else %}
@@ -68,7 +68,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-govuk-form-group {{ who.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Who was using the LPA service</legend>
 
@@ -166,7 +166,7 @@
                 </div>
             </fieldset>
         </div>
-        <div class="govuk-form-group">
+        <div class="form-group">
             {{ formElement(form.get('save')) }}
         </div>
 

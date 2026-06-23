@@ -54,7 +54,7 @@
     <fieldset>
         <legend class="govuk-visually-hidden">Change password</legend>
 
-        <div class="govuk-govuk-form-group {{ password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
             <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
@@ -65,7 +65,7 @@
             </div>
         </div>
 
-        <div class="govuk-govuk-form-group {{ new_password.getMessages|length >0 ? 'govuk-govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ new_password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(new_password) }}
             <label class="govuk-label" for="{{ new_password.getAttribute('id') }}">
                 {{ new_password.getOption('label') }}
@@ -78,7 +78,7 @@
         </div>
         {{ macros.formGroup(new_password_confirm) }}
 
-        <div class="govuk-govuk-form-group">
+        <div class="govuk-form-group">
             <input type="submit" name="submit" id="signin-form-submit" class="govuk-button" data-cy='save-new-password' value="Save new password">
             <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
         </div>
