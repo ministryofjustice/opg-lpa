@@ -3,7 +3,7 @@ import { Then } from '@badeball/cypress-cucumber-preprocessor';
 Then(`I complete the payment with card number {string}`, (cardNumber) => {
   const args = { cardNumber: cardNumber };
 
-  cy.origin('http://localhost:4547', { args: args }, ({ cardNumber }) => {
+  cy.origin('http://mock-pay:8080', { args: args }, ({ cardNumber }) => {
     // we have to define this inside the origin() call, otherwise
     // it's not visible inside this function
     const setValue = (fieldId, value) => {
@@ -36,7 +36,7 @@ Then(`I complete the payment with card number {string}`, (cardNumber) => {
 });
 
 Then(`I confirm the payment`, () => {
-  cy.origin('http://localhost:4547', () => {
+  cy.origin('http://mock-pay:8080', () => {
     cy.get('#confirm').click();
   });
 });

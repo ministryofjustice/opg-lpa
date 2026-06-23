@@ -114,4 +114,31 @@ final class ApplicantFormTest extends TestCase
         $form->setData(['whoIsRegistering' => '']);
         $this->assertFalse($form->isValid());
     }
+
+    /**
+     * When multiple attorneys act jointly-and-severally the form adds an
+     * `attorneyList` MultiCheckbox.  Browsers omit unchecked checkboxes from
+     * the POST body entirely, so normalizeCheckboxDefaults() injects
+     * `$data['attorneyList'] = null` (the MultiCheckbox's unchecked default).
+     * validateByModel() must treat null the same as an empty array so the
+     * model validator rejects the submission and "Select the person…" appears.
+     */
+    public function testEmptyAttorneyListIsInvalidForJointlyAndSeverallyAttorneys(): void
+    {
+        $lpa  = $this->createLpa(
+            [$this->createAttorney(1), $this->createAttorney(2)],
+            PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY
+        );
+        $form = new ApplicantForm(['lpa' => $lpa]);
+        $form->init();
+
+        // Simulate a POST with no radio selected and no checkbox ticked;
+        // normalizeCheckboxDefaults() will add 'attorneyList' => null.
+        $form->setData([]);
+        $this->assertFalse($form->isValid());
+
+        $messages = $form->getMessages();
+        $this->assertArrayHasKey('whoIsRegistering', $messages);
+        $this->assertContains('allowed-values:donor,Array', $messages['whoIsRegistering']);
+    }
 }

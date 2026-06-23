@@ -10,7 +10,7 @@ var returnUrl  = paymentsStore.load('return_url_' + paymentId) || '';
 var reference  = paymentsStore.load('reference_' + paymentId) || '';
 var email      = paymentsStore.load('email_' + paymentId) || 'payer@example.org';
 
-var baseUrl = 'http://localhost:4547';
+var baseUrl = 'http://mock-pay:8080';
 
 var responseBody = JSON.stringify({
     payment_id: paymentId,

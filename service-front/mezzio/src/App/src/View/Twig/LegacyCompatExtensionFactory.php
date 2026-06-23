@@ -9,6 +9,7 @@ use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
@@ -26,6 +27,7 @@ class LegacyCompatExtensionFactory
             $container->get(UserDetailsHolder::class),
             $container->get(UrlHelper::class),
             $container->get(FlashMessagesHolder::class),
+            $container->get(SystemMessage::class),
         );
     }
 }
