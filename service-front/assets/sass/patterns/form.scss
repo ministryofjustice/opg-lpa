@@ -2,7 +2,7 @@
 // This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
 .govuk-form-group--error {
 
-	.govuk-input {
+	.form-control {
 		border: 4px solid govuk-colour("red");
 	}
 }
