@@ -26,11 +26,12 @@
 
     // Local custom class – no GOV.UK Frontend equivalent.
     // Styles the active-step heading with the OPG turquoise background.
-    // margin-top: 0 overrides the local govuk-heading-m top-margin override so
-    // the header sits flush at the top of its accordion section.
+    // govuk-heading-m sets margin-top: 0; we restore spacing here so the header
+    // is separated from any content rendered above the accordion (e.g. the
+    // govuk-details__text inset block on the lpa-type page).
     .accordion-header {
         display: block;
-        margin-top: 0;
+        margin-top: govuk-spacing(6);
         padding: govuk-spacing(3);
         background-color: $turquoise-with-contrast;
         color: govuk-colour("white");
