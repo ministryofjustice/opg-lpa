@@ -50,6 +50,11 @@
     .govuk-heading-m & {
         @extend %icon-with-heading-base;
     }
+
+    a & {
+        vertical-align: middle;
+        margin-right: govuk-spacing(1);
+    }
 }
 
 .icon-information {
