@@ -167,4 +167,40 @@ class UserServiceTest extends TestCase
 
         $this->assertEquals([], $actual);
     }
+
+    public function testSearchByAReference()
+    {
+        $aReference = 'A-99998888882';
+        $userId = 'abc123def456';
+
+        $client = $this->prophesize(ApiClient::class);
+
+        $client->httpGet('/v2/users/search', ['aReference' => $aReference])->willReturn([
+            'userId' => $userId,
+            'isActive' => true,
+        ]);
+
+        $userService = new UserService($client->reveal());
+        $userService->setLogger($this->logger->reveal());
+        $actual = $userService->searchByAReference($aReference);
+
+        $this->assertIsArray($actual);
+        $this->assertEquals($userId, $actual['userId']);
+    }
+
+    public function testSearchByAReferenceNotFound()
+    {
+        $aReference = 'A-00000000000';
+
+        $client = $this->prophesize(ApiClient::class);
+
+        // API returns null (404 → client returns null)
+        $client->httpGet('/v2/users/search', ['aReference' => $aReference])->willReturn(null);
+
+        $userService = new UserService($client->reveal());
+        $userService->setLogger($this->logger->reveal());
+        $actual = $userService->searchByAReference($aReference);
+
+        $this->assertFalse($actual);
+    }
 }

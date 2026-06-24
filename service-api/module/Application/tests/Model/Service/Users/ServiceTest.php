@@ -490,4 +490,104 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->assertEquals($expected, $this->service->searchByUsername($username));
     }
+
+    public function testSearchByAReference()
+    {
+        $aReference = 'A-99998888882';
+        $lpaId = 99998888882;
+        $userId = 'abc123def456abc123def456abc12345';
+
+        $lpaRecord = ['id' => $lpaId, 'user' => $userId];
+        $userRecord = new UserModel(['id' => $userId]);
+
+        $this->applicationRepository
+            ->shouldReceive('getById')
+            ->with($lpaId)
+            ->andReturn($lpaRecord)
+            ->once();
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($userRecord)
+            ->once();
+
+        $result = $this->service->searchByAReference($aReference);
+
+        $this->assertEquals($userRecord->toArray(), $result);
+    }
+
+    public function testSearchByAReferenceStripsNonNumericCharacters()
+    {
+        // "A-12345" and "A 000 000 00012345" should both resolve to lpaId 12345
+        $lpaId = 12345;
+        $userId = 'abc123def456abc123def456abc12345';
+        $lpaRecord = ['id' => $lpaId, 'user' => $userId];
+        $userRecord = new UserModel(['id' => $userId]);
+
+        $this->applicationRepository
+            ->shouldReceive('getById')
+            ->with($lpaId)
+            ->andReturn($lpaRecord)
+            ->twice();
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($userRecord)
+            ->twice();
+
+        $result1 = $this->service->searchByAReference('A-12345');
+        $result2 = $this->service->searchByAReference('A 000 000 00012345');
+
+        $this->assertIsArray($result1);
+        $this->assertIsArray($result2);
+    }
+
+    public function testSearchByAReferenceInvalidInputReturnsFalse()
+    {
+        // Non-numeric input with no digits resolves to id 0
+        $this->applicationRepository->shouldNotReceive('getById');
+
+        $result = $this->service->searchByAReference('INVALID');
+
+        $this->assertFalse($result);
+    }
+
+    public function testSearchByAReferenceLpaNotFound()
+    {
+        $lpaId = 99998888882;
+
+        $this->applicationRepository
+            ->shouldReceive('getById')
+            ->with($lpaId)
+            ->andReturn(null)
+            ->once();
+
+        $result = $this->service->searchByAReference('A-99998888882');
+
+        $this->assertFalse($result);
+    }
+
+    public function testSearchByAReferenceUserNotFound()
+    {
+        $lpaId = 99998888882;
+        $userId = 'abc123def456abc123def456abc12345';
+
+        $this->applicationRepository
+            ->shouldReceive('getById')
+            ->with($lpaId)
+            ->andReturn(['id' => $lpaId, 'user' => $userId])
+            ->once();
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn(null)
+            ->once();
+
+        $result = $this->service->searchByAReference('A-99998888882');
+
+        $this->assertFalse($result);
+    }
 }

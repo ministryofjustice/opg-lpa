@@ -46,12 +46,12 @@
                 </strong>
             </div>
 
-            <div class="form-group">
+            <div class="govuk-form-group">
                 <details role="group">
                     <summary role="button" data-analytics-click="page:link.reveal:help: Rules on who can and cannot be the certificate provider">
                         <span class="summary">Rules on who can and cannot be the certificate provider</span>
                     </summary>
-                    <div class="panel">
+                    <div class="govuk-inset-text">
                         <h2 class="govuk-heading-m">Who can be a certificate provider</h2>
 
                         <p class="govuk-body">The certificate provider must be either:</p>
@@ -115,7 +115,7 @@
             </ul>
         </div>
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ url(nextRoute, {'lpa-id': lpa.id}) }}" class="govuk-button" data-cy="save">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
         </div>
 
@@ -126,7 +126,7 @@
         {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-        <div class="form-group">
+        <div class="govuk-form-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>
             <input type="submit" name="submit" class="button-link button-input-to-link" value="Skip this question for now" data-analytics-click="page:link:skip: Skip this question for now" data-cy="skip-certificate-provider"/>
         </div>
