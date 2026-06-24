@@ -122,3 +122,9 @@ variable "container_version" {
 variable "rds_proxy_iam_role" {
   type = any
 }
+
+variable "mezzio_frontend_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to toggle the mezzio frontend switchover"
+}

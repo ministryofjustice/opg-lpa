@@ -17,41 +17,35 @@
 
             {% if (lpa.document.primaryAttorneyDecisions) %}
                 {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
-                <div class="alert" role="alert">
-                    <i class="icon icon-important-small" role="presentation"></i>
-                    <div class="alert-message">
-                        <h2 class="govuk-heading-s flush--top">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
-                        <p class="govuk-body">If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
-                        <p class="govuk-body">If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
-                        <ul class="list list-bullet">
-                            <li>
-                                <p class="govuk-body"><strong class="govuk-!-font-weight-bold">ALL the original attorneys will be replaced by the replacement attorneys, unless the donor states otherwise in their instructions</strong></p>
-                            </li>
-                            <li>
-                                <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the original attorneys will not be able to make any decisions on the donor’s behalf anymore</strong></p>
-                            </li>
-                        </ul>
-                        <p class="govuk-body">If the donor wants to change how their replacement attorneys step in, they can explain their wishes in the instructions section.</p>
-                    </div>
+                <div class="govuk-inset-text">
+                    <h2 class="govuk-heading-s govuk-!-margin-top-0">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
+                    <p class="govuk-body">If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
+                    <p class="govuk-body">If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
+                    <ul class="list list-bullet">
+                        <li>
+                            <p class="govuk-body"><strong class="govuk-!-font-weight-bold">ALL the original attorneys will be replaced by the replacement attorneys, unless the donor states otherwise in their instructions</strong></p>
+                        </li>
+                        <li>
+                            <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the original attorneys will not be able to make any decisions on the donor's behalf anymore</strong></p>
+                        </li>
+                    </ul>
+                    <p class="govuk-body">If the donor wants to change how their replacement attorneys step in, they can explain their wishes in the instructions section.</p>
                 </div>
                 {% elseif (lpa.document.primaryAttorneyDecisions.how == 'depends') %}
-                <div class="alert" role="alert">
-                    <i class="icon icon-information" role="presentation"></i>
-                    <div class="alert-message">
-                        <h2 class="govuk-heading-s flush--top">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
-                        <p class="govuk-body">This means that if an original attorney dies or can no longer act:</p>
-                        <ul class="list list-bullet">
-                            <li>
-                                <p class="govuk-body"><strong class="govuk-!-font-weight-bold">all the replacement attorneys step in and take over making the joint decisions</strong></p>
-                            </li>
-                            <li>
-                                <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the remaining original attorneys will not be able to make the joint decisions anymore, unless the donor states otherwise in their instructions</strong></p>
-                            </li>
-                            <li>
-                                <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the replacement and remaining original attorneys can make all other decisions together or individually</strong></p>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="govuk-inset-text">
+                    <h2 class="govuk-heading-s govuk-!-margin-top-0">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
+                    <p class="govuk-body">This means that if an original attorney dies or can no longer act:</p>
+                    <ul class="list list-bullet">
+                        <li>
+                            <p class="govuk-body"><strong class="govuk-!-font-weight-bold">all the replacement attorneys step in and take over making the joint decisions</strong></p>
+                        </li>
+                        <li>
+                            <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the remaining original attorneys will not be able to make the joint decisions anymore, unless the donor states otherwise in their instructions</strong></p>
+                        </li>
+                        <li>
+                            <p class="govuk-body"><strong class="govuk-!-font-weight-bold">the replacement and remaining original attorneys can make all other decisions together or individually</strong></p>
+                        </li>
+                    </ul>
                 </div>
                 {% endif %}
             {% endif %}

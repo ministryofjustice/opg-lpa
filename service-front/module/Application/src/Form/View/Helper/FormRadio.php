@@ -192,6 +192,9 @@ class FormRadio extends FormMultiCheckbox
                 $divAttributes = array_merge($divAttributes, $optionSpec['div-attributes']);
             }
 
+            // Strip non-HTML attributes from input before rendering
+            unset($inputAttributes['div-attributes']);
+
             $divOpen = '<div>';
 
             if (count($divAttributes)) {

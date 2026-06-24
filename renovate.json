@@ -414,7 +414,8 @@
         "pipenv",
         "pyenv",
         "setup-cfg",
-        "pip_setup"
+        "pip_setup",
+        "uv"
       ],
       "matchUpdateTypes": [
         "minor",
