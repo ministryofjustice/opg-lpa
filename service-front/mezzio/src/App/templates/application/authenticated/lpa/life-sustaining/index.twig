@@ -16,15 +16,22 @@
 {# Set form fields variables #}
 {% set canSustainLife = form.get('canSustainLife') %}
 
-{{ canSustainLife.setValueOptions(
-    {"1": {"id": "canSustainLife", "value": "1", "label": "Option A – <strong class='govuk-!-font-weight-bold'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."},
-        "0": {"value": "0", "label": "Option B – <strong class='govuk-!-font-weight-bold'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
-}) ? ''}}
-
-{# form fields config #}
-
-{{ canSustainLife.setOptions({
-    label_attributes: {'class': 'text block-label'}
+{{ canSustainLife.setValueOptions({
+    "1": {
+        "id": "canSustainLife",
+        "value": "1",
+        "label": "Option A – <strong class='govuk-!-font-weight-bold'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
+        "attributes": {"class": "govuk-radios__input"},
+        "div-attributes": {"class": "govuk-radios__item govuk-!-width-two-thirds"},
+        "label_attributes": {"class": "govuk-label govuk-radios__label"}
+    },
+    "0": {
+        "value": "0",
+        "label": "Option B – <strong class='govuk-!-font-weight-bold'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
+        "attributes": {"class": "govuk-radios__input"},
+        "div-attributes": {"class": "govuk-radios__item govuk-!-width-two-thirds"},
+        "label_attributes": {"class": "govuk-label govuk-radios__label"}
+    }
 }) ? '' }}
 
 {{ canSustainLife.setLabelOptions({
@@ -48,10 +55,9 @@
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-
         {{ macros.formErrorSummary(error,form) }}
 
-        <fieldset>
+        <fieldset class="govuk-fieldset">
             <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
             <h2 class="govuk-heading-m flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
             <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-form-group--error'}}">
@@ -60,13 +66,13 @@
                 <div class="govuk-radios">
                     {{ formRadioOption(canSustainLife, "1")|raw }}
 
-                    <div class="govuk-inset-text">
+                    <div class="govuk-radios__conditional">
                         <p class="govuk-body">The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.</p>
                     </div>
 
                     {{ formRadioOption(canSustainLife, "0")|raw }}
 
-                    <div class="govuk-inset-text">
+                    <div class="govuk-radios__conditional">
                         <p class="govuk-body">Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.</p>
                     </div>
                 </div>
