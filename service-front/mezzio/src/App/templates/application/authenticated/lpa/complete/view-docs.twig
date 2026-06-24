@@ -85,10 +85,10 @@
 
     <div class="panel-cta">
         <div class="panel-body">
-            <ul class="list iconlinks govuk-!-margin-0 govuk-!-padding-0 text-left">
+            <ul class="govuk-list govuk-!-margin-0 govuk-!-padding-0">
                 <li class="iconlinks-item">
-                    <a class="iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your print-ready LPA form">
-                        <i class="icon icon-file-download"></i>
+                    <a class="govuk-link iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your print-ready LPA form">
+                        <i class="icon icon-file-download" aria-hidden="true"></i>
                         <span class="iconlinks-text">Download your print-ready LPA form (PDF, opens in new tab)</span>
                     </a>
                 </li>
@@ -96,16 +96,16 @@
                 {% if lpa120Url %}
                     {% if feeBenefits %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee exemption form">
-                                <i class="icon icon-file-download"></i>
+                            <a class="govuk-link iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee exemption form">
+                                <i class="icon icon-file-download" aria-hidden="true"></i>
                                 <span class="iconlinks-text">Download your fee exemption form (PDF, opens in new tab)</span>
                             </a>
                         </li>
                     {% endif %}
                     {% if feeUC or feeLowIncome %}
                         <li class="iconlinks-item">
-                            <a class="iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee remission form">
-                                <i class="icon icon-file-download"></i>
+                            <a class="govuk-link iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee remission form">
+                                <i class="icon icon-file-download" aria-hidden="true"></i>
                                 <span class="iconlinks-text">Download your fee remission form (PDF, opens in new tab)</span>
                             </a>
                         </li>
@@ -114,8 +114,8 @@
 
                 {% if lp3Url %}
                     <li class="iconlinks-item">
-                        <a class="iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download the letter to send to your 'people to notify'">
-                            <i class="icon icon-file-download"></i>
+                        <a class="govuk-link iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download the letter to send to your 'people to notify'">
+                            <i class="icon icon-file-download" aria-hidden="true"></i>
                             <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF, opens in new tab)</span>
                         </a>
                     </li>
