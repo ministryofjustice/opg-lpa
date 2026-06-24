@@ -134,7 +134,6 @@ data "aws_ecr_repository" "lpa_front_mezzio_app" {
 }
 
 data "aws_ecr_image" "lpa_front_mezzio_app" {
-  count           = var.mezzio_frontend_enabled ? 1 : 0
   repository_name = data.aws_ecr_repository.lpa_front_mezzio_app.name
   image_tag       = var.container_version
   provider        = aws.management
