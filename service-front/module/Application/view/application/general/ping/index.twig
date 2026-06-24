@@ -5,7 +5,7 @@
 {% block content %}
 
 <div class="service-status">
-	<div class="text">
+	<div>
 		{% if status.status == 'pass' %}
 			<h2 class="govuk-heading-m"><i class="icon icon-tick"></i> Service is up and running</h2>
 		{% elseif status.status == 'warn' %}
