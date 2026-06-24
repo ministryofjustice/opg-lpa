@@ -28,16 +28,16 @@
 
         <h2 class="heading-large">Payment received</h2>
 
-        <p class="govuk-body">Thank you for your payment of <strong class="bold-small">&pound;{{ paymentAmount | money_format }}</strong></p>
+        <p class="govuk-body">Thank you for your payment of <strong class="govuk-!-font-weight-bold">&pound;{{ paymentAmount | money_format }}</strong></p>
 
-        <p class="govuk-body">Your payment reference number is <strong class="bold-small">{{ paymentReferenceNo }}</strong></p>
+        <p class="govuk-body">Your payment reference number is <strong class="govuk-!-font-weight-bold">{{ paymentReferenceNo }}</strong></p>
 
 
         <h2 class="heading-large">The LPA is ready to print and sign</h2>
 
     {% endif %}
 
-    <p class="govuk-body">Your online LPA ID is <strong class="bold-small" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</strong></p>
+    <p class="govuk-body">Your online LPA ID is <strong class="govuk-!-font-weight-bold" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</strong></p>
 
     <p class="govuk-body">You're now ready to print and sign the {{ lpa.document.type == 'property-and-financial' ? 'property and financial affairs' : 'health and welfare' }} LPA for {{ lpa.document.donor.name }}, then post it to the Office of the Public Guardian.</p>
 
@@ -99,10 +99,10 @@
 
     <div class="panel-cta">
         <div class="panel-body">
-            <ul class="list iconlinks govuk-!-margin-0 govuk-!-padding-0 text-left">
+            <ul class="govuk-list iconlinks govuk-!-margin-0 govuk-!-padding-0 govuk-!-text-align-left">
                 <li class="iconlinks-item">
                     <a class="govuk-link iconlinks-link" href="{{ lp1Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your print-ready LPA form">
-                        <i class="icon icon-file-download"></i>
+                        <i class="icon icon-file-download" aria-hidden="true"></i>
                         <span class="iconlinks-text">Download your print-ready LPA form (PDF, opens in new tab)</span>
                     </a>
                 </li>
@@ -111,7 +111,7 @@
                     {% if feeBenefits %}
                         <li class="iconlinks-item">
                             <a class="govuk-link iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee exemption form">
-                                <i class="icon icon-file-download"></i>
+                                <i class="icon icon-file-download" aria-hidden="true"></i>
                                 <span class="iconlinks-text">Download your fee exemption form (PDF, opens in new tab)</span>
                             </a>
                         </li>
@@ -119,7 +119,7 @@
                     {% if feeUC or feeLowIncome %}
                         <li class="iconlinks-item">
                             <a class="govuk-link iconlinks-link" href="{{ lpa120Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download your fee remission form">
-                                <i class="icon icon-file-download"></i>
+                                <i class="icon icon-file-download" aria-hidden="true"></i>
                                 <span class="iconlinks-text">Download your fee remission form (PDF, opens in new tab)</span>
                             </a>
                         </li>
@@ -129,7 +129,7 @@
                 {% if lp3Url %}
                     <li class="iconlinks-item">
                         <a class="govuk-link iconlinks-link" href="{{ lp3Url }}" rel="noreferrer noopener" target="_blank" data-analytics-click="page:link:download: Download the letter to send to your 'people to notify'">
-                            <i class="icon icon-file-download"></i>
+                            <i class="icon icon-file-download" aria-hidden="true"></i>
                             <span class="iconlinks-text">Download the letter to send to your 'people to notify' (PDF, opens in new tab)</span>
                         </a>
                     </li>
@@ -197,7 +197,7 @@
     </ul>
 
     <p class="govuk-body">
-        <strong class="bold-small">
+        <strong class="govuk-!-font-weight-bold">
             Office of the Public Guardian<br>
             PO Box 16185<br>
             Birmingham<br>
@@ -207,7 +207,7 @@
 
     {# If paid online #}
     {% if paymentMethod == 'card' %}
-        <p class="govuk-body"><strong class="bold-small">Post the signed LPA to us as soon as you can. If we do not receive it by {{ lpa.completedAt|date_modify("+40 day")|date('d F Y') }} we’ll refund the application fee. You can still post the LPA to us after you’ve been refunded - we will contact you and ask you to pay again or you can send a cheque with the LPA.</strong></p>
+        <p class="govuk-body"><strong class="govuk-!-font-weight-bold">Post the signed LPA to us as soon as you can. If we do not receive it by {{ lpa.completedAt|date_modify("+40 day")|date('d F Y') }} we’ll refund the application fee. You can still post the LPA to us after you’ve been refunded - we will contact you and ask you to pay again or you can send a cheque with the LPA.</strong></p>
     {% endif %}
 
 
