@@ -14,7 +14,7 @@ locals {
     tag                                   = var.container_version
     db_client_security_group_id           = !local.dr_enabled ? module.eu-west-1.db_client_security_group_id : module.eu-west-2[0].db_client_security_group_id
     seeding_security_group_id             = !local.dr_enabled ? module.eu-west-1.seeding_security_group_id : module.eu-west-2[0].seeding_security_group_id
-    cluster_name                          = !local.dr_enabled ? module.eu-west-1.ecs_cluster_name : module.eu-west-2[0].cluster_name
+    cluster_name                          = !local.dr_enabled ? module.eu-west-1.ecs_cluster_name : module.eu-west-2[0].ecs_cluster_name
     front_load_balancer_security_group_id = !local.dr_enabled ? module.eu-west-1.front_load_balancer_sg_id : module.eu-west-2[0].front_load_balancer_sg_id
     admin_load_balancer_security_group_id = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_sg_id : module.eu-west-2[0].admin_load_balancer_sg_id
     vpc_id                                = !local.dr_enabled ? module.eu-west-1.vpc_id : module.eu-west-2[0].vpc_id
