@@ -92,7 +92,6 @@ jobs:
             dockerfile_path: ./service-front/mezzio/docker/app
             snyk_policy_path: service-front/mezzio/docker/app/.snyk
             scan_id: front_mezzio_app
-            build_enabled: false
 
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
