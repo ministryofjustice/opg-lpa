@@ -50,7 +50,7 @@
     <li id="fee-reduction-section" class="section current" data-cy="section-current">
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
-    	<div class="text">
+    	<div>
             <p class="govuk-body">If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
 
             {% if lpa.repeatCaseNumber is defined and lpa.repeatCaseNumber is not null %}
@@ -68,7 +68,7 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group text {{ reductionOptionsElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ reductionOptionsElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Reduced fee options</legend>
                 <h2 class="govuk-heading-m flush--top">Reduced fee options</h2>

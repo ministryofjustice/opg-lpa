@@ -38,7 +38,7 @@
 			'data-cy': 'how-jointly-and-severally'
 		},
 		label: '<strong class="govuk-!-font-weight-bold">Jointly and severally</strong>
-			<span class="text govuk-hint">
+			<span class="govuk-hint">
 			Attorneys can make decisions on their own or together. Most people choose this option because it’s the most practical.
 			</span>',
 		label_attributes: {
@@ -51,7 +51,7 @@
 			'data-cy': 'how-jointly'
 		},
 		label: '<strong class="govuk-!-font-weight-bold">Jointly</strong>
-			<span class="text govuk-hint">
+			<span class="govuk-hint">
 			Attorneys must agree unanimously on every decision, however big or small. Be careful - if one of the attorneys can no longer act, none of the other attorneys will be able to act either, unless the donor states otherwise in their instructions.
 			</span>',
 		value: currentHowValueOptions['jointly'].value
@@ -62,7 +62,7 @@
 			'data-aria-controls': 'decisions-details'
 		},
 		label: '<strong class="govuk-!-font-weight-bold">Jointly for some decisions, and jointly and severally for other decisions</strong>
-			<span class="text govuk-hint">
+			<span class="govuk-hint">
 			Attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
 			</span>',
 		value: currentHowValueOptions['depends'].value,
@@ -74,7 +74,7 @@
 
 {{ how.setOptions({
 	value_options: howValueOptions,
-	label_attributes: {'class': 'text block-label'}
+	label_attributes: {'class': 'block-label'}
 }) ? '' }}
 
 {{ how.setLabelOptions({
@@ -89,7 +89,7 @@
 	<h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
-		<div class="text">
+		<div>
 			<p class="govuk-body">The donor’s choice here is very important as it affects how their LPA can be used. Whichever option the donor chooses, the attorneys must always act in the donor’s best interests.</p>
 			<p class="govuk-body"><a class="govuk-link js-guidance" href="/guide#topic-how-multiple-attorneys-make-decisions" data-analytics-click="page:link:help: Get help with making this decision">Get help with making this decision</a></p>
 		</div>
