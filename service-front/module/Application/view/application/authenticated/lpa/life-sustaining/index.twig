@@ -17,8 +17,8 @@
 {% set canSustainLife = form.get('canSustainLife') %}
 
 {{ canSustainLife.setValueOptions(
-    {"1": {"id": "canSustainLife", "value": "1", "label": "Option A – <strong>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."},
-        "0": {"value": "0", "label": "Option B – <strong>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
+    {"1": {"id": "canSustainLife", "value": "1", "label": "Option A – <strong class='govuk-!-font-weight-bold'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."},
+        "0": {"value": "0", "label": "Option B – <strong class='govuk-!-font-weight-bold'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf."}
 }) ? ''}}
 
 {# form fields config #}
@@ -59,13 +59,13 @@
                 {{ formRadio().outputOption(canSustainLife, "1")|raw }}
 
                 <div class="govuk-inset-text">
-                    The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.
+                    <p class="govuk-body">The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.</p>
                 </div>
 
                 {{ formRadio().outputOption(canSustainLife, "0")|raw }}
 
                 <div class="govuk-inset-text">
-                    Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.
+                    <p class="govuk-body">Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.</p>
                 </div>
             </div>
         </fieldset>

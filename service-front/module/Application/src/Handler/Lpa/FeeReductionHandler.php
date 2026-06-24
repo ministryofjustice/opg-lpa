@@ -214,7 +214,7 @@ class FeeReductionHandler implements RequestHandlerInterface
                     . "href=\"/guide#topic-fees-reductions-and-exemptions\" "
                     . "data-analytics-click=\"page:link:help: these means-tested benefits\">"
                     . "these means-tested benefits</a> and has not been awarded personal injury damages "
-                    . "of more than £16,000<br><strong>Fee: £"
+                    . "of more than £16,000<br><strong class='govuk-!-font-weight-bold'>Fee: £"
                     . $benefitsFee . "</strong>",
                 'data-cy' => 'reducedFeeReceivesBenefits',
             ],
@@ -222,21 +222,21 @@ class FeeReductionHandler implements RequestHandlerInterface
                 'id' => 'reducedFeeUniversalCredit',
                 'value' => $valueOptions['reducedFeeUniversalCredit']['value'],
                 'label' => "The donor receives Universal Credit<br>"
-                    . "<strong>We'll contact you about the fee</strong>",
+                    . "<strong class='govuk-!-font-weight-bold'>We'll contact you about the fee</strong>",
                 'data-cy' => 'reducedFeeUniversalCredit',
             ],
             'reducedFeeLowIncome' => [
                 'id' => 'reducedFeeLowIncome',
                 'value' => $valueOptions['reducedFeeLowIncome']['value'],
                 'label' => "The donor currently has an income of less than £12,000 a year before tax"
-                    . "<br><strong>Fee: £" . $lowIncomeFee . "</strong>",
+                    . "<br><strong class='govuk-!-font-weight-bold'>Fee: £" . $lowIncomeFee . "</strong>",
                 'data-cy' => 'reducedFeeLowIncome',
             ],
             'notApply' => [
                 'id' => 'notApply',
                 'value' => $valueOptions['notApply']['value'],
                 'label' => "The donor is not applying for a reduced fee<br>"
-                    . "<strong>Fee: £" . $fullFee . "</strong>",
+                    . "<strong class='govuk-!-font-weight-bold'>Fee: £" . $fullFee . "</strong>",
                 'data-cy' => 'notApply',
             ],
         ];
