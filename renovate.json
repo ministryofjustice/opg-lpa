@@ -286,6 +286,34 @@
     {
       "schedule": ["* 6 1,15 * *"],
       "description": [
+        "front mezzio composer minor and patch updates (PHP, stable for 3 days)",
+        "These might be automerged once we're comfortable with Renovate"
+      ],
+      "automerge": false,
+      "groupName": "front mezzio minor and patch updates (PHP)",
+      "groupSlug": "front-mezzio-minor-patch-updates-php",
+      "labels": [
+        "Dependencies",
+        "Renovate",
+        "PHP"
+      ],
+      "matchManagers": [
+        "composer"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch"
+      ],
+      "matchFileNames": [
+        "service-front/mezzio/composer.json"
+      ],
+      "prCreation": "immediate",
+      "prPriority": 4,
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "schedule": ["* 6 1,15 * *"],
+      "description": [
         "api composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
@@ -409,13 +437,13 @@
         "Renovate"
       ],
       "matchManagers": [
+        "pep621",
         "pip_requirements",
         "pip-compile",
         "pipenv",
         "pyenv",
         "setup-cfg",
-        "pip_setup",
-        "uv"
+        "pip_setup"
       ],
       "matchUpdateTypes": [
         "minor",
@@ -424,6 +452,25 @@
       "prCreation": "immediate",
       "prPriority": 4,
       "minimumReleaseAge": "7 days"
+    },
+    {
+      "groupName": "Docker images",
+      "groupSlug": "docker-images",
+      "description": "Update Docker images and digests",
+      "labels": [
+        "Dependencies",
+        "Renovate"
+      ],
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "digest"
+      ],
+      "matchDatasources": [
+        "docker"
+      ],
+      "prCreation": "not-pending",
+      "prPriority": 4
     }
   ]
 }
