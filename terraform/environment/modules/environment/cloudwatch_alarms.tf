@@ -1,3 +1,11 @@
+locals {
+  enable_anomaly_alarms = contains(["preproduction", "production"], var.environment_name)
+
+  # For non-preprod/prod environments, set this to one alarm resource name to test it.
+  # Example: test_alarm = "front_4xx_anomaly"
+  test_alarm = ""
+}
+
 #5xx Alarms
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   actions_enabled     = true
@@ -17,42 +25,8 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.front_component_tag
-  threshold                 = 2
+  threshold                 = 1
   treat_missing_data        = "notBreaching"
-}
-
-# Metric Anomaly Alarm
-resource "aws_cloudwatch_metric_alarm" "front_5xx_anomaly" {
-  alarm_name                = "${var.environment_name} public front 5XX anomaly"
-  comparison_operator       = "GreaterThanUpperThreshold"
-  evaluation_periods        = 2
-  threshold_metric_id       = "ad1"
-  alarm_description         = "Anomaly detection in 5xx Errors returned to front users for ${var.environment_name}"
-  datapoints_to_alarm       = 2
-  insufficient_data_actions = []
-  treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-
-  metric_query {
-    id          = "ad1"
-    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
-    label       = "5XX anomaly detection band"
-    return_data = true
-  }
-  metric_query {
-    id          = "m1"
-    return_data = true
-    metric {
-      metric_name = "HTTPCode_Target_5XX_Count"
-      namespace   = "AWS/ApplicationELB"
-      period      = 60
-      stat        = "Sum"
-      dimensions = {
-        LoadBalancer = trimprefix(split(":", aws_lb.front.arn)[5], "loadbalancer/")
-      }
-    }
-  }
 }
 
 # 5xx Admin Error
@@ -80,7 +54,6 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 
 #Application 5xx Alarm
 resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
-  actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   alarm_description         = "Applications are logging 500 errors for ${var.environment_name}"
   alarm_name                = "${var.environment_name} application 5XX errors"
@@ -113,7 +86,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 
   metric_query {
     id          = "e1"
-    expression  = "ANOMALY_DETECTION_BAND(m1)"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
     label       = "Authentication Errors (Expected)"
     return_data = "true"
   }
@@ -133,6 +106,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 
 # 4XX Metric Anomaly Alarm
 resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
+  count             = local.enable_anomaly_alarms || local.test_alarm == "front_4xx_anomaly" ? 1 : 0
   alarm_name        = "${var.environment_name} public front 4XX anomaly"
   alarm_description = "Anomaly detection in 4XX Errors returned to users for ${var.environment_name}"
 
@@ -229,6 +203,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
 
 # Auth Event Anomaly Alarms
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
+  count               = local.enable_anomaly_alarms || local.test_alarm == "auth_sign_in_success_anomaly" ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in success anomaly"
   alarm_description   = "Anomaly detection on successful sign-ins for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
@@ -262,6 +237,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
+  count               = local.enable_anomaly_alarms || local.test_alarm == "auth_sign_in_failed_anomaly" ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in failed anomaly"
   alarm_description   = "Anomaly detection on failed sign-ins for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
@@ -295,6 +271,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
+  count               = local.enable_anomaly_alarms || local.test_alarm == "auth_account_locked_anomaly" ? 1 : 0
   alarm_name          = "${var.environment_name} auth account locked anomaly"
   alarm_description   = "Anomaly detection on account lockouts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
@@ -328,6 +305,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
+  count               = local.enable_anomaly_alarms || local.test_alarm == "auth_sign_in_account_locked_anomaly" ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in against locked account anomaly"
   alarm_description   = "Anomaly detection on sign-in attempts against locked accounts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
@@ -361,6 +339,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
+  count               = local.enable_anomaly_alarms || local.test_alarm == "auth_sign_in_inactive_account_anomaly" ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in inactive account anomaly"
   alarm_description   = "Anomaly detection on sign-in attempts against inactive accounts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
