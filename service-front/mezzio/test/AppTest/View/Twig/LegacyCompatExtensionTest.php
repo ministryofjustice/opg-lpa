@@ -540,6 +540,80 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->assertStringContainsString('&lt;em&gt;Severally&lt;/em&gt;', $html);
     }
 
+    public function testFormRadioUsesGovukStyleWhenElementClassIsGovukRadiosInput(): void
+    {
+        // When class="govuk-radios__input" is set at element level (e.g. via PHP form spec),
+        // formRadio should detect govuk style and use govuk-radios__item / govuk-radios__label defaults.
+        $radio = new Radio('whoIsRegistering');
+        $radio->setAttributes([
+            'name'           => 'whoIsRegistering',
+            'class'          => 'govuk-radios__input',
+            'div-attributes' => ['class' => 'govuk-radios__item'],
+        ]);
+        $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+        $radio->setValueOptions([
+            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
+            'attorney' => ['label' => 'The attorneys', 'value' => '1,2'],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Wrapper div uses govuk-radios__item (from element-level div-attributes fallback)
+        $this->assertStringContainsString('class="govuk-radios__item"', $html);
+        // Input carries element-level class
+        $this->assertStringContainsString('class="govuk-radios__input"', $html);
+        // Label uses govuk-radios__label (from getLabelAttributes())
+        $this->assertStringContainsString('class="govuk-label govuk-radios__label"', $html);
+        // No legacy classes
+        $this->assertStringNotContainsString('multiple-choice', $html);
+        $this->assertStringNotContainsString('block-label', $html);
+    }
+
+    public function testFormRadioElementLevelClassDetectionTakesPriorityOverPerOptionDetection(): void
+    {
+        // Element-level class detection runs before per-option scan.
+        $radio = new Radio('when');
+        $radio->setAttributes(['name' => 'when', 'class' => 'govuk-radios__input']);
+        $radio->setValueOptions([
+            'now' => [
+                'label'      => 'Now',
+                'value'      => 'now',
+                'attributes' => ['class' => 'govuk-radios__input', 'data-aria-controls' => 'conditional-when-now'],
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Regardless of which detection path fires, result is govuk style
+        $this->assertStringNotContainsString('multiple-choice', $html);
+        $this->assertStringContainsString('govuk-radios__item', $html);
+    }
+
+    public function testFormRadioElementLevelLabelAttributesApplyToAllOptions(): void
+    {
+        // getLabelAttributes() should be used as the element-level default for all options.
+        $radio = new Radio('whoIsRegistering');
+        $radio->setAttributes(['name' => 'whoIsRegistering', 'class' => 'govuk-radios__input']);
+        $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+        $radio->setValueOptions([
+            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
+            'attorney' => [
+                'label'      => 'The attorneys',
+                'value'      => '1,2',
+                'attributes' => ['data-aria-controls' => 'conditional-whoIsRegistering-attorney'],
+            ],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Both options should use the element-level label class
+        $this->assertSame(2, substr_count($html, 'class="govuk-label govuk-radios__label"'));
+        // Attorney input should carry the per-option data-aria-controls alongside element-level class
+        $this->assertStringContainsString('data-aria-controls="conditional-whoIsRegistering-attorney"', $html);
+        $this->assertStringContainsString('class="govuk-radios__input"', $html);
+    }
+
     // -------------------------------------------------------------------------
     // formRadioOption
     // -------------------------------------------------------------------------
