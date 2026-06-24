@@ -128,6 +128,7 @@ data "aws_ecr_image" "lpa_front_app" {
 }
 
 data "aws_ecr_repository" "lpa_front_mezzio_app" {
+  count    = var.mezzio_frontend_enabled ? 1 : 0
   provider = aws.management
   name     = "online-lpa/front_mezzio_app"
 }
