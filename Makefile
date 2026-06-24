@@ -307,7 +307,6 @@ cypress-update-baselines-clone: _cypress-stitch
 _cypress-stitch:
 	@pushd cypress && python3 stitch.py && popd
 
-
 # Internal helper - runs the baseline cypress commands without stitching. Expects SUITE_TAG to be set.
 .PHONY: _cypress-run-baseline-suite
 _cypress-run-baseline-suite:

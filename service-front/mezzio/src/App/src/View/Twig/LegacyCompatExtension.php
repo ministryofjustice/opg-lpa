@@ -505,15 +505,19 @@ class LegacyCompatExtension extends AbstractExtension
         //   GOV.UK Frontend v3: <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
         //                        / <input class="govuk-radios__input">
         //
-        // Auto-detect which style to use: if any value option explicitly sets
-        // 'govuk-radios__input' as its input class, use the GOV.UK Frontend defaults;
-        // otherwise fall back to the legacy GDS defaults.
-        $usesGovukStyle = false;
-        foreach ($valueOptions as $optSpec) {
-            $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
-            if (str_contains((string) $inputClass, 'govuk-radios__input')) {
-                $usesGovukStyle = true;
-                break;
+        // Auto-detect which style to use by checking (in order):
+        //   1. Element-level class attribute (e.g. set via PHP form spec 'attributes' => ['class' => 'govuk-radios__input'])
+        //   2. Any per-option 'attributes.class' containing 'govuk-radios__input' (set in Twig value options)
+        $elementClass   = (string) ($element->getAttribute('class') ?? '');
+        $usesGovukStyle = str_contains($elementClass, 'govuk-radios__input');
+
+        if (!$usesGovukStyle) {
+            foreach ($valueOptions as $optSpec) {
+                $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
+                if (str_contains((string) $inputClass, 'govuk-radios__input')) {
+                    $usesGovukStyle = true;
+                    break;
+                }
             }
         }
 
@@ -521,11 +525,16 @@ class LegacyCompatExtension extends AbstractExtension
         $defaultDivClass   = $usesGovukStyle ? 'govuk-radios__item' : 'multiple-choice';
         $defaultLabelClass = $usesGovukStyle ? 'govuk-label govuk-radios__label' : 'block-label';
 
-        // Element-level label_attributes (set via setOptions(['label_attributes' => ...]))
-        // apply to all options unless overridden per-option.
-        $elementLabelAttributes = method_exists($element, 'getOption')
-            ? ($element->getOption('label_attributes') ?? [])
-            : [];
+        // Element-level label_attributes (set via setOptions(['label_attributes' => ...]) or the
+        // PHP form element spec) apply to all options unless overridden per-option.
+        // Prefer getLabelAttributes() (populated by the Laminas form factory from the element spec)
+        // and fall back to getOption('label_attributes') (populated by an explicit Twig setOptions call).
+        $elementLabelAttributes = [];
+        if (method_exists($element, 'getLabelAttributes') && !empty($element->getLabelAttributes())) {
+            $elementLabelAttributes = $element->getLabelAttributes();
+        } elseif (method_exists($element, 'getOption')) {
+            $elementLabelAttributes = $element->getOption('label_attributes') ?? [];
+        }
 
         // Element-level disable_html_escape (set via setLabelOptions(['disable_html_escape' => true]))
         $elementLabelOptions      = method_exists($element, 'getLabelOptions') ? $element->getLabelOptions() : [];
