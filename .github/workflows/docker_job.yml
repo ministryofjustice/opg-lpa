@@ -88,6 +88,11 @@ jobs:
             snyk_policy_path: service-front/docker/app/.snyk
             scan_id: front_app
 
+          - image_name: online-lpa/front_mezzio_app
+            dockerfile_path: ./service-front/mezzio/docker/app
+            snyk_policy_path: service-front/mezzio/docker/app/.snyk
+            scan_id: front_mezzio_app
+
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             snyk_policy_path: service-front/docker/web/.snyk
