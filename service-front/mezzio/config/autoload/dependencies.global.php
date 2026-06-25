@@ -19,6 +19,7 @@ use App\Service\Lpa\MetadataFactory;
 use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Redis\RedisClientFactory;
+use App\Service\Session\FilteringSaveHandler;
 use App\Service\Session\SaveHandlerFactory;
 use App\Service\System\StatusServiceFactory;
 use App\Service\Lpa\Communication as CommunicationService;
@@ -57,6 +58,7 @@ use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddlewareFactory;
 use App\Middleware\LpaLoaderMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
+use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
@@ -85,7 +87,6 @@ use App\Service\Lpa\ReplacementAttorneyCleanup as ReplacementAttorneyCleanupServ
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\EventManager\EventManager;
 use Laminas\Form\FormElementManager;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Logging\LoggerFactory;
 use Mezzio\Csrf\CsrfGuardFactoryInterface;
 use Mezzio\Csrf\CsrfMiddleware;
@@ -642,8 +643,12 @@ return [
                 $store->setDynamoDbClient($c->get(DynamoDbClient::class));
                 return new SystemMessage($store);
             },
-            RedisClient::class         => RedisClientFactory::class,
-            SaveHandlerInterface::class => SaveHandlerFactory::class,
+            RedisClient::class          => RedisClientFactory::class,
+            FilteringSaveHandler::class => SaveHandlerFactory::class,
+            RegisterSessionSaveHandlerMiddleware::class => static fn(ContainerInterface $c) => new RegisterSessionSaveHandlerMiddleware(
+                $c->get(FilteringSaveHandler::class),
+                $c->get('config')['session']['native_settings'] ?? [],
+            ),
             AppMailTransportInterface::class => MailTransportFactory::class,
             Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
                 $c->get(TemplateRendererInterface::class),
