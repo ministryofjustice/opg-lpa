@@ -22,7 +22,7 @@
 
 {% block content %}
 
-<div>
+<div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 
     <p class="govuk-body">Your online LPA ID is <strong class="govuk-!-font-weight-bold" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</strong></p>
 
@@ -214,6 +214,6 @@
             <a class="govuk-link" href="/user/dashboard/create" data-analytics-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
         </li>
     </ul>
-</div>
+</div></div>
 
 {% endblock %}

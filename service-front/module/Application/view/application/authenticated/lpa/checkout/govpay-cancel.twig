@@ -6,13 +6,13 @@
 
     <h2 class="govuk-heading-m flush--top">Amount due: &pound;{{ lpa.payment.amount | money_format }}</h2>
 
-    <div>
+    <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 
         <p class="govuk-body">You appear to have cancelled online payment. You could try paying online again or <a class="govuk-link" href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
 
-    </div>
+    </div></div>
 
-    <div>
+    <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
         <p class="govuk-body divorced">
             {# begin form #}
             {{ form.prepare() ? '' }}
@@ -23,6 +23,6 @@
 
             {{ form().closeTag|raw }}
         </p>
-    </div>
+    </div></div>
 
 {% endblock %}

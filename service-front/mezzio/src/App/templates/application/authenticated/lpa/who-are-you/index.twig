@@ -42,22 +42,22 @@
 
     {% if not form %}
         <div class="accordion-info">
-            <div>
+            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                 <p class="govuk-body">Thanks, you have already answered this question.</p>
 
                 <p class="govuk-body">Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
-            </div>
+            </div></div>
         </div>
         <div class="govuk-form-group">
             <a href="{{ nextUrl }}" role="button" class="govuk-button" data-cy="continue">{{ (final_check_accessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
         </div>
     {% else %}
         <div class="accordion-info">
-            <div>
+            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                 <p class="govuk-body">We think we can make this service better by finding out how people use it.</p>
                 <p class="govuk-body">To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
                 <p class="govuk-body">Your answer will be completely anonymous. It will not be linked to you, this LPA or your personal information.</p>
-            </div>
+            </div></div>
         </div>
 
     {# begin form #}
