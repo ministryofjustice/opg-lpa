@@ -1,24 +1,24 @@
-output "front_zone_id" {
+output "front_load_balancer_zone_id" {
   value = aws_lb.front.zone_id
 }
 
-output "front_dns_name" {
+output "front_load_balancer_dns_name" {
   value = aws_lb.front.dns_name
 }
 
-output "front_sg_id" {
+output "front_load_balancer_sg_id" {
   value = aws_security_group.front_loadbalancer.id
 }
 
-output "admin_zone_id" {
+output "admin_load_balancer_zone_id" {
   value = aws_lb.admin.zone_id
 }
 
-output "admin_dns_name" {
+output "admin_load_balancer_dns_name" {
   value = aws_lb.admin.dns_name
 }
 
-output "admin_sg_id" {
+output "admin_load_balancer_sg_id" {
   value = aws_security_group.admin_loadbalancer.id
 }
 
@@ -31,7 +31,7 @@ output "seeding_security_group_id" {
   value = aws_security_group.seeding_ecs_service.id
 }
 
-output "cluster_name" {
+output "ecs_cluster_name" {
   value = aws_ecs_cluster.online-lpa.name
 }
 

@@ -82,7 +82,7 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.migrations.online-lpa",
           mode                  = "non-blocking",
           max-buffer-size       = "25m",
@@ -118,9 +118,10 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", value = data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = "https://sqs.${var.region_name}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
+        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = "https://sqs.${data.aws_region.current.region}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
-        { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" }
+        { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }
   )

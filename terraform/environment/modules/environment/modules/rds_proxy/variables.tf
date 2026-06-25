@@ -29,3 +29,7 @@ variable "vpc_id" {
 variable "secretsmanager_encryption_key_arns" {
   type = list(string)
 }
+
+variable "rds_proxy_iam_role" {
+  type = any
+}

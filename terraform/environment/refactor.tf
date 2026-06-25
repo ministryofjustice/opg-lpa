@@ -43,3 +43,8 @@ moved {
   from = module.eu-west-1.aws_secretsmanager_secret_version.api_rds_credentials[0]
   to   = module.eu-west-1.aws_secretsmanager_secret_version.api_rds_credentials
 }
+
+moved {
+  from = module.eu-west-1.module.rds_proxy.aws_iam_role.rds_proxy_role
+  to   = aws_iam_role.rds_proxy
+}
