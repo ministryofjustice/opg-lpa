@@ -23,6 +23,7 @@ use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Helper\UrlHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class CheckoutPayHandlerTest extends TestCase
@@ -49,6 +50,8 @@ class CheckoutPayHandlerTest extends TestCase
             $this->paymentClient,
             $this->urlHelper,
         );
+
+        $this->handler->setLogger($this->createMock(LoggerInterface::class));
     }
 
     /**
