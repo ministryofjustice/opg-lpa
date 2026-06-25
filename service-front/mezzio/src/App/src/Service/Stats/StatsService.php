@@ -17,7 +17,7 @@ class StatsService
     /**
      * @return array|false|null|string
      */
-    public function getApiStats(): array|string|false|null|false
+    public function getApiStats(): array|string|false|null
     {
         try {
             return $this->apiClient->httpGet('/stats/all');
