@@ -395,6 +395,52 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->assertStringNotContainsString('multiple-choice', $html);
     }
 
+    public function testFormCheckboxMultiEscapesLabelHtmlByDefault(): void
+    {
+        $multi = new MultiCheckbox('items');
+        $multi->setValueOptions([
+            'a' => ['label' => '<strong>Option A</strong>', 'value' => 'a', 'attributes' => ['id' => 'items-a']],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('&lt;strong&gt;Option A&lt;/strong&gt;', $html);
+        $this->assertStringNotContainsString('<strong>Option A</strong>', $html);
+    }
+
+    public function testFormCheckboxMultiRendersLabelHtmlWhenDisableHtmlEscapeSetOnElement(): void
+    {
+        $multi = new MultiCheckbox('items');
+        $multi->setValueOptions([
+            'a' => ['label' => '<strong>Option A</strong>', 'value' => 'a', 'attributes' => ['id' => 'items-a']],
+        ]);
+        $multi->setLabelOptions(['disable_html_escape' => true]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('<strong>Option A</strong>', $html);
+        $this->assertStringNotContainsString('&lt;strong&gt;', $html);
+    }
+
+    public function testFormCheckboxMultiRendersLabelHtmlWhenDisableHtmlEscapeSetPerOption(): void
+    {
+        $multi = new MultiCheckbox('items');
+        $multi->setValueOptions([
+            'a' => [
+                'label'               => '<strong>Option A</strong>',
+                'value'               => 'a',
+                'attributes'          => ['id' => 'items-a'],
+                'disable_html_escape' => true,
+            ],
+            'b' => ['label' => '<em>Option B</em>', 'value' => 'b', 'attributes' => ['id' => 'items-b']],
+        ]);
+
+        $html = $this->extension->formCheckbox($multi);
+
+        $this->assertStringContainsString('<strong>Option A</strong>', $html);
+        $this->assertStringContainsString('&lt;em&gt;Option B&lt;/em&gt;', $html);
+    }
+
     public function testFormElementDispatchesToFormCheckboxForMultiCheckbox(): void
     {
         $multi = new MultiCheckbox('items');
@@ -438,6 +484,134 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->assertSame(1, substr_count($html, 'checked'));
         // checked attribute appears on the health-welfare input (attribute order may vary)
         $this->assertMatchesRegularExpression('/value="health-welfare"[^>]*\bchecked\b/', $html);
+    }
+
+    public function testFormRadioEscapesLabelHtmlByDefault(): void
+    {
+        $radio = new Radio('how');
+        $radio->setAttributes(['name' => 'how']);
+        $radio->setValueOptions([
+            'jointly' => ['label' => '<strong>Jointly</strong>', 'value' => 'jointly'],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // HTML tags must be escaped when disable_html_escape is not set
+        $this->assertStringContainsString('&lt;strong&gt;Jointly&lt;/strong&gt;', $html);
+        $this->assertStringNotContainsString('<strong>Jointly</strong>', $html);
+    }
+
+    public function testFormRadioRendersLabelHtmlWhenDisableHtmlEscapeSetOnElement(): void
+    {
+        $radio = new Radio('how');
+        $radio->setAttributes(['name' => 'how']);
+        $radio->setValueOptions([
+            'jointly' => ['label' => '<strong>Jointly</strong>', 'value' => 'jointly'],
+            'depends' => ['label' => '<em>Jointly for some</em>', 'value' => 'depends'],
+        ]);
+        $radio->setLabelOptions(['disable_html_escape' => true]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // HTML tags must be rendered raw when disable_html_escape is true
+        $this->assertStringContainsString('<strong>Jointly</strong>', $html);
+        $this->assertStringContainsString('<em>Jointly for some</em>', $html);
+        $this->assertStringNotContainsString('&lt;strong&gt;', $html);
+    }
+
+    public function testFormRadioRendersLabelHtmlWhenDisableHtmlEscapeSetPerOption(): void
+    {
+        $radio = new Radio('how');
+        $radio->setAttributes(['name' => 'how']);
+        $radio->setValueOptions([
+            'jointly' => [
+                'label'              => '<strong>Jointly</strong>',
+                'value'              => 'jointly',
+                'disable_html_escape' => true,
+            ],
+            'severally' => ['label' => '<em>Severally</em>', 'value' => 'severally'],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Only the option with disable_html_escape=true renders raw HTML
+        $this->assertStringContainsString('<strong>Jointly</strong>', $html);
+        // The other option is still escaped
+        $this->assertStringContainsString('&lt;em&gt;Severally&lt;/em&gt;', $html);
+    }
+
+    public function testFormRadioUsesGovukStyleWhenElementClassIsGovukRadiosInput(): void
+    {
+        // When class="govuk-radios__input" is set at element level (e.g. via PHP form spec),
+        // formRadio should detect govuk style and use govuk-radios__item / govuk-radios__label defaults.
+        $radio = new Radio('whoIsRegistering');
+        $radio->setAttributes([
+            'name'           => 'whoIsRegistering',
+            'class'          => 'govuk-radios__input',
+            'div-attributes' => ['class' => 'govuk-radios__item'],
+        ]);
+        $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+        $radio->setValueOptions([
+            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
+            'attorney' => ['label' => 'The attorneys', 'value' => '1,2'],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Wrapper div uses govuk-radios__item (from element-level div-attributes fallback)
+        $this->assertStringContainsString('class="govuk-radios__item"', $html);
+        // Input carries element-level class
+        $this->assertStringContainsString('class="govuk-radios__input"', $html);
+        // Label uses govuk-radios__label (from getLabelAttributes())
+        $this->assertStringContainsString('class="govuk-label govuk-radios__label"', $html);
+        // No legacy classes
+        $this->assertStringNotContainsString('multiple-choice', $html);
+        $this->assertStringNotContainsString('block-label', $html);
+    }
+
+    public function testFormRadioElementLevelClassDetectionTakesPriorityOverPerOptionDetection(): void
+    {
+        // Element-level class detection runs before per-option scan.
+        $radio = new Radio('when');
+        $radio->setAttributes(['name' => 'when', 'class' => 'govuk-radios__input']);
+        $radio->setValueOptions([
+            'now' => [
+                'label'      => 'Now',
+                'value'      => 'now',
+                'attributes' => ['class' => 'govuk-radios__input', 'data-aria-controls' => 'conditional-when-now'],
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Regardless of which detection path fires, result is govuk style
+        $this->assertStringNotContainsString('multiple-choice', $html);
+        $this->assertStringContainsString('govuk-radios__item', $html);
+    }
+
+    public function testFormRadioElementLevelLabelAttributesApplyToAllOptions(): void
+    {
+        // getLabelAttributes() should be used as the element-level default for all options.
+        $radio = new Radio('whoIsRegistering');
+        $radio->setAttributes(['name' => 'whoIsRegistering', 'class' => 'govuk-radios__input']);
+        $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+        $radio->setValueOptions([
+            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
+            'attorney' => [
+                'label'      => 'The attorneys',
+                'value'      => '1,2',
+                'attributes' => ['data-aria-controls' => 'conditional-whoIsRegistering-attorney'],
+            ],
+        ]);
+
+        $html = $this->extension->formRadio($radio);
+
+        // Both options should use the element-level label class
+        $this->assertSame(2, substr_count($html, 'class="govuk-label govuk-radios__label"'));
+        // Attorney input should carry the per-option data-aria-controls alongside element-level class
+        $this->assertStringContainsString('data-aria-controls="conditional-whoIsRegistering-attorney"', $html);
+        $this->assertStringContainsString('class="govuk-radios__input"', $html);
     }
 
     // -------------------------------------------------------------------------

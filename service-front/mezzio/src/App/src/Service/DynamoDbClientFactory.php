@@ -14,7 +14,7 @@ class DynamoDbClientFactory
         $config = $container->get('config');
 
         return new DynamoDbClient($config['admin']['dynamodb']['client'] ?? [
-            'region'   => 'eu-west-1',
+            'region'   => getenv('AWS_REGION') ?: 'eu-west-1',
             'version'  => '2012-08-10',
             'endpoint' => getenv('OPG_LPA_COMMON_DYNAMODB_ENDPOINT') ?: null,
         ]);
