@@ -129,6 +129,7 @@ variable "mezzio_frontend_enabled" {
   description = "Flag to toggle the mezzio frontend switchover"
 }
 
+# tflint-ignore: terraform_unused_declarations
 variable "admin_cognito" {
   description = "Settings for the AWS Cognito to use for the admin interface."
   type = object({
