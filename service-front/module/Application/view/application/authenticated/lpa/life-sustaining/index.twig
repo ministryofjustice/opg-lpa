@@ -46,8 +46,7 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-
+        {{ formElement(form.getCsrf) }}
 
         {{ macros.formErrorSummary(error,form) }}
 
