@@ -1,6 +1,13 @@
 // Forms
 // ==========================================================================
 
+// GOV.UK Frontend's .govuk-hint is designed to be used on block elements
+// (div, p). Where it is applied to a <span> (e.g. embedded in radio label
+// HTML), force it to display as a block so hint text sits below the label.
+span.govuk-hint {
+    display: block;
+}
+
 [disabled="disabled"],
 .disabled {
     opacity: .5 !important;
