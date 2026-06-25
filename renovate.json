@@ -19,6 +19,7 @@
   "lockFileMaintenance": {
     "enabled": false
   },
+  "minimumReleaseAge": "7 days",
   "vulnerabilityAlerts": {
     "groupName": "Security Alerts",
     "labels": [
@@ -158,7 +159,6 @@
         "patch",
         "digest"
       ],
-      "minimumReleaseAge": "7 days",
       "matchManagers": [
         "github-actions"
       ]
@@ -252,8 +252,7 @@
         "service-admin/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -280,8 +279,7 @@
         "service-front/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -308,8 +306,7 @@
         "service-front/mezzio/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -336,8 +333,7 @@
         "service-api/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -364,8 +360,7 @@
         "service-pdf/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -392,8 +387,7 @@
         "shared/composer.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -421,8 +415,7 @@
         "service-front/package.json"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "schedule": ["* 6 1,15 * *"],
@@ -450,8 +443,7 @@
         "patch"
       ],
       "prCreation": "immediate",
-      "prPriority": 4,
-      "minimumReleaseAge": "7 days"
+      "prPriority": 4
     },
     {
       "groupName": "Docker images",
