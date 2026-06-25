@@ -47,6 +47,9 @@ COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 
+COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/health-check.sh
+
 WORKDIR /app
 
 ARG ENABLE_XDEBUG=0
