@@ -98,6 +98,7 @@
                 <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
                 <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                     {{ formElementErrorsV2(isRepeatApplication) }}
+                </div></div>
 
                 <div class="govuk-radios" data-module="govuk-radios">
                     {{ formRadio(isRepeatApplication) }}
@@ -109,12 +110,13 @@
                             {{ macros.formGroup(repeatCaseNumber) }}
                         </div>
 
-                        <p class="govuk-body">You can find the case number on the letter that came with the returned LPA application.</p>
+                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+                            <p class="govuk-body">You can find the case number on the letter that came with the returned LPA application.</p>
 
-                        <p class="govuk-body">By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
+                            <p class="govuk-body">By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
+                        </div></div>
                     </div>
                 </div>
-                </div></div>
             </fieldset>
         </div>
 
