@@ -83,14 +83,12 @@
             </div>
         </div>
 
-        <div class="iconlinks iconlinks--right">
-            <div class="iconlinks-item">
-                <a href="#" class="iconlinks-link js-print hide-if-no-js" data-analytics-click="page:link:Print this summary">
-                    <i class="icon icon-print"></i>
-                    <span class="iconlinks-text">Print this summary</span>
-                </a>
-            </div>
-        </div>
+        <p class="govuk-body govuk-!-text-align-right">
+            <a href="#" class="govuk-link js-print hide-if-no-js" data-analytics-click="page:link:Print this summary">
+                <i class="icon icon-print" aria-hidden="true"></i>
+                Print this summary
+            </a>
+        </p>
 
     {% endif %}
 
@@ -148,9 +146,9 @@
                 {{ form().openTag( form )|raw }}
                 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-            <div class="govuk-form-group">
+            <div class="govuk-button-group">
                 {{ formElement(form.get('submit')) }}
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="button-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
+                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="govuk-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
             </div>
 
             {{ form().closeTag|raw }}
@@ -172,8 +170,10 @@
             </strong>
         </div>
 
-        <a class="govuk-button" disabled="disabled">Confirm</a>
-        <a href="/user/dashboard" class="button-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        <div class="govuk-button-group">
+            <a class="govuk-button" disabled="disabled">Confirm</a>
+            <a href="/user/dashboard" class="govuk-link" data-analytics-click="page:link:save: Save for later">Save for later</a>
+        </div>
 
     {% endif %}
 

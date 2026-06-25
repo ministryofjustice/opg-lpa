@@ -22,7 +22,7 @@ jobs:
   terraform_environment_cleanup:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Get terraform version
         id: set-terraform-version
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0

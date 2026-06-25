@@ -63,7 +63,7 @@ class Lp3 extends AbstractIndividualPdf
 
         //  Determine how many additional page three instances were added
         //  If there is an odd number of additional pages then we need to insert a blank page
-        $additionalPages = ceil(count($lpa->document->primaryAttorneys) / self::MAX_ATTORNEYS_PER_PAGE) - 1;
+        $additionalPages = intval(ceil(count($lpa->document->primaryAttorneys) / self::MAX_ATTORNEYS_PER_PAGE)) - 1;
 
         if ($additionalPages % 2 == 1) {
             //  Insert a single blank page at the end of the document
