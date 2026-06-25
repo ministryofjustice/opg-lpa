@@ -92,7 +92,7 @@
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
-        <div>
+        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 
             {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
                 <p class="govuk-body">Either the donor or all the attorneys can apply to register the LPA.</p>
@@ -102,7 +102,7 @@
 
             <p class="govuk-body"><a href="/guide#topic-applicant" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the applicant">Find out more about the role of the applicant</a></p>
 
-        </div>
+        </div></div>
     </div>
 
     {# begin form #}

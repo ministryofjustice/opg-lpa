@@ -50,14 +50,14 @@
     <li id="fee-reduction-section" class="section current" data-cy="section-current">
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
-    	<div>
+    	<div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">If the donor receives certain benefits or has an income of less than £12,000 a year before tax, they might be eligible to pay a reduced fee or no fee at all.</p>
 
             {% if lpa.repeatCaseNumber is defined and lpa.repeatCaseNumber is not null %}
                 <p class="govuk-body">To apply, you will need to send us a ‘fee remissions and exemptions form’. If you applied for this reduction on the original LPA and sent that LPA to us in the current tax year (on or after 6 April), you do not need to send us proof of the donor’s income or benefits again.</p>
             {% endif %}
 
-        </div>
+        </div></div>
 	</div>
 
     {# begin form #}
