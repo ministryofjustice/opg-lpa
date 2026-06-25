@@ -53,9 +53,9 @@
 
         <fieldset>
             <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
-            <h2 class="govuk-heading-m flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
             <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+                <h2 class="govuk-heading-m flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
                 {{ formElementErrorsV2(canSustainLife) }}
                 {{ formRadio().outputOption(canSustainLife, "1")|raw }}
 
