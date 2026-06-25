@@ -5,12 +5,11 @@ declare(strict_types=1);
 namespace App\Service\Session;
 
 use App\Service\Redis\RedisClient;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 use Redis;
 
-class FilteringSaveHandler implements SaveHandlerInterface, LoggerAwareInterface
+class FilteringSaveHandler implements \SessionHandlerInterface, LoggerAwareInterface
 {
     use LoggerTrait;
 

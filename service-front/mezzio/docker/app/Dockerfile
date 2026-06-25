@@ -18,7 +18,8 @@ RUN apk add --no-cache icu fcgi \
     && docker-php-ext-install opcache \
     && docker-php-ext-install sockets
 
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
+# Default for AWS. Should be set to 1 for local development.
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
 COPY --chown=root:root shared /shared
 
