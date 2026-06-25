@@ -93,14 +93,14 @@
     };
 
     const handleStateChange = function () {
-      details.attr('open') === 'open' ? wrapped.open() : wrapped.close();
+      details.prop('open') ? wrapped.open() : wrapped.close();
     };
 
     const polyfillToggle = function () {
       // Toggle the open attribute on details element
-      details.attr('open') === 'open'
-        ? details.removeAttr('open')
-        : details.attr('open', 'open');
+      details.prop('open')
+        ? details.prop('open', false)
+        : details.prop('open', true);
 
       // Fire a toggle event on the details element; as we've set the
       // open attr, the existing handler for native details will trigger
@@ -182,7 +182,7 @@
       nonNativeInit();
 
       // Call open or close based on current state
-      details.attr('open') === 'open' ? wrapped.open() : wrapped.close();
+      details.prop('open') ? wrapped.open() : wrapped.close();
 
       inited = true;
       return inited;
