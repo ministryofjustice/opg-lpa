@@ -100,6 +100,7 @@
 	<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 	<fieldset>
         <legend class="govuk-visually-hidden">How should the replacement attorneys make decisions?</legend>
+        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
             <h2 class="govuk-heading-m flush--top">How should the replacement attorneys make decisions?</h2>
 
 			{{ formElementErrorsV2(how) }}
@@ -113,6 +114,7 @@
 					{{ macros.formGroup(howDetails) }}
 				</div>
 			</div>
+        </div></div>
 	    </fieldset>
 	</div>
 

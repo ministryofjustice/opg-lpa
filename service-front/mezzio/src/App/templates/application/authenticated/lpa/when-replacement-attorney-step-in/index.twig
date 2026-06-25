@@ -93,7 +93,7 @@
 		<div class="govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">
 	            <legend class="govuk-visually-hidden">How should the replacement attorneys step in?</legend>
-
+	            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 	                {{ formElementErrorsV2(when) }}
 
 				<div class="govuk-radios" data-module="govuk-radios">
@@ -106,6 +106,7 @@
 						{{ macros.formGroup(whenDetails) }}
 	                </div>
 				</div>
+	            </div></div>
 	        </fieldset>
 	    </div>
 		<div class="govuk-form-group">
