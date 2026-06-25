@@ -25,6 +25,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class CheckoutPayResponseHandlerTest extends TestCase
@@ -54,6 +55,8 @@ class CheckoutPayResponseHandlerTest extends TestCase
             $this->urlHelper,
             $this->renderer,
         );
+
+        $this->handler->setLogger($this->createMock(LoggerInterface::class));
     }
 
     /**
