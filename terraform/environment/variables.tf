@@ -58,6 +58,7 @@ variable "accounts" {
       regions = map(
         object({
           region     = string
+          enabled    = bool
           is_primary = string
       }))
       autoscaling = object({
