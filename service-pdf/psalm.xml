@@ -13,4 +13,18 @@
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
+
+    <issueHandlers>
+        <!--
+            AbstractData defines properties as protected then adds getters for them. This means
+            they're available publicly, but Psalm can't understand that.
+        -->
+        <InaccessibleProperty errorLevel="suppress" />
+
+        <!-- We don't currently use override attributes -->
+        <MissingOverrideAttribute errorLevel="suppress" />
+
+        <!-- We magically fetch properties from the DataModel -->
+        <UndefinedMagicPropertyFetch errorLevel="suppress" />
+    </issueHandlers>
 </psalm>

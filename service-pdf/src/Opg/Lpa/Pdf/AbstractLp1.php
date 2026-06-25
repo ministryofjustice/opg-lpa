@@ -215,7 +215,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
                 $strikeThroughArea = 'primaryAttorney-' . $i;
 
                 // Determine what page number this is
-                $strikeThroughPage = intval(2 + floor($i / 2));
+                $strikeThroughPage = 2 + intval(floor($i / 2));
 
                 if ($strikeThroughPage == 2) {
                     // Add the required strike through area prefix
@@ -310,7 +310,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
             } else {
                 // Add a strike through on the appropriate page
                 $strikeThroughArea = 'replacementAttorney-' . $i . '-' . $this->getAreaReferenceSuffix();
-                $strikeThroughPage = intval(5 + floor($i / 2));
+                $strikeThroughPage = 5 + intval(floor($i / 2));
 
                 $this->addStrikeThrough($strikeThroughArea, $strikeThroughPage);
             }
@@ -636,7 +636,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
 
     /**
      * @param Payment|null $payment
-     * @param null $repeatCaseNumber
+     * @param string|int|null $repeatCaseNumber
      */
     private function populatePageNineteen(Payment $payment = null, $repeatCaseNumber = null)
     {
@@ -1024,7 +1024,7 @@ abstract class AbstractLp1 extends AbstractIndividualPdf
         // If the stamped end page is numeric then that means this was NOT the
         // last page and therefore we need to append another unstamped part of the PDF
         if (is_numeric($stampedPdfEndPage)) {
-            $newPdf->cat($stampedPdfEndPage + 1, 'end', 'A');
+            $newPdf->cat(intval($stampedPdfEndPage) + 1, 'end', 'A');
         }
 
         $newPdf->flatten()
