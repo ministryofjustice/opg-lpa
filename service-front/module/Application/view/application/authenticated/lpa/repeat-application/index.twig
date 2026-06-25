@@ -87,7 +87,8 @@
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
-        {{ formElement(form.getCsrf) }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
 
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
@@ -95,7 +96,7 @@
         <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
-
+                <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                     {{ formElementErrorsV2(isRepeatApplication) }}
 
                 <div class="govuk-radios" data-module="govuk-radios">
@@ -108,17 +109,18 @@
                             {{ macros.formGroup(repeatCaseNumber) }}
                         </div>
 
-                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-                            <p class="govuk-body">You can find the case number on the letter that came with the returned LPA application.</p>
+                        <p class="govuk-body">You can find the case number on the letter that came with the returned LPA application.</p>
 
-                            <p class="govuk-body">By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
-                        </div></div>
+                        <p class="govuk-body">By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
                     </div>
                 </div>
+                </div></div>
             </fieldset>
         </div>
 
-        {{ formElement(form.get('save')) }}
+        <div class="govuk-form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
     {{ form().closeTag|raw }}
 </li>
 

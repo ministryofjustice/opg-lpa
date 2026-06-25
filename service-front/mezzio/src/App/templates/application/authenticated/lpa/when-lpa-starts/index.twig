@@ -38,21 +38,22 @@
             <fieldset>
                 <legend class="govuk-visually-hidden">When can the LPA be used?</legend>
                 <h2 class="govuk-heading-m flush--top">The LPA can be used</h2>
-
+                <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                 {{ formElementErrorsV2(when) }}
-                {{ formRadioOption(when, 'now')|raw }}
+                {{ formRadio().outputOption(when, 'now')|raw }}
 
                 <div class="govuk-inset-text">
-                        <p class="govuk-body">Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
+                    <p class="govuk-body">Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
 
-                        <p class="govuk-body">This option is useful if the donor is able to make their own decisions but there’s another reason they want their attorneys' help – for example, if the donor is away on holiday, or if they have a physical condition that makes it difficult to visit the bank.</p>
+                    <p class="govuk-body">This option is useful if the donor is able to make their own decisions but there's another reason they want their attorneys' help – for example, if the donor is away on holiday, or if they have a physical condition that makes it difficult to visit the bank.</p>
                 </div>
 
-                {{ formRadioOption(when, 'no-capacity')|raw }}
+                {{ formRadio().outputOption(when, 'no-capacity')|raw }}
 
                 <div class="govuk-inset-text">
-                        <p class="govuk-body">This means the attorneys can only act if the donor does not have mental capacity to make certain decisions themselves. But be careful – this option can make the LPA a lot less useful. Every time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.</p>
+                    <p class="govuk-body">This means the attorneys can only act if the donor does not have mental capacity to make certain decisions themselves. But be careful – this option can make the LPA a lot less useful. Every time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.</p>
                 </div>
+                </div></div>
             </fieldset>
         </div>
         <div class="govuk-form-group">
