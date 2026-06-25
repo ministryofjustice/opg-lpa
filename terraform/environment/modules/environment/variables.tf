@@ -124,15 +124,7 @@ variable "container_version" {
 variable "rds_proxy_iam_role" {
   type = any
 }
-<<<<<<< HEAD
 
-variable "mezzio_frontend_enabled" {
-  type        = bool
-  default     = false
-  description = "Flag to toggle the mezzio frontend switchover"
-}
-
-# tflint-ignore: terraform_unused_declarations
 variable "admin_cognito" {
   description = "Settings for the AWS Cognito to use for the admin interface."
   type = object({
@@ -144,5 +136,3 @@ variable "admin_cognito" {
   })
   sensitive = true
 }
-=======
->>>>>>> a7da0903c (pass tfvar through to ecs front configuration)
