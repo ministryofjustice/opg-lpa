@@ -144,8 +144,8 @@ data "aws_ecr_image" "lpa_front_mezzio_app" {
 locals {
 
   current_front_app_image = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}"
-  mezzio_front_app_image  = var.mezzio_frontend_enabled ? "${data.aws_ecr_repository.lpa_front_mezzio_app.repository_url}@${data.aws_ecr_image.lpa_front_mezzio_app.image_digest}" : null
-  front_app_image         = var.mezzio_frontend_enabled ? local.mezzio_front_app_image : local.current_front_app_image
+  mezzio_front_app_image  = var.account.mezzio_frontend_enabled ? "${data.aws_ecr_repository.lpa_front_mezzio_app.repository_url}@${data.aws_ecr_image.lpa_front_mezzio_app.image_digest}" : null
+  front_app_image         = var.account.mezzio_frontend_enabled ? local.mezzio_front_app_image : local.current_front_app_image
 
 }
 
