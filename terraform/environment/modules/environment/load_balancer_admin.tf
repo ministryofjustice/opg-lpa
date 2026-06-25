@@ -41,8 +41,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
   port              = "443"
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-
-  certificate_arn = data.aws_acm_certificate.certificate_admin.arn
+  certificate_arn   = data.aws_acm_certificate.certificate_admin.arn
 
   dynamic "default_action" {
     for_each = var.account.admin_cognito_auth_enabled ? [1] : []
@@ -64,27 +63,6 @@ resource "aws_lb_listener" "admin_loadbalancer" {
     }
   }
 
-  default_action {
-    type = "authenticate-oidc"
-    authenticate_oidc {
-      authentication_request_extra_params = {}
-      authorization_endpoint              = "${var.admin_cognito.user_pool_domain_name}/oauth2/authorize"
-      client_id                           = var.admin_cognito.id
-      client_secret                       = var.admin_cognito.user_pool_client_secret
-      issuer                              = "https://cognito-idp.eu-west-1.amazonaws.com/${var.admin_cognito.user_pool_id}"
-      on_unauthenticated_request          = "authenticate"
-      scope                               = "openid"
-      session_cookie_name                 = "AWSELBAuthSessionCookie"
-      session_timeout                     = var.admin_cognito.user_pool_id_token_validity
-      token_endpoint                      = "${var.admin_cognito.user_pool_domain_name}/oauth2/token"
-      user_info_endpoint                  = "${var.admin_cognito.user_pool_domain_name}/oauth2/userInfo"
-    }
-  }
-
-  default_action {
-    target_group_arn = aws_lb_target_group.admin.arn
-    type             = "forward"
-  }
   default_action {
     target_group_arn = aws_lb_target_group.admin.arn
     type             = "forward"
