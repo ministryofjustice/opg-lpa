@@ -8,8 +8,8 @@ use App\Service\AddressLookup\OrdnanceSurvey;
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\Redis\RedisClient;
+use App\Service\Session\FilteringSaveHandler;
 use Aws\DynamoDb\DynamoDbClient;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use Psr\Container\ContainerInterface;
 
 class StatusServiceFactory
@@ -28,7 +28,7 @@ class StatusServiceFactory
         return new StatusService(
             $container->get(ApiClient::class),
             $getOrNull(DynamoDbClient::class),
-            $getOrNull(SaveHandlerInterface::class),
+            $getOrNull(FilteringSaveHandler::class),
             $getOrNull(MailTransportInterface::class),
             $getOrNull(OrdnanceSurvey::class),
             $getOrNull(RedisClient::class),
