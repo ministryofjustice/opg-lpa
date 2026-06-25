@@ -212,8 +212,8 @@
                 <legend class="govuk-visually-hidden">Language options</legend>
 
 
-                {{ formRadioOption(contactInWelsh, 'english')|raw }}
-                {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
+                {{ formRadio().outputOption(contactInWelsh, 'english')|raw }}
+                {{ formRadio().outputOption(contactInWelsh, 'welsh')|raw }}
             </fieldset>
         </div>
 
