@@ -21,11 +21,16 @@ class ApplicantForm extends AbstractMainFlowForm
                 'div-attributes' => ['class' => 'govuk-radios__item'],
             ],
             'options' => [
+                'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                 'value_options' => [
                     'donor' => [
                         'value' => 'donor',
                     ],
-                    'attorney' => [],
+                    'attorney' => [
+                        'attributes' => [
+                            'data-aria-controls' => 'conditional-whoIsRegistering-attorney',
+                        ],
+                    ],
                 ],
             ],
         ],

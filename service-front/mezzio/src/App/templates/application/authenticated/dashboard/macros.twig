@@ -61,7 +61,7 @@
                             </li>
                         {% endif %}
                         <li>
-                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="js-form-popup" data-cy="delete-lpa" data-analytics-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="govuk-visually-hidden"> A{{ lpa.id }}</span></a>
+                            <a href="/user/dashboard/confirm-delete-lpa/{{ lpa.id }}{% if page > 1 %}?page={{ page }}{% endif %}" class="govuk-link js-form-popup" data-cy="delete-lpa" data-analytics-click="page:link:delete: Delete">Delete <span class="extra-text">LPA</span><span class="govuk-visually-hidden"> A{{ lpa.id }}</span></a>
                         </li>
                     </ul>
                 </div>

@@ -283,6 +283,7 @@ cypress-run-spec:
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 cypress-run-tags:
 	docker compose run --rm -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
+
 # Creates and runs stitched test suites for visual regression testing.
 cypress-run-stitched-suites:
 	@pushd cypress && python3 stitch.py && popd
@@ -306,7 +307,6 @@ cypress-update-baselines-clone: _cypress-stitch
 .PHONY: _cypress-stitch
 _cypress-stitch:
 	@pushd cypress && python3 stitch.py && popd
-
 
 # Internal helper - runs the baseline cypress commands without stitching. Expects SUITE_TAG to be set.
 .PHONY: _cypress-run-baseline-suite
@@ -399,6 +399,19 @@ mezzio-clear-cache:
 .PHONY: mezzio-cypress-run-spec
 mezzio-cypress-run-spec:
 	${MEZZIO_COMPOSE} run --rm --no-deps -v ./cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+
+# This should be used in the form : make mezzio-cypress-run-tags TAGS=@Signup. This is mainly used by CI, its normally more convenient locally to use mezzio-cypress-run-spec
+# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+.PHONY: mezzio-cypress-run-tags
+mezzio-cypress-run-tags:
+	${MEZZIO_COMPOSE} run --rm --no-deps -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress-mezzio --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",TAGS="${TAGS}"
+
+# Runs the "remaining" mezzio cypress tests - everything not covered by stitched suites or signup.
+# Mirrors the exclusion expression used in CI (workflow_merge_queue.yml cypress_tests_Remaining),
+# plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
+.PHONY: mezzio-cypress-run-remaining
+mezzio-cypress-run-remaining:
+	@${MAKE} mezzio-cypress-run-tags TAGS="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
 
 .PHONY: mezzio-cypress-open
 mezzio-cypress-open: npm-install python-api-venv

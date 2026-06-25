@@ -36,14 +36,22 @@ class CsrfValidationMiddleware implements MiddlewareInterface
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
-            $postToken    = ($request->getParsedBody() ?? [])[self::CSRF_KEY] ?? '';
-            $sessionToken = ($session instanceof SessionInterface) ? $session->get(self::CSRF_KEY, '') : '';
+            // JSON requests cannot be forged cross-origin by a browser (the SOP blocks
+            // non-simple content-types without a preflight), so CSRF validation is not
+            // applicable.  Skip token checking for application/json requests.
+            $contentType = $request->getHeaderLine('Content-Type');
+            $isJson      = str_contains(strtolower($contentType), 'application/json');
 
-            // Validate without consuming: compare directly so that concurrent XHR requests
-            // on the same page (popup opens, reuse-details, etc.) don't invalidate the token
-            // embedded in the parent page's main form.
-            if ($postToken === '' || $postToken !== $sessionToken) {
-                return new RedirectResponse($request->getUri()->getPath());
+            if (!$isJson) {
+                $postToken    = ($request->getParsedBody() ?? [])[self::CSRF_KEY] ?? '';
+                $sessionToken = ($session instanceof SessionInterface) ? $session->get(self::CSRF_KEY, '') : '';
+
+                // Validate without consuming: compare directly so that concurrent XHR requests
+                // on the same page (popup opens, reuse-details, etc.) don't invalidate the token
+                // embedded in the parent page's main form.
+                if ($postToken === '' || $postToken !== $sessionToken) {
+                    return new RedirectResponse($request->getUri()->getPath());
+                }
             }
         }
 
