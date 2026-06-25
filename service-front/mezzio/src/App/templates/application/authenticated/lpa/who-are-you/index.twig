@@ -71,7 +71,7 @@
         <div class="govuk-form-group {{ who.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-visually-hidden">Who was using the LPA service</legend>
-
+                <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
                 {{ formElementErrorsV2(who) }}
 
                 <div class="govuk-radios" data-module="govuk-radios">
@@ -164,6 +164,7 @@
                         </label>
                     </div>
                 </div>
+                </div></div>
             </fieldset>
         </div>
         <div class="govuk-form-group">
