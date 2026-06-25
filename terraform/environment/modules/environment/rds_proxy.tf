@@ -7,6 +7,7 @@ module "rds_proxy" {
   vpc_subnet_ids                 = [for subnet in data.aws_subnet.data : subnet.id]
   rds_client_security_group_id   = aws_security_group.rds_client.id
   rds_api_security_group_id      = aws_security_group.rds_api.id
+  rds_proxy_iam_role             = var.rds_proxy_iam_role
   secretsmanager_encryption_key_arns = [
     data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
   ]

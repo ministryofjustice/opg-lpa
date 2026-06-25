@@ -106,22 +106,26 @@ resource "aws_ecs_task_definition" "front" {
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_web"
 }
 
 data "aws_ecr_image" "lpa_front_web" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_web.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_app"
 }
 
 data "aws_ecr_image" "lpa_front_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_app.name
   image_tag       = var.container_version
   provider        = aws.management
@@ -180,7 +184,7 @@ locals {
       logDriver = "awslogs",
       options = {
         awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-        awslogs-region        = "eu-west-1",
+        awslogs-region        = data.aws_region.current.region,
         awslogs-stream-prefix = "${var.environment_name}.front-web.online-lpa",
         mode                  = "non-blocking",
         max-buffer-size       = "25m",
@@ -229,7 +233,7 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.front-app.online-lpa",
           mode                  = "non-blocking",
           max-buffer-size       = "25m",
@@ -268,7 +272,8 @@ locals {
         { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
-        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction }
+        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }
   )
