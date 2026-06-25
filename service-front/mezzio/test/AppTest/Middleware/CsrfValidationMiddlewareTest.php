@@ -168,4 +168,61 @@ class CsrfValidationMiddlewareTest extends TestCase
     {
         $this->assertEquals('csrfToken', CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
     }
+
+    public function testJsonPostBypassesCsrfValidationAndPassesThrough(): void
+    {
+        // No __csrf in session or body, but it's a JSON request — should pass through
+        $this->session->method('has')->with('__csrf')->willReturn(false);
+        $this->guard->method('generateToken')->willReturn('new-token');
+
+        $expected = new EmptyResponse();
+
+        $request = (new ServerRequest())
+            ->withMethod('POST')
+            ->withHeader('Content-Type', 'application/json')
+            ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+
+        $result = $this->middleware->process($request, $this->handlerReturning($expected));
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function testJsonPostWithCharsetBypassesCsrfValidation(): void
+    {
+        $this->session->method('has')->with('__csrf')->willReturn(false);
+        $this->guard->method('generateToken')->willReturn('new-token');
+
+        $expected = new EmptyResponse();
+
+        $request = (new ServerRequest())
+            ->withMethod('POST')
+            ->withHeader('Content-Type', 'application/json; charset=utf-8')
+            ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+
+        $result = $this->middleware->process($request, $this->handlerReturning($expected));
+
+        $this->assertSame($expected, $result);
+    }
+
+    public function testFormPostWithoutCsrfStillRedirects(): void
+    {
+        // Confirm that form/urlencoded POST without __csrf is still rejected
+        $this->session->method('get')->with('__csrf', '')->willReturn('some-token');
+
+        $request = (new ServerRequest())
+            ->withMethod('POST')
+            ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
+            ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withParsedBody(['other' => 'data']);
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $result = $this->middleware->process($request, $handler);
+
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+    }
 }

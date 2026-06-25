@@ -16,14 +16,31 @@
 {# Set form fields variables #}
 {% set when = form.get('when') %}
 
+{{ when.setValueOptions({
+    'now': {
+        'value': 'now',
+        'label': "as soon as it's registered (with the donor's consent)",
+        'attributes': {'class': 'govuk-radios__input'},
+        'div-attributes': {'class': 'govuk-radios__item'},
+        'label_attributes': {'class': 'govuk-label govuk-radios__label'}
+    },
+    'no-capacity': {
+        'value': 'no-capacity',
+        'label': 'only if the donor does not have mental capacity',
+        'attributes': {'class': 'govuk-radios__input'},
+        'div-attributes': {'class': 'govuk-radios__item'},
+        'label_attributes': {'class': 'govuk-label govuk-radios__label'}
+    }
+}) ? '' }}
+
 <li id="when-lpa-starts-section" class="section current" data-cy="section-current">
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
-        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+        <div class="text">
             <p class="govuk-body">If the donor wants help straight away with managing their property and finances, they can say that their LPA can be used as soon as it's registered.</p>
             <p class="govuk-body">Alternatively, they can say that their LPA can only be used if they do not have <a href="/guide#topic-mental-capacity" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about mental capacity">mental capacity</a>.</p>
             <p class="govuk-body"><a href="/guide#topic-when-an-lpa-can-be-used" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about your options">Find out more the donor's options</a></p>
-        </div></div>
+        </div>
     </div>
 
     {# begin form #}
@@ -38,22 +55,22 @@
             <fieldset>
                 <legend class="govuk-visually-hidden">When can the LPA be used?</legend>
                 <h2 class="govuk-heading-m flush--top">The LPA can be used</h2>
-                <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+
                 {{ formElementErrorsV2(when) }}
-                {{ formRadio().outputOption(when, 'now')|raw }}
+                <div class="govuk-radios">
+                    {{ formRadioOption(when, 'now')|raw }}
 
-                <div class="govuk-inset-text">
-                    <p class="govuk-body">Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
+                    <div class="govuk-radios__conditional govuk-!-width-two-thirds" id="conditional-when-now">
+                        <p class="govuk-body">Most donors choose this option because it is the most practical. While the donor still has mental capacity, their attorneys can only act with the donor's permission. The donor will still be in control of all decisions affecting them.</p>
+                        <p class="govuk-body">This option is useful if the donor is able to make their own decisions but there's another reason they want their attorneys' help – for example, if the donor is away on holiday, or if they have a physical condition that makes it difficult to visit the bank.</p>
+                    </div>
 
-                    <p class="govuk-body">This option is useful if the donor is able to make their own decisions but there's another reason they want their attorneys' help – for example, if the donor is away on holiday, or if they have a physical condition that makes it difficult to visit the bank.</p>
+                    {{ formRadioOption(when, 'no-capacity')|raw }}
+
+                    <div class="govuk-radios__conditional govuk-!-width-two-thirds" id="conditional-when-no-capacity">
+                        <p class="govuk-body">This means the attorneys can only act if the donor does not have mental capacity to make certain decisions themselves. But be careful – this option can make the LPA a lot less useful. Every time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.</p>
+                    </div>
                 </div>
-
-                {{ formRadio().outputOption(when, 'no-capacity')|raw }}
-
-                <div class="govuk-inset-text">
-                    <p class="govuk-body">This means the attorneys can only act if the donor does not have mental capacity to make certain decisions themselves. But be careful – this option can make the LPA a lot less useful. Every time the attorneys try to use the LPA, they might be asked to prove that the donor does not have mental capacity.</p>
-                </div>
-                </div></div>
             </fieldset>
         </div>
         <div class="govuk-form-group">
