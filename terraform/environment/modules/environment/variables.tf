@@ -15,6 +15,7 @@ variable "account" {
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
     admin_cognito_auth_enabled             = bool
+    mezzio_frontend_enabled                = bool
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
@@ -123,6 +124,7 @@ variable "container_version" {
 variable "rds_proxy_iam_role" {
   type = any
 }
+<<<<<<< HEAD
 
 variable "mezzio_frontend_enabled" {
   type        = bool
@@ -142,3 +144,5 @@ variable "admin_cognito" {
   })
   sensitive = true
 }
+=======
+>>>>>>> a7da0903c (pass tfvar through to ecs front configuration)
