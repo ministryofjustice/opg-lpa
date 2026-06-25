@@ -60,7 +60,7 @@
         "laminas/laminas-form": "^3.24",
         "laminas/laminas-servicemanager": "^3.22",
         "laminas/laminas-stdlib": "^3.21",
-        "laminas/laminas-view": "^2.44",
+        "laminas/laminas-view": "^3.0",
         "mezzio/mezzio": "^3.23.1",
         "mezzio/mezzio-csrf": "^1.11",
         "mezzio/mezzio-fastroute": "^3.11.0",
