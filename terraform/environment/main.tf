@@ -1,10 +1,17 @@
 module "eu-west-1" {
-  source             = "./modules/environment"
-  account            = local.account
-  account_name       = local.account_name
-  environment_name   = local.environment_name
-  region_name        = "eu-west-1"
-  container_version  = var.container_version
+  source            = "./modules/environment"
+  account           = local.account
+  account_name      = local.account_name
+  environment_name  = local.environment_name
+  region_name       = "eu-west-1"
+  container_version = var.container_version
+  admin_cognito = {
+    id                          = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id
+    user_pool_id                = local.admin_cognito_user_pool_id
+    user_pool_domain_name       = local.admin_cognito_user_pool_domain_name
+    user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.client_secret
+    user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id_token_validity
+  }
   ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
     api               = aws_iam_role.api_task_role
@@ -22,13 +29,20 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count              = local.account.regions["eu-west-2"].enabled ? 1 : 0
-  source             = "./modules/environment"
-  account            = local.account
-  account_name       = local.account_name
-  environment_name   = local.environment_name
-  region_name        = "eu-west-2"
-  container_version  = var.container_version
+  count             = local.account.regions["eu-west-2"].enabled ? 1 : 0
+  source            = "./modules/environment"
+  account           = local.account
+  account_name      = local.account_name
+  environment_name  = local.environment_name
+  region_name       = "eu-west-2"
+  container_version = var.container_version
+  admin_cognito = {
+    id                          = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id
+    user_pool_id                = local.admin_cognito_user_pool_id
+    user_pool_domain_name       = local.admin_cognito_user_pool_domain_name
+    user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.client_secret
+    user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id_token_validity
+  }
   ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
     api               = aws_iam_role.api_task_role
