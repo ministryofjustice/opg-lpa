@@ -39,11 +39,13 @@ resource "aws_ecs_task_definition" "seeding" {
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/seeding_app"
 }
 
 data "aws_ecr_image" "lpa_seeding_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_seeding_app.name
   image_tag       = var.container_version
   provider        = aws.management
@@ -72,7 +74,7 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.seeding.online-lpa",
           mode                  = "non-blocking",
           max-buffer-size       = "25m",
@@ -86,7 +88,8 @@ locals {
         { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
         { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
-        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name }
+        { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
   })
 }
