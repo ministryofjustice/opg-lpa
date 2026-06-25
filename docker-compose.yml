@@ -20,7 +20,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.4-alpine@sha256:054c4e144f09447f69091fee43b7ed33ad7b9bd13d756a073675f2e711eb383c
+    image: library/redis:8.8-alpine@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005
   #    ports:
   #      - 6379:6379
 
@@ -487,14 +487,14 @@ services:
       - ./cypress.config.js:/app/cypress.config.js
 
   npm-root:
-    image: node:24.14.1-alpine3.23@sha256:8510330d3eb72c804231a834b1a8ebb55cb3796c3e4431297a24d246b8add4d5
+    image: node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436
     working_dir: /home/node
     entrypoint: npm
     volumes:
       - ./:/home/node
 
   npm-front:
-    image: node:24.14.1-alpine3.23@sha256:8510330d3eb72c804231a834b1a8ebb55cb3796c3e4431297a24d246b8add4d5
+    image: node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436
     working_dir: /home/node
     entrypoint: npm
     volumes:
