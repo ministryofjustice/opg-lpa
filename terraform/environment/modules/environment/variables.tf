@@ -128,3 +128,15 @@ variable "mezzio_frontend_enabled" {
   default     = false
   description = "Flag to toggle the mezzio frontend switchover"
 }
+
+variable "admin_cognito" {
+  description = "Settings for the AWS Cognito to use for the admin interface."
+  type = object({
+    id                          = string
+    user_pool_id                = string
+    user_pool_domain_name       = string
+    user_pool_client_secret     = string
+    user_pool_id_token_validity = string
+  })
+  sensitive = true
+}
