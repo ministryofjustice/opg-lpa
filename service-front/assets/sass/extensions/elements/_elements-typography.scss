@@ -85,7 +85,27 @@
 }
 
 // Restore margins for GOV.UK Frontend heading classes to match the old toolkit
-// heading-medium / heading-small values that were lost in the migration.
+// heading-xlarge / heading-large / heading-medium / heading-small values.
+.govuk-heading-xl {
+    margin-top: govuk-spacing(6);
+    margin-bottom: govuk-spacing(3);
+
+    @include govuk-media-query($from: tablet) {
+        margin-top: govuk-spacing(9);
+        margin-bottom: govuk-spacing(6);
+    }
+}
+
+.govuk-heading-l {
+    margin-top: govuk-spacing(5);
+    margin-bottom: govuk-spacing(2);
+
+    @include govuk-media-query($from: tablet) {
+        margin-top: 45px;
+        margin-bottom: govuk-spacing(4);
+    }
+}
+
 .govuk-heading-m {
     margin-top: govuk-spacing(5);
     margin-bottom: govuk-spacing(2);
