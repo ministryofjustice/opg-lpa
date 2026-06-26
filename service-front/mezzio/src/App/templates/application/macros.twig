@@ -1,0 +1,151 @@
+{# Form Validation - Error Summary #}
+{% macro formErrorSummary(error, form, message = "There is a problem") %}
+
+    {% if (error is not empty or form.getMessages|length > 0) %}
+    <div class="govuk-error-summary" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary" data-module="govuk-error-summary">
+        <h2 class="govuk-error-summary__title" id="error-heading" data-cy="error-heading">{{ message }}</h2>
+
+        {% if error is not empty %}
+            {# API errors #}
+            <div class="govuk-error-summary__body" data-tracking-context="API error">
+                {% if error == 'user-not-found' %}
+                    <p class="govuk-body" data-tracking-summary="User not found">
+                        We could not find an LPA account for this email address.<br><a class="govuk-link" href="signup">Create an LPA account now.</a>
+                    </p>
+                {% elseif error == 'address-already-registered' %}
+                    <p class="govuk-body" data-tracking-summary="Email address already registered">
+                        This email address has already been registered. Please <a class="govuk-link" href="{{ url('login') }}">sign in</a> or <a class="govuk-link" href="{{ url('forgot-password') }}">reset your password</a>.
+                    </p>
+                {% elseif error == 'user-already-has-email' %}
+                    <p class="govuk-body" data-tracking-summary="User already has email address">
+                        You're already using that email address for this account – please enter another email address.
+                    </p>
+                {% elseif error == 'email-already-exists' %}
+                    <p class="govuk-body" data-tracking-summary="Email address already exists">
+                        Another LPA account is already using that email address – please enter a different email address.
+                    </p>
+                {% elseif error == 'api-error' %}
+                    <p class="govuk-body" data-tracking-summary="API unavailable">
+                        Sorry, the service is unavailable. Please try again later.
+                    </p>
+                {% else %}
+                    <p class="govuk-body" data-tracking-summary="{{ error }}">
+                        Unexpected error: {{ error }}
+                    </p>
+                {% endif %}
+            </div>
+        {% else %}
+            <ul class="govuk-error-summary__list">
+                {% for e in form_linked_errors(form) %}
+                    <li>
+                        <a class="govuk-link" href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+    {% endif %}
+
+{% endmacro %}
+
+{# Text input #}
+{% macro formGroup(element) %}
+
+<div class="govuk-form-group{{ element.getMessages|length >0 ? ' govuk-form-group--error'}}">
+    {{ formElementErrorsV2(element) }}
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
+        {{ element.getOption('label') }}
+    </label>
+    {{ formElement(element) }}
+</div>
+
+{% endmacro %}
+
+{# Checkbox #}
+{% macro formGroupCheckbox(element) %}
+
+<div class="option group">
+    <label class="govuk-label" for="{{ element.getAttribute('id') }}">
+        {{ element.getOption('label')|raw }}
+    </label>
+    {{ formElement(element) }}
+</div>
+
+{% endmacro %}
+
+{% macro displayUseMyDetailsLink(analyticsDescription, csrfToken) %}
+    {% set currentHostLength = serverUrl() | length %}
+    {% set action = serverUrl(true)[currentHostLength:] %}
+    <div class="action-item use-details-link-panel hard--bottom">
+        <form novalidate="novalidate" method="post" action="{{ action }}">
+            <input type="hidden" name="reuse-details" value="0">
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+            <button type="submit" name="submit" class="app-button-link govuk-link" data-cy="use-my-details" {% if analyticsDescription %} data-analytics-click="page:link:reuse: {{ analyticsDescription }}" {% endif %}>Use my details</button>
+        </form>
+    </div>
+{% endmacro %}
+
+{% macro addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, trustLink) %}
+    {% if (switchAttorneyTypeRoute) %}
+        <div class="action-item use-details-link-panel hard--bottom">
+            <a class="govuk-link js-form-popup" data-cy="use-trust-corporation" href="{{ url(switchAttorneyTypeRoute, {'lpa-id': lpa.id}) }}">Using {{ trustLink ? 'a trust corporation' : 'an individual' }}?</a>
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro renderFormButtons(cancelUrl, backButtonUrl) %}
+    <div class="govuk-button-group">
+        {# Submit button #}
+        <input type="submit" name="submit" id="form-save" value="Save details" class="govuk-button" data-cy="form-save">
+
+        {# Back button - if necessary #}
+        {% if (backButtonUrl) %}
+            <a href="{{ backButtonUrl }}" class="govuk-button govuk-button--secondary js-form-popup" data-cy="form-back">Back</a>
+        {% endif %}
+
+        {# Cancel button #}
+        {% if cancelUrl %}
+            <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro continuationNotes(continuationNoteKeys) %}
+
+    {%- if continuationNoteKeys|length > 0 -%}
+        <h3 class="govuk-heading-m">Continuation sheets</h3>
+
+        {%- for cnote in continuationNoteKeys -%}
+            {%- if cnote != 'HAS_ATTORNEY_DECISIONS' and cnote != 'LONG_INSTRUCTIONS_OR_PREFERENCES' -%}
+            <p class="govuk-body" data-cy="continuation-sheet-notes">
+                {% if cnote == 'ALL_PEOPLE_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys, 2 replacement attorneys and 4 people to notify. The extra attorneys, replacements and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'ALL_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys and 2 replacement attorneys. The extra attorneys and replacements are listed at the end of the LPA form on 'continuation sheet 1'.
+                {% elseif cnote == 'PRIMARY_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'REPLACEMENT_ATTORNEY_AND_NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 2 replacement attorneys and 4 people to notify. The extra attorneys and people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'PRIMARY_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 attorneys. The extra attorneys are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'REPLACEMENT_ATTORNEY_OVERFLOW' %}
+                    An LPA form only has enough space to add 2 replacement attorneys. The extra replacement attorneys are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'NOTIFY_OVERFLOW' %}
+                    An LPA form only has enough space to add 4 people to notify. The extra people to notify are listed at the end of the LPA on 'continuation sheet 1'.
+                {% elseif cnote == 'CANT_SIGN' %}
+                    As the donor cannot sign the LPA, a trusted person will need to sign 'continuation sheet 3' on the donor's behalf. The continuation sheet is included at the end of the LPA form.
+                {% elseif cnote == 'HAS_TRUST_CORP' %}
+                    As the donor appointed a Trust Corporation as an attorney, an authorised person from the corporation will need to sign 'continuation sheet 4'. The continuation sheet is included at the end of the LPA form.
+                {% endif %}
+            </p>
+            {%- endif -%}
+        {%- endfor -%}
+
+        {%- if 'HAS_ATTORNEY_DECISIONS' in continuationNoteKeys or 'LONG_INSTRUCTIONS_OR_PREFERENCES' in continuationNoteKeys -%}
+            <p class="govuk-body" data-cy="continuation-sheet-notes">
+                As there are extra instructions for the attorneys on the LPA, the donor will need to sign 'continuation sheet 2'. The continuation sheet is included at the end of the LPA form.
+            </p>
+        {%- endif -%}
+    {%- endif -%}
+
+{% endmacro %}

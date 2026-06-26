@@ -17,6 +17,9 @@ jobs:
             service: admin-app-test
           - name: service-front
             service: front-app-test
+          - name: service-front-mezzio
+            service: front-app-mezzio-test
+            ignoreFailures: true
           - name: service-api
             service: api-app-test
           - name: shared
@@ -25,12 +28,13 @@ jobs:
             service: pdf-app-test
     steps:
       - name: Checkout code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ matrix.scan.service }}
           path: /tmp/images
+
       - name: Load Images
         run: |
           docker load -i /tmp/images/image.tar
@@ -38,14 +42,17 @@ jobs:
       - name: Run Psalm
         run: |
           mkdir -m 0777 ./output
-          docker compose run --rm \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm \
             --volume ./output:/tmp/output \
             ${{ matrix.scan.service }} \
             vendor/bin/psalm --report=/tmp/output/psalm-results.sarif --no-cache
+        continue-on-error: ${{ matrix.scan.ignoreFailures == true }}
+
       - name: Add prefix to Psalm paths
         if: always()
         run: |
           sed -i 's|"uri":"|"uri":"${{ matrix.scan.name }}\/|g' ./output/psalm-results.sarif
+
       - name: Upload Security Analysis results to GitHub
         uses: github/codeql-action/upload-sarif@014f16e7ab1402f30e7c3329d33797e7948572db # v4.31.3
         if: always()

@@ -9,8 +9,10 @@ variable "account" {
     retention_in_days  = number
     regions = map(
       object({
-        region     = string
-        is_primary = string
+        region                         = string
+        is_primary                     = string
+        elasticache_node_type          = string
+        codecatalyst_endpoints_enabled = bool
     }))
     dns_firewall = object({
       enabled         = bool
@@ -39,4 +41,10 @@ variable "account_name" {
 variable "firewalled_vpc_cidr_range" {
   type        = string
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length."
+}
+
+variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
+  type        = bool
+  description = "enable AWSManagedRulesAmazonIpReputationList in this account"
+  default     = false
 }

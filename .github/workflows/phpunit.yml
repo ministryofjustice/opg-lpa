@@ -17,6 +17,9 @@ jobs:
             minCoverage: 3
           - service: front-app-test
             minCoverage: 85
+          - service: front-app-mezzio-test
+            minCoverage: 85
+            ignoreFailures: true
           - service: api-app-test
             minCoverage: 74
           - service: pdf-app-test
@@ -25,9 +28,9 @@ jobs:
             minCoverage: 90
     steps:
       - name: Checkout code
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
-      - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ matrix.scan.service }}
           path: /tmp/images
@@ -38,18 +41,23 @@ jobs:
       - name: Run phpunit
         run: |
           mkdir -m 0777 ./coverage-html ./coverage-xml
-          docker compose run --rm \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm \
             --env XDEBUG_MODE=coverage \
             --volume ./coverage-html:/tmp/coverage-html \
             --volume ./coverage-xml:/tmp/coverage-xml \
             ${{ matrix.scan.service }} \
             vendor/bin/phpunit --coverage-html /tmp/coverage-html --coverage-xml /tmp/coverage-xml
+        continue-on-error: ${{ matrix.scan.ignoreFailures == true }}
+
       - name: Check coverage
+        if: ${{ matrix.scan.ignoreFailures != true }}
         run: |
-          docker compose run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
+          docker compose -f docker-compose.yml -f docker-compose.mezzio.yml run --rm --volume ./coverage-xml:/tmp/coverage-xml ${{ matrix.scan.service }} \
           php /shared/src/functions/check_coverage.php /tmp/coverage-xml/index.xml ${{ matrix.scan.minCoverage }}
+
       - name: Upload Coverage Artifacts
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        if: ${{ matrix.scan.ignoreFailures != true }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ matrix.scan.service }}-coverage-html
           path: ./coverage-html/

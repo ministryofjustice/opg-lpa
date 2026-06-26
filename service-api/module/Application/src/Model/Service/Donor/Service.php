@@ -8,7 +8,6 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Document\Donor;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -33,9 +32,7 @@ class Service extends AbstractService
         $lpa = $this->getLpa($lpaId);
         $lpa->getDocument()->setDonor($donor);
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after setting donor');
 
         $this->updateLpa($lpa);
 

@@ -33,6 +33,7 @@ variable "account" {
     regions = map(
       object({
         region     = string
+        enabled    = bool
         is_primary = string
     }))
     autoscaling = object({
@@ -116,4 +117,14 @@ variable "ecs_execution_role" {
 variable "container_version" {
   type    = string
   default = "latest"
+}
+
+variable "rds_proxy_iam_role" {
+  type = any
+}
+
+variable "mezzio_frontend_enabled" {
+  type        = bool
+  default     = false
+  description = "Flag to toggle the mezzio frontend switchover"
 }

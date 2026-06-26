@@ -76,11 +76,11 @@
 
 {{ whoIsRegistering.setOptions({
     value_options: whoIsRegisteringValueOptions,
-    label_attributes: {'class': 'text block-label'}
+    label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? '' }}
 
 {{ attorneyList.setOptions({
-    label_attributes: {'class': 'text block-label'}
+    label_attributes: {'class': 'govuk-label govuk-checkboxes__label'}
 }) ? '' }}
 
 {{ whoIsRegistering.setLabelOptions({
@@ -89,18 +89,18 @@
 
 <li id="applicant-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
 
             {% if (lpa.document.primaryAttorneyDecisions.how == 'jointly') %}
-                <p>Either the donor or all the attorneys can apply to register the LPA.</p>
+                <p class="govuk-body">Either the donor or all the attorneys can apply to register the LPA.</p>
             {% else %}
-                <p>Either the donor or one or more of the attorneys can apply to register the LPA.</p>
+                <p class="govuk-body">Either the donor or one or more of the attorneys can apply to register the LPA.</p>
             {% endif %}
 
-            <p><a href="/guide#topic-applicant" class="js-guidance" data-analytics-click="page:link:help: Find out more about the role of the applicant">Find out more about the role of the applicant</a></p>
+            <p class="govuk-body"><a href="/guide#topic-applicant" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the applicant">Find out more about the role of the applicant</a></p>
 
         </div>
     </div>
@@ -112,16 +112,16 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="form-group {{ whoIsRegistering.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ whoIsRegistering.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 
             <fieldset>
-                <legend class="heading-medium flush--top">This LPA is being registered by</legend>
+                <legend class="govuk-heading-m flush--top">This LPA is being registered by</legend>
                     {{ formElementErrorsV2(whoIsRegistering) }}
                     {{ formRadio(whoIsRegistering) }}
             </fieldset>
             {% if (attorneyList) %}
                 <fieldset>
-                    <div class="panel js-attorney-list">
+                    <div class="govuk-inset-text js-attorney-list">
                         {{ formElementErrorsV2(attorneyList) }}
                         {{ formCheckbox(attorneyList) }}
                     </div>
@@ -129,9 +129,7 @@
             {% endif %}
         </div>
 
-        <div class="form-group">
-            {{ formElement(form.get('save')) }}
-        </div>
+        {{ formElement(form.get('save')) }}
 
 	{{ form().closeTag|raw }}
 

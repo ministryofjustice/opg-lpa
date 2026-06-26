@@ -1,0 +1,654 @@
+{% extends 'layout/layout.twig' %}
+
+{% import "application/macros.twig" as macros %}
+
+{%- set pageTitle = 'Check signature dates' -%}
+{%- set donorSignatureDate = lpa.document.donor.canSign ? "donor's signature date" : "signature date of the person signing on behalf of the donor" -%}
+{%- set errorMappings = {
+    'sign-date-donor-life-sustaining': {
+        'Enter all the date fields': 'Enter the ' ~ (donorSignatureDate),
+        'The input does not appear to be a valid date': 'The ' ~ (donorSignatureDate) ~ ' does not appear to be a valid date'
+    },
+    'sign-date-donor': {
+        'Enter all the date fields': 'Enter the ' ~ (donorSignatureDate),
+        'The input does not appear to be a valid date': 'The ' ~ (donorSignatureDate) ~ ' does not appear to be a valid date'
+    },
+    'sign-date-certificate-provider': {
+        'Enter all the date fields': 'Enter the certificate provider\'s signature date',
+        'The input does not appear to be a valid date': 'The certificate provider\'s signature date does not appear to be a valid date'
+    }
+} -%}
+
+{# Loop through the attorneys and add mappings for each #}
+{% for idx, attorney in lpa.document.primaryAttorneys %}
+    {% set messageKey = 'sign-date-attorney-' ~ idx %}
+
+    {% set errorMappings = errorMappings|merge({
+        (messageKey) : {
+            'Enter all the date fields': 'Enter the attorney\'s signature date',
+            'The input does not appear to be a valid date': 'The attorney\'s signature date does not appear to be a valid date'
+        }
+    }) %}
+{% endfor %}
+
+{% for idx, attorney in lpa.document.replacementAttorneys %}
+    {% set messageKey = 'sign-date-replacement-attorney-' ~ idx %}
+
+    {% set errorMappings = errorMappings|merge({
+        (messageKey) : {
+            'Enter all the date fields': 'Enter the replacement attorney\'s signature date',
+            'The input does not appear to be a valid date': 'The replacement attorney\'s signature date does not appear to be a valid date'
+        }
+    }) %}
+{% endfor %}
+
+{% for idx, applicant in applicants %}
+    {% set messageKey = 'sign-date-applicant-' ~ idx %}
+
+    {% if applicant['isHuman'] and applicant['isDonor'] and not lpa.document.donor.canSign %}
+        {% set applicantSignatureDate = "signature date of the person signing on behalf of the applicant" %}
+    {% else %}
+        {% set applicantSignatureDate = "applicant's signature date" %}
+    {% endif %}
+
+    {% set errorMappings = errorMappings|merge({
+        (messageKey) : {
+            'Enter all the date fields': 'Enter the ' ~ (applicantSignatureDate),
+            'The input does not appear to be a valid date': 'The ' ~ (applicantSignatureDate) ~ ' does not appear to be a valid date'
+        }
+    }) %}
+{% endfor %}
+
+{% set form = formErrorTextExchange(form, errorMappings) %}
+
+{% block errorSummary %}
+    {# Error summary #}
+    {{ macros.formErrorSummary(error,form) }}
+{% endblock %}
+
+{% block content %}
+
+    {# Set form fields variables #}
+    {% set donorElement = form.get('sign-date-donor') %}
+    {% set donorElementDay = donorElement.get('day') %}
+    {% set donorElementDayId = donorElementDay.getAttribute('name') %}
+
+    {% set donorElementMonth = donorElement.get('month') %}
+    {% set donorElementMonthId = donorElementMonth.getAttribute('name') %}
+
+    {% set donorElementYear = donorElement.get('year') %}
+    {% set donorElementYearId = donorElementYear.getAttribute('name') %}
+
+    {# form fields config #}
+    {{ donorElementDay.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '2',
+        pattern: '[0-9]*',
+        id: donorElementDayId,
+        'data-cy': 'date-check-date-day'
+    }) ? '' }}
+    {{ donorElementMonth.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '2',
+        pattern: '[0-9]*',
+        id: donorElementMonthId,
+        'data-cy': 'date-check-date-month'
+    }) ? '' }}
+    {{ donorElementYear.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '4',
+        pattern: '[0-9]*',
+        id: donorElementYearId,
+        'data-cy': 'date-check-date-year'
+    }) ? '' }}
+
+    {% set certificateProviderElement = form.get('sign-date-certificate-provider') %}
+    {% set certificateProviderElementDay = certificateProviderElement.get('day') %}
+    {% set certificateProviderElementDayId = certificateProviderElementDay.getAttribute('name') %}
+
+    {% set certificateProviderElementMonth = certificateProviderElement.get('month') %}
+    {% set certificateProviderElementMonthId = certificateProviderElementMonth.getAttribute('name') %}
+
+    {% set certificateProviderElementYear = certificateProviderElement.get('year') %}
+    {% set certificateProviderElementYearId = certificateProviderElementYear.getAttribute('name') %}
+
+    {{ certificateProviderElementDay.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '2',
+        pattern: '[0-9]*',
+        id: certificateProviderElementDayId,
+        'data-cy': 'date-check-date-day'
+    }) ? '' }}
+
+    {{ certificateProviderElementMonth.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '2',
+        pattern: '[0-9]*',
+        id: certificateProviderElementMonthId,
+        'data-cy': 'date-check-date-month'
+    }) ? '' }}
+
+    {{ certificateProviderElementYear.setAttributes({
+        type: 'text',
+        class: 'form-control',
+        inputmode: 'numeric',
+        maxlength: '4',
+        pattern: '[0-9]*',
+        id: certificateProviderElementYearId,
+        'data-cy': 'date-check-date-year'
+    }) ? '' }}
+
+    {% if form.has('sign-date-donor-life-sustaining') %}
+
+        {% set donorLifeSustainingElement = form.get('sign-date-donor-life-sustaining') %}
+
+        {% set donorLifeSustainingElementDay = donorLifeSustainingElement.get('day') %}
+        {% set donorLifeSustainingElementDayId = donorLifeSustainingElementDay.getAttribute('name') %}
+
+        {% set donorLifeSustainingElementMonth = donorLifeSustainingElement.get('month') %}
+        {% set donorLifeSustainingElementMonthId = donorLifeSustainingElementMonth.getAttribute('name') %}
+
+        {% set donorLifeSustainingElementYear = donorLifeSustainingElement.get('year') %}
+        {% set donorLifeSustainingElementYearId = donorLifeSustainingElementYear.getAttribute('name') %}
+
+        {{ donorLifeSustainingElementDay.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: donorLifeSustainingElementDayId,
+            'data-cy': 'date-check-date-day'
+        }) ? '' }}
+
+        {{ donorLifeSustainingElementMonth.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: donorLifeSustainingElementMonthId,
+            'data-cy': 'date-check-date-month'
+        }) ? '' }}
+
+        {{ donorLifeSustainingElementYear.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '4',
+            pattern: '[0-9]*',
+            id: donorLifeSustainingElementYearId,
+            'data-cy': 'date-check-date-year'
+        }) ? '' }}
+
+    {% endif %}
+
+    <div class="accordion-info">
+        <div class="text">
+
+            <p class="govuk-body">This page is optional. You can use it to check that your {{ lpa.document.type == 'health-and-welfare' ? 'health and welfare' : 'property and finance' }} LPA has been <a href="/guide#topic-signing-the-lpa" class="govuk-link js-guidance" data-analytics-click="page:link:help: has been -signed in the correct order- before">signed in the correct order</a> before you send it to us.</p>
+
+            <p class="govuk-body">Please give the date each person below signed the LPA.</p>
+        </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+    <input type="hidden" name="return-route" value="{{ returnRoute }}">
+
+    <div class="date-check-person person person--full" data-cy="date-check-donor">
+        <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">
+        {% if lpa.document.donor.canSign %}
+            {{ lpa.document.donor.name }} (donor)
+        {% else %}
+            The person signing on behalf of {{ lpa.document.donor.name }} (donor)
+        {% endif %}
+        </h3>
+
+        {% if donorLifeSustainingElement is defined %}
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    {{ formElementErrorsV2(donorLifeSustainingElementDay) }}
+                    {{ formElementErrorsV2(donorLifeSustainingElementMonth) }}
+                    {{ formElementErrorsV2(donorLifeSustainingElementYear) }}
+                    {{ formElementErrorsV2(donorLifeSustainingElement) }}
+
+                    <p class="govuk-body">
+                    {% if lpa.document.donor.canSign %}
+                        This person signed section 5 of the LPA on
+                    {% else %}
+                        This person signed section 5 of the LPA on behalf of the donor on
+                    {% endif %}
+                    </p>
+
+                    <fieldset id="{{ donorLifeSustainingElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-donor-life-date date-check-dates">
+                        <legend class="govuk-visually-hidden">
+                        Check signature dates for the
+                        {% if lpa.document.donor.canSign %}
+                            donor who signed section 5 of the LPA
+                        {% else %}
+                            person who signed section 5 of the LPA on behalf of the donor
+                        {% endif %}
+                        </legend>
+                        <div class="govuk-form-group form-group-day {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorLifeSustainingElementDayId }}">Day</label>
+                            {{ formElement(donorLifeSustainingElementDay) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-month {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorLifeSustainingElementMonthId }}">Month</label>
+                            {{ formElement(donorLifeSustainingElementMonth) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-year {{ donorLifeSustainingElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorLifeSustainingElementYearId }}">Year</label>
+                            {{ formElement(donorLifeSustainingElementYear) }}
+                        </div>
+                    </fieldset>
+
+                </div>
+
+                <br>
+            </div>
+        {% endif %}
+
+        {% block donorGuidance %}
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    {{ formElementErrorsV2(donorElementDay) }}
+                    {{ formElementErrorsV2(donorElementMonth) }}
+                    {{ formElementErrorsV2(donorElementYear) }}
+                    {{ formElementErrorsV2(donorElement) }}
+
+                    <p class="govuk-body" data-cy="donor-check-signature-date-prompt">
+                    {% if lpa.document.donor.canSign %}
+                        This person signed section 9 of the LPA on
+                    {% else %}
+                        This person signed continuation sheet 3 on behalf of the donor, followed by two witnesses, on
+                    {% endif %}
+                    </p>
+
+                    <fieldset id="{{ donorElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-donor-date date-check-dates">
+                        <legend class="govuk-visually-hidden">Check signature dates for the
+                        {% if lpa.document.donor.canSign %}
+                            donor
+                        {% else %}
+                            person who signed on behalf of the donor
+                        {% endif %}
+                        </legend>
+                        <div class="govuk-form-group form-group-day {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorElementDayId }}">Day</label>
+                            {{ formElement(donorElementDay) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-month {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorElementMonthId }}">Month</label>
+                            {{ formElement(donorElementMonth) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-year {{ donorElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ donorElementYearId }}">Year</label>
+                            {{ formElement(donorElementYear) }}
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+
+            {% if continuationSheets is not empty %}
+            <div class="govuk-inset-text">
+                {# cs1 cs2 cs3 #}
+                {% if 1 in continuationSheets and 2 in continuationSheets and 3 in continuationSheets %}
+                    {% if lpa.document.type == 'property-and-financial' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                    {% elseif lpa.document.type == 'health-and-welfare' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheets 1 and 2 must have been signed and dated before or on the same day as they signed section 5.</p>
+                    {% endif %}
+
+                {# cs1 cs2 #}
+                {% elseif 1 in continuationSheets and 2 in continuationSheets %}
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheets 1 and 2 before you signed section 9 of the LPA, or on the same day.</p>
+
+                {# cs1 cs3 #}
+                {% elseif 1 in continuationSheets and 3 in continuationSheets %}
+                    {% if lpa.document.type == 'property-and-financial' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                    {% elseif lpa.document.type == 'health-and-welfare' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 1 must have been signed and dated before or on the same day as they signed section 5.</p>
+                    {% endif %}
+
+                {# cs2 cs3 #}
+                {% elseif 2 in continuationSheets and 3 in continuationSheets %}
+                    {% if lpa.document.type == 'property-and-financial' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                    {% elseif lpa.document.type == 'health-and-welfare' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">Continuation sheet 2 must have been signed and dated before or on the same day as they signed section 5.</p>
+                    {% endif %}
+
+                {# cs1 #}
+                {% elseif 1 in continuationSheets %}
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 1 before you signed section 9 of the LPA, or on the same day.</p>
+                {# cs2 #}
+                {% elseif 2 in continuationSheets %}
+                    <p class="govuk-body" data-cy="continuation-sheet-info">You must have signed and dated continuation sheet/s 2 before you signed section 9 of the LPA, or on the same day.</p>
+                {# cs3 #}
+                {% elseif 3 in continuationSheets %}
+                    {% if lpa.document.type == 'property-and-financial' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 before the certificate provider has signed section 10.</p>
+                    {% elseif lpa.document.type == 'health-and-welfare' %}
+                        <p class="govuk-body" data-cy="continuation-sheet-info">This person must have signed continuation sheet 3 on the same day as they sign section 5 and before the certificate provider signs section 10.</p>
+                    {% endif %}
+                {% endif %}
+
+                {% if (1 in continuationSheets or 2 in continuationSheets) and 3 in continuationSheets and lpa.document.type == 'health-and-welfare' %}
+                    <p class="govuk-body" data-cy="continuation-sheet-info">Section 5 must have been signed and dated before or on the same day as they signed continuation sheet 3.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        {% endblock %}
+    </div>
+
+    <div class="date-check-person person person--full" data-cy="date-check-certificate-provider">
+        <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ lpa.document.certificateProvider.name }} (certificate provider)</h3>
+        <div class="person-address flush--ends">
+            <div class="dob-element form-date {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                {{ formElementErrorsV2(certificateProviderElementDay) }}
+                {{ formElementErrorsV2(certificateProviderElementMonth) }}
+                {{ formElementErrorsV2(certificateProviderElementYear) }}
+                {{ formElementErrorsV2(certificateProviderElement) }}
+
+                <p class="govuk-body">This person signed section 10 of the LPA on</p>
+
+                <fieldset id="{{ certificateProviderElement.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-certificate-provider-date date-check-dates">
+                    <legend class="govuk-visually-hidden">Check signature dates for certificate provider</legend>
+                    <div class="govuk-form-group form-group-day {{ certificateProviderElement.getMessages|length >0 ? 'error'}}">
+                        <label class="govuk-label" for="{{ certificateProviderElementDayId }}">Day</label>
+                        {{ formElement(certificateProviderElementDay) }}
+                    </div>
+
+                    <div class="govuk-form-group form-group-month {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                        <label class="govuk-label" for="{{ certificateProviderElementMonthId }}">Month</label>
+                        {{ formElement(certificateProviderElementMonth) }}
+                    </div>
+
+                    <div class="govuk-form-group form-group-year {{ certificateProviderElement.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                        <label class="govuk-label" for="{{ certificateProviderElementYearId }}">Year</label>
+                        {{ formElement(certificateProviderElementYear) }}
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+    {% for idx, attorney in lpa.document.primaryAttorneys %}
+
+        {% set element = form.get('sign-date-attorney-' ~ idx) %}
+        {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
+        {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
+        {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
+
+        {{ elementDay.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
+        }) ? '' }}
+        {{ elementMonth.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
+        }) ? '' }}
+        {{ elementYear.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '4',
+            pattern: '[0-9]*',
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
+        }) ? '' }}
+
+        <div class="date-check-person person person--full" data-cy="date-check-primary-attorney">
+            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ attorney.name }} (attorney)</h3>
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    {{ formElementErrorsV2(elementDay) }}
+                    {{ formElementErrorsV2(elementMonth) }}
+                    {{ formElementErrorsV2(elementYear) }}
+                    {{ formElementErrorsV2(element) }}
+
+                    <p class="govuk-body">
+                        {% if attorney.dob is defined %}
+                            This person signed section 11 of the LPA on
+                        {% else %}
+                            This corporation signed continuation sheet 4 of the LPA on
+                        {% endif %}
+                    </p>
+
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-primary-attorney-{{idx}}-date date-check-dates">
+                        <legend class="govuk-visually-hidden">Check signature dates for primary attorney</legend>
+                        <div class="govuk-form-group form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                            {{ formElement(elementDay) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                            {{ formElement(elementMonth) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                            {{ formElement(elementYear) }}
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+        </div>
+
+    {% endfor %}
+
+    {% for idx, attorney in lpa.document.replacementAttorneys %}
+
+        {% set element = form.get('sign-date-replacement-attorney-' ~ idx) %}
+        {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
+        {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
+        {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
+
+        {{ elementDay.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
+        }) ? '' }}
+        {{ elementMonth.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
+        }) ? '' }}
+        {{ elementYear.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '4',
+            pattern: '[0-9]*',
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
+        }) ? '' }}
+
+        <div class="date-check-person person person--full">
+            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">{{ attorney.name }} (replacement attorney)</h3>
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    {{ formElementErrorsV2(elementDay) }}
+                    {{ formElementErrorsV2(elementMonth) }}
+                    {{ formElementErrorsV2(elementYear) }}
+                    {{ formElementErrorsV2(element) }}
+
+                    <p class="govuk-body">
+                        {% if attorney.dob is defined %}
+                            This person signed section 11 of the LPA on
+                        {% else %}
+                            This corporation signed continuation sheet 4 of the LPA on
+                        {% endif %}
+                    </p>
+
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-replacement-attorney-{{idx}}-date date-check-dates">
+                        <legend class="govuk-visually-hidden">Check signature dates for replacement attorney</legend>
+                        <div class="govuk-form-group form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                            {{ formElement(elementDay) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                            {{ formElement(elementMonth) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                            {{ formElement(elementYear) }}
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+
+            {% include 'application/authenticated/lpa/date-check/partials/continuation-note-for-corporation.twig' %}
+        </div>
+
+    {% endfor %}
+
+    {% for idx, applicant in applicants %}
+
+        {% set element = form.get('sign-date-applicant-' ~ idx) %}
+        {% set elementDay = element.get('day') %}
+        {% set elementDayId = elementDay.getAttribute('name') %}
+
+        {% set elementMonth = element.get('month') %}
+        {% set elementMonthId = elementMonth.getAttribute('name') %}
+
+        {% set elementYear = element.get('year') %}
+        {% set elementYearId = elementYear.getAttribute('name') %}
+
+        {{ elementDay.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementDayId,
+            'data-cy': 'date-check-date-day'
+        }) ? '' }}
+        {{ elementMonth.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '2',
+            pattern: '[0-9]*',
+            id: elementMonthId,
+            'data-cy': 'date-check-date-month'
+        }) ? '' }}
+        {{ elementYear.setAttributes({
+            type: 'text',
+            class: 'form-control',
+            inputmode: 'numeric',
+            maxlength: '4',
+            pattern: '[0-9]*',
+            id: elementYearId,
+            'data-cy': 'date-check-date-year'
+        }) ? '' }}
+
+        <div class="date-check-person person person--full" data-cy="date-check-applicant">
+            <h3 class="person-name govuk-heading-s flush--ends" data-cy="person-name">
+            {% if applicant['isDonor'] and not lpa.document.donor.canSign %}
+                The person signing on behalf of {{ applicant['name'] }} (applicant)
+            {% else %}
+                {{ applicant['name'] }} (applicant)
+            {% endif %}
+            </h3>
+            <div class="person-address flush--ends">
+                <div class="dob-element form-date {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                    {{ formElementErrorsV2(elementDay) }}
+                    {{ formElementErrorsV2(elementMonth) }}
+                    {{ formElementErrorsV2(elementYear) }}
+                    {{ formElementErrorsV2(element) }}
+
+                    <p class="govuk-body">
+                    {% if applicant['isHuman'] and applicant['isDonor'] and not lpa.document.donor.canSign %}
+                        This person signed section 15 of the LPA on behalf of the applicant on
+                    {% elseif applicant['isHuman'] %}
+                        This person signed section 15 of the LPA on
+                    {% else %}
+                        This corporation signed section 15 of the LPA on
+                    {% endif %}
+                    </p>
+
+                    <fieldset id="{{ element.getAttribute('id') }}" class="date-check-dates" data-cy="date-check-applicant-{{idx}}-date date-check-dates">
+                        <legend class="govuk-visually-hidden">Check signature dates for applicant</legend>
+                        <div class="govuk-form-group form-group-day {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementDayId }}">Day</label>
+                            {{ formElement(elementDay) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-month {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementMonthId }}">Month</label>
+                            {{ formElement(elementMonth) }}
+                        </div>
+
+                        <div class="govuk-form-group form-group-year {{ element.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                            <label class="govuk-label" for="{{ elementYearId }}">Year</label>
+                            {{ formElement(elementYear) }}
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+    <div class="divorced">
+        <input type="submit" name="save" value="Check dates" class="govuk-button">
+    </div>
+
+    {{ form().closeTag|raw }}
+
+{% endblock %}

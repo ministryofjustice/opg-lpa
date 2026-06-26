@@ -219,7 +219,6 @@
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-api/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-api/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas-api-tools/api-tools-api-problem" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-authentication" />
@@ -368,7 +367,6 @@
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-front/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-front/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-front/vendor/kokspflanze/zfc-twig" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-authentication" />
@@ -506,7 +504,6 @@
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-pdf/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/laminas/laminas-barcode" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/laminas/laminas-filter" />
@@ -604,7 +601,6 @@
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/advanced-json-rpc" />
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/shared/vendor/fidry/cpu-core-counter" />
-      <path value="$PROJECT_DIR$/shared/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/shared/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/shared/vendor/laminas/laminas-config" />
       <path value="$PROJECT_DIR$/shared/vendor/laminas/laminas-diactoros" />
@@ -1074,11 +1070,16 @@
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/shared/phpunit.xml" custom_loader_path="$PROJECT_DIR$/shared/vendor/autoload.php" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
-      <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" custom_loader_path="/shared/vendor/autoload.php" phpunit_phar_path="" />
       <phpunit_by_interpreter interpreter_id="106a51db-6e04-4281-a577-326e9ba80765" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/service-pdf/phpunit.xml" custom_loader_path="$PROJECT_DIR$/service-pdf/vendor/autoload.php" use_configuration_file="true" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/service-admin/phpunit.xml.dist" custom_loader_path="$PROJECT_DIR$/service-admin/vendor/autoload.php" use_configuration_file="true" />
       <phpunit_by_interpreter interpreter_id="088c6e8f-c48c-4fdd-b2ba-3c2d21a222d7" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <phpunit_by_interpreter interpreter_id="49d29832-bc24-4bae-8a82-2c3eb403a4b1" custom_loader_path="/shared/vendor/autoload.php" phpunit_phar_path="" />
       <phpunit_by_interpreter interpreter_id="34e91671-73b3-40e4-87f0-0d70d49a29ce" configuration_file_path="/app/phpunit.xml" custom_loader_path="/app/vendor/autoload.php" phpunit_phar_path="" use_configuration_file="true" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/service-front/phpunit.xml" custom_loader_path="$PROJECT_DIR$/service-front/vendor/autoload.php" use_configuration_file="true" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/service-api/phpunit.xml" custom_loader_path="$PROJECT_DIR$/service-api/vendor/autoload.php" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="Psalm">

@@ -1,0 +1,74 @@
+{% extends 'layout/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/general/auth/partials/error-summary.twig' %}
+{% endblock %}
+
+{%- set pageTitle = 'Sign in' -%}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set password = form.get('password') %}
+
+{# form fields config #}
+{{ email.setAttributes({
+    id: 'email',
+    class: 'govuk-input',
+    'data-cy': 'login-email'
+}) ? ''}}
+
+{{ password.setAttributes({
+    id: 'password',
+    class: 'govuk-input',
+    'data-cy': 'login-password'
+}) ? '' }}
+
+{# form fields labels #}
+{{ email.setOptions({ label: 'Email address' }) ? '' }}
+{{ password.setOptions( { label: 'Password' }) ? '' }}
+
+<p class="govuk-body">Sign in or <a class="govuk-link" href="{{ url('register') }}">create an account</a> to get started.</p>
+
+<div class="govuk-details__text">
+    If you already have a registered LPA and want to use it online, go to the<br>
+    <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+</div><br>
+{{ systemMessage() }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+
+    <fieldset>
+        <legend class="govuk-visually-hidden">Sign in</legend>
+
+        {{ macros.formGroup(email) }}
+
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            {{ formElementErrorsV2(password) }}
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password">Show password</a>
+            </div>
+        </div>
+
+        <div class="govuk-form-group">
+            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="govuk-button">
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+<p class="govuk-body">
+    <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
+</p>
+
+{% endblock content %}

@@ -1,0 +1,81 @@
+<?php
+
+/**
+ * Development-only configuration.
+ *
+ * Put settings you want enabled when under development mode in this file, and
+ * check it into your repository.
+ *
+ * Developers on your team will then automatically enable them by calling on
+ * `composer development-enable`.
+ */
+
+declare(strict_types=1);
+
+use Laminas\Diactoros\Response\EmptyResponse;
+use Mezzio\Container\WhoopsErrorResponseGeneratorFactory;
+use Mezzio\Container\WhoopsFactory;
+use Mezzio\Container\WhoopsPageHandlerFactory;
+use Mezzio\Handler\NotFoundHandler;
+use Mezzio\Middleware\ErrorResponseGenerator;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+/**
+ * Path prefixes that browsers probe automatically and should return a silent
+ * 404 rather than triggering the Whoops error page in development.
+ */
+const DEV_SILENT_404_PREFIXES = [
+    '/apple-touch-icon',
+    '/favicon',
+    '/.well-known',
+];
+
+return [
+    'dependencies' => [
+        'factories' => [
+            // Replace the default error response generator with Whoops in dev mode.
+            // This covers 500 errors and any exception thrown inside a handler.
+            ErrorResponseGenerator::class => WhoopsErrorResponseGeneratorFactory::class,
+            'Mezzio\Whoops'              => static function (\Psr\Container\ContainerInterface $c) {
+                $factory = new WhoopsFactory();
+                $whoops  = $factory($c);
+                // Also log every exception to PHP-FPM stderr so it appears in docker logs
+                $whoops->pushHandler(static function (\Throwable $e): void {
+                    error_log(sprintf(
+                        "[Whoops] %s: %s in %s:%d\n%s",
+                        get_class($e),
+                        $e->getMessage(),
+                        $e->getFile(),
+                        $e->getLine(),
+                        $e->getTraceAsString()
+                    ));
+                });
+                return $whoops;
+            },
+            'Mezzio\WhoopsPageHandler'   => WhoopsPageHandlerFactory::class,
+
+            // Replace the 404 handler with one that throws, so Whoops catches it
+            // and shows the full stack trace instead of the custom 404 template.
+            // Browser-probed asset paths (favicons, apple-touch-icon, etc.) return
+            // a plain empty 404 to avoid polluting the dev error screen.
+            NotFoundHandler::class => static fn () => new class implements RequestHandlerInterface {
+                public function handle(ServerRequestInterface $request): ResponseInterface
+                {
+                    $path = $request->getUri()->getPath();
+
+                    foreach (DEV_SILENT_404_PREFIXES as $prefix) {
+                        if (str_starts_with($path, $prefix)) {
+                            return new EmptyResponse(404);
+                        }
+                    }
+
+                    throw new \RuntimeException(
+                        sprintf('404 Not Found: no route matched "%s %s"', $request->getMethod(), $path)
+                    );
+                }
+            },
+        ],
+    ],
+];

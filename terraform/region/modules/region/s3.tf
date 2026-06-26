@@ -52,10 +52,14 @@ resource "aws_s3_bucket" "access_log" {
   bucket = "online-lpa-${local.account_name}-${local.region_name}-lb-access-logs"
 }
 
-resource "aws_s3_bucket_acl" "access_log" {
+resource "aws_s3_bucket_ownership_controls" "access_log" {
   bucket = aws_s3_bucket.access_log.id
-  acl    = "private"
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
+
 
 #tfsec:ignore:aws-s3-encryption-customer-key
 #encryption of ALB access logs not supported with CMK
@@ -63,6 +67,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "access_log" {
   bucket = aws_s3_bucket.access_log.id
 
   rule {
+    bucket_key_enabled       = false
+    blocked_encryption_types = ["SSE-C"]
+
     apply_server_side_encryption_by_default {
       sse_algorithm = "aws:kms"
     }
@@ -88,9 +95,12 @@ resource "aws_s3_bucket" "lpa_pdf_cache" {
   force_destroy = local.account_name != "production" ? true : false
 }
 
-resource "aws_s3_bucket_acl" "lpa_pdf_cache" {
+resource "aws_s3_bucket_ownership_controls" "lpa_pdf_cache" {
   bucket = aws_s3_bucket.lpa_pdf_cache.id
-  acl    = "private"
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
 
 resource "aws_s3_bucket_lifecycle_configuration" "lpa_pdf_cache" {
@@ -112,6 +122,9 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lpa_pdf_cache" {
   bucket = aws_s3_bucket.lpa_pdf_cache.id
 
   rule {
+    bucket_key_enabled       = false
+    blocked_encryption_types = ["SSE-C"]
+
     apply_server_side_encryption_by_default {
       kms_master_key_id = aws_kms_key.lpa_pdf_cache.arn
       sse_algorithm     = "aws:kms"
@@ -183,15 +196,22 @@ resource "aws_s3_bucket_lifecycle_configuration" "redacted_logs" {
   }
 }
 
-resource "aws_s3_bucket_acl" "redacted_logs" {
+resource "aws_s3_bucket_ownership_controls" "redacted_logs" {
   bucket = aws_s3_bucket.redacted_logs.id
-  acl    = "private"
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
 }
+
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "redacted_logs" {
   bucket = aws_s3_bucket.redacted_logs.id
 
   rule {
+    bucket_key_enabled       = false
+    blocked_encryption_types = ["SSE-C"]
+
     apply_server_side_encryption_by_default {
       kms_master_key_id = aws_kms_key.redacted_logs.arn
       sse_algorithm     = "aws:kms"

@@ -1,21 +1,48 @@
 // New form-control-error class is required instead of inheriting from form-control-group (formerly error).
 // This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
-.form-group-error {
+.form-group-error,
+.govuk-form-group--error {
 
-	.form-control {
-		@extend .form-control-error;
-	}
+        .form-control {
+                border: 4px solid govuk-colour("red");
+        }
+}
+
+// Replicate the govuk-elements form-group-error margin-right so error state
+// form groups do not span the full container width (govuk-frontend omits this).
+// The popup layout already overrides margin-right: 0 via _form-popup.scss.
+.govuk-form-group--error {
+        margin-right: 15px;
 }
 
 .form-date {
 
-	.form-group-error {
-		border-left: 0;
-		padding-left: 0;
-	}
+        .form-group-error,
+        .govuk-form-group--error {
+                border-left: 0;
+                padding-left: 0;
+        }
 }
 
-// Override form-hint colour from govUK to meet AAA accessibility for contrast
-.form-hint {
-	color: #555;
+// Override govuk-hint colour to meet AAA accessibility for contrast
+.govuk-hint {
+        color: #555;
 }
+
+// The old error-summary always carried the .text class which imposed
+// max-width: 30em (from govuk-elements-sass _elements-typography.scss).
+// govuk-error-summary has no built-in max-width, so restore the constraint
+// here to prevent it spanning the full page width on accordion form pages.
+.govuk-error-summary {
+        max-width: 30em;
+}
+
+// The old .error-message (govuk-elements) had margin: 0; padding: 2px 0 —
+// no bottom gap between the red error text and the input below it.
+// govuk-error-message adds margin-bottom: govuk-spacing(3) (15px) by default,
+// which creates a visible gap. Reset to match the original spacing.
+.govuk-error-message {
+        margin-bottom: 0;
+        padding-bottom: 2px;
+}
+

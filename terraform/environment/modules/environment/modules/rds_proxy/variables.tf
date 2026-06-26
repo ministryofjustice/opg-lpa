@@ -26,6 +26,10 @@ variable "vpc_id" {
   type = string
 }
 
-variable "secretsmanager_encryption_key_arn" {
-  type = string
+variable "secretsmanager_encryption_key_arns" {
+  type = list(string)
+}
+
+variable "rds_proxy_iam_role" {
+  type = any
 }

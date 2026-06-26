@@ -1,0 +1,100 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Handler;
+
+use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
+use App\Authentication\AuthenticationService;
+use App\Service\UserDetails as UserService;
+use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Form\FormElementManager;
+use Mezzio\Template\TemplateRendererInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use App\Form\User\ChangeEmailAddress as ChangeEmailAddressForm;
+
+class ChangeEmailAddressHandler implements RequestHandlerInterface
+{
+    use CommonTemplateVariablesTrait;
+
+    public function __construct(
+        private readonly TemplateRendererInterface $renderer,
+        private readonly FormElementManager $formElementManager,
+        private readonly AuthenticationService $authenticationService,
+        private readonly UserService $userService,
+    ) {
+    }
+
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
+        $form = $this->formElementManager->get(ChangeEmailAddressForm::class);
+        $form->setAttribute('action', '/user/change-email-address');
+
+        $error = null;
+
+        // Get current email from user details (set by UserDetailsMiddleware middleware)
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
+        $currentEmailAddress = (string) $userDetails->email;
+
+        // This form needs to check the user's current password, thus we pass it the Authentication Service
+        $this->authenticationService->setEmail($currentEmailAddress);
+        $form->setAuthenticationService($this->authenticationService);
+
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            $data = $request->getParsedBody() ?? [];
+            if (!is_array($data)) {
+                $data = [];
+            }
+
+            $form->setData($data);
+
+            if ($form->isValid()) {
+                $validated = $form->getData();
+
+                $newEmailAddress = '';
+                if (is_array($validated) && isset($validated['email']) && is_string($validated['email'])) {
+                    $newEmailAddress = $validated['email'];
+                }
+
+                $result = $this->userService->requestEmailUpdate($newEmailAddress, $currentEmailAddress);
+
+                if ($result === true) {
+                    $html = $this->renderer->render(
+                        'application/authenticated/change-email-address/email-sent.twig',
+                        array_merge(
+                            $this->getTemplateVariables($request),
+                            ['email' => $newEmailAddress]
+                        )
+                    );
+
+                    return new HtmlResponse($html);
+                } else {
+                    $error = $result;
+                }
+            }
+        }
+
+        $html = $this->renderer->render(
+            'application/authenticated/change-email-address/index.twig',
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form'                 => $form,
+                    'error'                => $error,
+                    'currentEmailAddress'  => $currentEmailAddress,
+                    'cancelUrl'            => '/user/about-you',
+                    'csrfToken'            => $csrfToken,
+                ]
+            )
+        );
+
+        return new HtmlResponse($html);
+    }
+}

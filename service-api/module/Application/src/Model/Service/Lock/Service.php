@@ -7,7 +7,6 @@ use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -29,9 +28,7 @@ class Service extends AbstractService
         $lpa->setLocked(true);
         $lpa->setLockedAt(new MillisecondDateTime());
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object was created');
-        }
+        $this->assertLpaValid($lpa, 'after locking LPA');
 
         $this->updateLpa($lpa);
 

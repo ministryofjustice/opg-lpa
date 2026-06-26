@@ -15,7 +15,7 @@ Set up software on your machine required to run the application locally:
 * Install [docker](https://docs.docker.com/get-docker/)
 * Install [docker-compose](https://docs.docker.com/compose/install/)
 * Install [homebrew](https://docs.brew.sh/) (Mac only)
-* Install python3
+* Install [uv](https://docs.astral.sh/uv/getting-started/installation/) (manages Python and all Python dependencies — replaces pip/virtualenv)
 
 ### Clone repo
 
@@ -143,14 +143,13 @@ The load tests are located in `tests/load`. They are written using [locust](http
 To run the load tests:
 
 1. Start the stack (see above).
-1. Create a virtualenv: `virtualenv -p python3 ~/.loadtestsvenv` (substitute your preferred
-path for the virtual environment).
-1. Install dependencies:
+2. Install dependencies:
 ```bash
 cd tests/load
-pip install -e .
+uv sync --locked
 ```
-1. Run the test suite: `run_load_tests.sh tests/suite.py`
+
+3. Run the test suite: `uv run bin/run_load_tests.sh tests/suite.py`
     The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
     Running `run_load_tests.sh` without arguments shows the available switches.
 
@@ -158,21 +157,27 @@ When working on the tests, it can be useful to debug HTTP requests made by the r
 To enable this, edit the `tests/load/load-test-config.json` file and set `"requests_debugging": true`.
 The output is very verbose but can be useful for a low-level view of the HTTP layer.
 
+Alternatively, to run locust itself independently as is done by CI:
+```bash
+cd locust
+uv sync --locked
+uv run locust -f locustfile.py
+uv run locust -f locustfile.py --host=https://localhost:7002
+```
+
+You can see a web interface for locust at http://0.0.0.0:8089 where you can experiment with different loads
+
+Or you can run it headless:
+```bash
+uv run locust -f locustfile.py --headless -u 1 -r 1 -t 10s --host=https://localhost:7002
+```
+
+
 ### Cypress functional tests
 
 **Note:** the below assumes that the dev stack has been already started using `make dc-up`.
 
-Install python3. This is used to run the S3 monitor, which picks up activation emails (see below). On a mac:
-
-```bash
-brew install python3
-```
-
-Install the dependencies required by the S3 monitor:
-
-```bash
-pip3 install boto3
-```
+Install [uv](https://docs.astral.sh/uv/getting-started/installation/) if not already installed (see pre-requisites above). The `make cypress-open` target runs `uv sync --locked` automatically to install the required Python dependencies.
 
 The cypress functional test suite can now be run with:
 

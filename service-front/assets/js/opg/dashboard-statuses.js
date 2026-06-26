@@ -22,7 +22,7 @@ $(document).ready(function () {
           var li = $('li[data-refresh-id=' + lpaId + ']');
           var statusIndicator = li.find('.opg-status');
 
-          if (lpaResult['found']) {
+          if (lpaResult && lpaResult['found']) {
             // Get the status from the returned data
             var newStatus = lpaResult['status'].toLowerCase();
 

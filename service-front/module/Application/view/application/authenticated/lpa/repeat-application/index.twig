@@ -72,13 +72,13 @@
 }) ? '' }}
 
 <li id="repeat-application-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="text">
-            <details class="form-group">
+            <details class="govuk-form-group">
                 <summary data-analytics-click="page:link.reveal:help: What is a repeat application?" role="button" aria-expanded="false">What is a repeat application?</summary>
                 <div>
-                    <p>If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
+                    <p class="govuk-body">If an application has already been made to register an LPA for the donor, but OPG could not register it, we will have written to the correspondent to let them know. The letter will explain that if a repeat application is made within 3 months, the donor can pay half the normal application fee.</p>
                 </div>
             </details>
         </div>
@@ -92,9 +92,9 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ isRepeatApplication.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
-                <legend class="visually-hidden">Is this a repeat application?</legend>
+                <legend class="govuk-visually-hidden">Is this a repeat application?</legend>
 
                     {{ formElementErrorsV2(isRepeatApplication) }}
 
@@ -102,25 +102,23 @@
                     {{ formRadio(isRepeatApplication) }}
 
                     <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-repeat-application">
-                        <h2 class="visually-hidden">Repeat application details</h2>
+                        <h2 class="govuk-visually-hidden">Repeat application details</h2>
 
                         <div class="govuk-form-group">
                             {{ macros.formGroup(repeatCaseNumber) }}
                         </div>
 
                         <div class="text">
-                            <p>You can find the case number on the letter that came with the returned LPA application.</p>
+                            <p class="govuk-body">You can find the case number on the letter that came with the returned LPA application.</p>
 
-                            <p>By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
+                            <p class="govuk-body">By clicking on the save button below, you confirm that OPG has said a repeat application can be made for half the normal application fee.</p>
                         </div>
                     </div>
                 </div>
             </fieldset>
         </div>
 
-        <div class="form-group">
-            {{ formElement(form.get('save')) }}
-        </div>
+        {{ formElement(form.get('save')) }}
     {{ form().closeTag|raw }}
 </li>
 

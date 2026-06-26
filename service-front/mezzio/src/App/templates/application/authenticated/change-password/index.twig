@@ -1,0 +1,90 @@
+{% extends 'layout/layout.twig' %}
+
+{% block errorSummary %}
+    {% include 'application/authenticated/change-password/partials/index-error-summary.twig' %}
+{% endblock %}
+
+{%- set pageTitle = 'Change your password' -%}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Set form fields variables #}
+{% set password = form.get('password_current') %}
+{% set new_password = form.get('password') %}
+{% set new_password_confirm = form.get('password_confirm') %}
+{% set skip_confirm_password = form.get('skip_confirm_password') %}
+
+{# form fields config #}
+{{ password.setAttributes({
+    id: 'password_current',
+    class: 'govuk-input',
+    'data-cy': 'password_current'
+}) ? ''}}
+
+{{ new_password.setAttributes({
+    id: 'password',
+    class: 'govuk-input',
+    'data-cy': 'password'
+}) ? ''}}
+
+{{ new_password_confirm.setAttributes({
+    id: 'password_confirm',
+    class: 'govuk-input',
+    'data-cy': 'password_confirm'
+}) ? ''}}
+
+{{ skip_confirm_password.setAttributes({
+    id: 'js-skipConfirmPassword'
+}) ? ''}}
+
+
+{# form fields labels #}
+{{ password.setOptions({ label: 'Your current password' }) ? '' }}
+{{ new_password.setOptions({ label: 'New password' }) ? '' }}
+{{ new_password_confirm.setOptions({ label: 'Confirm new password' }) ? '' }}
+
+{# begin form #}
+{{ form.prepare() ? '' }}
+{{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+
+    <fieldset>
+        <legend class="govuk-visually-hidden">Change password</legend>
+
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            {{ formElementErrorsV2(password) }}
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">
+                {{ password.getOption('label') }}
+            </label>
+            {{ formElement(password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password_current">Show password</a>
+            </div>
+        </div>
+
+        <div class="govuk-form-group {{ new_password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            {{ formElementErrorsV2(new_password) }}
+            <label class="govuk-label" for="{{ new_password.getAttribute('id') }}">
+                {{ new_password.getOption('label') }}
+            </label>
+            {{ formElement(new_password) }}
+            <div>
+                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+            </div>
+            {{ formElement(skip_confirm_password) }}
+        </div>
+        {{ macros.formGroup(new_password_confirm) }}
+
+        <div class="govuk-form-group">
+            <input type="submit" name="submit" id="signin-form-submit" class="govuk-button" data-cy='save-new-password' value="Save new password">
+            <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+        </div>
+
+    </fieldset>
+
+{{ form().closeTag|raw }}
+
+{% endblock content %}

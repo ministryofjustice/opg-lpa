@@ -1,0 +1,15 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-PHP-SYMFONYYAML-16797942:
+    - '*':
+        reason: >
+          symfony/yaml vulnerability exists only in the nested tools/behat/composer.lock
+          inside the psalm/plugin-phpunit vendor package. This is dev tooling used by the
+          psalm plugin maintainers, not a runtime or test dependency of this project.
+          psalm/plugin-phpunit 0.20.x (which ships the fix) requires vimeo/psalm ^7,
+          incompatible with our current vimeo/psalm ^6. Will be resolved when upgrading psalm.
+        expires: 2026-07-11T00:00:00.000Z
+        created: 2026-06-11T00:00:00.000Z
+patch: {}

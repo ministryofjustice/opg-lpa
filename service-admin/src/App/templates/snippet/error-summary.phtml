@@ -1,6 +1,6 @@
 <?php if(!empty($form->getMessages())) { ?>
     <div class="govuk-error-summary" data-module="govuk-error-summary">
-        <h2 class="govuk-error-summary__title" id="error-heading">There is a problem</h2>
+        <h2 class="govuk-error-summary__title" data-cy="error-summary-title" id="error-heading">There is a problem</h2>
         <div class="govuk-error-summary__body">
             <ul class="govuk-list govuk-error-summary__list">
                 <?php foreach ($form->getMessages() as $elementName=>$messages) { ?>

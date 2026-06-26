@@ -41,12 +41,8 @@ data "aws_iam_role" "ecs_autoscaling_service_role" {
   name = "AWSServiceRoleForApplicationAutoScaling_ECSService"
 }
 
-data "aws_kms_alias" "secrets_encryption_alias" {
-  name = "alias/secrets_encryption_key-${var.account_name}"
-}
-
 data "aws_kms_alias" "multi_region_secrets_encryption_alias" {
-  name = "alias/mrk_secrets_encryption_key-${var.account_name}"
+  name = "alias/opg-lpa-${var.account_name}-secrets-manager-encryption-key"
 }
 
 data "aws_region" "current" {}
@@ -62,3 +58,7 @@ data "aws_availability_zones" "aws_zones" {
 }
 
 data "aws_default_tags" "current" {}
+
+data "aws_kms_alias" "application_log_group_encryption_alias" {
+  name = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+}

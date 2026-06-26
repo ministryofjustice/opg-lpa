@@ -76,11 +76,13 @@ resource "aws_ecs_task_definition" "pdf" {
 }
 
 data "aws_ecr_repository" "lpa_pdf_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/pdf_app"
 }
 
 data "aws_ecr_image" "lpa_pdf_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_pdf_app.name
   image_tag       = var.container_version
   provider        = aws.management
@@ -117,8 +119,10 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.pdf-app.online-lpa"
+          awslogs-region        = data.aws_region.current.region,
+          awslogs-stream-prefix = "${var.environment_name}.pdf-app.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [
@@ -137,7 +141,8 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", value = data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = aws_sqs_queue.pdf_fifo_queue.id }
+        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = aws_sqs_queue.pdf_fifo_queue.id },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }
   )

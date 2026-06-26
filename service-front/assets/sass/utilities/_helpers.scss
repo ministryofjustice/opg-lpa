@@ -7,45 +7,27 @@
 // scss-lint:disable SpaceBeforeBrace, SpaceAfterPropertyColon
 // Special formatting here
 
-// Negating spacing
+// Negating spacing — legacy GOV.UK toolkit helpers still referenced in templates.
+// Migrate each usage to the appropriate govuk-! utility class and remove from here.
 // Remove margins
-.flush          { margin:       0 !important; }
-.flush--top     { margin-top:   0 !important; }
-.flush--right   { margin-right: 0 !important; }
-.flush--bottom  { margin-bottom:0 !important; }
-.flush--left    { margin-left:  0 !important; }
-.flush--ends    { margin-top:   0 !important; margin-bottom: 0 !important; }
-.flush--sides   { margin-right: 0 !important; margin-left:  0 !important; }
+.flush--top     { margin-top:   0 !important; }  // → govuk-!-margin-top-0
+.flush--bottom  { margin-bottom:0 !important; }  // → govuk-!-margin-bottom-0
+.flush--ends    { margin-top:   0 !important; margin-bottom: 0 !important; }  // → govuk-!-margin-top-0 govuk-!-margin-bottom-0
 
 // Remove paddings
-.hard           { padding:       0 !important; }
-.hard--top      { padding-top:   0 !important; }
-.hard--right    { padding-right: 0 !important; }
-.hard--bottom   { padding-bottom:0 !important; }
-.hard--left     { padding-left:  0 !important; }
-.hard--ends     { padding-top:   0 !important; padding-bottom:0 !important; }
-.hard--sides    { padding-right: 0 !important; padding-left:  0 !important; }
+.hard--bottom   { padding-bottom:0 !important; }  // → govuk-!-padding-bottom-0
 
-// Adding spacing
-// Add margins
-.push           { margin:       $gutter !important; }
-.push--top      { margin-top:   $gutter !important; }
-.push--right    { margin-right: $gutter !important; }
-.push--bottom   { margin-bottom:$gutter !important; }
-.push--left     { margin-left:  $gutter !important; }
-.push--ends     { margin-top:   $gutter !important; margin-bottom:$gutter !important; }
-.push--sides    { margin-right: $gutter !important; margin-left:  $gutter !important; }
 
 // scss-lint:enable SpaceBeforeBrace, SpaceAfterPropertyColon
 
 //Further down
 .divorced {
-    margin-top: $gutter;
+    margin-top: govuk-spacing(6);
 }
 
 // Simple handling of overflowing tables on mobile
 .mobile-scroll {
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         overflow: auto;
 
         table {
@@ -56,13 +38,13 @@
 
 // Responsive helper classes
 .mobile {
-    @include media(tablet) {
+    @include govuk-media-query($from: tablet) {
         display: none !important;
     }
 }
 
 .tablet-and-up {
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         display: none !important;
     }
 }

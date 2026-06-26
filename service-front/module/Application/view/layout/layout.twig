@@ -5,12 +5,6 @@
     {%- set defaultTitle = 'Make a lasting power of attorney' -%}
     <title>{% if (authError is not empty or error is not empty or (form is not empty and form.getMessages|length > 0)) %}Error: {% endif %}{% if overridePageTitle %}{{ overridePageTitle }} - {% elseif pageTitle %}{{ pageTitle }} - {% else %}{% set pageTitle = defaultTitle %}{% endif %}{{ defaultTitle }} - GOV.UK</title>
 
-    <link href="{{ '/assets/v2/css/govuk-template.css' | asset_path({ 'minify':true }) }}" rel="stylesheet" type="text/css"/>
-
-
-    <link href="{{ '/assets/v2/css/govuk-template-print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
-
-
     <link rel="icon" sizes="48x48" href="/assets/v2/images/favicon.ico">
     <link rel="icon" sizes="any" href="/assets/v2/images/favicon.svg" type="image/svg+xml">
     <link rel="mask-icon" href="/assets/v2/images/govuk-icon-mask.svg" color="#1d70b8">
@@ -31,35 +25,41 @@
     <link href="{{ '/assets/v2/css/print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
 </head>
 <body class="govuk-template__body govuk-frontend-supported">
-    <div id="skiplink-container">
-        <div><a href="#main-content" class="skiplink" data-cy="skip-link">Skip to main content</a></div>
-    </div>
+    <a href="#main-content" class="govuk-skip-link" data-cy="skip-link">Skip to main content</a>
 
-    <div id="global-cookie-message" class="govuk-cookie-banner" role="region" aria-label="Cookies on Make a lasting power of attorney" data-cy="cookie-message" hidden="true" data-nosnipper>
-        <div id="cookie-preferences-form" hidden="true">
-            <h2 class="global-cookie-message__heading">Cookies on Make a lasting power of attorney</h2>
-            <div class="global-cookie-message__content">
-                <p class="global-cookie-message__text">
-                    We use some essential cookies to make this service work.
-                </p>
-                <p class="global-cookie-message__text">
-                    We’d also like to use analytics cookies so we can understand how you use the service and make improvements.
-                </p>
+    <div id="global-cookie-message" class="govuk-cookie-banner" role="region" aria-label="Cookies on Make a lasting power of attorney" data-cy="cookie-message" hidden="true" data-nosnippet>
+
+        <div id="cookie-preferences-form" class="govuk-cookie-banner__message govuk-width-container" hidden="true">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <h2 class="govuk-cookie-banner__heading govuk-heading-m">Cookies on Make a lasting power of attorney</h2>
+                    <div class="govuk-cookie-banner__content">
+                        <p class="govuk-body">We use some essential cookies to make this service work.</p>
+                        <p class="govuk-body">We'd also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+                    </div>
+                </div>
             </div>
-            <div class="global-cookie-message__buttons">
-                <button class="global-cookie-message__button global-cookie-message__button_accept button" type="submit" data-cy="accept-analytics-cookies">Accept analytics cookies</button>
-                <button class="global-cookie-message__button global-cookie-message__button_reject button" type="submit" data-cy="reject-analytics-cookies">Reject analytics cookies</button>
-                <a class="govuk-link global-cookie-message__button-link global-cookie-message__button-link_settings" role="button" href="/cookies" rel="noreferrer noopener" target="_blank">View cookies<span class="visually-hidden"> (opens in new tab)</span></a>
-            </div>
-        </div>
-        <div id="cookie-preferences-save-confirm" class="global-cookie-message__content" hidden="true" data-cy="cookie-preferences-save-confirm" role="alert" tabindex="-1">
-            <p class="global-cookie-message__text">You’ve <span id="cookie-preferences-decision"></span> analytics cookies.
-            You can <a href="/cookies" rel="noreferrer noopener" target="_blank">change your
-            cookie settings<span class="visually-hidden"> (opens in new tab)</span></a> at any time.</p>
-            <div class="global-cookie-message__buttons">
-                <button class="global-cookie-message__button global-cookie-message__button_hide button" type="submit" data-cy="hide-cookies-banner">Hide this message</button>
+            <div class="govuk-button-group">
+                <button class="govuk-button global-cookie-message__button_accept" type="submit" data-cy="accept-analytics-cookies">Accept analytics cookies</button>
+                <button class="govuk-button global-cookie-message__button_reject" type="submit" data-cy="reject-analytics-cookies">Reject analytics cookies</button>
+                <a class="govuk-link global-cookie-message__button-link_settings" href="/cookies" rel="noreferrer noopener" target="_blank">View cookies<span class="govuk-visually-hidden"> (opens in new tab)</span></a>
             </div>
         </div>
+
+        <div id="cookie-preferences-save-confirm" class="govuk-cookie-banner__message govuk-width-container" hidden="true" data-cy="cookie-preferences-save-confirm" role="alert" tabindex="-1">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <div class="govuk-cookie-banner__content">
+                        <p class="govuk-body">You've <span id="cookie-preferences-decision"></span> analytics cookies.
+                        You can <a class="govuk-link" href="/cookies" rel="noreferrer noopener" target="_blank">change your cookie settings<span class="govuk-visually-hidden"> (opens in new tab)</span></a> at any time.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button global-cookie-message__button_hide" type="submit" data-cy="hide-cookies-banner">Hide this message</button>
+            </div>
+        </div>
+
     </div>
 
     <header role="banner" class="govuk-header govuk-header--full-width-border" data-module="govuk-header" data-cy="banner">
@@ -141,8 +141,8 @@
         {% endblock divider %}
 
         {% if hideFeedbackLink is not defined %}
-        <p>
-            Your <a href="/send-feedback">feedback</a> will help us to improve
+        <p class="govuk-body">
+            Your <a class="govuk-link" href="/send-feedback">feedback</a> will help us to improve
         </p>
         {% endif %}
     </main>
@@ -175,34 +175,34 @@
                     <ul class="govuk-footer__inline-list">
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href="/contact">
-                                Contact us<span class="visually-hidden"> (opens in new tab)</span>
+                                Contact us<span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href="/accessibility" rel="noreferrer noopener" target="_blank">
-                                Accessibility statement<span class="visually-hidden"> (opens in new tab)</span>
+                                Accessibility statement<span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href="/terms" rel="noreferrer noopener" target="_blank">
-                                Terms of use<span class="visually-hidden"> (opens in new tab)</span>
+                                Terms of use<span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href="/privacy-notice" rel="noreferrer noopener" target="_blank">
-                                Privacy notice<span class="visually-hidden"> (opens in new tab)</span>
+                                Privacy notice<span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             <a class="govuk-footer__link" href="/cookies" rel="noreferrer noopener" target="_blank">
-                                Cookies<span class="visually-hidden"> (opens in new tab)</span>
+                                Cookies<span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                         <li class="govuk-footer__inline-list-item">
                             Built by
                             <a class="govuk-footer__link" rel="noreferrer noopener" target="_blank" href="https://www.gov.uk/government/organisations/office-of-the-public-guardian">
                                 OPG Digital
-                                <span class="visually-hidden"> (opens in new tab)</span>
+                                <span class="govuk-visually-hidden"> (opens in new tab)</span>
                             </a>
                         </li>
                     </ul>
