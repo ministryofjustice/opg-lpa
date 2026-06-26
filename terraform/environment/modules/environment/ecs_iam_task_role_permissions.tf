@@ -77,15 +77,14 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
   }
   statement {
-    sid    = "lpaCacheDecrypt"
+    sid    = "DynamoDBKeyDecrypt"
     effect = "Allow"
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey",
     ]
     resources = [
-      data.aws_s3_bucket.lpa_pdf_cache.arn,
-      data.aws_kms_key.lpa_pdf_cache.arn,
+      data.aws_kms_key.dynamodb_encryption_key.arn,
     ]
   }
   statement {
@@ -156,6 +155,17 @@ data "aws_iam_policy_document" "admin_permissions_role" {
     ]
   }
   statement {
+    sid    = "DynamoDBKeyDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_kms_key.dynamodb_encryption_key.arn,
+    ]
+  }
+  statement {
     effect = "Allow"
     sid    = "ApiXrayDaemon"
     #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
@@ -208,6 +218,17 @@ data "aws_iam_policy_document" "front_permissions_role" {
       aws_dynamodb_table.lpa-locks.arn,
       aws_dynamodb_table.lpa-properties.arn,
       aws_dynamodb_table.lpa-sessions.arn,
+    ]
+  }
+  statement {
+    sid    = "DynamoDBKeyDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_kms_key.dynamodb_encryption_key.arn,
     ]
   }
   statement {
@@ -301,6 +322,17 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     ]
   }
 
+  statement {
+    sid    = "DynamoDBKeyDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+      "kms:GenerateDataKey",
+    ]
+    resources = [
+      data.aws_kms_key.dynamodb_encryption_key.arn,
+    ]
+  }
   statement {
     sid    = "lpaCacheDecrypt"
     effect = "Allow"
