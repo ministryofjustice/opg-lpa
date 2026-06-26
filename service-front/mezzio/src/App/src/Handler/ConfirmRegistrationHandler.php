@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Service\UserDetails as UserService;
+use Fig\Http\Message\RequestMethodInterface;
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -23,6 +25,11 @@ class ConfirmRegistrationHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // To account for safelinks and similar activating accounts before page render
+        if ($request->getMethod() === RequestMethodInterface::METHOD_HEAD) {
+            return new Response();
+        }
+
         $token = $request->getAttribute('token');
 
         $data = [];
