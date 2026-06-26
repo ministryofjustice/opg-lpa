@@ -89,6 +89,8 @@ use Aws\DynamoDb\DynamoDbClient;
 use Laminas\EventManager\EventManager;
 use Laminas\Form\FormElementManager;
 use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\RequestLoggingMiddleware;
+use MakeShared\Logging\RequestLoggingMiddlewareFactory;
 use Mezzio\Csrf\CsrfGuardFactoryInterface;
 use Mezzio\Csrf\CsrfMiddleware;
 use Mezzio\Csrf\CsrfMiddlewareFactory;
@@ -715,7 +717,8 @@ return [
 
             AuthenticationService::class => AuthenticationServiceFactory::class,
 
-            LoggerInterface::class => LoggerFactory::class,
+            LoggerInterface::class            => LoggerFactory::class,
+            RequestLoggingMiddleware::class   => RequestLoggingMiddlewareFactory::class,
         ],
     ],
 
