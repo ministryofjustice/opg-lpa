@@ -9,7 +9,6 @@ use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
 use ApplicationTest\Model\Service\AbstractServiceTest;
 use DateTime;
 use Exception;
-use Hamcrest\Matchers;
 use Mockery;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -39,9 +38,9 @@ final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([Matchers::equalTo(new Lpa([
+            ->withArgs([$this->equalTo(new Lpa([
                 'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()]
-            ])), Matchers::equalTo(new ReplacementAttorneyDecisions())])
+            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
             ->once();
 
         $this->service->cleanUp($lpa);
@@ -53,9 +52,9 @@ final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([Matchers::equalTo(new Lpa([
+            ->withArgs([$this->equalTo(new Lpa([
                 'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()]
-            ])), Matchers::equalTo(new ReplacementAttorneyDecisions())])
+            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
             ->once();
 
         $this->service->cleanUp($lpa);

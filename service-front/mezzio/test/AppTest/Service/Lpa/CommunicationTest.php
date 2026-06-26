@@ -9,8 +9,6 @@ use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use DateTime;
-use Hamcrest\MatcherAssert;
-use Hamcrest\Matchers;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\LongName;
 use MakeShared\DataModel\Lpa\Document\Document;
@@ -97,7 +95,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -140,7 +138,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -192,7 +190,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -235,7 +233,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -287,7 +285,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -330,7 +328,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -382,7 +380,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -425,7 +423,7 @@ final class CommunicationTest extends MockeryTestCase
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParams));
+            ->with($this->equalTo($expectedMailParams));
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
@@ -483,7 +481,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -533,7 +531,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -593,7 +591,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -644,7 +642,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -698,7 +696,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -742,7 +740,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -796,7 +794,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
@@ -842,7 +840,7 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->mailTransport->shouldReceive('send')
             ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                MatcherAssert::assertThat($expectedMailParams, Matchers::equalTo($actualMailParams));
+                $this->assertEquals($expectedMailParams, $actualMailParams);
                 return true;
             }));
 
