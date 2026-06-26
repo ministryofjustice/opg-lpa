@@ -11,6 +11,7 @@ use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -60,6 +61,17 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         $gatewayReference = $lpa->payment->gatewayReference;
 
         $paymentResponse = $this->paymentClient->getPayment($gatewayReference);
+
+        if ($paymentResponse === null) {
+            $this->getLogger()->error('GovPay payment lookup returned null — payment may not exist yet or gateway reference is invalid', [
+                'lpaId'            => $lpa->id,
+                'gatewayReference' => $gatewayReference,
+            ]);
+
+            return new RedirectResponse(
+                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            );
+        }
 
         if (!$paymentResponse->isSuccess()) {
             /** @var \App\Form\Lpa\BlankMainFlowForm $form */
