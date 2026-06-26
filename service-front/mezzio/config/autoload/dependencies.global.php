@@ -60,6 +60,7 @@ use App\Middleware\LpaLoaderMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
+use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
 use App\Model\UserDetailsHolder;
@@ -694,6 +695,11 @@ return [
                 $c->get(UrlHelper::class),
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
+            TermsAndConditionsMiddleware::class    => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
+                $c->get('config'),
+                $c->get(AuthenticationService::class),
+                $c->get(UrlHelper::class),
+            ),
             CsrfValidationMiddleware::class        => static fn() => new CsrfValidationMiddleware(),
             FlashMessagesHolderMiddleware::class    => static fn(ContainerInterface $c) => new FlashMessagesHolderMiddleware(
                 $c->get(FlashMessagesHolder::class),
@@ -726,6 +732,7 @@ return [
 
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
+        'expected-working-days-before-receipt' => 15,
     ],
 
     'email' => [
@@ -733,10 +740,7 @@ return [
             'key'                   => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
             'smokeTestEmailAddress' => 'simulate-delivered@notifications.service.gov.uk',
         ],
-    ],
-
-    'redirects' => [
-        'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+        'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
     ],
 
     'admin' => [
@@ -762,7 +766,7 @@ return [
 
     'redis' => [
         'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
-        'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000),
+        'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 10800000), // 3 hours, matching legacy app
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],
