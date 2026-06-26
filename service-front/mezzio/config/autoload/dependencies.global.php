@@ -88,6 +88,7 @@ use App\Service\Lpa\ReplacementAttorneyCleanup as ReplacementAttorneyCleanupServ
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\EventManager\EventManager;
 use Laminas\Form\FormElementManager;
+use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Logging\RequestLoggingMiddleware;
 use MakeShared\Logging\RequestLoggingMiddlewareFactory;
@@ -146,6 +147,45 @@ return [
             RouteNameMiddleware::class => RouteNameMiddleware::class,
         ],
         'factories' => [
+            // Override the default ErrorHandler factory to attach a logging listener.
+            // Laminas\Stratigility\Middleware\ErrorHandler catches all unhandled Throwables
+            // but does not log them by default — this listener ensures every 500 is logged
+            // with full exception context (message, class, file, line, trace).
+            ErrorHandler::class => static function (ContainerInterface $c): ErrorHandler {
+                /** @var ErrorHandler $handler */
+                $handler = (new \Mezzio\Container\ErrorHandlerFactory())($c);
+                $logger  = $c->get(LoggerInterface::class);
+
+                $handler->attachListener(
+                    static function (
+                        \Throwable $error,
+                        \Psr\Http\Message\ServerRequestInterface $request,
+                        \Psr\Http\Message\ResponseInterface $response,
+                    ) use ($logger): void {
+                        $logger->error('Unhandled exception — 500 response', [
+                            'exception' => [
+                                'class'   => get_class($error),
+                                'message' => $error->getMessage(),
+                                'code'    => $error->getCode(),
+                                'file'    => $error->getFile() . ':' . $error->getLine(),
+                                'trace'   => array_slice(
+                                    array_map(
+                                        static fn(array $f) => ($f['file'] ?? '') . ':' . ($f['line'] ?? ''),
+                                        $error->getTrace()
+                                    ),
+                                    0,
+                                    10
+                                ),
+                            ],
+                            'request_path'   => $request->getUri()->getPath(),
+                            'request_method' => $request->getMethod(),
+                        ]);
+                    }
+                );
+
+                return $handler;
+            },
+
             MezzioSessionStorage::class => static fn() => new MezzioSessionStorage(),
             ApiClient::class            => ApiClientFactory::class,
             PersistentSessionDetails::class => static fn() => new PersistentSessionDetails(),
