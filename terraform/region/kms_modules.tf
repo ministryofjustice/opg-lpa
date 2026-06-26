@@ -17,16 +17,19 @@ module "aws_backup_cross_account_key" {
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   encryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   grant_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
 }
 
