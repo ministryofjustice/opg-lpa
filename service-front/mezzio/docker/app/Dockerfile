@@ -21,6 +21,9 @@ RUN apk add --no-cache icu fcgi \
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
 
+ARG OPG_LPA_COMMON_APP_VERSION="dev"
+ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
+
 COPY --chown=root:root shared /shared
 
 RUN mkdir -p /service-front/mezzio
