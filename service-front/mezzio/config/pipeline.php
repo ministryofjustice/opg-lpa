@@ -9,6 +9,7 @@ use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
+use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use Mezzio\Csrf\CsrfMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
@@ -45,6 +46,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(PersistentSessionDetailsMiddleware::class);
     $app->pipe(AuthenticationMiddleware::class);
     $app->pipe(UserDetailsMiddleware::class);
+    $app->pipe(TermsAndConditionsMiddleware::class);
     $app->pipe(DispatchMiddleware::class);
     $app->pipe(NotFoundHandler::class);
 };
