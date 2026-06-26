@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Service\Lpa;
 
+use App\Model\UserDetailsHolder;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use App\View\Twig\Traits\MoneyFormatterTrait;
@@ -13,7 +14,6 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
-use Mezzio\Session\SessionInterface;
 use DateTimeZone;
 use DateInterval;
 use Exception;
@@ -28,8 +28,8 @@ class Communication implements LoggerAwareInterface
     public const EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
     public const EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
 
-    private ?SessionInterface $session = null;
     private ?UrlHelper $urlHelper = null;
+    private ?UserDetailsHolder $userDetailsHolder = null;
     private string $emailTemplateRef;
     private array $data;
     private string $lpaTypeTitleCase;
@@ -39,28 +39,29 @@ class Communication implements LoggerAwareInterface
     ) {
     }
 
-    public function setSession(SessionInterface $session): void
-    {
-        $this->session = $session;
-    }
-
     public function setUrlHelper(UrlHelper $urlHelper): void
     {
         $this->urlHelper = $urlHelper;
     }
 
+    public function setUserDetailsHolder(UserDetailsHolder $userDetailsHolder): void
+    {
+        $this->userDetailsHolder = $userDetailsHolder;
+    }
+
     public function sendRegistrationCompleteEmail(Lpa $lpa): bool|string
     {
-        // Get the signed in user's email address from the session.
-        $user = $this->session?->get('user');
+        // Get the signed in user's details from UserDetailsHolder (populated by UserDetailsMiddleware).
+        $user = $this->userDetailsHolder?->get();
+
         if (!$user instanceof User) {
-            $userData = $this->session?->get('user');
-            if (is_array($userData)) {
-                $user = new User($userData);
-            }
+            $this->getLogger()->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
+                'lpaId' => $lpa->id,
+            ]);
+            return 'failed-sending-email';
         }
 
-        $userEmailAddress = (string) ($user->email->address ?? '');
+        $userEmailAddress = (string) ($user->email?->address ?? '');
         $to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
