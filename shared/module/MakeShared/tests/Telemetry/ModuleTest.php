@@ -2,7 +2,6 @@
 
 namespace MakeSharedTest\Telemetry;
 
-use Hamcrest\Core\IsInstanceOf;
 use Laminas\EventManager\EventManager;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
@@ -38,7 +37,7 @@ class ModuleTest extends TestCase
 
         $rootSegment = Mockery::mock(Segment::class);
         $rootSegment->shouldReceive('setAttribute')
-            ->with('http', IsInstanceOf::anInstanceOf(Http::class));
+            ->with('http', $this->isInstanceOf(Http::class));
 
         $tracer = Mockery::mock(Tracer::class);
         $tracer->shouldReceive('startRootSegment')->once();
