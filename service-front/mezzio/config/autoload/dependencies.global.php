@@ -174,7 +174,7 @@ return [
                                         $error->getTrace()
                                     ),
                                     0,
-                                    10
+                                    15
                                 ),
                             ],
                             'request_path'   => $request->getUri()->getPath(),

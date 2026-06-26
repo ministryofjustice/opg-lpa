@@ -54,13 +54,6 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        $this->getLogger()->info('PayResponse: handler entered', [
-            'lpaId'            => $lpa->id,
-            'gatewayReference' => $lpa->payment->gatewayReference,
-            'paymentMethod'    => $lpa->payment->method,
-            'hasReference'     => $lpa->payment->reference !== null,
-        ]);
-
         if (is_null($lpa->payment->gatewayReference)) {
             throw new RuntimeException('Payment id needed');
         }
@@ -162,8 +155,6 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
                 'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
             ]);
         }
-
-        $this->getLogger()->info('PayResponse: calling finishCheckout', ['lpaId' => $lpa->id]);
 
         return $this->finishCheckout($lpa, $request);
     }
