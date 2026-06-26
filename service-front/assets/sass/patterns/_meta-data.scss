@@ -2,7 +2,7 @@
 // META DATA
 
 .meta-data {
-  @include core-16;
-  color: $secondary-text-colour;
-  margin-top: em(60);
+  @include govuk-font($size: 16);
+  color: $govuk-secondary-text-colour;
+  margin-top: govuk-spacing(9);
 }

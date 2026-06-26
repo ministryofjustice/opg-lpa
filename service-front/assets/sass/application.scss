@@ -1,10 +1,16 @@
 // GOVUK Frontend
-@use "../../node_modules/govuk-frontend/dist/govuk/index" with (
+@use "../../node_modules/govuk-frontend/dist/govuk/index" as * with (
   $govuk-assets-path: "/assets/v2/"
 );
 
 // Settings
 @import 'settings/variables';
+
+// GOVUK Frontend — loaded via @import so its helpers (govuk-font, govuk-colour,
+// govuk-spacing, govuk-media-query) are available in the global scope for
+// @import-ed pattern partials.
+$govuk-assets-path: "/assets/v2/";
+@import "../../node_modules/govuk-frontend/dist/govuk/index";
 
 // GOVUK Elements
 @import "govuk-elements";
@@ -60,9 +66,6 @@
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
 
-html {
-  font-size: 100% !important;
-}
 
 .govuk-service-navigation {
   width: 100vw !important;

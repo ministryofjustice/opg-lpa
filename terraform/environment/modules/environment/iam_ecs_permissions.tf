@@ -22,7 +22,15 @@ data "aws_iam_policy_document" "execution_role" {
     actions = [
       "ecr:BatchCheckLayerAvailability",
       "ecr:GetDownloadUrlForLayer",
-      "ecr:BatchGetImage"
+      "ecr:BatchGetImage",
+      "ecr:BatchImportUpstreamImage",
+      "ecr:GetImageCopyStatus",
+      "ecr:InitiateLayerUpload",
+      "ecr:UploadLayerPart",
+      "ecr:CompleteLayerUpload",
+      "ecr:PutImage"
+
+
     ]
   }
   statement {
@@ -79,7 +87,8 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.api_rds_username.arn,
       data.aws_secretsmanager_secret.api_rds_password.arn,
       data.aws_secretsmanager_secret.performance_platform_db_username.arn,
-      data.aws_secretsmanager_secret.performance_platform_db_password.arn
+      data.aws_secretsmanager_secret.performance_platform_db_password.arn,
+      data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.arn,
     ]
   }
 
@@ -87,8 +96,7 @@ data "aws_iam_policy_document" "execution_role" {
     effect = "Allow"
     sid    = "AllowECSKMS"
     resources = [
-      data.aws_kms_alias.secrets_encryption_alias.target_key_arn,
-      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
     ]
 
     actions = [

@@ -1,7 +1,7 @@
-#tfsec:ignore:aws-cloudwatch-log-group-customer-key encryption of logs too expensive
 resource "aws_cloudwatch_log_group" "application_logs" {
   name              = "${var.environment_name}_application_logs"
   retention_in_days = var.account.log_retention_in_days
+  kms_key_id        = data.aws_kms_alias.application_log_group_encryption_alias.target_key_arn
 
   tags = merge(
     local.shared_component_tag,
@@ -72,4 +72,82 @@ resource "aws_cloudwatch_query_definition" "migrations" {
   | filter @logStream like "migrations"
   |limit 10000
   EOF
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_success" {
+  name           = "${var.environment_name}-auth-sign-in-success"
+  pattern        = "{ $.context.event = \"auth.sign_in.success\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-success"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_failed" {
+  name           = "${var.environment_name}-auth-sign-in-failed"
+  pattern        = "{ $.context.event = \"auth.sign_in.failed\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-failed"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_account_locked" {
+  name           = "${var.environment_name}-auth-account-locked"
+  pattern        = "{ $.context.event = \"auth.account.locked\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-account-locked"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_account_locked" {
+  name           = "${var.environment_name}-auth-sign-in-account-locked"
+  pattern        = "{ $.context.event = \"auth.sign_in.account_locked\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-account-locked"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_user_not_found" {
+  name           = "${var.environment_name}-auth-sign-in-user-not-found"
+  pattern        = "{ $.context.event = \"auth.sign_in.user_not_found\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-user-not-found"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
+}
+
+resource "aws_cloudwatch_log_metric_filter" "auth_sign_in_inactive_account" {
+  name           = "${var.environment_name}-auth-sign-in-inactive-account"
+  pattern        = "{ $.context.event = \"auth.sign_in.inactive_account\" }"
+  log_group_name = aws_cloudwatch_log_group.application_logs.name
+
+  metric_transformation {
+    name          = "${var.environment_name}-auth-sign-in-inactive-account"
+    namespace     = "Make/Monitoring"
+    value         = "1"
+    default_value = "0"
+  }
 }

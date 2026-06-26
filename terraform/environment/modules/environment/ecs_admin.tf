@@ -96,22 +96,26 @@ resource "aws_ecs_task_definition" "admin" {
 }
 
 data "aws_ecr_repository" "lpa_admin_web" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/admin_web"
 }
 
 data "aws_ecr_image" "lpa_admin_web" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_admin_web.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_admin_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/admin_app"
 }
 
 data "aws_ecr_image" "lpa_admin_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_admin_app.name
   image_tag       = var.container_version
   provider        = aws.management
@@ -153,8 +157,10 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.admin-web.online-lpa"
+          awslogs-region        = data.aws_region.current.region,
+          awslogs-stream-prefix = "${var.environment_name}.admin-web.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       environment = [
@@ -198,8 +204,10 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.admin-app.online-lpa"
+          awslogs-region        = data.aws_region.current.region,
+          awslogs-stream-prefix = "${var.environment_name}.admin-app.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [

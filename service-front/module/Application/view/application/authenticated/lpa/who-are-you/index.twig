@@ -38,25 +38,23 @@
 {% endif %}
 
 <li id="who-are-you-section" class="section current" data-cy="section-current">
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     {% if not form %}
         <div class="accordion-info">
             <div class="text">
-                <p>Thanks, you have already answered this question.</p>
+                <p class="govuk-body">Thanks, you have already answered this question.</p>
 
-                <p>Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
+                <p class="govuk-body">Your answer was saved separately from your LPA and is anonymous. This means that it cannot now be linked to you and you cannot change it.</p>
             </div>
         </div>
-        <div class="form-group">
-            <a href="{{ nextUrl }}" role="button" class="button" data-cy="continue">{{ (final_check_accessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
-        </div>
+        <a href="{{ nextUrl }}" role="button" class="govuk-button" data-cy="continue">{{ (final_check_accessible(lpa) ? 'Return to final check' : 'Continue') }}</a>
     {% else %}
         <div class="accordion-info">
             <div class="text">
-                <p>We think we can make this service better by finding out how people use it.</p>
-                <p>To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
-                <p>Your answer will be completely anonymous. It will not be linked to you, this LPA or your personal information.</p>
+                <p class="govuk-body">We think we can make this service better by finding out how people use it.</p>
+                <p class="govuk-body">To do this, we'd like to know who was using the digital LPA service - for instance, if a friend, family member or charity helped the donor a lot, or if a professional made it on their behalf.</p>
+                <p class="govuk-body">Your answer will be completely anonymous. It will not be linked to you, this LPA or your personal information.</p>
             </div>
         </div>
 
@@ -68,9 +66,9 @@
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ who.getMessages|length >0 ? 'govuk-form-group--error'}}">
             <fieldset class="govuk-fieldset">
-                <legend class="visually-hidden">Who was using the LPA service</legend>
+                <legend class="govuk-visually-hidden">Who was using the LPA service</legend>
 
                 {{ formElementErrorsV2(who) }}
 
@@ -147,9 +145,9 @@
                         </label>
                     </div>
 
-                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden panel panel-border-narrow"
+                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden"
                          id="other-input">
-                        <label class="form-label" for="{{ other.getAttribute('id') }}">
+                        <label class="govuk-label" for="{{ other.getAttribute('id') }}">
                             {{ other.getOption('label') }}
                         </label>
                         {{ formElementErrorsV2(other) }}
@@ -166,9 +164,7 @@
                 </div>
             </fieldset>
         </div>
-        <div class="form-group">
-            {{ formElement(form.get('save')) }}
-        </div>
+        {{ formElement(form.get('save')) }}
 
     {{ form().closeTag|raw }}
     {% endif %}

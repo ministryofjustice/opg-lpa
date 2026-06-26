@@ -2,7 +2,6 @@
 
 namespace MakeSharedTest\Telemetry\Exporter;
 
-use Hamcrest\Matchers;
 use MakeShared\Telemetry\Exporter\XrayExporter;
 use MakeShared\Telemetry\Segment;
 use Mockery;
@@ -16,7 +15,7 @@ class XrayExporterTest extends TestCase
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->shouldReceive('error')
             ->withArgs([
-                Matchers::startsWith('Segment too large to export')
+                $this->stringStartsWith('Segment too large to export')
             ])
             ->andReturn()
             ->once();

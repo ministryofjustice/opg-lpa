@@ -238,6 +238,38 @@ class Service extends AbstractService
     }
 
     /**
+     * Search for a user by AReference value.
+     * The AReference is the LPA ID formatted as "A" + zero-padded to 12 digits (e.g. "A000 123 4567").
+     * We strip the "A" prefix, spaces and leading zeros to recover the raw integer ID.
+     *
+     * @param string $aReference
+     * @return array|bool
+     */
+    public function searchByAReference(string $aReference): bool|array
+    {
+        $normalised = preg_replace('/[^0-9]/', '', $aReference);
+        $lpaId = (int) $normalised;
+
+        if ($lpaId <= 0) {
+            return false;
+        }
+
+        $lpa = $this->getApplicationRepository()->getById($lpaId);
+
+        if ($lpa === null || empty($lpa['user'])) {
+            return false;
+        }
+
+        $user = $this->getUserRepository()->getById($lpa['user']);
+
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->toArray();
+    }
+
+    /**
      * @param string $username
      * @return array|bool
      */

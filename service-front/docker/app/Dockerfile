@@ -1,4 +1,4 @@
-FROM composer:2.9.7@sha256:dc292c5c0f95f526b051d4c341bf08e7e2b18504c74625e3203d7f123050e318 AS composer
+FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a69007242d267 AS composer
 
 FROM php:8.4-fpm-alpine3.23@sha256:aa3fbc44ad16c4a0ecb35797f31a2259a42c001d7711b649f4916a02deedf6e9 AS base
 
@@ -18,6 +18,8 @@ RUN apk add --no-cache icu fcgi \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
     && docker-php-ext-install sockets
+
+RUN apk update && apk add --upgrade expat
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"

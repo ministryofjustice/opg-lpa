@@ -1,0 +1,92 @@
+{% extends 'layout/accordion-layout.twig' %}
+
+{%- set pageTitle = 'Who does the donor want to make decisions about life-sustaining treatment?' -%}
+
+{% block content %}
+
+{% import "application/macros.twig" as macros %}
+
+{# Error messages #}
+{% set form = formErrorTextExchange(form, {
+    'canSustainLife' : {
+        'Value is required and can\'t be empty' : 'Select if the donor gives or does not give their attorneys authority to consent to life-sustaining treatment'
+    }
+}) %}
+
+{# Set form fields variables #}
+{% set canSustainLife = form.get('canSustainLife') %}
+
+{{ canSustainLife.setValueOptions({
+    "1": {
+        "id": "canSustainLife",
+        "value": "1",
+        "label": "Option A – <strong class='govuk-!-font-weight-bold'>The donor gives their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
+        "attributes": {"class": "govuk-radios__input"},
+        "div-attributes": {"class": "govuk-radios__item govuk-!-width-two-thirds"},
+        "label_attributes": {"class": "govuk-label govuk-radios__label"}
+    },
+    "0": {
+        "value": "0",
+        "label": "Option B – <strong class='govuk-!-font-weight-bold'>The donor does not give their attorneys authority</strong> to give or refuse consent to life-sustaining treatment on their behalf.",
+        "attributes": {"class": "govuk-radios__input"},
+        "div-attributes": {"class": "govuk-radios__item govuk-!-width-two-thirds"},
+        "label_attributes": {"class": "govuk-label govuk-radios__label"}
+    }
+}) ? '' }}
+
+{{ canSustainLife.setLabelOptions({
+    disable_html_escape: true
+}) ? '' }}
+
+
+<li id="life-sustaining-section" class="section current" data-cy="section-current">
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
+    <div class="accordion-info">
+        <div class="text">
+            <p class="govuk-body">This is a very important decision. The donor should read the guidance carefully before they answer.</p>
+            <p class="govuk-body">Life-sustaining treatment is care, surgery, medicine or other help from doctors that's needed to keep someone alive.</p>
+            <p class="govuk-body">The donor must choose who they want to make decisions about life-sustaining treatment if they do not have the mental capacity to decide themselves.</p>
+            <p class="govuk-body"><a href="/guide#topic-life-sustaining-treatment" class="govuk-link js-guidance" data-analytics-click="page:link:help: Read guidance on making this decision">Read guidance on making this decision</a></p>
+        </div>
+    </div>
+
+    {# begin form #}
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+        {{ macros.formErrorSummary(error,form) }}
+
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
+            <h2 class="govuk-heading-m flush--top text">Who does the donor want to make decisions about life-sustaining treatment?</h2>
+            <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                {{ formElementErrorsV2(canSustainLife) }}
+
+                <div class="govuk-radios">
+                    {{ formRadioOption(canSustainLife, "1")|raw }}
+
+                    <div class="govuk-radios__conditional">
+                        <p class="govuk-body">The donor can add preferences and instructions later in the LPA to explain what they would like their attorneys to consider if they have to make decisions about life-sustaining treatment.</p>
+                    </div>
+
+                    {{ formRadioOption(canSustainLife, "0")|raw }}
+
+                    <div class="govuk-radios__conditional">
+                        <p class="govuk-body">Doctors will make any decisions about life-sustaining treatment, taking into account the donor's best interests and, where possible, the views of others involved in the donor's welfare, such as their attorneys and family members.</p>
+                    </div>
+                </div>
+            </div>
+        </fieldset>
+        <div class="text">
+            <p class="govuk-body">After the LPA document is printed, the donor will need to sign and date the option they've chosen. This must be witnessed. The witness must also sign and include their full name and address. If they do not,  OPG cannot register the LPA and the donor may have to pay the application fee again.</p>
+        </div>
+        <div class="govuk-form-group">
+            {{ formElement(form.get('save')) }}
+        </div>
+
+    {{ form().closeTag|raw }}
+
+</li>
+
+{% endblock %}

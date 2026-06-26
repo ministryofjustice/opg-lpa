@@ -1,6 +1,13 @@
 // Forms
 // ==========================================================================
 
+// GOV.UK Frontend's .govuk-hint is designed to be used on block elements
+// (div, p). Where it is applied to a <span> (e.g. embedded in radio label
+// HTML), force it to display as a block so hint text sits below the label.
+span.govuk-hint {
+    display: block;
+}
+
 [disabled="disabled"],
 .disabled {
     opacity: .5 !important;
@@ -23,6 +30,29 @@
     .error-group-popup {
         display: none;
     }
+
+    // Mirror the govuk-elements .form-date .form-group rule for the migrated class name
+    .govuk-form-group {
+        float: left;
+        width: 50px;
+        margin-right: 20px;
+        margin-bottom: 0;
+        clear: none;
+
+        label {
+            display: block;
+            padding-bottom: 2px;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+
+    // Restore the wider width for the year field (overrides the 50px default above)
+    .form-group-year {
+        width: 70px;
+    }
 }
 
 .form-group-day,
@@ -39,10 +69,6 @@
     border-radius: 0;
 }
 
-.form-hint--strong {
-    margin-top: 10px;
-    color: $black;
-}
 
 .form-group-checkbox {
     width: 100%;

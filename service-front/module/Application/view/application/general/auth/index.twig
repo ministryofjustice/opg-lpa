@@ -17,13 +17,13 @@
 {# form fields config #}
 {{ email.setAttributes({
     id: 'email',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'login-email'
 }) ? ''}}
 
 {{ password.setAttributes({
     id: 'password',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'login-password'
 }) ? '' }}
 
@@ -31,11 +31,11 @@
 {{ email.setOptions({ label: 'Email address' }) ? '' }}
 {{ password.setOptions( { label: 'Password' }) ? '' }}
 
-<p>Sign in or <a href="{{ url('register') }}">create an account</a> to get started.</p>
+<p class="govuk-body">Sign in or <a class="govuk-link" href="{{ url('register') }}">create an account</a> to get started.</p>
 
 <div class="govuk-details__text">
     If you already have a registered LPA and want to use it online, go to the<br>
-    <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+    <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
 </div><br>
 {{ systemMessage() }}
 
@@ -44,31 +44,31 @@
 {{ form().openTag( form )|raw }}
 
     <fieldset>
-        <legend class="visually-hidden">Sign in</legend>
+        <legend class="govuk-visually-hidden">Sign in</legend>
 
         {{ macros.formGroup(email) }}
 
-        <div class="form-group {{ password.getMessages|length >0 ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
             {{ formElementErrorsV2(password) }}
-            <label class="form-label" for="{{ password.getAttribute('id') }}">
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">
                 {{ password.getOption('label') }}
             </label>
             {{ formElement(password) }}
             <div>
-                <a href="#" class="hidden js-showHidePassword" data-for="password">Show password</a>
+                <a href="#" class="govuk-link hidden js-showHidePassword" data-for="password">Show password</a>
             </div>
         </div>
 
-        <div class="form-group">
-            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="button">
+        <div class="govuk-form-group">
+            <input type="submit" name="submit" id="signin-form-submit" data-cy="login-submit-button" value="Sign in" class="govuk-button">
         </div>
 
     </fieldset>
 
 {{ form().closeTag|raw }}
 
-<p>
-    <a href="{{ url('forgot-password') }}">Forgotten your password?</a>
+<p class="govuk-body">
+    <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
 </p>
 
 {% endblock content %}

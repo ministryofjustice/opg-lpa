@@ -1,3 +1,26 @@
+// Icon mixin — previously provided by govuk-elements-sass, now defined locally.
+// Depends on $path from settings/_variables.scss (e.g. '/assets/v2/images/icons/').
+@mixin icon($icon-name, $icon-width, $icon-height, $icon-sub-folder: false) {
+  width: #{$icon-width}px;
+  height: #{$icon-height}px;
+
+  @if $icon-sub-folder {
+    background-image: url("#{$path}#{$icon-sub-folder}/#{$icon-name}.png");
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      background-image: url("#{$path}#{$icon-sub-folder}/#{$icon-name}-2x.png");
+      background-size: 100%;
+    }
+  } @else {
+    background-image: url("#{$path}#{$icon-name}.png");
+
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+      background-image: url("#{$path}#{$icon-name}-2x.png");
+      background-size: 100%;
+    }
+  }
+}
+
 // Icons
 // ==========================================================================
 // Information (27x27)
@@ -23,8 +46,14 @@
 }
 
 .icon {
-    .heading-medium & {
+    .heading-medium &,
+    .govuk-heading-m & {
         @extend %icon-with-heading-base;
+    }
+
+    a & {
+        vertical-align: middle;
+        margin-right: govuk-spacing(1);
     }
 }
 
@@ -40,20 +69,20 @@
     @include icon(icon-question, 52, 50);
     margin-right: 10px;
 
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-question, 31, 30);
         margin-right: 6px;
         background-size: contain;
     }
 
-    @include media($max-width: 360px) {
+    @media (max-width: 360px) {
         display: none;
     }
 }
 
 .icon-tick {
     @include icon(icon-tick, 22, 22);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-tick, 16, 16);
         margin-right: 6px;
         background-size: contain;
@@ -62,7 +91,7 @@
 
 .icon-cross {
     @include icon(icon-cross, 22, 22);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-cross, 16, 16);
         margin-right: 6px;
         background-size: contain;
@@ -76,7 +105,7 @@
 
 .icon-person {
     @include icon(icon-person, 27, 27);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-person, 27, 27);
         margin-right: 6px;
         background-size: contain;
@@ -85,7 +114,7 @@
 
 .icon-phone {
     @include icon(icon-phone, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-phone, 27, 27);
         background-size: contain;
     }
@@ -93,7 +122,7 @@
 
 .icon-email {
     @include icon(icon-email, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-email, 27, 27);
         background-size: contain;
     }
@@ -101,7 +130,7 @@
 
 .icon-post {
     @include icon(icon-post, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-post, 27, 27);
         background-size: contain;
     }
@@ -109,7 +138,7 @@
 
 .icon-fax {
     @include icon(icon-fax, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-fax, 27, 27);
         background-size: contain;
     }
@@ -117,7 +146,7 @@
 
 .icon-bin {
     @include icon(icon-bin, 27, 27);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-bin, 27, 27);
         background-size: contain;
     }
@@ -125,7 +154,7 @@
 
 .icon-print {
     @include icon(icon-print, 36, 36);
-    @include media(mobile) {
+    @include govuk-media-query($until: tablet) {
         @include icon(icon-print, 27, 27);
         background-size: contain;
     }

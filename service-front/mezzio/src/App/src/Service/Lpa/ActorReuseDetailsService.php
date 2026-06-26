@@ -1,0 +1,345 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Service\Lpa;
+
+use MakeShared\DataModel\Common\Dob;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\Common\LongName;
+use MakeShared\DataModel\Lpa\Document\Attorneys;
+use MakeShared\DataModel\Lpa\Document\CertificateProvider;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
+use MakeShared\DataModel\Lpa\Document\Document;
+use MakeShared\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Lpa;
+use MakeShared\DataModel\User\User;
+use Mezzio\Session\SessionInterface;
+
+class ActorReuseDetailsService
+{
+    private ?SessionInterface $session = null;
+
+    public function __construct(
+        private readonly Application $lpaApplicationService,
+    ) {
+    }
+
+    public function setSession(SessionInterface $session): void
+    {
+        $this->session = $session;
+    }
+
+    public function getActorReuseDetails(User $user, Lpa $lpa, bool $includeTrusts = true): array
+    {
+        $actorReuseDetails = [];
+
+        $this->addCurrentUserDetailsForReuse($user, $lpa, $actorReuseDetails);
+
+        $seedActorDetails = $this->getSeedLpaActorDetails($lpa);
+
+        foreach ($seedActorDetails as $type => $actorData) {
+            $actorType = ($actorData['who'] ?? 'other');
+
+            switch ($type) {
+                case 'donor':
+                    $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                        $actorData,
+                        'donor',
+                        '(was the donor)'
+                    );
+                    break;
+
+                case 'correspondent':
+                    if ($actorType === 'other') {
+                        $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                            $actorData,
+                            $actorType,
+                            '(was the correspondent)'
+                        );
+                    }
+                    break;
+
+                case 'certificateProvider':
+                    $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                        $actorData,
+                        $actorType,
+                        '(was the certificate provider)'
+                    );
+                    break;
+
+                case 'primaryAttorneys':
+                case 'replacementAttorneys':
+                    $suffixText = $type === 'replacementAttorneys'
+                        ? '(was a replacement attorney)'
+                        : '(was a primary attorney)';
+
+                    foreach ($actorData as $singleActorData) {
+                        $isTrust = ($singleActorData['type'] === 'trust');
+
+                        if ($isTrust && (!$includeTrusts || !$this->allowTrust($lpa))) {
+                            continue;
+                        }
+
+                        $detail = $this->getReuseDetailsForActor($singleActorData, 'attorney', $suffixText);
+
+                        if ($isTrust) {
+                            $actorReuseDetails['t'] = $detail;
+                        } else {
+                            $actorReuseDetails[] = $detail;
+                        }
+                    }
+                    break;
+
+                case 'peopleToNotify':
+                    foreach ($actorData as $singleActorData) {
+                        $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                            $singleActorData,
+                            $actorType,
+                            '(was a person to be notified)'
+                        );
+                    }
+                    break;
+            }
+        }
+
+        return $actorReuseDetails;
+    }
+
+    public function getCorrespondentReuseDetails(User $user, Lpa $lpa): array
+    {
+        $actorReuseDetails = [];
+
+        $this->addCurrentUserDetailsForReuse($user, $lpa, $actorReuseDetails, false);
+
+        $lpaDocument = $lpa->document;
+
+        if ($lpaDocument->donor instanceof Donor) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $lpaDocument->donor->toArray(),
+                Correspondence::WHO_DONOR,
+                '(donor)'
+            );
+        }
+
+        foreach ($lpaDocument->primaryAttorneys as $attorney) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $attorney->toArray(),
+                Correspondence::WHO_ATTORNEY,
+                '(primary attorney)'
+            );
+        }
+
+        foreach ($lpaDocument->replacementAttorneys as $attorney) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $attorney->toArray(),
+                Correspondence::WHO_ATTORNEY,
+                '(replacement attorney)'
+            );
+        }
+
+        if ($lpaDocument->certificateProvider instanceof CertificateProvider) {
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $lpaDocument->certificateProvider->toArray(),
+                Correspondence::WHO_CERTIFICATE_PROVIDER,
+                '(certificate provider)'
+            );
+        }
+
+        // Include the correspondent from the seed/cloned LPA if present
+        $seedActorDetails = $this->getSeedLpaActorDetails($lpa);
+        if (isset($seedActorDetails['correspondent'])) {
+            $correspondent = $seedActorDetails['correspondent'];
+            $actorType = ($correspondent['who'] ?? Correspondence::WHO_OTHER);
+            $actorReuseDetails[] = $this->getReuseDetailsForActor(
+                $correspondent,
+                $actorType,
+                '(was the correspondent)'
+            );
+        }
+
+        return $actorReuseDetails;
+    }
+
+    private function addCurrentUserDetailsForReuse(User $user, Lpa $lpa, array &$actorReuseDetails, bool $checkIfAlreadyUsed = true): void
+    {
+        $shouldAdd = true;
+
+        if ($checkIfAlreadyUsed && $user->name !== null) {
+            foreach ($this->getActorsList($lpa) as $actorsListItem) {
+                if (
+                    strtolower($user->name->first) === strtolower($actorsListItem['firstname'])
+                    && strtolower($user->name->last) === strtolower($actorsListItem['lastname'])
+                ) {
+                    $shouldAdd = false;
+                    break;
+                }
+            }
+        }
+
+        if ($shouldAdd && $user->name !== null) {
+            $userDetails = $user->flatten();
+            $userDetails['who'] = 'other';
+
+            if (($dateOfBirth = $user->dob) instanceof Dob) {
+                $userDetails['dob-date'] = [
+                    'day'   => $dateOfBirth->date->format('d'),
+                    'month' => $dateOfBirth->date->format('m'),
+                    'year'  => $dateOfBirth->date->format('Y'),
+                ];
+            }
+
+            $actorReuseDetails[] = [
+                'label' => sprintf('%s %s (myself)', $user->name->first, $user->name->last),
+                'data'  => $userDetails,
+            ];
+        }
+    }
+
+    public function getActorsList(Lpa $lpa, bool $excludeDonor = true, ?int $excludeReplacementAttorneyIdx = null): array
+    {
+        $actorsList = [];
+        $lpaDocument = $lpa->document;
+
+        if (!$excludeDonor && $lpaDocument->donor instanceof Donor) {
+            $actorsList[] = $this->getActorDetails($lpaDocument->donor, 'donor');
+        }
+
+        if ($lpaDocument->certificateProvider instanceof CertificateProvider) {
+            $actorsList[] = $this->getActorDetails($lpaDocument->certificateProvider, 'certificate provider');
+        }
+
+        foreach ($lpaDocument->primaryAttorneys as $attorney) {
+            if ($attorney instanceof Attorneys\Human) {
+                $actorsList[] = $this->getActorDetails($attorney, 'attorney');
+            }
+        }
+
+        foreach ($lpaDocument->replacementAttorneys as $idx => $attorney) {
+            if ($excludeReplacementAttorneyIdx !== null && $idx === $excludeReplacementAttorneyIdx) {
+                continue;
+            }
+            if ($attorney instanceof Attorneys\Human) {
+                $actorsList[] = $this->getActorDetails($attorney, 'replacement attorney');
+            }
+        }
+
+        foreach ($lpaDocument->peopleToNotify as $person) {
+            $actorsList[] = $this->getActorDetails($person, 'person to notify');
+        }
+
+        return $actorsList;
+    }
+
+    /**
+     * @param Attorneys\Human|CertificateProvider|Donor $actorData
+     */
+    private function getActorDetails(Donor|CertificateProvider|Attorneys\Human $actorData, string $actorType): array
+    {
+        if (
+            isset($actorData->name)
+            && ($actorData->name instanceof Name || $actorData->name instanceof LongName)
+        ) {
+            return [
+                'firstname' => $actorData->name->first,
+                'lastname'  => $actorData->name->last,
+                'type'      => $actorType,
+            ];
+        }
+
+        return [];
+    }
+
+    private function getSeedLpaActorDetails(Lpa $lpa): array
+    {
+        $seedId = (string) $lpa->seed;
+
+        if (empty($seedId)) {
+            return [];
+        }
+
+        $sessionKey = 'clone_' . $seedId;
+        $sessionSeedData = $this->session?->get($sessionKey);
+
+        if ($sessionSeedData === null) {
+            $seedDetails = $this->lpaApplicationService->getSeedDetails($lpa->id);
+            $this->session?->set($sessionKey, $seedDetails);
+            return is_array($seedDetails) ? $seedDetails : [];
+        }
+
+        return is_array($sessionSeedData) ? $sessionSeedData : [];
+    }
+
+    private function getReuseDetailsForActor(array $actorData, string $actorType, string $suffixText = ''): array
+    {
+        $actorData['who'] = $actorType;
+
+        $label = $actorData['name'];
+
+        if (isset($actorData['type']) && $actorData['type'] === 'trust') {
+            $actorData['company'] = $label;
+        } elseif (is_array($actorData['name'])) {
+            $label = $actorData['name']['first'] . ' ' . $actorData['name']['last'];
+        }
+
+        $allowedKeys = ['name', 'number', 'otherNames', 'address', 'dob', 'email', 'case', 'phone',
+            'who', 'company', 'type', 'canSign'];
+
+        foreach (array_keys($actorData) as $key) {
+            if (!in_array($key, $allowedKeys)) {
+                unset($actorData[$key]);
+            }
+        }
+
+        return [
+            'label' => trim($label . ' ' . $suffixText),
+            'data'  => $this->flattenData($actorData),
+        ];
+    }
+
+    private function flattenData(array $modelData): array
+    {
+        $formData = [];
+
+        foreach ($modelData as $l1 => $l2) {
+            if (is_array($l2)) {
+                foreach ($l2 as $name => $l3) {
+                    if ($l1 === 'dob') {
+                        $dob = new \DateTime($l3);
+                        $formData['dob-date'] = [
+                            'day'   => $dob->format('d'),
+                            'month' => $dob->format('m'),
+                            'year'  => $dob->format('Y'),
+                        ];
+                    } else {
+                        $formData[$l1 . '-' . $name] = $l3;
+                    }
+                }
+            } else {
+                $formData[$l1] = $l2;
+            }
+        }
+
+        return $formData;
+    }
+
+    public function allowTrust(Lpa $lpa): bool
+    {
+        if ($lpa->document->type === Document::LPA_TYPE_HW) {
+            return false;
+        }
+
+        $attorneys = array_merge(
+            $lpa->document->primaryAttorneys,
+            $lpa->document->replacementAttorneys
+        );
+
+        foreach ($attorneys as $attorney) {
+            if ($attorney instanceof Attorneys\TrustCorporation) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}

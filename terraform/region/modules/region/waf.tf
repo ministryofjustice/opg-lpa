@@ -9,7 +9,7 @@ resource "aws_wafv2_web_acl" "main" {
 
   rule {
     name     = "Allow-ON-Keyword"
-    priority = 5
+    priority = 1
 
     action {
       allow {}
@@ -35,9 +35,101 @@ resource "aws_wafv2_web_acl" "main" {
       metric_name                = "allow-on-keyword"
       sampled_requests_enabled   = true
     }
-
   }
 
+  rule {
+    name     = "RateLimitSuspiciousURIPatterns"
+    priority = 5
+
+    action {
+      block {}
+    }
+
+    statement {
+      rate_based_statement {
+        limit              = 10
+        aggregate_key_type = "IP"
+
+        scope_down_statement {
+          regex_pattern_set_reference_statement {
+            arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns.arn
+            field_to_match {
+              uri_path {}
+            }
+            text_transformation {
+              priority = 0
+              type     = "LOWERCASE"
+            }
+          }
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "RateLimitSuspiciousURIPatterns"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  rule {
+    name     = "BlockSuspiciousURIPatterns"
+    priority = 6
+
+    action {
+      block {}
+    }
+
+    statement {
+      regex_pattern_set_reference_statement {
+        arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns.arn
+
+        field_to_match {
+          uri_path {}
+        }
+
+        text_transformation {
+          priority = 0
+          type     = "LOWERCASE"
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "BlockSuspiciousURIPatterns"
+      sampled_requests_enabled   = true
+    }
+  }
+  rule {
+    name     = "BlockSuspiciousURIPatterns2"
+    priority = 7
+
+    action {
+      block {}
+    }
+
+    statement {
+      regex_pattern_set_reference_statement {
+        arn = aws_wafv2_regex_pattern_set.suspicious_uri_patterns_2.arn
+
+        field_to_match {
+          uri_path {}
+        }
+
+        text_transformation {
+          priority = 0
+          type     = "LOWERCASE"
+        }
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "RateLimitSuspiciousURIPatterns"
+      sampled_requests_enabled   = true
+    }
+  }
   rule {
     name     = "AWS-AWSManagedRulesPHPRuleSet"
     priority = 10
@@ -155,24 +247,49 @@ resource "aws_wafv2_web_acl" "main" {
       sampled_requests_enabled   = true
     }
   }
-  rule {
-    name     = "AWS-AWSManagedRulesAmazonIpReputationList"
-    priority = 50
 
-    override_action {
-      none {}
+  dynamic "rule" {
+    for_each = var.aws_waf_amazon_managed_ip_reputation_list_rule_enabled ? [1] : []
+    content {
+      name     = "AWS-AWSManagedRulesAmazonIpReputationList"
+      priority = 50
+      override_action {
+        none {}
+      }
+      statement {
+        managed_rule_group_statement {
+          name        = "AWSManagedRulesAmazonIpReputationList"
+          vendor_name = "AWS"
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
+        sampled_requests_enabled   = true
+      }
+    }
+  }
+
+  rule {
+    name     = "RateLimitByIP"
+    priority = 60
+
+    action {
+      count {}
     }
 
     statement {
-      managed_rule_group_statement {
-        name        = "AWSManagedRulesAmazonIpReputationList"
-        vendor_name = "AWS"
+      rate_based_statement {
+        limit                 = 200
+        aggregate_key_type    = "IP"
+        evaluation_window_sec = 60
       }
     }
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                = "AWS-AWSManagedRulesAmazonIpReputationList"
+      metric_name                = "RateLimitByIP"
       sampled_requests_enabled   = true
     }
   }
@@ -193,7 +310,26 @@ resource "aws_wafv2_regex_pattern_set" "allow_on_keyword" {
   regular_expression {
     regex_string = ".*[oO][nN].*=.*$"
   }
+}
 
+resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns" {
+  name        = "suspicious-uri-patterns"
+  description = "Regex pattern set for suspicious URI patterns"
+  scope       = "REGIONAL"
+
+  regular_expression {
+    regex_string = "(?i)\\.(env|git|sql|bak|php|asp|aspx|cgi|sh|exe|tar|gz|tgz|zip|rar|7z|z|bz2|lz|xz|db|sqlite|sqlitedb|war|jar|config|conf|ini|log|pem|key|p12|pfx|crt|ovpn|htaccess|htpasswd|DS_Store|swp)$"
+  }
+}
+
+resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns_2" {
+  name        = "suspicious-uri-patterns-2"
+  description = "Regex pattern set for suspicious URI patterns"
+  scope       = "REGIONAL"
+
+  regular_expression {
+    regex_string = "(?i)\\.(dump|aws|xml|c|err|staging)$"
+  }
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "main" {

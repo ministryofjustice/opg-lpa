@@ -10,14 +10,14 @@ First install Node dependencies:
 
 ```bash
 cd service-front
-npm ci --ignore-scripts
-npm rebuild esbuild
+docker compose run --rm npm-front ci --ignore-scripts
+docker compose run --rm npm-front rebuild esbuild
 ```
 
 Then run a full build:
 
 ```bash
-npm run build
+docker compose run --rm npm-front run build
 ```
 
 ### What the build does
@@ -30,9 +30,9 @@ npm run build
 
 | Command | What it does |
 |---|---|
-| `npm run build` | Full build (JS + CSS) |
-| `npm run build:js` | JavaScript only |
-| `npm run build:css` | CSS only |
+| `docker compose run --rm npm-front run build` | Full build (JS + CSS) |
+| `docker compose run --rm npm-front run build:js` | JavaScript only |
+| `docker compose run --rm npm-front run build:css` | CSS only |
 
 ### Watch mode (local development)
 
@@ -45,10 +45,10 @@ brew install fswatch
 Then start watching:
 
 ```bash
-npm run watch
+docker compose run --rm npm-front run watch
 ```
 
-When running the full local stack, `make dc-up` starts the containers and then runs `npm run watch` automatically, so rebuilt assets are immediately available in the browser without restarting anything.
+When running the full local stack, `make dc-up` starts the containers and then runs the watch automatically, so rebuilt assets are immediately available in the browser without restarting anything.
 
 ## Tests
 

@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Handler\Traits;
+
+use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
+use Psr\Http\Message\ServerRequestInterface;
+
+trait CommonTemplateVariablesTrait
+{
+    public function getTemplateVariables(ServerRequestInterface $request): array
+    {
+        return [
+            'signedInUser' => $request->getAttribute(RequestAttribute::USER_DETAILS),
+            'secondsUntilSessionExpires' => $request->getAttribute('secondsUntilSessionExpires'),
+            'lpa' => $request->getAttribute(RequestAttribute::LPA),
+            'currentRouteName' => $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME),
+            'csrfToken' => $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE),
+        ];
+    }
+}

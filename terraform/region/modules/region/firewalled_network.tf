@@ -83,6 +83,8 @@ module "vpc_endpoints" {
   application_subnets_id          = module.network.application_subnets[*].id
   public_subnets_cidr_blocks      = module.network.public_subnets[*].cidr_block
   application_route_tables        = data.aws_route_tables.firewalled_network_application
+  # codecatalyst endpoints were not available in eu-west-2
+  codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
   providers = {
     aws.region = aws
   }
@@ -91,4 +93,29 @@ module "vpc_endpoints" {
 resource "aws_db_subnet_group" "data" {
   name       = "data"
   subnet_ids = module.network.data_subnets[*].id
+}
+
+# DNS logs
+data "aws_kms_alias" "application_log_group_encryption_key" {
+  name     = "alias/opg-lpa-${var.account_name}-application-log-group-encryption-key"
+  provider = aws.region
+}
+
+resource "aws_cloudwatch_log_group" "route_53_resolver_logs" {
+  name              = "${data.aws_default_tags.current.tags.environment-name}-route53-resolver-logs-${data.aws_region.current.region}"
+  retention_in_days = 400
+  kms_key_id        = data.aws_kms_alias.application_log_group_encryption_key.target_key_arn
+  provider          = aws.region
+}
+
+resource "aws_route53_resolver_query_log_config" "main" {
+  name            = "main"
+  destination_arn = aws_cloudwatch_log_group.route_53_resolver_logs.arn
+  provider        = aws.region
+}
+
+resource "aws_route53_resolver_query_log_config_association" "main" {
+  resolver_query_log_config_id = aws_route53_resolver_query_log_config.main.id
+  resource_id                  = module.network.vpc.id
+  provider                     = aws.region
 }

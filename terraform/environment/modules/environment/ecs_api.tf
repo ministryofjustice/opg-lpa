@@ -33,7 +33,12 @@ resource "aws_ecs_service" "api" {
   }
   depends_on = [
     data.aws_ecs_task_execution.migrations,
+    aws_iam_role_policy.execution_role
   ]
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
@@ -155,22 +160,26 @@ resource "aws_ecs_task_definition" "api" {
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/api_web"
 }
 
 data "aws_ecr_image" "lpa_api_web" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_api_web.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_api_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/api_app"
 }
 
 data "aws_ecr_image" "lpa_api_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_api_app.name
   image_tag       = var.container_version
   provider        = aws.management
@@ -210,8 +219,10 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.api-web.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       environment = [
@@ -257,8 +268,10 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
-          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa"
+          awslogs-region        = data.aws_region.current.region,
+          awslogs-stream-prefix = "${var.environment_name}.api-app.online-lpa",
+          mode                  = "non-blocking",
+          max-buffer-size       = "25m",
         }
       },
       secrets = [
@@ -266,7 +279,8 @@ locals {
         { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
         { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
+        { name = "OPG_LPA_AUTH_LOG_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.name}" }
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
@@ -290,9 +304,10 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET", value = data.aws_s3_bucket.lpa_pdf_cache.bucket },
-        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = "https://sqs.${var.region_name}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
+        { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = "https://sqs.${data.aws_region.current.region}.amazonaws.com/${var.account.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
-        { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" }
+        { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }
   )

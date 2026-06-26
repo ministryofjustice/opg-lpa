@@ -5,19 +5,39 @@ defaults:
     shell: bash
 
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
-      account_id:
-        description: "AWS account ID containing the role to assume for boto commands"
+      environment:
+        description: "Terraform workspace / environment name (e.g. 3359lpal1896addaut)"
         required: true
         type: string
+      users:
+        description: "Number of users"
+        default: "5"
+        required: false
+        type: string
+      run_time:
+        description: "Test duration (e.g. 2m, 5m)"
+        default: "2m"
+        required: false
+        type: string
+  workflow_call:
+    inputs:
       front_url:
-        description: "URL of the frontend"
+        description: "URL of the frontend to run tests against"
         required: true
         type: string
       oidc_ingress_management_role:
         description: "OIDC role to assume for ingress management permissions"
         required: true
+        type: string
+      users:
+        description: "Number of users"
+        default: "5"
+        type: string
+      run_time:
+        description: "Test duration (e.g. 2m, 5m)"
+        default: "2m"
         type: string
 
 permissions:
@@ -38,35 +58,88 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+
 
       - name: Configure AWS Credentials - Ingress Management
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_ingress_management_role }}
+          role-to-assume: ${{ inputs.oidc_ingress_management_role || vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupStart
 
-      - name: Setup Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
         with:
-          python-version: "3.14"
+          version: "0.11.21"
+          python-version: "3.14.5"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
 
       - name: Install dependencies
+        working-directory: scripts/pipeline/ci_ingress
+        run: uv sync --locked
+
+      - name: Generate Terraform artifact config (dispatch only)
+        if: github.event_name == 'workflow_dispatch'
         run: |
-          python -m pip install --upgrade pip
-          pip install -r scripts/pipeline/ci_ingress/requirements.txt
+          ENVIRONMENT="${{ inputs.environment }}"
+          ACCOUNT_ID="050256574573"
+          FRONT_URL="https://${ENVIRONMENT}.development.front.lpa.opg.service.justice.gov.uk"
+
+          FRONT_SG=$(aws ec2 describe-security-groups \
+            --filters \
+              "Name=tag:environment-name,Values=${ENVIRONMENT}" \
+              "Name=tag:component,Values=front" \
+            --query "SecurityGroups[0].GroupId" \
+            --output text)
+
+          ADMIN_SG=$(aws ec2 describe-security-groups \
+            --filters \
+              "Name=tag:environment-name,Values=${ENVIRONMENT}" \
+              "Name=tag:component,Values=admin" \
+            --query "SecurityGroups[0].GroupId" \
+            --output text)
+
+          echo "Front URL: ${FRONT_URL}"
+          echo "Front SG: ${FRONT_SG}"
+          echo "Admin SG: ${ADMIN_SG}"
+
+          echo "FRONT_URL=${FRONT_URL}" >> $GITHUB_ENV
+
+          cat <<EOF > /tmp/environment_pipeline_tasks_config.json
+          {
+            "region": "eu-west-1",
+            "account_id": "${ACCOUNT_ID}",
+            "front_load_balancer_security_group_id": "${FRONT_SG}",
+            "admin_load_balancer_security_group_id": "${ADMIN_SG}"
+          }
+          EOF
+
+      - name: Set FRONT_URL from inputs
+        if: inputs.front_url != ''
+        run: echo "FRONT_URL=${{ inputs.front_url }}" >> $GITHUB_ENV
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        if: github.event_name != 'workflow_dispatch'
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: terraform-artifact
           path: /tmp/
 
+      - name: Protect against production load tests
+        run: |
+          if [[ "${FRONT_URL}" =~ ^(https://lastingpowerofattorney\.service\.gov\.uk|https://front\.lpa\.opg\.service\.justice\.gov\.uk)$ ]]; then
+            echo "Error: cannot run load tests against production"
+            exit 1
+          fi
+
       - name: Add GitHub Actions runner Ingress Rule
         run: |
-          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
       - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
@@ -84,20 +157,20 @@ jobs:
         env:
           DISABLE_SSL_VERIFY: True
         run: |
-          pip install boto3 locust beautifulsoup4 faker
+          uv sync --locked --directory locust
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          locust --headless -f ./locustfile.py --host ${{ inputs.front_url }} -u 5 -r 1 --run-time 2m
+          uv run --no-project locust --headless -f ./locustfile.py -r 1 --host $FRONT_URL -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
 
       - name: Configure AWS Credentials - Ingress Management
         if: always()
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_ingress_management_role }}
+          role-to-assume: ${{ inputs.oidc_ingress_management_role || vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupEnd
 
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
         run: |
-          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json
