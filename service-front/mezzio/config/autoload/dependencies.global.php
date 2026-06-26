@@ -669,7 +669,7 @@ return [
             DateService::class    => static fn() => new DateService(),
             FeedbackService::class => FeedbackServiceFactory::class,
             GuidanceService::class    => static fn() => new GuidanceService(
-                dirname(__DIR__, 2) . '/content/guidance',
+                getcwd() . '/content/guidance',
             ),
             OrdnanceSurveyService::class => OrdnanceSurveyFactory::class,
             StatsService::class  => static fn(ContainerInterface $c) => new StatsService(
