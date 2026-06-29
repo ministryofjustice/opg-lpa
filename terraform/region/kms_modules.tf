@@ -185,3 +185,41 @@ module "application_log_group_encryption_key" {
     data.aws_caller_identity.current.account_id,
   ]
 }
+
+module "dynamodb_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  description        = "Customer managed encryption key for DynamoDB"
+  alias              = "opg-lpa-${local.account_name}-dynamodb-encryption-key"
+  usage_services     = []
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-admin-task-role",
+    "-front-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
