@@ -11,7 +11,6 @@ use App\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
 
 class StatusService
@@ -25,7 +24,7 @@ class StatusService
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly ?DynamoDbClient $dynamoDbClient = null,
-        private readonly ?SaveHandlerInterface $sessionSaveHandler = null,
+        private readonly ?\SessionHandlerInterface $sessionSaveHandler = null,
         private readonly ?MailTransportInterface $mailTransport = null,
         private readonly ?OrdnanceSurvey $ordnanceSurveyClient = null,
         private readonly ?RedisClient $redisClient = null,

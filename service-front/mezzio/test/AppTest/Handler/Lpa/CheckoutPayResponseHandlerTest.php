@@ -112,6 +112,22 @@ class CheckoutPayResponseHandlerTest extends TestCase
         ];
     }
 
+    public function testNullPaymentResponseRedirectsToPayPage(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'ref-123';
+
+        $this->paymentClient->method('getPayment')->willReturn(null);
+        $this->urlHelper->method('generate')
+            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/91333263035/checkout/pay');
+
+        $response = $this->handler->handle($this->createRequest($lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('checkout/pay', $response->getHeaderLine('location'));
+    }
+
     #[DataProvider('failureTemplateProvider')]
     public function testUnsuccessfulPaymentRendersCorrectTemplate(string $stateCode, string $template): void
     {
