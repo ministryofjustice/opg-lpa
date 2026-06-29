@@ -14,12 +14,11 @@ locals {
 }
 
 resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_admin" {
-  provider             = aws.identity
-  name                 = "${local.environment_name}-admin-auth"
-  user_pool_id         = local.admin_cognito_user_pool_id
-  allowed_oauth_flows  = ["code"]
-  allowed_oauth_scopes = ["openid"]
-  # supported_identity_providers = []
+  provider                             = aws.identity
+  name                                 = "${local.environment_name}-admin-auth"
+  user_pool_id                         = local.admin_cognito_user_pool_id
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["openid"]
   supported_identity_providers         = ["EntraID"]
   allowed_oauth_flows_user_pool_client = true
   explicit_auth_flows = [
