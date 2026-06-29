@@ -11,7 +11,7 @@ resource "aws_dynamodb_table" "lpa-locks" {
 
   server_side_encryption {
     enabled     = true
-    kms_key_arn = data.aws_kms_key.dynamodb_encryption_key.arn
+    kms_key_arn = data.aws_kms_alias.dynamodb_encryption_key.target_key_arn
   }
 
   tags = local.dynamodb_component_tag
@@ -30,7 +30,7 @@ resource "aws_dynamodb_table" "lpa-properties" {
 
   server_side_encryption {
     enabled     = true
-    kms_key_arn = data.aws_kms_key.dynamodb_encryption_key.arn
+    kms_key_arn = data.aws_kms_alias.dynamodb_encryption_key.target_key_arn
   }
 
   tags = local.dynamodb_component_tag
@@ -54,7 +54,7 @@ resource "aws_dynamodb_table" "lpa-sessions" {
 
   server_side_encryption {
     enabled     = true
-    kms_key_arn = data.aws_kms_key.dynamodb_encryption_key.arn
+    kms_key_arn = data.aws_kms_alias.dynamodb_encryption_key.target_key_arn
   }
 
   tags = local.dynamodb_component_tag
