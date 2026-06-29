@@ -9,7 +9,6 @@ use Application\Model\Service\ApiClient\Client;
 use Application\Model\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
-use Hamcrest\Matchers;
 use Http\Client\HttpClient;
 use MakeShared\Telemetry\Tracer;
 use Mockery;
@@ -63,14 +62,14 @@ final class ClientTest extends MockeryTestCase
 
         if ($requestData == null) {
             $this->httpClient->shouldReceive('sendRequest')
-                ->withArgs(
-                    [Matchers::equalTo(
+                ->with(
+                    $this->equalTo(
                         new Request(
                             $verb,
                             new Uri($url),
                             $expectedHeaders,
                         )
-                    )]
+                    )
                 )
                 ->once()
                 ->andReturn($this->response);

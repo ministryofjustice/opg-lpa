@@ -219,7 +219,6 @@
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-api/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-api/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-api/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas-api-tools/api-tools-api-problem" />
       <path value="$PROJECT_DIR$/service-api/vendor/laminas/laminas-authentication" />
@@ -368,7 +367,6 @@
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-front/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-front/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-front/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-front/vendor/kokspflanze/zfc-twig" />
       <path value="$PROJECT_DIR$/service-front/vendor/laminas/laminas-authentication" />
@@ -506,7 +504,6 @@
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/guzzle" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/promises" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/guzzlehttp/psr7" />
-      <path value="$PROJECT_DIR$/service-pdf/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/laminas/laminas-barcode" />
       <path value="$PROJECT_DIR$/service-pdf/vendor/laminas/laminas-filter" />
@@ -604,7 +601,6 @@
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/advanced-json-rpc" />
       <path value="$PROJECT_DIR$/shared/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/shared/vendor/fidry/cpu-core-counter" />
-      <path value="$PROJECT_DIR$/shared/vendor/hamcrest/hamcrest-php" />
       <path value="$PROJECT_DIR$/shared/vendor/kelunik/certificate" />
       <path value="$PROJECT_DIR$/shared/vendor/laminas/laminas-config" />
       <path value="$PROJECT_DIR$/shared/vendor/laminas/laminas-diactoros" />

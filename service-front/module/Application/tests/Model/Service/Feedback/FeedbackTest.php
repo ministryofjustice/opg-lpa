@@ -10,8 +10,6 @@ use Application\Model\Service\Feedback\Feedback;
 use Application\Model\Service\Feedback\FeedbackValidationException;
 use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use GuzzleHttp\Psr7\Response;
-use Hamcrest\Matchers;
-use Hamcrest\MatcherAssert;
 use Mockery;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
@@ -57,29 +55,23 @@ final class FeedbackTest extends AbstractEmailServiceTest
             'agent' => 'Mozilla',
         ];
 
-        $expectedData = [
-            'currentDateTime' => Matchers::matchesPattern('/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/'),
-            'rating' => Matchers::equalTo($templateData['rating']),
-            'details' => Matchers::equalTo($templateData['details']),
-            'email' => Matchers::equalTo($templateData['email']),
-            'phone' => Matchers::equalTo($templateData['phone']),
-            'fromPage' => Matchers::equalTo($templateData['fromPage']),
-            'agent' => Matchers::equalTo($templateData['agent']),
-        ];
-
         // Check the data we interpolate into the template looks right
         $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($mailParams) use ($expectedData): true {
+            ->with(Mockery::on(function ($mailParams) use ($templateData): true {
                 $actualData = $mailParams->getData();
 
-                foreach ($expectedData as $key => $matcher) {
-                    MatcherAssert::assertThat($actualData[$key], $matcher);
-                }
-
-                MatcherAssert::assertThat(
-                    array_keys($actualData),
-                    Matchers::equalTo(array_keys($expectedData))
+                $this->assertEqualsCanonicalizing(
+                    [...array_keys($templateData), 'currentDateTime'],
+                    array_keys($actualData)
                 );
+
+                $this->assertMatchesRegularExpression('/\d{4}\/\d{2}\/\d{2} \d{2}:\d{2}:\d{2}/', $actualData['currentDateTime']);
+                $this->assertEquals($templateData['rating'], $actualData['rating']);
+                $this->assertEquals($templateData['details'], $actualData['details']);
+                $this->assertEquals($templateData['email'], $actualData['email']);
+                $this->assertEquals($templateData['phone'], $actualData['phone']);
+                $this->assertEquals($templateData['fromPage'], $actualData['fromPage']);
+                $this->assertEquals($templateData['agent'], $actualData['agent']);
 
                 return true;
             }))
