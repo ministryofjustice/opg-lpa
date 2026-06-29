@@ -17,8 +17,15 @@ class ConfigProvider
             'templates' => $this->getTemplates(),
             'twig'      => $this->getTwig(),
             'version'   => [
-                'tag'   => getenv('OPG_LPA_COMMON_APP_VERSION') ?: 'dev',
-                'cache' => getenv('OPG_LPA_COMMON_ASSETS_VERSION') ?: '',
+                'tag'   => getenv('OPG_DOCKER_TAG') ?: 'dev',
+                'cache' => (getenv('OPG_DOCKER_TAG') !== false) ? abs(crc32(getenv('OPG_DOCKER_TAG'))) : '',
+            ],
+            'redirects' => [
+                'index'  => 'https://www.gov.uk/power-of-attorney/make-lasting-power',
+                'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+            ],
+            'terms' => [
+                'lastUpdated' => '2015-02-17 14:00 UTC',
             ],
         ];
     }

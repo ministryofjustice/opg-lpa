@@ -13,8 +13,6 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Mezzio\Helper\UrlHelper;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use RuntimeException;
@@ -51,11 +49,6 @@ trait CheckoutTrait
 
     private function finishCheckout(Lpa $lpa, ServerRequestInterface $request): ResponseInterface
     {
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-        if ($session instanceof SessionInterface) {
-            $this->communicationService->setSession($session);
-        }
-
         $this->lpaApplicationService->lockLpa($lpa);
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 

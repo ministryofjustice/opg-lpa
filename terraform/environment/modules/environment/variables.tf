@@ -14,6 +14,7 @@ variable "account" {
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
+    mezzio_frontend_enabled                = bool
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
@@ -121,10 +122,4 @@ variable "container_version" {
 
 variable "rds_proxy_iam_role" {
   type = any
-}
-
-variable "mezzio_frontend_enabled" {
-  type        = bool
-  default     = false
-  description = "Flag to toggle the mezzio frontend switchover"
 }
