@@ -84,7 +84,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "kms:GenerateDataKey",
     ]
     resources = [
-      data.aws_kms_key.dynamodb_encryption_key.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
@@ -162,7 +162,7 @@ data "aws_iam_policy_document" "admin_permissions_role" {
       "kms:GenerateDataKey",
     ]
     resources = [
-      data.aws_kms_key.dynamodb_encryption_key.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
@@ -228,7 +228,7 @@ data "aws_iam_policy_document" "front_permissions_role" {
       "kms:GenerateDataKey",
     ]
     resources = [
-      data.aws_kms_key.dynamodb_encryption_key.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
@@ -330,7 +330,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
       "kms:GenerateDataKey",
     ]
     resources = [
-      data.aws_kms_key.dynamodb_encryption_key.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
