@@ -77,7 +77,8 @@ span.govuk-hint {
 
 .error {
     .form-group-checkbox {
-        .block-label:last-child {
+        .govuk-radios__label:last-child,
+        .govuk-checkboxes__label:last-child {
             margin-bottom: 10px;
         }
     }

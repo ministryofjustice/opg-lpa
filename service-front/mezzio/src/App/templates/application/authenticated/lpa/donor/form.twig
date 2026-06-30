@@ -154,6 +154,7 @@
 
 {{ cannotSign.setAttributes({
     id: 'cannot-sign',
+    class: 'govuk-checkboxes__input',
     'data-cy': 'cannot-sign'
 }) ? '' }}
 
@@ -276,13 +277,15 @@
     <div class="single-checkbox-group govuk-form-group {{ cannotSign.getMessages|length > 0 ? 'govuk-form-group--error'}}">
         <fieldset>
             <legend class="govuk-visually-hidden"></legend>
-            <div class="multiple-choice">
-                {{ formElementErrorsV2(cannotSign) }}
-                {{ formElement(cannotSign) }}
-                <label for="{{ cannotSign.getAttribute('id') }}">
-                    {{ cannotSign.getOption('label') }}
-                    <span class="govuk-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
-                </label>
+            <div class="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    {{ formElementErrorsV2(cannotSign) }}
+                    {{ formElement(cannotSign) }}
+                    <label class="govuk-label govuk-checkboxes__label" for="{{ cannotSign.getAttribute('id') }}">
+                        {{ cannotSign.getOption('label') }}
+                        <span class="govuk-hint flush--bottom">We'll add an extra sheet to the LPA so someone can sign on the donor's behalf</span>
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>

@@ -75,74 +75,74 @@
                 {{ formElementErrorsV2(who) }}
 
                 <div class="govuk-radios" data-module="govuk-radios">
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['donor']) }}
                         {{ formInput(whoOptions['donor']) }}
-                        <label class="block-label" for="{{ whoOptions['donor'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['donor'].getAttribute('id') }}">
                             {{ whoOptions['donor'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['friend-or-family']) }}
                         {{ formInput(whoOptions['friend-or-family']) }}
-                        <label class="block-label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['friend-or-family'].getAttribute('id') }}">
                             {{ whoOptions['friend-or-family'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['finance-professional']) }}
                         {{ formInput(whoOptions['finance-professional']) }}
-                        <label class="block-label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['finance-professional'].getAttribute('id') }}">
                             {{ whoOptions['finance-professional'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['legal-professional']) }}
                         {{ formInput(whoOptions['legal-professional']) }}
-                        <label class="block-label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['legal-professional'].getAttribute('id') }}">
                             {{ whoOptions['legal-professional'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['estate-planning-professional']) }}
                         {{ formInput(whoOptions['estate-planning-professional']) }}
-                        <label class="block-label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['estate-planning-professional'].getAttribute('id') }}">
                             {{ whoOptions['estate-planning-professional'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['digital-partner']) }}
                         {{ formInput(whoOptions['digital-partner']) }}
-                        <label class="block-label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['digital-partner'].getAttribute('id') }}">
                             {{ whoOptions['digital-partner'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['charity']) }}
                         {{ formInput(whoOptions['charity']) }}
-                        <label class="block-label" for="{{ whoOptions['charity'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['charity'].getAttribute('id') }}">
                             {{ whoOptions['charity'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['organisation']) }}
                         {{ formInput(whoOptions['organisation']) }}
-                        <label class="block-label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['organisation'].getAttribute('id') }}">
                             {{ whoOptions['organisation'].getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="multiple-choice" data-target="other-input">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['other']) }}
                         {{ formInput(whoOptions['other']) }}
-                        <label class="block-label" for="{{ whoOptions['other'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['other'].getAttribute('id') }}">
                             {{ whoOptions['other'].getOption('label')|raw }}
                         </label>
                     </div>
@@ -156,10 +156,10 @@
                         {{ formText(other) }}
                     </div>
 
-                    <div class="multiple-choice">
+                    <div class="govuk-radios__item">
                         {{ formElementErrorsV2(whoOptions['notSaid']) }}
                         {{ formInput(whoOptions['notSaid']) }}
-                        <label class="block-label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
+                        <label class="govuk-label govuk-radios__label" for="{{ whoOptions['notSaid'].getAttribute('id') }}">
                             {{ whoOptions['notSaid'].getOption('label')|raw }}
                         </label>
                     </div>
