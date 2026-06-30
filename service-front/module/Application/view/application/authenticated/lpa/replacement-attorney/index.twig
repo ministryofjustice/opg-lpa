@@ -11,7 +11,7 @@
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
-        <div class="text">
+        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">Replacement attorneys step in if an original attorney can no longer act.</p>
             <p class="govuk-body">A replacement attorney must meet the same requirements as an original attorney. This includes being 18 or over.</p>
 
@@ -21,7 +21,7 @@
                     <h2 class="govuk-heading-s govuk-!-margin-top-0">Replacement attorneys are an important backup when attorneys are appointed to act jointly.</h2>
                     <p class="govuk-body">If the donor does not appoint any replacement attorneys and one of the original attorneys dies or can no longer act, the LPA will stop working.</p>
                     <p class="govuk-body">If the donor does appoint replacement attorneys and one of the original attorneys dies or can no longer act:</p>
-                    <ul class="list list-bullet">
+                    <ul class="govuk-list govuk-list--bullet">
                         <li>
                             <p class="govuk-body"><strong class="govuk-!-font-weight-bold">ALL the original attorneys will be replaced by the replacement attorneys, unless the donor states otherwise in their instructions</strong></p>
                         </li>
@@ -35,7 +35,7 @@
                 <div class="govuk-inset-text">
                     <h2 class="govuk-heading-s govuk-!-margin-top-0">The donor appointed their attorneys to act jointly for some decisions, and jointly and severally for others.</h2>
                     <p class="govuk-body">This means that if an original attorney dies or can no longer act:</p>
-                    <ul class="list list-bullet">
+                    <ul class="govuk-list govuk-list--bullet">
                         <li>
                             <p class="govuk-body"><strong class="govuk-!-font-weight-bold">all the replacement attorneys step in and take over making the joint decisions</strong></p>
                         </li>
@@ -51,7 +51,7 @@
             {% endif %}
 
             <p class="govuk-body"><a class="govuk-link js-guidance" href="/guide#topic-replacement-attorneys" data-analytics-click="page:link:help: Find out more about replacement attorneys">Find out more about replacement attorneys</a></p>
-        </div>
+        </div></div>
     </div>
 
     {% if (attorneys) %}

@@ -63,6 +63,8 @@ use App\Middleware\RouteNameMiddleware;
 use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
+use App\Middleware\UserIdMiddleware;
+use App\Middleware\UserIdMiddlewareFactory;
 use App\Model\UserDetailsHolder;
 use App\Model\FlashMessagesHolder;
 use App\Model\Service\Session\PersistentSessionDetails;
@@ -738,6 +740,7 @@ return [
                 $c->get(LoggerInterface::class),
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
+            UserIdMiddleware::class                => UserIdMiddlewareFactory::class,
             TermsAndConditionsMiddleware::class    => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
                 $c->get('config'),
                 $c->get(AuthenticationService::class),
