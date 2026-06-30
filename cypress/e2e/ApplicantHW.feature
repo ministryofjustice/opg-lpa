@@ -18,8 +18,9 @@ Feature: Add Applicant to a Health and Welfare LPA
         Then I see in the page text
             | There is a problem |
             | Select the person who is applying to register the LPA |
-        # select the donor as applicant
-        When I check "whoIsRegistering-donor"
+        # select the attorney as applicant
+        When I check occurrence 1 of radio button
+        When I check occurrence 1 of checkbox
         Then the page matches the "add-applicant" baseline image
         And I click "save"
         Then I am taken to the correspondent page
