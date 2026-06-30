@@ -11,6 +11,7 @@ use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
 use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
+use App\Middleware\UserIdMiddleware;
 use MakeShared\Logging\RequestLoggingMiddleware;
 use Mezzio\Csrf\CsrfMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
@@ -38,6 +39,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(RequestLoggingMiddleware::class);
     $app->pipe(CsrfMiddleware::class);
     $app->pipe(IdentityTokenRefreshMiddleware::class);
+    $app->pipe(UserIdMiddleware::class);
     $app->pipe(RouteMiddleware::class);
     $app->pipe(RouteNameMiddleware::class);
     $app->pipe(ImplicitHeadMiddleware::class);
