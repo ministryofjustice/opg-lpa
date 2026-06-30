@@ -386,6 +386,10 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
             return false;
         }
 
+        $this->getLogger()->info('User account deleted', [
+            'userId' => $this->getUserId(),
+        ]);
+
         return true;
     }
 
