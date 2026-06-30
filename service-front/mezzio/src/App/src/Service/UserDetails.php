@@ -348,7 +348,11 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
             $expiresIn   = $response['expiresIn'] ?? null;
             $failureCode = null;
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to get token info', [
+            // 401 means the token has expired or been invalidated — this is a normal
+            // part of the session lifecycle and is handled by clearing the identity.
+            // Only log at error for unexpected server-side failures.
+            $logLevel = $ex->getStatusCode() === 401 ? 'info' : 'error';
+            $this->getLogger()->{$logLevel}('Failed to get token info', [
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -381,6 +385,10 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
             return false;
         }
+
+        $this->getLogger()->info('User account deleted', [
+            'userId' => $this->getUserId(),
+        ]);
 
         return true;
     }

@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\Service\Mail\Transport\MailTransportInterface;
-use Hamcrest\MatcherAssert;
-use Hamcrest\Matchers;
 use Laminas\View\HelperPluginManager;
 use Mockery;
 use Mockery\MockInterface;
@@ -15,7 +13,7 @@ class AbstractEmailServiceTest extends AbstractServiceTest
 {
     protected array $config;
     protected HelperPluginManager|MockInterface $helperPluginManager;
-    protected MailTransportInterface $mailTransport;
+    protected MailTransportInterface|MockInterface $mailTransport;
 
     public function setUp(): void
     {
@@ -71,9 +69,9 @@ class AbstractEmailServiceTest extends AbstractServiceTest
         $this->helperPluginManager->shouldReceive('get')
             ->with('url')
             ->andReturn(function ($name, $params, $options): string {
-                MatcherAssert::assertThat($name, Matchers::equalTo('/a/route'));
-                MatcherAssert::assertThat($params, Matchers::equalTo(['token' => 'foo']));
-                MatcherAssert::assertThat($options, Matchers::equalTo(['force_canonical' => true]));
+                $this->assertEquals('/a/route', $name);
+                $this->assertEquals(['token' => 'foo'], $params);
+                $this->assertEquals(['force_canonical' => true], $options);
                 return 'https://some.url/';
             });
 

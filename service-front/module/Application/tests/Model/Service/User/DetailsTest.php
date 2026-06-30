@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\User;
 
 use Application\Model\Service\Session\ContainerNamespace;
-use Hamcrest\MatcherAssert;
 use Application\Model\Service\Mail\Exception\InvalidArgumentException;
 use Application\Model\Service\Session\SessionUtility;
 use Psr\Log\LoggerInterface;
@@ -19,7 +18,6 @@ use ApplicationTest\Model\Service\AbstractEmailServiceTest;
 use ApplicationTest\Model\Service\ServiceTestHelper;
 use MakeShared\DataModel\User\User;
 use MakeSharedTest\DataModel\FixturesData;
-use Hamcrest\Matchers;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -225,7 +223,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedOldMailParameters));
+            ->with($this->equalTo($expectedOldMailParameters));
 
         $expectedNewMailParameters = new MailParameters(
             'new@email.address',
@@ -234,7 +232,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedNewMailParameters));
+            ->with($this->equalTo($expectedNewMailParameters));
 
         $result = $this->service->requestEmailUpdate('new@email.address', 'old@email.address');
 
@@ -430,7 +428,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $this->service->setSessionUtility($sessionUtility);
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParameters))
+            ->with($this->equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->updatePassword('old-password', 'new-password');
@@ -463,7 +461,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         $this->service->setSessionUtility($sessionUtility);
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -532,16 +530,16 @@ final class DetailsTest extends AbstractEmailServiceTest
 
         $result = $this->service->getTokenInfo('test-token');
 
-        MatcherAssert::assertThat([
+        $this->assertEquals([
             'success' => false,
             'failureCode' => 500,
             'expiresIn' => null,
-        ], Matchers::equalTo($result));
+        ], $result);
     }
 
     public function testDelete(): void
     {
-        $this->setUpIdentity(2, 2, 0, 0);
+        $this->setUpIdentity(3, 3, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
@@ -588,7 +586,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParameters))
+            ->with($this->equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -630,7 +628,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParameters))
+            ->with($this->equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -665,7 +663,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             });
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->requestPasswordResetEmail('test@email.com');
@@ -688,7 +686,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             });
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -712,7 +710,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             });
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -736,7 +734,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             });
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -815,7 +813,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParameters))
+            ->with($this->equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -851,7 +849,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             });
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -880,7 +878,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once();
 
         $result = $this->service->registerAccount('test@email.com', 'test-password');
@@ -896,7 +894,7 @@ final class DetailsTest extends AbstractEmailServiceTest
             ->andThrow(ServiceTestHelper::createApiException('username-already-exists'));
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::anInstanceOf(MailParameters::class))
+            ->with($this->isInstanceOf(MailParameters::class))
             ->once()
             ->andThrow(new InvalidArgumentException());
 
@@ -927,7 +925,7 @@ final class DetailsTest extends AbstractEmailServiceTest
         );
 
         $this->mailTransport->shouldReceive('send')
-            ->with(Matchers::equalTo($expectedMailParameters))
+            ->with($this->equalTo($expectedMailParameters))
             ->once();
 
         $result = $this->service->resendActivateEmail('test@email.com');

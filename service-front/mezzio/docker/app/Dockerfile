@@ -18,7 +18,11 @@ RUN apk add --no-cache icu fcgi \
     && docker-php-ext-install opcache \
     && docker-php-ext-install sockets
 
-ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="1"
+# Default for AWS. Should be set to 1 for local development.
+ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
+
+ARG OPG_LPA_COMMON_APP_VERSION="dev"
+ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
 
 COPY --chown=root:root shared /shared
 
@@ -46,6 +50,9 @@ COPY --chown=root:root service-front/mezzio/content /service-front/mezzio/conten
 COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
+
+COPY --chown=root:root scripts/containers/health-check.sh /usr/local/bin/health-check.sh
+RUN chmod +x /usr/local/bin/health-check.sh
 
 WORKDIR /app
 

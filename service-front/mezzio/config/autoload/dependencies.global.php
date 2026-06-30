@@ -19,6 +19,7 @@ use App\Service\Lpa\MetadataFactory;
 use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Redis\RedisClientFactory;
+use App\Service\Session\FilteringSaveHandler;
 use App\Service\Session\SaveHandlerFactory;
 use App\Service\System\StatusServiceFactory;
 use App\Service\Lpa\Communication as CommunicationService;
@@ -57,7 +58,9 @@ use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddlewareFactory;
 use App\Middleware\LpaLoaderMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
+use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
+use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserDetailsMiddlewareFactory;
 use App\Model\UserDetailsHolder;
@@ -85,8 +88,10 @@ use App\Service\Lpa\ReplacementAttorneyCleanup as ReplacementAttorneyCleanupServ
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\EventManager\EventManager;
 use Laminas\Form\FormElementManager;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
+use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\RequestLoggingMiddleware;
+use MakeShared\Logging\RequestLoggingMiddlewareFactory;
 use Mezzio\Csrf\CsrfGuardFactoryInterface;
 use Mezzio\Csrf\CsrfMiddleware;
 use Mezzio\Csrf\CsrfMiddlewareFactory;
@@ -142,6 +147,45 @@ return [
             RouteNameMiddleware::class => RouteNameMiddleware::class,
         ],
         'factories' => [
+            // Override the default ErrorHandler factory to attach a logging listener.
+            // Laminas\Stratigility\Middleware\ErrorHandler catches all unhandled Throwables
+            // but does not log them by default — this listener ensures every 500 is logged
+            // with full exception context (message, class, file, line, trace).
+            ErrorHandler::class => static function (ContainerInterface $c): ErrorHandler {
+                /** @var ErrorHandler $handler */
+                $handler = (new \Mezzio\Container\ErrorHandlerFactory())($c);
+                $logger  = $c->get(LoggerInterface::class);
+
+                $handler->attachListener(
+                    static function (
+                        \Throwable $error,
+                        \Psr\Http\Message\ServerRequestInterface $request,
+                        \Psr\Http\Message\ResponseInterface $response,
+                    ) use ($logger): void {
+                        $logger->error('Unhandled exception — 500 response', [
+                            'exception' => [
+                                'class'   => get_class($error),
+                                'message' => $error->getMessage(),
+                                'code'    => $error->getCode(),
+                                'file'    => $error->getFile() . ':' . $error->getLine(),
+                                'trace'   => array_slice(
+                                    array_map(
+                                        static fn(array $f) => ($f['file'] ?? '') . ':' . ($f['line'] ?? ''),
+                                        $error->getTrace()
+                                    ),
+                                    0,
+                                    15
+                                ),
+                            ],
+                            'request_path'   => $request->getUri()->getPath(),
+                            'request_method' => $request->getMethod(),
+                        ]);
+                    }
+                );
+
+                return $handler;
+            },
+
             MezzioSessionStorage::class => static fn() => new MezzioSessionStorage(),
             ApiClient::class            => ApiClientFactory::class,
             PersistentSessionDetails::class => static fn() => new PersistentSessionDetails(),
@@ -625,7 +669,7 @@ return [
             DateService::class    => static fn() => new DateService(),
             FeedbackService::class => FeedbackServiceFactory::class,
             GuidanceService::class    => static fn() => new GuidanceService(
-                dirname(__DIR__, 2) . '/content/guidance',
+                getcwd() . '/content/guidance',
             ),
             OrdnanceSurveyService::class => OrdnanceSurveyFactory::class,
             StatsService::class  => static fn(ContainerInterface $c) => new StatsService(
@@ -642,8 +686,12 @@ return [
                 $store->setDynamoDbClient($c->get(DynamoDbClient::class));
                 return new SystemMessage($store);
             },
-            RedisClient::class         => RedisClientFactory::class,
-            SaveHandlerInterface::class => SaveHandlerFactory::class,
+            RedisClient::class          => RedisClientFactory::class,
+            FilteringSaveHandler::class => SaveHandlerFactory::class,
+            RegisterSessionSaveHandlerMiddleware::class => static fn(ContainerInterface $c) => new RegisterSessionSaveHandlerMiddleware(
+                $c->get(FilteringSaveHandler::class),
+                $c->get('config')['session']['native_settings'] ?? [],
+            ),
             AppMailTransportInterface::class => MailTransportFactory::class,
             Handler\AboutYouHandler::class => static fn(ContainerInterface $c) => new Handler\AboutYouHandler(
                 $c->get(TemplateRendererInterface::class),
@@ -687,8 +735,14 @@ return [
             LpaLoaderMiddleware::class => static fn(ContainerInterface $c) => new LpaLoaderMiddleware(
                 $c->get(LpaApplicationService::class),
                 $c->get(UrlHelper::class),
+                $c->get(LoggerInterface::class),
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
+            TermsAndConditionsMiddleware::class    => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
+                $c->get('config'),
+                $c->get(AuthenticationService::class),
+                $c->get(UrlHelper::class),
+            ),
             CsrfValidationMiddleware::class        => static fn() => new CsrfValidationMiddleware(),
             FlashMessagesHolderMiddleware::class    => static fn(ContainerInterface $c) => new FlashMessagesHolderMiddleware(
                 $c->get(FlashMessagesHolder::class),
@@ -704,7 +758,8 @@ return [
 
             AuthenticationService::class => AuthenticationServiceFactory::class,
 
-            LoggerInterface::class => LoggerFactory::class,
+            LoggerInterface::class            => LoggerFactory::class,
+            RequestLoggingMiddleware::class   => RequestLoggingMiddlewareFactory::class,
         ],
     ],
 
@@ -721,6 +776,7 @@ return [
 
     'processing-status' => [
         'track-from-date' => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
+        'expected-working-days-before-receipt' => 15,
     ],
 
     'email' => [
@@ -728,10 +784,7 @@ return [
             'key'                   => getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: null,
             'smokeTestEmailAddress' => 'simulate-delivered@notifications.service.gov.uk',
         ],
-    ],
-
-    'redirects' => [
-        'logout' => 'https://www.gov.uk/done/lasting-power-of-attorney',
+        'sendFeedbackEmailTo' => 'LPADigitalFeedback@PublicGuardian.gov.uk',
     ],
 
     'admin' => [
@@ -757,7 +810,7 @@ return [
 
     'redis' => [
         'url' => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
-        'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 604800000),
+        'ttlMs' => (int)(getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 10800000), // 3 hours, matching legacy app
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],
