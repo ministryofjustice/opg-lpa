@@ -78,14 +78,17 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
   }
   statement {
-    sid    = "DynamoDBKeyDecrypt"
+    sid    = "lpaCacheDecrypt"
     effect = "Allow"
     actions = [
       "kms:Decrypt",
       "kms:GenerateDataKey",
     ]
     resources = [
+      data.aws_s3_bucket.lpa_pdf_cache.arn,
+      data.aws_kms_key.lpa_pdf_cache.arn,
       data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
+
     ]
   }
   statement {
@@ -98,20 +101,6 @@ data "aws_iam_policy_document" "api_permissions_role" {
     resources = [
       data.aws_kms_key.lpa_pdf_sqs.arn,
       data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
-    ]
-  }
-  statement {
-    sid    = "lpaCacheDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_s3_bucket.lpa_pdf_cache.arn,
-      data.aws_kms_key.lpa_pdf_cache.arn,
-      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
-
     ]
   }
   statement {
@@ -171,17 +160,6 @@ data "aws_iam_policy_document" "admin_permissions_role" {
     ]
   }
   statement {
-    sid    = "DynamoDBKeyDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
-    ]
-  }
-  statement {
     effect = "Allow"
     sid    = "ApiXrayDaemon"
     #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray
@@ -237,17 +215,6 @@ data "aws_iam_policy_document" "front_permissions_role" {
     ]
   }
   statement {
-    sid    = "DynamoDBKeyDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
-    ]
-  }
-  statement {
     sid    = "lpaCacheDecrypt"
     effect = "Allow"
     actions = [
@@ -257,6 +224,7 @@ data "aws_iam_policy_document" "front_permissions_role" {
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
       data.aws_kms_key.lpa_pdf_cache.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
@@ -337,18 +305,6 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
       data.aws_s3_bucket.lpa_pdf_cache.arn,
     ]
   }
-
-  statement {
-    sid    = "DynamoDBKeyDecrypt"
-    effect = "Allow"
-    actions = [
-      "kms:Decrypt",
-      "kms:GenerateDataKey",
-    ]
-    resources = [
-      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
-    ]
-  }
   statement {
     sid    = "lpaCacheDecrypt"
     effect = "Allow"
@@ -359,6 +315,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     resources = [
       data.aws_s3_bucket.lpa_pdf_cache.arn,
       data.aws_kms_key.lpa_pdf_cache.arn,
+      data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
   statement {
