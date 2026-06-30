@@ -326,6 +326,10 @@ class Details extends AbstractEmailService implements ApiClientAwareInterface
             return false;
         }
 
+        $this->getLogger()->info('User account deleted', [
+            'userId' => $this->getUserId(),
+        ]);
+
         return true;
     }
 

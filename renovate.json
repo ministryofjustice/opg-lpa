@@ -74,6 +74,7 @@
         "laminas/laminas-cache-storage-adapter-memory",
         "laminas/laminas-filter",
         "laminas/laminas-paginator",
+        "laminas/laminas-view",
         "symfony/console"
       ],
       "enabled": false

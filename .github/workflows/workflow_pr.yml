@@ -199,7 +199,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: terraform-artifact
           path: /tmp/
@@ -237,6 +237,7 @@ jobs:
       cypress_tags: "@StitchedPF"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
+      mezzio: "1"
   cypress_tests_Signup_StitchedHW:
     name: Run Cypress tests - Signup,StitchedHW
     uses: ./.github/workflows/cypress_tests.yml
@@ -249,6 +250,7 @@ jobs:
       cypress_tags: "@StitchedHW"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
+      mezzio: "1"
   cypress_tests_Signup_StitchedClone:
     name: Run Cypress tests - Signup,StitchedClone
     uses: ./.github/workflows/cypress_tests.yml
@@ -261,6 +263,7 @@ jobs:
       cypress_tags: "@StitchedClone"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
+      mezzio: "1"
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
     uses: ./.github/workflows/cypress_tests.yml
@@ -284,7 +287,7 @@ jobs:
       admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @FrontMezzio and not @MezzioHome"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
   end_of_workflow:
@@ -299,6 +302,7 @@ jobs:
       - cypress_tests_Signup_StitchedClone
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
+
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
       url: "https://${{ env.FRONT_URL }}/home"

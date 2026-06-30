@@ -7,6 +7,7 @@ namespace App\Middleware;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class LpaLoaderMiddlewareFactory
 {
@@ -15,6 +16,7 @@ class LpaLoaderMiddlewareFactory
         return new LpaLoaderMiddleware(
             $container->get(LpaApplicationService::class),
             $container->get(UrlHelper::class),
+            $container->get(LoggerInterface::class),
         );
     }
 }

@@ -17,16 +17,19 @@ module "aws_backup_cross_account_key" {
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   encryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
   grant_roles = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
   ]
 }
 
@@ -180,6 +183,44 @@ module "application_log_group_encryption_key" {
   decryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/operator",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+module "dynamodb_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  description        = "Customer managed encryption key for DynamoDB"
+  alias              = "opg-lpa-${local.account_name}-dynamodb-encryption-key"
+  usage_services     = []
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-admin-task-role",
+    "-front-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
