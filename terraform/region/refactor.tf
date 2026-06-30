@@ -41,6 +41,20 @@ removed {
     destroy = false
   }
 }
+removed {
+  from = module.eu-west-1.aws_kms_key.cloudwatch_encryption
+  lifecycle {
+    destroy = false
+  }
+}
+
+removed {
+  from = module.eu-west-2.aws_kms_key.cloudwatch_encryption
+  lifecycle {
+    destroy = false
+  }
+}
+
 
 import {
   to = module.eu-west-1.aws_db_parameter_group.postgres_db_params["postgres13"]
