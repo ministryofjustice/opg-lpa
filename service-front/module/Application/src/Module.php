@@ -476,6 +476,7 @@ class Module implements FormElementProviderInterface
                     return new LpaLoaderMiddleware(
                         $sm->get(LpaApplicationService::class),
                         new MvcUrlHelper($sm->get(RouteStackInterface::class)),
+                        $sm->get(LoggerInterface::class),
                     );
                 },
 

@@ -539,7 +539,7 @@ final class DetailsTest extends AbstractEmailServiceTest
 
     public function testDelete(): void
     {
-        $this->setUpIdentity(2, 2, 0, 0);
+        $this->setUpIdentity(3, 3, 0, 0);
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/test-id'])
