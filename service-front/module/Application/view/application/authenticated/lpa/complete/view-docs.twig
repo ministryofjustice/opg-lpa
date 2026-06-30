@@ -22,7 +22,7 @@
 
 {% block content %}
 
-<div class="text">
+<div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 
     <p class="govuk-body">Your online LPA ID is <strong class="govuk-!-font-weight-bold" data-cy="lpa-number">{{ lpa.id | format_lpa_id }}</strong></p>
 
@@ -30,7 +30,7 @@
 
     <h2 class="govuk-heading-m">What you need to do</h2>
 
-    <ol class="list list-number">
+    <ol class="govuk-list govuk-list--number">
         <li>Download and print the LPA, and get it signed and dated in the right order</li>
 
         {# fee options 2 or 3 (UC or low income) #}
@@ -81,7 +81,7 @@
     </ol>
 
 
-    <h2 class="heading-large">Documents</h2>
+    <h2 class="govuk-heading-l">Documents</h2>
 
     <div class="panel-cta">
         <div class="panel-body">
@@ -130,7 +130,7 @@
 
     {{ macros.continuationNotes(continuationNoteKeys) }}
 
-    <h2 class="heading-large">Sign the LPA in the right order</h2>
+    <h2 class="govuk-heading-l">Sign the LPA in the right order</h2>
 
     <p class="govuk-body">The different sections of the LPA must be signed in the right order. If they’re not, we cannot register the LPA.</p>
 
@@ -138,18 +138,18 @@
 
     <p class="govuk-body">Once the LPA has been signed, you can <a class="govuk-link" href="{{ dateCheckUrl }}" data-analytics-click="page:link:navigation: -this tool- to check">use this tool to check your LPA is correct before sending it to us</a>. If you find the LPA has been signed in the wrong order, you'll need to print the relevant sections of the LPA and get them signed again.</p>
 
-    <h2 class="heading-large">Found a mistake in the LPA?</h2>
+    <h2 class="govuk-heading-l">Found a mistake in the LPA?</h2>
 
     <p class="govuk-body">If you spot a mistake in the LPA, do not cross anything out or write anything on the LPA - if you do, we may not be able to register it.</p>
 
     <p class="govuk-body">Find out what to do if you’ve <a class="govuk-link js-guidance" href="/guide#topic-if-you-find-a-mistake" data-analytics-click="page:link:help: found a mistake in the LPA">found a mistake in the LPA</a>.</p>
 
 
-    <h2 class="heading-large">Post your LPA to the Office of the Public Guardian</h2>
+    <h2 class="govuk-heading-l">Post your LPA to the Office of the Public Guardian</h2>
 
     <p class="govuk-body">You need to send us:</p>
 
-    <ul class="list list-bullet">
+    <ul class="govuk-list govuk-list--bullet">
         <li>the signed LPA (all sections from 1 to 15, including any blank pages)</li>
 
         {# fee options 2 or 3 (UC or low income) #}
@@ -194,19 +194,19 @@
     {% endif %}
 
 
-    <h2 class="heading-large">What happens next?</h2>
+    <h2 class="govuk-heading-l">What happens next?</h2>
 
     <p class="govuk-body">It will take up to 8 weeks to register the LPA if there are no mistakes in the application. This includes a 4 week waiting period during which people can object to the registration of the LPA. This waiting period is an important safeguard and is required by law.</p>
 
     <p class="govuk-body">If there are no problems with the LPA, we'll register it and send it to the correspondent, {{ correspondentName }}. If we cannot register the LPA, we'll write to the correspondent to let them know.</p>
 
 
-    <h2 class="heading-large">Track the progress of the LPA online</h2>
+    <h2 class="govuk-heading-l">Track the progress of the LPA online</h2>
     <p class="govuk-body">You can view the status of this LPA from the <a class="govuk-link" href="/user/dashboard">Your LPAs</a> page. This will let you know when we've received it, when we're checking it, and when we've processed it.</p>
 
-    <h2 class="heading-large">Make another LPA?</h2>
+    <h2 class="govuk-heading-l">Make another LPA?</h2>
 
-    <ul class="list">
+    <ul class="govuk-list">
         <li>
             <a class="govuk-link" href="{{ cloneUrl }}" data-analytics-click="page:link:reuse: Make an LPA based on this one">Make an LPA based on this one</a> (you'll be able to add people in a single click).
         </li>
@@ -214,6 +214,6 @@
             <a class="govuk-link" href="/user/dashboard/create" data-analytics-click="page:link:create new: Make an LPA from scratch">Make an LPA from scratch</a>
         </li>
     </ul>
-</div>
+</div></div>
 
 {% endblock %}

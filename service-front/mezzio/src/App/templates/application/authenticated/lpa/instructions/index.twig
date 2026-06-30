@@ -48,7 +48,7 @@
 <li id="preferences-and-instructions-section" class="section current" data-cy="section-current">
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
-        <div class="text">
+        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">You've entered all the essential information needed for the LPA.</p>
 
             <p class="govuk-body">The optional section below lets you add the donor’s <a class="govuk-link js-guidance" href="/guide#topic-preferences-and-instructions" data-analytics-click="page:link:help: lets you add -preferences or instructions- for your attorneys">preferences or instructions</a> for their attorneys. The donor can state things that the attorneys must or must not do, or give guidance that they’d like their attorneys to follow.</p>
@@ -60,7 +60,7 @@
                     For example, the donor could add preferences about where they’d like to live or taking exercise. The donor could add instructions about their diet or medical treatment that fits with their beliefs.
                 {% endif %}
             </p>
-        </div>
+        </div></div>
     </div>
 
 
@@ -71,30 +71,34 @@
 
         <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="form-group">
             <summary data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
-            <div>
-                <div class="form-group text flush--bottom">
+            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+                <div class="govuk-form-group flush--bottom">
                     <p class="govuk-body">If the donor would like to add anything here, please <a class="govuk-link js-guidance" href="/guide#topic-preferences-and-instructions" data-analytics-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a> first. It contains useful examples and can help avoid mistakes.</p>
                 </div>
+            </div></div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
                     <div class="form-group {{ preferences.getMessages|length >0 ? 'form-group-error'}}">
-                        {{ formElementErrorsV2(preferences) }}
-                        <label class="govuk-label text" for="{{ preferences.getAttribute('id') }}">
-                            {{ preferences.getOption('label') }}<br>
-                            <span class="govuk-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
-                        </label>
+                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+                            {{ formElementErrorsV2(preferences) }}
+                            <label class="govuk-label" for="{{ preferences.getAttribute('id') }}">
+                                {{ preferences.getOption('label') }}<br>
+                                <span class="govuk-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
+                            </label>
+                        </div></div>
                         {{ formElement(preferences) }}
                     </div>
                     <div class="form-group {{ instructions.getMessages|length >0 ? 'form-group-error'}} flush--bottom">
-                        {{ formElementErrorsV2(instructions) }}
-                        <label class="govuk-label text" for="{{ instructions.getAttribute('id') }}">
-                            {{ instructions.getOption('label') }}<br>
-                            <span class="govuk-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>
-                        </label>
+                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+                            {{ formElementErrorsV2(instructions) }}
+                            <label class="govuk-label" for="{{ instructions.getAttribute('id') }}">
+                                {{ instructions.getOption('label') }}<br>
+                                <span class="govuk-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>
+                            </label>
+                        </div></div>
                         {{ formElement(instructions) }}
                     </div>
                 </fieldset>
-            </div>
         </details>
 
         {{ formElement(form.get('save')) }}
