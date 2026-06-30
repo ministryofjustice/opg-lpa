@@ -71,123 +71,11 @@
         }
     }
 
-    // Only apply flex row layout to govuk-form-group (from HTML templates).
-    // JS-injected wrappers (age-check alert, duplication alert, postcode search)
-    // use the older form-group class and must not receive flex layout.
-    .govuk-form-group {
-        @include govuk-media-query($from: tablet) {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
-    }
-
-    .form-label,
-    .govuk-label:not(.govuk-checkboxes__label):not(.govuk-radios__label) {
-        @include govuk-media-query($from: tablet) {
-            width: 150px;
-            margin-top: 6px;
-            flex-shrink: 0;
-        }
-    }
-
-    .govuk-input,
-    .govuk-textarea,
-    .govuk-select {
-        @include govuk-media-query($from: tablet) {
-            flex: 1;
-            min-width: 0;
-        }
-    }
-
-    .postcode-input {
-        @include govuk-media-query($from: tablet) {
-            width: 252px;
-        }
-    }
-
-    .summary,
-    .summary-text,
-    .address-type-toggle,
-    .button,
-    .govuk-button-group,
-    .alert,
-    .single-checkbox-group {
-        @include govuk-media-query($from: tablet) {
-            margin-left: 150px;
-        }
-    }
-
-    // Checkbox/radio wrappers must not inherit the flex row layout
-    .single-checkbox-group {
-        @include govuk-media-query($from: tablet) {
-            display: block;
-        }
-    }
-
-    .postcode-button,
-    .button-secondary {
-        @include govuk-media-query($from: tablet) {
-            margin-left: 0;
-        }
-    }
-
-    .dob-label {
-        @include govuk-media-query($from: tablet) {
-            float: left;
-        }
-    }
-
-    .form-date {
-        @include govuk-media-query($from: tablet) {
-            margin-left: 150px;
-        }
-
-        .form-group,
+    // govuk-date-input items must stay inline-block (standard GDS date component)
+    .govuk-date-input {
         .govuk-form-group {
             display: inline-block;
-            margin-bottom: 18px;
-        }
-
-        .form-label,
-        .govuk-label {
-            @include govuk-media-query($from: tablet) {
-                width: auto;
-                flex-shrink: unset;
-            }
-        }
-
-        .govuk-input,
-        .govuk-textarea,
-        .govuk-select {
-            @include govuk-media-query($from: tablet) {
-                flex: unset;
-            }
-        }
-
-        .govuk-hint {
-            @include govuk-media-query($from: tablet) {
-                display: none;
-            }
-        }
-    }
-
-    .postcodelookup {
-        position: relative;
-
-        .js-PostcodeLookup__search .error-message,
-        .js-PostcodeLookup__search .govuk-error-message {
-            @include govuk-media-query($from: tablet) {
-                width: 79%;
-            }
-        }
-
-        .spinner {
-            @include govuk-media-query($from: tablet) {
-                position: absolute;
-                top: 10px;
-                right: 182px;
-            }
+            margin-bottom: govuk-spacing(2);
         }
     }
 
@@ -222,10 +110,6 @@
             position: relative;
             margin-right: 0;
             padding-left: 0;
-
-            .form-date & {
-                margin-right: 20px;
-            }
         }
 
         .form-reuse-details {
@@ -237,57 +121,8 @@
         }
     }
 
-    .form-date {
-        .form-group-error,
-        .govuk-form-group--error {
-            @include govuk-media-query($from: tablet) {
-                margin-right: 20px;
-            }
-        }
-    }
-
-    .error-message,
-    .govuk-error-message {
-        @include govuk-media-query($from: tablet) {
-            position: relative;
-            top: 13px;
-            left: 150px;
-            width: 80%;
-            padding-bottom: 15px;
-        }
-    }
-
-    // scss-lint:disable MergeableSelector
-    .form-date {
-
-        .error-message,
-        .govuk-error-message {
-            @include govuk-media-query($from: tablet) {
-                top: 3px;
-                left: 0;
-                width: 100%;
-                padding-bottom: 0px;
-            }
-        }
-
-        // Hide the normal placement of error messages inside popup
-        .error-group {
-            display: none;
-        }
-
-        // Show new placement of error messages within popup
-        .error-group-popup {
-            display: block;
-        }
-    }
-    // scss-lint:enable MergeableSelector
-
     .use-details-link-panel {
         padding: 15px;
-
-        @include govuk-media-query($from: tablet) {
-            padding-left: 165px;
-        }
     }
 }
 
