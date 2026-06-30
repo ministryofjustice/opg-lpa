@@ -19,3 +19,7 @@ metadata.json
 terraform
 tests/load
 tests/sirius-gateway-mock
+
+# Mezzio dev-mode files — gitignored locally but must not be baked into Docker images
+service-front/mezzio/config/development.config.php
+service-front/mezzio/config/autoload/development.local.php
