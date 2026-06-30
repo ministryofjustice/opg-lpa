@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <div class="grid-row">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <p class="govuk-body-l">Use this section to check that the details of the people involved in the LPA are correct and to change the LPA if you need to.</p>
 
@@ -24,13 +24,13 @@
         </a>
     </p>
 
-    <div class="grid-row">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             {% include 'application/authenticated/lpa/summary/partials/summary-table.twig' %}
         </div>
     </div>
 
-    <div class="grid-row">
+    <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
             <p class="govuk-body">
                 <a href="{{ url(returnRoute, {'lpa-id': lpa.id}) }}" data-cy="continue" class="govuk-button">Continue</a>
