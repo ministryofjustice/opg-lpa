@@ -205,15 +205,16 @@
             </fieldset>
         </div>
 
-        <div class="govuk-form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
         <h3 class="govuk-heading-m flush--top">Which language should we use in written correspondence?</h3>
 
-            <fieldset class="inline">
+            <fieldset>
                 <legend class="govuk-visually-hidden">Language options</legend>
 
-
-                {{ formRadioOption(contactInWelsh, 'english')|raw }}
-                {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
+                <div class="govuk-radios govuk-radios--inline">
+                    {{ formRadioOption(contactInWelsh, 'english')|raw }}
+                    {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
+                </div>
             </fieldset>
         </div>
 
