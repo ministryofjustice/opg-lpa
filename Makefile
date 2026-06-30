@@ -378,7 +378,12 @@ mezzio-up: mezzio-build
 	$(info ${YELLOW}starting mezzio app on https://localhost:7004${RESET})
 	@export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY}; \
+	export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
+	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
+	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	${MEZZIO_COMPOSE} up -d --remove-orphans
+	docker compose run --rm npm-front install
+	docker compose run --rm npm-front run watch
 
 .PHONY: mezzio-down
 mezzio-down:
