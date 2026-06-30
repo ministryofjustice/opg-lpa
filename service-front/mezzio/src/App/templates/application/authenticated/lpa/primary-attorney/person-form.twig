@@ -190,7 +190,7 @@
         {{ macros.formGroup(lastname) }}
     </fieldset>
 
-    <div class="govuk-form-group {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
+    <div class="govuk-form-group dob-element {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
         <fieldset class="govuk-fieldset" id="{{ dob.getAttribute('name') }}">
             <legend class="govuk-fieldset__legend">
                 <span class="govuk-label">Date of birth</span>
