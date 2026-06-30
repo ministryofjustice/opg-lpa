@@ -31,6 +31,11 @@ resource "aws_ecs_service" "admin" {
     ]
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
     update = var.environment_name == "production" ? "20m" : "6m"
