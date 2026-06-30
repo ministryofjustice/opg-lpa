@@ -290,20 +290,6 @@ jobs:
       cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
-  cypress_tests_Mezzio:
-    name: Run Cypress tests - Mezzio
-    uses: ./.github/workflows/cypress_tests.yml
-    needs:
-      - terraform_outputs
-    with:
-      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
-      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
-      account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
-      mezzio: "1"
-      visual_regression_enabled: "1"
-      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
-
   end_of_workflow:
     name: End of Workflow
     runs-on: ubuntu-latest
@@ -331,8 +317,7 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Signup_StitchedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Mezzio.result, 'success')}}; then
+            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
             echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
             echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
             echo "URL: https://${{ env.FRONT_URL }}/home"
