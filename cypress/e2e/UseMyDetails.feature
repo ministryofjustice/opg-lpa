@@ -6,7 +6,7 @@ Feature: UseMyDetails
 
   Background:
     Given I ignore application exceptions
-    And I log in as seeded user
+    And I log in as second seeded user
 
   Scenario: Searching for an LPA by donor name returns multiple results (LPAL-539)
     Given I visit the dashboard
@@ -17,10 +17,10 @@ Feature: UseMyDetails
     When I click "add-donor"
     Then I can find "form-donor"
     When I visit link containing "Use my details"
-    Then I see "name-title" prepopulated with "Mr"
-    And I see "name-first" prepopulated with "Test"
+    Then I see "name-title" prepopulated with "Mrs"
+    And I see "name-first" prepopulated with "Second Test"
     And I see "name-last" prepopulated with "User"
-    And I see "email-address" prepopulated with "seeded_test_user@digital.justice.gov.uk"
+    And I see "email-address" prepopulated with "seeded_test_user2@digital.justice.gov.uk"
     And I see "dob-date-day" prepopulated with "28"
     And I see "dob-date-month" prepopulated with "11"
     And I see "dob-date-year" prepopulated with "1982"
