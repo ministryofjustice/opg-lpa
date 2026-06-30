@@ -4,22 +4,7 @@
 // Hide for both screenreaders and browsers
 // Proactive important
 .hidden {
-        // scss-lint:disable ImportantRule
+	// scss-lint:disable ImportantRule
     display: none !important;
     visibility: hidden !important;
 }
-
-// Visually hidden but accessible to screen readers.
-// Previously provided by govuk-elements-sass/_helpers.scss.
-.visually-hidden,
-.visuallyhidden {
-    position: absolute;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    width: 1px;
-    margin: -1px;
-    padding: 0;
-    border: 0;
-}
-
