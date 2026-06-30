@@ -81,7 +81,7 @@
     }
 
     .form-label,
-    .govuk-label {
+    .govuk-label:not(.govuk-checkboxes__label):not(.govuk-radios__label) {
         @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
@@ -107,8 +107,6 @@
     .summary,
     .summary-text,
     .address-type-toggle,
-    .govuk-radios__label,
-    .govuk-checkboxes__label,
     .button,
     .govuk-button-group,
     .alert,
