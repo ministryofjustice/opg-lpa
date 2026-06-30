@@ -735,6 +735,7 @@ return [
             LpaLoaderMiddleware::class => static fn(ContainerInterface $c) => new LpaLoaderMiddleware(
                 $c->get(LpaApplicationService::class),
                 $c->get(UrlHelper::class),
+                $c->get(LoggerInterface::class),
             ),
             UserDetailsMiddleware::class           => UserDetailsMiddlewareFactory::class,
             TermsAndConditionsMiddleware::class    => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
