@@ -75,6 +75,7 @@
                 <div class="govuk-form-group flush--bottom">
                     <p class="govuk-body">If the donor would like to add anything here, please <a class="govuk-link js-guidance" href="/guide#topic-preferences-and-instructions" data-analytics-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a> first. It contains useful examples and can help avoid mistakes.</p>
                 </div>
+            </div></div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
                     <div class="form-group {{ preferences.getMessages|length >0 ? 'form-group-error'}}">
@@ -94,7 +95,6 @@
                         {{ formElement(instructions) }}
                     </div>
                 </fieldset>
-            </div></div>
         </details>
 
         {{ formElement(form.get('save')) }}
