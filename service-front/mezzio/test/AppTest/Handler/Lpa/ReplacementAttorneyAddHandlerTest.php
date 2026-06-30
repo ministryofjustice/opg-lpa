@@ -34,7 +34,7 @@ class ReplacementAttorneyAddHandlerTest extends TestCase
     private ActorReuseDetailsService&MockObject $actorReuseDetailsService;
     private Metadata&MockObject $metadata;
     private ReplacementAttorneyCleanup&MockObject $replacementAttorneyCleanup;
-    /** @var \Application\Form\Lpa\AttorneyForm&MockObject */
+    /** @var \App\Form\Lpa\AttorneyForm&MockObject */
     private $form;
     private ReplacementAttorneyAddHandler $handler;
 
@@ -64,7 +64,7 @@ class ReplacementAttorneyAddHandlerTest extends TestCase
         $this->actorReuseDetailsService->method('getActorsList')->willReturn([]);
         $this->actorReuseDetailsService->method('allowTrust')->willReturn(true);
 
-        $this->form = $this->createMock(\Application\Form\Lpa\AttorneyForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\AttorneyForm::class);
         $this->formElementManager->method('get')->willReturn($this->form);
 
         $this->urlHelper->method('generate')->willReturnCallback(

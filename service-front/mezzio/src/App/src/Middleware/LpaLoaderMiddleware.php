@@ -11,26 +11,26 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-/**
- * Mezzio port of Application\Middleware\LpaLoaderMiddleware.
- *
- * Loads the LPA for the current request, validates ownership, and checks the
- * form flow. Uses Mezzio\Helper\UrlHelper for URL generation instead of the
- * legacy MvcUrlHelper wrapper.
- */
-class LpaLoaderMiddleware implements MiddlewareInterface
+class LpaLoaderMiddleware implements MiddlewareInterface, LoggerAwareInterface
 {
+    use LoggerTrait;
+
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly UrlHelper $urlHelper,
+        LoggerInterface $logger,
     ) {
+        $this->setLogger($logger);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -61,6 +61,19 @@ class LpaLoaderMiddleware implements MiddlewareInterface
         }
 
         if ($identity->id() !== $lpa->user) {
+            $isGetRequest = strtoupper($request->getMethod()) === 'GET';
+            if ($isGetRequest) {
+                $this->getLogger()->info("User attempted to view another user's LPA", [
+                    'userId' => $identity->id(),
+                    'lpaId' => (int) $lpaId,
+                ]);
+            } else {
+                $this->getLogger()->info("User attempted to modify another user's LPA", [
+                    'userId' => $identity->id(),
+                    'lpaId' => (int) $lpaId,
+                ]);
+            }
+
             return new HtmlResponse('The requested LPA could not be found', 404);
         }
 
@@ -87,6 +100,13 @@ class LpaLoaderMiddleware implements MiddlewareInterface
             );
 
             return new RedirectResponse($url);
+        }
+
+        if (strtoupper($request->getMethod()) === 'GET') {
+            $this->getLogger()->info('User viewed LPA', [
+                'userId' => $identity->id(),
+                'lpaId' => $lpa->id,
+            ]);
         }
 
         $request = $request

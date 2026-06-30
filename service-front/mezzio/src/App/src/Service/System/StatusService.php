@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace App\Service\System;
 
-use Application\Model\Service\AddressLookup\OrdnanceSurvey;
+use App\Service\AddressLookup\OrdnanceSurvey;
 use App\Service\ApiClient\Client as ApiClient;
-use Application\Model\Service\Mail\Transport\MailTransportInterface;
-use Application\Model\Service\Redis\RedisClient;
+use App\Service\Mail\Transport\MailTransportInterface;
+use App\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
-use Laminas\Session\SaveHandler\SaveHandlerInterface;
 use MakeShared\Constants;
 
 class StatusService
@@ -25,7 +24,7 @@ class StatusService
     public function __construct(
         private readonly ApiClient $apiClient,
         private readonly ?DynamoDbClient $dynamoDbClient = null,
-        private readonly ?SaveHandlerInterface $sessionSaveHandler = null,
+        private readonly ?\SessionHandlerInterface $sessionSaveHandler = null,
         private readonly ?MailTransportInterface $mailTransport = null,
         private readonly ?OrdnanceSurvey $ordnanceSurveyClient = null,
         private readonly ?RedisClient $redisClient = null,
@@ -206,7 +205,21 @@ class StatusService
 
     private function callOrdnanceSurvey(int $currentUnixTime): array
     {
-        $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        try {
+            $os = $this->ordnanceSurveyClient->lookupPostcode('SW1A 1AA');
+        } catch (Exception) {
+            $this->redisClient->write('os_last_call', strval($currentUnixTime));
+            $this->redisClient->write('os_last_status', '');
+            $this->redisClient->write('os_last_details', json_encode(''));
+            $this->redisClient->close();
+
+            return [
+                'ok' => false,
+                'status' => Constants::STATUS_FAIL,
+                'cached' => false,
+                'details' => '',
+            ];
+        }
 
         $this->redisClient->write('os_last_call', strval($currentUnixTime));
 

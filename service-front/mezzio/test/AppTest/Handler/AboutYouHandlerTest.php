@@ -43,7 +43,7 @@ class AboutYouHandlerTest extends TestCase
 
         $this->formElementManager
             ->method('get')
-            ->with('Application\Form\User\AboutYou')
+            ->with('App\Form\User\AboutYou')
             ->willReturn($this->form);
 
         $this->handler = new AboutYouHandler(

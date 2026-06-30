@@ -50,7 +50,7 @@ class UserController extends AbstractLpaController
             //  Inject the email address from the identity to ensure it is correct
             $identity = $this->authorizationService->getIdentity();
 
-            if ($identity instanceof UserIdentity) {
+            if ($identity instanceof UserIdentity && $identity->id() === $id) {
                 $resultData['email']['address'] = $identity->email();
             }
 

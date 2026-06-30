@@ -286,7 +286,7 @@ abstract class AbstractIndividualPdf extends AbstractPdf
                         //  If the insert point was numeric then add the rest of the master file
                         //  If it wasn't numeric (e.g. 'end', etc) then do nothing
                         if (is_numeric($insertPoint)) {
-                            $pdfMaster->cat($insertPoint + 1, 'end', 'A');
+                            $pdfMaster->cat(intval($insertPoint) + 1, 'end', 'A');
                         }
                     }
 

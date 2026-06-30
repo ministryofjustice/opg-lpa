@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace AppTest\Handler\Lpa;
 
-use Alphagov\Pay\Client as GovPayClient;
-use Alphagov\Pay\Response\Payment as GovPayPayment;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -25,6 +25,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class CheckoutPayResponseHandlerTest extends TestCase
@@ -54,6 +55,8 @@ class CheckoutPayResponseHandlerTest extends TestCase
             $this->urlHelper,
             $this->renderer,
         );
+
+        $this->handler->setLogger($this->createMock(LoggerInterface::class));
     }
 
     /**
@@ -109,6 +112,22 @@ class CheckoutPayResponseHandlerTest extends TestCase
         ];
     }
 
+    public function testNullPaymentResponseRedirectsToPayPage(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'ref-123';
+
+        $this->paymentClient->method('getPayment')->willReturn(null);
+        $this->urlHelper->method('generate')
+            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/91333263035/checkout/pay');
+
+        $response = $this->handler->handle($this->createRequest($lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('checkout/pay', $response->getHeaderLine('location'));
+    }
+
     #[DataProvider('failureTemplateProvider')]
     public function testUnsuccessfulPaymentRendersCorrectTemplate(string $stateCode, string $template): void
     {
@@ -117,7 +136,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
 
         $submitElement = $this->createMock(Submit::class);
         $submitElement->method('setAttribute')->willReturnSelf();
-        $form = $this->createMock(\Application\Form\Lpa\BlankMainFlowForm::class);
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $form->method('get')->with('submit')->willReturn($submitElement);
         $this->formElementManager->method('get')->willReturn($form);

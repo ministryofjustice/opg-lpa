@@ -96,11 +96,9 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
                         'lpa-id' => $lpa->id,
                     ], [
-                        'query' => [
-                            'calling-url' => $request->getUri()->getPath(),
-                            'include-trusts' => false,
-                            'actor-name' => 'Certificate provider',
-                        ],
+                        'calling-url' => $request->getUri()->getPath(),
+                        'include-trusts' => false,
+                        'actor-name' => 'Certificate provider',
                     ]);
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -108,8 +106,8 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\AbstractActorForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\CertificateProviderForm');
+        /** @var \App\Form\Lpa\AbstractActorForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\CertificateProviderForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/certificate-provider/add', ['lpa-id' => $lpa->id])

@@ -52,8 +52,10 @@ variable "accounts" {
 
       regions = map(
         object({
-          region     = string
-          is_primary = string
+          region                         = string
+          is_primary                     = string
+          elasticache_node_type          = string
+          codecatalyst_endpoints_enabled = bool
       }))
     })
   )

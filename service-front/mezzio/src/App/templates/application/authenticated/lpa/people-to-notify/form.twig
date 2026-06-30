@@ -104,7 +104,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="heading-small popup-header-title" id="dialog-title">Person to notify details</h2>
+    <h2 class="govuk-heading-s popup-header-title" id="dialog-title">Person to notify details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -116,7 +116,7 @@
 
 {# If applicable display the Use my details link #}
 {% if displayReuseSessionUserLink %}
-    {{ macros.displayUseMyDetailsLink('Person to notify - Use my details') }}
+    {{ macros.displayUseMyDetailsLink('Person to notify - Use my details', csrfToken) }}
 {% endif %}
 
 {# begin form #}
@@ -124,10 +124,10 @@
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
 
-    <h2 class="heading-medium popup-exclude">What is the person's name?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the person's name?</h2>
 
     <fieldset>
-        <legend class="visually-hidden">Add person's name</legend>
+        <legend class="govuk-visually-hidden">Add person's name</legend>
 
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
@@ -135,10 +135,10 @@
 
     </fieldset>
 
-    <h2 class="heading-medium popup-exclude">What is the person's address?</h2>
+    <h2 class="govuk-heading-m popup-exclude">What is the person's address?</h2>
 
     <fieldset class="postcodelookup">
-        <legend class="visually-hidden">Address</legend>
+        <legend class="govuk-visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}

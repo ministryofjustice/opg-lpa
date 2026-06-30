@@ -20,7 +20,7 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.4-alpine@sha256:61ea466e4022f3803b9f019e01f7738aac694f01989aee35a013724921d8e742
+    image: library/redis:8.8-alpine@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005
   #    ports:
   #      - 6379:6379
 
@@ -30,15 +30,14 @@ services:
   #    ports:
   #      - 8000:8000
 
-  govpaystub:
-    container_name: lpa-govpaystub
-    image: bbyars/mountebank@sha256:32c52e77eab3e075c485e1981512ef14fe35fb59f6bc65924b646ad373489139
+  mock-pay:
+    container_name: lpa-mock-pay
+    build:
+      dockerfile: mock-pay/docker/Dockerfile
     ports:
-      - 2527:2525
-      - 4547:4545
-    volumes:
-      - ./cypress/govpay-stubs:/app
-    command: --allowInjection --configfile /app/mountebank-config.ejs
+      - "4547:8080"
+    environment:
+      - IMPOSTER_LOG_LEVEL=TRACE
 
   localstack:
     container_name: lpa-localstack
@@ -112,7 +111,7 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
-      govpaystub:
+      mock-pay:
         condition: service_started
     environment:
       OPG_LPA_STACK_NAME: "local"
@@ -142,7 +141,7 @@ services:
 
       OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
-      OPG_LPA_FRONT_GOV_PAY_URL: "http://govpaystub:4545"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
@@ -233,6 +232,7 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+      OPG_LPA_AUTH_LOG_SALT: "a-dummy-salt-for-auth-logs"
 
       # Fake key; deliberately committed
       OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
@@ -487,14 +487,14 @@ services:
       - ./cypress.config.js:/app/cypress.config.js
 
   npm-root:
-    image: node:24.14.1-alpine3.23@sha256:8510330d3eb72c804231a834b1a8ebb55cb3796c3e4431297a24d246b8add4d5
+    image: node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436
     working_dir: /home/node
     entrypoint: npm
     volumes:
       - ./:/home/node
 
   npm-front:
-    image: node:24.14.1-alpine3.23@sha256:8510330d3eb72c804231a834b1a8ebb55cb3796c3e4431297a24d246b8add4d5
+    image: node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436
     working_dir: /home/node
     entrypoint: npm
     volumes:

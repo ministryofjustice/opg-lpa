@@ -42,12 +42,15 @@ class Metadata implements LoggerAwareInterface
         return $this->setMetadataByKey($lpa, Lpa::INSTRUCTION_CONFIRMED);
     }
 
-    public function setAnalyticsReturnCount(Lpa $lpa, $returnCount)
+    /**
+     * @psalm-param 10 $returnCount
+     */
+    public function setAnalyticsReturnCount(Lpa $lpa, int $returnCount)
     {
         return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount);
     }
 
-    public function removeMetadata(Lpa $lpa, $key)
+    public function removeMetadata(Lpa $lpa, string $key): bool
     {
         if (array_key_exists($key, $lpa->metadata)) {
             //  Remove the value
@@ -79,7 +82,7 @@ class Metadata implements LoggerAwareInterface
         return true;
     }
 
-    private function setMetadataByKey(Lpa $lpa, $key, $value = true)
+    private function setMetadataByKey(Lpa $lpa, string $key, $value = true): bool
     {
         if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
             //  Update the value

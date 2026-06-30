@@ -1,7 +1,7 @@
 <div id="help-system" class="help-system">
     <header class="help-header">
         <i class="icon icon-information"></i>
-        <p class="help-header-title flush--bottom">A guide to making your lasting power of attorney (LPA)</p>
+        <p class="govuk-body help-header-title govuk-!-margin-bottom-0">A guide to making your lasting power of attorney (LPA)</p>
     </header>
 
     <div class="grid-row help-body">
@@ -10,7 +10,7 @@
                 {% for key,value in sections %}
                     {{ value['html']|raw }}
                 {% endfor %}
-                <a href="#help-navigation" class="link-back">Back to topics</a>
+                <a href="#help-navigation" class="govuk-link link-back">Back to topics</a>
             </div>
         </div>
         <div class="column-right">
@@ -18,7 +18,7 @@
                 <h2 id=”help-title” class="help-navigation-title">Help topics</h2>
                 <ul class="help-topics">
                 {% for key,value in sections %}
-                    <li><a class="js-guidance" href="{{ value['url'] }}" data-analytics-click="{{ value['dataJourney'] }}" data-cy="{{ value['dataCy'] }}">{{ value['title'] }}</a></li>
+                    <li><a class="govuk-link js-guidance" href="{{ value['url'] }}" data-analytics-click="{{ value['dataJourney'] }}" data-cy="{{ value['dataCy'] }}">{{ value['title'] }}</a></li>
                 {% endfor %}
                 </ul>
             </nav>
@@ -26,8 +26,8 @@
     </div>
 
     <div class="help-footer" data-cy="help-footer">
-        <p class="flush--bottom" data-cy="help-footer-contacts">Need help? Ring us on <strong>0300 456 0300</strong>. Alternatively, email us at <strong><a href="mailto:customerservices@publicguardian.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@publicguardian.gov.uk</a></strong></p>
+        <p class="govuk-body govuk-!-margin-bottom-0" data-cy="help-footer-contacts">Need help? Ring us on <strong class="govuk-!-font-weight-bold">0300 456 0300</strong>. Alternatively, email us at <strong class="govuk-!-font-weight-bold"><a class="govuk-link" href="mailto:customerservices@publicguardian.gov.uk?subject=Digital%20LPA%20Enquiry">customerservices@publicguardian.gov.uk</a></strong></p>
         <hr>
-        <a href="#" class="js-popup-close button-secondary">Close help</a>
+        <a href="#" class="govuk-link js-popup-close button-secondary">Close help</a>
     </div>
 </div>

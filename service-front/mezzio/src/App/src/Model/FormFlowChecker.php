@@ -229,7 +229,7 @@ class FormFlowChecker
      * @param $personIdex
      * @return string
      */
-    public function nextRoute($currentRoute, $personIdex = null)
+    public function nextRoute(string $currentRoute, $personIdex = null)
     {
         //  If the final check route is accessible then that is automatically the next route
         if ($this->finalCheckAccessible()) {
@@ -298,13 +298,24 @@ class FormFlowChecker
         return (new self($lpa))->finalCheckAccessible();
     }
 
-    public function getRouteOptions(/** @noinspection PhpUnusedParameterInspection */$route)
+    /**
+     * @param string|true $route
+     *
+     * @psalm-return array<never, never>
+     */
+    public function getRouteOptions(/** @noinspection PhpUnusedParameterInspection */string|bool $route): array
     {
         return [];
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isLpaAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'user/dashboard'|true
+     */
+    private function isLpaAccessible(): string|bool
     {
         if ($this->lpa->hasDocument()) {
             return true;
@@ -313,8 +324,14 @@ class FormFlowChecker
         return 'user/dashboard';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isFormTypeAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'user/dashboard'|true
+     */
+    private function isFormTypeAccessible(): string|bool
     {
         if ($this->lpa->hasDocument()) {
             return true;
@@ -323,7 +340,12 @@ class FormFlowChecker
         return 'user/dashboard';
     }
 
-    private function isDonorAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/form-type'|true
+     */
+    private function isDonorAccessible(): string|bool
     {
         if ($this->lpa->hasType()) {
             return true;
@@ -338,8 +360,14 @@ class FormFlowChecker
         return $this->isDonorAccessible();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isDonorEditAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/donor'|true
+     */
+    private function isDonorEditAccessible(): string|bool
     {
         if ($this->lpa->hasType() && $this->lpa->hasDonor()) {
             return true;
@@ -348,8 +376,14 @@ class FormFlowChecker
         return 'lpa/donor';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isLifeSustainingAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/donor'|true
+     */
+    private function isLifeSustainingAccessible(): string|bool
     {
         if (
             $this->lpa->hasType() && $this->lpa->hasDonor()
@@ -361,8 +395,14 @@ class FormFlowChecker
         return 'lpa/donor';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isWhenLpaStartsAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/donor'|true
+     */
+    private function isWhenLpaStartsAccessible(): string|bool
     {
         if (
             $this->lpa->hasType() && $this->lpa->hasDonor()
@@ -374,7 +414,12 @@ class FormFlowChecker
         return 'lpa/donor';
     }
 
-    private function isAttorneyAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/form-type'|'lpa/life-sustaining'|'lpa/when-lpa-starts'|true
+     */
+    private function isAttorneyAccessible(): string|bool
     {
         if ($this->lpa->hasType()) {
             if ($this->lpa->getDocument()->getType() == Document::LPA_TYPE_PF) {
@@ -395,8 +440,14 @@ class FormFlowChecker
         return 'lpa/form-type';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isAttorneyAddAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/primary-attorney'|true
+     */
+    private function isAttorneyAddAccessible(): string|bool
     {
         if ($this->isAttorneyAccessible() === true) {
             return true;
@@ -405,8 +456,14 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isAttorneyEditAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/primary-attorney'|true
+     */
+    private function isAttorneyEditAccessible($idx): string|bool
     {
         if ($this->isAttorneyAccessible() === true && $this->lpaHasPrimaryAttorney($idx)) {
             return true;
@@ -415,8 +472,14 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isAttorneyDeleteAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/primary-attorney'|true
+     */
+    private function isAttorneyDeleteAccessible($idx): string|bool
     {
         if ($this->isAttorneyAccessible() === true && $this->lpaHasPrimaryAttorney($idx)) {
             return true;
@@ -425,8 +488,14 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isAttorneyAddTrustAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/primary-attorney'|true
+     */
+    private function isAttorneyAddTrustAccessible(): string|bool
     {
         if ($this->isAttorneyAccessible() === true && !$this->lpaHasTrustCorporation('primary')) {
             return true;
@@ -435,8 +504,14 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isHowPrimaryAttorneysMakeDecisionAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/primary-attorney'|true
+     */
+    private function isHowPrimaryAttorneysMakeDecisionAccessible(): string|bool
     {
         if ($this->lpa->hasMultiplePrimaryAttorneys()) {
             return true;
@@ -445,7 +520,12 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    private function isReplacementAttorneyAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/how-primary-attorneys-make-decision'|'lpa/primary-attorney'|true
+     */
+    private function isReplacementAttorneyAccessible(): string|bool
     {
         if ($this->lpa->hasMultiplePrimaryAttorneys()) {
             if ($this->lpa->isHowPrimaryAttorneysMakeDecisionHasValue()) {
@@ -460,8 +540,14 @@ class FormFlowChecker
         return 'lpa/primary-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isReplacementAttorneyAddAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|true
+     */
+    private function isReplacementAttorneyAddAccessible(): string|bool
     {
         if ($this->isReplacementAttorneyAccessible() === true) {
             return true;
@@ -470,8 +556,14 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isReplacementAttorneyEditAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|true
+     */
+    private function isReplacementAttorneyEditAccessible($idx): string|bool
     {
         if ($this->isReplacementAttorneyAccessible() === true && $this->lpaHasReplacementAttorney($idx)) {
             return true;
@@ -480,8 +572,14 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isReplacementAttorneyDeleteAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|true
+     */
+    private function isReplacementAttorneyDeleteAccessible($idx): string|bool
     {
         if ($this->isReplacementAttorneyAccessible() === true && $this->lpaHasReplacementAttorney($idx)) {
             return true;
@@ -490,8 +588,14 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isReplacementAttorneyAddTrustAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|true
+     */
+    private function isReplacementAttorneyAddTrustAccessible(): string|bool
     {
         if ($this->isReplacementAttorneyAccessible() === true && !$this->lpaHasTrustCorporation('replacement')) {
             return true;
@@ -500,8 +604,14 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isWhenReplacementAttorneyStepInAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|true
+     */
+    private function isWhenReplacementAttorneyStepInAccessible(): string|bool
     {
         if (
             $this->lpaHasReplacementAttorney() && $this->lpa->hasMultiplePrimaryAttorneys()
@@ -513,8 +623,14 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isHowReplacementAttorneysMakeDecisionAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/replacement-attorney'|'lpa/when-replacement-attorney-step-in'|true
+     */
+    private function isHowReplacementAttorneysMakeDecisionAccessible(): string|bool
     {
         if ($this->lpa->hasMultipleReplacementAttorneys()) {
             if (
@@ -537,7 +653,12 @@ class FormFlowChecker
         return 'lpa/replacement-attorney';
     }
 
-    private function isCertificateProviderAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/how-replacement-attorneys-make-decision'|'lpa/replacement-attorney'|'lpa/when-replacement-attorney-step-in'|true
+     */
+    private function isCertificateProviderAccessible(): string|bool
     {
         if (
             $this->lpaHasPrimaryAttorney() && (
@@ -597,8 +718,14 @@ class FormFlowChecker
         }
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCertificateProviderAddAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/certificate-provider'|true
+     */
+    private function isCertificateProviderAddAccessible(): string|bool
     {
         if ($this->isCertificateProviderAccessible() === true) {
             return true;
@@ -607,8 +734,14 @@ class FormFlowChecker
         return 'lpa/certificate-provider';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCertificateProviderEditAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/certificate-provider'|true
+     */
+    private function isCertificateProviderEditAccessible(): string|bool
     {
         if ($this->isCertificateProviderAccessible() === true && $this->lpaHasCertificateProvider()) {
             return true;
@@ -617,8 +750,14 @@ class FormFlowChecker
         return 'lpa/certificate-provider';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCertificateProviderDeleteAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/certificate-provider'|true
+     */
+    private function isCertificateProviderDeleteAccessible(): string|bool
     {
         if ($this->isCertificateProviderAccessible() === true && $this->lpaHasCertificateProvider()) {
             return true;
@@ -627,7 +766,12 @@ class FormFlowChecker
         return 'lpa/certificate-provider';
     }
 
-    private function isPeopleToNotifyAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/certificate-provider'|true
+     */
+    private function isPeopleToNotifyAccessible(): string|bool
     {
         if (
             $this->isCertificateProviderAccessible() === true && ($this->lpaHasCertificateProviderSkipped()
@@ -639,8 +783,14 @@ class FormFlowChecker
         return 'lpa/certificate-provider';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isPeopleToNotifyAddAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/people-to-notify'|true
+     */
+    private function isPeopleToNotifyAddAccessible(): string|bool
     {
         if ($this->isPeopleToNotifyAccessible() === true) {
             return true;
@@ -649,8 +799,14 @@ class FormFlowChecker
         return 'lpa/people-to-notify';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isPeopleToNotifyEditAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/people-to-notify'|true
+     */
+    private function isPeopleToNotifyEditAccessible($idx): string|bool
     {
         if ($this->isPeopleToNotifyAccessible() === true && $this->lpaHasPeopleToNotify($idx)) {
             return true;
@@ -659,8 +815,14 @@ class FormFlowChecker
         return 'lpa/people-to-notify';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isPeopleToNotifyDeleteAccessible($idx)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/people-to-notify'|true
+     */
+    private function isPeopleToNotifyDeleteAccessible($idx): string|bool
     {
         if ($this->isPeopleToNotifyAccessible() === true && $this->lpaHasPeopleToNotify($idx)) {
             return true;
@@ -669,8 +831,14 @@ class FormFlowChecker
         return 'lpa/people-to-notify';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isInstructionsAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/people-to-notify'|true
+     */
+    private function isInstructionsAccessible(): string|bool
     {
         if ($this->isPeopleToNotifyAccessible() === true && $this->peopleToNotifyHasBeenConfirmed()) {
             return true;
@@ -679,14 +847,24 @@ class FormFlowChecker
         return 'lpa/people-to-notify';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isDownloadAccessible(/** @noinspection PhpUnusedParameterInspection */$pdfType)
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return true
+     */
+    private function isDownloadAccessible(/** @noinspection PhpUnusedParameterInspection */$pdfType): bool
     {
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isApplicantAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/instructions'|true
+     */
+    private function isApplicantAccessible(): string|bool
     {
         if ($this->lpaHasInstructionOrPreference()) {
             return true;
@@ -695,8 +873,14 @@ class FormFlowChecker
         return 'lpa/instructions';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCorrespondentAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/applicant'|true
+     */
+    private function isCorrespondentAccessible(): string|bool
     {
         if ($this->lpaHasApplicant()) {
             return true;
@@ -705,8 +889,14 @@ class FormFlowChecker
         return 'lpa/applicant';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCorrespondentEditAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/applicant'|true
+     */
+    private function isCorrespondentEditAccessible(): string|bool
     {
         if ($this->lpaHasApplicant()) {
             return true;
@@ -715,8 +905,14 @@ class FormFlowChecker
         return 'lpa/applicant';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isWhoAreYouAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/correspondent'|true
+     */
+    private function isWhoAreYouAccessible(): string|bool
     {
         if ($this->lpaHasCorrespondent()) {
             return true;
@@ -725,7 +921,12 @@ class FormFlowChecker
         return 'lpa/correspondent';
     }
 
-    private function isRepeatApplicationAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/who-are-you'|true
+     */
+    private function isRepeatApplicationAccessible(): string|bool
     {
         if ($this->isWhoAreYouAnsweredAfterSpecifyingCorrespondent()) {
             return true;
@@ -734,8 +935,14 @@ class FormFlowChecker
         return 'lpa/who-are-you';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isFeeReductionAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/repeat-application'|true
+     */
+    private function isFeeReductionAccessible(): string|bool
     {
         if (
             $this->isRepeatApplicationAccessible() === true
@@ -747,7 +954,12 @@ class FormFlowChecker
         return 'lpa/repeat-application';
     }
 
-    private function isPaymentAccessible()
+    /**
+     * @return string|true
+     *
+     * @psalm-return 'lpa/fee-reduction'|true
+     */
+    private function isPaymentAccessible(): string|bool
     {
         if ($this->lpa->getPayment() instanceof Payment) {
             return true;
@@ -756,8 +968,14 @@ class FormFlowChecker
         return 'lpa/fee-reduction';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isOnlinePaymentSuccessAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/checkout'|true
+     */
+    private function isOnlinePaymentSuccessAccessible(): string|bool
     {
         if ($this->isPaymentAccessible() === true && $this->lpa->getPayment()->getMethod() == 'card') {
             return true;
@@ -766,8 +984,14 @@ class FormFlowChecker
         return 'lpa/checkout';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isOnlinePaymentFailureAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/checkout'|true
+     */
+    private function isOnlinePaymentFailureAccessible(): string|bool
     {
         if ($this->isPaymentAccessible() === true && $this->lpa->getPayment()->getMethod() == 'card') {
             return true;
@@ -776,8 +1000,14 @@ class FormFlowChecker
         return 'lpa/checkout';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isOnlinePaymentCancelAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/checkout'|true
+     */
+    private function isOnlinePaymentCancelAccessible(): string|bool
     {
         if ($this->isPaymentAccessible() === true && $this->lpa->getPayment()->getMethod() == 'card') {
             return true;
@@ -786,8 +1016,14 @@ class FormFlowChecker
         return 'lpa/checkout';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isCompleteAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/checkout'|true
+     */
+    private function isCompleteAccessible(): string|bool
     {
         if ($this->lpa->isPaymentResolved()) {
             return true;
@@ -796,14 +1032,24 @@ class FormFlowChecker
         return 'lpa/checkout';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isMoreInfoRequiredAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return true
+     */
+    private function isMoreInfoRequiredAccessible(): bool
     {
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isViewDocsAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return string|true
+     *
+     * @psalm-return 'lpa/checkout'|true
+     */
+    private function isViewDocsAccessible(): string|bool
     {
         if ($this->lpa->isPaymentResolved() && $this->lpa->getCompletedAt() !== null) {
             return true;
@@ -812,60 +1058,76 @@ class FormFlowChecker
         return 'lpa/checkout';
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isReuseDetailsAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return true
+     */
+    private function isReuseDetailsAccessible(): bool
     {
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function isStatusAccessible()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return true
+     */
+    private function isStatusAccessible(): bool
     {
         return true;
     }
 
-    private function peopleToNotifyHasBeenConfirmed()
+    private function peopleToNotifyHasBeenConfirmed(): bool
     {
         return ($this->lpaHasCertificateProvider() && count($this->lpa->getDocument()->getPeopleToNotify()) > 0
             || $this->metadataIsPresent(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED));
     }
 
-    protected function replacementAttorneyHasBeenConfirmed()
+    protected function replacementAttorneyHasBeenConfirmed(): bool
     {
         return ($this->lpaHasPrimaryAttorney() && count($this->lpa->getDocument()->getReplacementAttorneys()) > 0
             || $this->metadataIsPresent(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED));
     }
 
-    protected function lpaHasSingleReplacementAttorney()
+    protected function lpaHasSingleReplacementAttorney(): bool
     {
         return ($this->lpaHasReplacementAttorney()
             && count($this->lpa->getDocument()->getReplacementAttorneys()) == 1);
     }
 
-    protected function lpaHasNoReplacementAttorney()
+    protected function lpaHasNoReplacementAttorney(): bool
     {
         return (count($this->lpa->getDocument()->getReplacementAttorneys()) == 0);
     }
 
-    protected function lpaHasSinglePrimaryAttorney()
+    protected function lpaHasSinglePrimaryAttorney(): bool
     {
         return ($this->lpaHasPrimaryAttorney() && count($this->lpa->getDocument()->getPrimaryAttorneys()) == 1);
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToFormType()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return true
+     */
+    private function returnToFormType(): bool
     {
         return true;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToDonor()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToDonor(): bool
     {
         return $this->lpa->hasType() && $this->lpa->hasDonor();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToLifeSustaining()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToLifeSustaining(): bool|string
     {
         if ($this->lpa->getDocument()->getType() != Document::LPA_TYPE_HW) {
             return $this->routeNotApplicableKey;
@@ -874,8 +1136,10 @@ class FormFlowChecker
         return $this->lpa->hasLifeSustaining();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToWhenLpaStarts()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToWhenLpaStarts(): bool|string
     {
         if ($this->lpa->getDocument()->getType() != Document::LPA_TYPE_PF) {
             return $this->routeNotApplicableKey;
@@ -884,14 +1148,22 @@ class FormFlowChecker
         return $this->lpa->hasDonor() && $this->lpa->hasWhenLpaStarts();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToPrimaryAttorney()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToPrimaryAttorney(): bool
     {
         return $this->lpaHasPrimaryAttorney();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToHowPrimaryAttorneysMakeDecision()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return bool|string
+     *
+     * @psalm-return 'NA'|bool
+     */
+    private function returnToHowPrimaryAttorneysMakeDecision(): string|bool
     {
         //  Only required if there are multiple primary attorneys
         if (!$this->lpa->hasMultiplePrimaryAttorneys()) {
@@ -907,8 +1179,14 @@ class FormFlowChecker
         return $this->replacementAttorneyHasBeenConfirmed();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToWhenReplacementAttorneyStepIn()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return bool|string
+     *
+     * @psalm-return 'NA'|bool
+     */
+    private function returnToWhenReplacementAttorneyStepIn(): string|bool
     {
         if (
             !$this->lpaHasReplacementAttorney() || !$this->lpa->hasMultiplePrimaryAttorneys()
@@ -920,8 +1198,14 @@ class FormFlowChecker
         return $this->isLpaWhenReplacementAttorneyStepInHasValue();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToHowReplacementAttorneysMakeDecision()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     *
+     * @return bool|string
+     *
+     * @psalm-return 'NA'|bool
+     */
+    private function returnToHowReplacementAttorneysMakeDecision(): string|bool
     {
         if (!$this->lpa->hasMultipleReplacementAttorneys()) {
             return "NA";
@@ -938,8 +1222,10 @@ class FormFlowChecker
         return $this->lpa->isHowReplacementAttorneysMakeDecisionHasValue();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToCertificateProvider()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToCertificateProvider(): bool
     {
         return ($this->lpaHasCertificateProviderSkipped() || $this->lpaHasCertificateProvider());
     }
@@ -950,27 +1236,35 @@ class FormFlowChecker
         return $this->peopleToNotifyHasBeenConfirmed();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToInstructions()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToInstructions(): bool
     {
         return (!is_null($this->lpa->getDocument()->getInstruction())
             || !is_null($this->lpa->getDocument()->getPreference()));
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToApplicant()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToApplicant(): bool
     {
         return $this->lpaHasApplicant();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToCorrespondent()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToCorrespondent(): bool
     {
         return $this->lpaHasCorrespondent();
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToWhoAreYou()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToWhoAreYou(): bool
     {
         return $this->isWhoAreYouAnsweredAfterSpecifyingCorrespondent();
     }
@@ -981,26 +1275,32 @@ class FormFlowChecker
         return $this->metadataIsPresent(Lpa::REPEAT_APPLICATION_CONFIRMED);
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToFeeReduction()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToFeeReduction(): bool
     {
         return $this->lpa->getPayment() instanceof Payment;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToCheckout()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToCheckout(): bool
     {
         return $this->lpa->getPayment() instanceof Payment &&
             ($this->lpa->isEligibleForFeeReduction() || $this->lpa->getPayment()->getAmount() > 0);
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
-    private function returnToViewDocs()
+    /**
+     * @noinspection PhpUnusedPrivateMethodInspection
+     */
+    private function returnToViewDocs(): bool
     {
         return $this->lpa->isPaymentResolved() && $this->lpa->getCompletedAt() !== null;
     }
 
-    private function metadataIsPresent($metadataKey)
+    private function metadataIsPresent(string $metadataKey): bool
     {
         return array_key_exists($metadataKey, $this->lpa->getMetadata());
     }

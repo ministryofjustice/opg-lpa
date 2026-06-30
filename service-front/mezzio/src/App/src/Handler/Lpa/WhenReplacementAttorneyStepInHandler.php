@@ -48,9 +48,9 @@ class WhenReplacementAttorneyStepInHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\WhenReplacementAttorneyStepInForm $form */
+        /** @var \App\Form\Lpa\WhenReplacementAttorneyStepInForm $form */
         $form = $this->formElementManager->get(
-            'Application\Form\Lpa\WhenReplacementAttorneyStepInForm',
+            'App\Form\Lpa\WhenReplacementAttorneyStepInForm',
             ['lpa' => $lpa]
         );
 

@@ -64,11 +64,11 @@
 
 <div class="govuk-body">
     <p class="govuk-body-l">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
-    <p>You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
-    <p>If you already have an account, please <a href="{{ url('login') }}">sign in</a>.</p>
+    <p class="govuk-body">You can create an account in your name to help someone else make an LPA. But they must make all the decisions about the LPA themselves.</p>
+    <p class="govuk-body">If you already have an account, please <a class="govuk-link" href="{{ url('login') }}">sign in</a>.</p>
     <div class="govuk-details__text">
         If you already have a registered LPA and want to use it online, go to<br> the
-        <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+        <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
     </div>
 </div>
 
@@ -115,13 +115,13 @@
         <fieldset>
             <legend class="govuk-visually-hidden">Terms</legend>
             <div class="govuk-body">
-                <p>LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
+                <p class="govuk-body">LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
             </div>
 
             <div class="multiple-choice">
                 {{ formElement(terms) }}
                 <label class="block-label" for="{{ terms.getAttribute('id') }}">
-                    I agree to the <a href="/terms" rel="noopener noreferrer" target="_blank">terms of use (opens in new tab)</a>
+                    I agree to the <a class="govuk-link" href="/terms" rel="noopener noreferrer" target="_blank">terms of use (opens in new tab)</a>
                     {{ formElementErrorsV2(terms) }}
                 </label>
             </div>

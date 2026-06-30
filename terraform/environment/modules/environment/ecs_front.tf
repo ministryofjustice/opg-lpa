@@ -106,32 +106,54 @@ resource "aws_ecs_task_definition" "front" {
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_web"
 }
 
 data "aws_ecr_image" "lpa_front_web" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_web.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
 data "aws_ecr_repository" "lpa_front_app" {
+  region   = data.aws_region.current.region
   provider = aws.management
   name     = "online-lpa/front_app"
 }
 
 data "aws_ecr_image" "lpa_front_app" {
+  region          = data.aws_region.current.region
   repository_name = data.aws_ecr_repository.lpa_front_app.name
   image_tag       = var.container_version
   provider        = aws.management
 }
 
+data "aws_ecr_repository" "lpa_front_mezzio_app" {
+  provider = aws.management
+  name     = "online-lpa/front_mezzio_app"
+}
+
+data "aws_ecr_image" "lpa_front_mezzio_app" {
+  repository_name = data.aws_ecr_repository.lpa_front_mezzio_app.name
+  image_tag       = var.container_version
+  provider        = aws.management
+}
+locals {
+
+  current_front_app_image = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}"
+  mezzio_front_app_image  = var.account.mezzio_frontend_enabled ? "${data.aws_ecr_repository.lpa_front_mezzio_app.repository_url}@${data.aws_ecr_image.lpa_front_mezzio_app.image_digest}" : null
+  front_app_image         = var.account.mezzio_frontend_enabled ? local.mezzio_front_app_image : local.current_front_app_image
+
+}
 
 //-----------------------------------------------
 // front ECS Service Task Container level config
 
 locals {
+
   front_web = jsonencode({
     cpu       = 1,
     essential = true,
@@ -162,7 +184,7 @@ locals {
       logDriver = "awslogs",
       options = {
         awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-        awslogs-region        = "eu-west-1",
+        awslogs-region        = data.aws_region.current.region,
         awslogs-stream-prefix = "${var.environment_name}.front-web.online-lpa",
         mode                  = "non-blocking",
         max-buffer-size       = "25m",
@@ -183,7 +205,7 @@ locals {
       cpu                    = 1,
       essential              = true,
       readonlyRootFilesystem = true,
-      image                  = "${data.aws_ecr_repository.lpa_front_app.repository_url}@${data.aws_ecr_image.lpa_front_app.image_digest}",
+      image                  = local.front_app_image
       mountPoints = [
         {
           containerPath = "/tmp",
@@ -211,7 +233,7 @@ locals {
         logDriver = "awslogs",
         options = {
           awslogs-group         = aws_cloudwatch_log_group.application_logs.name,
-          awslogs-region        = var.region_name,
+          awslogs-region        = data.aws_region.current.region,
           awslogs-stream-prefix = "${var.environment_name}.front-app.online-lpa",
           mode                  = "non-blocking",
           max-buffer-size       = "25m",
@@ -250,7 +272,8 @@ locals {
         { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
-        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction }
+        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction },
+        { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }
   )

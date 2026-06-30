@@ -13,18 +13,18 @@
 {% if (isNew) %}
 
     <div class="govuk-body">
-        <p>First, please give us some information about yourself.</p>
-        <p>You do not have to be the person the LPA is for – you might just be helping someone else make an LPA.</p>
-        <p>You'll be able to use these details in any LPAs you make using this service.</p>
+        <p class="govuk-body">First, please give us some information about yourself.</p>
+        <p class="govuk-body">You do not have to be the person the LPA is for – you might just be helping someone else make an LPA.</p>
+        <p class="govuk-body">You'll be able to use these details in any LPAs you make using this service.</p>
     </div>
 
 {% else %}
 
-    <p>Update your details.</p>
+    <p class="govuk-body">Update your details.</p>
 
-    <p><a class="govuk-link" href="{{ url('user/change-password') }}">Change Password</a></p>
-    <p><a class="govuk-link" href="{{ url('user/change-email-address') }}">Change Email Address</a></p>
-    <p><a class="govuk-link" href="{{ url('user/delete') }}">Delete Account</a></p>
+    <p class="govuk-body"><a class="govuk-link" href="{{ url('user/change-password') }}">Change Password</a></p>
+    <p class="govuk-body"><a class="govuk-link" href="{{ url('user/change-email-address') }}">Change Email Address</a></p>
+    <p class="govuk-body"><a class="govuk-link" href="{{ url('user/delete') }}">Delete Account</a></p>
 
 {% endif %}
 
@@ -158,17 +158,17 @@
                 {{ formElementErrorsV2(dob) }}
             </div>
 
-            <div class="form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-day {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 <label for="dob-date-day">Day</label>
                 {{ formElement(dayOfBirth) }}
             </div>
 
-            <div class="form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-month {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 <label for="dob-date-month">Month</label>
                 {{ formElement(monthOfBirth) }}
             </div>
 
-            <div class="form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+            <div class="govuk-form-group form-group-year {{ dob.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 <label for="dob-date-year">Year</label>
                 {{ formElement(yearOfBirth) }}
             </div>

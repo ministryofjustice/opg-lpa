@@ -15,6 +15,7 @@ use Psr\Log\LoggerInterface;
 class ServiceTest extends MockeryTestCase
 {
     public const TIME_FORMAT = 'Y-m-d\TH:i:s.uO';
+    public const TEST_LOG_SALT = 'test-salt';
 
     /**
      * @var MockInterface|UserRepositoryInterface
@@ -38,7 +39,7 @@ class ServiceTest extends MockeryTestCase
 
     private function makeService(int $tokenTtl = AuthenticationService::TOKEN_TTL): AuthenticationService
     {
-        $service = new AuthenticationService($tokenTtl);
+        $service = new AuthenticationService($tokenTtl, self::TEST_LOG_SALT);
         $service->setUserRepository($this->authUserRepository);
         $service->setLogger($this->logger);
         return $service;
@@ -58,10 +59,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUserDataSourceGetByUsernameExpectation('not@found.com', null);
 
-        $service = new AuthenticationService();
-        $service->setUserRepository($this->authUserRepository);
-
-        $result = $service->withPassword('not@found.com', 'valid', false);
+        $result = $this->makeService()->withPassword('not@found.com', 'valid', false);
 
         $this->assertEquals('user-not-found', $result);
     }
@@ -506,11 +504,22 @@ class ServiceTest extends MockeryTestCase
         $this->assertEquals('account-not-active', $result);
     }
 
-    public function testAuditLogDoesNotEmitForUnknownUser()
+    public function testAuditLogsSignInAttemptWithUnknownEmail()
     {
         $this->setUserDataSourceGetByUsernameExpectation('not@found.com', null);
 
-        $this->logger->shouldNotReceive('log');
+        $expectedHash = hash_hmac('sha256', 'not@found.com', self::TEST_LOG_SALT);
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function ($level, $message, $context) use ($expectedHash) {
+                return $level === 'warning'
+                    && $message === 'Sign-in attempt with unknown email address'
+                    && $context['event'] === 'auth.sign_in.user_not_found'
+                    && $context['hashed_username'] === $expectedHash
+                    && !array_key_exists('user_id', $context)
+                    && !array_key_exists('username', $context);
+            });
 
         $result = $this->makeService()->withPassword('not@found.com', 'whatever', false);
         $this->assertEquals('user-not-found', $result);

@@ -70,15 +70,15 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             );
         }
 
-        /** @var \Application\Form\Lpa\ReuseDetailsForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\ReuseDetailsForm', [
+        /** @var \App\Form\Lpa\ReuseDetailsForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\ReuseDetailsForm', [
             'actorReuseDetails' => $actorReuseDetails,
         ]);
 
         $formAction = $this->urlHelper->generate(
             'lpa/reuse-details',
             ['lpa-id' => $lpa->id],
-            ['query' => $queryParams]
+            $queryParams
         );
         $form->setAttribute('action', $formAction);
 

@@ -36,15 +36,18 @@ class DateFormatterPlatesExtension implements ExtensionInterface
             $default = $var;
         }
 
+        $tz = new \DateTimeZone('Europe/London');
+
         if ($var instanceof DateTime) {
-            return $var->format('jS M Y \\a\\t g:i:s a');
+            $date = clone $var;
+            return $date->setTimezone($tz)->format('jS M Y \\a\\t g:i:s a');
         }
 
         // If it's a string, try to parse it as a DateTime
         if (is_string($var)) {
             try {
                 $date = new DateTime($var);
-                return $date->format('jS M Y \\a\\t g:i:s a');
+                return $date->setTimezone($tz)->format('jS M Y \\a\\t g:i:s a');
             } catch (\Exception $e) {
                 return $default;
             }

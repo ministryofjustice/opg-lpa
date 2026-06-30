@@ -8,7 +8,7 @@ use App\Handler\Lpa\FeeReductionHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Form\Lpa\FeeReductionForm;
+use App\Form\Lpa\FeeReductionForm;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;

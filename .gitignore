@@ -30,6 +30,9 @@ cypress/logs/
 /cypress/regressions/*
 !/cypress/regressions/baseline
 !/cypress/regressions/baseline/**
+/cypress/mezzio-regressions/*
+!/cypress/mezzio-regressions/baseline
+!/cypress/mezzio-regressions/baseline/**
 /cypress/fixtures/
 /cypress/downloads/
 service-front-v2/app/static
@@ -50,3 +53,4 @@ service-pdf/before.png
 service-pdf/after.png
 service-pdf/*.pdf
 .idea/copilotDiffState.xml
+venv/

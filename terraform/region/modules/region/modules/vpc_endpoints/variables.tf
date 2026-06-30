@@ -38,3 +38,9 @@ variable "dynamodb_endpoint_enabled" {
   type        = bool
   default     = true
 }
+
+variable "codecatalyst_endpoints_enabled" {
+  description = "whether to create codecatalyst required by cloudshell"
+  type        = bool
+  default     = true
+}

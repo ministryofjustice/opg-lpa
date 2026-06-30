@@ -52,7 +52,7 @@ class DonorEditHandlerTest extends TestCase
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
         $this->actorReuseDetailsService->method('getActorsList')->willReturn([]);
-        $this->form = $this->createMock(\Application\Form\Lpa\DonorForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\DonorForm::class);
         $this->formElementManager->method('get')->willReturn($this->form);
         $this->handler = new DonorEditHandler(
             $this->renderer,

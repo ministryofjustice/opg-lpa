@@ -106,6 +106,19 @@ class UserService implements LoggerAwareInterface
         return $this->search($userData['email']['address']);
     }
 
+    public function searchByAReference(string $aReference): array|false
+    {
+        $userData = $this->client->httpGet('/v2/users/search', [
+            'aReference' => $aReference,
+        ]);
+
+        if (is_array($userData)) {
+            return $this->convertDates($userData);
+        }
+
+        return false;
+    }
+
     public function userLpas(string $userId): array|false
     {
         try {

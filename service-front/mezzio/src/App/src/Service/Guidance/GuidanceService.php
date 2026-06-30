@@ -11,6 +11,11 @@ class GuidanceService
     public const GUIDANCE_MARKDOWN_FOLDER = 'content/guidance';
     public const GUIDANCE_ROUTE = 'guide';
 
+    public function __construct(
+        private readonly string $markdownFolder = self::GUIDANCE_MARKDOWN_FOLDER,
+    ) {
+    }
+
     /**
      * Generate guidance sections and navigation from the guidance markdown files.
      *
@@ -20,7 +25,7 @@ class GuidanceService
     {
         $sectionArray = [];
         $orderFileName = '/order.md';
-        $lines = file(self::GUIDANCE_MARKDOWN_FOLDER . $orderFileName);
+        $lines = file($this->markdownFolder . $orderFileName);
 
         $sectionTitle = '';
 
@@ -53,15 +58,25 @@ class GuidanceService
 
     public function processSection(string $filename, string $sectionId): string
     {
-        $md = Markdown::defaultTransform(file_get_contents(self::GUIDANCE_MARKDOWN_FOLDER . '/' . $filename));
+        $md = Markdown::defaultTransform(file_get_contents($this->markdownFolder . '/' . $filename));
 
         $html = '<article id="topic-' . $sectionId . '">';
 
-        $html .= preg_replace(
+        // Add govuk-link + js-guidance to internal help topic links and rewrite to the guidance route
+        $processed = preg_replace(
             '/<a href="\/help\/#topic-([^"]*)">([^"]*)<\/a>/',
-            '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="js-guidance" data-cy="${1}-link" data-analytics-click="guidance:link:help: ${1}">${2}</a>',
+            '<a href="/' . self::GUIDANCE_ROUTE . '#topic-${1}" class="govuk-link js-guidance" data-cy="${1}-link" data-analytics-click="guidance:link:help: ${1}">${2}</a>',
             $md
         );
+
+        // Add govuk-link to all other plain <a> tags that don't already have a class attribute
+        $processed = preg_replace(
+            '/<a href="([^"]*)"(?![^>]*class=)/',
+            '<a href="${1}" class="govuk-link"',
+            $processed
+        );
+
+        $html .= $processed;
 
         $html .= '</article>';
 

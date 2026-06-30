@@ -5,10 +5,10 @@
 {% block content %}
 
 {% if (generated == false) %}
-    <p>LPA Statistics failed to generate</p>
+    <p class="govuk-body">LPA Statistics failed to generate</p>
 {% else %}
 
-    <p>Generated {{ generated }} in {{ generationTimeInMs }}ms</p>
+    <p class="govuk-body">Generated {{ generated }} in {{ generationTimeInMs }}ms</p>
 
     <h2 class="govuk-heading-m">Users</h2>
 
@@ -33,15 +33,15 @@
         </table>
     </div>
 
-    <p>* since 17 December 2015</p>
+    <p class="govuk-body">* since 17 December 2015</p>
 
     <h2 class="govuk-heading-m">Status by type</h2>
 
     {% if (lpas.generated == false) %}
-        <p>Status by type failed to generate</p>
+        <p class="govuk-body">Status by type failed to generate</p>
     {% else %}
 
-        <p>Generated {{ lpas.generated }} in {{ lpas.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ lpas.generated }} in {{ lpas.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table class="govuk-table">
@@ -97,7 +97,7 @@
                         <td class="govuk-table__cell govuk-table__cell--numeric">{{ lpas['property-and-finance'].completed }}</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><strong>Total</strong></td>
+                        <td class="govuk-table__cell"><strong class="govuk-!-font-weight-bold">Total</strong></td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">{{ lpas.all.started + lpas.all.created + lpas.all.waiting + lpas.all.checking + lpas.all.received + lpas.all.processed + lpas.all.completed }}</td>
                         <td class="govuk-table__cell govuk-table__cell--numeric">{{ lpas['health-and-welfare'].started + lpas['health-and-welfare'].created + lpas['health-and-welfare'].waiting + lpas['health-and-welfare'].checking  +
                             lpas['health-and-welfare'].received  + lpas['health-and-welfare'].processed + lpas['health-and-welfare'].completed }}</td>
@@ -172,10 +172,10 @@
     <h2 class="govuk-heading-m">Type of users</h2>
 
     {% if (who.generated == false) %}
-        <p>Type of users failed to generate</p>
+        <p class="govuk-body">Type of users failed to generate</p>
     {% else %}
 
-        <p>Generated {{ who.generated }} in {{ who.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ who.generated }} in {{ who.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table class="govuk-table">
@@ -268,10 +268,10 @@
     <h2 class="govuk-heading-m">Correspondence</h2>
 
     {% if (correspondence.generated == false) %}
-        <p>Correspondence failed to generate</p>
+        <p class="govuk-body">Correspondence failed to generate</p>
     {% else %}
 
-        <p>Generated {{ correspondence.generated }} in {{ correspondence.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ correspondence.generated }} in {{ correspondence.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table class="govuk-table">
@@ -329,10 +329,10 @@
     <h2 class="govuk-heading-m">Preferences and Instructions</h2>
 
     {% if (preferencesInstructions.generated == false) %}
-        <p>Preferences and Instructions failed to generate</p>
+        <p class="govuk-body">Preferences and Instructions failed to generate</p>
     {% else %}
 
-        <p>Generated {{ preferencesInstructions.generated }} in {{ preferencesInstructions.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ preferencesInstructions.generated }} in {{ preferencesInstructions.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table class="govuk-table">
@@ -372,10 +372,10 @@
     <h2 class="govuk-heading-m">Applications</h2>
 
     {% if (lpasPerUser.generated == false) %}
-        <p>Applications failed to generate</p>
+        <p class="govuk-body">Applications failed to generate</p>
     {% else %}
 
-        <p>Generated {{ lpasPerUser.generated }} in {{ lpasPerUser.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ lpasPerUser.generated }} in {{ lpasPerUser.generationTimeInMs }}ms</p>
 
         <div class="mobile-scroll">
             <table class="govuk-table">
@@ -399,12 +399,12 @@
     {% endif %}
 
     {% if (options.generated == false) %}
-        <p>Options failed to generate</p>
+        <p class="govuk-body">Options failed to generate</p>
     {% else %}
 
         <h2 class="govuk-heading-m">LPA options</h2>
 
-        <p>Generated {{ options.generated }} in {{ options.generationTimeInMs }}ms</p>
+        <p class="govuk-body">Generated {{ options.generated }} in {{ options.generationTimeInMs }}ms</p>
 
         <h3 class="govuk-heading-s">Type</h3>
 

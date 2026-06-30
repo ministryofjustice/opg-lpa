@@ -21,13 +21,6 @@ use Mezzio\Helper\UrlHelper;
 use Psr\Log\LoggerAwareInterface;
 use RuntimeException;
 
-/**
- * Mezzio port of Application\Model\Service\User\Details.
- *
- * All SessionUtility::getFromMvc() calls are replaced with direct Mezzio
- * session access via MezzioSessionStorage. url() uses UrlHelper instead of
- * the MVC view helper plugin manager.
- */
 class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 {
     use ApiClientTrait;
@@ -91,7 +84,15 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         $this->sessionStorage = $storage;
     }
 
-    public function url($name = null, $params = [], $options = []): string
+    /**
+     * @param null|string $name
+     * @param (mixed|string)[] $params
+     * @param true[] $options
+     *
+     * @psalm-param array{token?: mixed|string, id?: '1'} $params
+     * @psalm-param array{force_canonical?: true} $options
+     */
+    public function url(string|null $name = null, array $params = [], array $options = []): string
     {
         $path = $this->urlHelper->generate((string) $name, $params);
 
@@ -347,7 +348,11 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
             $expiresIn   = $response['expiresIn'] ?? null;
             $failureCode = null;
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to get token info', [
+            // 401 means the token has expired or been invalidated — this is a normal
+            // part of the session lifecycle and is handled by clearing the identity.
+            // Only log at error for unexpected server-side failures.
+            $logLevel = $ex->getStatusCode() === 401 ? 'info' : 'error';
+            $this->getLogger()->{$logLevel}('Failed to get token info', [
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -380,6 +385,10 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
             return false;
         }
+
+        $this->getLogger()->info('User account deleted', [
+            'userId' => $this->getUserId(),
+        ]);
 
         return true;
     }

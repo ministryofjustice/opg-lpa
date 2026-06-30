@@ -37,6 +37,7 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         Then the page matches the "add-replacement-attorney-form" baseline image
         And I click "form-save"
         Then I cannot find "form-attorney"
+        Then the page matches the "add-replacement-attorney-add-another" baseline image
         And I see "Ms Isobel Ward" in the page text
         When I click "save"
         Then I am taken to the when replacement attorneys step in page

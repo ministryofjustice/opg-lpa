@@ -1,6 +1,6 @@
-FROM composer:2.9.7@sha256:02062f7719ec9433a9d4256cfba1c792db96dc9db60a4a92e48264c9e166b877 AS composer
+FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a69007242d267 AS composer
 
-FROM pdftk/pdftk:3.3.3@sha256:feed50ba54e7645bd820227c85a01b2f213346755533493a4aa03de597e7cea6 AS pdftk
+FROM pdftk/pdftk:3.3.3@sha256:01c1bc85f760226bc5d0dc2567c7f4ec6444f070212be610fe803cd5ce160872 AS pdftk
 
 FROM php:8.4.19-fpm-alpine3.22@sha256:d4d819a881296479b471c2f61a99397c03bffe1ee28ef8310e50fc4e1d647457 AS base
 
@@ -13,7 +13,9 @@ RUN apk upgrade --no-cache
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
+    && apk add --upgrade expat \
     && docker-php-ext-install gd
+
 
 # only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
 ARG VISUAL_TESTS=false

@@ -44,6 +44,15 @@ class ApiException extends RuntimeException
         return $data;
     }
 
+    public function getBody(?string $key = null): mixed
+    {
+        if ($key !== null) {
+            return $this->getBodyData($key);
+        }
+
+        return $this->body;
+    }
+
     private function getBodyData(string $key): mixed
     {
         if (is_array($this->body) && isset($this->body[$key])) {
