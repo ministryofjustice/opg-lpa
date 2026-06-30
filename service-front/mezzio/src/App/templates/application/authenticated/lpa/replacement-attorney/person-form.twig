@@ -181,41 +181,37 @@
     </fieldset>
 
     <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's date of birth?</h2>
-    <fieldset id="{{ dob.getAttribute('name') }}">
-        <legend class="govuk-label dob-label">Date of birth</legend>
-        <div class="dob-element form-date {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <p class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</p>
-
-            <div class="error-group">
-                {{ formElementErrorsV2(dobYear) }}
-                {{ formElementErrorsV2(dobMonth) }}
-                {{ formElementErrorsV2(dobDay) }}
+    <div class="govuk-form-group {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
+        <fieldset class="govuk-fieldset" id="{{ dob.getAttribute('name') }}">
+            <legend class="govuk-fieldset__legend">
+                <span class="govuk-label">Date of birth</span>
+            </legend>
+            <div class="govuk-hint">For example, 08 04 {{ 'now'|date('Y')-18 }}</div>
+            {% if dob.getMessages|length >0 %}
                 {{ formElementErrorsV2(dob) }}
+            {% endif %}
+            <div class="govuk-date-input">
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="{{ dobDay.getAttribute('id') }}">Day</label>
+                        {{ formElement(dobDay) }}
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
+                        {{ formElement(dobMonth) }}
+                    </div>
+                </div>
+                <div class="govuk-date-input__item">
+                    <div class="govuk-form-group">
+                        <label class="govuk-label govuk-date-input__label" for="{{ dobYear.getAttribute('id') }}">Year</label>
+                        {{ formElement(dobYear) }}
+                    </div>
+                </div>
             </div>
-
-            <div class="error-group-popup">
-                {{ formElementErrorsV2(dobYear) }}
-                {{ formElementErrorsV2(dobMonth) }}
-                {{ formElementErrorsV2(dobDay) }}
-                {{ formElementErrorsV2(dob) }}
-            </div>
-
-            <div class="govuk-form-group form-group-day {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobDay.getAttribute('id') }}">Day</label>
-                {{ formElement(dobDay) }}
-            </div>
-
-            <div class="govuk-form-group form-group-month {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobMonth.getAttribute('id') }}">Month</label>
-                {{ formElement(dobMonth) }}
-            </div>
-
-            <div class="govuk-form-group form-group-year {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                <label class="govuk-label" for="{{ dobYear.getAttribute('id') }}">Year</label>
-                {{ formElement(dobYear) }}
-            </div>
-        </div>
-    </fieldset>
+        </fieldset>
+    </div>
 
     <h2 class="govuk-heading-m popup-exclude">What is the replacement attorney's address?</h2>
     <fieldset class="postcodelookup">
