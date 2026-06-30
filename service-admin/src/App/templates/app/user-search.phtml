@@ -3,12 +3,12 @@
 $this->addErrorMap([
         'email' => [
                 'required' => [
-                        'summary'   => 'Enter a valid email address or user ID',
-                        'field'     => 'Enter a valid email address or user ID',
+                        'summary'   => 'Enter a search value',
+                        'field'     => 'Enter a search value',
                 ],
                 'invalid' => [
-                        'summary'   => 'Enter a valid email address or user ID',
-                        'field'     => 'Enter a valid email address or user ID',
+                        'summary'   => 'Enter a valid search value',
+                        'field'     => 'Enter a valid search value',
                 ],
         ],
 ]);
@@ -27,13 +27,19 @@ $this->addErrorMap([
                 </h1>
             </legend>
 
-            <p class="govuk-body">Search for a user by email address or user ID. If found, the user's account status and other details will be displayed.</p>
+            <p class="govuk-body">Search for a user by email address, user ID, or A Reference.</p>
+
+            <?php $this->insert('snippet::input-select', [
+                'formLabel'   => 'Search by',
+                'formElement' => $form->get('searchType'),
+                'attrs'       => ['data-cy' => 'search-type-select'],
+            ]) ?>
 
             <?php $this->insert('snippet::input-text', [
-                'formLabel' => 'Email address or user ID',
-                'formElement'   => $form->get('email'),
-                'formType'      => 'text',
-                'attrs'         => ['data-cy' => 'email-address-input'],
+                'formLabel'   => 'Search value',
+                'formElement' => $form->get('email'),
+                'formType'    => 'text',
+                'attrs'       => ['data-cy' => 'email-address-input'],
             ]) ?>
         </fieldset>
     </div>

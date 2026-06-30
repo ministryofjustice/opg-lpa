@@ -20,7 +20,7 @@
                 </li>
             </ul>
             <div class="govuk-details__text">
-                If you already have a registered LPA and want to use it online, go to the <a href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+                If you already have a registered LPA and want to use it online, go to the <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@
         <div class="panel-cta tablet-and-up">
             <div class="panel-heading govuk-heading-m">Make another LPA</div>
             <div class="panel-body">
-                <p><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
+                <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
                 <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
             </div>
         </div>
@@ -47,13 +47,13 @@
         <div class="column-one-half tablet-and-up">
         {% if isSearch %}
             <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
-            <p class="flush--bottom">
+            <p class="govuk-body govuk-!-margin-bottom-0">
                 {% if lpaTotalCount == 0 %}
                     Your search has found no results.<br>
                 {% else %}
                     Your search has found {{ lpaTotalCount }} results.<br>
                 {% endif %}
-                <a id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
+                <a class="govuk-link" id="clear" href='{{ url('user/dashboard') }}'>Clear search results</a>
             </p>
         {% else %}
             {% if lpaTotalCount == 0 %}
@@ -77,13 +77,13 @@
         {# This is only displayed on mobile #}
             {% if isSearch %}
                 <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
-                <p class="flush--bottom">
+                <p class="govuk-body govuk-!-margin-bottom-0">
                     {% if lpaTotalCount == 0 %}
                         Your search has found no results.<br>
                     {% else %}
                         Your search has found {{ lpaTotalCount }} results.<br>
                     {% endif %}
-                    <a id="clear-mobile" href='{{ url('user/dashboard') }}'>Clear search results</a>
+                    <a class="govuk-link" id="clear-mobile" href='{{ url('user/dashboard') }}'>Clear search results</a>
                 </p>
             {% else %}
                 {% if lpaTotalCount == 0 %}
@@ -114,7 +114,7 @@
 <div class="panel-cta mobile">
     <div class="panel-heading govuk-heading-m">Create another LPA</div>
     <div class="panel-body">
-        <p>
+        <p class="govuk-body">
             <a class="govuk-button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
         </p>
         <p class="govuk-!-font-weight-bold govuk-body-s">Or select an LPA above whose details you want to reuse</p>

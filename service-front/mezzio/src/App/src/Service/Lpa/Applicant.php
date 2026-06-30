@@ -11,7 +11,10 @@ class Applicant
 {
     private Application $lpaApplicationService;
 
-    public function removeAttorney(Lpa $lpa, $attorneyId): void
+    /**
+     * @psalm-param 222|444 $attorneyId
+     */
+    public function removeAttorney(Lpa $lpa, int $attorneyId): void
     {
         $whoIsRegistering = $lpa->document->whoIsRegistering;
 

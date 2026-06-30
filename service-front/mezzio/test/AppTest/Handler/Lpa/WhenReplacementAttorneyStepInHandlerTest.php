@@ -30,7 +30,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private ReplacementAttorneyCleanup&MockObject $replacementAttorneyCleanup;
     private UrlHelper&MockObject $urlHelper;
-    /** @var \Application\Form\Lpa\WhenReplacementAttorneyStepInForm&MockObject */
+    /** @var \App\Form\Lpa\WhenReplacementAttorneyStepInForm&MockObject */
     private $form;
     private WhenReplacementAttorneyStepInHandler $handler;
 
@@ -41,7 +41,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->replacementAttorneyCleanup = $this->createMock(ReplacementAttorneyCleanup::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->form = $this->createMock(\Application\Form\Lpa\WhenReplacementAttorneyStepInForm::class);
+        $this->form = $this->createMock(\App\Form\Lpa\WhenReplacementAttorneyStepInForm::class);
 
         $this->formElementManager
             ->method('get')

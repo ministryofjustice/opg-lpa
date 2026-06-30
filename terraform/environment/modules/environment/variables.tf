@@ -14,6 +14,7 @@ variable "account" {
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
+    mezzio_frontend_enabled                = bool
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
@@ -33,6 +34,7 @@ variable "account" {
     regions = map(
       object({
         region     = string
+        enabled    = bool
         is_primary = string
     }))
     autoscaling = object({
@@ -116,4 +118,8 @@ variable "ecs_execution_role" {
 variable "container_version" {
   type    = string
   default = "latest"
+}
+
+variable "rds_proxy_iam_role" {
+  type = any
 }

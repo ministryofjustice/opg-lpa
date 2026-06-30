@@ -10,6 +10,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
 use App\View\Twig\Traits\MoneyFormatterTrait;
@@ -18,6 +19,7 @@ use Mezzio\Helper\UrlHelper;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Element\Textarea;
 use Laminas\Form\ElementInterface;
 use Laminas\Form\FormInterface;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -41,6 +43,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UserDetailsHolder $userDetailsHolder,
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
+        private readonly SystemMessage $systemMessage,
     ) {
     }
 
@@ -64,8 +67,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('url', [$this, 'url']),
             new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
-            // TODO: stub — always returns empty string; wire up SystemMessage service when available
-            new TwigFunction('systemMessage', fn () => '', ['is_safe' => ['html']]),
+            new TwigFunction('systemMessage', fn () => $this->systemMessage->fetchSanitised() ?? '', ['is_safe' => ['html']]),
             // FormRendererStub provides openTag(form) and closeTag — covers all (currently ported) template usage
             new TwigFunction('form', fn () => new FormRendererStub(), ['is_safe' => ['html']]),
             // Laminas view helper equivalent — Twig has no built-in escapeHtmlAttr function
@@ -76,6 +78,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('formText', [$this, 'formInput'], ['is_safe' => ['html']]),
             new TwigFunction('formCheckbox', [$this, 'formCheckbox'], ['is_safe' => ['html']]),
             new TwigFunction('formRadio', [$this, 'formRadio'], ['is_safe' => ['html']]),
+            new TwigFunction('formRadioOption', [$this, 'formRadioOption'], ['is_safe' => ['html']]),
             // Ported from AppFunctionsExtension — renders via layout/partials/form-element-errors.twig
             new TwigFunction('formElementErrorsV2', [$this, 'formElementErrorsV2'], ['is_safe' => ['html']]),
             new TwigFunction('formErrorTextExchange', [$this, 'formErrorTextExchange']),
@@ -205,8 +208,10 @@ class LegacyCompatExtension extends AbstractExtension
     /**
      * Ported from AppFunctionsExtension::formElementErrorsV2().
      * Inlined from layout/partials/form-element-errors.twig — no renderer needed.
+     *
+     * @param array|string|object|null $errors
      */
-    public function formElementErrorsV2(mixed $errors): string
+    public function formElementErrorsV2(array|string|object|null $errors): string
     {
         if ($errors === null) {
             return '';
@@ -236,8 +241,8 @@ class LegacyCompatExtension extends AbstractExtension
         ));
 
         return sprintf(
-            '<span class="error-message text" data-cy="form-error">'
-            . '<span class="visually-hidden">Error:</span> %s'
+            '<span class="govuk-error-message text" data-cy="form-error">'
+            . '<span class="govuk-visually-hidden">Error:</span> %s'
             . '</span>',
             $escaped,
         );
@@ -316,6 +321,10 @@ class LegacyCompatExtension extends AbstractExtension
             return $this->formCheckbox($element);
         }
 
+        if ($element instanceof Textarea) {
+            return $this->formTextarea($element);
+        }
+
         $type = $element->getAttribute('type') ?? 'text';
 
         if ($type === 'hidden') {
@@ -323,6 +332,20 @@ class LegacyCompatExtension extends AbstractExtension
         }
 
         return $this->formInput($element);
+    }
+
+    /**
+     * Renders a textarea element, with the current value as text content.
+     */
+    public function formTextarea(ElementInterface $element): string
+    {
+        $attrs = $element->getAttributes();
+        unset($attrs['type']); // textarea has no type attribute
+
+        $attrString = $this->buildAttributeString($attrs);
+        $value      = htmlspecialchars((string) ($element->getValue() ?? ''), ENT_QUOTES);
+
+        return sprintf('<textarea %s>%s</textarea>', $attrString, $value);
     }
 
     /**
@@ -346,12 +369,22 @@ class LegacyCompatExtension extends AbstractExtension
 
     /**
      * Renders a checkbox input element.
+     *
+     * For MultiCheckbox elements, renders one wrapped checkbox item per value
+     * option (matching the legacy FormMultiCheckbox view helper behaviour).
+     * For plain Checkbox elements, renders a single input.
      */
     public function formCheckbox(ElementInterface $element): string
     {
-        // Use the checked value ('1' by default) as the submitted value, and
-        // determine checked state via isChecked() so the value attribute is
-        // always correct regardless of current element state.
+        // MultiCheckbox — render one wrapped item per value option.
+        // Radio extends MultiCheckbox, but Radio is handled by formRadio() before
+        // this method is ever called (see formElement()), so we can safely
+        // treat any MultiCheckbox here as a real multi-checkbox.
+        if ($element instanceof MultiCheckbox) {
+            return $this->renderMultiCheckbox($element);
+        }
+
+        // Plain Checkbox — single input.
         if ($element instanceof Checkbox) {
             $value   = $element->getCheckedValue();
             $checked = $element->isChecked();
@@ -372,6 +405,90 @@ class LegacyCompatExtension extends AbstractExtension
     }
 
     /**
+     * Renders all options of a MultiCheckbox element as individual checkbox items.
+     * Each option is wrapped in a <div class="govuk-checkboxes__item"> with a <label>.
+     *
+     * The legacy Laminas FormMultiCheckbox view helper set `$inputAttributes['checked']`
+     * as a boolean value inside the attributes array and passed it to
+     * createAttributesString().  That meant `value` and `checked` were always the last
+     * two attributes in the rendered string, producing `value="X" checked`.
+     *
+     * We replicate that ordering here by explicitly appending `value` and `checked` last
+     * to the $attrs array before handing it to buildAttributeString().  `checked = false`
+     * is skipped by buildAttributeString(), so unchecked options emit no `checked` token.
+     */
+    private function renderMultiCheckbox(MultiCheckbox $element): string
+    {
+        $name           = (string) ($element->getName() ?? '');
+        $inputName      = $name . '[]';
+        $valueOptions   = $element->getValueOptions();
+        $selectedValues = array_map('strval', (array) ($element->getValue() ?? []));
+        $html           = '';
+
+        foreach ($valueOptions as $optKey => $optSpec) {
+            if (is_scalar($optSpec)) {
+                $optSpec = ['label' => (string) $optSpec, 'value' => $optKey];
+            }
+
+            $optValue   = (string) ($optSpec['value'] ?? $optKey);
+            $label      = (string) ($optSpec['label'] ?? $optValue);
+            $extraAttrs = $optSpec['attributes'] ?? [];
+            $labelAttrs = $optSpec['label_attributes'] ?? [];
+
+            // Strip internal structure hints that are not valid HTML attributes.
+            unset($extraAttrs['div-attributes']);
+
+            $inputId = (string) ($extraAttrs['id'] ?? ($name . '-' . $optValue));
+            $checked = in_array($optValue, $selectedValues, true);
+
+            // Build core attributes first.  value and checked are appended last so
+            // buildAttributeString() produces `... value="X" checked` — matching the
+            // legacy FormMultiCheckbox helper and keeping `value` immediately adjacent
+            // to `checked` in the output.
+            $attrs = [
+                'id'    => $inputId,
+                'type'  => 'checkbox',
+                'name'  => $inputName,
+                'class' => $extraAttrs['class'] ?? 'govuk-checkboxes__input',
+            ];
+
+            // Carry through any extra per-option attributes (excluding those we set).
+            foreach ($extraAttrs as $k => $v) {
+                if (!array_key_exists($k, $attrs)) {
+                    $attrs[$k] = $v;
+                }
+            }
+
+            // value and checked must be last — see docblock above.
+            $attrs['value']   = $optValue;
+            $attrs['checked'] = $checked; // false → skipped by buildAttributeString
+
+            $attrString        = $this->buildAttributeString($attrs);
+            $labelFor          = htmlspecialchars($inputId, ENT_QUOTES);
+            $labelClass        = htmlspecialchars($labelAttrs['class'] ?? 'govuk-label govuk-checkboxes__label', ENT_QUOTES);
+            $disableHtmlEscape = (bool) ($optSpec['disable_html_escape']
+                ?? ($element->getLabelOptions()['disable_html_escape'] ?? false));
+            $labelText         = $disableHtmlEscape
+                ? $label
+                : htmlspecialchars($label, ENT_QUOTES);
+
+            $html .= sprintf(
+                '<div class="govuk-checkboxes__item%s">'
+                . '<input %s>'
+                . '<label class="%s" for="%s">%s</label>'
+                . '</div>',
+                $checked ? ' selected' : '',
+                $attrString,
+                $labelClass,
+                $labelFor,
+                $labelText,
+            );
+        }
+
+        return $html;
+    }
+
+    /**
      * Renders radio buttons for a Radio element.
      */
     public function formRadio(ElementInterface $element): string
@@ -381,40 +498,138 @@ class LegacyCompatExtension extends AbstractExtension
         $currentValue = $element->getValue();
         $html         = '';
 
-        // Base attributes from the element (excluding value/type which vary per option)
-        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id']));
-        $baseAttrs['type']  = 'radio';
-        $baseAttrs['class'] = $baseAttrs['class'] ?? 'govuk-radios__input';
+        // Determine the wrapper div class from element-level div-attributes, or default.
+        //
+        // Two distinct radio styles are used across the app:
+        //   Legacy GDS:        <div class="multiple-choice"> / <label class="block-label"> / no input class
+        //   GOV.UK Frontend v3: <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
+        //                        / <input class="govuk-radios__input">
+        //
+        // Auto-detect which style to use by checking (in order):
+        //   1. Element-level class attribute (e.g. set via PHP form spec 'attributes' => ['class' => 'govuk-radios__input'])
+        //   2. Any per-option 'attributes.class' containing 'govuk-radios__input' (set in Twig value options)
+        $elementClass   = (string) ($element->getAttribute('class') ?? '');
+        $usesGovukStyle = str_contains($elementClass, 'govuk-radios__input');
 
-        foreach ($valueOptions as $optValue => $optLabel) {
+        if (!$usesGovukStyle) {
+            foreach ($valueOptions as $optSpec) {
+                $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
+                if (str_contains((string) $inputClass, 'govuk-radios__input')) {
+                    $usesGovukStyle = true;
+                    break;
+                }
+            }
+        }
+
+        $divAttributes     = $element->getAttribute('div-attributes') ?? [];
+        $defaultDivClass   = $usesGovukStyle ? 'govuk-radios__item' : 'multiple-choice';
+        $defaultLabelClass = $usesGovukStyle ? 'govuk-label govuk-radios__label' : 'block-label';
+
+        // Element-level label_attributes (set via setOptions(['label_attributes' => ...]) or the
+        // PHP form element spec) apply to all options unless overridden per-option.
+        // Prefer getLabelAttributes() (populated by the Laminas form factory from the element spec)
+        // and fall back to getOption('label_attributes') (populated by an explicit Twig setOptions call).
+        $elementLabelAttributes = [];
+        if (method_exists($element, 'getLabelAttributes') && !empty($element->getLabelAttributes())) {
+            $elementLabelAttributes = $element->getLabelAttributes();
+        } elseif (method_exists($element, 'getOption')) {
+            $elementLabelAttributes = $element->getOption('label_attributes') ?? [];
+        }
+
+        // Element-level disable_html_escape (set via setLabelOptions(['disable_html_escape' => true]))
+        $elementLabelOptions      = method_exists($element, 'getLabelOptions') ? $element->getLabelOptions() : [];
+        $elementDisableHtmlEscape = (bool) ($elementLabelOptions['disable_html_escape'] ?? false);
+
+        // Base attributes from the element (excluding value/type/id which vary per option,
+        // and div-attributes which are used for the wrapper div, not the input)
+        $baseAttrs = array_diff_key($element->getAttributes(), array_flip(['value', 'type', 'id', 'div-attributes']));
+        $baseAttrs['type'] = 'radio';
+        // Do not add a default class — legacy radio inputs had no class attribute.
+
+        foreach ($valueOptions as $optValue => $optSpec) {
             $optionAttributes = [];
-            if (is_array($optLabel)) {
-                $optionAttributes = $optLabel['attributes'] ?? [];
-                $optValue = $optLabel['value'] ?? $optValue;
-                $optLabel = $optLabel['label'] ?? (string) $optValue;
+            $labelAttributes  = [];
+            if (is_array($optSpec)) {
+                $optionAttributes     = $optSpec['attributes'] ?? [];
+                $labelAttributes      = $optSpec['label_attributes'] ?? [];
+                $optValue             = $optSpec['value'] ?? $optValue;
+                $optLabel             = $optSpec['label'] ?? (string) $optValue;
+                $disableHtmlEscape    = (bool) ($optSpec['disable_html_escape'] ?? $elementDisableHtmlEscape);
+            } else {
+                $optLabel          = (string) $optSpec;
+                $disableHtmlEscape = $elementDisableHtmlEscape;
             }
 
             $optAttrs            = array_merge($baseAttrs, $optionAttributes);
             $optAttrs['id']      = $name . '-' . $optValue;
-            $optAttrs['value']   = (string) $optValue;
             $optAttrs['data-cy'] = $optAttrs['id'];
+            $optAttrs['value']   = (string) $optValue;
+
+            // Per-option div-attributes override the element-level ones
+            $thisDivAttrs = (is_array($optSpec) ? ($optSpec['div-attributes'] ?? null) : null) ?? $divAttributes;
+            $divClass     = $thisDivAttrs['class'] ?? $defaultDivClass;
+            $divAttrStr   = $divClass !== '' ? sprintf(' class="%s"', htmlspecialchars($divClass, ENT_QUOTES)) : '';
+
+            // Merge element-level label_attributes → per-option label_attributes (per-option wins)
+            $mergedLabelAttrs = array_merge($elementLabelAttributes, $labelAttributes);
+            $labelClass       = $mergedLabelAttrs['class'] ?? $defaultLabelClass;
+            $labelAttrStr     = $this->buildAttributeString(array_merge(
+                ['class' => $labelClass, 'for' => $optAttrs['id']],
+                array_diff_key($mergedLabelAttrs, array_flip(['class', 'for'])),
+            ));
 
             $attrString = $this->buildAttributeString($optAttrs);
             $checked    = ($currentValue == $optValue) ? ' checked' : '';
+            $labelHtml  = $disableHtmlEscape
+                ? (string) $optLabel
+                : htmlspecialchars((string) $optLabel, ENT_QUOTES);
 
             $html .= sprintf(
-                '<div class="govuk-radios__item">'
+                '<div%s>'
                 . '<input %s%s>'
-                . '<label class="govuk-label govuk-radios__label" for="%s">%s</label>'
+                . '<label %s>%s</label>'
                 . '</div>',
+                $divAttrStr,
                 $attrString,
                 $checked,
-                htmlspecialchars($optAttrs['id'], ENT_QUOTES),
-                htmlspecialchars((string) $optLabel, ENT_QUOTES),
+                $labelAttrStr,
+                $labelHtml,
             );
         }
 
         return $html;
+    }
+
+    /**
+     * Renders a single named option from a Radio element.
+     *
+     * Root-cause context
+     * ------------------
+     * The legacy FormRadio view helper exposed an outputOption(Radio $element, $option)
+     * method which templates called as formRadio().outputOption(element, 'key').
+     * In Twig, functions return values not objects, so that chained-call pattern is a
+     * SyntaxError.  This function replicates outputOption() faithfully: it clones the
+     * element, restricts its value options to the single requested key, then delegates
+     * to formRadio() — producing identical HTML to the legacy helper.
+     *
+     * @param ElementInterface $element   A Radio element with value_options
+     * @param string           $optionKey The key in value_options to render
+     */
+    public function formRadioOption(ElementInterface $element, string $optionKey): string
+    {
+        $valueOptions = method_exists($element, 'getValueOptions') ? $element->getValueOptions() : [];
+
+        if (!isset($valueOptions[$optionKey])) {
+            return '';
+        }
+
+        // Clone to avoid mutating the original element (matches outputOption's clone).
+        $single = clone $element;
+        if (method_exists($single, 'setValueOptions')) {
+            $single->setValueOptions([$optionKey => $valueOptions[$optionKey]]);
+        }
+
+        return $this->formRadio($single);
     }
 
     // -------------------------------------------------------------------------
@@ -466,8 +681,12 @@ class LegacyCompatExtension extends AbstractExtension
         $attrs = $element->getAttributes();
 
         $attrs['type']  = $attrs['type'] ?? 'text';
-        $attrs['value'] = $element->getValue() ?? '';
         $attrs['class'] = $attrs['class'] ?? 'govuk-input';
+
+        $value = $element->getValue();
+        if ($value !== null && $value !== '') {
+            $attrs['value'] = $value;
+        }
 
         if (!empty($element->getMessages()) && strpos((string) $attrs['class'], 'govuk-input--error') === false) {
             $attrs['class'] .= ' govuk-input--error';

@@ -103,25 +103,25 @@
 
 <li id="correspondent-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
 
         <div class="text">
 
-            <p>The person below will be the ‘correspondent’. We’ll send them the registered LPA and contact them if we have any questions about the LPA application.</p>
+            <p class="govuk-body">The person below will be the ‘correspondent’. We’ll send them the registered LPA and contact them if we have any questions about the LPA application.</p>
 
-            <p>If you want someone else to be the correspondent, change the details below.</p>
+            <p class="govuk-body">If you want someone else to be the correspondent, change the details below.</p>
 
-            <p><a href="/guide#topic-correspondent" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the correspondent">Find out more about the role of the correspondent</a></p>
+            <p class="govuk-body"><a href="/guide#topic-correspondent" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about the role of the correspondent">Find out more about the role of the correspondent</a></p>
         </div>
     </div>
 
-    <h2 class="heading-medium flush--top">The correspondent</h2>
+    <h2 class="govuk-heading-m flush--top">The correspondent</h2>
 
     <div class="person">
-        <h3 class="person-name heading-small flush--ends">{{ correspondentName }}</h3>
-        <p class="person-address flush--ends">{{ correspondentAddress }}</p>
+        <h3 class="person-name govuk-heading-s flush--ends">{{ correspondentName }}</h3>
+        <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ correspondentAddress }}</p>
         <ul class="person-actions">
             {% if allowEditButton %}
                 <li class="action-item">
@@ -142,21 +142,21 @@
 
         {{ macros.formErrorSummary(error,form) }}
 
-        <div class="govuk-form-group {{ topLevelError ? 'form-group-error'}}">
+        <div class="govuk-form-group {{ topLevelError ? 'govuk-form-group--error'}}">
 
             <fieldset class="govuk-fieldset" id="{{ correspondence.getAttribute('name') }}">
-                <legend class="visually-hidden">Contact options</legend>
-                <h3 class="heading-medium flush--top">How would the person above prefer to be contacted?</h3>
+                <legend class="govuk-visually-hidden">Contact options</legend>
+                <h3 class="govuk-heading-m flush--top">How would the person above prefer to be contacted?</h3>
 
-                <p>Select how the correspondent would like to be contacted. You can choose more than one option.</p>
+                <p class="govuk-body">Select how the correspondent would like to be contacted. You can choose more than one option.</p>
 
                 {% if topLevelError %}
                     {{ formElementErrorsV2(correspondence) }}
                 {% endif %}
                 <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                    <div class="multiple-choice">
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByPost) }}
-                        <label class="text block-label" for="{{ contactByPost.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPost.getAttribute('id') }}">
                             {{ contactByPost.getOption('label')|raw }}
                         </label>
                     </div>
@@ -181,32 +181,32 @@
                     See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
                     for the offending code which applies the attribute.
                     #}
-                    <div class="multiple-choice" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                    <div class="govuk-checkboxes__item" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
                         {{ formElement(contactByPhone) }}
-                        <label class="text block-label" for="{{ contactByPhone.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPhone.getAttribute('id') }}">
                         {{ contactByPhone.getOption('label')|raw }}
                         </label>
                     </div>
 
-                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden panel panel-border-narrow" id="contact-by-phone">
+                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="contact-by-phone">
                         {{ macros.formGroup(phone) }}
                     </div>
 
-                    <div class="multiple-choice" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                    <div class="govuk-checkboxes__item" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
                         {{ formElement(contactByEmail) }}
-                        <label class="text block-label" for="{{ contactByEmail.getAttribute('id') }}">
+                        <label class="govuk-label govuk-checkboxes__label" for="{{ contactByEmail.getAttribute('id') }}">
                         {{ contactByEmail.getOption('label')|raw }}</label>
                     </div>
 
-                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden panel panel-border-narrow" id="contact-by-email">
+                    <div class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden" id="contact-by-email">
                         {{ macros.formGroup(email) }}
                     </div>
                 </div>
             </fieldset>
         </div>
 
-        <div class="form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'form-group-error'}}">
-        <h3 class="heading-medium flush--top">Which language should we use in written correspondence?</h3>
+        <div class="govuk-form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <h3 class="govuk-heading-m flush--top">Which language should we use in written correspondence?</h3>
 
             <fieldset class="inline">
                 <legend class="govuk-visually-hidden">Language options</legend>

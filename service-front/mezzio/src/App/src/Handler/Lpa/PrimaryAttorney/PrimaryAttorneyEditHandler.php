@@ -67,11 +67,11 @@ class PrimaryAttorneyEditHandler implements RequestHandlerInterface
 
         // Determine form type based on attorney type
         if ($attorney instanceof Human) {
-            $form = $this->formElementManager->get('Application\Form\Lpa\AttorneyForm');
+            $form = $this->formElementManager->get('App\Form\Lpa\AttorneyForm');
             $form->setActorData('attorney', $this->getActorsList($lpa, (int) $attorneyIdx));
             $template = 'application/authenticated/lpa/primary-attorney/person-form.twig';
         } else {
-            $form = $this->formElementManager->get('Application\Form\Lpa\TrustCorporationForm');
+            $form = $this->formElementManager->get('App\Form\Lpa\TrustCorporationForm');
             $template = 'application/authenticated/lpa/primary-attorney/trust-form.twig';
         }
 

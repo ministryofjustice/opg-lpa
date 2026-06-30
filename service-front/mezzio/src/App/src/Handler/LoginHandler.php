@@ -130,7 +130,7 @@ class LoginHandler implements RequestHandlerInterface
     private function getLoginForm(): FormInterface
     {
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('Application\Form\User\Login');
+        $form = $this->formElementManager->get(\App\Form\User\Login::class);
         $form->setAttribute('action', '/login');
 
         return $form;

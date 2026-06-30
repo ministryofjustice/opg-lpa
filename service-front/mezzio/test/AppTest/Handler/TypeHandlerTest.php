@@ -8,7 +8,7 @@ use App\Handler\TypeHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
-use Application\Form\Lpa\TypeForm;
+use App\Form\Lpa\TypeForm;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -46,7 +46,7 @@ class TypeHandlerTest extends TestCase
 
         $this->formElementManager
             ->method('get')
-            ->with('Application\Form\Lpa\TypeForm')
+            ->with('App\Form\Lpa\TypeForm')
             ->willReturn($this->form);
 
         $this->handler = new TypeHandler(

@@ -14,6 +14,7 @@ module "eu-west-1" {
     seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
+  rds_proxy_iam_role = aws_iam_role.rds_proxy
   providers = {
     aws            = aws.eu_west_1
     aws.management = aws.management
@@ -21,7 +22,7 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count              = local.dr_enabled ? 1 : 0
+  count              = local.account.regions["eu-west-2"].enabled ? 1 : 0
   source             = "./modules/environment"
   account            = local.account
   account_name       = local.account_name
@@ -37,6 +38,7 @@ module "eu-west-2" {
     seeding           = aws_iam_role.seeding_task_role
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
+  rds_proxy_iam_role = aws_iam_role.rds_proxy
 
   providers = {
     aws            = aws.eu_west_2
@@ -53,11 +55,10 @@ module "environment_dns" {
   }
   account_name     = local.account_name
   environment_name = local.environment_name
-  front_dns_name   = !local.dr_enabled ? module.eu-west-1.front_dns_name : module.eu-west-2[0].front_dns_name
-  front_zone_id    = !local.dr_enabled ? module.eu-west-1.front_zone_id : module.eu-west-2[0].front_zone_id
-  admin_dns_name   = !local.dr_enabled ? module.eu-west-1.admin_dns_name : module.eu-west-2[0].admin_dns_name
-  admin_zone_id    = !local.dr_enabled ? module.eu-west-1.admin_zone_id : module.eu-west-2[0].admin_zone_id
-
+  front_dns_name   = !local.dr_enabled ? module.eu-west-1.front_load_balancer_dns_name : module.eu-west-2[0].front_load_balancer_dns_name
+  front_zone_id    = !local.dr_enabled ? module.eu-west-1.front_load_balancer_zone_id : module.eu-west-2[0].front_load_balancer_zone_id
+  admin_dns_name   = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_dns_name : module.eu-west-2[0].admin_load_balancer_dns_name
+  admin_zone_id    = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_zone_id : module.eu-west-2[0].admin_load_balancer_zone_id
 }
 
 module "cross_region_backup" {
@@ -103,9 +104,9 @@ output "admin_fqdn" {
 }
 
 output "front_sg_id" {
-  value = !local.dr_enabled ? module.eu-west-1.front_sg_id : module.eu-west-2[0].front_sg_id
+  value = !local.dr_enabled ? module.eu-west-1.front_load_balancer_sg_id : module.eu-west-2[0].front_load_balancer_sg_id
 }
 
 output "admin_sg_id" {
-  value = !local.dr_enabled ? module.eu-west-1.admin_sg_id : module.eu-west-2[0].admin_sg_id
+  value = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_sg_id : module.eu-west-2[0].admin_load_balancer_sg_id
 }

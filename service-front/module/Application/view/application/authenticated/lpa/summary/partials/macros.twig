@@ -19,7 +19,7 @@
 
     <dd class="cya-change">
         {% if changeUrl is not null %}
-            <a class="govuk-link" data-cy="cya-change" href="{{ changeUrl|raw }}" data-analytics-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="visually-hidden"> {{ ariaLabel }}</span></a>
+            <a class="govuk-link" data-cy="cya-change" href="{{ changeUrl|raw }}" data-analytics-click="check your answers:link:navigation: {{ navigationReference }}"{% if ariaLabel %} aria-label="Change {{ ariaLabel }}"{% endif %}>Change<span class="govuk-visually-hidden"> {{ ariaLabel }}</span></a>
         {% endif %}
     </dd>
 
@@ -164,7 +164,7 @@
 
     {% import _self as macros %}
 
-    {{ macros.outputSection('<h3 class="heading-small">' ~ sectionHeading ~ '</h3>') }}
+    {{ macros.outputSection('<h3 class="govuk-heading-s">' ~ sectionHeading ~ '</h3>') }}
 
 {% endmacro %}
 
@@ -172,6 +172,6 @@
 
     {% import _self as macros %}
 
-    {{ macros.outputSection('<' ~ headerType ~ ' class="heading-small">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
+    {{ macros.outputSection('<' ~ headerType ~ ' class="govuk-heading-s">' ~ sectionHeading ~ '</' ~ headerType ~ '>') }}
 
 {% endmacro %}

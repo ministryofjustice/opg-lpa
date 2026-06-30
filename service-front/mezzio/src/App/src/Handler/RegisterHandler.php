@@ -47,8 +47,7 @@ class RegisterHandler implements RequestHandlerInterface
             return new RedirectResponse('/user/dashboard');
         }
 
-        /** @var \Application\Form\User\Registration $form */
-        $form = $this->formElementManager->get('Application\Form\User\Registration');
+        $form = $this->formElementManager->get(\App\Form\User\Registration::class);
         $form->setAttribute('action', '/signup');
 
         $data = ['form' => $form];
@@ -68,7 +67,7 @@ class RegisterHandler implements RequestHandlerInterface
                 if ($result === true || $result === "address-already-registered") {
                     // Set up form for resend email functionality
                     /** @var FormInterface $resendForm */
-                    $resendForm = $this->formElementManager->get('Application\Form\User\ConfirmEmail');
+                    $resendForm = $this->formElementManager->get(\App\Form\User\ConfirmEmail::class);
 
                     $resendForm->setAttribute('action', '/signup/resend-email');
                     $resendForm->setData([

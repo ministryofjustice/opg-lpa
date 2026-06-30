@@ -47,8 +47,8 @@
             </div>
             <div>
                 <p class="govuk-body-l">We're checking the LPA to make sure it's been made correctly. Once we've checked it, we'll write to the donor, attorneys and correspondent to let them know what happens next.</p>
-                <p>If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
-                <p>The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
+                <p class="govuk-body">If there is something that must be corrected before the LPA can be registered, we'll contact {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}.</p>
+                <p class="govuk-body">The law says there must be a 4 week wait between the date OPG sent the ‘Notice of application’ letter to the donor and attorneys and the date the LPA is registered.</p>
             </div>
 
         {% elseif status == 'waiting' %}
@@ -57,15 +57,15 @@
                 <h2 class="heading-xlarge">We're waiting to confirm receipt of this LPA</h2>
             </div>
             <div>
-                <p>It will take up to 30 working days for us to add this LPA to our records and confirm we've received it. It will then take up to 8 weeks to process the LPA if there are no mistakes in the application.</p>
+                <p class="govuk-body">It will take up to 30 working days for us to add this LPA to our records and confirm we've received it. It will then take up to 8 weeks to process the LPA if there are no mistakes in the application.</p>
 
-                <p>If you sent the LPA by recorded delivery, Royal Mail’s website will confirm we have received it before we can confirm it here.</p>
+                <p class="govuk-body">If you sent the LPA by recorded delivery, Royal Mail’s website will confirm we have received it before we can confirm it here.</p>
 
                 {% if canGenerateLPA120 == 'true' %}
-                    <p>If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. We will not start processing the LPA or update this message until we've heard back from them.</p>
+                    <p class="govuk-body">If we need more information about the application to pay a reduced or no fee, we'll write to {{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }}. We will not start processing the LPA or update this message until we've heard back from them.</p>
                 {% endif %}
 
-                <p>If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p class="govuk-body">If you have not posted the LPA to us yet, <a class="govuk-link" href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
         {% elseif status == 'processed' %}
@@ -75,9 +75,9 @@
             </div>
 
             <div>
-                <p>For security reasons, we cannot tell you here if the LPA has been registered or not.</p>
+                <p class="govuk-body">For security reasons, we cannot tell you here if the LPA has been registered or not.</p>
 
-                <p>{{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }} will receive the LPA in the post, along with a letter saying if the LPA:
+                <p class="govuk-body">{{ lpa.document.correspondent.name.title }} {{ lpa.document.correspondent.name.first }} {{ lpa.document.correspondent.name.last }} will receive the LPA in the post, along with a letter saying if the LPA:
 
                 <ul class="list list-bullet" style="font-weight:normal;">
                     <li>has been registered</li>
@@ -85,14 +85,14 @@
                 </ul>
 
                 {% if returnUnpaid != 'true' %}
-                    <p>The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
+                    <p class="govuk-body">The donor and all attorneys on the LPA will get a letter telling them the outcome.</p>
 
-                    <p>If the LPA has successfully been registered, the donor and attorneys will be able to use it
-                    by creating an account on <a href="https://www.gov.uk/use-lasting-power-of-attorney">Use an LPA</a>
+                    <p class="govuk-body">If the LPA has successfully been registered, the donor and attorneys will be able to use it
+                    by creating an account on <a class="govuk-link" href="https://www.gov.uk/use-lasting-power-of-attorney">Use an LPA</a>
                     and adding the details provided in the letter.</p>
                 {% endif %}
 
-                <p>The letter and LPA were sent by second class post. If they have not arrived
+                <p class="govuk-body">The letter and LPA were sent by second class post. If they have not arrived
                 {% if shouldReceiveByDate != null %}
                     by <span data-cy="lpa-should-receive">{{ shouldReceiveByDate|date('d/m/y') }}</span>,
                 {% else %}
@@ -100,7 +100,7 @@
                 {% endif %}
                 please call 0300 456 0300.</p>
 
-                <p>Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm.</p>
+                <p class="govuk-body">Opening times: Monday, Tuesday, Thursday, Friday 9am to 5pm. Wednesday 10am to 5pm.</p>
             </div>
 
         {% elseif status == 'received' %}
@@ -109,8 +109,8 @@
                 <h2 class="heading-xlarge">We’ve received the LPA</h2>
             </div>
             <div>
-                <p class="lede">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
-                <p>It will take up to 16 weeks to register the LPA if there are no mistakes in the application.</p>
+                <p class="govuk-body-l">When we've checked the LPA, we'll send a letter to the donor, the attorneys and the correspondent to let them know what happens next.</p>
+                <p class="govuk-body">It will take up to 16 weeks to register the LPA if there are no mistakes in the application.</p>
             </div>
 
         {% elseif status == 'completed' %}
@@ -119,14 +119,14 @@
                 <h2 class="heading-xlarge">You have completed the LPA application</h2>
             </div>
             <div>
-                <p class="lede">This LPA was made before it was possible to track the progress of an LPA application online.</p>
-                <p class="govuk-body-l">If you have not posted the LPA to us yet, <a href="/contact#postal-address">here's the address to send it to</a>.</p>
+                <p class="govuk-body-l">This LPA was made before it was possible to track the progress of an LPA application online.</p>
+                <p class="govuk-body-l">If you have not posted the LPA to us yet, <a class="govuk-link" href="/contact#postal-address">here's the address to send it to</a>.</p>
             </div>
 
         {% endif %}
 
         <div>
-            <a href="/user/dashboard">Back to your LPAs</a>
+            <a class="govuk-link" href="/user/dashboard">Back to your LPAs</a>
         </div>
     </div>
 {% endblock content %}

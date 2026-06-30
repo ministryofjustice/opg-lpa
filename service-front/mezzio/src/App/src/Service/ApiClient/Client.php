@@ -13,9 +13,6 @@ use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerAwareInterface;
 
-/**
- * Mezzio port of Application\Model\Service\ApiClient\Client.
- */
 class Client implements LoggerAwareInterface
 {
     use LoggerTrait;
@@ -157,12 +154,13 @@ class Client implements LoggerAwareInterface
     private function handleErrorResponse(ResponseInterface $response): never
     {
         $exception = new ApiException($response);
-        $method    = $response->getStatusCode() >= 500 ? 'error' : 'info';
+        $method    = $response->getStatusCode() >= 500 ? 'error' : 'warning';
 
         $this->getLogger()->$method('API client error response', [
-            'error_code' => 'API_CLIENT_ERROR_RESPONSE',
-            'status'     => $response->getStatusCode(),
-            'exception'  => $exception,
+            'error_code'   => 'API_CLIENT_ERROR_RESPONSE',
+            'status'       => $response->getStatusCode(),
+            'responseBody' => $exception->getBody(),
+            'exception'    => $exception,
         ]);
 
         throw $exception;

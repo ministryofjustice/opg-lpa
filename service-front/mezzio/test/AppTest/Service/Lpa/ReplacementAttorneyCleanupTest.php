@@ -4,29 +4,26 @@ declare(strict_types=1);
 
 namespace AppTest\Service\Lpa;
 
-use Application\Model\Service\Lpa\Application as LpaApplicationService;
-use Application\Model\Service\Lpa\ReplacementAttorneyCleanup;
-use ApplicationTest\Model\Service\AbstractServiceTest;
+use App\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\ReplacementAttorneyCleanup;
 use DateTime;
 use Exception;
-use Hamcrest\Matchers;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 
-final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
+final class ReplacementAttorneyCleanupTest extends MockeryTestCase
 {
     private LpaApplicationService|MockInterface $lpaApplicationService;
     private ReplacementAttorneyCleanup $service;
 
     public function setUp(): void
     {
-        parent::setUp();
-
         $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
 
-        $this->service = new ReplacementAttorneyCleanup($this->authenticationService, []);
+        $this->service = new ReplacementAttorneyCleanup();
         $this->service->setLpaApplicationService($this->lpaApplicationService);
     }
 
@@ -39,9 +36,9 @@ final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([Matchers::equalTo(new Lpa([
-                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()]
-            ])), Matchers::equalTo(new ReplacementAttorneyDecisions())])
+            ->withArgs([$this->equalTo(new Lpa([
+                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
+            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
             ->once();
 
         $this->service->cleanUp($lpa);
@@ -53,9 +50,9 @@ final class ReplacementAttorneyCleanupTest extends AbstractServiceTest
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([Matchers::equalTo(new Lpa([
-                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()]
-            ])), Matchers::equalTo(new ReplacementAttorneyDecisions())])
+            ->withArgs([$this->equalTo(new Lpa([
+                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
+            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
             ->once();
 
         $this->service->cleanUp($lpa);

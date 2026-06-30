@@ -99,11 +99,9 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
                     $reuseDetailsUrl = $this->urlHelper->generate('lpa/reuse-details', [
                         'lpa-id' => $lpa->id,
                     ], [
-                        'query' => [
-                            'calling-url' => $request->getUri()->getPath(),
-                            'include-trusts' => false,
-                            'actor-name' => 'Person to notify',
-                        ],
+                        'calling-url' => $request->getUri()->getPath(),
+                        'include-trusts' => false,
+                        'actor-name' => 'Person to notify',
                     ]);
 
                     return new RedirectResponse($reuseDetailsUrl);
@@ -111,7 +109,7 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
             }
         }
 
-        $form = $this->formElementManager->get('Application\Form\Lpa\PeopleToNotifyForm');
+        $form = $this->formElementManager->get('App\Form\Lpa\PeopleToNotifyForm');
         $form->setAttribute(
             'action',
             $this->urlHelper->generate('lpa/people-to-notify/add', ['lpa-id' => $lpa->id])

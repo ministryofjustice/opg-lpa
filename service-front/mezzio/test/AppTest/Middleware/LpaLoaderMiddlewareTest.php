@@ -23,21 +23,25 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class LpaLoaderMiddlewareTest extends TestCase
 {
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
+    private LoggerInterface&MockObject $logger;
     private LpaLoaderMiddleware $middleware;
 
     protected function setUp(): void
     {
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->middleware = new LpaLoaderMiddleware(
             $this->lpaApplicationService,
             $this->urlHelper,
+            $this->logger,
         );
     }
 

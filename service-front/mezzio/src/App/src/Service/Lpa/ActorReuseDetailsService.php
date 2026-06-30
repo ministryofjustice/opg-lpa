@@ -231,7 +231,10 @@ class ActorReuseDetailsService
         return $actorsList;
     }
 
-    private function getActorDetails(mixed $actorData, string $actorType): array
+    /**
+     * @param Attorneys\Human|CertificateProvider|Donor $actorData
+     */
+    private function getActorDetails(Donor|CertificateProvider|Attorneys\Human $actorData, string $actorType): array
     {
         if (
             isset($actorData->name)

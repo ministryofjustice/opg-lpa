@@ -50,9 +50,9 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
-        /** @var \Application\Form\Lpa\HowAttorneysMakeDecisionForm $form */
+        /** @var \App\Form\Lpa\HowAttorneysMakeDecisionForm $form */
         $form = $this->formElementManager->get(
-            'Application\Form\Lpa\HowAttorneysMakeDecisionForm',
+            'App\Form\Lpa\HowAttorneysMakeDecisionForm',
             ['lpa' => $lpa]
         );
 
@@ -66,7 +66,11 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
                 $postData = [];
             }
 
-            if ($postData['how'] != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+            // Use null coalescing rather than direct array access: unlike the legacy app's
+            // Laminas\Stdlib\Parameters (which returns null for missing keys silently),
+            // PSR-7 getParsedBody() returns a plain PHP array where accessing an absent key
+            // throws an E_WARNING promoted to ErrorException by the error handler.
+            if (($postData['how'] ?? null) != PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
                 $form->setValidationGroup(['how']);
             }
 

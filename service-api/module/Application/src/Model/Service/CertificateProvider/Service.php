@@ -8,7 +8,6 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -33,9 +32,7 @@ class Service extends AbstractService
         $lpa = $this->getLpa($lpaId);
         $lpa->getDocument()->setCertificateProvider($certificateProvider);
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after setting certificate provider');
 
         $this->updateLpa($lpa);
 
@@ -58,9 +55,7 @@ class Service extends AbstractService
             return new ValidationApiProblem($validation);
         }
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after deleting certificate provider');
 
         $this->updateLpa($lpa);
 

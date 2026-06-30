@@ -21,11 +21,20 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.4-alpine@sha256:61ea466e4022f3803b9f019e01f7738aac694f01989aee35a013724921d8e742
+    image: library/redis:8.8-alpine@sha256:9d317178eceac8454a2284a9e6df2466b93c745529947f0cd42a0fa9609d7005
 
   dynamodb:
     container_name: lpa-dynamodb
     image: amazon/dynamodb-local@sha256:d89f8fcc6b1a39cb35976c248ed42a28c66ae00dc043099210f5571e42648ab4
+
+  mock-pay:
+    container_name: lpa-mock-pay
+    build:
+      dockerfile: mock-pay/docker/Dockerfile
+    ports:
+      - "4547:8080"
+    environment:
+      - IMPOSTER_LOG_LEVEL=TRACE
 
   localstack:
     container_name: lpa-localstack
@@ -71,6 +80,8 @@ services:
     build:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
+    ports:
+      - 7001:8080
     environment:
       APP_HOST: api-app
       APP_PORT: 9000
@@ -155,6 +166,7 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
 
+
   # ---------------------------
   # Mezzio front
 
@@ -170,9 +182,11 @@ services:
       - ./service-front/mezzio/config:/app/config
       - ./service-front/mezzio/src:/app/src
       - ./service-front/mezzio/test:/app/test
-      - ./service-front/mezzio/phpunit.xml.dist:/app/phpunit.xml.dist
+      - ./service-front/mezzio/phpunit.xml:/app/phpunit.xml
+      - ./service-front/mezzio/psalm.xml:/app/psalm.xml
+      - ./service-front/mezzio/phpcs.xml:/app/phpcs.xml
       - ./service-front/module:/service-front/module
-      - ./service-front/content:/app/content
+      - ./service-front/mezzio/content:/app/content
       - ./shared:/shared
     depends_on:
       api-app:
@@ -181,6 +195,10 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
+      pdf-app:
+        condition: service_started
+      mock-pay:
+        condition: service_started
     environment:
       PHP_IDE_CONFIG: serverName=lpa-mezzio-app
       OPG_LPA_STACK_NAME: "local"
@@ -198,6 +216,10 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+      OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
+      OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
+      OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
+      OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
     healthcheck:
       test: ["CMD-SHELL", "cgi-fcgi -bind -connect 127.0.0.1:9000 || exit 1"]
       interval: 10s
@@ -222,6 +244,7 @@ services:
     volumes:
       - ./service-front/mezzio/public:/web
       - ./service-front/public/assets/v2:/web/assets/v2:ro
+      - ./service-front/docker/web/etc/nginx/templates/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     environment:
       APP_HOST: mezzio-app
       APP_PORT: 9000
@@ -245,9 +268,107 @@ services:
       TARGET_HOST: "mezzio-web"
       TARGET_PORT: "8080"
 
+  # ---------------------------
+  # PDF
+
+  pdf-app:
+    container_name: lpa-pdf-app
+    image: lpa-pdf-app
+    depends_on:
+      localstack:
+        condition: service_healthy
+    volumes:
+      - ./service-pdf:/app
+      - ./shared:/shared
+    tmpfs:
+      - /tmp/
+    build:
+      context: ./
+      args:
+        ENABLE_XDEBUG: "0"
+        VISUAL_TESTS: true
+      dockerfile: service-pdf/docker/app/Dockerfile
+    environment:
+      OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
+
+  # ---------------------------
+  # Admin
+
+  admin-web:
+    container_name: lpa-admin-web
+    image: lpa-admin-web
+    depends_on:
+      - admin-app
+    build:
+      context: ./
+      dockerfile: service-admin/docker/web/Dockerfile
+    environment:
+      APP_HOST: admin-app
+      APP_PORT: 9000
+
+  admin-app:
+    container_name: lpa-admin-app
+    image: lpa-admin-app
+    build:
+      context: ./
+      dockerfile: service-admin/docker/app/Dockerfile
+      args:
+        ENABLE_XDEBUG: "0"
+    volumes:
+      - ./service-admin:/app
+      - ./shared:/shared
+    depends_on:
+      dynamodb:
+        condition: service_started
+      localstack:
+        condition: service_healthy
+    environment:
+      OPG_LPA_STACK_NAME: "local"
+      OPG_LPA_STACK_ENVIRONMENT: "dev"
+      OPG_LPA_ENDPOINTS_API: "http://api-web:8080"
+      OPG_LPA_COMMON_ADMIN_DYNAMODB_TABLE: "Properties"
+      OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
+      OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
+      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
+      AWS_ACCESS_KEY_ID: "devkey"
+      AWS_SECRET_ACCESS_KEY: "secretdevkey"
+      OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
+      PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
+      OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/health-check.sh"]
+      interval: 10s
+      timeout: 15s
+      retries: 3
+      start_period: 90s
+
+  admin-ssl:
+    container_name: lpa-admin-ssl
+    image: lpa-admin-ssl
+    depends_on:
+      - admin-web
+    build:
+      context: ./
+      dockerfile: local-ssl/docker/Dockerfile
+    ports:
+      - 7003:443
+    volumes:
+      - ./local-ssl/certs:/etc/nginx/certs
+    environment:
+      DOMAIN: "localhost"
+      TARGET_HOST_HEADER: "localhost:7003"
+      SSL_PORT: "443"
+      TARGET_HOST: "admin-web"
+      TARGET_PORT: "8080"
+
   cypress-mezzio:
     depends_on:
       - mezzio-ssl
+      - admin-ssl
     build:
       context: ./
       dockerfile: cypress/Dockerfile
@@ -258,3 +379,14 @@ services:
     volumes:
       - ./cypress:/app/cypress
       - ./cypress/screenshots:/app/cypress/screenshots
+      - ./cypress.config.js:/app/cypress.config.js
+
+  front-app-mezzio-test:
+    profiles: ["test"]
+    image: lpa-front-app-mezzio-test
+    build:
+      context: ./
+      dockerfile: service-front/mezzio/docker/app/Dockerfile
+      target: test-runner
+      args:
+        ENABLE_XDEBUG: "1"

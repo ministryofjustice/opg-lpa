@@ -9,7 +9,6 @@ use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\Logging\LoggerTrait;
-use RuntimeException;
 
 class Service extends AbstractService
 {
@@ -39,9 +38,7 @@ class Service extends AbstractService
         }
         $lpa->setWhoAreYouAnswered(true);
 
-        if ($lpa->validate()->hasErrors()) {
-            throw new RuntimeException('A malformed LPA object');
-        }
+        $this->assertLpaValid($lpa, 'after setting whoAreYouAnswered');
 
         $this->updateLpa($lpa);
 

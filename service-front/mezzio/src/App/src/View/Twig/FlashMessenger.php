@@ -59,11 +59,11 @@ final class FlashMessenger
     }
 
     /**
-     * Renders flash messages of the given type as an HTML alert panel.
+     * Renders flash messages of the given type as a GOV.UK notification banner.
      *
      * @param string $type      Flash type: 'error', 'success', 'warning', 'info', 'default'
-     * @param string $class     CSS class for the outer div (e.g. 'alert-error')
-     * @param string $iconClass CSS class for the icon (e.g. 'icon-cross')
+     * @param string $class     Unused — kept for backwards-compatible call sites
+     * @param string $iconClass Unused — kept for backwards-compatible call sites
      */
     public function render(string $type, string $class = '', string $iconClass = ''): string
     {
@@ -72,18 +72,39 @@ final class FlashMessenger
             return '';
         }
 
-        $messageHtml = implode('</p><p>', array_map(
+        $messageHtml = implode('</p><p class="govuk-body">', array_map(
             static fn(string $m) => htmlspecialchars($m, ENT_QUOTES | ENT_SUBSTITUTE),
             $messages,
         ));
 
+        $isSuccess = ($type === 'success');
+        $bannerClass = $isSuccess
+            ? 'govuk-notification-banner govuk-notification-banner--success'
+            : 'govuk-notification-banner';
+        $role = $isSuccess ? 'alert' : 'region';
+        $title = match ($type) {
+            'success' => 'Success',
+            'error'   => 'There is a problem',
+            default   => 'Important',
+        };
+        $titleId = 'govuk-notification-banner-title-' . htmlspecialchars($type, ENT_QUOTES);
+        $ariaAttr = $isSuccess ? '' : sprintf(' aria-labelledby="%s"', $titleId);
+        $idAttr   = $isSuccess ? '' : sprintf(' id="%s"', $titleId);
+
         return sprintf(
-            '<div class="alert panel text %s" role="alert">'
-            . '<i class="icon %s" role="presentation"></i>'
-            . '<div class="alert-message"><p>%s</p></div>'
+            '<div class="%s" role="%s"%s data-module="govuk-notification-banner">'
+            . '<div class="govuk-notification-banner__header">'
+            . '<h2 class="govuk-notification-banner__title"%s>%s</h2>'
+            . '</div>'
+            . '<div class="govuk-notification-banner__content">'
+            . '<p class="govuk-body">%s</p>'
+            . '</div>'
             . '</div>',
-            htmlspecialchars($class, ENT_QUOTES),
-            htmlspecialchars($iconClass, ENT_QUOTES),
+            $bannerClass,
+            $role,
+            $ariaAttr,
+            $idAttr,
+            htmlspecialchars($title, ENT_QUOTES),
             $messageHtml,
         );
     }

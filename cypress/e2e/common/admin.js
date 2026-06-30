@@ -16,6 +16,26 @@ Then('I find {string} on the admin site', (name) => {
   cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
 });
 
+Then(
+  'I search for user {string} by {string}',
+  (searchValue, searchType) => {
+    cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
+    cy.get('[data-cy=search-type-select]').select(searchType);
+    cy.get('[data-cy=email-address-input]')
+      .clear({ force: true })
+      .type(searchValue);
+    cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
+  },
+);
+
+Then('the user account status is {string}', (status) => {
+  cy.get('[data-role=user-account-status]').first().should('contain', status);
+});
+
+Then('the user ID displayed is {string}', (userId) => {
+  cy.get('[data-role=user-id]').first().should('have.text', userId);
+});
+
 // cypress steps specific to the admin UI
 Then('I am taken to the find users page', () => {
   cy.url().should('eq', Cypress.env('adminUrl') + '/user-find');

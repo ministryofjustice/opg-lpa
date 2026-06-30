@@ -107,7 +107,7 @@ class PeopleToNotifyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->expects($this->once())->method('bind');
         $this->formElementManager->method('get')->willReturn($form);
         $this->urlHelper->method('generate')->willReturn('/some-url');
@@ -142,7 +142,7 @@ class PeopleToNotifyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'Updated', 'last' => 'Person'],
@@ -165,7 +165,7 @@ class PeopleToNotifyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'Updated', 'last' => 'Person'],
@@ -187,7 +187,7 @@ class PeopleToNotifyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(true);
         $form->method('getModelDataFromValidatedForm')->willReturn([
             'name' => ['title' => 'Mr', 'first' => 'Updated', 'last' => 'Person'],
@@ -206,7 +206,7 @@ class PeopleToNotifyEditHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $form = $this->createMock(\Application\Form\Lpa\AbstractActorForm::class);
+        $form = $this->createMock(\App\Form\Lpa\AbstractActorForm::class);
         $form->method('isValid')->willReturn(false);
         $this->formElementManager->method('get')->willReturn($form);
         $this->urlHelper->method('generate')->willReturn('/some-url');

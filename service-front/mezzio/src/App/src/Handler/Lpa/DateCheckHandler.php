@@ -51,8 +51,8 @@ class DateCheckHandler implements RequestHandlerInterface
             }
         }
 
-        /** @var \Application\Form\Lpa\DateCheckForm $form */
-        $form = $this->formElementManager->get('Application\Form\Lpa\DateCheckForm', [
+        /** @var \App\Form\Lpa\DateCheckForm $form */
+        $form = $this->formElementManager->get('App\Form\Lpa\DateCheckForm', [
             'lpa' => $lpa,
         ]);
 
@@ -124,7 +124,7 @@ class DateCheckHandler implements RequestHandlerInterface
                     $validUrl = $this->urlHelper->generate(
                         'lpa/date-check/valid',
                         ['lpa-id' => $lpa->id],
-                        ['query' => $queryParams],
+                        empty($queryParams) ? [] : ['query' => $queryParams],
                     );
 
                     return new RedirectResponse($validUrl);

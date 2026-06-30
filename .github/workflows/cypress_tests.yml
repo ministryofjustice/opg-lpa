@@ -28,6 +28,11 @@ on:
         required: false
         type: string
         default: "0"
+      mezzio:
+        description: "Enable mezzio mode (uses mezzio-regressions baseline directory)"
+        required: false
+        type: string
+        default: "0"
       oidc_ingress_management_role:
         description: "OIDC role to assume for ingress management permissions"
         required: true
@@ -51,7 +56,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure AWS Credentials - Ingress Management
         uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
@@ -61,25 +66,29 @@ jobs:
           role-duration-seconds: 900
           role-session-name: OPGLPACypressTestsSecurityGroupStart
 
-      - name: Setup Python
-        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+      - name: Install uv
+        uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
         with:
-          python-version: "3.14"
+          version: "0.11.21"
+          python-version: "3.14.5"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r scripts/pipeline/ci_ingress/requirements.txt
+        working-directory: scripts/pipeline/ci_ingress
+        run: uv sync --locked
 
       - name: Download Terraform Task definition
-        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: terraform-artifact
           path: /tmp/
 
       - name: Add GitHub Actions runner Ingress Rule
         run: |
-          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json --add
 
       - uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
         with:
@@ -97,25 +106,26 @@ jobs:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
           CYPRESS_baseUrl: ${{ inputs.front_url }}
           CYPRESS_visualRegressionEnabled: ${{ inputs.visual_regression_enabled }}
+          CYPRESS_MEZZIO: ${{ inputs.mezzio }}
           CYPRESS_TAGS: ${{ inputs.cypress_tags }}
         run: |
           pushd cypress ; python3 stitch.py ; popd
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${CYPRESS_adminUrl}|g" docker-compose.yml
           CYPRESS_userNumber=`python3 cypress/user_number.py`
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup"
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${CYPRESS_TAGS}"
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}",mezzio="${CYPRESS_MEZZIO}" -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="@Signup"
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}",mezzio="${CYPRESS_MEZZIO}" -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",TAGS="${CYPRESS_TAGS}"
 
       - name: Upload Screenshot Artifact
         if: failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cypress-screenshots (${{ inputs.cypress_tags }})
           path: cypress/screenshots/
 
       - name: Upload Diff Artifact
         if: failure()
-        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: cypress-diffs (${{ inputs.cypress_tags }})
           path: cypress/regressions/diff
@@ -132,4 +142,4 @@ jobs:
       - name: Remove GitHub Actions runner Ingress Rule
         if: always()
         run: |
-          python scripts/pipeline/ci_ingress/ci_ingress.py /tmp/environment_pipeline_tasks_config.json
+          uv run --directory scripts/pipeline/ci_ingress python ci_ingress.py /tmp/environment_pipeline_tasks_config.json

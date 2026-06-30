@@ -8,48 +8,44 @@
 
 <li id="donor-section" class="section current" data-cy="section-current">
 
-    <h1 class="heading-medium accordion-header flush--top">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
 
     <div class="accordion-info">
         <div class="text">
-            <p>The 'donor' is the person appointing other people to make decisions on their behalf. The donor:</p>
+            <p class="govuk-body">The 'donor' is the person appointing other people to make decisions on their behalf. The donor:</p>
 
             <ul class="list list-bullet">
                 <li>must be 18 or over</li>
-                <li>must be able to make their own decisions at the time their LPA is made – this is known as having <a href="/guide#topic-mental-capacity" class="js-guidance" data-analytics-click="page:link:help: Find out more about mental capacity">mental capacity</a></li>
+                <li>must be able to make their own decisions at the time their LPA is made – this is known as having <a href="/guide#topic-mental-capacity" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about mental capacity">mental capacity</a></li>
             </ul>
 
-            <p>Only the donor can make decisions about their LPA and the people to involve.</p>
+            <p class="govuk-body">Only the donor can make decisions about their LPA and the people to involve.</p>
 
-            <p>
-                <a href="/guide#topic-donor" class="js-guidance" data-analytics-click="page:link:help: Find out more about being a donor">Find out more about being a donor</a>
+            <p class="govuk-body">
+                <a href="/guide#topic-donor" class="govuk-link js-guidance" data-analytics-click="page:link:help: Find out more about being a donor">Find out more about being a donor</a>
             </p>
         </div>
     </div>
 
     {% if (lpa.document.donor) %}
 
-        <h2 class="heading-medium flush--top">The donor</h2>
+        <h2 class="govuk-heading-m flush--top">The donor</h2>
 
         <div class="person person--wider">
-            <h3 class="person-name heading-small flush--ends">{{ lpa.document.donor.name }}</h3>
-            <p class="person-address flush--ends">{{ lpa.document.donor.address }}</p>
+            <h3 class="person-name govuk-heading-s flush--ends">{{ lpa.document.donor.name }}</h3>
+            <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.donor.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">
-                    <a href="{{ editUrl }}" role="button" class="action-edit js-form-popup"  data-cy="view-change-donor" aria-label="View/Change Donor">View/Change<span class="govuk-visually-hidden"> Donor</span></a>
+                    <a href="{{ editUrl }}" role="button" class="govuk-link action-edit js-form-popup"  data-cy="view-change-donor" aria-label="View/Change Donor">View/Change<span class="govuk-visually-hidden"> Donor</span></a>
                 </li>
             </ul>
         </div>
 
-        <div class="form-group">
-            <a href="{{ nextUrl }}" role="button" class="button" data-cy="save-and-continue">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
-        </div>
+        <a href="{{ nextUrl }}" role="button" class="govuk-button" data-cy="save-and-continue">{{ (final_check_accessible(lpa) ? 'Save and return to final check' : 'Save and continue') }}</a>
 
     {% else %}
 
-        <div class="form-group">
-            <a href="{{ addUrl }}" role="button" class="button js-form-popup" aria-label="Add Donor" data-cy="add-donor">Add donor</a>
-        </div>
+        <a href="{{ addUrl }}" role="button" class="govuk-button js-form-popup" aria-label="Add Donor" data-cy="add-donor">Add donor</a>
 
     {% endif %}
 

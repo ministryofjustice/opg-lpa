@@ -32,6 +32,7 @@ Feature: Add People to Notify to a Health and Welfare LPA
         Then the page matches the "add-people-to-notify-form" baseline image
         And I click "form-save"
         Then I see "Sir Anthony Webb" in the page text
+        Then the page matches the "add-people-to-notify-add-another" baseline image
         When I click "view-change"
         Then I can find "form-people-to-notify"
         And I see form prepopulated with

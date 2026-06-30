@@ -71,12 +71,14 @@ class LockCommand extends Command
             '2012-08-10'
         );
 
+        $awsRegion = getenv('AWS_REGION');
+
         $this->addOption(
             'region',
             null,
             InputOption::VALUE_OPTIONAL,
             'AWS region; defaults to eu-west-1',
-            'eu-west-1'
+            $awsRegion !== false ? $awsRegion : 'eu-west-1'
         );
     }
 
