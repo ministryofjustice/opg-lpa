@@ -56,12 +56,6 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
-        @include govuk-media-query($from: tablet) {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: flex-start;
-        }
-
         &.read-only {
             label {
                 @include govuk-media-query($until: tablet) {
@@ -74,6 +68,17 @@
                     margin-top: 7px;
                 }
             }
+        }
+    }
+
+    // Only apply flex row layout to govuk-form-group (from HTML templates).
+    // JS-injected wrappers (age-check alert, duplication alert, postcode search)
+    // use the older form-group class and must not receive flex layout.
+    .govuk-form-group {
+        @include govuk-media-query($from: tablet) {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
     }
 
