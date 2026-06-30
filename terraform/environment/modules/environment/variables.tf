@@ -14,6 +14,8 @@ variable "account" {
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
+    admin_cognito_auth_enabled             = bool
+    mezzio_frontend_enabled                = bool
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool
@@ -123,8 +125,14 @@ variable "rds_proxy_iam_role" {
   type = any
 }
 
-variable "mezzio_frontend_enabled" {
-  type        = bool
-  default     = false
-  description = "Flag to toggle the mezzio frontend switchover"
+variable "admin_cognito" {
+  description = "Settings for the AWS Cognito to use for the admin interface."
+  type = object({
+    id                          = string
+    user_pool_id                = string
+    user_pool_domain_name       = string
+    user_pool_client_secret     = string
+    user_pool_id_token_validity = string
+  })
+  sensitive = true
 }

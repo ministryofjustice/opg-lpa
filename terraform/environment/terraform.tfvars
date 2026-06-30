@@ -1,0 +1,208 @@
+account_mapping = {
+  development   = "development",
+  preproduction = "preproduction",
+  production    = "production"
+}
+accounts = {
+  development = {
+    dr_enabled                             = false,
+    performance_platform_enabled           = true,
+    always_on                              = false,
+    pagerduty_service_name                 = "Make a Lasting Power of Attorney Non-Production",
+    account_id                             = "050256574573",
+    is_production                          = "false",
+    sirius_api_gateway_endpoint            = "https://integration.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas/",
+    sirius_api_gateway_arn                 = "arn:aws:execute-api:eu-west-1:288342028542:*/*/GET/lpa-online-tool/*",
+    sirius_api_healthcheck_arn             = "arn:aws:execute-api:eu-west-1:288342028542:*/*/GET/healthcheck",
+    telemetry_requests_sampled_fraction    = "1.0",
+    auth_token_ttl_secs                    = 4500,
+    log_retention_in_days                  = 7,
+    account_name_short                     = "dev",
+    associate_alb_with_waf_web_acl_enabled = true,
+    admin_cognito_auth_enabled             = false,
+    mezzio_frontend_enabled                = false,
+    database = {
+      cluster_identifier                 = "api2",
+      aurora_cross_region_backup_enabled = false,
+      cross_account_backup_enabled       = false,
+      aurora_restore_testing_enabled     = false,
+      enable_backup_vault_lock           = false,
+      daily_backup_deletion              = 1,
+      daily_backup_cold_storage          = 0,
+      monthly_backup_deletion            = 0,
+      monthly_backup_cold_storage        = 0,
+      aurora_enabled                     = true,
+      aurora_instance_count              = 1,
+      aurora_serverless                  = true,
+      deletion_protection                = false,
+      psql_engine_version                = "14",
+      psql_parameter_group_family        = "postgres14",
+      rds_instance_type                  = "db.t3.small",
+      skip_final_snapshot                = true
+    },
+    autoscaling = {
+      front = {
+        minimum = 1,
+        maximum = 5
+      },
+      api = {
+        minimum = 1,
+        maximum = 5
+      },
+      pdf = {
+        minimum = 1,
+        maximum = 5
+      },
+      admin = {
+        minimum = 1,
+        maximum = 5
+      }
+    },
+    regions = {
+      eu-west-1 = {
+        region     = "eu-west-1",
+        enabled    = true,
+        is_primary = true
+      },
+      eu-west-2 = {
+        region     = "eu-west-2",
+        enabled    = false,
+        is_primary = false
+      }
+    }
+  },
+  preproduction = {
+    dr_enabled                             = false,
+    performance_platform_enabled           = false,
+    always_on                              = false,
+    pagerduty_service_name                 = "Make a Lasting Power of Attorney Non-Production",
+    account_id                             = "987830934591",
+    is_production                          = "false",
+    sirius_api_gateway_endpoint            = "https://integration.dev.lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas/",
+    sirius_api_gateway_arn                 = "arn:aws:execute-api:eu-west-1:288342028542:*/*/GET/lpa-online-tool/*",
+    sirius_api_healthcheck_arn             = "arn:aws:execute-api:eu-west-1:288342028542:*/*/GET/healthcheck",
+    telemetry_requests_sampled_fraction    = "1.0",
+    auth_token_ttl_secs                    = 4500,
+    log_retention_in_days                  = 7,
+    account_name_short                     = "pre",
+    associate_alb_with_waf_web_acl_enabled = true,
+    admin_cognito_auth_enabled             = false,
+    mezzio_frontend_enabled                = false,
+    database = {
+      cluster_identifier                 = "api2-20260414",
+      aurora_cross_region_backup_enabled = true,
+      cross_account_backup_enabled       = true,
+      aurora_restore_testing_enabled     = false,
+      enable_backup_vault_lock           = false,
+      daily_backup_deletion              = 2,
+      daily_backup_cold_storage          = 0,
+      monthly_backup_deletion            = 0,
+      monthly_backup_cold_storage        = 0,
+      aurora_enabled                     = true,
+      aurora_instance_count              = 3,
+      aurora_serverless                  = true,
+      deletion_protection                = false,
+      psql_engine_version                = "14",
+      psql_parameter_group_family        = "postgres14",
+      rds_instance_type                  = "db.m5.large",
+      skip_final_snapshot                = true
+    },
+    autoscaling = {
+      front = {
+        minimum = 1,
+        maximum = 5
+      },
+      api = {
+        minimum = 1,
+        maximum = 5
+      },
+      pdf = {
+        minimum = 1,
+        maximum = 5
+      },
+      admin = {
+        minimum = 1,
+        maximum = 5
+      }
+    },
+    regions = {
+      eu-west-1 = {
+        region     = "eu-west-1",
+        enabled    = true,
+        is_primary = true
+      },
+      eu-west-2 = {
+        region     = "eu-west-2",
+        enabled    = false,
+        is_primary = false
+      }
+    }
+  },
+  production = {
+    dr_enabled                             = false,
+    performance_platform_enabled           = false,
+    always_on                              = false,
+    account_id                             = "980242665824",
+    pagerduty_service_name                 = "Make a Lasting Power of Attorney Production",
+    is_production                          = "true",
+    sirius_api_gateway_endpoint            = "https://lpa.api.opg.service.justice.gov.uk/v1/lpa-online-tool/lpas/",
+    sirius_api_gateway_arn                 = "arn:aws:execute-api:eu-west-1:649098267436:*/*/GET/lpa-online-tool/*",
+    sirius_api_healthcheck_arn             = "arn:aws:execute-api:eu-west-1:649098267436:*/*/GET/healthcheck",
+    telemetry_requests_sampled_fraction    = "0.05",
+    auth_token_ttl_secs                    = 4500,
+    log_retention_in_days                  = 120,
+    account_name_short                     = "prod",
+    associate_alb_with_waf_web_acl_enabled = true,
+    admin_cognito_auth_enabled             = true,
+    mezzio_frontend_enabled                = false,
+    database = {
+      cluster_identifier                 = "api2-20260415",
+      aurora_cross_region_backup_enabled = true,
+      cross_account_backup_enabled       = true,
+      aurora_restore_testing_enabled     = false,
+      enable_backup_vault_lock           = false,
+      daily_backup_deletion              = 30,
+      daily_backup_cold_storage          = 0,
+      monthly_backup_deletion            = 395,
+      monthly_backup_cold_storage        = 30,
+      aurora_enabled                     = true,
+      aurora_instance_count              = 3,
+      aurora_serverless                  = true,
+      deletion_protection                = true,
+      psql_engine_version                = "14",
+      psql_parameter_group_family        = "postgres14",
+      rds_instance_type                  = "db.m5.large",
+      skip_final_snapshot                = false
+    },
+    autoscaling = {
+      front = {
+        minimum = 3,
+        maximum = 20
+      },
+      api = {
+        minimum = 3,
+        maximum = 20
+      },
+      pdf = {
+        minimum = 2,
+        maximum = 20
+      },
+      admin = {
+        minimum = 1,
+        maximum = 2
+      }
+    },
+    regions = {
+      eu-west-1 = {
+        region     = "eu-west-1",
+        enabled    = true,
+        is_primary = true
+      },
+      eu-west-2 = {
+        region     = "eu-west-2",
+        enabled    = false,
+        is_primary = false
+      }
+    }
+  }
+}
