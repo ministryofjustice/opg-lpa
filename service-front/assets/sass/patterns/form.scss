@@ -1,9 +1,12 @@
-// New form-control-error class is required instead of inheriting from form-control-group (formerly error).
-// This will automatically apply the inheritance - changed in version 3.0.0 gov-uk-elements
+// Apply error border to govuk-input/textarea/select elements inside error form groups.
+// GOV.UK Frontend normally expects govuk-input--error modifier class, but this project
+// uses .govuk-form-group--error on the wrapper and relies on descendant selectors instead.
 .form-group-error,
 .govuk-form-group--error {
 
-        .form-control {
+        .govuk-input,
+        .govuk-textarea,
+        .govuk-select {
                 border: 4px solid govuk-colour("red");
         }
 }
