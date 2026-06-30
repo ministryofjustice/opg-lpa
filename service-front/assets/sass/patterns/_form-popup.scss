@@ -56,13 +56,10 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
-        &:has(> .form-label),
-        &:has(> .govuk-label) {
-            @include govuk-media-query($from: tablet) {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: flex-start;
-            }
+        @include govuk-media-query($from: tablet) {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
         }
 
         &.read-only {
@@ -113,6 +110,13 @@
     .single-checkbox-group {
         @include govuk-media-query($from: tablet) {
             margin-left: 150px;
+        }
+    }
+
+    // Checkbox/radio wrappers must not inherit the flex row layout
+    .single-checkbox-group {
+        @include govuk-media-query($from: tablet) {
+            display: block;
         }
     }
 
