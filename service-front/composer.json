@@ -1,8 +1,10 @@
 {
-    "name": "mezzio/mezzio-skeleton",
-    "description": "Laminas mezzio skeleton. Begin developing PSR-15 middleware applications in seconds!",
+    "name": "ministryofjustice/opg-lpa-front",
+    "description": "Front end service for creating Lasting Power of Attorney PDF documents",
     "type": "project",
     "license": "BSD-3-Clause",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
     "keywords": [
         "laminas",
         "mezzio",
@@ -13,15 +15,7 @@
         "psr-11",
         "psr-15"
     ],
-    "homepage": "https://mezzio.dev",
-    "support": {
-        "docs": "https://docs.mezzio.dev/mezzio/",
-        "issues": "https://github.com/mezzio/mezzio-skeleton/issues",
-        "source": "https://github.com/mezzio/mezzio-skeleton",
-        "rss": "https://github.com/mezzio/mezzio-skeleton/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
-    },
+    "homepage": "https://github.com/ministryofjustice/opg-lpa",
     "config": {
         "sort-packages": true,
         "allow-plugins": {
@@ -47,12 +41,18 @@
     },
     "require": {
         "php": "8.4.*",
+        "ext-bcmath": "*",
+        "ext-intl": "*",
+        "ext-redis": "*",
+        "ext-sockets": "*",
         "alphagov/notifications-php-client": "^7.0.0",
         "aws/aws-sdk-php": "^3.204.5",
         "composer/package-versions-deprecated": "^1.11.99.5",
         "egulias/email-validator": "^4.0",
         "ezyang/htmlpurifier": "^4.19",
+        "fig/http-message-util": "^1.1",
         "guzzlehttp/guzzle": "^7.0",
+        "guzzlehttp/psr7": "^2.6",
         "laminas/laminas-authentication": "^2.19",
         "laminas/laminas-component-installer": "^2.6 || ^3.5",
         "laminas/laminas-config-aggregator": "^1.18",
