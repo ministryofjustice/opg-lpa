@@ -56,6 +56,19 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
+        // Only apply flex row layout to form groups with a direct label child.
+        // JS-injected wrappers (age-check alert, duplication alert, postcode search)
+        // use the older form-group class and must not receive flex layout.
+        // Date input inner form-groups will match but are overridden to inline-block below.
+        &:has(> .form-label),
+        &:has(> .govuk-label) {
+            @include govuk-media-query($from: tablet) {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: flex-start;
+            }
+        }
+
         &.read-only {
             label {
                 @include govuk-media-query($until: tablet) {
@@ -71,11 +84,111 @@
         }
     }
 
+    .form-label,
+    .govuk-label:not(.govuk-checkboxes__label):not(.govuk-radios__label):not(.govuk-date-input__label) {
+        @include govuk-media-query($from: tablet) {
+            width: 150px;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+    }
+
+    .form-control,
+    .govuk-input,
+    .govuk-textarea,
+    .govuk-select {
+        @include govuk-media-query($from: tablet) {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    .postcode-input {
+        @include govuk-media-query($from: tablet) {
+            width: 252px;
+        }
+    }
+
+    .summary,
+    .summary-text,
+    .address-type-toggle,
+    .block-label,
+    .button,
+    .govuk-button-group,
+    .alert,
+    .single-checkbox-group {
+        @include govuk-media-query($from: tablet) {
+            margin-left: 150px;
+        }
+    }
+
+    .postcode-button,
+    .button-secondary {
+        @include govuk-media-query($from: tablet) {
+            margin-left: 0;
+        }
+    }
+
     // govuk-date-input items must stay inline-block (standard GDS date component)
     .govuk-date-input {
         .govuk-form-group {
             display: inline-block;
             margin-bottom: govuk-spacing(2);
+        }
+    }
+
+    // DOB section: two-column layout for the govuk-date-input / govuk-fieldset pattern.
+    // The legend acts as the left-column label (floated), and the hint + date inputs
+    // sit to the right via margin-left, matching the old .form-date behaviour.
+    .dob-element {
+        @include govuk-media-query($from: tablet) {
+            overflow: hidden; // clearfix for the floated legend
+
+            .govuk-fieldset__legend {
+                float: left;
+                width: 150px;
+                margin-top: 6px;
+            }
+
+            // The govuk-label inside the legend should not itself get 150px width
+            .govuk-fieldset__legend .govuk-label {
+                width: auto;
+                margin-top: 0;
+                flex-shrink: unset;
+            }
+
+            .govuk-hint,
+            .govuk-date-input {
+                margin-left: 150px;
+            }
+
+            .govuk-error-message {
+                margin-left: 150px;
+                position: static;
+                top: auto;
+                left: auto;
+                width: auto;
+                padding-bottom: 2px;
+            }
+        }
+    }
+
+    .postcodelookup {
+        position: relative;
+
+        .js-PostcodeLookup__search .error-message,
+        .js-PostcodeLookup__search .govuk-error-message {
+            @include govuk-media-query($from: tablet) {
+                width: 79%;
+            }
+        }
+
+        .spinner {
+            @include govuk-media-query($from: tablet) {
+                position: absolute;
+                top: 10px;
+                right: 182px;
+            }
         }
     }
 
@@ -121,8 +234,23 @@
         }
     }
 
+    .error-message,
+    .govuk-error-message {
+        @include govuk-media-query($from: tablet) {
+            position: relative;
+            top: 13px;
+            left: 150px;
+            width: 80%;
+            padding-bottom: 15px;
+        }
+    }
+
     .use-details-link-panel {
         padding: 15px;
+
+        @include govuk-media-query($from: tablet) {
+            padding-left: 165px;
+        }
     }
 }
 
