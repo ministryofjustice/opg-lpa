@@ -149,8 +149,9 @@
     }
 
     // DOB section: two-column layout for the govuk-date-input / govuk-fieldset pattern.
-    // The legend acts as the left-column label (floated), and the hint + date inputs
+    // The legend acts as the left-column label (floated), and the date inputs
     // sit to the right via margin-left, matching the old .form-date behaviour.
+    // The hint is hidden on tablet+ (as in main) to keep the popup compact.
     .dob-element {
         @include govuk-media-query($from: tablet) {
             overflow: hidden; // clearfix for the floated legend
@@ -168,7 +169,13 @@
                 flex-shrink: unset;
             }
 
-            .govuk-hint,
+            // Hide the hint on tablet+, matching main branch behaviour (space is at a premium
+            // in the popup and the two-column layout is self-explanatory without it).
+            // The hint remains visible on mobile where screen space is less constrained.
+            .govuk-hint {
+                display: none;
+            }
+
             .govuk-date-input {
                 margin-left: 150px;
             }
