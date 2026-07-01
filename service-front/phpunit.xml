@@ -14,9 +14,19 @@
         </testsuite>
     </testsuites>
 
+    <php>
+        <ini name="memory_limit" value="512M"/>
+    </php>
+
     <source ignoreIndirectDeprecations="true">
         <include>
             <directory suffix=".php">src</directory>
         </include>
     </source>
+
+    <coverage>
+        <report>
+            <html outputDirectory="./build/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

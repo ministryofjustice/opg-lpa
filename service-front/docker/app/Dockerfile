@@ -38,7 +38,6 @@ COPY --chown=root:root service-front/config /app/config
 COPY --chown=root:root service-front/src /app/src
 COPY --chown=root:root service-front/public /app/public
 COPY --chown=root:root service-front/data /app/data
-COPY --chown=root:root service-front/test /app/test
 COPY --chown=root:root service-front/content /app/content
 
 
@@ -99,5 +98,6 @@ RUN mkdir -m a+w build
 
 USER appuser
 
+COPY --chown=root:root service-front/test /app/test
 COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
 COPY --chown=root:root service-front/psalm.xml /app/psalm.xml

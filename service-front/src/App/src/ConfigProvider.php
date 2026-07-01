@@ -45,8 +45,14 @@ class ConfigProvider
 
     public function getTwig(): array
     {
+        $cacheEnv = getenv('OPG_LPA_FRONT_TWIG_CACHE_DIR');
+        $cacheDir = '/tmp/twig_cache';
+        if ($cacheEnv !== false) {
+            $cacheDir = ($cacheEnv === '' || strtolower($cacheEnv) === 'false') ? false : $cacheEnv;
+        }
+
         return [
-            'cache_dir'        => '/tmp/twig_cache',
+            'cache_dir'        => $cacheDir,
             'strict_variables' => false,
             'extensions' => [
                 View\Twig\LegacyCompatExtension::class,
