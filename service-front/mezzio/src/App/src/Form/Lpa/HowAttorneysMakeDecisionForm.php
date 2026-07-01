@@ -17,7 +17,8 @@ class HowAttorneysMakeDecisionForm extends AbstractMainFlowForm
             'type'    => 'Laminas\Form\Element\Radio',
             'attributes' => [
                 'id'             => 'how',
-                'div-attributes' => ['class' => 'multiple-choice'],
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
             ],
             'required' => true,
             'options'  => [

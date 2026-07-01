@@ -498,32 +498,14 @@ class LegacyCompatExtension extends AbstractExtension
         $currentValue = $element->getValue();
         $html         = '';
 
-        // Determine the wrapper div class from element-level div-attributes, or default.
-        //
-        // Two distinct radio styles are used across the app:
-        //   Legacy GDS:        <div class="multiple-choice"> / <label class="block-label"> / no input class
-        //   GOV.UK Frontend v3: <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
-        //                        / <input class="govuk-radios__input">
-        //
-        // Auto-detect which style to use by checking (in order):
-        //   1. Element-level class attribute (e.g. set via PHP form spec 'attributes' => ['class' => 'govuk-radios__input'])
-        //   2. Any per-option 'attributes.class' containing 'govuk-radios__input' (set in Twig value options)
-        $elementClass   = (string) ($element->getAttribute('class') ?? '');
-        $usesGovukStyle = str_contains($elementClass, 'govuk-radios__input');
-
-        if (!$usesGovukStyle) {
-            foreach ($valueOptions as $optSpec) {
-                $inputClass = is_array($optSpec) ? ($optSpec['attributes']['class'] ?? '') : '';
-                if (str_contains((string) $inputClass, 'govuk-radios__input')) {
-                    $usesGovukStyle = true;
-                    break;
-                }
-            }
-        }
+        // All radio elements now use GOV.UK Frontend v3 style:
+        //   <div class="govuk-radios__item"> / <label class="govuk-label govuk-radios__label">
+        //   / <input class="govuk-radios__input">
+        // The legacy GDS style (multiple-choice / block-label) has been fully migrated.
 
         $divAttributes     = $element->getAttribute('div-attributes') ?? [];
-        $defaultDivClass   = $usesGovukStyle ? 'govuk-radios__item' : 'multiple-choice';
-        $defaultLabelClass = $usesGovukStyle ? 'govuk-label govuk-radios__label' : 'block-label';
+        $defaultDivClass   = 'govuk-radios__item';
+        $defaultLabelClass = 'govuk-label govuk-radios__label';
 
         // Element-level label_attributes (set via setOptions(['label_attributes' => ...]) or the
         // PHP form element spec) apply to all options unless overridden per-option.
