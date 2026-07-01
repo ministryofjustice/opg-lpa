@@ -1,7 +1,7 @@
 import { Then } from '@badeball/cypress-cucumber-preprocessor';
 
 Then(`I see {string} in the page text`, (text) => {
-  cy.contains(text).scrollIntoView().and('be.visible');
+  cy.contains(text).and('be.visible');
 });
 
 Then(`I should not see {string} in the page text`, (text) => {
