@@ -52,7 +52,7 @@ When running the full local stack, `make dc-up` starts the containers and then r
 
 ## Tests
 
-Unit tests can be found in `module/Application/tests/`.
+Unit tests can be found in `test/AppTest/`.
 
 End-to-end tests are in the `cypress/` directory at the root of the repository.
 

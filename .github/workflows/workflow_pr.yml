@@ -237,7 +237,6 @@ jobs:
       cypress_tags: "@StitchedPF"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
-      mezzio: "1"
   cypress_tests_Signup_StitchedHW:
     name: Run Cypress tests - Signup,StitchedHW
     uses: ./.github/workflows/cypress_tests.yml
@@ -250,7 +249,6 @@ jobs:
       cypress_tags: "@StitchedHW"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
-      mezzio: "1"
   cypress_tests_Signup_StitchedClone:
     name: Run Cypress tests - Signup,StitchedClone
     uses: ./.github/workflows/cypress_tests.yml
@@ -263,7 +261,6 @@ jobs:
       cypress_tags: "@StitchedClone"
       visual_regression_enabled: "1"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
-      mezzio: "1"
   cypress_tests_SignupIncluded:
     name: Run Cypress tests - @SignupIncluded
     uses: ./.github/workflows/cypress_tests.yml

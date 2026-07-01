@@ -88,11 +88,6 @@ jobs:
             snyk_policy_path: service-front/docker/app/.snyk
             scan_id: front_app
 
-          - image_name: online-lpa/front_mezzio_app
-            dockerfile_path: ./service-front/mezzio/docker/app
-            snyk_policy_path: service-front/mezzio/docker/app/.snyk
-            scan_id: front_mezzio_app
-
           - image_name: online-lpa/front_web
             dockerfile_path: ./service-front/docker/web
             snyk_policy_path: service-front/docker/web/.snyk
@@ -156,14 +151,6 @@ jobs:
             snyk_policy_path: service-front/docker/app/.snyk
             scan_id: front_app_test
             archive_name: front-app-test
-            with_xdebug: true
-
-          - image_name: lpa-front-app-mezzio-test
-            dockerfile_path: ./service-front/mezzio/docker/app
-            dockerfile_target: test-runner
-            snyk_policy_path: service-front/mezzio/docker/app/.snyk
-            scan_id: front_app_mezziotest
-            archive_name: front-app-mezzio-test
             with_xdebug: true
 
           - image_name: lpa-pdf-app-test
