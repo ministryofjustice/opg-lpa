@@ -184,7 +184,7 @@
 {{ form().openTag( form )|raw }}
 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-    <fieldset>
+    <fieldset class="govuk-fieldset">
         {{ macros.formGroup(title) }}
         {{ macros.formGroup(firstname) }}
         {{ macros.formGroup(lastname) }}
@@ -222,11 +222,11 @@
         </fieldset>
     </div>
 
-    <fieldset>
+    <fieldset class="govuk-fieldset">
         {{ macros.formGroup(email) }}
     </fieldset>
 
-    <fieldset class="postcodelookup">
+    <fieldset class="postcodelookup govuk-fieldset">
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}
             {{ macros.formGroup(address2) }}
