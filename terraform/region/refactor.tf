@@ -44,14 +44,14 @@ removed {
 removed {
   from = module.eu-west-1.aws_kms_key.cloudwatch_encryption
   lifecycle {
-    destroy = false
+    destroy = true
   }
 }
 
 removed {
   from = module.eu-west-2.aws_kms_key.cloudwatch_encryption
   lifecycle {
-    destroy = false
+    destroy = true
   }
 }
 
