@@ -1,6 +1,38 @@
 // Helpers
 // ==========================================================================
 
+// Base element resets previously provided by govuk-elements-sass/_reset.scss,
+// _govuk-template-base.scss and _lists.scss.
+// These were applied globally by the old toolkit import; without them, browser
+// defaults re-appear on elements that don't carry govuk- classes.
+
+// govuk-frontend resets .govuk-fieldset { border: 0 } but plain <fieldset>
+// elements still get the browser-default thin grey border.
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+// govuk-elements-sass/_lists.scss applied list-style-type: none globally, and
+// _reset.scss zeroed margin and padding on ul, ol and li.
+// govuk-frontend only resets lists that carry .govuk-list; without these blanket
+// resets, the accordion <ul>, <ul class="person-actions"> and similar unclassed
+// lists all revert to showing browser-default bullet points and 40px indent.
+// Note: govuk-list--bullet / govuk-list--number override list-style with disc/decimal,
+// and govuk-list--bullet sets padding-left: 20px — both of which take priority
+// over these element-level rules, so intentional bullet lists are unaffected.
+ul,
+ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}
+
 // Hide for both screenreaders and browsers
 // Proactive important
 .hidden {
