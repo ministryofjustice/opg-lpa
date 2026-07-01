@@ -151,4 +151,32 @@ final class DonorFormTest extends TestCase
         $result = $this->form->getData();
         $this->assertSame('John', $result['name-first']);
     }
+
+    public function testGetModelDataFromValidatedFormHandlesReuseDataWithNullNestedFields(): void
+    {
+        $reuseData = [
+            'name-title'       => 'Mr',
+            'name-first'       => 'John',
+            'name-last'        => 'Doe',
+            'otherNames'       => '',
+            'dob-date'         => ['day' => '01', 'month' => '01', 'year' => '1970'],
+            'email-address'    => 'john@example.com',
+            'address-address1' => '1 Test Street',
+            'address-address2' => '',
+            'address-address3' => '',
+            'address-postcode' => 'SW1A 1AA',
+            'cannotSign'       => '0',
+            'email'            => null,
+        ];
+
+        $this->form->bind($reuseData);
+        $this->form->isValid();
+
+        $modelData = $this->form->getModelDataFromValidatedForm();
+
+        $this->assertIsArray($modelData);
+        $this->assertSame('John', $modelData['name']['first'] ?? null);
+        $this->assertSame('Doe', $modelData['name']['last'] ?? null);
+        $this->assertSame('john@example.com', $modelData['email']['address'] ?? null);
+    }
 }
