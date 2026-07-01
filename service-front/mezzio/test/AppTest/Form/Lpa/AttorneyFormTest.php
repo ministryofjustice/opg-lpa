@@ -96,4 +96,31 @@ final class AttorneyFormTest extends TestCase
         $result = $this->form->getData();
         $this->assertSame('jane@example.com', $result['email-address']);
     }
+
+    public function testGetModelDataFromValidatedFormHandlesReuseDataWithNullNestedFields(): void
+    {
+        $reuseData = [
+            'name-title'       => 'Ms',
+            'name-first'       => 'Jane',
+            'name-last'        => 'Smith',
+            'dob-date'         => ['day' => '15', 'month' => '06', 'year' => '1985'],
+            'email-address'    => '',
+            'address-address1' => '2 Attorney Road',
+            'address-address2' => '',
+            'address-address3' => '',
+            'address-postcode' => 'EC1A 1BB',
+            'email'            => null,
+            'phone'            => null,
+        ];
+
+        $this->form->bind($reuseData);
+        $this->form->isValid();
+
+        $modelData = $this->form->getModelDataFromValidatedForm();
+
+        $this->assertIsArray($modelData);
+        $this->assertSame('Jane', $modelData['name']['first'] ?? null);
+        $this->assertSame('Smith', $modelData['name']['last'] ?? null);
+        $this->assertSame('2 Attorney Road', $modelData['address']['address1'] ?? null);
+    }
 }

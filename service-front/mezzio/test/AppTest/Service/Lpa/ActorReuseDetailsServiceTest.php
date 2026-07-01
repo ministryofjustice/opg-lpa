@@ -9,6 +9,7 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use MakeShared\DataModel\Common\Dob;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -119,6 +120,27 @@ class ActorReuseDetailsServiceTest extends TestCase
         );
 
         $this->assertCount(2, $replacementAttorneyEntries);
+    }
+
+    public function testGetActorsListIncludesPeopleToNotify(): void
+    {
+        $lpa = FixturesData::getPfLpa();
+
+        $person = new NotifiedPerson();
+        $person->id = 1;
+        $person->name = new Name(['title' => 'Mr', 'first' => 'Notified', 'last' => 'Person']);
+        $lpa->document->peopleToNotify = [$person];
+
+        $result = $this->service->getActorsList($lpa);
+
+        $peopleToNotifyEntries = array_values(array_filter(
+            $result,
+            fn(array $entry) => $entry['type'] === 'person to notify'
+        ));
+
+        $this->assertCount(1, $peopleToNotifyEntries);
+        $this->assertSame('Notified', $peopleToNotifyEntries[0]['firstname']);
+        $this->assertSame('Person', $peopleToNotifyEntries[0]['lastname']);
     }
 
     public function testAllowTrustReturnsFalseForHwLpa(): void

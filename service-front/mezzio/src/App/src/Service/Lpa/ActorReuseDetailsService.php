@@ -12,6 +12,7 @@ use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Document\Donor;
+use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use Mezzio\Session\SessionInterface;
@@ -232,10 +233,12 @@ class ActorReuseDetailsService
     }
 
     /**
-     * @param Attorneys\Human|CertificateProvider|Donor $actorData
+     * @param Attorneys\Human|CertificateProvider|Donor|NotifiedPerson $actorData
      */
-    private function getActorDetails(Donor|CertificateProvider|Attorneys\Human $actorData, string $actorType): array
-    {
+    private function getActorDetails(
+        Donor|CertificateProvider|Attorneys\Human|NotifiedPerson $actorData,
+        string $actorType,
+    ): array {
         if (
             isset($actorData->name)
             && ($actorData->name instanceof Name || $actorData->name instanceof LongName)
