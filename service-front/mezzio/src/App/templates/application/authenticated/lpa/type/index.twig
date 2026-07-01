@@ -31,7 +31,7 @@
 {# form fields config #}
 {{ type.setOptions({
     label_attributes: {
-        'class': 'block-label'
+        'class': 'govuk-label govuk-radios__label'
     }
 }) ? ''}}
 
@@ -39,7 +39,7 @@
 {% if not isChangeAllowed %}
 {{ type.setAttributes({'disabled': 'disabled'}) ? '' }}
 {{ type.setOptions({
-    label_attributes: {'class': 'block-label disabled'}
+    label_attributes: {'class': 'govuk-label govuk-radios__label disabled'}
 }) ? ''}}
 {% endif %}
 
