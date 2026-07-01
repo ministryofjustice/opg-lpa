@@ -78,25 +78,21 @@
             </div></div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
-                    <div class="govuk-form-group {{ preferences.getMessages|length >0 ? 'govuk-form-group--error'}}">
-                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-                            {{ formElementErrorsV2(preferences) }}
-                            <label class="govuk-label" for="{{ preferences.getAttribute('id') }}">
-                                {{ preferences.getOption('label') }}<br>
-                                <span class="govuk-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
-                            </label>
-                            {{ formElement(preferences) }}
-                        </div></div>
+                    <div class="govuk-form-group text {{ preferences.getMessages|length >0 ? 'govuk-form-group--error'}}">
+                        {{ formElementErrorsV2(preferences) }}
+                        <label class="govuk-label" for="{{ preferences.getAttribute('id') }}">
+                            {{ preferences.getOption('label') }}<br>
+                            <span class="govuk-hint">These are things the donor would like their attorneys to think about when making decisions. Use words like 'prefer' or 'would like'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Preferences)">Not sure what to put?</a><br></span>
+                        </label>
+                        {{ formElement(preferences) }}
                     </div>
-                    <div class="govuk-form-group {{ instructions.getMessages|length >0 ? 'govuk-form-group--error'}} flush--bottom">
-                        <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-                            {{ formElementErrorsV2(instructions) }}
-                            <label class="govuk-label" for="{{ instructions.getAttribute('id') }}">
-                                {{ instructions.getOption('label') }}<br>
-                                <span class="govuk-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>
-                            </label>
-                            {{ formElement(instructions) }}
-                        </div></div>
+                    <div class="govuk-form-group text {{ instructions.getMessages|length >0 ? 'govuk-form-group--error'}} flush--bottom">
+                        {{ formElementErrorsV2(instructions) }}
+                        <label class="govuk-label" for="{{ instructions.getAttribute('id') }}">
+                            {{ instructions.getOption('label') }}<br>
+                            <span class="govuk-hint">These are things that the attorneys MUST or MUST NOT do. Use words like 'must' or 'have to'. <a href="/guide#topic-preferences-and-instructions" class="govuk-link js-guidance" data-analytics-click="page:link:help: Not sure what to put? (Instructions)">Not sure what to put?</a><br></span>
+                        </label>
+                        {{ formElement(instructions) }}
                     </div>
                 </fieldset>
         </details>
