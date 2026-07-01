@@ -31,6 +31,10 @@ class RegisterSessionSaveHandlerMiddleware implements MiddlewareInterface
             session_name($this->settings['name']);
         }
 
+        if (isset($this->settings['cookie_path'])) {
+            ini_set('session.cookie_path', $this->settings['cookie_path']);
+        }
+
         if (isset($this->settings['cookie_secure'])) {
             ini_set('session.cookie_secure', (string)(int) $this->settings['cookie_secure']);
         }
