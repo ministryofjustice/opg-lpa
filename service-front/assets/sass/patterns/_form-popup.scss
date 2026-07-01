@@ -129,11 +129,22 @@
         }
     }
 
-    // govuk-date-input items must stay inline-block (standard GDS date component)
+    // govuk-date-input items must stay inline-block (standard GDS date component).
+    // The :has(> .govuk-label) flex rule above has equal specificity; we add an extra
+    // class in the selector (.govuk-date-input__input) so these rules win at tablet+.
     .govuk-date-input {
         .govuk-form-group {
             display: inline-block;
             margin-bottom: govuk-spacing(2);
+        }
+
+        // Prevent the flex:1 rule from making date inputs full-width.
+        // govuk-input--width-2 / govuk-input--width-4 set max-width, but
+        // flex:1 with flex-basis:0 would override width entirely in a flex context.
+        .govuk-input {
+            @include govuk-media-query($from: tablet) {
+                flex: none;
+            }
         }
     }
 
