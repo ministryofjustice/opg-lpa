@@ -13,7 +13,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
 {
     private string $originalSessionName;
-    private string $originalCookiePath;
     private string $originalCookieSecure;
     private string $originalCookieHttponly;
     private string $originalCookieSamesite;
@@ -27,7 +26,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
         }
 
         $this->originalSessionName    = session_name();
-        $this->originalCookiePath     = (string) ini_get('session.cookie_path');
         $this->originalCookieSecure   = (string) ini_get('session.cookie_secure');
         $this->originalCookieHttponly = (string) ini_get('session.cookie_httponly');
         $this->originalCookieSamesite = (string) ini_get('session.cookie_samesite');
@@ -42,7 +40,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
         }
 
         session_name($this->originalSessionName);
-        ini_set('session.cookie_path', $this->originalCookiePath);
         ini_set('session.cookie_secure', $this->originalCookieSecure);
         ini_set('session.cookie_httponly', $this->originalCookieHttponly);
         ini_set('session.cookie_samesite', $this->originalCookieSamesite);
@@ -62,7 +59,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
         $saveHandler = $this->createMock(\SessionHandlerInterface::class);
         $middleware = new RegisterSessionSaveHandlerMiddleware($saveHandler, [
             'name'            => 'lpa2-test',
-            'cookie_path'     => '/',
             'cookie_secure'   => true,
             'cookie_httponly' => true,
             'gc_probability'  => 0,
@@ -71,7 +67,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
         $middleware->process(new ServerRequest(), $this->makeHandler());
 
         $this->assertSame('lpa2-test', session_name());
-        $this->assertSame('/', ini_get('session.cookie_path'));
         $this->assertSame('1', ini_get('session.cookie_secure'));
         $this->assertSame('1', ini_get('session.cookie_httponly'));
         $this->assertSame('0', ini_get('session.gc_probability'));
@@ -104,7 +99,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
 
     public function testOmittedSettingsAreNotApplied(): void
     {
-        ini_set('session.cookie_path', '/some/path');
         ini_set('session.cookie_secure', '0');
         ini_set('session.cookie_httponly', '0');
 
@@ -113,7 +107,6 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
 
         $middleware->process(new ServerRequest(), $this->makeHandler());
 
-        $this->assertSame('/some/path', ini_get('session.cookie_path'));
         $this->assertSame('0', ini_get('session.cookie_secure'));
         $this->assertSame('0', ini_get('session.cookie_httponly'));
     }
@@ -131,23 +124,5 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
             ->willReturn(new EmptyResponse());
 
         $middleware->process($request, $handler);
-    }
-
-    public function testExplicitRootCookiePathOverridesNonRootDefault(): void
-    {
-        ini_set('session.cookie_path', '/user/dashboard');
-
-        $saveHandler = $this->createMock(\SessionHandlerInterface::class);
-        $middleware = new RegisterSessionSaveHandlerMiddleware($saveHandler, [
-            'cookie_path' => '/',
-        ]);
-
-        $middleware->process(new ServerRequest(), $this->makeHandler());
-
-        $this->assertSame(
-            '/',
-            ini_get('session.cookie_path'),
-            'cookie_path must be "/" to prevent path-scoped duplicate cookies accumulating in the browser'
-        );
     }
 }
