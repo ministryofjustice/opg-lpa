@@ -346,9 +346,12 @@ services:
         condition: service_healthy
       mock-cognito:
         condition: service_healthy
+      mock-cognito:
+        condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
+      APP_ENV: "local"
 
       OPG_LPA_ENDPOINTS_API: "http://api-web:8080"
 
@@ -356,7 +359,11 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
+      COGNITO_JWKS_URI: "http://mock-cognito:8080/.well-known/jwks.json"
+      COGNITO_CLIENT_ID: "local-client-id"
+      COGNITO_ISSUER: "http://mock-cognito:8080"
+      COGNITO_MOCK_URL: "http://mock-cognito:8080"
+      COGNITO_DEV_EMAIL: "dev-admin@local"
 
       OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
