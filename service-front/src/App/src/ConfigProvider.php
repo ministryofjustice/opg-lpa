@@ -46,6 +46,7 @@ class ConfigProvider
     public function getTwig(): array
     {
         return [
+            'cache_dir'        => '/tmp/twig_cache',
             'strict_variables' => false,
             'extensions' => [
                 View\Twig\LegacyCompatExtension::class,

@@ -26,24 +26,20 @@ ENV OPG_LPA_COMMON_APP_VERSION=${OPG_LPA_COMMON_APP_VERSION}
 
 COPY --chown=root:root shared /shared
 
-RUN mkdir -p /service-front/mezzio
-COPY --chown=root:root service-front/mezzio/composer.json /service-front/mezzio/composer.json
-COPY --chown=root:root service-front/mezzio/composer.lock /service-front/mezzio/composer.lock
-# Copy the legacy Application module which is referenced by mezzio's autoloader
-COPY --chown=root:root service-front/module /service-front/module
-RUN ln -s /service-front/mezzio /app
+COPY --chown=root:root service-front/composer.json /app/composer.json
+COPY --chown=root:root service-front/composer.lock /app/composer.lock
 
 COPY --from=composer /usr/bin/composer /usr/bin/
-RUN composer check-platform-reqs -d /service-front/mezzio \
-    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /service-front/mezzio
+RUN composer check-platform-reqs -d /app \
+    && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app
 
 # Core files for the application
-COPY --chown=root:root service-front/mezzio/config /service-front/mezzio/config
-COPY --chown=root:root service-front/mezzio/src /service-front/mezzio/src
-COPY --chown=root:root service-front/mezzio/public /service-front/mezzio/public
-COPY --chown=root:root service-front/mezzio/data /service-front/mezzio/data
-COPY --chown=root:root service-front/mezzio/test /service-front/mezzio/test
-COPY --chown=root:root service-front/mezzio/content /service-front/mezzio/content
+COPY --chown=root:root service-front/config /app/config
+COPY --chown=root:root service-front/src /app/src
+COPY --chown=root:root service-front/public /app/public
+COPY --chown=root:root service-front/data /app/data
+COPY --chown=root:root service-front/test /app/test
+COPY --chown=root:root service-front/content /app/content
 
 
 # PHP config files (reuse the shared service config)
@@ -88,8 +84,8 @@ FROM base AS test-runner
 USER "root"
 RUN chown -R appuser:appuser /app/vendor
 
-COPY --chown=root:root service-front/mezzio/composer.json /app/composer.json
-COPY --chown=root:root service-front/mezzio/composer.lock /app/composer.lock
+COPY --chown=root:root service-front/composer.json /app/composer.json
+COPY --chown=root:root service-front/composer.lock /app/composer.lock
 COPY --from=composer /usr/bin/composer /usr/bin/
 
 RUN composer check-platform-reqs -d /app \
@@ -103,5 +99,5 @@ RUN mkdir -m a+w build
 
 USER appuser
 
-COPY --chown=root:root service-front/mezzio/phpunit.xml /app/phpunit.xml
-COPY --chown=root:root service-front/mezzio/psalm.xml /app/psalm.xml
+COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
+COPY --chown=root:root service-front/psalm.xml /app/psalm.xml

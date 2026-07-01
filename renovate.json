@@ -285,33 +285,6 @@
     {
       "schedule": ["* 6 1,15 * *"],
       "description": [
-        "front mezzio composer minor and patch updates (PHP, stable for 3 days)",
-        "These might be automerged once we're comfortable with Renovate"
-      ],
-      "automerge": false,
-      "groupName": "front mezzio minor and patch updates (PHP)",
-      "groupSlug": "front-mezzio-minor-patch-updates-php",
-      "labels": [
-        "Dependencies",
-        "Renovate",
-        "PHP"
-      ],
-      "matchManagers": [
-        "composer"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "matchFileNames": [
-        "service-front/mezzio/composer.json"
-      ],
-      "prCreation": "immediate",
-      "prPriority": 4
-    },
-    {
-      "schedule": ["* 6 1,15 * *"],
-      "description": [
         "api composer minor and patch updates (PHP, stable for 3 days)",
         "These might be automerged once we're comfortable with Renovate"
       ],
