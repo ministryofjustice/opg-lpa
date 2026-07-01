@@ -74,6 +74,18 @@ provider "aws" {
 
 provider "aws" {
   region = "eu-west-1"
+  alias  = "identity"
+  default_tags {
+    tags = local.default_tags
+  }
+  assume_role {
+    role_arn     = "arn:aws:iam::631181914621:role/${var.management_role}"
+    session_name = "terraform-session"
+  }
+}
+
+provider "aws" {
+  region = "eu-west-1"
   alias  = "backup"
   default_tags {
     tags = local.default_tags
