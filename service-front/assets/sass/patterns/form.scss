@@ -49,3 +49,13 @@
         padding-bottom: 2px;
 }
 
+// On non-popup pages (e.g. the no-JS fallback for correspondent/person forms),
+// govuk-input is width:100% with no built-in max-width, so inputs span the
+// full page. Constrain the PersonForm to the same max-width as the popup
+// container so the layout looks reasonable.
+form.js-PersonForm {
+        @include govuk-media-query($from: tablet) {
+                max-width: 600px;
+        }
+}
+
