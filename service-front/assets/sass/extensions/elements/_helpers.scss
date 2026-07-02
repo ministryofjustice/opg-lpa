@@ -14,6 +14,26 @@
 // These were applied globally by the old toolkit import; without them, browser
 // defaults re-appear on elements that don't carry govuk- classes.
 
+// govuk-elements-sass/_govuk-template-base.scss applied 19px GDS font to <main>,
+// making it the inherited base size for all content inside main.
+// govuk-frontend only applies this via explicit govuk-* classes, so we restore it here.
+main {
+    @include govuk-font(19);
+}
+
+// govuk-elements-sass/_govuk-template-base.scss set strong/b to weight 600.
+// Without it, browsers default to 700 (bolder) for <strong>/<b>.
+b,
+strong {
+    font-weight: 600;
+}
+
+// govuk-elements-sass/_forms.scss set textarea { display: block } to remove
+// the small descender gap below inline elements.
+textarea {
+    display: block;
+}
+
 // govuk-frontend resets .govuk-fieldset { border: 0 } but plain <fieldset>
 // elements still get the browser-default thin grey border.
 fieldset {
