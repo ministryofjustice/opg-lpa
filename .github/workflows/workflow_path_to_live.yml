@@ -138,7 +138,7 @@ jobs:
       - set_variables
     steps:
       - id: slack
-        uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         with:
           channel-id: "C09M1LWJ2G0"
           payload: |
@@ -305,7 +305,7 @@ jobs:
       name: "production"
       url: "https://www.lastingpowerofattorney.service.gov.uk/home"
     steps:
-      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+      - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
         with:
           channel-id: "C09M1LWJ2G0"
@@ -343,7 +343,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+      - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
           channel-id: "C09M1LWJ2G0"
@@ -381,7 +381,7 @@ jobs:
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1
+      - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
           channel-id: "C09L117EZ27"
