@@ -48,3 +48,27 @@ Feature: Add People to Notify to a Health and Welfare LPA
         Then I cannot find "form-people-to-notify"
         When I click "save"
         Then I am taken to the instructions page
+
+    @focus @CleanupFixtures
+    Scenario: Adding a second person to notify does not 500 when one already exists
+        Given I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify
+        When I log in as appropriate test user
+        And I visit the people to notify page for the test fixture lpa
+
+        Then I see "Sir Anthony Webb" in the page text
+        When I click "add"
+
+        Then I can find "form-people-to-notify"
+        And I can find "use-my-details"
+
+        When I select "Mr" on "name-title"
+        And I force fill out
+            | name-first       | James          |
+            | name-last        | Collins        |
+            | address-address1 | 12 High Street |
+            | address-address2 | Anytown        |
+            | address-postcode | SW1A 1AA       |
+        And I click "form-save"
+
+        Then I see "Sir Anthony Webb" in the page text
+        And I see "James Collins" in the page text
