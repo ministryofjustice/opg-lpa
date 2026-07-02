@@ -17,6 +17,7 @@ use Laminas\Form\Element;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
 use Laminas\Form\Element\Radio;
+use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Helper\UrlHelper;
@@ -251,6 +252,53 @@ final class LegacyCompatExtensionTest extends TestCase
         ]);
 
         $this->assertSame($form, $result);
+    }
+
+
+    public function testFormErrorTextExchangePreservesNestedFieldsetMessages(): void
+    {
+        $form     = new Form();
+        $fieldset = new Fieldset('correspondence');
+        $fieldset->add(['name' => 'email-address', 'type' => 'text']);
+        $form->add($fieldset);
+
+        $nestedMessages = [
+            'email-address' => ['isEmpty' => 'Value is required'],
+        ];
+        $fieldset->setMessages($nestedMessages);
+
+        // Must not throw TypeError.
+        $result = $this->extension->formErrorTextExchange($form, [
+            'correspondence' => [
+                'at-least-one-option-needs-to-be-selected' => 'Select how the correspondent would like to be contacted',
+            ],
+        ]);
+
+        $this->assertSame($form, $result);
+        // Nested child messages must be preserved intact.
+        $this->assertSame($nestedMessages, $form->get('correspondence')->getMessages());
+    }
+
+    public function testFormErrorTextExchangeReplacesTopLevelFieldsetMessages(): void
+    {
+        $form     = new Form();
+        $fieldset = new Fieldset('correspondence');
+        $form->add($fieldset);
+
+        $fieldset->setMessages([
+            'myKey' => 'at-least-one-option-needs-to-be-selected',
+        ]);
+
+        $this->extension->formErrorTextExchange($form, [
+            'correspondence' => [
+                'at-least-one-option-needs-to-be-selected' => 'Select how the correspondent would like to be contacted',
+            ],
+        ]);
+
+        $this->assertSame(
+            ['myKey' => 'Select how the correspondent would like to be contacted'],
+            $form->get('correspondence')->getMessages()
+        );
     }
 
     // -------------------------------------------------------------------------
