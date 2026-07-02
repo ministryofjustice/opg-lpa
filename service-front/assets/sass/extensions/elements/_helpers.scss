@@ -14,6 +14,15 @@
 // These were applied globally by the old toolkit import; without them, browser
 // defaults re-appear on elements that don't carry govuk- classes.
 
+// govuk-elements-sass/_reset.scss zeroed margins and padding on all headings.
+// govuk-frontend heading classes (.govuk-heading-xl etc.) explicitly set their
+// own margins, so this reset is safe and only affects unclassed / custom-class
+// headings (e.g. <h3 class="list-item_title">, <h2 class="help-navigation-title">).
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
 // govuk-elements-sass/_govuk-template-base.scss applied 19px GDS font to <main>,
 // making it the inherited base size for all content inside main.
 // govuk-frontend only applies this via explicit govuk-* classes, so we restore it here.
