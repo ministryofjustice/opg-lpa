@@ -28,6 +28,11 @@ class UserIdMiddleware implements MiddlewareInterface
 
         if ($identity instanceof Identity && $this->logger instanceof Logger) {
             $userId = $identity->id();
+
+            if (!empty($this->logger->getProcessors())) {
+                $this->logger->popProcessor();
+            }
+
             $this->logger->pushProcessor(function (LogRecord $record) use ($userId): LogRecord {
                 return $record->with(extra: array_merge($record->extra, ['user_id' => $userId]));
             });
