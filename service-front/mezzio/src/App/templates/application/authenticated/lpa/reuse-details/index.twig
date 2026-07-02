@@ -43,7 +43,9 @@
             <fieldset class="reuse-details-container">
                 <legend class="govuk-heading-m">Which details would you like to reuse?</legend>
                 <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
-                {{ formRadio(reuseDetails) }}
+                <div class="govuk-radios" data-module="govuk-radios">
+                    {{ formRadio(reuseDetails) }}
+                </div>
 
             </fieldset>
         </div>
