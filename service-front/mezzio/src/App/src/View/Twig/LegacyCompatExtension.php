@@ -271,6 +271,11 @@ class LegacyCompatExtension extends AbstractExtension
             $newMessages = [];
 
             foreach ($messages as $key => $message) {
+                if (!is_string($message)) {
+                    $newMessages[$key] = $message;
+                    continue;
+                }
+
                 // $message is the raw validation key (e.g. 'cannot-be-empty'),
                 // $replacements maps that key to a human-readable string.
                 $newMessages[$key] = $replacements[$message] ?? $message;
