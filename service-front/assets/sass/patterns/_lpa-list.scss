@@ -49,6 +49,11 @@
         font-size: 2.4rem;
         font-weight: bold;
         color: #0b0c0c;
+        // Reset browser-default <h3> margin — the old govuk-elements-sass/_reset.scss
+        // zeroed all heading margins globally; without it, the browser adds
+        // margin-top above the donor name on the dashboard.
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .list-item_cta{
