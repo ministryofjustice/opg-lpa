@@ -52,5 +52,7 @@ Feature: Add a correspondent to a Health and Welfare LPA
 
         Then I cannot find "form-reuse-details"
         And I see "Isobel Ward" in the page text
+
+        When I check "contactByPost"
         And I click "save"
         Then I am taken to the who are you page
