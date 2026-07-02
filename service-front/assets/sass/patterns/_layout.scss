@@ -9,12 +9,18 @@
     max-width: $govuk-page-width;
     margin: 0 govuk-spacing(3); // 15px each side on mobile
 
+    // Restore the bottom padding that govuk-elements-sass/_layout.scss applied
+    // via %site-width-container on #content ($gutter = 30px, $gutter*3 = 90px on desktop).
+    // Without this the feedback paragraph sits flush against the footer.
+    padding-bottom: govuk-spacing(6); // 30px
+
     @include govuk-media-query($from: tablet) {
         margin: 0 govuk-spacing(6); // 30px each side on tablet
     }
 
     @include govuk-media-query($from: desktop) {
         margin: 0 auto;
+        padding-bottom: 90px;
     }
 
     outline: none;

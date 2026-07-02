@@ -34,6 +34,19 @@ textarea {
     display: block;
 }
 
+// govuk-elements-sass/_elements-typography.scss styled <hr> as a thin grey line
+// with 30px top/bottom margins. Without this the browser shows its own raised
+// border style and the spacing around the divider in the layout is lost.
+hr {
+    display: block;
+    background: $govuk-border-colour;
+    border: 0;
+    height: 1px;
+    margin-top: govuk-spacing(6);    // 30px
+    margin-bottom: govuk-spacing(6); // 30px
+    padding: 0;
+}
+
 // govuk-frontend resets .govuk-fieldset { border: 0 } but plain <fieldset>
 // elements still get the browser-default thin grey border.
 fieldset {
