@@ -12,6 +12,7 @@ use ArrayObject;
 use DateTime;
 use GuzzleHttp\Psr7\Utils;
 use Http\Client\Exception;
+use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
@@ -293,5 +294,35 @@ final class ApplicationTest extends MockeryTestCase
             'HAS_ATTORNEY_DECISIONS',
         ];
         $this->assertEqualsCanonicalizing($expectedResult, $this->service->getContinuationNoteKeys($mockLpa));
+    }
+
+    public function testSetWhoIsRegisteringWithKeyPresent(): void
+    {
+        $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
+
+        $this->apiClient->shouldReceive('httpPut')
+            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => [1, 2]]])
+            ->once()
+            ->andReturn(['whoIsRegistering' => [1, 2]]);
+
+        $result = $this->service->setWhoIsRegistering($lpa, [1, 2]);
+
+        $this->assertTrue($result);
+        $this->assertEquals([1, 2], $lpa->document->whoIsRegistering);
+    }
+
+    public function testSetWhoIsRegisteringKeyAbsentInResponse(): void
+    {
+        $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
+
+        $this->apiClient->shouldReceive('httpPut')
+            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => null]])
+            ->once()
+            ->andReturn([]); // API omits the key when value is null
+
+        $result = $this->service->setWhoIsRegistering($lpa, null);
+
+        $this->assertTrue($result);
+        $this->assertNull($lpa->document->whoIsRegistering);
     }
 }
