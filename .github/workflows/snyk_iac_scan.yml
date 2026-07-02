@@ -47,7 +47,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ inputs.oidc_role }}
@@ -56,20 +56,20 @@ jobs:
 
       - name: ECR Login
         id: login-ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         with:
           registries: 311462405659
 
       - name: Snyk IaC ${{ matrix.name }}
         id: snyk_iac
-        uses: ministryofjustice/opg-github-actions/actions/snyk-iac@9e8b7c2fb29c11e77b12913f74459fa48b11829f # v4.8.2
+        uses: ministryofjustice/opg-github-actions/actions/snyk-iac@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           iac_test_directory: "${{ matrix.terraform_configuration_path }}"
           SNYK_TOKEN: ${{ secrets.snyk_token }}
           snyk_test_args: "--severity-threshold=high"
           snyk_policy_path: "${{ matrix.terraform_configuration_path }}.snyk"
       - name: Upload Snyk IaC results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
         if: always()
         with:
           category: "IaC-${{matrix.name}}"
