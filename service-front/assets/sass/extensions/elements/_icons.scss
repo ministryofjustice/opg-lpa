@@ -48,6 +48,7 @@
 .icon {
     display: inline-block; // required so width/height apply on <i> elements (previously set globally by govuk-elements-sass)
     background-repeat: no-repeat;
+    background-position: 0 0;
 
     .heading-medium &,
     .govuk-heading-m & {
