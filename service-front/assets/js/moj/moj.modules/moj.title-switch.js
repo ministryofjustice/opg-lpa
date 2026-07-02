@@ -50,7 +50,7 @@
       const $select = $('<select>', {
         id: $titleInput.attr('id'),
         name: $titleInput.attr('name'),
-        class: 'js-TitleSwitch-select form-control',
+        class: 'js-TitleSwitch-select govuk-select',
         'data-cy': $titleInput.attr('id'),
       });
 
@@ -77,7 +77,7 @@
         const $text = $('<input>', {
           id: $titleInput.attr('id'),
           name: $titleInput.attr('name'),
-          class: 'form-control',
+          class: 'govuk-input',
           type: 'text',
           placeholder: 'Please specify',
           'data-cy': $titleInput.attr('id'),

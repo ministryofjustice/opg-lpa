@@ -19,12 +19,15 @@ class CookieConsentForm extends AbstractForm
         $this->add([
             'name'       => 'usageCookies',
             'type'       => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'attributes' => [
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
             'required'   => true,
             'options'    => [
                 'value_options' => [
-                    'yes' => ['label' => 'Yes', 'value' => 'yes'],
-                    'no'  => ['label' => 'No', 'value' => 'no'],
+                    'yes' => ['label' => 'Yes', 'value' => 'yes', 'label_attributes' => ['class' => 'govuk-label govuk-radios__label']],
+                    'no'  => ['label' => 'No', 'value' => 'no', 'label_attributes' => ['class' => 'govuk-label govuk-radios__label']],
                 ],
             ],
         ]);

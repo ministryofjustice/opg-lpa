@@ -94,7 +94,7 @@
       // if all fields are empty and there are no validation messages, hide them
       if (
         moj.Helpers.hasCleanFields(this.$postalFields) &&
-        !$('.error-summary').length
+        !$('.govuk-error-summary').length
       ) {
         this.$wrap
           .find('.js-PostcodeLookup__change')
@@ -126,7 +126,7 @@
       this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
       if (
         moj.Helpers.hasCleanFields(this.$postalFields) &&
-        !$('.error-summary').length
+        !$('.govuk-error-summary').length
       ) {
         this.$wrap
           .find('.js-PostcodeLookup__toggle-address')
