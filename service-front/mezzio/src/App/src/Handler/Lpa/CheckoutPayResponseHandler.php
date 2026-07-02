@@ -101,7 +101,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
             $form->setAttribute('class', 'js-single-use');
             $form->get('submit')->setAttribute('value', 'Retry online payment');
 
-            $template = $paymentResponse->state->code === 'P0030'
+            $template = ($paymentResponse->state->code ?? null) === 'P0030'
                 ? 'application/authenticated/lpa/checkout/govpay-cancel.twig'
                 : 'application/authenticated/lpa/checkout/govpay-failure.twig';
 
