@@ -51,7 +51,6 @@ class UserIdMiddlewareTest extends TestCase
 
         $pushedProcessor = null;
         $logger = $this->createMock(Logger::class);
-        $logger->method('getProcessors')->willReturn([]);
         $logger->expects($this->once())
             ->method('pushProcessor')
             ->with($this->isType('callable'))
@@ -76,34 +75,6 @@ class UserIdMiddlewareTest extends TestCase
 
         $processed = ($pushedProcessor)($record);
         $this->assertSame('user-123', $processed->extra['user_id']);
-    }
-
-    public function testPopsExistingProcessorBeforePushingNewOne(): void
-    {
-        $identity = $this->makeIdentity('user-789');
-        $this->authService->method('getIdentity')->willReturn($identity);
-
-        $logger = $this->createMock(Logger::class);
-        $logger->method('getProcessors')->willReturn([fn($r) => $r]); // simulate existing processor
-        $logger->expects($this->once())->method('popProcessor');
-        $logger->expects($this->once())->method('pushProcessor');
-
-        $middleware = new UserIdMiddleware($logger, $this->authService);
-        $middleware->process(new ServerRequest(), $this->makeHandler());
-    }
-
-    public function testDoesNotPopWhenNoExistingProcessors(): void
-    {
-        $identity = $this->makeIdentity('user-789');
-        $this->authService->method('getIdentity')->willReturn($identity);
-
-        $logger = $this->createMock(Logger::class);
-        $logger->method('getProcessors')->willReturn([]);
-        $logger->expects($this->never())->method('popProcessor');
-        $logger->expects($this->once())->method('pushProcessor');
-
-        $middleware = new UserIdMiddleware($logger, $this->authService);
-        $middleware->process(new ServerRequest(), $this->makeHandler());
     }
 
     public function testDoesNotPushProcessorWhenNoIdentity(): void
@@ -139,7 +110,6 @@ class UserIdMiddlewareTest extends TestCase
 
         $pushedProcessor = null;
         $logger = $this->createMock(Logger::class);
-        $logger->method('getProcessors')->willReturn([]);
         $logger->method('pushProcessor')
             ->willReturnCallback(function (callable $processor) use (&$pushedProcessor, $logger) {
                 $pushedProcessor = $processor;
