@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Middleware\AuthenticationMiddleware;
+use App\Middleware\RequestCpuLoggingMiddleware;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
@@ -31,6 +32,7 @@ use Psr\Container\ContainerInterface;
 
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->pipe(ErrorHandler::class);
+    $app->pipe(RequestCpuLoggingMiddleware::class);
     $app->pipe(ServerUrlMiddleware::class);
     $app->pipe(RegisterSessionSaveHandlerMiddleware::class);
     $app->pipe(SessionMiddleware::class);
