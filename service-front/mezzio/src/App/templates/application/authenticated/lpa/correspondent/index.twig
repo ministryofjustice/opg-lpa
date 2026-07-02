@@ -66,7 +66,7 @@
 
 {{ phone.setAttributes({
     id: 'phone-number',
-    class: 'form-control',
+    class: 'govuk-input govuk-input--width-20',
     type: 'tel',
     inputmode: 'numeric',
     pattern: '[0-9]*',
@@ -76,7 +76,7 @@
 {{ email.setAttributes({
     id: 'email-address',
     type: 'text',
-    class: 'form-control',
+    class: 'govuk-input govuk-input--width-20',
     'data-cy' : 'email-address'
 }) ? '' }}
 
@@ -181,7 +181,7 @@
                     See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
                     for the offending code which applies the attribute.
                     #}
-                    <div class="govuk-checkboxes__item" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByPhone) }}
                         <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPhone.getAttribute('id') }}">
                         {{ contactByPhone.getOption('label')|raw }}
@@ -192,7 +192,7 @@
                         {{ macros.formGroup(phone) }}
                     </div>
 
-                    <div class="govuk-checkboxes__item" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByEmail) }}
                         <label class="govuk-label govuk-checkboxes__label" for="{{ contactByEmail.getAttribute('id') }}">
                         {{ contactByEmail.getOption('label')|raw }}</label>
@@ -205,15 +205,16 @@
             </fieldset>
         </div>
 
-        <div class="govuk-form-group inline {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <div class="govuk-form-group {{ contactInWelsh.getMessages|length > 0 ? 'govuk-form-group--error'}}">
         <h3 class="govuk-heading-m flush--top">Which language should we use in written correspondence?</h3>
 
-            <fieldset class="inline">
+            <fieldset>
                 <legend class="govuk-visually-hidden">Language options</legend>
 
-
-                {{ formRadioOption(contactInWelsh, 'english')|raw }}
-                {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
+                <div class="govuk-radios govuk-radios--inline">
+                    {{ formRadioOption(contactInWelsh, 'english')|raw }}
+                    {{ formRadioOption(contactInWelsh, 'welsh')|raw }}
+                </div>
             </fieldset>
         </div>
 

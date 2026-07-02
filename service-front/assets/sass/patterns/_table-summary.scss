@@ -5,6 +5,11 @@
 // Recommended - Use these styles for the check your answers pattern
 .govuk-check-your-answers {
 
+    // Apply the standard govuk-body font-size (16px mobile / 19px tablet+) to
+    // all content inside the table, matching the behaviour of the old
+    // govuk-elements-sass global body text styles.
+    @include govuk-font(19);
+
     @include govuk-media-query($from: desktop) {
         display: table;
     }
@@ -20,6 +25,7 @@
 
         > * {
             display: block;
+            margin: 0; // reset browser-default dd { margin-left: 40px }
 
             @include govuk-media-query($from: desktop) {
                 display: table-cell;

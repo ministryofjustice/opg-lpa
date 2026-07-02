@@ -46,7 +46,7 @@
 }) ? ''}}
 
 {{ rating.setOptions({
-    label_attributes: {'class': 'govuk-radios__label'}
+    label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? ''}}
 
 {{ form().openTag( form )|raw }}
@@ -63,7 +63,9 @@
                 How would you rate your experience with this service?
             </label>
             {{ formElementErrorsV2(rating) }}
-            {{ formRadio(rating) }}
+            <div class="govuk-radios" data-module="govuk-radios">
+                {{ formRadio(rating) }}
+            </div>
         </div>
 
         <div class="govuk-form-group {{ details.getMessages|length >0 ? 'govuk-form-group--error'}}">

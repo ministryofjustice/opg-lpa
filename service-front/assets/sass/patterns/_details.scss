@@ -1,10 +1,81 @@
-details[data-role=details-instructions]:not([open]) {
-    padding-bottom: govuk-spacing(3);
-}
+// =======================================================
+// DETAILS / SUMMARY
+//
+// Restores the custom govuk-elements-sass arrow + link styling for plain
+// <details>/<summary> elements that don't use the .govuk-details component
+// class (e.g. checkout "What do I need to do next?", type page help, etc.).
+// govuk-frontend only styles .govuk-details__summary; without these rules the
+// browser shows its native disclosure triangle with no colour or underline.
 
-// reset top margin on headings used inside a <details> element
-// to same as bottom margin
-details {
+details:not(.govuk-details) {
+    display: block;
+    clear: both;
+
+    // Pad bottom when instructions <details> is closed (not-open variant)
+    &[data-role=details-instructions]:not([open]) {
+        padding-bottom: govuk-spacing(3);
+    }
+
+    > summary {
+        display: inline-block;
+        color: govuk-colour("blue");
+        cursor: pointer;
+        position: relative;
+        margin-bottom: govuk-spacing(1);
+        padding-left: 25px;
+
+        // Right-pointing triangle (collapsed state)
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            margin: auto;
+            display: block;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-color: transparent;
+            -webkit-clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+            clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+            border-width: 7px 0 7px 12.124px;
+            border-left-color: inherit;
+        }
+
+        &:hover {
+            color: $govuk-link-hover-colour;
+        }
+
+        &:focus {
+            outline: 3px solid $govuk-focus-colour;
+        }
+
+        // Hide the browser's native disclosure triangle
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        // Underline only the summary text span, not the arrow
+        .summary {
+            text-decoration: underline;
+        }
+    }
+
+    // Down-pointing triangle (open state)
+    &[open] > summary::before {
+        display: block;
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-color: transparent;
+        -webkit-clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+        clip-path: polygon(0% 0%, 50% 100%, 100% 0%);
+        border-width: 12.124px 7px 0 7px;
+        border-top-color: inherit;
+    }
+
+    // reset top margin on headings used inside a <details> element
     .heading-medium,
     .govuk-heading-m {
         margin-top: govuk-spacing(2);

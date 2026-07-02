@@ -27,7 +27,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control',
+    class: 'govuk-textarea',
     'data-cy': 'when-details'
 }) ? ''}}
 
@@ -49,9 +49,6 @@
 	'depends' : {
 		label: 'In some other way...',
 		value: currentWhenOptions['depends'].value,
-		'div-attributes': {
-			'data-target': 'step-in-details'
-		},
 		attributes: {
 			'data-cy': 'when-depends',
 			'data-aria-controls': 'step-in-details'
@@ -62,7 +59,7 @@
 
 {{ when.setOptions({
 	value_options: whenOptions,
-	label_attributes: {'class': 'block-label'}
+        label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? '' }}
 
 {{ when.setLabelOptions({

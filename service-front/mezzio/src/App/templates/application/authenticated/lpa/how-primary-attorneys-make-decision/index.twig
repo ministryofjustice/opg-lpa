@@ -27,7 +27,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control',
+    class: 'govuk-textarea',
     'data-cy': 'how-details'
 }) ? ''}}
 
@@ -65,16 +65,13 @@
 			<span class="govuk-hint">
 			Attorneys must agree unanimously on some decisions, but can make others on their own. The donor must state which decisions need to be agreed unanimously.
 			</span>',
-		value: currentHowValueOptions['depends'].value,
-		'div-attributes': {
-			'data-target': 'decisions-details'
-		}
+		value: currentHowValueOptions['depends'].value
 	}
 }%}
 
 {{ how.setOptions({
 	value_options: howValueOptions,
-	label_attributes: {'class': 'block-label'}
+      label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? '' }}
 
 {{ how.setLabelOptions({
@@ -108,7 +105,7 @@
 	            <h2 class="govuk-heading-m flush--top">How should the attorneys make decisions?</h2>
 
                 {{ formElementErrorsV2(how) }}
-				<div data-module="govuk-radios">
+                            <div class="govuk-radios" data-module="govuk-radios">
 					{{ formRadio(how) }}
 					<div id="decisions-details" class="govuk-radios__conditional govuk-radios__conditional--hidden">
 						<p class="govuk-body">

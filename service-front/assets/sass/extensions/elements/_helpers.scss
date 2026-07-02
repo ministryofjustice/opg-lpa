@@ -1,6 +1,88 @@
 // Helpers
 // ==========================================================================
 
+// em() helper — previously provided by govuk-elements-sass/_helpers.scss.
+// Converts a pixel value to em units relative to a base font-size (default 19px,
+// matching the old toolkit's body text size).  Required by _table-summary.scss
+// and any other pattern file that still uses em() calls.
+@function em($px, $base: 19) {
+    @return ($px / $base) + em;
+}
+
+// Base element resets previously provided by govuk-elements-sass/_reset.scss,
+// _govuk-template-base.scss and _lists.scss.
+// These were applied globally by the old toolkit import; without them, browser
+// defaults re-appear on elements that don't carry govuk- classes.
+
+// govuk-elements-sass/_reset.scss zeroed margins and padding on all headings.
+// govuk-frontend heading classes (.govuk-heading-xl etc.) explicitly set their
+// own margins, so this reset is safe and only affects unclassed / custom-class
+// headings (e.g. <h3 class="list-item_title">, <h2 class="help-navigation-title">).
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding: 0;
+}
+
+// govuk-elements-sass/_govuk-template-base.scss applied 19px GDS font to <main>,
+// making it the inherited base size for all content inside main.
+// govuk-frontend only applies this via explicit govuk-* classes, so we restore it here.
+main {
+    @include govuk-font(19);
+}
+
+// govuk-elements-sass/_govuk-template-base.scss set strong/b to weight 600.
+// Without it, browsers default to 700 (bolder) for <strong>/<b>.
+b,
+strong {
+    font-weight: 600;
+}
+
+// govuk-elements-sass/_forms.scss set textarea { display: block } to remove
+// the small descender gap below inline elements.
+textarea {
+    display: block;
+}
+
+// govuk-elements-sass/_elements-typography.scss styled <hr> as a thin grey line
+// with 30px top/bottom margins. Without this the browser shows its own raised
+// border style and the spacing around the divider in the layout is lost.
+hr {
+    display: block;
+    background: $govuk-border-colour;
+    border: 0;
+    height: 1px;
+    margin-top: govuk-spacing(6);    // 30px
+    margin-bottom: govuk-spacing(6); // 30px
+    padding: 0;
+}
+
+// govuk-frontend resets .govuk-fieldset { border: 0 } but plain <fieldset>
+// elements still get the browser-default thin grey border.
+fieldset {
+    border: none;
+    padding: 0;
+}
+
+// govuk-elements-sass/_lists.scss applied list-style-type: none globally, and
+// _reset.scss zeroed margin and padding on ul, ol and li.
+// govuk-frontend only resets lists that carry .govuk-list; without these blanket
+// resets, the accordion <ul>, <ul class="person-actions"> and similar unclassed
+// lists all revert to showing browser-default bullet points and 40px indent.
+// Note: govuk-list--bullet / govuk-list--number override list-style with disc/decimal,
+// and govuk-list--bullet sets padding-left: 20px — both of which take priority
+// over these element-level rules, so intentional bullet lists are unaffected.
+ul,
+ol {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+li {
+    margin: 0;
+    padding: 0;
+}
+
 // Hide for both screenreaders and browsers
 // Proactive important
 .hidden {

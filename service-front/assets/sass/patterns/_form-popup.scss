@@ -56,6 +56,10 @@
         margin-top: 0;
         margin-bottom: govuk-spacing(3);
 
+        // Only apply flex row layout to form groups with a direct label child.
+        // JS-injected wrappers (age-check alert, duplication alert, postcode search)
+        // use the older form-group class and must not receive flex layout.
+        // Date input inner form-groups will match but are overridden to inline-block below.
         &:has(> .form-label),
         &:has(> .govuk-label) {
             @include govuk-media-query($from: tablet) {
@@ -81,7 +85,7 @@
     }
 
     .form-label,
-    .govuk-label {
+    .govuk-label:not(.govuk-checkboxes__label):not(.govuk-radios__label):not(.govuk-date-input__label) {
         @include govuk-media-query($from: tablet) {
             width: 150px;
             margin-top: 6px;
@@ -89,7 +93,9 @@
         }
     }
 
-    .form-control {
+    .govuk-input,
+    .govuk-textarea,
+    .govuk-select {
         @include govuk-media-query($from: tablet) {
             flex: 1;
             min-width: 0;
@@ -105,7 +111,6 @@
     .summary,
     .summary-text,
     .address-type-toggle,
-    .block-label,
     .button,
     .govuk-button-group,
     .alert,
@@ -122,40 +127,64 @@
         }
     }
 
-    .dob-label {
-        @include govuk-media-query($from: tablet) {
-            float: left;
+    // govuk-date-input items must stay inline-block (standard GDS date component).
+    // The :has(> .govuk-label) flex rule above has equal specificity; we add an extra
+    // class in the selector (.govuk-date-input__input) so these rules win at tablet+.
+    .govuk-date-input {
+        .govuk-form-group {
+            display: inline-block;
+            margin-bottom: govuk-spacing(2);
+        }
+
+        // Prevent the flex:1 rule from making date inputs full-width.
+        // govuk-input--width-2 / govuk-input--width-4 set max-width, but
+        // flex:1 with flex-basis:0 would override width entirely in a flex context.
+        .govuk-input {
+            @include govuk-media-query($from: tablet) {
+                flex: none;
+            }
         }
     }
 
-    .form-date {
+    // DOB section: two-column layout for the govuk-date-input / govuk-fieldset pattern.
+    // The legend acts as the left-column label (floated), and the date inputs
+    // sit to the right via margin-left, matching the old .form-date behaviour.
+    // The hint is hidden on tablet+ (as in main) to keep the popup compact.
+    .dob-element {
         @include govuk-media-query($from: tablet) {
-            margin-left: 150px;
-        }
+            overflow: hidden; // clearfix for the floated legend
 
-        .form-group,
-        .govuk-form-group {
-            display: inline-block;
-            margin-bottom: 18px;
-        }
+            .govuk-fieldset__legend {
+                float: left;
+                width: 150px;
+                margin-top: 6px;
+            }
 
-        .form-label,
-        .govuk-label {
-            @include govuk-media-query($from: tablet) {
+            // The govuk-label inside the legend should not itself get 150px width
+            .govuk-fieldset__legend .govuk-label {
                 width: auto;
+                margin-top: 0;
                 flex-shrink: unset;
             }
-        }
 
-        .form-control {
-            @include govuk-media-query($from: tablet) {
-                flex: unset;
-            }
-        }
-
-        .govuk-hint {
-            @include govuk-media-query($from: tablet) {
+            // Hide the hint on tablet+, matching main branch behaviour (space is at a premium
+            // in the popup and the two-column layout is self-explanatory without it).
+            // The hint remains visible on mobile where screen space is less constrained.
+            .govuk-hint {
                 display: none;
+            }
+
+            .govuk-date-input {
+                margin-left: 150px;
+            }
+
+            .govuk-error-message {
+                margin-left: 150px;
+                position: static;
+                top: auto;
+                left: auto;
+                width: auto;
+                padding-bottom: 2px;
             }
         }
     }
@@ -210,10 +239,6 @@
             position: relative;
             margin-right: 0;
             padding-left: 0;
-
-            .form-date & {
-                margin-right: 20px;
-            }
         }
 
         .form-reuse-details {
@@ -221,15 +246,6 @@
             .govuk-error-message {
                 left: 0;
                 padding-bottom: 15px;
-            }
-        }
-    }
-
-    .form-date {
-        .form-group-error,
-        .govuk-form-group--error {
-            @include govuk-media-query($from: tablet) {
-                margin-right: 20px;
             }
         }
     }
@@ -244,31 +260,6 @@
             padding-bottom: 15px;
         }
     }
-
-    // scss-lint:disable MergeableSelector
-    .form-date {
-
-        .error-message,
-        .govuk-error-message {
-            @include govuk-media-query($from: tablet) {
-                top: 3px;
-                left: 0;
-                width: 100%;
-                padding-bottom: 0px;
-            }
-        }
-
-        // Hide the normal placement of error messages inside popup
-        .error-group {
-            display: none;
-        }
-
-        // Show new placement of error messages within popup
-        .error-group-popup {
-            display: block;
-        }
-    }
-    // scss-lint:enable MergeableSelector
 
     .use-details-link-panel {
         padding: 15px;

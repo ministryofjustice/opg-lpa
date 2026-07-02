@@ -10,8 +10,6 @@ echo "======================================"
 # so two separate runs are required to produce both expanded (.css) and compressed (.min.css) versions.
 echo "→ Compiling Sass files..."
 npx sass \
-  --load-path=node_modules/govuk_frontend_toolkit/stylesheets \
-  --load-path=node_modules/govuk-elements-sass/public/sass \
   --no-source-map \
   assets/sass/application.scss:public/assets/v2/css/application.css \
   assets/sass/download-message.scss:public/assets/v2/css/download-message.css \
@@ -19,8 +17,6 @@ npx sass \
 
 echo "→ Compiling minified Sass files..."
 npx sass \
-  --load-path=node_modules/govuk_frontend_toolkit/stylesheets \
-  --load-path=node_modules/govuk-elements-sass/public/sass \
   --no-source-map \
   --style=compressed \
   assets/sass/application.scss:public/assets/v2/css/application.min.css \
@@ -30,8 +26,6 @@ npx sass \
 echo "Copying vendor CSS files..."
 
 # Copy govuk template CSS
-cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template-print.css public/assets/v2/css/
-cp node_modules/govuk_template_mustache/assets/stylesheets/govuk-template.css public/assets/v2/css/
 cp node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css public/assets/v2/css/
 
 echo "Patching colours in CSS files..."

@@ -1,6 +1,12 @@
 // Typography
 // ==========================================================================
 
+// .bold — previously defined in govuk-elements-sass/_elements-typography.scss.
+// Used e.g. on the accordion "This LPA covers..." title bar.
+.bold {
+    font-weight: 700;
+}
+
 // Allow very long words/links to break so they don't break out of containers
 .text {
     overflow-wrap: break-word;
