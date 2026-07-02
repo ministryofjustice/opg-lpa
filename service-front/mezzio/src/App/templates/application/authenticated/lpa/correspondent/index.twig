@@ -181,7 +181,7 @@
                     See service-front/node_modules/govuk_frontend_toolkit/javascripts/govuk/show-hide-content.js
                     for the offending code which applies the attribute.
                     #}
-                    <div class="govuk-checkboxes__item" {{ contactPhone ? '' : 'data-target="contact-by-phone"' }}>
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByPhone) }}
                         <label class="govuk-label govuk-checkboxes__label" for="{{ contactByPhone.getAttribute('id') }}">
                         {{ contactByPhone.getOption('label')|raw }}
@@ -192,7 +192,7 @@
                         {{ macros.formGroup(phone) }}
                     </div>
 
-                    <div class="govuk-checkboxes__item" {{ contactEmail ? '' : 'data-target="contact-by-email"' }}>
+                    <div class="govuk-checkboxes__item">
                         {{ formElement(contactByEmail) }}
                         <label class="govuk-label govuk-checkboxes__label" for="{{ contactByEmail.getAttribute('id') }}">
                         {{ contactByEmail.getOption('label')|raw }}</label>

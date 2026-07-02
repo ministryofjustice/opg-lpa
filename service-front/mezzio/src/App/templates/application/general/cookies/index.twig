@@ -81,7 +81,9 @@
                         <h3 class="govuk-heading-m">Do you want to accept analytics cookies?</h3>
                         <span class="govuk-visually-hidden question-text">Do you want to accept analytics cookies?</span>
                     </legend>
-                    {{ formRadio(usageCookies) }}
+                    <div class="govuk-radios" data-module="govuk-radios">
+                        {{ formRadio(usageCookies) }}
+                    </div>
                 </fieldset>
             </div>
             {{ form().closeTag|raw }}
