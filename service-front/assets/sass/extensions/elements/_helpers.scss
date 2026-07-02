@@ -1,6 +1,14 @@
 // Helpers
 // ==========================================================================
 
+// em() helper — previously provided by govuk-elements-sass/_helpers.scss.
+// Converts a pixel value to em units relative to a base font-size (default 19px,
+// matching the old toolkit's body text size).  Required by _table-summary.scss
+// and any other pattern file that still uses em() calls.
+@function em($px, $base: 19) {
+    @return ($px / $base) + em;
+}
+
 // Base element resets previously provided by govuk-elements-sass/_reset.scss,
 // _govuk-template-base.scss and _lists.scss.
 // These were applied globally by the old toolkit import; without them, browser

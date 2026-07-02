@@ -45,6 +45,7 @@
     }
 
     .list-item_title {
+        @include govuk-font($size: false); // GDS Transport font-family + antialiasing
         font-size: 2.4rem;
         font-weight: bold;
         color: #0b0c0c;
