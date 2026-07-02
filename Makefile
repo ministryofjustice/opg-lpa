@@ -270,7 +270,7 @@ python-api-venv:
 
 .PHONY: cypress-open
 cypress-open: npm-install python-api-venv
-	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7004" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
