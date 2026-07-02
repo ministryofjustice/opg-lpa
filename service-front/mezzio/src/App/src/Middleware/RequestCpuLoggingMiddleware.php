@@ -29,6 +29,8 @@ class RequestCpuLoggingMiddleware implements MiddlewareInterface, LoggerAwareInt
         $wallStart = microtime(true);
         $before    = getrusage();
 
+        // Blocks here until the entire downstream pipeline (all remaining middleware + route handler)
+        // has completed and returned a response. PHP-FPM is synchronous — nothing escapes this call.
         $response = $handler->handle($request);
 
         $after    = getrusage();
@@ -38,20 +40,41 @@ class RequestCpuLoggingMiddleware implements MiddlewareInterface, LoggerAwareInt
         $cpuMs    = $userMs + $systemMs;
         $load     = sys_getloadavg();
 
-        $this->getLogger()->info('request cpu usage', [
-            'wall_ms'        => $wallMs,
-            'cpu_total_ms'   => $cpuMs,
-            'cpu_user_ms'    => $userMs,
-            'cpu_system_ms'  => $systemMs,
-            // Large wait_ms = request was blocked on I/O (session lock, API calls, Redis)
-            // Large cpu_ms relative to wall_ms = request is CPU-bound
-            'wait_ms'        => round($wallMs - $cpuMs, 2),
-            'load_avg_1min'  => $load[0],
-            'load_avg_5min'  => $load[1],
-            'load_avg_15min' => $load[2],
-            'path'           => $request->getUri()->getPath(),
-            'method'         => $request->getMethod(),
-            'status'         => $response->getStatusCode(),
+        $waitMs = round($wallMs - $cpuMs, 2);
+        // cpu_pct: % of wall-clock time this worker was on CPU.
+        // ~100% = CPU-bound (e.g. Twig compile). ~0-10% = I/O-bound (session lock, API calls).
+        $cpuPct = $wallMs > 0 ? round(($cpuMs / $wallMs) * 100, 1) : 0.0;
+
+        $this->getLogger()->info('request timing', [
+            // HTTP request identity
+            'method'        => $request->getMethod(),
+            'path'          => $request->getUri()->getPath(),
+            'status'        => $response->getStatusCode(),
+
+            // Total wall-clock time from first byte to last byte of response
+            'duration_ms'   => $wallMs,
+
+            // Total CPU time consumed by this PHP-FPM worker (app + kernel combined).
+            // High cpu_ms relative to duration_ms = CPU-bound work (e.g. Twig compiling templates).
+            'cpu_ms'        => $cpuMs,
+
+            // CPU as a % of wall-clock time. ~100% = CPU-bound. ~0-10% = mostly waiting on I/O.
+            'cpu_percent'   => $cpuPct,
+
+            // CPU time spent executing PHP application code (business logic, Twig rendering, etc.)
+            'app_cpu_ms'    => $userMs,
+
+            // CPU time spent in kernel on behalf of this request (file I/O, sockets, memory allocation)
+            'kernel_cpu_ms' => $systemMs,
+
+            // Wall time not accounted for by CPU — the worker was blocked waiting on something external.
+            // High io_wait_ms = session lock contention, slow API calls, or Redis latency.
+            'io_wait_ms'    => $waitMs,
+
+            // System load averages — correlate with ECS CPU utilisation metrics in CloudWatch
+            'load_1m'       => $load[0],
+            'load_5m'       => $load[1],
+            'load_15m'      => $load[2],
         ]);
 
         return $response;
