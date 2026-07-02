@@ -59,6 +59,7 @@ use App\Middleware\IdentityTokenRefreshMiddlewareFactory;
 use App\Middleware\LpaLoaderMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\RegisterSessionSaveHandlerMiddleware;
+use App\Middleware\RequestCpuLoggingMiddleware;
 use App\Middleware\RouteNameMiddleware;
 use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
@@ -145,10 +146,15 @@ return [
             'EventManager'  => EventManager::class,
         ],
         'invokables' => [
-            EventManager::class       => EventManager::class,
-            RouteNameMiddleware::class => RouteNameMiddleware::class,
+            EventManager::class            => EventManager::class,
+            RouteNameMiddleware::class     => RouteNameMiddleware::class,
         ],
         'factories' => [
+            RequestCpuLoggingMiddleware::class => static function (ContainerInterface $c): RequestCpuLoggingMiddleware {
+                $m = new RequestCpuLoggingMiddleware();
+                $m->setLogger($c->get(LoggerInterface::class));
+                return $m;
+            },
             // Override the default ErrorHandler factory to attach a logging listener.
             // Laminas\Stratigility\Middleware\ErrorHandler catches all unhandled Throwables
             // but does not log them by default — this listener ensures every 500 is logged
