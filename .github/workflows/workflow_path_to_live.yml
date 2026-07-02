@@ -49,21 +49,21 @@ jobs:
           echo "short_sha=$(git rev-list --no-merges -n 1 HEAD | cut -c1-7)" >> $GITHUB_OUTPUT
       - name: Set terraform version - environment
         id: terraform_version_environment
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           terraform_directory: "./terraform/environment"
       - name: Set terraform version - account
         id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           terraform_directory: "./terraform/region"
       - name: Bump version and push tag
-        uses: ministryofjustice/opg-github-actions/actions/semver@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/semver@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         id: semver_tag
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -95,7 +95,7 @@ jobs:
     needs:
       - set_variables
       - snyk_iac_scan
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
@@ -110,7 +110,7 @@ jobs:
 
   terraform_region_development:
     name: TF Development - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
     needs:
       - set_variables
       - snyk_iac_scan
@@ -189,7 +189,7 @@ jobs:
 
   terraform_account_production:
     name: TF Production - Account
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
     needs:
       - slack_msg_production_deploy_begin
       - snyk_iac_scan
@@ -208,7 +208,7 @@ jobs:
 
   terraform_region_production:
     name: TF Production - Region
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
     needs:
       - slack_msg_production_deploy_begin
       - set_variables
@@ -228,7 +228,7 @@ jobs:
 
   terraform_environment_production:
     name: TF Production - Environment
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@17ca444d0b23a0f9f6c612f1bfb8dc9be358f235 # v3.19.6
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
@@ -271,7 +271,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@fac544c07dec837d0ccb6301d7b5580bf5edae39  # v8.2.0
         with:
-          version: "0.11.21"
+          version: "0.11.24"
           python-version: "3.14.5"
           enable-cache: true
 

@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Set safe branch name
         id: safe_branch_name
-        uses: ministryofjustice/opg-github-actions/actions/branch-name@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/branch-name@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
     if: github.event.pull_request.merged == true
 
   cleanup_workspace:
@@ -46,7 +46,7 @@ jobs:
 
       - name: Get terraform version
         id: set-terraform-version
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           terraform_directory: "./terraform/environment"
 
@@ -55,12 +55,12 @@ jobs:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
 
-      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
+      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           deploy_key: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           aws-region: eu-west-1
           role-duration-seconds: 1800

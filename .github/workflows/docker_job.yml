@@ -48,7 +48,7 @@ jobs:
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ inputs.oidc_docker_role }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: ECR Login
         id: login_ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         with:
           registries: 311462405659
 
@@ -68,7 +68,7 @@ jobs:
       - name: Scan OTEL image with SNYK
         id: otel_snyk_scan
         continue-on-error: ${{ !inputs.otel_scan_required }}
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@8dea82fc8b8e7ffca431f0fb83848d523147ccd8 # v4.5.0
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           SNYK_TEST_IMAGE: ${{ env.otel_image_version }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
@@ -186,7 +186,7 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@8df5847569e6427dd6c4fb1cf565c83acfa8afa7 # v6.0.0
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ inputs.oidc_docker_role }}
@@ -223,7 +223,7 @@ jobs:
 
       - name: ECR Login
         id: login_ecr
-        uses: aws-actions/amazon-ecr-login@062b18b96a7aff071d4dc91bc00c4c1a7945b076 # v2.0.1
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         with:
           registries: 311462405659
 
@@ -251,7 +251,7 @@ jobs:
       #SNYK SCAN STEPS
       - name: Run SNYK vulnerability scan for ${{ matrix.scan_id }}
         id: snyk_scan
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@8dea82fc8b8e7ffca431f0fb83848d523147ccd8 # v4.5.0
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@77bb12e7fec3bcee9a6a35cb21361195e027a12a # v4.9.0
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
@@ -299,14 +299,14 @@ jobs:
           fi
 
       - name: Upload SARIF results part 1
-        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
         if: always() && hashFiles(format('./test-results/{0}_snyk_part_01.sarif', matrix.scan_id)) != ''
         with:
           sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_01.sarif
           category: ${{ matrix.scan_id }}-1
 
       - name: Upload SARIF results part 2
-        uses: github/codeql-action/upload-sarif@0d579ffd059c29b07949a3cce3983f0780820c98 # v4.32.6
+        uses: github/codeql-action/upload-sarif@8aad20d150bbac5944a9f9d289da16a4b0d87c1e # v4.36.2
         if: always() && hashFiles(format('./test-results/{0}_snyk_part_02.sarif', matrix.scan_id)) != ''
         with:
           sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_02.sarif
