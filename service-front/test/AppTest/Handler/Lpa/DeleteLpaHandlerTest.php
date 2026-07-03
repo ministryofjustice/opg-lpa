@@ -10,21 +10,20 @@ use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class DeleteLpaHandlerTest extends TestCase
 {
     private LpaApplicationService&MockObject $lpaApplicationService;
-    private MockObject $flash;
+    private FlashMessagesInterface&MockObject $flash;
     private DeleteLpaHandler $handler;
 
     protected function setUp(): void
     {
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->flash = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['flash'])
-            ->getMock();
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->handler = new DeleteLpaHandler($this->lpaApplicationService);
     }
