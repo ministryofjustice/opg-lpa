@@ -7026,24 +7026,21 @@
         },
         {
             "name": "mezzio/mezzio-tooling",
-            "version": "2.12.1",
+            "version": "2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mezzio/mezzio-tooling.git",
-                "reference": "38c6ae0fac6de3456fd7198c5a89032277042baf"
+                "reference": "7875384c2840faf51c94f8e3fe0990caf011c0e9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mezzio/mezzio-tooling/zipball/38c6ae0fac6de3456fd7198c5a89032277042baf",
-                "reference": "38c6ae0fac6de3456fd7198c5a89032277042baf",
+                "url": "https://api.github.com/repos/mezzio/mezzio-tooling/zipball/7875384c2840faf51c94f8e3fe0990caf011c0e9",
+                "reference": "7875384c2840faf51c94f8e3fe0990caf011c0e9",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "laminas/laminas-cli": "^1.7.0",
-                "laminas/laminas-code": "^4.7.1",
-                "laminas/laminas-stdlib": "^3.15.0",
-                "laminas/laminas-stratigility": "^3.9.0",
                 "mezzio/mezzio": "^3.13.0",
                 "mezzio/mezzio-router": "^3.9.0",
                 "php": "~8.1.0 || ~8.2.0 || ~8.3.0 || ~8.4.1",
