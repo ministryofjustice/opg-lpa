@@ -336,7 +336,8 @@
         "minor"
       ],
       "matchManagers": [
-        "dockerfile"
+        "dockerfile",
+        "composer"
       ],
       "matchPackageNames": [
         "php"
