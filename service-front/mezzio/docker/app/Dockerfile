@@ -73,7 +73,8 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
 fi
 
 RUN rm /usr/bin/composer /app/composer.json /app/composer.lock && \
-    chown -R root:root /app/vendor
+    chown -R root:root /app/vendor && \
+    chown appuser:appuser /app/data/cache/twig
 
 RUN apk del .build-dependencies
 
