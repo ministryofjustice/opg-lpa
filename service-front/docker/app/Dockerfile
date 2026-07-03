@@ -101,3 +101,4 @@ USER appuser
 COPY --chown=root:root service-front/test /app/test
 COPY --chown=root:root service-front/phpunit.xml /app/phpunit.xml
 COPY --chown=root:root service-front/psalm.xml /app/psalm.xml
+COPY --chown=root:root service-front/psalm-baseline.xml /app/psalm-baseline.xml

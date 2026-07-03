@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="6.16.1@f1f5de594dc76faf8784e02d3dc4716c91c6f6ac">
+  <file src="src/App/src/Form/Fieldset/Dob.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$elementName]]></code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/App/src/Form/Lpa/AbstractActorForm.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$formData]]></code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/App/src/Form/Lpa/AbstractLpaForm.php">
+    <InvalidDocblock>
+      <code><![CDATA[protected function modelValidationMessageConverter(ValidatorResponse $validationResponse, array|null $context = null)]]></code>
+    </InvalidDocblock>
+    <MismatchingDocblockParamType>
+      <code><![CDATA[T|array|null|object]]></code>
+    </MismatchingDocblockParamType>
+  </file>
+  <file src="src/App/src/Form/Lpa/DonorForm.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$formData]]></code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/App/src/Form/Lpa/WhoAreYouForm.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$formData]]></code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/App/src/Form/User/AboutYou.php">
+    <MoreSpecificImplementedParamType>
+      <code><![CDATA[$data]]></code>
+      <code><![CDATA[$data]]></code>
+      <code><![CDATA[$data]]></code>
+    </MoreSpecificImplementedParamType>
+  </file>
+  <file src="src/App/src/Form/Validator/Date.php">
+    <RedundantCondition>
+      <code><![CDATA[is_int($value)]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/App/src/Handler/HomePageHandlerFactory.php">
+    <UndefinedClass>
+      <code><![CDATA[HomePageHandler]]></code>
+      <code><![CDATA[HomePageHandler]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="src/App/src/Handler/Lpa/InstructionsHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getData]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/Lpa/PeopleToNotify/PeopleToNotifyAddHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setActorData]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/Lpa/PeopleToNotify/PeopleToNotifyEditHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setActorData]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/Lpa/PrimaryAttorney/PrimaryAttorneyAddHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setActorData]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/Lpa/PrimaryAttorney/PrimaryAttorneyAddTrustHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/Lpa/PrimaryAttorney/PrimaryAttorneyEditHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[getModelDataFromValidatedForm]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setActorData]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/LpaTypeHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getData]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Handler/StatusesHandler.php">
+    <InvalidArrayOffset>
+      <code><![CDATA[$statuses[$id]]]></code>
+    </InvalidArrayOffset>
+  </file>
+  <file src="src/App/src/Handler/TypeHandler.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[bind]]></code>
+      <code><![CDATA[getData]]></code>
+      <code><![CDATA[isValid]]></code>
+      <code><![CDATA[setData]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/App/src/Middleware/AuthenticationMiddleware.php">
+    <RedundantCondition>
+      <code><![CDATA[$tokenExpiresAt !== null]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="src/App/src/Middleware/SessionIdentityMiddleware.php">
+    <UndefinedMethod>
+      <code><![CDATA[getStorage]]></code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/App/src/Service/Lpa/Application.php">
+    <InvalidOperand>
+      <code><![CDATA[$lpa->document->primaryAttorneys]]></code>
+      <code><![CDATA[$lpa->document->replacementAttorneys]]></code>
+    </InvalidOperand>
+  </file>
+  <file src="src/App/src/Service/Mail/Transport/NotifyMailTransport.php">
+    <ImplementedReturnTypeMismatch>
+      <code><![CDATA[array{ok: bool, status: 'fail'|'pass', details: array{smokeTestEmailAddress: null|string, exception?: 'Unable to send email to smoke test address'}}]]></code>
+    </ImplementedReturnTypeMismatch>
+    <UndefinedClass>
+      <code><![CDATA[Response]]></code>
+      <code><![CDATA[Response]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="src/App/src/Service/Payment/GovPay/Client.php">
+    <UndefinedPropertyFetch>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$payment->payment_id]]></code>
+      <code><![CDATA[$refund->refund_id]]></code>
+    </UndefinedPropertyFetch>
+  </file>
+  <file src="src/App/src/Service/Payment/GovPay/Response/AbstractData.php">
+    <MissingTemplateParam>
+      <code><![CDATA[AbstractData]]></code>
+    </MissingTemplateParam>
+  </file>
+  <file src="src/App/src/Service/Payment/GovPay/Response/Payment.php">
+    <UndefinedThisPropertyFetch>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+      <code><![CDATA[$this->state]]></code>
+    </UndefinedThisPropertyFetch>
+  </file>
+  <file src="src/App/src/Service/UserDetails.php">
+    <UndefinedClass>
+      <code><![CDATA[Response]]></code>
+    </UndefinedClass>
+  </file>
+  <file src="src/App/src/Storage/MezzioSessionStorage.php">
+    <RedundantCondition>
+      <code><![CDATA[$contents->lastLogin()?->format('c')]]></code>
+      <code><![CDATA[$tokenExpiresAt !== null]]></code>
+    </RedundantCondition>
+    <TypeDoesNotContainNull>
+      <code><![CDATA[$contents->lastLogin()]]></code>
+      <code><![CDATA[(new DateTime())->format('c')]]></code>
+    </TypeDoesNotContainNull>
+  </file>
+  <file src="src/App/src/View/Twig/LegacyCompatExtension.php">
+    <InvalidArrayOffset>
+      <code><![CDATA[$optSpec['disable_html_escape']]]></code>
+    </InvalidArrayOffset>
+    <InvalidOperand>
+      <code><![CDATA[$attrs['class']]]></code>
+    </InvalidOperand>
+    <RedundantCast>
+      <code><![CDATA[(string) ($element->getName() ?? '')]]></code>
+    </RedundantCast>
+  </file>
+  <file src="test/AppTest/Form/Fieldset/CorrespondenceTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getCheckedValue]]></code>
+      <code><![CDATA[getUncheckedValue]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/AppTest/Form/General/FeedbackFormTest.php">
+    <InvalidArrayAccess>
+      <code><![CDATA[$this->form->getData()['details']]]></code>
+      <code><![CDATA[$this->form->getData()['details']]]></code>
+      <code><![CDATA[$this->form->getData()['email']]]></code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="test/AppTest/Form/Lpa/ApplicantFormTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[getValueOptions]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/AppTest/Form/Lpa/AttorneyFormTest.php">
+    <InvalidArrayAccess>
+      <code><![CDATA[$result['email-address']]]></code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="test/AppTest/Form/Lpa/DonorFormTest.php">
+    <InvalidArrayAccess>
+      <code><![CDATA[$result['name-first']]]></code>
+      <code><![CDATA[$result['name-first']]]></code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="test/AppTest/Form/Lpa/FeeReductionFormTest.php">
+    <RedundantCondition>
+      <code><![CDATA[assertIsBool]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="test/AppTest/Form/Lpa/InstructionsAndPreferencesFormTest.php">
+    <InvalidArrayAccess>
+      <code><![CDATA[$data['instruction']]]></code>
+      <code><![CDATA[$data['instruction']]]></code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="test/AppTest/Form/Lpa/ReuseDetailsFormTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[$options]]></code>
+      <code><![CDATA[getValueOptions]]></code>
+      <code><![CDATA[getValueOptions]]></code>
+      <code><![CDATA[getValueOptions]]></code>
+      <code><![CDATA[getValueOptions]]></code>
+      <code><![CDATA[getValueOptions]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
+  <file src="test/AppTest/Form/User/LoginTest.php">
+    <InvalidArrayAccess>
+      <code><![CDATA[$data['email']]]></code>
+    </InvalidArrayAccess>
+  </file>
+  <file src="test/AppTest/Handler/Lpa/Download/DownloadCheckHandlerTest.php">
+    <NullArgument>
+      <code><![CDATA[null]]></code>
+    </NullArgument>
+  </file>
+  <file src="test/AppTest/Handler/Lpa/Download/DownloadFileHandlerTest.php">
+    <NullArgument>
+      <code><![CDATA[null]]></code>
+    </NullArgument>
+  </file>
+  <file src="test/AppTest/Handler/Lpa/Download/DownloadHandlerTest.php">
+    <NullArgument>
+      <code><![CDATA[null]]></code>
+    </NullArgument>
+  </file>
+  <file src="test/AppTest/Handler/Lpa/PrimaryAttorney/PrimaryAttorneyAddTrustHandlerTest.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA['88888']]></code>
+    </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="test/AppTest/Handler/Lpa/SummaryHandlerTest.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$repeatCaseNumber]]></code>
+    </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="test/AppTest/Middleware/RouteNameMiddlewareTest.php">
+    <NoInterfaceProperties>
+      <code><![CDATA[$handler->capturedRouteName]]></code>
+      <code><![CDATA[$handler->capturedRouteName]]></code>
+      <code><![CDATA[$handler->capturedRouteName]]></code>
+      <code><![CDATA[$handler->capturedRouteName]]></code>
+    </NoInterfaceProperties>
+  </file>
+  <file src="test/AppTest/Middleware/UserIdMiddlewareTest.php">
+    <RedundantCondition>
+      <code><![CDATA[assertNotNull]]></code>
+      <code><![CDATA[assertNotNull]]></code>
+    </RedundantCondition>
+  </file>
+  <file src="test/AppTest/Service/Lpa/ApplicationTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[once]]></code>
+      <code><![CDATA[once]]></code>
+    </UndefinedInterfaceMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="test/AppTest/Service/Lpa/CommunicationTest.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[byDefault]]></code>
+    </UndefinedInterfaceMethod>
+    <UndefinedMagicMethod>
+      <code><![CDATA[andReturn]]></code>
+    </UndefinedMagicMethod>
+  </file>
+  <file src="test/AppTest/Service/Payment/GovPay/ClientTest.php">
+    <RedundantCast>
+      <code><![CDATA[(string) $request->getUri()->getQuery()]]></code>
+      <code><![CDATA[(string) $request->getUri()->getQuery()]]></code>
+    </RedundantCast>
+    <UndefinedPropertyFetch>
+      <code><![CDATA[$payment->payment_id]]></code>
+    </UndefinedPropertyFetch>
+  </file>
+  <file src="test/AppTest/View/Twig/LegacyCompatExtensionTest.php">
+    <InvalidArgument>
+      <code><![CDATA[[
+            'a' => [
+                'label'               => '<strong>Option A</strong>',
+                'value'               => 'a',
+                'attributes'          => ['id' => 'items-a'],
+                'disable_html_escape' => true,
+            ],
+            'b' => ['label' => '<em>Option B</em>', 'value' => 'b', 'attributes' => ['id' => 'items-b']],
+        ]]]></code>
+      <code><![CDATA[[
+            'jointly' => [
+                'label'              => '<strong>Jointly</strong>',
+                'value'              => 'jointly',
+                'disable_html_escape' => true,
+            ],
+            'severally' => ['label' => '<em>Severally</em>', 'value' => 'severally'],
+        ]]]></code>
+      <code><![CDATA[[
+            'name'           => 'whoIsRegistering',
+            'class'          => 'govuk-radios__input',
+            'div-attributes' => ['class' => 'govuk-radios__item'],
+        ]]]></code>
+      <code><![CDATA[[
+            'now' => [
+                'label'      => 'Now',
+                'value'      => 'now',
+                'attributes' => ['class' => 'govuk-radios__input', 'data-aria-controls' => 'conditional-when-now'],
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler',   'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+            2 => ['label' => 'David Wheeler', 'value' => 2, 'attributes' => ['id' => 'attorney-2']],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler',   'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+            2 => ['label' => 'David Wheeler', 'value' => 2, 'attributes' => ['id' => 'attorney-2']],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => [
+                'id' => 'attorney-1',
+                'div-attributes' => ['class' => 'multiple-choice'],
+            ]],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]]]></code>
+      <code><![CDATA[[
+            1 => ['label' => 'Amy Wheeler', 'value' => 1, 'attributes' => ['id' => 'attorney-1']],
+        ]]]></code>
+    </InvalidArgument>
+  </file>
+</files>
