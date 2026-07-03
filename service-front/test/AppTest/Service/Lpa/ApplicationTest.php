@@ -359,9 +359,9 @@ final class ApplicationTest extends MockeryTestCase
 
     public function testCreateApplicationFailure(): void
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
-        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(500);
+        $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpPost')
             ->withArgs(['/v2/user/4321/applications'])
@@ -389,9 +389,9 @@ final class ApplicationTest extends MockeryTestCase
 
     public function testUpdateApplicationFailure(): void
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(422);
-        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{"validation":{"status":"invalid"}}'))->once();
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(422);
+        $mockResponse->method('getBody')->willReturn(Utils::streamFor('{"validation":{"status":"invalid"}}'));
 
         $this->apiClient->shouldReceive('httpPatch')
             ->withArgs(['/v2/user/4321/applications/1234', ['status' => 'updated']])
@@ -412,9 +412,9 @@ final class ApplicationTest extends MockeryTestCase
 
     public function testDeleteApplicationFailure(): void
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
-        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(500);
+        $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpDelete')
             ->withArgs(['/v2/user/4321/applications/1234'])
@@ -509,6 +509,7 @@ final class ApplicationTest extends MockeryTestCase
         $this->assertSame('12345', $lpa->document->replacementAttorneys[array_key_last($lpa->document->replacementAttorneys)]->number);
     }
 
+    /** @psalm-suppress UndefinedInterfaceMethod */
     public function testAddNotifiedPerson(): void
     {
         $lpa = FixturesData::getPfLpa();
@@ -526,8 +527,10 @@ final class ApplicationTest extends MockeryTestCase
         $result = $this->service->addNotifiedPerson($lpa, $notifiedPerson);
 
         $this->assertTrue($result);
-        $this->assertCount(1, $lpa->document->peopleToNotify);
-        $this->assertInstanceOf(NotifiedPerson::class, $lpa->document->peopleToNotify[0]);
+        /** @var array<int, NotifiedPerson> $peopleToNotify */
+        $peopleToNotify = iterator_to_array($lpa->document->peopleToNotify);
+        $this->assertCount(1, $peopleToNotify);
+        $this->assertInstanceOf(NotifiedPerson::class, $peopleToNotify[0]);
     }
 
     public function testSetPrimaryAttorney(): void
@@ -584,6 +587,7 @@ final class ApplicationTest extends MockeryTestCase
         $this->assertSame('22222', $lpa->document->replacementAttorneys[0]->number);
     }
 
+    /** @psalm-suppress InvalidArgument */
     public function testDeletePrimaryAttorney(): void
     {
         $lpa = FixturesData::getPfLpa();
@@ -596,7 +600,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->primaryAttorneys);
-        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, $lpa->document->primaryAttorneys)));
+        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, iterator_to_array($lpa->document->primaryAttorneys))));
     }
 
     public function testDeleteReplacementAttorney(): void
@@ -611,7 +615,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->replacementAttorneys);
-        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, $lpa->document->replacementAttorneys)));
+        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, iterator_to_array($lpa->document->replacementAttorneys))));
     }
 
     public function testSetWhoAreYou(): void
@@ -712,9 +716,9 @@ final class ApplicationTest extends MockeryTestCase
     public function testSetWhoIsRegisteringFailure(): void
     {
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(500);
-        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
+        $mockResponse = $this->createMock(ResponseInterface::class);
+        $mockResponse->method('getStatusCode')->willReturn(500);
+        $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpPut')
             ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => ['donor']]])

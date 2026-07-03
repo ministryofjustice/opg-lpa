@@ -195,10 +195,9 @@ class ActorReuseDetailsServiceTest extends TestCase
 
     public function testGetActorReuseDetailsBuildsReuseDetailsFromUserAndSeedActors(): void
     {
-        $user      = FixturesData::getUser();
-        $lpa       = FixturesData::getPfLpa();
-        $lpa->id   = 'cloned-lpa';
-        $lpa->seed = 'seed-123';
+        $user = FixturesData::getUser();
+        $lpa  = FixturesData::getPfLpa();
+        $lpa->setId(9001)->setSeed(123);
 
         $seedDetails = [
             'donor'                => [
@@ -245,7 +244,7 @@ class ActorReuseDetailsServiceTest extends TestCase
         $session = $this->createMock(SessionInterface::class);
         $session->expects($this->once())
             ->method('get')
-            ->with('clone_seed-123')
+            ->with('clone_123')
             ->willReturn($seedDetails);
 
         $this->lpaApplicationService->expects($this->never())
@@ -274,12 +273,12 @@ class ActorReuseDetailsServiceTest extends TestCase
 
     public function testGetActorReuseDetailsSkipsTrustsWhenTheyAreExcluded(): void
     {
-        $user      = FixturesData::getUser();
-        $lpa       = FixturesData::getPfLpa();
-        $lpa->seed = 'seed-456';
+        $user = FixturesData::getUser();
+        $lpa  = FixturesData::getPfLpa();
+        $lpa->setSeed(456);
 
         $session = $this->createMock(SessionInterface::class);
-        $session->method('get')->with('clone_seed-456')->willReturn([
+        $session->method('get')->with('clone_456')->willReturn([
             'correspondent'    => [
                 'who'  => 'donor',
                 'name' => ['first' => 'Seed', 'last' => 'Correspondent'],
@@ -303,12 +302,12 @@ class ActorReuseDetailsServiceTest extends TestCase
 
     public function testGetCorrespondentReuseDetailsIncludesDocumentActorsAndSeedCorrespondent(): void
     {
-        $user      = FixturesData::getUser();
-        $lpa       = FixturesData::getPfLpa();
-        $lpa->seed = 'seed-789';
+        $user = FixturesData::getUser();
+        $lpa  = FixturesData::getPfLpa();
+        $lpa->setSeed(789);
 
         $session = $this->createMock(SessionInterface::class);
-        $session->method('get')->with('clone_seed-789')->willReturn([
+        $session->method('get')->with('clone_789')->willReturn([
             'correspondent' => [
                 'who'  => 'donor',
                 'name' => ['first' => 'Seed', 'last' => 'Correspondent'],
@@ -353,6 +352,7 @@ class ActorReuseDetailsServiceTest extends TestCase
         $args   = [$user, $lpa, &$actorReuseDetails, true];
         $method->invokeArgs($this->service, $args);
 
+        /** @var array<int, array<string, mixed>> $actorReuseDetails */
         $this->assertCount(1, $actorReuseDetails);
         $this->assertSame('Chris Smith (myself)', $actorReuseDetails[0]['label']);
         $this->assertSame('other', $actorReuseDetails[0]['data']['who']);
@@ -362,8 +362,8 @@ class ActorReuseDetailsServiceTest extends TestCase
 
     public function testGetSeedLpaActorDetailsReturnsEmptyArrayWithoutSeed(): void
     {
-        $lpa       = FixturesData::getPfLpa();
-        $lpa->seed = null;
+        $lpa = FixturesData::getPfLpa();
+        $lpa->setSeed(null);
 
         $method = new ReflectionMethod($this->service, 'getSeedLpaActorDetails');
 
@@ -373,22 +373,21 @@ class ActorReuseDetailsServiceTest extends TestCase
     public function testGetSeedLpaActorDetailsFetchesAndCachesSeedDataWhenSessionIsEmpty(): void
     {
         $lpa         = FixturesData::getPfLpa();
-        $lpa->id     = 'generated-lpa-id';
-        $lpa->seed   = 'seed-999';
+        $lpa->setId(8001)->setSeed(999);
         $seedDetails = ['donor' => ['name' => ['first' => 'Seed', 'last' => 'Donor']]];
 
         $session = $this->createMock(SessionInterface::class);
         $session->expects($this->once())
             ->method('get')
-            ->with('clone_seed-999')
+            ->with('clone_999')
             ->willReturn(null);
         $session->expects($this->once())
             ->method('set')
-            ->with('clone_seed-999', $seedDetails);
+            ->with('clone_999', $seedDetails);
 
         $this->lpaApplicationService->expects($this->once())
             ->method('getSeedDetails')
-            ->with('generated-lpa-id')
+            ->with(8001)
             ->willReturn($seedDetails);
 
         $this->service->setSession($session);

@@ -105,6 +105,7 @@ class StatusServiceTest extends TestCase
 
         $result = $this->createService()->check();
 
+        /** @var array<string, mixed> $result */
         $this->assertTrue($result['ok']);
         $this->assertSame(Constants::STATUS_WARN, $result['status']);
         $this->assertSame(Constants::STATUS_PASS, $result['api']['status']);
