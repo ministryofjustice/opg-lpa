@@ -31,6 +31,11 @@ resource "aws_ecs_service" "front" {
     ]
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
     update = var.environment_name == "production" ? "20m" : "6m"
@@ -91,8 +96,8 @@ resource "aws_ecs_task_definition" "front" {
   family                   = "${var.environment_name}-front"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 512
-  memory                   = 1024
+  cpu                      = 1024
+  memory                   = 2048
   container_definitions    = "[${local.front_web}, ${local.front_app}, ${local.aws_otel_collector}]"
   task_role_arn            = var.ecs_iam_task_roles.front.arn
   execution_role_arn       = var.ecs_execution_role.arn

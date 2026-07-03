@@ -272,7 +272,7 @@
                           ageWarningAlertStart +
                           ' I understand that the ' +
                           actorType +
-                          ' must be at least 18 <strong class="bold-small">on the date ' +
+                          ' must be at least 18 <strong>on the date ' +
                           ageWarningAlertMiddle +
                           ' signs the LPA</strong>, ' +
                           'otherwise the LPA will be rejected.',
