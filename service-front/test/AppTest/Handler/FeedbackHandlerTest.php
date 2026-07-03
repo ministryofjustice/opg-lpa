@@ -33,7 +33,7 @@ class FeedbackHandlerTest extends TestCase
     private FormInterface&MockObject $form;
     private FeedbackHandler $handler;
 
-    /** @var array<string, string> */
+    /** @var array<string, mixed> */
     private array $originalServer = [];
 
     protected function setUp(): void
