@@ -22,6 +22,15 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <!-- Interfaces, stubs and pure exception classes: no logic to test -->
+            <directory suffix="Interface.php">src</directory>
+            <directory suffix="Stub.php">src</directory>
+            <directory>src/App/src/Service/ApiClient/Exception</directory>
+            <file>src/App/src/Service/Feedback/FeedbackValidationException.php</file>
+            <directory>src/App/src/Service/Mail/Exception</directory>
+            <directory>src/App/src/Service/Payment/GovPay/Exception</directory>
+        </exclude>
     </source>
 
     <coverage>
