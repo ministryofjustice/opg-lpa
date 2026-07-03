@@ -56,7 +56,7 @@ class SessionIdentityMiddleware implements MiddlewareInterface
 
                 // Write the identity into the auth service storage so that
                 // AbstractService::getUserId() returns the correct value.
-                $this->authenticationService->getStorage()->write($identity);
+                $this->authenticationService->getStorage()?->write($identity);
 
                 $request = $request->withAttribute(RequestAttribute::IDENTITY, $identity);
             }

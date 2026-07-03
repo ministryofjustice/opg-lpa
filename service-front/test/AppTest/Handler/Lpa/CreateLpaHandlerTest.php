@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,16 +21,14 @@ class CreateLpaHandlerTest extends TestCase
 {
     private LpaApplicationService&MockObject $lpaApplicationService;
     private SessionInterface&MockObject $session;
-    private MockObject $flash;
+    private FlashMessagesInterface&MockObject $flash;
     private CreateLpaHandler $handler;
 
     protected function setUp(): void
     {
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->session = $this->createMock(SessionInterface::class);
-        $this->flash = $this->getMockBuilder(\stdClass::class)
-            ->addMethods(['flash'])
-            ->getMock();
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->handler = new CreateLpaHandler($this->lpaApplicationService);
     }

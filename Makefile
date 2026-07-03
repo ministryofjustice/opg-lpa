@@ -34,7 +34,7 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+	@docker run --rm -v `pwd`/service-front/:/app/ -v `pwd`/shared/:/shared/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
@@ -228,7 +228,7 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --rm --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app /app/vendor/bin/phpunit
+	@docker compose run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:

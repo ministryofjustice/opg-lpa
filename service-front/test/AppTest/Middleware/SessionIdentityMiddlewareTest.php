@@ -8,7 +8,7 @@ use App\Authentication\AuthenticationService;
 use App\Middleware\RequestAttribute;
 use App\Middleware\SessionIdentityMiddleware;
 use App\Model\Service\Authentication\Identity\User;
-use Laminas\Authentication\Storage\StorageInterface;
+use App\Storage\MezzioSessionStorage;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
@@ -47,7 +47,7 @@ class SessionIdentityMiddlewareTest extends TestCase
             ->with('identity')
             ->willReturn($sessionData);
 
-        $storage = $this->createMock(StorageInterface::class);
+        $storage = $this->createMock(MezzioSessionStorage::class);
         $storage->expects($this->once())
             ->method('write')
             ->with($this->callback(function ($identity): bool {

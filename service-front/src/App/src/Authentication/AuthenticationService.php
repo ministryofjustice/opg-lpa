@@ -22,6 +22,11 @@ class AuthenticationService
         $this->storage = $storage;
     }
 
+    public function getStorage(): ?MezzioSessionStorage
+    {
+        return $this->storage;
+    }
+
     public function setEmail(#[\SensitiveParameter] string $email): static
     {
         $this->adapter->setEmail($email);
