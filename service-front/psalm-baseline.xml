@@ -126,11 +126,6 @@
       <code><![CDATA[$tokenExpiresAt !== null]]></code>
     </RedundantCondition>
   </file>
-  <file src="src/App/src/Middleware/SessionIdentityMiddleware.php">
-    <UndefinedMethod>
-      <code><![CDATA[getStorage]]></code>
-    </UndefinedMethod>
-  </file>
   <file src="src/App/src/Service/Lpa/Application.php">
     <InvalidOperand>
       <code><![CDATA[$lpa->document->primaryAttorneys]]></code>
