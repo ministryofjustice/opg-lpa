@@ -21,4 +21,11 @@ return [
             'template_error' => 'error::error',
         ],
     ],
+
+    // Twig renderer configuration.
+    // cache_dir enables compiled template caching — without this, Twig re-parses and re-compiles
+    // every .twig file on every single request, causing significant CPU overhead under load.
+    'twig' => [
+        'cache_dir' => __DIR__ . '/../../data/cache/twig',
+    ],
 ];
