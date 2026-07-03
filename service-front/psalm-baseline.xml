@@ -136,10 +136,6 @@
     <ImplementedReturnTypeMismatch>
       <code><![CDATA[array{ok: bool, status: 'fail'|'pass', details: array{smokeTestEmailAddress: null|string, exception?: 'Unable to send email to smoke test address'}}]]></code>
     </ImplementedReturnTypeMismatch>
-    <UndefinedClass>
-      <code><![CDATA[Response]]></code>
-      <code><![CDATA[Response]]></code>
-    </UndefinedClass>
   </file>
   <file src="src/App/src/Service/Payment/GovPay/Client.php">
     <UndefinedPropertyFetch>
@@ -168,11 +164,6 @@
       <code><![CDATA[$this->state]]></code>
       <code><![CDATA[$this->state]]></code>
     </UndefinedThisPropertyFetch>
-  </file>
-  <file src="src/App/src/Service/UserDetails.php">
-    <UndefinedClass>
-      <code><![CDATA[Response]]></code>
-    </UndefinedClass>
   </file>
   <file src="src/App/src/Storage/MezzioSessionStorage.php">
     <RedundantCondition>
