@@ -107,9 +107,42 @@ class CheckoutPayResponseHandlerTest extends TestCase
     public static function failureTemplateProvider(): array
     {
         return [
-            'cancelled (P0030)' => ['P0030', 'application/authenticated/lpa/checkout/govpay-cancel.twig'],
-            'other failure'     => ['P0050', 'application/authenticated/lpa/checkout/govpay-failure.twig'],
+            'cancelled (P0030)'  => ['P0030', 'application/authenticated/lpa/checkout/govpay-cancel.twig'],
+            'other failure'      => ['P0050', 'application/authenticated/lpa/checkout/govpay-failure.twig'],
+            'no code (null)'     => [null,    'application/authenticated/lpa/checkout/govpay-failure.twig'],
         ];
+    }
+
+    public function testUnsuccessfulPaymentWithNoStateCodeRendersFailureTemplate(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'ref-123';
+
+        $submitElement = $this->createMock(Submit::class);
+        $submitElement->method('setAttribute')->willReturnSelf();
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnSelf();
+        $form->method('get')->with('submit')->willReturn($submitElement);
+        $this->formElementManager->method('get')->willReturn($form);
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'ref-123',
+            'state'      => ['status' => 'failed', 'finished' => true],
+            '_links'     => [],
+        ]);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        $this->urlHelper->method('generate')
+            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/91333263035/checkout/pay');
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with('application/authenticated/lpa/checkout/govpay-failure.twig')
+            ->willReturn('html');
+
+        $response = $this->handler->handle($this->createRequest($lpa));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testNullPaymentResponseRedirectsToPayPage(): void
@@ -129,7 +162,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
     }
 
     #[DataProvider('failureTemplateProvider')]
-    public function testUnsuccessfulPaymentRendersCorrectTemplate(string $stateCode, string $template): void
+    public function testUnsuccessfulPaymentRendersCorrectTemplate(?string $stateCode, string $template): void
     {
         $lpa = $this->createCompleteLpa();
         $lpa->payment->gatewayReference = 'ref-123';
