@@ -6,6 +6,8 @@ namespace AppTest\Handler;
 
 use App\Handler\ConfirmRegistrationHandler;
 use App\Service\UserDetails as UserService;
+use Fig\Http\Message\StatusCodeInterface;
+use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
@@ -40,6 +42,16 @@ final class ConfirmRegistrationHandlerTest extends TestCase
         return (new ServerRequest([], [], '/signup/confirm/' . $token, 'GET'))
             ->withAttribute('token', $token ?: null)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
+    }
+
+    public function testHeadRequestsReturn200(): void
+    {
+        $request = new ServerRequest([], [], '/signup/confirm/1234', 'HEAD');
+        $response = $this->handler->handle($request);
+
+        self::assertInstanceOf(Response::class, $response);
+        self::assertEquals(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+        self::assertEmpty($response->getBody()->getContents());
     }
 
     public function testMissingTokenDisplaysError(): void
