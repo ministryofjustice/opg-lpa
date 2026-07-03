@@ -27,9 +27,7 @@ final class FlashMessengerTest extends TestCase
 
     public function testGetMessagesReturnsArrayOfStringsWhenFlashReturnsArray(): void
     {
-        $flash = $this->getMockBuilder(FlashMessagesInterface::class)
-            ->onlyMethods(["getFlash"])
-            ->getMock();
+        $flash = $this->createMock(FlashMessagesInterface::class);
         $flash->expects($this->once())
             ->method('getFlash')
             ->with('flash_error')
@@ -41,9 +39,7 @@ final class FlashMessengerTest extends TestCase
 
     public function testGetMessagesReturnsEmptyArrayWhenFlashReturnsNull(): void
     {
-        $flash = $this->getMockBuilder(FlashMessagesInterface::class)
-            ->onlyMethods(["getFlash"])
-            ->getMock();
+        $flash = $this->createMock(FlashMessagesInterface::class);
         $flash->expects($this->once())
             ->method('getFlash')
             ->with('flash_error')
@@ -55,9 +51,7 @@ final class FlashMessengerTest extends TestCase
 
     public function testGetMessagesWrapsSingleStringValueInArray(): void
     {
-        $flash = $this->getMockBuilder(FlashMessagesInterface::class)
-            ->onlyMethods(["getFlash"])
-            ->getMock();
+        $flash = $this->createMock(FlashMessagesInterface::class);
         $flash->expects($this->once())
             ->method('getFlash')
             ->with('flash_error')
@@ -69,9 +63,7 @@ final class FlashMessengerTest extends TestCase
 
     public function testUnknownTypeUsesFlashTypeConvention(): void
     {
-        $flash = $this->getMockBuilder(FlashMessagesInterface::class)
-            ->onlyMethods(["getFlash"])
-            ->getMock();
+        $flash = $this->createMock(FlashMessagesInterface::class);
         $flash->expects($this->once())
             ->method('getFlash')
             ->with('flash_custom')

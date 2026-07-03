@@ -24,7 +24,7 @@ class SessionIdentityMiddlewareTest extends TestCase
     {
         $this->authenticationService = $this->getMockBuilder(AuthenticationService::class)
             ->disableOriginalConstructor()
-            ->addMethods(['getStorage'])
+            ->onlyMethods(['getStorage'])
             ->getMock();
     }
 
