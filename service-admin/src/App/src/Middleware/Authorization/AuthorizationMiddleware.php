@@ -83,6 +83,16 @@ class AuthorizationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // Unauthenticated routes bypass JWT session data and RBAC checks entirely.
+        $routeResult = $request->getAttribute(RouteResult::class);
+        if ($routeResult instanceof RouteResult) {
+            $matchedRoute = $routeResult->getMatchedRoute();
+            $options = $matchedRoute !== false ? $matchedRoute->getOptions() : [];
+            if (!empty($options['unauthenticated_route'])) {
+                return $handler->handle($request);
+            }
+        }
+
         $token = $this->getTokenData('token');
 
         $user = null;
