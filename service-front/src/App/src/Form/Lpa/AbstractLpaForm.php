@@ -203,6 +203,12 @@ abstract class AbstractLpaForm extends AbstractForm
     {
         $modelData = [];
 
+        if ($formData === null) {
+            return $modelData;
+        }
+
+        $formData = $this->stripFlatKeysCollidingWithHyphenated($formData);
+
         foreach ($formData as $key => $value) {
             $names = explode('-', $key);
             $m = &$modelData;
@@ -226,6 +232,35 @@ abstract class AbstractLpaForm extends AbstractForm
         }
 
         return $modelData;
+    }
+
+    /**
+     * @param array<array-key, mixed> $formData
+     * @return array<array-key, mixed>
+     */
+    private function stripFlatKeysCollidingWithHyphenated(array $formData): array
+    {
+        $hyphenatedPrefixes = [];
+        foreach (array_keys($formData) as $key) {
+            if (!is_string($key)) {
+                continue;
+            }
+            $dashPos = strpos($key, '-');
+            if ($dashPos > 0) {
+                $hyphenatedPrefixes[substr($key, 0, $dashPos)] = true;
+            }
+        }
+
+        foreach (array_keys($formData) as $key) {
+            if (!is_string($key)) {
+                continue;
+            }
+            if (strpos($key, '-') === false && isset($hyphenatedPrefixes[$key])) {
+                unset($formData[$key]);
+            }
+        }
+
+        return $formData;
     }
 
     public function bind(array|object $object, int $flags = FormInterface::VALUES_NORMALIZED)

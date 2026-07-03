@@ -70,7 +70,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             return new Lpa($result);
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to fetch application', [
-                'userId'    => $this->getUserId(),
                 'lpaId'     => $lpaId,
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
@@ -93,7 +92,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             $result = $this->apiClient->httpGet($target);
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to fetch LPA statuses', [
-                'userId'    => $this->getUserId(),
                 'ids'       => $ids,
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
@@ -120,7 +118,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             );
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to create LPA Application', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -137,7 +134,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             return new Lpa($this->apiClient->httpPatch($target, $data));
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to update application', [
-                'userId'           => $this->getUserId(),
                 'lpaId'            => $lpaId,
                 'status'           => $ex->getStatusCode(),
                 'validationErrors' => $ex->getBody('validation'),
@@ -178,7 +174,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to fetch LPA Application summaries', [
-                'userId'      => $this->getUserId(),
                 'queryParams' => $queryParams,
                 'status'      => $ex->getStatusCode(),
                 'exception'   => $ex,
@@ -260,7 +255,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             );
         } catch (ApiException $ex) {
             $this->getLogger()->warning('Failed to fetch ID of seed LPA document', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -277,7 +271,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             );
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to fetch PDF details', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -298,7 +291,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             );
         } catch (ApiException $ex) {
             $this->getLogger()->warning('Failed to fetch PDF contents', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -327,7 +319,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new primary attorney', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -352,7 +343,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new replacement attorney', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -374,7 +364,6 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
             }
         } catch (ApiException $ex) {
             $this->getLogger()->error('Failed to add a new notified person', [
-                'userId'    => $this->getUserId(),
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);

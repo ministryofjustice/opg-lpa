@@ -62,7 +62,7 @@
 
 {{ when.setOptions({
 	value_options: whenOptions,
-	label_attributes: {'class': 'text block-label'}
+	label_attributes: {'class': 'block-label'}
 }) ? '' }}
 
 {{ when.setLabelOptions({
@@ -75,12 +75,12 @@
 <li id="when-replacement-attorney-step-in-section" class="section current" data-cy="section-current">
     <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
-		<div class="text">
+		<div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 			<p class="govuk-body">The donor can choose when their replacement attorneys step in and in what order.</p>
 			<p class="govuk-body">Once they’ve stepped in, the replacement attorneys will be able to make any decision jointly and severally along with the remaining original attorneys.</p>
 			<p class="govuk-body">Most donors choose for all the replacement attorneys to step in together as soon as 1 of the original attorneys can no longer act.</p>
 			<p class="govuk-body">If the donor would prefer the replacement attorneys to step in later or in a specific order, select 1 of the other 2 options.</p>
-		</div>
+		</div></div>
 	</div>
 
 	{# begin form #}
@@ -93,7 +93,7 @@
 		<div class="govuk-form-group {{ when.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">
 	            <legend class="govuk-visually-hidden">How should the replacement attorneys step in?</legend>
-
+	            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
 	                {{ formElementErrorsV2(when) }}
 
 				<div class="govuk-radios" data-module="govuk-radios">
@@ -106,6 +106,7 @@
 						{{ macros.formGroup(whenDetails) }}
 	                </div>
 				</div>
+	            </div></div>
 	        </fieldset>
 	    </div>
 		<div class="govuk-form-group">
