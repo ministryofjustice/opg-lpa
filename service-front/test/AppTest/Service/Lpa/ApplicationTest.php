@@ -509,7 +509,6 @@ final class ApplicationTest extends MockeryTestCase
         $this->assertSame('12345', $lpa->document->replacementAttorneys[array_key_last($lpa->document->replacementAttorneys)]->number);
     }
 
-    /** @psalm-suppress UndefinedInterfaceMethod */
     public function testAddNotifiedPerson(): void
     {
         $lpa = FixturesData::getPfLpa();
@@ -587,7 +586,6 @@ final class ApplicationTest extends MockeryTestCase
         $this->assertSame('22222', $lpa->document->replacementAttorneys[0]->number);
     }
 
-    /** @psalm-suppress InvalidArgument */
     public function testDeletePrimaryAttorney(): void
     {
         $lpa = FixturesData::getPfLpa();
@@ -600,7 +598,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->primaryAttorneys);
-        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, iterator_to_array($lpa->document->primaryAttorneys))));
+        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, (array)$lpa->document->primaryAttorneys)));
     }
 
     public function testDeleteReplacementAttorney(): void
@@ -615,7 +613,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->replacementAttorneys);
-        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, iterator_to_array($lpa->document->replacementAttorneys))));
+        $this->assertSame([2, 3], array_values(array_map(fn($attorney) => $attorney->id, (array)$lpa->document->replacementAttorneys)));
     }
 
     public function testSetWhoAreYou(): void

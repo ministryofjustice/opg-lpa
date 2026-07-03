@@ -362,8 +362,7 @@ class ActorReuseDetailsServiceTest extends TestCase
 
     public function testGetSeedLpaActorDetailsReturnsEmptyArrayWithoutSeed(): void
     {
-        $lpa = FixturesData::getPfLpa();
-        $lpa->setSeed(null);
+        $lpa = FixturesData::getPfLpa(); // seed defaults to null in fixture
 
         $method = new ReflectionMethod($this->service, 'getSeedLpaActorDetails');
 
