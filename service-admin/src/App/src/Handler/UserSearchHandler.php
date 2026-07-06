@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\UserSearch;
+use App\RequestAttributes;
 use App\Service\User\UserService;
-use App\Handler\Traits\JwtTrait;
 use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,8 +14,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class UserSearchHandler extends AbstractHandler
 {
-    use JwtTrait;
-
     public function __construct(private readonly UserService $userService)
     {
     }
@@ -23,7 +21,7 @@ class UserSearchHandler extends AbstractHandler
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserSearch([
-            'csrf' => $this->getTokenData('csrf'),
+            'csrf' => $request->getAttribute(RequestAttributes::CSRF_TOKEN),
         ]);
 
         $user = null;
@@ -80,7 +78,7 @@ class UserSearchHandler extends AbstractHandler
                     $user = $result;
 
                     $this->auditLog(
-                        $request->getAttribute('user')->id,
+                        $request->getAttribute(RequestAttributes::USER_EMAIL),
                         'admin.user.search',
                         'Admin viewed user data',
                         ['searched_for' => $input],

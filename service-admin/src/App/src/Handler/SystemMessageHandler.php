@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\SystemMessage;
-use App\Handler\Traits\JwtTrait;
+use App\RequestAttributes;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Cache\Storage\StorageInterface;
@@ -13,8 +13,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class SystemMessageHandler extends AbstractHandler
 {
-    use JwtTrait;
-
     /**
      * @var StorageInterface
      */
@@ -36,7 +34,7 @@ class SystemMessageHandler extends AbstractHandler
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new SystemMessage([
-            'csrf' => $this->getTokenData('csrf'),
+            'csrf' => $request->getAttribute(RequestAttributes::CSRF_TOKEN),
         ]);
 
         if ($request->getMethod() == 'POST') {
@@ -58,7 +56,7 @@ class SystemMessageHandler extends AbstractHandler
                 $confirmMessage = 'System message removed';
 
                 $this->auditLog(
-                    $request->getAttribute('user')->id,
+                    $request->getAttribute(RequestAttributes::USER_EMAIL),
                     'admin.system_message.removed',
                     'Admin removed system message',
                 );
@@ -67,7 +65,7 @@ class SystemMessageHandler extends AbstractHandler
                 $confirmMessage = 'System message set';
 
                 $this->auditLog(
-                    $request->getAttribute('user')->id,
+                    $request->getAttribute(RequestAttributes::USER_EMAIL),
                     'admin.system_message.set',
                     'Admin set system message',
                     ['message_content' => $newMessage],
