@@ -62,7 +62,6 @@ class ConfigProvider
             'invokables' => [
                 //  Handlers
                 Handler\HomeHandler::class => Handler\HomeHandler::class,
-                Handler\SignOutHandler::class => Handler\SignOutHandler::class,
 
                 //  Middleware
                 Middleware\Session\CsrfMiddleware::class => Middleware\Session\CsrfMiddleware::class,
@@ -73,6 +72,7 @@ class ConfigProvider
                 //  Handlers
                 Handler\FeedbackHandler::class => Handler\FeedbackHandlerFactory::class,
                 Handler\SignInHandler::class => Handler\SignInHandlerFactory::class,
+                Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
                 Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
                 Handler\UserSearchHandler::class => Handler\UserSearchHandlerFactory::class,
                 Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
