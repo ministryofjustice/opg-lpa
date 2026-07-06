@@ -171,7 +171,7 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
-    screenshotOnRunFailure: false,
+    screenshotOnRunFailure: true,
     expose: {
       mezzio: false,
       updateBaseline: false,
