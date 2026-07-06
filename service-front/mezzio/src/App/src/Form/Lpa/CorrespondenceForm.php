@@ -18,19 +18,22 @@ class CorrespondenceForm extends AbstractMainFlowForm
     protected $formElements = [
         'contactInWelsh' => [
             'type'     => 'Radio',
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'attributes' => [
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
             'required' => true,
             'options'  => [
                 'value_options' => [
                     'english' => [
                         'value' => '0',
                         'label' => 'English',
-                        'label_attributes' => ['class' => 'block-label'],
+                        'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
                     'welsh' => [
                         'value' => '1',
                         'label' => 'Cymraeg',
-                        'label_attributes' => ['class' => 'block-label'],
+                        'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
                 ],
             ],

@@ -53,43 +53,43 @@
 
 {{ title.setAttributes({
     id: 'name-title',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-title'
 }) ? '' }}
 
 {{ firstname.setAttributes({
     id: 'name-first',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-first'
 }) ? '' }}
 
 {{ lastname.setAttributes({
     id: 'name-last',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'name-last'
 }) ? '' }}
 
 {{ address1.setAttributes({
     id: 'address-address1',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address1'
 }) ? ''}}
 
 {{ address2.setAttributes({
     id: 'address-address2',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address2'
 }) ? ''}}
 
 {{ address3.setAttributes({
     id: 'address-address3',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-address3'
 }) ? ''}}
 
 {{ postcode.setAttributes({
     id: 'address-postcode',
-    class: 'form-control',
+    class: 'govuk-input',
     'data-cy': 'address-postcode'
 }) ? ''}}
 
@@ -126,7 +126,7 @@
 
     <h2 class="govuk-heading-m popup-exclude">What is the person's name?</h2>
 
-    <fieldset>
+    <fieldset class="govuk-fieldset">
         <legend class="govuk-visually-hidden">Add person's name</legend>
 
         {{ macros.formGroup(title) }}
@@ -137,7 +137,7 @@
 
     <h2 class="govuk-heading-m popup-exclude">What is the person's address?</h2>
 
-    <fieldset class="postcodelookup">
+    <fieldset class="postcodelookup govuk-fieldset">
         <legend class="govuk-visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
             {{ macros.formGroup(address1) }}

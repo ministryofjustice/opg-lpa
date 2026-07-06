@@ -114,6 +114,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['donor']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who',
             'data-cy' => 'who',
             'value'   => $whoValueOptions['donor']['value'],
@@ -126,6 +127,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['friend-or-family']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-friend-or-family',
             'data-cy' => 'who-friend-or-family',
             'value'   => $whoValueOptions['friendOrFamily']['value'],
@@ -137,6 +139,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['finance-professional']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-finance-professional',
             'data-cy' => 'who-finance-professional',
             'value'   => $whoValueOptions['financeProfessional']['value'],
@@ -148,6 +151,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['legal-professional']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-legal-professional',
             'data-cy' => 'who-legal-professional',
             'value'   => $whoValueOptions['legalProfessional']['value'],
@@ -159,6 +163,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['estate-planning-professional']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-estate-planning-professional',
             'data-cy' => 'who-estate-planning-professional',
             'value'   => $whoValueOptions['estatePlanningProfessional']['value'],
@@ -170,6 +175,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['digital-partner']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-digital-partner',
             'data-cy' => 'who-digital-partner',
             'value'   => $whoValueOptions['digitalPartner']['value'],
@@ -181,6 +187,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['charity']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-charity',
             'data-cy' => 'who-charity',
             'value'   => $whoValueOptions['charity']['value'],
@@ -192,6 +199,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['organisation']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-organisation',
             'data-cy' => 'who-organisation',
             'value'   => $whoValueOptions['organisation']['value'],
@@ -203,6 +211,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['other']->setAttributes([
             'type'             => 'radio',
+            'class'            => 'govuk-radios__input',
             'id'               => 'who-other',
             'data-cy'          => 'who-other',
             'data-aria-controls' => 'other-input',
@@ -215,6 +224,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
         ]);
         $whoOptions['notSaid']->setAttributes([
             'type'    => 'radio',
+            'class'   => 'govuk-radios__input',
             'id'      => 'who-notSaid',
             'data-cy' => 'who-notSaid',
             'value'   => $whoValueOptions['notSaid']['value'],

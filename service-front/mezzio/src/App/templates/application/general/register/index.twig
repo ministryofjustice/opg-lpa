@@ -48,6 +48,7 @@
 
 {{ terms.setAttributes({
     id: 'terms',
+    class: 'govuk-checkboxes__input',
     "data-cy": 'signup-terms'
 }) ? ''}}
 
@@ -118,12 +119,14 @@
                 <p class="govuk-body">LPAs are governed by the laws of England and Wales and can only be made by people with mental capacity aged 18 or older.</p>
             </div>
 
-            <div class="multiple-choice">
-                {{ formElement(terms) }}
-                <label class="block-label" for="{{ terms.getAttribute('id') }}">
-                    I agree to the <a class="govuk-link" href="/terms" rel="noopener noreferrer" target="_blank">terms of use (opens in new tab)</a>
-                    {{ formElementErrorsV2(terms) }}
-                </label>
+            <div class="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                    {{ formElement(terms) }}
+                    <label class="govuk-label govuk-checkboxes__label" for="{{ terms.getAttribute('id') }}">
+                        I agree to the <a class="govuk-link" href="/terms" rel="noopener noreferrer" target="_blank">terms of use (opens in new tab)</a>
+                        {{ formElementErrorsV2(terms) }}
+                    </label>
+                </div>
             </div>
         </fieldset>
     </div>

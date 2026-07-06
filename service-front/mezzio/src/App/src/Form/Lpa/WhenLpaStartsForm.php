@@ -16,19 +16,22 @@ class WhenLpaStartsForm extends AbstractMainFlowForm
         'when' => [
             'type'     => 'Laminas\Form\Element\Radio',
             'required' => true,
-            'attributes' => ['div-attributes' => ['class' => 'multiple-choice']],
+            'attributes' => [
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
             'options'  => [
                 'value_options' => [
                     'now' => [
                         'id'    => 'when',
                         'value' => 'now',
                         'label' => 'as soon as it\'s registered (with the donor\'s consent)',
-                        'label_attributes' => ['class' => 'block-label'],
+                        'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
                     'no-capacity' => [
                         'value' => 'no-capacity',
                         'label' => 'only if the donor does not have mental capacity',
-                        'label_attributes' => ['class' => 'block-label'],
+                        'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
                 ],
             ],
