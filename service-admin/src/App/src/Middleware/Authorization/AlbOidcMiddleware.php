@@ -46,8 +46,7 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
         $claims = [];
 
         try {
-            $keys = JWK::parseKeySet($this->cognitoClient->fetchJwks());
-            $claims = (array) JWT::decode($token, $keys);
+            $claims = $this->decodeToken($token);
         } catch (ExpiredException $e) {
             $this->getLogger()->warning('ALB OIDC token expired', ['exception' => $e]);
         } catch (SignatureInvalidException $e) {
@@ -68,6 +67,28 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
+    }
+
+    /**
+     * Decodes the JWT using cached JWKS. On an unknown-key failure, invalidates
+     * the cache and retries once to handle key rotation without a TTL-length outage.
+     *
+     * @return array<string, mixed>
+     */
+    private function decodeToken(string $token): array
+    {
+        try {
+            $keys = JWK::parseKeySet($this->cognitoClient->fetchJwks());
+            return (array) JWT::decode($token, $keys);
+        } catch (\UnexpectedValueException $e) {
+            // "Kid" not found in JWKS — likely a key rotation. Refresh and retry once.
+            if (str_contains($e->getMessage(), 'kid')) {
+                $this->getLogger()->info('JWKS kid not found, refreshing cache after possible key rotation');
+                $keys = JWK::parseKeySet($this->cognitoClient->fetchJwks(forceRefresh: true));
+                return (array) JWT::decode($token, $keys);
+            }
+            throw $e;
+        }
     }
 
     private function validateClaims(array $claims): bool

@@ -23,6 +23,8 @@ class AlbOidcMiddlewareFactory
             }
         }
 
+        // Cache JWKS for 1 hour — keys rotate infrequently. APCu is shared across
+        // all PHP-FPM workers on the same host, so only one outbound call is made per TTL.
         return new AlbOidcMiddleware(
             new CognitoClient(new Client(), $cognitoConfig['base_url']),
             $cognitoConfig['issuer'],

@@ -14,7 +14,7 @@ RUN apk update && apk add --upgrade expat
 RUN apk add --no-cache icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
     && docker-php-ext-install intl \
-    && install-php-extensions gmp \
+    && install-php-extensions gmp apcu \
     && rm /usr/bin/install-php-extensions
 
 # Install composer dependencies
