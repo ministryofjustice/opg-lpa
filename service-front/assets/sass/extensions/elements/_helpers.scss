@@ -30,12 +30,6 @@ main {
     @include govuk-font(19);
 }
 
-// govuk-elements-sass/_govuk-template-base.scss set strong/b to weight 600.
-// Without it, browsers default to 700 (bolder) for <strong>/<b>.
-b,
-strong {
-    font-weight: 600;
-}
 
 // govuk-elements-sass/_forms.scss set textarea { display: block } to remove
 // the small descender gap below inline elements.
