@@ -138,6 +138,27 @@ final class LegacyCompatExtensionTest extends TestCase
         ];
     }
 
+    public function testFormatLpaIdReturnsEmptyStringWhenIdIsNull(): void
+    {
+        $this->assertSame('', $this->extension->formatLpaId(null));
+    }
+
+    #[\PHPUnit\Framework\Attributes\DataProvider('formatLpaIdProvider')]
+    public function testFormatLpaIdFormatsInteger(int $id, string $expected): void
+    {
+        $this->assertSame($expected, $this->extension->formatLpaId($id));
+    }
+
+    public static function formatLpaIdProvider(): array
+    {
+        return [
+            [0, 'A000 0000 0000'],
+            [1, 'A000 0000 0001'],
+            [123456789, 'A001 2345 6789'],
+            [98765432101, 'A987 6543 2101'],
+        ];
+    }
+
     // -------------------------------------------------------------------------
     // url
     // -------------------------------------------------------------------------

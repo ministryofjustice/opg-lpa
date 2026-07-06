@@ -139,8 +139,12 @@ class LegacyCompatExtension extends AbstractExtension
         return $number . 'th';
     }
 
-    public function formatLpaId(int $id): string
+    public function formatLpaId(?int $id): string
     {
+        if ($id === null) {
+            return '';
+        }
+
         return Formatter::id($id);
     }
 
