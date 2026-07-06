@@ -69,13 +69,14 @@
     {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-        <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="govuk-form-group">
-            <summary data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" role="button" data-cy="add-extra-preferences" aria-expanded="false">Add extra preferences or instructions for the attorneys? (optional)</summary>
-            <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-                <div class="govuk-form-group flush--bottom">
+        <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary" data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" data-cy="add-extra-preferences">
+                <span class="govuk-details__summary-text">Add extra preferences or instructions for the attorneys? (optional)</span>
+            </summary>
+            <div class="govuk-details__text">
+                <div class="govuk-form-group">
                     <p class="govuk-body">If the donor would like to add anything here, please <a class="govuk-link js-guidance" href="/guide#topic-preferences-and-instructions" data-analytics-click="page:link:help: read our help topic on preferences and instructions">read our help topic on preferences and instructions</a> first. It contains useful examples and can help avoid mistakes.</p>
                 </div>
-            </div></div>
                 <fieldset>
                     <legend class="govuk-visually-hidden">Preferences and instructions</legend>
                     <div class="govuk-form-group govuk-!-width-one-half {{ preferences.getMessages|length >0 ? 'govuk-form-group--error'}}">
@@ -86,7 +87,7 @@
                         </label>
                         {{ formElement(preferences) }}
                     </div>
-                    <div class="govuk-form-group govuk-!-width-one-half {{ instructions.getMessages|length >0 ? 'govuk-form-group--error'}} flush--bottom">
+                    <div class="govuk-form-group govuk-!-width-one-half {{ instructions.getMessages|length >0 ? 'govuk-form-group--error'}}">
                         {{ formElementErrorsV2(instructions) }}
                         <label class="govuk-label" for="{{ instructions.getAttribute('id') }}">
                             {{ instructions.getOption('label') }}<br>
@@ -95,6 +96,7 @@
                         {{ formElement(instructions) }}
                     </div>
                 </fieldset>
+            </div>
         </details>
 
         {{ formElement(form.get('save')) }}

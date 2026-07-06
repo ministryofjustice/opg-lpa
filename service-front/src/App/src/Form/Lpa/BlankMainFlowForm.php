@@ -17,7 +17,7 @@ class BlankMainFlowForm extends AbstractMainFlowForm
             'type'       => 'Submit',
             'attributes' => [
                 'value' => 'Save and continue',
-                'class' => 'button',
+                'class' => 'govuk-button',
             ],
         ]);
 
