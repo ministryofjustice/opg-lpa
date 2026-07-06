@@ -5,15 +5,13 @@ declare(strict_types=1);
 namespace App\Middleware\Authorization;
 
 use App\RequestAttributes;
+use App\Service\Cognito\Client as CognitoClient;
 use Exception;
-use Fig\Http\Message\RequestMethodInterface;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
-use GuzzleHttp\Psr7\Request;
 use MakeShared\Logging\LoggerTrait;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -28,8 +26,7 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
     public const string AWS_ALB_OIDC_COGNITO_HEADER = 'X-Amzn-Oidc-Data';
 
     public function __construct(
-        private readonly ClientInterface $httpClient,
-        private readonly string $jwksUri,
+        private readonly CognitoClient $cognitoClient,
         private readonly string $issuer,
         private readonly string $clientId,
     ) {
@@ -46,24 +43,10 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
             throw new Exception('Missing OIDC token in request header');
         }
 
-        try {
-            $response = $this->httpClient->sendRequest(
-                new Request(
-                    RequestMethodInterface::METHOD_GET,
-                    $this->jwksUri,
-                    ['Content-Type' => 'application/json']
-                )
-            );
-        } catch (\Throwable $e) {
-            throw new \RuntimeException('Error communicating with mock Cognito service', 0, $e);
-        }
-
         $claims = [];
 
         try {
-            $keys = JWK::parseKeySet(
-                json_decode($response->getBody()->getContents(), true)
-            );
+            $keys = JWK::parseKeySet($this->cognitoClient->fetchJwks());
             $claims = (array) JWT::decode($token, $keys);
         } catch (ExpiredException $e) {
             $this->getLogger()->warning('ALB OIDC token expired', ['exception' => $e]);
