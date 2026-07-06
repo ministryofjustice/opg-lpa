@@ -8,6 +8,26 @@ Feature: Add a correspondent to a Health and Welfare LPA
         And I create HW LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant
 
     @focus @CleanupFixtures
+    Scenario: Selecting a replacement attorney with no email as correspondent does not 500 (LPAL-regression-2)
+        When I log in as appropriate test user
+        And I visit the correspondent page for the test fixture lpa
+        Then I am taken to the correspondent page
+        And I can find "change-correspondent" with data-inited
+
+        When I click "change-correspondent"
+        Then I can find "form-reuse-details"
+
+        When I click the option labelled with "Isobel Ward (replacement attorney)" in the reuse popup
+        And I click "continue"
+
+        Then I cannot find "form-reuse-details"
+        And I see "Isobel Ward" in the page text
+
+        When I check "contactByPost"
+        And I click "save"
+        Then I am taken to the who are you page
+
+    @focus @CleanupFixtures
     Scenario: Add a correspondent
         When I log in as appropriate test user
         And I visit the correspondent page for the test fixture lpa

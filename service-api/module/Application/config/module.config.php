@@ -6,6 +6,7 @@ use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Lmc\Rbac\Role\InMemoryRoleProvider;
 use MakeShared\Factories\ListenerAbstractFactory;
+use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
@@ -42,7 +43,7 @@ return [
                     'route' => '/ping/elb',
                     'defaults' => [
                         'controller' => PipeSpec::class,
-                        'middleware' => Handler\ELBPingHandler::class,
+                        'middleware' => PingHandlerElb::class,
                     ],
                 ],
             ],

@@ -19,7 +19,8 @@ class TypeForm extends AbstractMainFlowForm
             'error_message' => 'cannot-be-empty',
             'attributes'    => [
                 'id'             => 'type',
-                'div-attributes' => ['class' => 'multiple-choice'],
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
             ],
             'options'       => [
                 'value_options' => [
