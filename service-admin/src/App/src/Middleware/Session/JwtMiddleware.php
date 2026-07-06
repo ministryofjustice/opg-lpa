@@ -45,6 +45,7 @@ use Exception;
 use Firebase\JWT\Key;
 use Firebase\JWT\JWT;
 use MakeShared\Logging\LoggerTrait;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -100,6 +101,16 @@ final class JwtMiddleware implements MiddlewareInterface, LoggerAwareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        // Unauthenticated routes (e.g. /ping/elb) bypass JWT and HTTPS enforcement entirely.
+        $routeResult = $request->getAttribute(RouteResult::class);
+        if ($routeResult instanceof RouteResult) {
+            $matchedRoute = $routeResult->getMatchedRoute();
+            $options = $matchedRoute !== false ? $matchedRoute->getOptions() : [];
+            if (!empty($options['unauthenticated_route'])) {
+                return $handler->handle($request);
+            }
+        }
+
         $scheme = $request->getUri()->getScheme();
 
         /* Only HTTPS is allowed */

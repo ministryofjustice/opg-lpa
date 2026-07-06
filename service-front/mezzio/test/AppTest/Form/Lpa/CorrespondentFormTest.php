@@ -110,4 +110,55 @@ final class CorrespondentFormTest extends TestCase
         $this->assertTrue($this->form->has('email-address'));
         $this->assertTrue($this->form->has('phone-number'));
     }
+
+    public function testIsValidHandlesReuseDataWithNullNestedFields(): void
+    {
+        $reuseData = [
+            'who'              => Correspondence::WHO_OTHER,
+            'name-title'       => 'Mr',
+            'name-first'       => 'Bob',
+            'name-last'        => 'Smith',
+            'address-address1' => '1 High Street',
+            'address-address2' => '',
+            'address-address3' => '',
+            'address-postcode' => 'AB1 2CD',
+            'email'            => null,
+            'phone'            => null,
+        ];
+
+        $this->form->bind($reuseData);
+
+        $this->form->isValid();
+
+        $modelData = $this->form->getModelDataFromValidatedForm();
+
+        $this->assertIsArray($modelData);
+        $this->assertSame('Bob', $modelData['name']['first'] ?? null);
+        $this->assertSame('Smith', $modelData['name']['last'] ?? null);
+        $this->assertSame('1 High Street', $modelData['address']['address1'] ?? null);
+    }
+
+    public function testIsValidPreservesNestedValueWhenFlatCollisionExists(): void
+    {
+        $reuseData = [
+            'who'              => Correspondence::WHO_OTHER,
+            'name-title'       => 'Mr',
+            'name-first'       => 'Bob',
+            'name-last'        => 'Smith',
+            'address-address1' => '1 High Street',
+            'address-address2' => '',
+            'address-address3' => '',
+            'address-postcode' => 'AB1 2CD',
+            'email-address'    => 'bob@example.com',
+            'email'            => null,
+        ];
+
+        $this->form->bind($reuseData);
+        $this->form->isValid();
+
+        $modelData = $this->form->getModelDataFromValidatedForm();
+
+        $this->assertIsArray($modelData);
+        $this->assertSame('bob@example.com', $modelData['email']['address'] ?? null);
+    }
 }
