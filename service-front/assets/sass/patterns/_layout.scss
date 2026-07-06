@@ -1,15 +1,5 @@
 // =======================================================
 // LAYOUT
-
-// Width constraint for <main id="content"> is now provided by adding the
-// govuk-width-container class directly to the element in layout.twig,
-// which also gives us env(safe-area-inset-*) support for free.
-//
-// These two extra rules cannot come from govuk-width-container:
-//   1. padding-bottom — restores the spacing above the footer that
-//      govuk-elements-sass used to apply; govuk-width-container has no padding.
-//   2. outline: none — suppresses the focus ring when the skip link sends
-//      programmatic focus to <main>; required for accessibility.
 // scss-lint:disable IdSelector
 #content {
     // Restore the bottom padding that govuk-elements-sass/_layout.scss applied.
