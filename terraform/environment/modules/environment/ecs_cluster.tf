@@ -4,7 +4,7 @@ resource "aws_ecs_cluster" "online-lpa" {
 
   setting {
     name  = "containerInsights"
-    value = "enabled"
+    value = "enhanced"
   }
 
   depends_on = [aws_iam_role_policy.execution_role]

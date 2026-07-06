@@ -602,7 +602,7 @@ class Application implements ApiClientAwareInterface, LoggerAwareInterface
         );
 
         if (is_array($result)) {
-            $lpa->document->whoIsRegistering = $result['whoIsRegistering'];
+            $lpa->document->whoIsRegistering = $result['whoIsRegistering'] ?? null;
             return true;
         }
 
