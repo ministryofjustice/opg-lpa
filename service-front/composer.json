@@ -10,7 +10,7 @@
     ],
     "homepage": "https://github.com/ministryofjustice/opg-lpa",
     "require": {
-        "php": "8.4.*",
+        "php": "8.5.*",
         "ext-redis": "*",
         "alphagov/notifications-php-client": "^7.0.0",
         "aws/aws-sdk-php": "^3.204.5",
