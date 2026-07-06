@@ -27,7 +27,8 @@ class FeedbackForm extends AbstractForm
             'type'    => 'Laminas\Form\Element\Radio',
             'attributes' => [
                 'id'             => 'rating',
-                'div-attributes' => ['class' => 'multiple-choice'],
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
             ],
             'options' => [
                 'value_options' => [
