@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware\ViewData;
 
+use App\RequestAttributes;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
@@ -21,10 +22,10 @@ class ViewDataMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $user = $request->getAttribute('user');
+        $userEmail = $request->getAttribute(RequestAttributes::USER_EMAIL);
 
         $this->renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'dockerTag', $this->dockerTag);
-        $this->renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'user', $user);
+        $this->renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'userEmail', $userEmail);
         $this->renderer->addDefaultParam(TemplateRendererInterface::TEMPLATE_ALL, 'currentPath', $request->getUri()->getPath());
 
         $flashOutput = [];

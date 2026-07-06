@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\UserFind;
+use App\RequestAttributes;
 use App\Service\User\UserService;
-use App\Handler\Traits\JwtTrait;
 use Fig\Http\Message\RequestMethodInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -14,8 +14,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 class UserFindHandler extends AbstractHandler
 {
-    use JwtTrait;
-
     /**
      * @var int
      */
@@ -42,7 +40,7 @@ class UserFindHandler extends AbstractHandler
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new UserFind([
-            'csrf' => $this->getTokenData('csrf'),
+            'csrf' => $request->getAttribute(RequestAttributes::CSRF_TOKEN),
         ]);
 
         $limit = self::$LIMIT;
@@ -118,7 +116,7 @@ class UserFindHandler extends AbstractHandler
                 $users = array_slice($result, 0, $limit);
 
                 $this->auditLog(
-                    $request->getAttribute('user')->id,
+                    $request->getAttribute(RequestAttributes::USER_EMAIL),
                     'admin.user.find',
                     'Admin searched users',
                     [

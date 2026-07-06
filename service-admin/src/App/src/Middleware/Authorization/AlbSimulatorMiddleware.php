@@ -33,7 +33,7 @@ class AlbSimulatorMiddleware implements MiddlewareInterface
             $response = $this->httpClient->sendRequest(
                 new Request(
                     RequestMethodInterface::METHOD_POST,
-                    $this->mockCognitoUrl,
+                    $this->mockCognitoUrl . '/test/token',
                     ['Content-Type' => 'application/json'],
                     json_encode(['email' => $this->devEmail])
                 )

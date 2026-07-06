@@ -83,9 +83,7 @@ class ConfigProvider
                 },
 
                 //  Middleware
-                Middleware\Session\JwtMiddleware::class => Middleware\Session\JwtMiddlewareFactory::class,
                 Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
-                Middleware\Session\SessionMiddleware::class => Middleware\Session\SessionMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
                 LoggerInterface::class => LoggerFactory::class,
                 RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,

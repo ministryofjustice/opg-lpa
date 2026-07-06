@@ -240,6 +240,7 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
       OPG_LPA_AUTH_LOG_SALT: "a-dummy-salt-for-auth-logs"
+      OPG_LPA_ADMIN_SERVICE_SECRET: "test-admin-service-secret"
 
       # Fake key; deliberately committed
       OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
@@ -381,6 +382,7 @@ services:
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
+      OPG_LPA_ADMIN_SERVICE_SECRET: "test-admin-service-secret"
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:
