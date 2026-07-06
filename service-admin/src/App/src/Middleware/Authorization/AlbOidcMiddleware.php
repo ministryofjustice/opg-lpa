@@ -50,7 +50,7 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $response = $this->httpClient->sendRequest(
                 new Request(
                     RequestMethodInterface::METHOD_GET,
-                    $this->jwksUri . '/.well-known/jwks',
+                    $this->jwksUri,
                     ['Content-Type' => 'application/json']
                 )
             );

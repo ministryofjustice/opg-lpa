@@ -83,6 +83,8 @@ class ConfigProvider
                 },
 
                 //  Middleware
+                Middleware\Authorization\AlbOidcMiddleware::class => Middleware\Authorization\AlbOidcMiddlewareFactory::class,
+                Middleware\Authorization\AlbSimulatorMiddleware::class => Middleware\Authorization\AlbSimulatorMiddlewareFactory::class,
                 Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
                 LoggerInterface::class => LoggerFactory::class,
