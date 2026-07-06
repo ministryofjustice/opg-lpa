@@ -7,6 +7,7 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -32,6 +33,10 @@ class ConfirmDeleteLpaHandler implements RequestHandlerInterface
         $lpaId = $routeResult?->getMatchedParams()['lpa-id'] ?? null;
 
         $lpa = $this->lpaApplicationService->getApplication($lpaId);
+
+        if ($lpa === false) {
+            return new RedirectResponse('/user/dashboard');
+        }
 
         $templateParams = [
             'lpa'  => $lpa,
