@@ -6,19 +6,24 @@ namespace App\Middleware\Authorization;
 
 use GuzzleHttp\Client;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 class AlbSimulatorMiddlewareFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): AlbSimulatorMiddleware
     {
-        $config = $container->get('config');
+        $cognitoConfig = $container->get('config')['cognito'] ?? [];
 
-        $httpClient = new Client();
+        if (empty($cognitoConfig['mock_url'])) {
+            throw new RuntimeException(
+                'Missing required Cognito config key "mock_url" — check COGNITO_MOCK_URL env var'
+            );
+        }
 
         return new AlbSimulatorMiddleware(
-            $httpClient,
-            mockCognitoUrl: $config['cognito']['mock_url'],  // e.g. http://mock-cognito:8080
-            devEmail:        $config['cognito']['dev_email'] ?? 'dev-admin@local',
+            new Client(),
+            mockCognitoUrl: $cognitoConfig['mock_url'],
+            devEmail:        $cognitoConfig['dev_email'] ?? 'dev-admin@local',
         );
     }
 }

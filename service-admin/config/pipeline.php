@@ -49,7 +49,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(ImplicitOptionsMiddleware::class);
     $app->pipe(MethodNotAllowedMiddleware::class);
 
-    if (getenv('APP_ENV') === 'dev') {
+    if (getenv('APP_ENV') === 'local') {
         $app->pipe(Middleware\Authorization\AlbSimulatorMiddleware::class);
     }
 

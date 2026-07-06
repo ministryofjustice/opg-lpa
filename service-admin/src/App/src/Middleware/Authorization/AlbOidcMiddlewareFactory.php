@@ -6,18 +6,25 @@ namespace App\Middleware\Authorization;
 
 use GuzzleHttp\Client;
 use Psr\Container\ContainerInterface;
+use RuntimeException;
 
 class AlbOidcMiddlewareFactory
 {
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): AlbOidcMiddleware
     {
-        $cognitoConfig = $container->get('config')['cognito'];
+        $cognitoConfig = $container->get('config')['cognito'] ?? [];
 
-        $httpClient = new Client();
+        foreach (['jwks_uri', 'issuer', 'client_id'] as $key) {
+            if (empty($cognitoConfig[$key])) {
+                throw new RuntimeException(
+                    sprintf('Missing required Cognito config key "%s" — check COGNITO_%s env var', $key, strtoupper($key))
+                );
+            }
+        }
 
         return new AlbOidcMiddleware(
-            $httpClient,
-            $cognitoConfig['base_url'],
+            new Client(),
+            $cognitoConfig['jwks_uri'],
             $cognitoConfig['issuer'],
             $cognitoConfig['client_id'],
         );
