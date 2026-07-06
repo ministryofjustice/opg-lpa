@@ -21,7 +21,6 @@
 
     <link href="{{ '/assets/v2/css/application.css' | asset_path({ 'minify':true }) }}" media="screen" rel="stylesheet" type="text/css" />
 
-    <link href="{{ '/assets/v2/css/govuk-template-print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
 
     <!-- LPA Print styles -->
     <link href="{{ '/assets/v2/css/print.css' | asset_path({ 'minify':true }) }}" media="print" rel="stylesheet" type="text/css" />
@@ -96,7 +95,7 @@
     </div>
 </header>
 
-<main id="content" role="main">
+<main id="content" class="govuk-width-container" role="main">
     <a name="main-content"></a>
     {{ renderNavigation(currentRouteName|default('')) }}
 

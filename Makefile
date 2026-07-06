@@ -141,7 +141,6 @@ dc-build-clean:
 	docker rmi gateway || true; \
 	docker rmi mocksirius || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
-	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	rm -fr ./service-pdf/vendor; \
@@ -164,7 +163,6 @@ hard-reset-front:
 	@docker system prune -f --volumes; \
 	docker rmi lpa-front-app || true; \
 	rm -fr ./service-front/node_modules/parse-json/vendor; \
-	rm -fr ./service-front/node_modules/govuk_frontend_toolkit/javascripts/vendor; \
 	rm -fr ./service-front/public/assets/v2/js/vendor; \
 	rm -fr ./service-front/vendor; \
 	docker compose build --no-cache front-app
@@ -270,7 +268,7 @@ python-api-venv:
 
 .PHONY: cypress-open
 cypress-open: npm-install python-api-venv
-	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
+	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7004" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
 		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
 
