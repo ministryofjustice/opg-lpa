@@ -39,13 +39,9 @@ class AuthorizationMiddleware implements MiddlewareInterface
     {
         $claims = $request->getAttribute(RequestAttributes::OIDC_CLAIMS);
 
-        if (is_null($claims)) {
-            throw new Exception('Access forbidden', StatusCodeInterface::STATUS_FORBIDDEN);
-        }
-
         $roles = ['guest'];
 
-        if (!empty($claims) && !empty($claims['sub']) && !empty($claims['email'])) {
+        if (!empty($claims['sub']) && !empty($claims['email'])) {
             $roles[] = 'authenticated-user';
         }
 
@@ -63,7 +59,7 @@ class AuthorizationMiddleware implements MiddlewareInterface
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
                 // Catch any unauthorized exceptions and trigger a sign out if required
                 try {
-                    return $handler->handle($request->withAttribute(RequestAttributes::USER_EMAIL, $claims['email']));
+                    return $handler->handle($request->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null));
                 } catch (ApiException $ae) {
                     if ($ae->getCode() === StatusCodeInterface::STATUS_UNAUTHORIZED) {
                         return new RedirectResponse($this->urlHelper->generate('sign.out'));
@@ -72,6 +68,12 @@ class AuthorizationMiddleware implements MiddlewareInterface
                     }
                 }
             }
+        }
+
+        // No role grants access. If unauthenticated (no claims), redirect to sign-in.
+        // If authenticated but lacking permission, throw 403.
+        if (empty($claims['sub'])) {
+            return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
 
         throw new Exception('Access forbidden', StatusCodeInterface::STATUS_FORBIDDEN);

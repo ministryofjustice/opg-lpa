@@ -39,8 +39,13 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
     {
         $token = $request->getHeaderLine(self::AWS_ALB_OIDC_COGNITO_HEADER);
 
+        // In production the ALB always injects this header before PHP sees the request.
+        // If it's missing (e.g. local dev with signed-out state), treat as unauthenticated
+        // by passing empty claims — AuthorizationMiddleware will redirect to sign.in.
         if (empty($token)) {
-            throw new Exception('Missing OIDC token in request header');
+            return $handler->handle(
+                $request->withAttribute(RequestAttributes::OIDC_CLAIMS, [])
+            );
         }
 
         $claims = [];
