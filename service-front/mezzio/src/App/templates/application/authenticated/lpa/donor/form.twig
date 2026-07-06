@@ -204,9 +204,11 @@
         {{ macros.formGroup(lastname) }}
 
         <div class="govuk-form-group">
-            <details class="flush--bottom" {{ otherNames.getValue() ? 'open' : '' }}>
-                <summary class="summary" role="button" aria-expanded="false"  data-analytics-click="page:link.reveal:data: Donor known by other names">Is the donor known by any other names?</summary>
-                <div>
+            <details class="govuk-details" data-module="govuk-details" {{ otherNames.getValue() ? 'open' : '' }}>
+                <summary class="govuk-details__summary" data-analytics-click="page:link.reveal:data: Donor known by other names">
+                    <span class="govuk-details__summary-text">Is the donor known by any other names?</span>
+                </summary>
+                <div class="govuk-details__text">
                     <span class="govuk-hint summary-text">
                         {% if lpa.document.type is defined %}
                             {% if lpa.document.type == 'property-and-financial' %}
