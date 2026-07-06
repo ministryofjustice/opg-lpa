@@ -65,10 +65,6 @@ span.govuk-hint {
     }
 }
 
-.form-control {
-    border-radius: 0;
-}
-
 
 .form-group-checkbox {
     width: 100%;
@@ -81,7 +77,8 @@ span.govuk-hint {
 
 .error {
     .form-group-checkbox {
-        .block-label:last-child {
+        .govuk-radios__label:last-child,
+        .govuk-checkboxes__label:last-child {
             margin-bottom: 10px;
         }
     }

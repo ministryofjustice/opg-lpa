@@ -26,7 +26,7 @@
     rows: 10,
     cols: 67,
     maxlength: 2000,
-    class: 'form-control',
+    class: 'govuk-textarea',
     'data-cy': 'how-details'
 }) ? ''}}
 
@@ -69,7 +69,7 @@
 
 {{ how.setOptions({
 	value_options: howValueOptions,
-	label_attributes: {'class': 'block-label'}
+  label_attributes: {'class': 'govuk-label govuk-radios__label'}
 }) ? '' }}
 
 {{ how.setLabelOptions({

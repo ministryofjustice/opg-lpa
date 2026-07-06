@@ -6,7 +6,7 @@
   const moj = window.moj;
 
   moj.Modules.Validation = {
-    selector: '.error-summary[role=alert]',
+    selector: '.govuk-error-summary[role=alert]',
 
     init: function () {
       _.bindAll(this, 'render');
