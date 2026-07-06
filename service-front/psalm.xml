@@ -1,21 +1,23 @@
 <?xml version="1.0"?>
 <psalm
-    errorLevel="4"
-    resolveFromConfigFile="true"
+    cacheDirectory="./.psalm-cache"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
     xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
-    ensureOverrideAttribute="false"
+    errorLevel="4"
+    errorBaseline="psalm-baseline.xml"
+    findUnusedPsalmSuppress="true"
     findUnusedCode="false"
+    findUnusedBaselineEntry="true"
 >
-    <projectFiles>
-        <directory name="module/Application/src" />
-        <ignoreFiles>
-            <directory name="vendor" />
-        </ignoreFiles>
-    </projectFiles>
-
     <issueHandlers>
+        <MissingOverrideAttribute>
+            <errorLevel type="suppress">
+                <directory name="src" />
+                <directory name="test" />
+            </errorLevel>
+        </MissingOverrideAttribute>
+
         <!--
             AbstractData defines properties as protected then adds getters for them. This means
             they're available publicly, but Psalm can't understand that.
@@ -32,4 +34,15 @@
         <UndefinedMagicPropertyAssignment errorLevel="suppress" />
         <UndefinedMagicPropertyFetch errorLevel="suppress" />
     </issueHandlers>
+
+    <projectFiles>
+        <directory name="src"/>
+        <directory name="test"/>
+        <ignoreFiles>
+            <directory name="vendor"/>
+        </ignoreFiles>
+    </projectFiles>
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+    </plugins>
 </psalm>

@@ -170,7 +170,7 @@ Cypress.Commands.add('updateBaseline', (pageName) => {
 
 function takeScreenshot(pageName) {
     const screenshotsDir = Cypress.config('screenshotsFolder');
-    let regressionsDir = screenshotsDir.split('/screenshots')[0] + (Cypress.expose('mezzio') ? '/mezzio-regressions' : '/regressions');
+    let regressionsDir = screenshotsDir.split('/screenshots')[0] + '/regressions';
 
     cy.screenshot(pageName, {
         overwrite: true,
