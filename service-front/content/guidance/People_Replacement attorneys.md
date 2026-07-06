@@ -79,4 +79,3 @@ When there are replacement attorneys, if an attorney dies or can no longer act:
 If the original attorneys are appointed jointly for some decisions, the donor can add instructions to change what happens when an original attorney dies or is unable or unwilling to act.
 
 Find out more and see example instructions on the [how multiple attorneys make decisions](/help/#topic-how-multiple-attorneys-make-decisions) help page.
-

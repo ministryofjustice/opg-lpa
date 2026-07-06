@@ -72,6 +72,3 @@ There’s more information about this on the [life-sustaining treatment](/help/#
 An advance decision is a legally binding written statement. It lets someone say what medical treatment they do not want to have in certain situations. It’s sometimes called a ‘living will’.
 
 If the donor already has an advance decision, and then makes a health and welfare LPA, the LPA might take priority when a decision needs to be made about life-sustaining treatment. There’s more information about this on the [life-sustaining treatment](/help/#topic-life-sustaining-treatment) help page.
-
-
-

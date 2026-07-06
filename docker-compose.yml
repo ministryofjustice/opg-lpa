@@ -84,9 +84,11 @@ services:
     container_name: lpa-front-web
     image: lpa-front-web
     depends_on:
-      - front-app
+      front-app:
+        condition: service_healthy
     volumes:
       - ./service-front/public:/web
+      - ./service-front/docker/web/etc/nginx/templates/default.conf.template:/etc/nginx/templates/default.conf.template:ro
     build:
       context: ./
       dockerfile: service-front/docker/web/Dockerfile
@@ -103,8 +105,13 @@ services:
         ENABLE_XDEBUG: "1"
       dockerfile: service-front/docker/app/Dockerfile
     volumes:
-      - ./service-front:/app
-      - ./tests:/app/tests
+      - ./service-front/config:/app/config
+      - ./service-front/src:/app/src
+      - ./service-front/test:/app/test
+      - ./service-front/phpunit.xml:/app/phpunit.xml
+      - ./service-front/psalm.xml:/app/psalm.xml
+      - ./service-front/phpcs.xml:/app/phpcs.xml
+      - ./service-front/content:/app/content
       - ./shared:/shared
     depends_on:
       dynamodb:
