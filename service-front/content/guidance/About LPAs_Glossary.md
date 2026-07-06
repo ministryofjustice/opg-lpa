@@ -108,4 +108,3 @@ A trust corporation can be an attorney on a property and financial affairs LPA. 
 **Witness**
 
 Witnesses are impartial people who watch the donor, attorneys and any replacement attorneys sign the LPA. The witnesses must also sign the LPA to say they've seen the donor and attorneys sign.
-

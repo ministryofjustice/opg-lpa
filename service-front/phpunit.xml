@@ -1,29 +1,41 @@
-<?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         bootstrap="./module/Application/tests/Bootstrap.php"
-         cacheDirectory="/tmp/.phpunit.cache"
-         colors="true"
-         displayDetailsOnAllIssues="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
-  <coverage>
-    <report>
-      <html outputDirectory="./build/coverage"/>
-    </report>
-  </coverage>
-  <testsuite name="ApplicationTest">
-    <directory>./module/Application/tests/</directory>
-  </testsuite>
-  <php>
-    <ini name="memory_limit" value="512M"/>
-  </php>
-  <source>
-    <include>
-      <directory>./module/Application/src</directory>
-      <!-- next line only required if you want coverage reports for twig templates -->
-      <!--directory suffix=".php">./build/twig-cache</directory-->
-    </include>
-    <exclude>
-      <file>./module/Application/src/Module.php</file>
-    </exclude>
-  </source>
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+    bootstrap="test/bootstrap.php"
+    cacheDirectory="/tmp/.phpunit.cache"
+    displayDetailsOnAllIssues="true"
+    failOnAllIssues="true"
+    colors="true"
+>
+    <testsuites>
+        <testsuite name="default">
+            <directory>test/</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <ini name="memory_limit" value="512M"/>
+    </php>
+
+    <source ignoreIndirectDeprecations="true">
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <exclude>
+            <!-- Interfaces, stubs and pure exception classes: no logic to test -->
+            <directory suffix="Interface.php">src</directory>
+            <directory suffix="Stub.php">src</directory>
+            <directory>src/App/src/Service/ApiClient/Exception</directory>
+            <file>src/App/src/Service/Feedback/FeedbackValidationException.php</file>
+            <directory>src/App/src/Service/Mail/Exception</directory>
+            <directory>src/App/src/Service/Payment/GovPay/Exception</directory>
+        </exclude>
+    </source>
+
+    <coverage>
+        <report>
+            <html outputDirectory="./build/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

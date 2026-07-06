@@ -37,7 +37,6 @@ variable "accounts" {
       log_retention_in_days                  = number
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
-      mezzio_frontend_enabled                = bool
       admin_cognito_auth_enabled             = bool
       database = object({
         cluster_identifier                 = string
