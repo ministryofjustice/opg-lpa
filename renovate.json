@@ -223,21 +223,6 @@
       "prPriority": 4
     },
     {
-      "groupName": "front mezzio minor and patch updates (PHP)",
-      "groupSlug": "front-mezzio-minor-patch-updates-php",
-      "matchDatasources": [
-        "packagist"
-      ],
-      "matchUpdateTypes": [
-        "minor",
-        "patch"
-      ],
-      "matchFileNames": [
-        "service-front/mezzio/composer.json"
-      ],
-      "prPriority": 4
-    },
-    {
       "groupName": "api minor and patch updates (PHP)",
       "groupSlug": "api-minor-patch-updates-php",
       "matchDatasources": [
