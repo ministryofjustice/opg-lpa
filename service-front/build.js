@@ -1,5 +1,5 @@
 import esbuild from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync } from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
 
@@ -173,10 +173,47 @@ async function buildIndividualScripts() {
   }
 }
 
+async function copyGovukFrontendImages() {
+  console.log('Copying govuk-frontend images...');
+
+  // These images are provided by govuk-frontend and should be copied at build
+  // time rather than committed, so they automatically stay in sync when the
+  // govuk-frontend package version is bumped.
+  const srcDir = 'node_modules/govuk-frontend/dist/govuk/assets/images';
+  const destDirs = [
+    'public/assets/v2/images',
+    'public/assets/v2/rebrand/images',
+  ];
+  const images = [
+    'favicon.ico',
+    'favicon.svg',
+    'govuk-crest.svg',
+    'govuk-icon-180.png',
+    'govuk-icon-192.png',
+    'govuk-icon-512.png',
+    'govuk-icon-mask.svg',
+    'govuk-opengraph-image.png',
+  ];
+
+  for (const dest of destDirs) {
+    mkdirSync(dest, { recursive: true });
+    for (const image of images) {
+      copyFileSync(`${srcDir}/${image}`, `${dest}/${image}`);
+    }
+  }
+
+  // The manifest.json is also identical to govuk-frontend's — keep it in sync.
+  copyFileSync(
+    'node_modules/govuk-frontend/dist/govuk/assets/manifest.json',
+    'public/assets/v2/rebrand/manifest.json',
+  );
+
+  console.log(`✓ govuk-frontend images and manifest copied`);
+}
+
 async function copyVendorScripts() {
   console.log('Copying vendor scripts...');
 
-  const { copyFileSync } = await import('fs');
 
   copyFileSync(
     'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
@@ -199,6 +236,7 @@ async function copyVendorScripts() {
     await buildApplication();
     await buildIndividualScripts();
     await copyVendorScripts();
+    await copyGovukFrontendImages();
 
     console.log(hr);
     console.log('✓ Build complete!');
