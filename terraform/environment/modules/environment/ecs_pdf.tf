@@ -5,7 +5,7 @@ resource "aws_ecs_service" "pdf" {
   name                  = "pdf"
   cluster               = aws_ecs_cluster.online-lpa.id
   task_definition       = aws_ecs_task_definition.pdf.arn
-  desired_count         = var.account.autoscaling.pdf.minimum
+  desired_count         = var.environment.autoscaling.pdf.minimum
   launch_type           = "FARGATE"
   platform_version      = "1.4.0"
   propagate_tags        = "TASK_DEFINITION"

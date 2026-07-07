@@ -1,5 +1,5 @@
 
-variable "account" {
+variable "environment" {
   type = object({
     dr_enabled                             = bool
     performance_platform_enabled           = bool
