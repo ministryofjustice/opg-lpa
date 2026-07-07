@@ -66,3 +66,7 @@ data "aws_kms_alias" "application_log_group_encryption_alias" {
 data "aws_kms_alias" "dynamodb_encryption_key" {
   name = "alias/opg-lpa-${var.account_name}-dynamodb-encryption-key"
 }
+
+data "aws_cognito_user_pool" "admin" {
+  user_pool_id = var.admin_cognito.user_pool_id
+}
