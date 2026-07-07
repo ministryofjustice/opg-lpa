@@ -5,7 +5,7 @@ resource "aws_ecs_service" "front" {
   name                               = "front"
   cluster                            = aws_ecs_cluster.online-lpa.id
   task_definition                    = aws_ecs_task_definition.front.arn
-  desired_count                      = var.account.autoscaling.front.minimum
+  desired_count                      = var.environment.autoscaling.front.minimum
   launch_type                        = "FARGATE"
   platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
@@ -263,7 +263,7 @@ locals {
         { name = "AWS_ACCOUNT_TYPE", value = var.account_name },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
-        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.account.telemetry_requests_sampled_fraction },
+        { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region }
       ]
     }

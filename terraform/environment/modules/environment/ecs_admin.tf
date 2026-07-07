@@ -5,7 +5,7 @@ resource "aws_ecs_service" "admin" {
   name                               = "admin"
   cluster                            = aws_ecs_cluster.online-lpa.id
   task_definition                    = aws_ecs_task_definition.admin.arn
-  desired_count                      = var.account.autoscaling.admin.minimum
+  desired_count                      = var.environment.autoscaling.admin.minimum
   launch_type                        = "FARGATE"
   platform_version                   = "1.4.0"
   propagate_tags                     = "TASK_DEFINITION"
