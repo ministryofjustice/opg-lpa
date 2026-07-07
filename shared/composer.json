@@ -23,6 +23,7 @@
         "symfony/validator": "^8.0"
     },
     "require-dev": {
+        "aws/aws-sdk-php": "^3.387",
         "mockery/mockery": "^1.5",
         "phpunit/phpunit": "^9.5.10",
         "vimeo/psalm": "^6.0"

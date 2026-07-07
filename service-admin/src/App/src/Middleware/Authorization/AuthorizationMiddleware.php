@@ -57,7 +57,11 @@ class AuthorizationMiddleware implements MiddlewareInterface
         // Routes marked unauthenticated_route => true bypass RBAC entirely.
         $routeOptions = $matchedRoute->getOptions() ?: [];
         if (($routeOptions['unauthenticated_route'] ?? false) === true) {
-            return $handler->handle($request->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null));
+            return $handler->handle(
+                $request
+                    ->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null)
+                    ->withAttribute(RequestAttributes::USER_ID, $claims['sub'] ?? null)
+            );
         }
 
         //  Check each role to see if the user has access to the route
@@ -65,7 +69,11 @@ class AuthorizationMiddleware implements MiddlewareInterface
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
                 // Catch any unauthorized exceptions and trigger a sign out if required
                 try {
-                    return $handler->handle($request->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null));
+                    return $handler->handle(
+                        $request
+                            ->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null)
+                            ->withAttribute(RequestAttributes::USER_ID, $claims['sub'] ?? null)
+                    );
                 } catch (ApiException $ae) {
                     if ($ae->getCode() === StatusCodeInterface::STATUS_UNAUTHORIZED) {
                         return new RedirectResponse($this->urlHelper->generate('sign.out'));

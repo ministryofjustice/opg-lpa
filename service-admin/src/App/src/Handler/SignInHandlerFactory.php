@@ -17,6 +17,7 @@ class SignInHandlerFactory
      * @param ContainerInterface $container
      * @return RequestHandlerInterface
      */
+    /** @psalm-suppress PossiblyUnusedParam */
     public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         return new SignInHandler();

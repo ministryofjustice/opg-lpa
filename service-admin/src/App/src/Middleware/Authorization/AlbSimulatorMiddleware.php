@@ -18,7 +18,7 @@ class AlbSimulatorMiddleware implements MiddlewareInterface
 
     public function __construct(
         private readonly CognitoClient $cognitoClient,
-        private readonly string $devEmail,
+        #[\SensitiveParameter] private readonly string $devEmail,
     ) {
     }
 

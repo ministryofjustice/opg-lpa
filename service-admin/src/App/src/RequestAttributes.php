@@ -13,6 +13,12 @@ final class RequestAttributes
     public const string USER_EMAIL = 'user_email';
 
     /**
+     * The authenticated admin user's Cognito sub (unique ID), set by AuthorizationMiddleware.
+     * Use this for audit logs — it is a stable UUID, not PII.
+     */
+    public const string USER_ID = 'user_id';
+
+    /**
      * The CSRF token for the current session, set by CsrfMiddleware.
      */
     public const string CSRF_TOKEN = 'csrf_token';
@@ -22,6 +28,7 @@ final class RequestAttributes
      */
     public const string OIDC_CLAIMS = 'oidc_claims';
 
+    /** @psalm-suppress UnusedConstructor */
     private function __construct()
     {
     }

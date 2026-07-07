@@ -93,7 +93,6 @@ class ConfigProvider
                 //  Services
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
-                Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
                 Service\Feedback\FeedbackService::class => Service\Feedback\FeedbackServiceFactory::class,
                 Service\User\UserService::class => Service\User\UserServiceFactory::class,
 

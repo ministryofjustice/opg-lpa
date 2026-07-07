@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "secretsmanager:GetSecretValue",
     ]
     resources = [
-      aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
+      data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
     ]
   }
   statement {
@@ -117,7 +117,7 @@ data "aws_iam_policy_document" "admin_permissions_role" {
       "secretsmanager:GetSecretValue",
     ]
     resources = [
-      aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
+      data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
     ]
   }
   statement {
