@@ -11,36 +11,17 @@ resource "aws_iam_role_policy" "api_permissions_role" {
 */
 data "aws_iam_policy_document" "api_permissions_role" {
   statement {
-    sid = "DynamoDBAccess"
-
+    sid    = "AdminServiceSecretAccess"
     effect = "Allow"
-
     actions = [
-      "dynamodb:BatchGetItem",
-      "dynamodb:BatchWriteItem",
-      "dynamodb:DeleteItem",
-      "dynamodb:DescribeStream",
-      "dynamodb:DescribeTable",
-      "dynamodb:GetItem",
-      "dynamodb:GetRecords",
-      "dynamodb:GetShardIterator",
-      "dynamodb:ListStreams",
-      "dynamodb:ListTables",
-      "dynamodb:PutItem",
-      "dynamodb:Query",
-      "dynamodb:Scan",
-      "dynamodb:UpdateItem",
-      "dynamodb:UpdateTable",
+      "secretsmanager:GetSecretValue",
     ]
-
     resources = [
-      aws_dynamodb_table.lpa-locks.arn,
-      aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
+      aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
     ]
   }
   statement {
-    sid = "APIGatewayAccess"
+    sid = "DynamoDBAccess"
     actions = [
       "execute-api:Invoke",
     ]
@@ -129,6 +110,16 @@ resource "aws_iam_role_policy" "admin_permissions_role" {
   Defines permissions that the application running within the task has.
 */
 data "aws_iam_policy_document" "admin_permissions_role" {
+  statement {
+    sid    = "AdminServiceSecretAccess"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
+    ]
+  }
   statement {
     sid = "DynamoDBAccess"
 

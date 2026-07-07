@@ -67,4 +67,11 @@ awslocal s3api create-bucket \
 --bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET} \
 --create-bucket-configuration LocationConstraint=eu-west-1
 
+echo 'creating Secrets Manager secrets'
+
+awslocal secretsmanager create-secret \
+--name="local/opg-lpa/admin-service-secret" \
+--secret-string="test-admin-service-secret" \
+--region=${REGION}
+
 echo 'localstack initialisation complete'
