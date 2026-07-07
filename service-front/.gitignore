@@ -28,6 +28,14 @@ public/assets/v2/js/application.min.js
 public/assets/v2/js/application.min.js.map
 public/assets/v2/js/opg/
 assets/js/lpa/lpa.templates.js
+# govuk-frontend images and manifest — copied from node_modules at build time
+public/assets/v2/images/favicon.*
+public/assets/v2/images/govuk-crest.svg
+public/assets/v2/images/govuk-icon-*.png
+public/assets/v2/images/govuk-icon-mask.svg
+public/assets/v2/images/govuk-opengraph-image.png
+public/assets/v2/rebrand/images/
+public/assets/v2/rebrand/manifest.json
 local.php.old
 module/Application/tests/coverage/
 venv
