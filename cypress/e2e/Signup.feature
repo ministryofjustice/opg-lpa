@@ -14,7 +14,6 @@ Feature: Signup
     Scenario: Go to the create account page
         Given I visit "/signup"
         Then I should not find links in the page which open in new tabs without notifying me
-        And I see "THIS WILL NEVER MATCH - intentional failure for screenshot upload test" in the page text
 
     Scenario: Sign up with automatically generated test username and password
         Given I sign up standard test user
