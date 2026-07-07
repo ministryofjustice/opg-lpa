@@ -11,7 +11,9 @@ use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
 use Firebase\JWT\SignatureInvalidException;
+use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\Logging\LoggerTrait;
+use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -29,6 +31,7 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
         private readonly CognitoClient $cognitoClient,
         private readonly string $issuer,
         private readonly string $clientId,
+        private readonly UrlHelper $urlHelper,
     ) {
     }
 
@@ -53,15 +56,19 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
         try {
             $claims = $this->decodeToken($token);
         } catch (ExpiredException $e) {
-            $this->getLogger()->warning('ALB OIDC token expired', ['exception' => $e]);
+            $this->getLogger()->warning('ALB OIDC token expired — redirecting to sign-in', ['exception' => $e]);
+            return new RedirectResponse($this->urlHelper->generate('sign.in'));
         } catch (SignatureInvalidException $e) {
-            $this->getLogger()->warning('ALB OIDC token signature invalid', ['exception' => $e]);
+            $this->getLogger()->warning('ALB OIDC token signature invalid — redirecting to sign-in', ['exception' => $e]);
+            return new RedirectResponse($this->urlHelper->generate('sign.in'));
         } catch (\Exception $e) {
-            $this->getLogger()->warning('ALB OIDC token decode failed', ['exception' => $e]);
+            $this->getLogger()->warning('ALB OIDC token decode failed — redirecting to sign-in', ['exception' => $e]);
+            return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
 
         if (!$this->validateClaims($claims)) {
-            $this->getLogger()->warning('ALB OIDC token claims invalid', ['claims' => $claims]);
+            $this->getLogger()->warning('ALB OIDC token claims invalid — redirecting to sign-in', ['claims' => $claims]);
+            return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
 
         return $handler->handle(

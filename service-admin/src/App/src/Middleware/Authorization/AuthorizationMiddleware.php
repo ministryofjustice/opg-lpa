@@ -54,6 +54,12 @@ class AuthorizationMiddleware implements MiddlewareInterface
             return $this->notFoundHandler->handle($request);
         }
 
+        // Routes marked unauthenticated_route => true bypass RBAC entirely.
+        $routeOptions = $matchedRoute->getOptions() ?: [];
+        if (($routeOptions['unauthenticated_route'] ?? false) === true) {
+            return $handler->handle($request->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null));
+        }
+
         //  Check each role to see if the user has access to the route
         foreach ($roles as $role) {
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {

@@ -6,6 +6,7 @@ namespace App\Middleware\Authorization;
 
 use App\Service\Cognito\Client as CognitoClient;
 use GuzzleHttp\Client;
+use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
 
@@ -29,6 +30,7 @@ class AlbOidcMiddlewareFactory
             new CognitoClient(new Client(), $cognitoConfig['base_url']),
             $cognitoConfig['issuer'],
             $cognitoConfig['client_id'],
+            $container->get(UrlHelper::class),
         );
     }
 }
