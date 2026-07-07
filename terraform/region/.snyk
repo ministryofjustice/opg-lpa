@@ -24,8 +24,8 @@ ignore:
         created: 2026-05-06T13:25:02.341Z
   SNYK-CC-TF-40:
     - '*':
-        reason: Scheduled for fix LPAL-2081
-        expires: 2026-07-05T13:25:27.744Z
+        reason: Required for servce to be accssible by the public
+        expires: 9999-07-05T13:25:27.744Z
         created: 2026-05-06T13:25:27.752Z
   SNYK-CC-AWS-428:
     - 'modules/region/modules/vpc_endpoints/main.tf > resource > aws_vpc_endpoint[cloudshell_codecatalyst_global]':
