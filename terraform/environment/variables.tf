@@ -21,7 +21,7 @@ variable "management_role" {
   description = "The default role to use to create resources in the management account"
 }
 
-variable "accounts" {
+variable "environments" {
   type = map(
     object({
       dr_enabled                             = bool

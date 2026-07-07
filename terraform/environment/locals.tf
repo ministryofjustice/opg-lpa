@@ -1,16 +1,17 @@
 locals {
 
   account_name     = lookup(var.account_mapping, terraform.workspace, "development")
-  account          = var.accounts[local.account_name]
-  environment_name = terraform.workspace
+  environment_name = lower(replace(terraform.workspace, "_", "-"))
+  environment      = contains(keys(var.environments), local.environment_name) ? var.environments[local.environment_name] : var.environments["default"]
+  # account          = var.accounts[local.account_name]
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
-  dr_enabled = local.account_name == "development" && local.account.dr_enabled
+  dr_enabled = local.account_name == "development" && local.environment.dr_enabled
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
-    is-production = local.account.is_production
+    is-production = local.environment.is_production
   }
 
   optional_tags = {
