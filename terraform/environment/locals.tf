@@ -1,9 +1,7 @@
 locals {
-
-  account_name     = lookup(var.account_mapping, terraform.workspace, "development")
   environment_name = lower(replace(terraform.workspace, "_", "-"))
   environment      = contains(keys(var.environments), local.environment_name) ? var.environments[local.environment_name] : var.environments["default"]
-  # account          = var.accounts[local.account_name]
+  account_name     = local.environment.account_name
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.environment.dr_enabled
