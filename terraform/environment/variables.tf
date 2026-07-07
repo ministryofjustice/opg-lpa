@@ -4,11 +4,6 @@ variable "pagerduty_token" {
   description = "The Pagerduty API token"
 }
 
-variable "account_mapping" {
-  type        = map(any)
-  description = "The mapping of account names to account IDs"
-}
-
 variable "default_role" {
   default     = "opg-lpa-ci"
   type        = string
@@ -21,13 +16,14 @@ variable "management_role" {
   description = "The default role to use to create resources in the management account"
 }
 
-variable "accounts" {
+variable "environments" {
   type = map(
     object({
       dr_enabled                             = bool
       performance_platform_enabled           = bool
       pagerduty_service_name                 = string
       account_id                             = string
+      account_name                           = string
       is_production                          = string
       sirius_api_gateway_endpoint            = string
       sirius_api_gateway_arn                 = string
