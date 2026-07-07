@@ -1,5 +1,5 @@
 data "pagerduty_service" "pagerduty" {
-  name = var.account.pagerduty_service_name
+  name = var.environment.pagerduty_service_name
 }
 
 data "pagerduty_service" "pagerduty_ops" {
