@@ -20,7 +20,7 @@ use RuntimeException;
  */
 class SecretService
 {
-    private const CACHE_TTL = 300; // 5 minutes — short enough for rotation to take effect
+    private const int CACHE_TTL = 300; // 5 minutes — short enough for rotation to take effect
 
     /**
      * @param string|null $arn      Secrets Manager ARN or name.
@@ -69,7 +69,7 @@ class SecretService
             $config['endpoint'] = $endpoint;
         }
 
-        $client = new SecretsManagerClient($config);
+        $client = static::createClient($config);
 
         $result = $client->getSecretValue(['SecretId' => $arn]);
 
@@ -80,5 +80,15 @@ class SecretService
         }
 
         return $value;
+    }
+
+    /**
+     * Creates a SecretsManagerClient. Extracted to allow overriding in tests.
+     *
+     * @param array<string, mixed> $config
+     */
+    protected static function createClient(array $config): SecretsManagerClient
+    {
+        return new SecretsManagerClient($config);
     }
 }

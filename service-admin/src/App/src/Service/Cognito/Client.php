@@ -34,7 +34,7 @@ class Client
     {
         if (!$forceRefresh && $this->jwksCacheTtl > 0 && function_exists('apcu_fetch')) {
             $cached = apcu_fetch(self::JWKS_CACHE_KEY, $success);
-            if ($success) {
+            if ($success && is_array($cached)) {
                 return $cached;
             }
         }
@@ -64,7 +64,7 @@ class Client
      * Requests a test token from the mock Cognito server for a given email.
      * Used by AlbSimulatorMiddleware in local development only.
      */
-    public function fetchTestToken(string $email): string
+    public function fetchTestToken(#[\SensitiveParameter] string $email): string
     {
         try {
             $response = $this->httpClient->sendRequest(

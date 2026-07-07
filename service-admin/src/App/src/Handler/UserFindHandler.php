@@ -116,7 +116,7 @@ class UserFindHandler extends AbstractHandler
                 $users = array_slice($result, 0, $limit);
 
                 $this->auditLog(
-                    $request->getAttribute(RequestAttributes::USER_EMAIL),
+                    $request->getAttribute(RequestAttributes::USER_ID),
                     'admin.user.find',
                     'Admin searched users',
                     [

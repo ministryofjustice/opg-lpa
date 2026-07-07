@@ -51,8 +51,6 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
             );
         }
 
-        $claims = [];
-
         try {
             $claims = $this->decodeToken($token);
         } catch (ExpiredException $e) {
@@ -87,7 +85,7 @@ class AlbOidcMiddleware implements MiddlewareInterface, LoggerAwareInterface
      *
      * @return array<string, mixed>
      */
-    private function decodeToken(string $token): array
+    private function decodeToken(#[\SensitiveParameter] string $token): array
     {
         try {
             $keys = JWK::parseKeySet($this->cognitoClient->fetchJwks());
