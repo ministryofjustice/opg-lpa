@@ -22,6 +22,35 @@ data "aws_iam_policy_document" "api_permissions_role" {
   }
   statement {
     sid = "DynamoDBAccess"
+
+    effect = "Allow"
+
+    actions = [
+      "dynamodb:BatchGetItem",
+      "dynamodb:BatchWriteItem",
+      "dynamodb:DeleteItem",
+      "dynamodb:DescribeStream",
+      "dynamodb:DescribeTable",
+      "dynamodb:GetItem",
+      "dynamodb:GetRecords",
+      "dynamodb:GetShardIterator",
+      "dynamodb:ListStreams",
+      "dynamodb:ListTables",
+      "dynamodb:PutItem",
+      "dynamodb:Query",
+      "dynamodb:Scan",
+      "dynamodb:UpdateItem",
+      "dynamodb:UpdateTable",
+    ]
+
+    resources = [
+      aws_dynamodb_table.lpa-locks.arn,
+      aws_dynamodb_table.lpa-properties.arn,
+      aws_dynamodb_table.lpa-sessions.arn,
+    ]
+  }
+  statement {
+    sid = "APIGatewayAccess"
     actions = [
       "execute-api:Invoke",
     ]
