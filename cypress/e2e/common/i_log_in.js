@@ -28,12 +28,8 @@ When(`I log in as second seeded user`, () => {
   logInAsSecondSeededUser();
 });
 
-When(`I log in to admin`, () => {
-  logIn(
-    Cypress.env('seeded_email'),
-    Cypress.env('seeded_password'),
-    Cypress.env('adminUrl') + '/sign-in',
-  );
+When(`I log in to admin using SSO`, () => {
+    cy.visitWithChecks(Cypress.env('adminUrl') + '/sign-in');
 });
 
 When(`I log in as standard test user`, () => {
