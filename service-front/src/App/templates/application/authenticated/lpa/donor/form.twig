@@ -176,7 +176,7 @@
 
 <header class="popup-header">
     <i class="icon icon-person"></i>
-    <h2 class="govuk-heading-s popup-header-title" id="dialog-title" data-cy="dialog-title">Donor details</h2>
+    <h2 class="govuk-heading-s govuk-!-margin-top-4 popup-header-title" id="dialog-title" data-cy="dialog-title">Donor details</h2>
 </header>
 
 {{ form.prepare() ? '' }}
@@ -195,7 +195,7 @@
 {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's name?</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">What is the donor's name?</h2>
     <fieldset class="govuk-fieldset">
         <legend class="govuk-visually-hidden">Add donor details</legend>
 
@@ -224,7 +224,7 @@
         </div>
     </fieldset>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's date of birth?</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">What is the donor's date of birth?</h2>
     <div class="govuk-form-group dob-element {{ dob.getMessages|length >0 ? 'govuk-form-group--error'}}">
         <fieldset class="govuk-fieldset" id="{{ dob.getAttribute('name') }}">
             <legend class="govuk-fieldset__legend">
@@ -257,13 +257,13 @@
         </fieldset>
     </div>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's email address?</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">What is the donor's email address?</h2>
     <fieldset class="govuk-fieldset">
         <legend class="govuk-visually-hidden">Email address</legend>
         {{ macros.formGroup(email) }}
     </fieldset>
 
-    <h2 class="govuk-heading-m popup-exclude">What is the donor's address?</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">What is the donor's address?</h2>
     <fieldset class="postcodelookup govuk-fieldset">
         <legend class="govuk-visually-hidden">Address</legend>
         <div class="js-PostcodeLookup__postal-add">
