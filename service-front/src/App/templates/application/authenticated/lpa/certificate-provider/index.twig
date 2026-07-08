@@ -52,7 +52,7 @@
                         <span class="govuk-details__summary-text">Rules on who can and cannot be the certificate provider</span>
                     </summary>
                     <div class="govuk-details__text">
-                        <h2 class="govuk-heading-m">Who can be a certificate provider</h2>
+                        <h2 class="govuk-heading-m govuk-!-margin-top-8">Who can be a certificate provider</h2>
 
                         <p class="govuk-body">The certificate provider must be either:</p>
 
@@ -68,7 +68,7 @@
                             <li>be able to make their own decisions (have ‘mental capacity’)</li>
                         </ul>
 
-                        <h2 class="govuk-heading-m">Who cannot be a certificate provider</h2>
+                        <h2 class="govuk-heading-m govuk-!-margin-top-8">Who cannot be a certificate provider</h2>
 
                         <p class="govuk-body">It’s important that the certificate provider is someone independent.</p>
 
@@ -100,10 +100,10 @@
 
     {% if (lpa.document.certificateProvider) %}
 
-        <h2 class="govuk-heading-m flush--top">The certificate provider</h2>
+        <h2 class="govuk-heading-m govuk-!-margin-top-8 flush--top">The certificate provider</h2>
 
         <div class="person">
-            <h3 class="person-name govuk-heading-s flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
+            <h3 class="person-name govuk-heading-s govuk-!-margin-top-4 flush--ends">{{ lpa.document.certificateProvider.name }}</h3>
             <p class="govuk-body person-address govuk-!-margin-top-0 govuk-!-margin-bottom-0">{{ lpa.document.certificateProvider.address }}</p>
             <ul class="person-actions">
                 <li class="action-item">

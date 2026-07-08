@@ -79,7 +79,7 @@
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
 
-    <h2 class="govuk-heading-m">Email address</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8">Email address</h2>
 
     <fieldset>
         <legend class="govuk-visually-hidden">Email</legend>
@@ -89,7 +89,7 @@
 
     </fieldset>
 
-    <h2 class="govuk-heading-m">Create password</h2>
+    <h2 class="govuk-heading-m govuk-!-margin-top-8">Create password</h2>
 
     <fieldset>
         <legend class="govuk-visually-hidden">Password</legend>
@@ -103,7 +103,7 @@
             </label>
             {{ formElement(password) }}
             <div>
-                <a href="#" class="hidden js-showHidePassword" data-for="password" data-alsoHideConfirm="true">Show password</a>
+                <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password" data-alsoHideConfirm="true">Show password</a>
             </div>
             {{ formElement(skip_confirm_password) }}
         </div>
