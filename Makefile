@@ -277,7 +277,7 @@ cypress-run-spec:
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags:
-	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${TAGS}"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
 .PHONY: cypress-run-stitched-suites
@@ -294,7 +294,7 @@ cypress-run-stitched-suites:
 # plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
 .PHONY: cypress-run-remaining
 cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch
