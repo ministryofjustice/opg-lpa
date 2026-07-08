@@ -38,7 +38,7 @@
 {% if shortList %}
 {# With less than 6 LPAs, no search is displayed #}
     {% if lpaTotalCount == 0 %}
-        <h2 class="govuk-heading-l flush--ends">You have no LPAs</h2>
+        <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">You have no LPAs</h2>
     {% endif %}
 {% else %}
 {# Over 6 LPAs and search is presented #}
@@ -46,7 +46,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half tablet-and-up">
         {% if isSearch %}
-            <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+            <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
             <p class="govuk-body govuk-!-margin-bottom-0">
                 {% if lpaTotalCount == 0 %}
                     Your search has found no results.<br>
@@ -57,9 +57,9 @@
             </p>
         {% else %}
             {% if lpaTotalCount == 0 %}
-                <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
+                <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">No LPAs found</h2>
             {% else %}
-                <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+                <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">All {{ lpaTotalCount }} LPAs</h2>
             {% endif %}
         {% endif %}
         </div>
@@ -76,7 +76,7 @@
         <div class="govuk-grid-column-one-half mobile">
         {# This is only displayed on mobile #}
             {% if isSearch %}
-                <h2 class="govuk-heading-l flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
+                <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">Search: {{ freeText ? escapeHtmlAttr( freeText ) : '' }}</h2>
                 <p class="govuk-body govuk-!-margin-bottom-0">
                     {% if lpaTotalCount == 0 %}
                         Your search has found no results.<br>
@@ -87,9 +87,9 @@
                 </p>
             {% else %}
                 {% if lpaTotalCount == 0 %}
-                    <h2 class="govuk-heading-l flush--ends">No LPAs found</h2>
+                    <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">No LPAs found</h2>
                 {% else %}
-                    <h2 class="govuk-heading-l flush--ends">All {{ lpaTotalCount }} LPAs</h2>
+                    <h2 class="govuk-heading-l govuk-!-margin-top-8 flush--ends">All {{ lpaTotalCount }} LPAs</h2>
                 {% endif %}
             {% endif %}
         </div>
@@ -112,7 +112,7 @@
 {% endif %}
 
 <div class="panel-cta mobile">
-    <div class="panel-heading govuk-heading-m">Create another LPA</div>
+    <div class="panel-heading govuk-heading-m govuk-!-margin-top-8">Create another LPA</div>
     <div class="panel-body">
         <p class="govuk-body">
             <a class="govuk-button" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a>
