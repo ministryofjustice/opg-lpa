@@ -294,7 +294,7 @@ cypress-run-stitched-suites:
 # plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
 .PHONY: cypress-run-remaining
 cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch
