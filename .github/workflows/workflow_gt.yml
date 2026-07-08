@@ -1,0 +1,41 @@
+name: "[Workflow] Testing LPAL-2236"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
+
+jobs:
+  test_semver:
+    name: Output workflow variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: LPAL-2236-test-rewrite
+          fetch-tags: true
+      - name: Bump version and push tag
+        uses: ministryofjustice/opg-github-actions/actions/semver@83663a5235330cc2193319b25d559885610c6bd5 # v4.8.4
+        id: semver_tag
+        with:
+          prerelease: true
+          create_release: false
+          default_bump: minor
