@@ -40,7 +40,7 @@
 
 
 <li id="life-sustaining-section" class="section current" data-cy="section-current">
-    <h1 class="govuk-heading-m accordion-header">{{ pageTitle }}</h1>
+    <h1 class="govuk-heading-m govuk-!-margin-top-8 accordion-header">{{ pageTitle }}</h1>
     <div class="accordion-info">
         <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
             <p class="govuk-body">This is a very important decision. The donor should read the guidance carefully before they answer.</p>
@@ -60,7 +60,7 @@
         <fieldset class="govuk-fieldset">
             <legend class="govuk-visually-hidden">Life-sustaining treatment decision</legend>
             <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-                <h2 class="govuk-heading-m flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
+                <h2 class="govuk-heading-m govuk-!-margin-top-8 flush--top">Who does the donor want to make decisions about life-sustaining treatment?</h2>
                 <div class="govuk-form-group {{ canSustainLife.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                     {{ formElementErrorsV2(canSustainLife) }}
 
