@@ -59,13 +59,13 @@ class SecretServiceTest extends MockeryTestCase
         TestableSecretService::resolve('arn:aws:secretsmanager:eu-west-1:123:secret:null-secret');
     }
 
-    public function testUsesDefaultRegion(): void
+    public function testUsesNoHardcodedRegion(): void
     {
         $this->mockClient('val');
 
         TestableSecretService::resolve('arn:aws:secretsmanager:eu-west-1:123:secret:x');
 
-        $this->assertSame('eu-west-1', TestableSecretService::$lastConfig['region']);
+        $this->assertArrayNotHasKey('region', TestableSecretService::$lastConfig);
         $this->assertArrayNotHasKey('endpoint', TestableSecretService::$lastConfig);
     }
 
@@ -79,14 +79,5 @@ class SecretServiceTest extends MockeryTestCase
         );
 
         $this->assertSame('http://localstack:4566', TestableSecretService::$lastConfig['endpoint']);
-    }
-
-    public function testPassesCustomRegion(): void
-    {
-        $this->mockClient('val');
-
-        TestableSecretService::resolve(arn: 'arn:aws:secretsmanager:us-east-1:123:secret:x', region: 'us-east-1');
-
-        $this->assertSame('us-east-1', TestableSecretService::$lastConfig['region']);
     }
 }
