@@ -5,7 +5,7 @@ resource "local_file" "environment_pipeline_tasks_config" {
 
 locals {
   environment_pipeline_tasks_config = {
-    account_id                            = local.account.account_id
+    account_id                            = local.environment.account_id
     region                                = !local.dr_enabled ? "eu-west-1" : "eu-west-2"
     environment                           = local.environment_name
     front_fqdn                            = module.environment_dns.front_fqdn

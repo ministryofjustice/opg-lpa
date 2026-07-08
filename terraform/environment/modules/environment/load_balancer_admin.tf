@@ -44,7 +44,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
   certificate_arn   = data.aws_acm_certificate.certificate_admin.arn
 
   dynamic "default_action" {
-    for_each = var.account.admin_cognito_auth_enabled ? [1] : []
+    for_each = var.environment.admin_cognito_auth_enabled ? [1] : []
     content {
       type = "authenticate-oidc"
       authenticate_oidc {

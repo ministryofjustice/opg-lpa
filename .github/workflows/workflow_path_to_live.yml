@@ -226,6 +226,30 @@ jobs:
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
       SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
+  terraform_environment_demo:
+    name: TF Demo - Environment
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+    with:
+      is_ephemeral: false
+      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
+      persist_artifacts: true
+      terraform_apply: true
+      terraform_directory: ./terraform/environment
+      terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
+      terraform_version: ${{ needs.set_variables.outputs.environment_terraform_version }}
+      terraform_workspace: demo
+      use_ssh_private_key: true
+    needs:
+      - docker_build_scan_push
+      - slack_msg_production_deploy_begin
+      - set_variables
+      - snyk_iac_scan
+      - terraform_region_production
+    secrets:
+      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
+
   terraform_environment_production:
     name: TF Production - Environment
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
@@ -302,7 +326,7 @@ jobs:
       - run_smoke_tests
       - set_variables
     environment:
-      name: "production"
+      name: production
       url: "https://www.lastingpowerofattorney.service.gov.uk/home"
     steps:
       - uses: slackapi/slack-github-action@fcfb566f8b0aab22203f066d80ca1d7e4b5d05b3 # v1.27.1

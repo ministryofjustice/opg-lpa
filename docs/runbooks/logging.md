@@ -56,9 +56,12 @@ Log entries look like this:
 
 ```
 {
+   "time":"2020-12-18T14:53:41+00:00",
+   "level":"INFO",
+   "msg":"GET /home",
+   "service_name":"make_front_web",
    "trace_id":"Root=1-1608303221.805-152-fromssl",
    "time_local":"18/Dec/2020:14:53:41 +0000",
-   "response_time_iso8601":"2020-12-18T14:53:41+00:00",
    "timestamp_msec":"1608303221.895",
    "remote_addr":"192.168.80.9",
    "real_ip":"192.168.80.1",
@@ -69,7 +72,8 @@ Log entries look like this:
    "request_time":0.090,
    "request_uri":"/home",
    "status":200,
-   "request":"GET /home HTTP/1.0",
+   "request":{"method":"GET","path":"/home"},
+   "request_line":"GET /home HTTP/1.0",
    "request_method":"GET",
    "http_referrer":"",
    "http_user_agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
@@ -206,17 +210,17 @@ Our logger also has attached processors which modify the log output in a couple 
 * `MvcEventProcessor`: this is tailored to recognise and reformat MVC events into an easier-to-read format before they are written to the log
 
 ## Increasing api logging
-Sometimes there is a need to examine what the front end has sent to the back-end api. 
+Sometimes there is a need to examine what the front end has sent to the back-end api.
 To achieve this, modify nginx.conf to add (in the server directive)
 
 ```
 client_body_in_file_only on
 ```
 
-Then in the log_format section, add 
+Then in the log_format section, add
 
 ```
-'"request_body_file": "$request_body_file"'  
+'"request_body_file": "$request_body_file"'
 ```
 
 not forgetting to append a comma on the previous line.
@@ -229,7 +233,7 @@ Then while running, e:g during a cypress scenario, write logs to a file:
 docker logs -ft lpa-api-web | tee apiweblog
 ```
 
-Then extract from this - ignore authenticate or session-expiry calls which happen a lot,  cut the timestamp off the front, leaving json which we can jq to get the request and the body file name, then use xargs to try to get the file content from the container , where this text relates to an existing file 
+Then extract from this - ignore authenticate or session-expiry calls which happen a lot,  cut the timestamp off the front, leaving json which we can jq to get the request and the body file name, then use xargs to try to get the file content from the container , where this text relates to an existing file
 
 ```
  cat apiweblog | grep -v "authenticate\|session-expiry" | cut -c 32- | jq .request,.request_body_file | xargs -I % sh -c 'printf "\n%" ; docker exec lpa-api-web cat % ' 2>/dev/null

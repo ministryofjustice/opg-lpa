@@ -1,6 +1,6 @@
 module "eu-west-1" {
   source            = "./modules/environment"
-  account           = local.account
+  environment       = local.environment
   account_name      = local.account_name
   environment_name  = local.environment_name
   region_name       = "eu-west-1"
@@ -29,9 +29,9 @@ module "eu-west-1" {
 }
 
 module "eu-west-2" {
-  count             = local.account.regions["eu-west-2"].enabled ? 1 : 0
+  count             = local.environment.regions["eu-west-2"].enabled ? 1 : 0
   source            = "./modules/environment"
-  account           = local.account
+  environment       = local.environment
   account_name      = local.account_name
   environment_name  = local.environment_name
   region_name       = "eu-west-2"
@@ -76,7 +76,7 @@ module "environment_dns" {
 }
 
 module "cross_region_backup" {
-  count  = local.account.database.aurora_cross_region_backup_enabled ? 1 : 0
+  count  = local.environment.database.aurora_cross_region_backup_enabled ? 1 : 0
   source = "./modules/rds_cross_region_backup"
   providers = {
     aws             = aws
@@ -86,20 +86,20 @@ module "cross_region_backup" {
   }
 
   source_cluster_arn                   = module.eu-west-1.aws_aurora_cluster_arn
-  account_id                           = local.account.account_id
+  account_id                           = local.environment.account_id
   environment_name                     = local.environment_name
   destination_region_name              = "eu-west-2"
   key_alias                            = "mrk_db_snapshot_key-${local.account_name}"
   account_name                         = local.account_name
-  aurora_restore_testing_enabled       = local.account.database.aurora_restore_testing_enabled
-  cross_account_backup_enabled         = local.account.database.cross_account_backup_enabled
-  daily_backup_deletion                = local.account.database.daily_backup_deletion
-  daily_backup_cold_storage            = local.account.database.daily_backup_cold_storage
-  monthly_backup_deletion              = local.account.database.monthly_backup_deletion
-  monthly_backup_cold_storage          = local.account.database.monthly_backup_cold_storage
-  enable_backup_vault_lock             = local.account.database.enable_backup_vault_lock
-  backup_vault_lock_min_retention_days = local.account.database.daily_backup_deletion
-  backup_vault_lock_max_retention_days = local.account.database.monthly_backup_deletion
+  aurora_restore_testing_enabled       = local.environment.database.aurora_restore_testing_enabled
+  cross_account_backup_enabled         = local.environment.database.cross_account_backup_enabled
+  daily_backup_deletion                = local.environment.database.daily_backup_deletion
+  daily_backup_cold_storage            = local.environment.database.daily_backup_cold_storage
+  monthly_backup_deletion              = local.environment.database.monthly_backup_deletion
+  monthly_backup_cold_storage          = local.environment.database.monthly_backup_cold_storage
+  enable_backup_vault_lock             = local.environment.database.enable_backup_vault_lock
+  backup_vault_lock_min_retention_days = local.environment.database.daily_backup_deletion
+  backup_vault_lock_max_retention_days = local.environment.database.monthly_backup_deletion
 }
 output "admin_domain" {
   value = module.environment_dns.admin_domain
