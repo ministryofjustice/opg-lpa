@@ -31,6 +31,7 @@ jobs:
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           fetch-depth: 2147483647
+          fetch-tags: true
       - name: Bump version and push tag
         uses: ministryofjustice/opg-github-actions/actions/semver@83663a5235330cc2193319b25d559885610c6bd5 # v4.8.4
         id: semver_tag
