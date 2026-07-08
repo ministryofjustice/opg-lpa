@@ -277,7 +277,7 @@ cypress-run-spec:
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags:
-	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${TAGS}"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
 .PHONY: cypress-run-stitched-suites
