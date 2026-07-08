@@ -24,12 +24,12 @@ class SecretService
 
     /**
      * @param string|null $arn      Secrets Manager ARN or name.
-     * @param string      $region   AWS region (defaults to eu-west-1).
      * @param string|null $endpoint Optional endpoint URL override (e.g. localstack).
+     *                              Region is resolved automatically from AWS_DEFAULT_REGION / AWS_REGION
+     *                              environment variables, so tasks in any region work without configuration.
      */
     public static function resolve(
         ?string $arn,
-        string $region = 'eu-west-1',
         ?string $endpoint = null,
     ): string {
         if ($arn === null) {
@@ -49,7 +49,7 @@ class SecretService
             }
         }
 
-        $value = self::fetchFromSecretsManager($arn, $region, $endpoint);
+        $value = self::fetchFromSecretsManager($arn, $endpoint);
 
         if (function_exists('apcu_store')) {
             apcu_store($cacheKey, $value, self::CACHE_TTL);
@@ -58,12 +58,9 @@ class SecretService
         return $value;
     }
 
-    private static function fetchFromSecretsManager(string $arn, string $region, ?string $endpoint): string
+    private static function fetchFromSecretsManager(string $arn, ?string $endpoint): string
     {
-        $config = [
-            'version' => 'latest',
-            'region'  => $region,
-        ];
+        $config = ['version' => 'latest'];
 
         if ($endpoint !== null) {
             $config['endpoint'] = $endpoint;
