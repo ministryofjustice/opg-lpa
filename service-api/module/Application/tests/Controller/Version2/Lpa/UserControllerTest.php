@@ -31,6 +31,21 @@ class UserControllerTest extends AbstractControllerTestCase
         return $controller;
     }
 
+    public function testGetCreatesProfileWhenNotFound()
+    {
+        $controller = $this->getController();
+
+        $this->service->shouldReceive('fetch')->andReturn(null)->once();
+        $this->service->shouldReceive('createProfile')
+            ->andReturn($this->createEntity(['key' => 'value']))->once();
+
+        $response = $controller->get(10);
+
+        $this->assertNotNull($response);
+        $this->assertInstanceOf(Json::class, $response);
+        $this->assertEquals('{"key":"value"}', $response->getContent());
+    }
+
     public function testGetSuccess()
     {
         $controller = $this->getController();
@@ -124,12 +139,12 @@ class UserControllerTest extends AbstractControllerTestCase
         $this->assertEquals('real-user@example.com', $responseArray['email']['address']);
     }
 
-    public function testGetApiProblemFromService()
+    public function testGetApiProblemFromCreateProfile()
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('fetch')->andReturn(new ApiProblem(500, 'error'))
-            ->once();
+        $this->service->shouldReceive('fetch')->andReturn(null)->once();
+        $this->service->shouldReceive('createProfile')->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->get(10);
 
@@ -143,11 +158,12 @@ class UserControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testGetUnexpectedResponse()
+    public function testGetUnexpectedResponseFromCreateProfile()
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('fetch')->andReturn('unexpected type')->once();
+        $this->service->shouldReceive('fetch')->andReturn(null)->once();
+        $this->service->shouldReceive('createProfile')->andReturn('unexpected type')->once();
 
         $response = $controller->get(10);
 
