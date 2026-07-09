@@ -8,6 +8,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\Mvc\MvcEvent;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Service\SecretService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -34,21 +35,33 @@ class AuthenticationListener implements LoggerAwareInterface
     public function authenticate(MvcEvent $e)
     {
         $serviceManager = $e->getApplication()->getServiceManager();
-
         $authService = $serviceManager->get('Laminas\Authentication\AuthenticationService');
 
-        /*
-         * Do some authentication. Initially this will just be via the token passed from front-2.
-         * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
-         *      X-AuthOne
-         *
-         * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
-         */
         // Suppress psalm errors caused by bug in laminas-mvc;
         // see https://github.com/laminas/laminas-mvc/issues/77
         /**
          * @psalm-suppress UndefinedInterfaceMethod
          */
+        // Check for admin service credential first. The admin app authenticates
+        // via a pre-shared secret rather than a user token. Network-level security
+        // (VPC security groups) is the primary control; this provides an explicit identity.
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $adminAuthHeader = $e->getRequest()->getHeader('X-AdminAuth');
+
+        if ($adminAuthHeader) {
+            $config = $serviceManager->get('Config');
+            $adminServiceSecret = SecretService::resolve(
+                arn: $config['admin']['service_secret_arn'] ?? null,
+                endpoint: $config['admin']['service_secret_sm_endpoint'] ?? null,
+            );
+
+            if (trim($adminAuthHeader->getFieldValue()) === $adminServiceSecret) {
+                $authService->getStorage()->write(new Identity\AdminService());
+                $this->getLogger()->info('Admin service authenticated via service secret');
+                return;
+            }
+        }
+
         $token = $e->getRequest()->getHeader('Token');
 
         if (!$token) {
