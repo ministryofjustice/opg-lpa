@@ -22,7 +22,7 @@ use Psr\Container\NotFoundExceptionInterface;
  *
  * Class ServiceAbstractFactory
  * @package Application\Model\Service
- * @psalm-api
+ * @psalm-suppress UnusedClass
  */
 class ServiceAbstractFactory implements AbstractFactoryInterface
 {

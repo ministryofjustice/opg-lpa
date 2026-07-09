@@ -40,7 +40,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
 
 /**
- * @psalm-api
+ * @psalm-suppress UnusedClass
  */
 class Module
 {

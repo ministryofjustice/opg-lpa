@@ -100,7 +100,7 @@ class Service extends AbstractService
     /**
      * @param FeedbackValidator $feedbackValidator
      * @return void
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setFeedbackValidator(FeedbackValidator $feedbackValidator): void
     {

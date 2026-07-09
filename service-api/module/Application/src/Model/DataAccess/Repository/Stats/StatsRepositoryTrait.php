@@ -11,7 +11,7 @@ trait StatsRepositoryTrait
 
     /**
      * @param StatsRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setStatsRepository(StatsRepositoryInterface $repo): void
     {
