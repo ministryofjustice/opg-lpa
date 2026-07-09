@@ -108,22 +108,29 @@ class Service extends AbstractService
 
     /**
      * @param $id
-     * @return DataModelEntity
+     * @return DataModelEntity|null Returns null if no profile exists for the given ID.
      */
     public function fetch($id)
     {
-        // Get existing user
         $user = $this->getUserRepository()->getProfile($id);
 
-        // If there is no user create one now and ensure that the email address is correct
         if (!$user instanceof ProfileUserModel) {
-            $user = $this->save($id);
-        } else {
-            $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
-            $user->setNumberOfLpas($lpaCount);
+            return null;
         }
 
+        $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
+        $user->setNumberOfLpas($lpaCount);
+
         return new DataModelEntity($user);
+    }
+
+    /**
+     * @param $id
+     * @return DataModelEntity
+     */
+    public function createProfile($id)
+    {
+        return new DataModelEntity($this->save($id));
     }
 
     /**
