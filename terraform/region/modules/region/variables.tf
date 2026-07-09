@@ -43,11 +43,22 @@ variable "firewalled_vpc_cidr_range" {
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length."
 }
 
-variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
-  type        = bool
-  description = "enable AWSManagedRulesAmazonIpReputationList in this account"
-  default     = false
+variable "web_application_firewall" {
+  type = object({
+    amazon_managed_ip_reputation_list_rule_enabled = bool
+    waf_ip_blocking_enabled                        = bool
+  })
 }
+
+# variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
+#   type        = bool
+#   description = "enable AWSManagedRulesAmazonIpReputationList in this account"
+#   default     = false
+# }
+
+# variable "waf_ip_blocking_enabled" {
+#   type = bool
+# }
 
 variable "dynamodb_kms_key_arn" {
   type = string

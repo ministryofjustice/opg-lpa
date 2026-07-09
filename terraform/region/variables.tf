@@ -48,6 +48,7 @@ variable "accounts" {
       })
       web_application_firewall = object({
         amazon_managed_ip_reputation_list_rule_enabled = bool
+        waf_ip_blocking_enabled                        = bool
       })
 
       regions = map(
