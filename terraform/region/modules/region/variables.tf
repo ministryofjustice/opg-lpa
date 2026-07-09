@@ -48,3 +48,7 @@ variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
   description = "enable AWSManagedRulesAmazonIpReputationList in this account"
   default     = false
 }
+
+variable "dynamodb_kms_key_arn" {
+  type = string
+}
