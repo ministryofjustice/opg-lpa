@@ -59,14 +59,22 @@ class SecretServiceTest extends MockeryTestCase
         TestableSecretService::resolve('arn:aws:secretsmanager:eu-west-1:123:secret:null-secret');
     }
 
-    public function testUsesNoHardcodedRegion(): void
+    public function testExtractsRegionFromArn(): void
     {
         $this->mockClient('val');
 
-        TestableSecretService::resolve('arn:aws:secretsmanager:eu-west-1:123:secret:x');
+        TestableSecretService::resolve('arn:aws:secretsmanager:eu-west-2:123:secret:x');
 
-        $this->assertArrayNotHasKey('region', TestableSecretService::$lastConfig);
+        $this->assertSame('eu-west-2', TestableSecretService::$lastConfig['region']);
         $this->assertArrayNotHasKey('endpoint', TestableSecretService::$lastConfig);
+    }
+
+    public function testThrowsWhenArnHasNoRegion(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Cannot determine region from ARN');
+
+        TestableSecretService::resolve('not-a-valid-arn');
     }
 
     public function testPassesEndpointWhenProvided(): void

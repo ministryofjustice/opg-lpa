@@ -240,7 +240,6 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
       OPG_LPA_AUTH_LOG_SALT: "a-dummy-salt-for-auth-logs"
-      OPG_LPA_ADMIN_SERVICE_SECRET: "test-admin-service-secret"
 
       # Fake key; deliberately committed
       OPG_LPA_API_PDF_ENCRYPTION_KEY_DOCUMENT: "0L5Mn687f312aj827NQq648U7899o91r"
@@ -347,8 +346,6 @@ services:
         condition: service_healthy
       mock-cognito:
         condition: service_healthy
-      mock-cognito:
-        condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -365,13 +362,9 @@ services:
       COGNITO_ISSUER: "http://mock-cognito:8080"
       COGNITO_MOCK_URL: "http://mock-cognito:8080"
       COGNITO_DEV_EMAIL: "dev-admin@local"
+      COGNITO_BASE_URL: "http://mock-cognito:8080"
 
       OPG_LPA_SHARED_SECRET_ENABLED: "true"
-      OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
-
-      COGNITO_BASE_URL: "http://mock-cognito:8080"
-      COGNITO_ISSUER: "http://mock-cognito:8080"
-      COGNITO_CLIENT_ID: "local-client-id"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
