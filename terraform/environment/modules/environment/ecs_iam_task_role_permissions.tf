@@ -11,6 +11,16 @@ resource "aws_iam_role_policy" "api_permissions_role" {
 */
 data "aws_iam_policy_document" "api_permissions_role" {
   statement {
+    sid    = "AdminServiceSecretAccess"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
+    ]
+  }
+  statement {
     sid = "DynamoDBAccess"
 
     effect = "Allow"
@@ -39,7 +49,6 @@ data "aws_iam_policy_document" "api_permissions_role" {
       aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
-
   statement {
     sid = "APIGatewayAccess"
     actions = [
@@ -130,6 +139,16 @@ resource "aws_iam_role_policy" "admin_permissions_role" {
   Defines permissions that the application running within the task has.
 */
 data "aws_iam_policy_document" "admin_permissions_role" {
+  statement {
+    sid    = "AdminServiceSecretAccess"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
+    ]
+  }
   statement {
     sid = "DynamoDBAccess"
 

@@ -307,7 +307,8 @@ locals {
         { name = "OPG_LPA_COMMON_PDF_QUEUE_URL", value = "https://sqs.${data.aws_region.current.region}.amazonaws.com/${var.environment.account_id}/lpa-pdf-queue-${var.environment_name}.fifo" },
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
-        { name = "AWS_REGION", value = data.aws_region.current.region }
+        { name = "AWS_REGION", value = data.aws_region.current.region },
+        { name = "OPG_LPA_ADMIN_SERVICE_SECRET_ARN", value = data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn }
       ]
     }
   )
