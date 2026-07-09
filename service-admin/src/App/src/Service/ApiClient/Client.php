@@ -74,6 +74,38 @@ class Client
     }
 
     /**
+     * Performs a POST against the API
+     *
+     * @param string $path
+     * @param mixed $payload
+     * @return mixed|null
+     * @throw RuntimeException | ApiException
+     */
+    public function httpPost($path, $payload = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        $encodedPayload = json_encode($payload);
+
+        if (!$encodedPayload) {
+            // JSON parse error
+            throw new \RuntimeException('Invalid JSON payload supplied as POST body');
+        }
+
+        $request = new Request('POST', $url, $this->buildHeaders(), $encodedPayload);
+
+        $response = $this->httpClient->sendRequest($request);
+
+        switch ($response->getStatusCode()) {
+            case 200:
+            case 201:
+                return $this->handleResponse($response);
+            default:
+                return $this->handleErrorResponse($response);
+        }
+    }
+
+    /**
      * Generates the standard set of HTTP headers expected by the API
      *
      * @return array<string, string>
