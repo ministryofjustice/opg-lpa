@@ -1,16 +1,29 @@
+# INFO - Lambda used to manage blocking of IP addresses on the WAF
 locals {
   block_ips_lambda_function_name = "block-ips"
 }
 
-# INFO - Lambda used to manage blocking of IP addresses on the WAF
+resource "aws_cloudwatch_log_group" "block_ips_lambda" {
+  name              = "/aws/lambda/${local.block_ips_lambda_function_name}"
+  retention_in_days = 14
+  kms_key_id        = var.dynamodb_kms_key_arn
+}
+
+data "archive_file" "block_ips_zip" {
+  type        = "zip"
+  source_dir  = "../../lambdas/block_ips/app"
+  output_path = "../../lambdas/block_ips/block_ips.zip"
+}
+
 resource "aws_lambda_function" "block_ips_lambda" {
-  filename      = data.archive_file.block_ips_zip.output_path
-  function_name = local.block_ips_lambda_function_name
-  role          = aws_iam_role.lambda_block_ips.arn
-  handler       = "block_ips.lambda_handler"
-  runtime       = "python3.14"
-  depends_on    = [aws_cloudwatch_log_group.block_ips_lambda]
-  timeout       = 300
+  filename         = data.archive_file.block_ips_zip.output_path
+  function_name    = local.block_ips_lambda_function_name
+  role             = var.lambda_function_aws_iam_role.arn
+  handler          = "block_ips.lambda_handler"
+  runtime          = "python3.14"
+  depends_on       = [aws_cloudwatch_log_group.block_ips_lambda]
+  timeout          = 300
+  source_code_hash = filebase64sha256(data.archive_file.block_ips_zip.output_path)
   environment {
     variables = {
       ENVIRONMENT = data.aws_default_tags.current.tags.environment-name
@@ -19,123 +32,6 @@ resource "aws_lambda_function" "block_ips_lambda" {
   tracing_config {
     mode = "Active"
   }
-
-  source_code_hash = filebase64sha256(data.archive_file.block_ips_zip.output_path)
-  tags = {
-    Name = "block-ip"
-  }
-}
-
-resource "aws_cloudwatch_log_group" "block_ips_lambda" {
-  name              = "/aws/lambda/${local.block_ips_lambda_function_name}"
-  retention_in_days = 14
-  kms_key_id        = var.dynamodb_kms_key_arn
-  tags = {
-    Name = "block_ips-log-group"
-  }
-}
-
-resource "aws_iam_role" "lambda_block_ips" {
-  assume_role_policy = data.aws_iam_policy_document.lambda_block_ips_policy.json
-  name               = "lambda-block-ips"
-}
-
-data "aws_iam_policy_document" "lambda_block_ips_policy" {
-  statement {
-    effect  = "Allow"
-    actions = ["sts:AssumeRole"]
-
-    principals {
-      identifiers = ["lambda.amazonaws.com"]
-      type        = "Service"
-    }
-  }
-}
-
-resource "aws_iam_role_policy" "lambda_block_ips" {
-  name   = "lambda-block-ips"
-  policy = data.aws_iam_policy_document.lambda_block_ips.json
-  role   = aws_iam_role.lambda_block_ips.id
-}
-
-data "aws_iam_policy_document" "lambda_block_ips" {
-  statement {
-    sid    = "allowLogging"
-    effect = "Allow"
-    resources = [
-      aws_cloudwatch_log_group.block_ips_lambda.arn,
-      "${aws_cloudwatch_log_group.block_ips_lambda.arn}:*"
-    ]
-    actions = [
-      "logs:CreateLogStream",
-      "logs:PutLogEvents",
-      "logs:DescribeLogStreams"
-    ]
-  }
-
-  statement {
-    sid    = "ReadLogsAndInsights"
-    effect = "Allow"
-    actions = [
-      "logs:GetLogEvents",
-      "logs:StartQuery",
-      "logs:StopQuery",
-      "logs:GetQueryResults",
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "ReadWriteTable"
-    effect = "Allow"
-    resources = [
-      aws_dynamodb_table.blocked_ips_table.arn,
-    ]
-    actions = [
-      "dynamodb:BatchGet*",
-      "dynamodb:DescribeStream",
-      "dynamodb:DescribeTable",
-      "dynamodb:Get*",
-      "dynamodb:Query",
-      "dynamodb:Scan",
-      "dynamodb:BatchWrite*",
-      "dynamodb:Delete*",
-      "dynamodb:Update*",
-      "dynamodb:PutItem"
-    ]
-  }
-
-  statement {
-    sid    = "UpdateIPSet"
-    effect = "Allow"
-    actions = [
-      "wafv2:ListIPSets",
-      "wafv2:GetIPSet",
-      "wafv2:UpdateIPSet"
-    ]
-    resources = ["*"]
-  }
-
-  statement {
-    sid    = "UseDynamodbKMSKey"
-    effect = "Allow"
-    actions = [
-      "kms:Encrypt",
-      "kms:Decrypt",
-      "kms:ReEncrypt*",
-      "kms:GenerateDataKey*",
-      "kms:DescribeKey"
-    ]
-    resources = [
-      var.dynamodb_kms_key_arn
-    ]
-  }
-}
-
-data "archive_file" "block_ips_zip" {
-  type        = "zip"
-  source_dir  = "../../lambdas/block_ips/app"
-  output_path = "../../lambdas/block_ips/block_ips.zip"
 }
 
 resource "aws_lambda_permission" "scheduled_block_ip_rule" {

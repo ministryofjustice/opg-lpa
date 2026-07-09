@@ -52,3 +52,9 @@ variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
 variable "dynamodb_kms_key_arn" {
   type = string
 }
+
+variable "aws_iam_roles" {
+  type = object({
+    ip_blocker = any
+  })
+}
