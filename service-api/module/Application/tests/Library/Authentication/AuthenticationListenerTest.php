@@ -63,7 +63,8 @@ class AuthenticationListenerTest extends MockeryTestCase
 
         $this->mvcEvent = Mockery::mock(MvcEvent::class);
         $this->mvcEvent->shouldReceive('getApplication')->andReturn($this->application)->once();
-        $this->mvcEvent->shouldReceive('getRequest')->andReturn($this->request)->once();
+        $this->mvcEvent->shouldReceive('getRequest')->andReturn($this->request);
+        $this->request->shouldReceive('getHeader')->with('X-AdminAuth')->andReturn(false);
         $this->logger = Mockery::spy(LoggerInterface::class);
     }
 
