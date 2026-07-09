@@ -50,17 +50,11 @@ variable "web_application_firewall" {
   })
 }
 
-# variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
-#   type        = bool
-#   description = "enable AWSManagedRulesAmazonIpReputationList in this account"
-#   default     = false
-# }
-
-# variable "waf_ip_blocking_enabled" {
-#   type = bool
-# }
-
 variable "dynamodb_kms_key_arn" {
+  type = string
+}
+
+variable "application_logs_kms_key_arn" {
   type = string
 }
 

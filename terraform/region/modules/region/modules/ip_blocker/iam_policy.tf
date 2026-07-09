@@ -73,7 +73,22 @@ data "aws_iam_policy_document" "lambda_block_ips" {
       "kms:DescribeKey"
     ]
     resources = [
-      var.dynamodb_kms_key_arn
+      var.dynamodb_kms_key_arn,
+      var.application_logs_kms_key_arn
+    ]
+  }
+  statement {
+    sid    = "UseApplicationLogsKMSKey"
+    effect = "Allow"
+    actions = [
+      "kms:Encrypt",
+      "kms:Decrypt",
+      "kms:ReEncrypt*",
+      "kms:GenerateDataKey*",
+      "kms:DescribeKey"
+    ]
+    resources = [
+      var.application_logs_kms_key_arn
     ]
   }
 }
