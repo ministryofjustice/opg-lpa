@@ -2,5 +2,5 @@
 services:
   block-ips-tests:
     build:
-      context: ./lambdas/block_ips_lambda
+      context: ./lambdas/block_ips
       dockerfile: Dockerfile
