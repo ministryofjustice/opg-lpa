@@ -143,7 +143,7 @@ resource "aws_lambda_permission" "scheduled_block_ip_rule" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.block_ips_lambda.function_name
   principal     = "events.amazonaws.com"
-  source_arn    = "arn:aws:events:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:rule/block-ips-*"
+  source_arn    = "arn:aws:events:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:rule/block-ips-*"
   lifecycle {
     replace_triggered_by = [
       aws_lambda_function.block_ips_lambda
