@@ -127,15 +127,15 @@ data "aws_iam_policy_document" "lambda_block_ips" {
       "kms:DescribeKey"
     ]
     resources = [
-      module.dynamodb_kms.eu_west_1_target_key_arn
+      var.dynamodb_kms_key_arn
     ]
   }
 }
 
 data "archive_file" "block_ips_zip" {
   type        = "zip"
-  source_dir  = "../../lambdas/functions/block_ips_lambda/app"
-  output_path = "../../lambdas/functions/block_ips_lambda/block_ips.zip"
+  source_dir  = "../../lambdas/block_ips/app"
+  output_path = "../../lambdas/block_ips/block_ips.zip"
 }
 
 resource "aws_lambda_permission" "scheduled_block_ip_rule" {
