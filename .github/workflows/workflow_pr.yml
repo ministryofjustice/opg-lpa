@@ -107,10 +107,8 @@ jobs:
       - docker_build_scan_push
 
   lambda_unit_tests:
-    name: lambda unit tests
+    name: Lambda unit tests
     uses: ./.github/workflows/lambda_unit_tests.yml
-    needs:
-      - workflow_variables
 
   terraform_account_development:
     name: TF Development - Account
