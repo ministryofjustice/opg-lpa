@@ -3,6 +3,7 @@
 namespace App\Service\ApiClient;
 
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
+use MakeShared\Service\SecretService;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -21,9 +22,17 @@ class ClientFactory
             'verify' => false,
         ]);
 
-        //  Get the end point targets from the config
         $config = $container->get('config');
 
-        return new Client($httpClient, $config['api_base_uri']);
+        $secret = SecretService::resolve(
+            arn: $config['admin_service_secret_arn'] ?? null,
+            endpoint: $config['secrets_manager_endpoint'] ?? null,
+        );
+
+        return new Client(
+            $httpClient,
+            $config['api_base_uri'],
+            $secret,
+        );
     }
 }

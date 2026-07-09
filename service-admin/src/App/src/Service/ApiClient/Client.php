@@ -2,7 +2,6 @@
 
 namespace App\Service\ApiClient;
 
-use App\Handler\Traits\JwtTrait;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient;
@@ -14,8 +13,6 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Client
 {
-    use JwtTrait;
-
     /**
      * @var HttpClient
      */
@@ -27,15 +24,22 @@ class Client
     private $apiBaseUri;
 
     /**
+     * @var string
+     */
+    private $serviceSecret;
+
+    /**
      * Client constructor
      *
      * @param HttpClient $httpClient
      * @param string $apiBaseUri
+     * @param string $serviceSecret
      */
-    public function __construct(HttpClient $httpClient, string $apiBaseUri)
+    public function __construct(HttpClient $httpClient, string $apiBaseUri, #[\SensitiveParameter] string $serviceSecret)
     {
         $this->httpClient = $httpClient;
         $this->apiBaseUri = $apiBaseUri;
+        $this->serviceSecret = $serviceSecret;
     }
 
     /**
@@ -70,58 +74,18 @@ class Client
     }
 
     /**
-     * Performs a POST against the API
-     *
-     * @param string $path
-     * @param mixed $payload
-     * @return mixed|null
-     * @throw RuntimeException | ApiException
-     */
-    public function httpPost($path, $payload = [])
-    {
-        $url = new Uri($this->apiBaseUri . $path);
-
-        $encodedPayload = json_encode($payload);
-
-        if (!$encodedPayload) {
-            // JSON parse error
-            throw new \RuntimeException('Invalid JSON payload supplied as POST body');
-        }
-
-        $request = new Request('POST', $url, $this->buildHeaders(), $encodedPayload);
-
-        $response = $this->httpClient->sendRequest($request);
-
-        switch ($response->getStatusCode()) {
-            case 200:
-            case 201:
-                return $this->handleResponse($response);
-            default:
-                return $this->handleErrorResponse($response);
-        }
-    }
-
-    /**
      * Generates the standard set of HTTP headers expected by the API
      *
      * @return array<string, string>
      */
     private function buildHeaders()
     {
-        $headerLines = [
-            'Accept'        => 'application/json, application/problem+json',
-            'Content-Type'  => 'application/json',
-            'User-agent'    => 'LPA-ADMIN'
+        return [
+            'Accept'       => 'application/json, application/problem+json',
+            'Content-Type' => 'application/json',
+            'User-agent'   => 'LPA-ADMIN',
+            'X-AdminAuth'  => $this->serviceSecret,
         ];
-
-        $apiToken = $this->getTokenData('token');
-
-        //  If the logged in user has an auth token already then set that in the header
-        if (is_string($apiToken)) {
-            $headerLines['token'] = $apiToken;
-        }
-
-        return $headerLines;
     }
 
     /**
