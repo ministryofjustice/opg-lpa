@@ -6,6 +6,9 @@ module "eu-west-1" {
   aws_waf_amazon_managed_ip_reputation_list_rule_enabled = local.account.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled
   firewalled_vpc_cidr_range                              = local.account.firewalled_vpc_cidr_ranges.eu_west_1
   dynamodb_kms_key_arn                                   = module.dynamodb_encryption_key.primary_key.arn
+  aws_iam_roles = {
+    ip_blocker = aws_iam_role.ip_blocker
+  }
   providers = {
     aws            = aws
     aws.management = aws.management
@@ -21,6 +24,9 @@ module "eu-west-2" {
   aws_waf_amazon_managed_ip_reputation_list_rule_enabled = local.account.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled
   firewalled_vpc_cidr_range                              = local.account.firewalled_vpc_cidr_ranges.eu_west_2
   dynamodb_kms_key_arn                                   = module.dynamodb_encryption_key.replica_keys.eu-west-2.arn
+  aws_iam_roles = {
+    ip_blocker = aws_iam_role.ip_blocker
+  }
   providers = {
     aws            = aws.eu-west-2
     aws.management = aws.management_eu_west_2
