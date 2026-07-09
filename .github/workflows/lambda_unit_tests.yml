@@ -1,0 +1,24 @@
+name: "[Tests] Lambda Unit Tests"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+
+permissions:
+  id-token: none
+  contents: read
+  security-events: none
+  pull-requests: none
+
+jobs:
+  lambda-unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: block ips tests
+        id: block-ips-tests
+        run: make block-ips-tests

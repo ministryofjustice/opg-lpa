@@ -351,3 +351,6 @@ update-secrets-baseline:
 .PHONY: psql
 psql:
 	@docker exec -it lpa-postgres psql --username=lpauser --dbname=lpadb
+
+block-ips-tests: ##@unit-tests Run the unit tests for IP blocking lambda.
+	docker compose -f docker-compose.commands.yml up block-ips-tests

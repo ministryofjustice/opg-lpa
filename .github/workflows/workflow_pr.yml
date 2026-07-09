@@ -106,6 +106,12 @@ jobs:
     needs:
       - docker_build_scan_push
 
+  lambda_unit_tests:
+    name: lambda unit tests
+    uses: ./.github/workflows/lambda_unit_tests.yml
+    needs:
+      - workflow_variables
+
   terraform_account_development:
     name: TF Development - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
@@ -155,6 +161,7 @@ jobs:
       - docker_build_scan_push
       - phpunit_tests
       - psalm_tests
+      - lambda_unit_tests
       - workflow_variables
       - snyk_iac_scan
       - terraform_account_development
