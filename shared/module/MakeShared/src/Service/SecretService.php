@@ -60,7 +60,16 @@ class SecretService
 
     private static function fetchFromSecretsManager(string $arn, ?string $endpoint): string
     {
-        $config = ['version' => 'latest'];
+        // Extract region from ARN (arn:aws:secretsmanager:REGION:...) so the SDK
+        // works regardless of whether AWS_DEFAULT_REGION/AWS_REGION is set.
+        $parts = explode(':', $arn);
+        $region = $parts[3] ?? null;
+
+        if ($region === null || $region === '') {
+            throw new RuntimeException(sprintf('Cannot determine region from ARN: %s', $arn));
+        }
+
+        $config = ['version' => 'latest', 'region' => $region];
 
         if ($endpoint !== null) {
             $config['endpoint'] = $endpoint;
