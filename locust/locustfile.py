@@ -51,7 +51,7 @@ class MakeAnLPAUser(HttpUser):
         lpa.who_are_you()
         lpa.confirm_repeat_application()
         lpa.add_fee_reductions()
-        lpa.view_checkout_page(pay_now=True)
+        lpa.view_checkout_page()
         lpa.generate_lpa_pdf()
         lpa.download_lpa_pdf()
 
@@ -114,7 +114,7 @@ class MakeAnLPAUser(HttpUser):
             lpa.who_are_you()
             lpa.confirm_repeat_application()
             lpa.add_fee_reductions()
-            lpa.view_checkout_page(pay_now=True)
+            lpa.view_checkout_page()
             lpa.generate_lpa_pdf()
             lpa.download_lpa_pdf()
 
