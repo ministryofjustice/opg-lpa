@@ -11,7 +11,7 @@ trait WhoRepositoryTrait
 
     /**
      * @param WhoRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setWhoRepository(WhoRepositoryInterface $repo): void
     {

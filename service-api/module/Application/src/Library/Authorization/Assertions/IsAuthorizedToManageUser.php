@@ -10,7 +10,7 @@ use Lmc\Rbac\Identity\IdentityInterface;
  *
  * Class IsAuthorizedToManageUser
  * @package Application\Library\Authorization\Assertions
- * @psalm-api
+ * @psalm-suppress UnusedClass
  */
 class IsAuthorizedToManageUser implements AssertionInterface
 {

@@ -225,7 +225,7 @@ class Service extends AbstractService
 
     /**
      * @param array $config
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setConfig(array $config): void
     {
@@ -234,7 +234,7 @@ class Service extends AbstractService
 
     /**
      * @param NotifyClient $notifyClient
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setNotifyClient(NotifyClient $notifyClient): void
     {
@@ -243,7 +243,7 @@ class Service extends AbstractService
 
     /**
      * @param UsersService $usersService
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setUsersService(UsersService $usersService): void
     {

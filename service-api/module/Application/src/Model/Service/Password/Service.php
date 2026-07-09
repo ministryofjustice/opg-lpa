@@ -127,7 +127,7 @@ class Service extends AbstractService
 
     /**
      * @param AuthenticationService $authenticationService
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setAuthenticationService(AuthenticationService $authenticationService): void
     {

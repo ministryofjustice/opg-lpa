@@ -11,7 +11,7 @@ trait FeedbackRepositoryTrait
 
     /**
      * @param FeedbackRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setFeedbackRepository(FeedbackRepositoryInterface $repo): void
     {
