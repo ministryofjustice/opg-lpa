@@ -89,7 +89,7 @@ class Service extends AbstractService
 
     /**
      * @param ApplicationService $applicationsService
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setApplicationsService(ApplicationService $applicationsService): void
     {

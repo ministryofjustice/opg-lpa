@@ -16,7 +16,7 @@ trait ApplicationRepositoryTrait
 
     /**
      * @param ApplicationRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setApplicationRepository(ApplicationRepositoryInterface $repo): void
     {
