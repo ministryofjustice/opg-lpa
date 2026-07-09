@@ -90,47 +90,6 @@
 
 }
 
-// Restore margins for GOV.UK Frontend heading classes to match the old toolkit
-// heading-xlarge / heading-large / heading-medium / heading-small values.
-.govuk-heading-xl {
-    margin-top: govuk-spacing(6);
-    margin-bottom: govuk-spacing(3);
-
-    @include govuk-media-query($from: tablet) {
-        margin-top: govuk-spacing(9);
-        margin-bottom: govuk-spacing(6);
-    }
-}
-
-.govuk-heading-l {
-    margin-top: govuk-spacing(5);
-    margin-bottom: govuk-spacing(2);
-
-    @include govuk-media-query($from: tablet) {
-        margin-top: 45px;
-        margin-bottom: govuk-spacing(4);
-    }
-}
-
-.govuk-heading-m {
-    margin-top: govuk-spacing(5);
-    margin-bottom: govuk-spacing(2);
-
-    @include govuk-media-query($from: tablet) {
-        margin-top: 45px;
-        margin-bottom: govuk-spacing(4);
-    }
-}
-
-.govuk-heading-s {
-    margin-top: govuk-spacing(2);
-    margin-bottom: govuk-spacing(1);
-
-    @include govuk-media-query($from: tablet) {
-        margin-top: govuk-spacing(4);
-    }
-}
-
 // simulate the newer design system layout for
 // warning blocks
 .govuk-warning-text {
