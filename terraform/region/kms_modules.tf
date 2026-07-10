@@ -1,5 +1,5 @@
 module "aws_backup_cross_account_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Encryption keys for Make an LPA backups copied into the backup account"
   alias              = "opg-lpa-${local.account_name}-aws-backup-key"
   primary_region     = "eu-west-1"
@@ -34,7 +34,7 @@ module "aws_backup_cross_account_key" {
 }
 
 module "aws_backup_source_account_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Encryption keys for Make an LPA backups copied into the backup account"
   alias              = "opg-lpa-${local.account_name}-aws-backup-source-account-key"
   primary_region     = "eu-west-1"
@@ -66,7 +66,7 @@ module "aws_backup_source_account_key" {
 }
 
 module "aurora_database_encryption_key" {
-  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description = "Customer managed encryption key for Aurora RDS database"
   alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
   usage_services = [
@@ -113,7 +113,7 @@ module "aurora_database_encryption_key" {
 }
 
 module "secrets_manager_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for Secrets Manager"
   alias              = "opg-lpa-${local.account_name}-secrets-manager-encryption-key"
   usage_services     = []
@@ -190,7 +190,7 @@ module "application_log_group_encryption_key" {
 }
 
 module "dynamodb_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for DynamoDB"
   alias              = "opg-lpa-${local.account_name}-dynamodb-encryption-key"
   usage_services     = []
