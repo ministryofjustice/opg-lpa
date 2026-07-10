@@ -4,6 +4,7 @@ namespace Application\Model\Service\Users;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use ArrayObject;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
@@ -12,6 +13,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\EntityInterface;
 use Application\Model\Service\PasswordValidatorTrait;
 use Application\Model\Service\TokenGenerationTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
@@ -108,9 +110,9 @@ class Service extends AbstractService
 
     /**
      * @param string $id
-     * @return DataModelEntity|null Returns null if no profile exists for the given ID.
+     * @return EntityInterface|null Returns null if no profile exists for the given ID.
      */
-    public function fetch(string $id): ?DataModelEntity
+    public function fetch(string $id): ?EntityInterface
     {
         $user = $this->getUserRepository()->getProfile($id);
 
@@ -126,9 +128,9 @@ class Service extends AbstractService
 
     /**
      * @param string $id
-     * @return ValidationApiProblem|DataModelEntity
+     * @return ApiProblem|EntityInterface
      */
-    public function createProfile(string $id): ValidationApiProblem|DataModelEntity
+    public function createProfile(string $id): ApiProblem|EntityInterface
     {
         $result = $this->save($id);
 
@@ -142,9 +144,9 @@ class Service extends AbstractService
     /**
      * @param array $data
      * @param string $id
-     * @return ValidationApiProblem|DataModelEntity|null
+     * @return ApiProblem|EntityInterface|null
      */
-    public function update(array $data, string $id): ValidationApiProblem|DataModelEntity|null
+    public function update(array $data, string $id): ApiProblem|EntityInterface|null
     {
         $user = $this->save($id, $data);
 
@@ -159,9 +161,9 @@ class Service extends AbstractService
     /**
      * @param string $id
      * @param string $reason
-     * @return bool
+     * @return ApiProblem|bool
      */
-    public function delete(string $id, string $reason = 'user-initiated'): bool
+    public function delete(string $id, string $reason = 'user-initiated'): ApiProblem|bool
     {
         //  First delete all applications for the user
         $this->applicationsService->deleteAll($id);
