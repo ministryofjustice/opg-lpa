@@ -48,7 +48,7 @@ class Service extends AbstractService
     /**
      * @param HttpClient $httpClient
      * @return void
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setClient(HttpClient $httpClient): void
     {
@@ -58,7 +58,7 @@ class Service extends AbstractService
     /**
      * @param CredentialsInterface $credentials
      * @return void
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setCredentials(CredentialsInterface $credentials): void
     {
@@ -68,7 +68,7 @@ class Service extends AbstractService
     /**
      * @param array $config
      * @return void
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setConfig(array $config): void
     {
@@ -83,7 +83,7 @@ class Service extends AbstractService
     /**
      * @param SignatureV4 $awsSignature
      * @return void
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setAwsSignatureV4(SignatureV4 $awsSignature): void
     {

@@ -313,7 +313,7 @@ class Service extends AbstractService
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
      * @return iterable Array of arrays; each subarray derived from a UserModel instance
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function matchUsers(string $query, array $options = []): iterable
     {
@@ -330,7 +330,7 @@ class Service extends AbstractService
 
     /**
      * @param ApplicationService $applicationsService
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setApplicationsService(ApplicationService $applicationsService): void
     {
