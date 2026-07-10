@@ -1,5 +1,5 @@
 module "aws_backup_cross_account_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Encryption keys for Make an LPA backups copied into the backup account"
   alias              = "opg-lpa-${local.account_name}-aws-backup-key"
   primary_region     = "eu-west-1"
@@ -34,7 +34,7 @@ module "aws_backup_cross_account_key" {
 }
 
 module "aws_backup_source_account_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Encryption keys for Make an LPA backups copied into the backup account"
   alias              = "opg-lpa-${local.account_name}-aws-backup-source-account-key"
   primary_region     = "eu-west-1"
@@ -66,7 +66,7 @@ module "aws_backup_source_account_key" {
 }
 
 module "aurora_database_encryption_key" {
-  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description = "Customer managed encryption key for Aurora RDS database"
   alias       = "opg-lpa-${local.account_name}-rds-encryption-key"
   usage_services = [
@@ -113,7 +113,7 @@ module "aurora_database_encryption_key" {
 }
 
 module "secrets_manager_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for Secrets Manager"
   alias              = "opg-lpa-${local.account_name}-secrets-manager-encryption-key"
   usage_services     = []
@@ -190,7 +190,7 @@ module "application_log_group_encryption_key" {
 }
 
 module "dynamodb_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.5"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for DynamoDB"
   alias              = "opg-lpa-${local.account_name}-dynamodb-encryption-key"
   usage_services     = []
@@ -221,6 +221,44 @@ module "dynamodb_encryption_key" {
     "-front-task-role",
     "-pdf-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+
+module "elasticache_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  description        = "Customer managed encryption key for ElastiCache at rest encryption"
+  alias              = "opg-lpa-${local.account_name}-elasticache-encryption-key"
+  usage_services     = ["elasticache.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
