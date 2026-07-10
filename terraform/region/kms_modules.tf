@@ -226,3 +226,41 @@ module "dynamodb_encryption_key" {
     data.aws_caller_identity.current.account_id,
   ]
 }
+
+
+module "elasticache_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  description        = "Customer managed encryption key for ElastiCache at rest encryption"
+  alias              = "opg-lpa-${local.account_name}-elasticache-encryption-key"
+  usage_services     = ["elasticache.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
