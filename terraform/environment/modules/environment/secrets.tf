@@ -82,3 +82,8 @@ resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
     dbClusterIdentifier = "api2-${var.environment_name}"
   })
 }
+
+# elasticache auth token secret
+data "aws_secretsmanager_secret" "elasticache_auth_token" {
+  name = "${var.account_name}/elasticache_auth_token"
+}
