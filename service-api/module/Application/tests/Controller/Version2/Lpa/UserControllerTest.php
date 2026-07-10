@@ -163,7 +163,7 @@ class UserControllerTest extends AbstractControllerTestCase
         $controller = $this->getController();
 
         $this->service->shouldReceive('fetch')->andReturn(null)->once();
-        $this->service->shouldReceive('createProfile')->andReturn('unexpected type')->once();
+        $this->service->shouldReceive('createProfile')->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->get(10);
 
@@ -224,8 +224,10 @@ class UserControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
+        // update() may return null for an unexpected/unhandled state;
+        // the controller should fall through to a 500 ApiProblem.
         $this->service->shouldReceive('update')->withArgs([['some' => 'data'], 10])
-            ->andReturn('unexpected type')->once();
+            ->andReturn(null)->once();
 
         $response = $controller->update(10, ['some' => 'data']);
 
