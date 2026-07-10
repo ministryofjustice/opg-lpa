@@ -107,10 +107,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @return DataModelEntity|null Returns null if no profile exists for the given ID.
      */
-    public function fetch($id)
+    public function fetch(string $id): ?DataModelEntity
     {
         $user = $this->getUserRepository()->getProfile($id);
 
@@ -125,20 +125,26 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
-     * @return DataModelEntity
+     * @param string $id
+     * @return ValidationApiProblem|DataModelEntity
      */
-    public function createProfile($id)
+    public function createProfile(string $id): ValidationApiProblem|DataModelEntity
     {
-        return new DataModelEntity($this->save($id));
+        $result = $this->save($id);
+
+        if (!$result instanceof ProfileUserModel) {
+            return $result;
+        }
+
+        return new DataModelEntity($result);
     }
 
     /**
-     * @param $data
-     * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
+     * @param array $data
+     * @param string $id
+     * @return ValidationApiProblem|DataModelEntity|null
      */
-    public function update($data, $id)
+    public function update(array $data, string $id): ValidationApiProblem|DataModelEntity|null
     {
         $user = $this->save($id, $data);
 
@@ -151,11 +157,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param string $reason
      * @return bool
      */
-    public function delete($id, $reason = 'user-initiated')
+    public function delete(string $id, string $reason = 'user-initiated'): bool
     {
         //  First delete all applications for the user
         $this->applicationsService->deleteAll($id);
@@ -193,11 +199,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param array $data
      * @return ValidationApiProblem|ProfileUserModel
      */
-    private function save($id, array $data = [])
+    private function save(string $id, array $data = []): ValidationApiProblem|ProfileUserModel
     {
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
