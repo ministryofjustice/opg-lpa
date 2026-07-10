@@ -140,7 +140,7 @@ class UserModel implements UserRepository\UserInterface
      * The date the user's account is set to be deleted.
      *
      * @return DateTime|null
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function deleteAt(): ?DateTime
     {
