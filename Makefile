@@ -34,44 +34,49 @@ reset:
 
 .PHONY: run-front-composer
 run-front-composer:
-	@docker run --rm -v `pwd`/service-front/:/app/ -v `pwd`/shared/:/shared/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
+	@docker compose run --rm composer-front install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
 .PHONY: run-pdf-composer
 run-pdf-composer:
-	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-pdf install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-api-composer
 run-api-composer:
-	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-api install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-admin-composer
 run-admin-composer:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-admin install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-shared-composer
 run-shared-composer:
-	@docker run --rm -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer install --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-shared install --prefer-dist --no-interaction --no-scripts
 
 .PHONY: run-composers
 run-composers:
-	@docker pull composer:${COMPOSER_VERSION}; \
 	${MAKE} -j run-front-composer run-pdf-composer run-api-composer run-admin-composer run-shared-composer
 
 # use make front-composer-update PACKAGE=symfony\/validator\:v5.4.43
 # you'll need to escape the \ and : as above
 .PHONY: front-composer-update
 front-composer-update:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-front update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+
+# Usage: make front-composer-require PACKAGE=vendor\/package
+# For a version constraint: make front-composer-require PACKAGE=vendor\/package\:^1.0
+.PHONY: front-composer-require
+front-composer-require:
+	@docker compose run --rm composer-front require $(PACKAGE)
 
 # remove a package, same format for PACKAGE= as above
 .PHONY: front-composer-remove
 front-composer-remove:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --no-install
+	@docker compose run --rm composer-front remove $(PACKAGE) --no-install
 
 #run composer outdated in front container
 .PHONY: front-composer-outdated
 front-composer-outdated:
-	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer outdated
+	@docker compose run --rm composer-front outdated
 
 # use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
 # you'll need to escape the \ and : as above
