@@ -175,12 +175,10 @@ class Document extends AbstractData
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
                 }
 
-                // use preg_split to split $value on any sequence of whitespace chars (\s+ matches one or more spaces, tabs, newlines, etc.), returning array of individual words.
-                // -1 — for the limit parameter means "no limit" — split into as many pieces as needed.
-                // PREG_SPLIT_NO_EMPTYihi is a flag that discards empty strings from the result, so multiple consecutive spaces or leading/trailing whitespace don't produce empty array entries.
-                
+                // Split on whitespace and reject if any single word exceeds 85 characters.
+                // ?: [] guards against preg_split returning false on regex failure.
                 if (is_string($value)) {
-                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) as $word) {
+                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $word) {
                         if (strlen($word) > 85) {
                             $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
                             break;
@@ -200,7 +198,7 @@ class Document extends AbstractData
             })
         );
 
-        // preference should be string (not containing words over 85 chars, or http), null or boolean false.
+        // preference should be string, null or boolean false.
         $metadata->addPropertyConstraint(
             'preference',
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
@@ -208,8 +206,10 @@ class Document extends AbstractData
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
                 }
 
+                // Split on whitespace and reject if any single word exceeds 85 characters.
+                // ?: [] guards against preg_split returning false on regex failure.
                 if (is_string($value)) {
-                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) as $word) {
+                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $word) {
                         if (strlen($word) > 85) {
                             $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
                             break;
