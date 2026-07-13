@@ -29,6 +29,7 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
     private MezzioSessionStorage&MockObject $storage;
     private ApiClient&MockObject $apiClient;
     private SessionInterface&MockObject $session;
+    private LoggerInterface&MockObject $logger;
     private IdentityTokenRefreshMiddleware $middleware;
 
     protected function setUp(): void
@@ -38,16 +39,15 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
         $this->storage = $this->createMock(MezzioSessionStorage::class);
         $this->apiClient = $this->createMock(ApiClient::class);
         $this->session = $this->createMock(SessionInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->middleware = new IdentityTokenRefreshMiddleware(
             $this->authService,
             $this->userService,
             $this->storage,
             $this->apiClient,
+            $this->logger,
         );
-
-        $logger = $this->createMock(LoggerInterface::class);
-        $this->middleware->setLogger($logger);
     }
 
     private function makeHandler(): RequestHandlerInterface

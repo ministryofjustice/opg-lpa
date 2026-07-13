@@ -157,9 +157,6 @@ final class NotifyMailTransportTest extends TestCase
 
     private function createTransport(?string $smokeTestEmailAddress = null): NotifyMailTransport
     {
-        $transport = new NotifyMailTransport($this->client, $smokeTestEmailAddress);
-        $transport->setLogger($this->logger);
-
-        return $transport;
+        return new NotifyMailTransport($this->client, $smokeTestEmailAddress, null, $this->logger);
     }
 }
