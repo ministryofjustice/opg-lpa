@@ -40,6 +40,7 @@ return [
         // from Secrets Manager so rotation takes effect without a task restart.
         'service_secret_arn' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET_ARN') ?: null,
         'service_secret_sm_endpoint' => getenv('OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT') ?: null,
+        'shared_secret_enabled' => getenv('OPG_LPA_SHARED_SECRET_ENABLED') === 'true',
     ],
 
     'db' => [

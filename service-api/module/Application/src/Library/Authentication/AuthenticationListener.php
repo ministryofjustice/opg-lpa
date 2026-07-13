@@ -46,10 +46,12 @@ class AuthenticationListener implements LoggerAwareInterface
         // via a pre-shared secret rather than a user token. Network-level security
         // (VPC security groups) is the primary control; this provides an explicit identity.
         /** @psalm-suppress UndefinedInterfaceMethod */
-        $adminAuthHeader = $e->getRequest()->getHeader('X-AdminAuth');
+        $adminAuthHeader = $e->getRequest()->getHeader('X-Shared-Secret');
 
-        if ($adminAuthHeader) {
-            $config = $serviceManager->get('Config');
+        $config = $serviceManager->get('Config');
+        $sharedSecretEnabled = $config['admin']['shared_secret_enabled'] ?? null;
+
+        if ($adminAuthHeader && $sharedSecretEnabled === true) {
             $adminServiceSecret = SecretService::resolve(
                 arn: $config['admin']['service_secret_arn'] ?? null,
                 endpoint: $config['admin']['service_secret_sm_endpoint'] ?? null,
@@ -77,7 +79,6 @@ class AuthenticationListener implements LoggerAwareInterface
             //  Attempt to authenticate - if successful the identity will be persisted for the request
             /** @var AuthenticationService $authenticationService */
             $authenticationService = $serviceManager->get(AuthenticationService::class);
-            $config = $serviceManager->get('Config');
 
             $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
 

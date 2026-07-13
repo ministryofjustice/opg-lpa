@@ -263,6 +263,10 @@ services:
 
       LPA_FEE_EFFECTIVE_DATE: "2025-09-17T14:30:00"
 
+      OPG_LPA_SHARED_SECRET_ENABLED: "true"
+      OPG_LPA_ADMIN_SERVICE_SECRET_ARN: "arn:aws:secretsmanager:eu-west-1:000000000000:secret:local/opg_lpa_admin_service_secret"
+      OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT: "http://localstack:4566"
+
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
@@ -354,6 +358,10 @@ services:
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
       OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
+
+      OPG_LPA_SHARED_SECRET_ENABLED: "true"
+      OPG_LPA_ADMIN_SERVICE_SECRET_ARN: "arn:aws:secretsmanager:eu-west-1:000000000000:secret:local/opg_lpa_admin_service_secret"
+      OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT: "http://localstack:4566"
 
       COGNITO_BASE_URL: "http://mock-cognito:8080"
       COGNITO_ISSUER: "http://mock-cognito:8080"

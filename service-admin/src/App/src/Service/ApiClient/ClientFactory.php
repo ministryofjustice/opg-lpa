@@ -24,10 +24,14 @@ class ClientFactory
 
         $config = $container->get('config');
 
-        $secret = SecretService::resolve(
-            arn: $config['admin_service_secret_arn'] ?? null,
-            endpoint: $config['secrets_manager_endpoint'] ?? null,
-        );
+        $secret = '';
+
+        if ($config['shared_secret_enabled'] === true) {
+            $secret = SecretService::resolve(
+                arn: $config['admin_service_secret_arn'] ?? null,
+                endpoint: $config['secrets_manager_endpoint'] ?? null,
+            );
+        }
 
         return new Client(
             $httpClient,
