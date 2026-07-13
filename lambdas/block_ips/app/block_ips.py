@@ -11,10 +11,11 @@ from datetime import datetime, timedelta
 table_name = "BlockedIPs"
 ip_set_name = "BlockedIPs"
 ip_set_scope = "REGIONAL"
+current_region = os.getenv("AWS_REGION", "eu-west-1")
 
 
 def query_cloudwatch_logs(log_group_name, log_stream_prefix):
-    cloudwatch_logs = boto3.client("logs", region_name="eu-west-1")
+    cloudwatch_logs = boto3.client("logs", region_name=current_region)
     end_time = datetime.now()
     # We choose 7 mins so it overlaps the last run (which is every 5 mins)
     start_time = end_time - timedelta(minutes=7)
@@ -119,7 +120,7 @@ def filter_logs(logs):
 
 
 def update_dynamodb_table(ips):
-    dynamodb = boto3.client("dynamodb", region_name="eu-west-1")
+    dynamodb = boto3.client("dynamodb", region_name=current_region)
     current_time = datetime.utcnow()
     timeout_expiry_short = current_time + timedelta(minutes=30)
     timeout_expiry_medium = current_time + timedelta(hours=4)
@@ -173,7 +174,7 @@ def update_dynamodb_table(ips):
 
 
 def get_blocked_ips():
-    dynamodb = boto3.client("dynamodb", region_name="eu-west-1")
+    dynamodb = boto3.client("dynamodb", region_name=current_region)
     response = dynamodb.scan(
         TableName=table_name, ProjectionExpression="IP, TimeoutExpiry"
     )
@@ -187,7 +188,7 @@ def get_blocked_ips():
 
 
 def update_waf_ip_set(ip_set_name, ip_set_scope, ips):
-    waf = boto3.client("wafv2", region_name="eu-west-1")
+    waf = boto3.client("wafv2", region_name=current_region)
     response = waf.list_ip_sets(Scope=ip_set_scope)
     ip_set_id = None
 
