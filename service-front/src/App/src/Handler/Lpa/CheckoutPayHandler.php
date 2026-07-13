@@ -19,12 +19,11 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -32,11 +31,10 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterface
+class CheckoutPayHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
-    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -44,6 +42,7 @@ class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterfac
         Communication $communicationService,
         private readonly GovPayClient $paymentClient,
         UrlHelper $urlHelper,
+        private readonly LoggerInterface $logger,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService  = $communicationService;
@@ -115,7 +114,7 @@ class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterfac
                 $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
                 if ($result === false) {
-                    $this->getLogger()->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
+                    $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
                         'lpaId'            => $lpa->id,
                         'gatewayReference' => $gatewayReference,
                         'has_email'        => $lpa->payment->email !== null,

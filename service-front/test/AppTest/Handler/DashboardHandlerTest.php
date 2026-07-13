@@ -16,21 +16,25 @@ use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class DashboardHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private LpaApplicationService&MockObject $lpaApplicationService;
+    private LoggerInterface&MockObject $logger;
     private DashboardHandler $handler;
 
     protected function setUp(): void
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = new DashboardHandler(
             $this->renderer,
             $this->lpaApplicationService,
+            $this->logger,
         );
     }
 

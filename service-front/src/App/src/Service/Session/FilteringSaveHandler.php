@@ -5,19 +5,18 @@ declare(strict_types=1);
 namespace App\Service\Session;
 
 use App\Service\Redis\RedisClient;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Redis;
 
-class FilteringSaveHandler implements \SessionHandlerInterface, LoggerAwareInterface
+class FilteringSaveHandler implements \SessionHandlerInterface
 {
-    use LoggerTrait;
-
     public const SESSION_PREFIX = 'PHPREDIS_SESSION:';
 
     private RedisClient $redisClient;
 
     private array $filters;
+    private readonly LoggerInterface $logger;
 
     private function getKey(string $id): string
     {
@@ -28,10 +27,14 @@ class FilteringSaveHandler implements \SessionHandlerInterface, LoggerAwareInter
      * @param RedisClient $redisClient Client for Redis access
      * @param array $filters Filters to assign
      */
-    public function __construct(RedisClient $redisClient, array $filters = [])
-    {
+    public function __construct(
+        RedisClient $redisClient,
+        array $filters = [],
+        ?LoggerInterface $logger = null,
+    ) {
         $this->filters     = $filters;
         $this->redisClient = $redisClient;
+        $this->logger      = $logger ?? new NullLogger();
     }
 
     public function addFilter(callable $closure): self

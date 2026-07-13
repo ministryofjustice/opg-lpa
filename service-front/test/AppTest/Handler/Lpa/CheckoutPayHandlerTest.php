@@ -34,6 +34,7 @@ class CheckoutPayHandlerTest extends TestCase
     private Communication&MockObject $communicationService;
     private GovPayClient&MockObject $paymentClient;
     private UrlHelper&MockObject $urlHelper;
+    private LoggerInterface&MockObject $logger;
     private CheckoutPayHandler $handler;
 
     protected function setUp(): void
@@ -43,6 +44,7 @@ class CheckoutPayHandlerTest extends TestCase
         $this->communicationService = $this->createMock(Communication::class);
         $this->paymentClient = $this->createMock(GovPayClient::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = new CheckoutPayHandler(
             $this->formElementManager,
@@ -50,9 +52,8 @@ class CheckoutPayHandlerTest extends TestCase
             $this->communicationService,
             $this->paymentClient,
             $this->urlHelper,
+            $this->logger,
         );
-
-        $this->handler->setLogger($this->createMock(LoggerInterface::class));
     }
 
     /**

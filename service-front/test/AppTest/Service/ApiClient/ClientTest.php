@@ -248,10 +248,7 @@ final class ClientTest extends TestCase
 
     private function createClient(array $defaultHeaders = [], ?Tracer $tracer = null): Client
     {
-        $client = new Client($this->httpClient, 'https://api.example', $defaultHeaders, $tracer);
-        $client->setLogger($this->logger);
-
-        return $client;
+        return new Client($this->httpClient, 'https://api.example', $defaultHeaders, $tracer, $this->logger);
     }
 
     private function makeResponse(int $statusCode, string $body): ResponseInterface

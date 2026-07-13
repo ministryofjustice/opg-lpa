@@ -11,26 +11,21 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 
-class LpaLoaderMiddleware implements MiddlewareInterface, LoggerAwareInterface
+class LpaLoaderMiddleware implements MiddlewareInterface
 {
-    use LoggerTrait;
-
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly UrlHelper $urlHelper,
-        LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->setLogger($logger);
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -63,11 +58,11 @@ class LpaLoaderMiddleware implements MiddlewareInterface, LoggerAwareInterface
         if ($identity->id() !== $lpa->user) {
             $isGetRequest = strtoupper($request->getMethod()) === 'GET';
             if ($isGetRequest) {
-                $this->getLogger()->info("User attempted to view another user's LPA", [
+                $this->logger->info("User attempted to view another user's LPA", [
                     'lpaId' => (int) $lpaId,
                 ]);
             } else {
-                $this->getLogger()->info("User attempted to modify another user's LPA", [
+                $this->logger->info("User attempted to modify another user's LPA", [
                     'lpaId' => (int) $lpaId,
                 ]);
             }
@@ -101,7 +96,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface, LoggerAwareInterface
         }
 
         if (strtoupper($request->getMethod()) === 'GET') {
-            $this->getLogger()->info('User viewed LPA', [
+            $this->logger->info('User viewed LPA', [
                 'lpaId' => $lpa->id,
             ]);
         }

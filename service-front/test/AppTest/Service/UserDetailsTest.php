@@ -46,11 +46,10 @@ final class UserDetailsTest extends TestCase
 
         $this->authService->method('getIdentity')->willReturn($this->identity);
 
-        $this->service = new UserDetails($this->authService, [], $this->mailTransport);
+        $this->service = new UserDetails($this->authService, [], $this->mailTransport, $this->logger);
         $this->service->setApiClient($this->apiClient);
         $this->service->setSessionStorage($this->sessionStorage);
         $this->service->setUrlHelper($this->urlHelper);
-        $this->service->setLogger($this->logger);
     }
 
     // -------------------------------------------------------------------------
@@ -141,10 +140,9 @@ final class UserDetailsTest extends TestCase
 
     public function testUpdatePasswordDoesNotWriteSessionStorageWhenNotSet(): void
     {
-        $service = new UserDetails($this->authService, [], $this->mailTransport);
+        $service = new UserDetails($this->authService, [], $this->mailTransport, $this->logger);
         $service->setApiClient($this->apiClient);
         $service->setUrlHelper($this->urlHelper);
-        $service->setLogger($this->logger);
         // No setSessionStorage()
 
         $this->apiClient->method('updateToken');
@@ -422,7 +420,7 @@ final class UserDetailsTest extends TestCase
 
     public function testGetConfigReturnsInjectedConfig(): void
     {
-        $service = new UserDetails($this->authService, ['feature' => true], $this->mailTransport);
+        $service = new UserDetails($this->authService, ['feature' => true], $this->mailTransport, $this->logger);
 
         $this->assertSame(['feature' => true], $service->getConfig());
     }

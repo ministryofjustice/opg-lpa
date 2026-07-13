@@ -10,14 +10,13 @@ use App\Service\ApiClient\Exception\ApiException;
 use App\Authentication\AuthenticationService;
 use App\Model\Service\Authentication\Identity\User as Identity;
 use App\Service\UserDetails as UserService;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Reads the authenticated identity from the Mezzio session, populates the
@@ -26,10 +25,8 @@ use Psr\Log\LoggerAwareInterface;
  *
  * Must run after Mezzio\Session\SessionMiddleware.
  */
-class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAwareInterface
+class IdentityTokenRefreshMiddleware implements MiddlewareInterface
 {
-    use LoggerTrait;
-
     public const string SESSION_KEY_IDENTITY = 'identity';
     public const string SESSION_KEY_AUTH_FAILURE_CODE = 'auth_failure_code';
 
@@ -43,6 +40,7 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAware
         private readonly UserService $userService,
         private readonly MezzioSessionStorage $storage,
         private readonly ApiClient $apiClient,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -88,7 +86,7 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAware
                 $identity->tokenExpiresIn($info['expiresIn']);
                 $this->storage->write($identity);
             } else {
-                $this->getLogger()->warning('Token refresh failed, clearing identity', [
+                $this->logger->warning('Token refresh failed, clearing identity', [
                     'success'     => $info['success'],
                     'failureCode' => $info['failureCode'] ?? null,
                     'expiresIn'   => $info['expiresIn'] ?? null,
@@ -101,7 +99,7 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface, LoggerAware
                 }
             }
         } catch (ApiException $e) {
-            $this->getLogger()->warning('ApiException during token refresh, clearing identity', [
+            $this->logger->warning('ApiException during token refresh, clearing identity', [
                 'message' => $e->getMessage(),
                 'code'    => $e->getStatusCode(),
             ]);
