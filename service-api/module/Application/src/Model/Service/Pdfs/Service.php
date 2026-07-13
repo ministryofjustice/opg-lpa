@@ -275,7 +275,7 @@ class Service extends AbstractService
      * Set the PDF config
      *
      * @param array $config
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setPdfConfig(array $config): void
     {
@@ -286,7 +286,7 @@ class Service extends AbstractService
 
     /**
      * @param S3Client $s3Client
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setS3Client(S3Client $s3Client): void
     {
@@ -295,7 +295,7 @@ class Service extends AbstractService
 
     /**
      * @param SqsClient $sqsClient
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setSqsClient(SqsClient $sqsClient): void
     {

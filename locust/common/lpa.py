@@ -1,6 +1,5 @@
 from common.helper import get_csrf_token
 import random
-from bs4 import BeautifulSoup
 from faker import Faker
 from common.config import logger
 
@@ -510,16 +509,13 @@ class LastingPowerAttorney:
                 response.headers["Location"],
             )
 
-    def view_checkout_page(self, pay_now=True):
+    def view_checkout_page(self):
         self.client.get(
             "/lpa/%s/checkout" % self.lpa_id,
             allow_redirects=False,
             name="/lpa/[id]/checkout",
         )
-
-        if pay_now:
-            payment_functions = [self.pay_by_cheque, self.pay_by_card]
-            random.choice(payment_functions)()
+        self.pay_by_cheque()
 
     def pay_by_cheque(self):
         self.client.get(
@@ -532,115 +528,6 @@ class LastingPowerAttorney:
             "User %s is paying by cheque for lpa with id: %s",
             self.account_details["email"],
             self.lpa_id,
-        )
-
-    def pay_by_card(self):
-        # This function is a bit of a mess, but it works. It would be nice to refactor it at some point.
-
-        card_number = "4444333322221111"
-        expiry_month = "01"
-        expiry_year = "30"
-        cvc = "123"
-        card_payments_url = "https://card.payments.service.gov.uk"
-
-        url = "/lpa/%s/checkout" % self.lpa_id
-
-        csrf_token_name, csrf_token = get_csrf_token(self.client, url)
-
-        data = {
-            csrf_token_name: csrf_token,
-        }
-
-        response = self.client.post(
-            "%s/pay" % url, data=data, allow_redirects=True, name="/lpa/[id]/checkout"
-        )
-
-        logger.debug(
-            "User %s is paying by card for lpa with id: %s",
-            self.account_details["email"],
-            self.lpa_id,
-        )
-
-        pay_url = response.url
-        # e.g. https://card.payments.service.gov.uk/card_details/l3duies6q4oso85bjt2gu270l4
-
-        response = self.client.get(
-            pay_url,
-            allow_redirects=True,
-            name="%s/card_details/[payment_id]" % card_payments_url,
-        )
-
-        soup = BeautifulSoup(response.text, "html.parser")
-        csrf_token_tag = soup.find(
-            "input", attrs={"name": "csrfToken", "type": "hidden"}
-        )
-        csrf_token = csrf_token_tag["value"]
-        # e.g. v7wtfMjA-DfHZimB4Dxfv5np7bSir11SNdCI
-        payment_id = pay_url.split("/")[-1]
-        # e.g. l3duies6q4oso85bjt2gu270l4
-
-        response = self.client.post(
-            "%s/check_card/%s" % (card_payments_url, payment_id),
-            data={"cardNo": card_number},
-            allow_redirects=True,
-            name="%s/check_card/[payment_id]" % card_payments_url,
-        )
-
-        logger.debug(
-            "User %s POSTed to %s and got redirected to %s",
-            self.account_details["email"],
-            url,
-            response.url,
-        )
-
-        data = {
-            "chargeId": payment_id,
-            "csrfToken": csrf_token,
-            "cardNo": card_number,
-            "expiryMonth": expiry_month,
-            "expiryYear": expiry_year,
-            "cardholderName": self.account_details["title"]
-            + " "
-            + self.account_details["first_name"]
-            + " "
-            + self.account_details["last_name"],
-            "cvc": cvc,
-            "addressCountry": "GB",
-            "addressLine1": self.account_details["address1"],
-            "addressLine2": self.account_details["address2"],
-            "addressCity": self.account_details["address3"],
-            "addressPostcode": self.account_details["postcode"],
-            "email": "simulate-delivered@notifications.service.gov.uk",
-        }
-
-        response = self.client.post(
-            "%s/card_details/%s" % (card_payments_url, payment_id),
-            data=data,
-            allow_redirects=True,
-            name="%s/card_details/[payment_id]" % card_payments_url,
-        )
-
-        response = self.client.get(
-            "%s/card_details/%s/confirm" % (card_payments_url, payment_id),
-            allow_redirects=True,
-            name="%s/card_details/[payment_id]/confirm" % card_payments_url,
-        )
-        soup = BeautifulSoup(response.text, "html.parser")
-        csrf_token_tag = soup.find(
-            "input", attrs={"name": "csrfToken", "type": "hidden"}
-        )
-        csrf_token = csrf_token_tag["value"]
-
-        data = {
-            "chargeId": payment_id,
-            "csrfToken": csrf_token,
-        }
-
-        response = self.client.post(
-            "%s/card_details/%s/confirm" % (card_payments_url, payment_id),
-            data=data,
-            allow_redirects=True,
-            name="%s/card_details/[payment_id]/confirm" % card_payments_url,
         )
 
     def generate_lpa_pdf(self):
