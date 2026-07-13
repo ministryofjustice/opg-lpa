@@ -198,7 +198,7 @@ class CheckoutPayHandlerTest extends TestCase
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'existing-ref',
             'reference' => 'ref-123',
-            'email' => 'user@example.com',
+            'email' => 'user@example.com ',
             'state' => ['status' => 'success', 'finished' => true],
             '_links' => [],
         ]);
@@ -250,21 +250,19 @@ class CheckoutPayHandlerTest extends TestCase
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        $capturedData = null;
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
-            ->with(
-                $lpa->id,
-                $this->callback(function (array $data) use ($expected): bool {
-                    return isset($data['payment']['email']['address'])
-                        && $data['payment']['email']['address'] === $expected;
-                })
-            )
-            ->willReturn(new Lpa([]));
+            ->willReturnCallback(function (mixed $id, array $data) use (&$capturedData): Lpa {
+                $capturedData = $data;
+                return new Lpa([]);
+            });
         $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame($expected, $capturedData['payment']['email']['address'] ?? null);
     }
 
     /**
@@ -305,7 +303,6 @@ class CheckoutPayHandlerTest extends TestCase
         $govPayPayment = $this->makeGovPayPayment($paymentData);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-        // Called exactly once — no retry because email was null/blank from the start
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
             ->with(
@@ -342,7 +339,6 @@ class CheckoutPayHandlerTest extends TestCase
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-        // Only one call — we never retry or manipulate the email value beyond trim/lowercase.
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
             ->with(
