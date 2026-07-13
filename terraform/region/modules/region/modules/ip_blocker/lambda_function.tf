@@ -6,7 +6,7 @@ locals {
 resource "aws_cloudwatch_log_group" "block_ips_lambda" {
   name              = "/aws/lambda/${local.block_ips_lambda_function_name}"
   retention_in_days = 14
-  kms_key_id        = var.dynamodb_kms_key_arn
+  kms_key_id        = var.application_logs_kms_key_arn
 }
 
 data "archive_file" "block_ips_zip" {

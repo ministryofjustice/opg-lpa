@@ -271,6 +271,29 @@ resource "aws_wafv2_web_acl" "main" {
     }
   }
 
+  dynamic "rule" {
+    for_each = var.web_application_firewall.waf_ip_blocking_enabled ? [1] : []
+    content {
+      name     = "BlockSpecificIPs"
+      priority = 55
+      action {
+        block {}
+      }
+
+      statement {
+        ip_set_reference_statement {
+          arn = modules.ip_blocker.aws_wafv2_ip_set.arn
+        }
+      }
+
+      visibility_config {
+        sampled_requests_enabled   = true
+        cloudwatch_metrics_enabled = true
+        metric_name                = "BlockSpecificIPs"
+      }
+    }
+  }
+
   rule {
     name     = "RateLimitByIP"
     priority = 60
@@ -332,6 +355,7 @@ resource "aws_wafv2_regex_pattern_set" "suspicious_uri_patterns_2" {
   }
 }
 
+# Logging
 resource "aws_wafv2_web_acl_logging_configuration" "main" {
   log_destination_configs = [aws_cloudwatch_log_group.waf_web_acl.arn]
   resource_arn            = aws_wafv2_web_acl.main.arn

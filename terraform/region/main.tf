@@ -9,7 +9,7 @@ module "eu-west-1" {
   }
   firewalled_vpc_cidr_range    = local.account.firewalled_vpc_cidr_ranges.eu_west_1
   dynamodb_kms_key_arn         = module.dynamodb_encryption_key.primary_key.arn
-  application_logs_kms_key_arn = module.dynamodb_encryption_key.primary_key.arn
+  application_logs_kms_key_arn = module.application_log_group_encryption_key.primary_key.arn
   aws_iam_roles = {
     ip_blocker = aws_iam_role.ip_blocker
   }
@@ -31,7 +31,7 @@ module "eu-west-2" {
   }
   firewalled_vpc_cidr_range    = local.account.firewalled_vpc_cidr_ranges.eu_west_2
   dynamodb_kms_key_arn         = module.dynamodb_encryption_key.replica_keys.eu-west-2.arn
-  application_logs_kms_key_arn = module.dynamodb_encryption_key.replica_keys.eu-west-2.arn
+  application_logs_kms_key_arn = module.application_log_group_encryption_key.replica_keys.eu-west-2.arn
   aws_iam_roles = {
     ip_blocker = aws_iam_role.ip_blocker
   }
