@@ -53,4 +53,7 @@ service-pdf/before.png
 service-pdf/after.png
 service-pdf/*.pdf
 .idea/copilotDiffState.xml
+.idea/php.xml
+.idea/php-test-framework.xml
+.idea/workspace.xml
 venv/
