@@ -11,11 +11,6 @@ variable "pagerduty_token" {
 }
 
 # variables for terraform.tfvars.json
-variable "account_mapping" {
-  description = "maps the tfvars.json files to accounts"
-  type        = map(any)
-}
-
 variable "accounts" {
   description = "the account map loaded from tfvars.json"
   type = map(
