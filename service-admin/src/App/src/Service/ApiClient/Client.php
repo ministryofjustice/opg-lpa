@@ -4,7 +4,7 @@ namespace App\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
-use Http\Client\HttpClient;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -13,33 +13,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Client
 {
-    /**
-     * @var HttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var string
-     */
-    private $apiBaseUri;
-
-    /**
-     * @var string
-     */
-    private $serviceSecret;
-
-    /**
-     * Client constructor
-     *
-     * @param HttpClient $httpClient
-     * @param string $apiBaseUri
-     * @param string $serviceSecret
-     */
-    public function __construct(HttpClient $httpClient, string $apiBaseUri, #[\SensitiveParameter] string $serviceSecret)
-    {
-        $this->httpClient = $httpClient;
-        $this->apiBaseUri = $apiBaseUri;
-        $this->serviceSecret = $serviceSecret;
+    public function __construct(
+        private ClientInterface $httpClient,
+        private string $apiBaseUri,
+        #[\SensitiveParameter] private string $serviceSecret,
+    ) {
     }
 
     /**
@@ -112,12 +90,24 @@ class Client
      */
     private function buildHeaders()
     {
-        return [
+        $headers = [
             'Accept'       => 'application/json, application/problem+json',
             'Content-Type' => 'application/json',
             'User-agent'   => 'LPA-ADMIN',
-            'X-AdminAuth'  => $this->serviceSecret,
         ];
+
+        if ($this->serviceSecret !== '') {
+            $headers['X-Shared-Secret'] = $this->serviceSecret;
+        } else {
+            $apiToken = $_SESSION['jwt-payload']['token'] ?? null;
+
+            //  If the logged-in user has an auth token already then set that in the header
+            if (is_string($apiToken)) {
+                $headers['token'] = $apiToken;
+            }
+        }
+
+        return $headers;
     }
 
     /**

@@ -56,6 +56,8 @@ return [
         ],
     ],
 
+    'shared_secret_enabled' => getenv('OPG_LPA_SHARED_SECRET_ENABLED') === 'true',
+
     'mezzio' => [
         // Provide templates for the error handling middleware to use when
         // generating responses.
