@@ -175,6 +175,19 @@ class Document extends AbstractData
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
                 }
 
+                if (is_string($value)) {
+                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) as $word) {
+                        if (strlen($word) > 85) {
+                            $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
+                            break;
+                        }
+                    }
+                }
+
+                if (is_string($value) && preg_match('/https?:\/\//', $value)) {
+                    $context->buildViolation('no-links-allowed')->addViolation();
+                }
+
                 if (is_null($value) || is_string($value) || $value === false) {
                     return;
                 }
@@ -189,6 +202,19 @@ class Document extends AbstractData
             new CallbackConstraintSymfony(function ($value, ExecutionContextInterface $context) {
                 if (is_string($value) && strlen($value) > 10000) {
                     $context->buildViolation('must-be-less-than-or-equal:10000')->addViolation();
+                }
+
+                if (is_string($value)) {
+                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) as $word) {
+                        if (strlen($word) > 85) {
+                            $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
+                            break;
+                        }
+                    }
+                }
+
+                if (is_string($value) && preg_match('/https?:\/\//', $value)) {
+                    $context->buildViolation('no-links-allowed')->addViolation();
                 }
 
                 if (is_null($value) || is_string($value) || $value === false) {

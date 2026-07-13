@@ -10,10 +10,14 @@
 {% set form = formErrorTextExchange(form, {
     'instruction' : {
         'must-be-less-than-or-equal:10000' : 'Limit your instructions to 10,000 characters',
+        'word-must-be-less-than-or-equal:85' : 'No single word in your instructions can be more than 85 characters long',
+        'no-links-allowed' : 'Web links (http:// and https://) are not allowed in instructions',
         'expected-type:string-or-bool=false' : 'Re-enter your instructions'
     },
     'preference' : {
         'must-be-less-than-or-equal:10000' : 'Limit your preferences to 10,000 characters',
+        'word-must-be-less-than-or-equal:85' : 'No single word in your preferences can be more than 85 characters long',
+        'no-links-allowed' : 'Web links (http:// and https://) are not allowed in preferences',
         'expected-type:string-or-bool=false' : 'Re-enter your preferences'
     }
 }) %}
