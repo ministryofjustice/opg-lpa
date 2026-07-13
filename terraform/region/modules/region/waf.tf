@@ -249,7 +249,7 @@ resource "aws_wafv2_web_acl" "main" {
   }
 
   dynamic "rule" {
-    for_each = var.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled ? [1] : []
+    for_each = var.account.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled ? [1] : []
     content {
       name     = "AWS-AWSManagedRulesAmazonIpReputationList"
       priority = 50
@@ -272,7 +272,7 @@ resource "aws_wafv2_web_acl" "main" {
   }
 
   dynamic "rule" {
-    for_each = var.web_application_firewall.waf_ip_blocking_enabled ? [1] : []
+    for_each = var.account.web_application_firewall.waf_ip_blocking_enabled ? [1] : []
     content {
       name     = "BlockSpecificIPs"
       priority = 55

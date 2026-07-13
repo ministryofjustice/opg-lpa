@@ -30,6 +30,10 @@ variable "account" {
         account_name = string
       })
     })
+    web_application_firewall = object({
+      amazon_managed_ip_reputation_list_rule_enabled = bool
+      waf_ip_blocking_enabled                        = bool
+    })
   })
 }
 
@@ -41,13 +45,6 @@ variable "account_name" {
 variable "firewalled_vpc_cidr_range" {
   type        = string
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length."
-}
-
-variable "web_application_firewall" {
-  type = object({
-    amazon_managed_ip_reputation_list_rule_enabled = bool
-    waf_ip_blocking_enabled                        = bool
-  })
 }
 
 variable "dynamodb_kms_key_arn" {
