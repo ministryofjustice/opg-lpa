@@ -34,6 +34,12 @@ variable "environments" {
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
       admin_cognito_auth_enabled             = bool
+      cognito = object({
+        admin_cognito_auth_enabled                        = bool
+        admin_cognito_user_pool_name                      = string
+        admin_cognito_user_pool_domain_name               = string
+        admin_cognito_client_supported_identity_providers = list(string)
+      })
       database = object({
         cluster_identifier                 = string
         aurora_cross_region_backup_enabled = bool
