@@ -33,7 +33,6 @@ variable "environments" {
       log_retention_in_days                  = number
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
-      admin_cognito_auth_enabled             = bool
       cognito = object({
         admin_cognito_auth_enabled                        = bool
         admin_cognito_user_pool_name                      = string
