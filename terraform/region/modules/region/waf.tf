@@ -282,7 +282,7 @@ resource "aws_wafv2_web_acl" "main" {
 
       statement {
         ip_set_reference_statement {
-          arn = module.ip_blocker.aws_wafv2_ip_set.arn
+          arn = module.ip_blocker.aws_wafv2_ip_set_arn
         }
       }
 
