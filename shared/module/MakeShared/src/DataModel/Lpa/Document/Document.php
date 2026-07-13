@@ -176,9 +176,9 @@ class Document extends AbstractData
                 }
 
                 // Split on whitespace and reject if any single word exceeds 85 characters.
-                // ?: [] guards against preg_split returning false on regex failure.
                 if (is_string($value)) {
-                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $word) {
+                    $words = preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($words !== false ? $words : [] as $word) {
                         if (strlen($word) > 85) {
                             $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
                             break;
@@ -207,9 +207,9 @@ class Document extends AbstractData
                 }
 
                 // Split on whitespace and reject if any single word exceeds 85 characters.
-                // ?: [] guards against preg_split returning false on regex failure.
                 if (is_string($value)) {
-                    foreach (preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY) ?: [] as $word) {
+                    $words = preg_split('/\s+/', $value, -1, PREG_SPLIT_NO_EMPTY);
+                    foreach ($words !== false ? $words : [] as $word) {
                         if (strlen($word) > 85) {
                             $context->buildViolation('word-must-be-less-than-or-equal:85')->addViolation();
                             break;
