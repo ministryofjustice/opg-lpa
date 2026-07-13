@@ -79,7 +79,7 @@ class TokenModel implements UserRepository\TokenInterface
      *
      * @return DateTime|null
      * @throws DateMalformedStringException
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function createdAt(): ?DateTime
     {

@@ -11,7 +11,7 @@ trait UserRepositoryTrait
 
     /**
      * @param UserRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setUserRepository(UserRepositoryInterface $repo): void
     {

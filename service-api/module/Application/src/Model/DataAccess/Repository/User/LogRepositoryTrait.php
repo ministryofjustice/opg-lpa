@@ -11,7 +11,7 @@ trait LogRepositoryTrait
 
     /**
      * @param LogRepositoryInterface $repo
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setLogRepository(LogRepositoryInterface $repo): void
     {

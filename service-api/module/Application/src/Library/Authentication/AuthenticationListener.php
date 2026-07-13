@@ -29,7 +29,7 @@ class AuthenticationListener implements LoggerAwareInterface
      * @return ApiProblemResponse|null
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
-     * @psalm-api
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function authenticate(MvcEvent $e)
     {
