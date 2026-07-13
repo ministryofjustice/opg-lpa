@@ -138,6 +138,7 @@ jobs:
       - terraform_lint
       - workflow_variables
       - snyk_iac_scan
+      - lambda_unit_tests
     with:
       terraform_version: ${{ needs.workflow_variables.outputs.region_terraform_version }}
       terraform_workspace: development

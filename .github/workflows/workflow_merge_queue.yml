@@ -138,6 +138,7 @@ jobs:
     needs:
       - set_variables
       - snyk_iac_scan
+      - lambda_unit_tests
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
