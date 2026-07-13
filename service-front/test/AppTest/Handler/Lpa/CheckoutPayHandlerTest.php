@@ -21,6 +21,7 @@ use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Helper\UrlHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -214,6 +215,148 @@ class CheckoutPayHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('complete', $response->getHeaderLine('location'));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function whitespaceEmailProvider(): array
+    {
+        return [
+            'trailing space'         => ['user@example.com ', 'user@example.com'],
+            'leading space'          => [' user@example.com', 'user@example.com'],
+            'surrounding whitespace' => ["\tuser@example.com\n", 'user@example.com'],
+            'mixed case with space'  => ['User@Example.COM ', 'user@example.com'],
+        ];
+    }
+
+    #[DataProvider('whitespaceEmailProvider')]
+    public function testExistingSuccessfulPaymentTrimsAndLowercasesEmail(string $govPayEmail, string $expected): void
+    {
+        $lpa                            = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'existing-ref';
+
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnSelf();
+        $form->method('get')->willReturn($this->createMock(Submit::class));
+        $this->formElementManager->method('get')->willReturn($form);
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'existing-ref',
+            'reference'  => 'ref-123',
+            'email'      => $govPayEmail,
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
+        ]);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->with(
+                $lpa->id,
+                $this->callback(function (array $data) use ($expected): bool {
+                    return isset($data['payment']['email']['address'])
+                        && $data['payment']['email']['address'] === $expected;
+                })
+            )
+            ->willReturn(new Lpa([]));
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    /**
+     * When GovPay provides no email (null or blank), null is sent immediately — no retry.
+     *
+     * @return array<string, array{0: mixed}>
+     */
+    public static function absentEmailProvider(): array
+    {
+        return [
+            'empty string'    => [''],
+            'whitespace only' => ['   '],
+            'null'            => [null],
+        ];
+    }
+
+    #[DataProvider('absentEmailProvider')]
+    public function testExistingSuccessfulPaymentWithAbsentEmailSendsNullOnFirstAttempt(mixed $govPayEmail): void
+    {
+        $lpa                            = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'existing-ref';
+
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnSelf();
+        $form->method('get')->willReturn($this->createMock(Submit::class));
+        $this->formElementManager->method('get')->willReturn($form);
+
+        $paymentData = [
+            'payment_id' => 'existing-ref',
+            'reference'  => 'ref-123',
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
+        ];
+        if ($govPayEmail !== null) {
+            $paymentData['email'] = $govPayEmail;
+        }
+
+        $govPayPayment = $this->makeGovPayPayment($paymentData);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        // Called exactly once — no retry because email was null/blank from the start
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->with(
+                $lpa->id,
+                $this->callback(function (array $data): bool {
+                    return array_key_exists('payment', $data)
+                        && ($data['payment']['email'] ?? null) === null;
+                })
+            )
+            ->willReturn(new Lpa([]));
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testExistingSuccessfulPaymentWithMalformedEmailIsPassedThroughUnchanged(): void
+    {
+        $lpa                            = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'existing-ref';
+
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnSelf();
+        $form->method('get')->willReturn($this->createMock(Submit::class));
+        $this->formElementManager->method('get')->willReturn($form);
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'existing-ref',
+            'reference'  => 'ref-123',
+            'email'      => 'not-a-valid-email',
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
+        ]);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        // Only one call — we never retry or manipulate the email value beyond trim/lowercase.
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->with(
+                $lpa->id,
+                $this->callback(function (array $data): bool {
+                    return ($data['payment']['email']['address'] ?? null) === 'not-a-valid-email';
+                })
+            )
+            ->willReturn(new Lpa([]));
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
     }
 
     public function testExistingUnfinishedPaymentRedirectsToPaymentPage(): void
