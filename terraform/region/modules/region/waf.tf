@@ -277,7 +277,7 @@ resource "aws_wafv2_web_acl" "main" {
       name     = "BlockSpecificIPs"
       priority = 55
       action {
-        block {}
+        count {}
       }
 
       statement {
