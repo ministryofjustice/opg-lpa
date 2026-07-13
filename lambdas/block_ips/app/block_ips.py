@@ -234,9 +234,8 @@ def update_waf_ip_set(ip_set_name, ip_set_scope, ips):
 
 
 def lambda_handler(event, context):
-    environment = os.getenv("ENVIRONMENT", "")
-    log_group_name = environment
-    log_stream_prefix = f"front.{environment}.web"
+    log_group_name = os.getenv("LOG_GROUP_NAME", "")
+    log_stream_prefix = os.getenv("LOG_STREAM_PREFIX", "")
     logs = query_cloudwatch_logs(log_group_name, log_stream_prefix)
     filtered_ips = filter_logs(logs)
     print(f"New Malicious IPs identified: {filtered_ips}")

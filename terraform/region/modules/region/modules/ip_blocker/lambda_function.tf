@@ -26,7 +26,8 @@ resource "aws_lambda_function" "block_ips_lambda" {
   source_code_hash = filebase64sha256(data.archive_file.block_ips_zip.output_path)
   environment {
     variables = {
-      ENVIRONMENT = data.aws_default_tags.current.tags.environment-name
+      LOG_GROUP_NAME    = var.monitored_log_group_name
+      LOG_STREAM_PREFIX = var.monitored_log_stream_prefix
     }
   }
   tracing_config {
