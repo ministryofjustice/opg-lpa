@@ -20,11 +20,9 @@ The runbook below outlines the steps to be taken. It is important to follow this
 - Slack alerts and pagerduty alarms are not changed
 - Breakglass access is required for the make a lpa AWS accounts, and the identity, management and backup accounts.
 
-! Consider enabling maintenance mode if possible before starting this procedure
-
 ### Approximate time to restore service
 
-During initial testing the process took approvimately 45 minutes to 1 hour. This is likely increase on a production Database, due to its size.
+During initial testing the process took approximately 1 to 2 hours. This is likely increase on a production Database, due to its size.
 
 ### High level approach
 
@@ -71,7 +69,6 @@ see docs/runbooks/maintenance_mode/README.md for instructions
 2. List the workspaces to find the environment to failover `aws-vault exec identity -- terraform workspace list`.
 3. Select your workspace from the list and switch to it: `aws-vault exec identity --  terraform workspace select <my-workspace>`.
 4. perform an initialisation of the workspace: `aws-exec vault identity — terraform init`.
-
 5. In the `terraform.tfvars.json’ under the environments" -> “<environment_name>", change `regions.eu-west-2.enabled` value to true and save the file.
 6. Run a plan on region: `aws-vault exec identity — terraform plan`.
 7. Check contents of plan. Things to look out for include:

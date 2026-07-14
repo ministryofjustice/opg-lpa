@@ -123,9 +123,12 @@ In the unlikely event that the main AWS region becomes unavailable, the Make An 
 
 IAC model allows us to stand up a new version of the service in another AWS account with relative ease as long as backups as preserved.
 
+**Regional failover process was last tested fully on 14/07/2026.**
+
 ### Recovery Time and Recovery Point Objectives
 
-Currently TBC.
+Recovery Time Objective: 2 hours
+Recover Point Objective: 24 hours
 
 ## Backup & Restore Plans (configuration and Testing)
 
@@ -135,7 +138,7 @@ The team can manually restore from a backup database if the active database is d
 
 The Infrastructure as Code model allows us to stand up a new version of the service easily (this is the process we use for ephemeral development environments).
 
-**Restore process was last tested fully on 25/11/2025.**
+**Restore process was last tested fully on 07/07/2026.**
 
 ## Supporting Information (Risk & Test Tracker Links)
 
