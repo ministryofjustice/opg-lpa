@@ -2,17 +2,9 @@
 
 ## Context
 
-We need to be able to have the option to switch over Make an LPA to a different region should there be an outage in it's current region.
+We need to be able to switch over Make an LPA to a different region should there be an outage in it's current region to improve the resilience of the service, and meet Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO).
 
-This is to improve the resilience of the service, whilst meeting business agreed Recovery Time Objectives (RTO) and Recovery Point Objectives (RPO).
-
-We considered a range of options from pure backup restore, through to full standby. It was decided that a backup restore being the most cost effective approach for this service.
-
-We have attempted to build the process such that this required minimal manual intervention.
-
-This runbook documents the approach that can be taken to ensure the service stands up in a different region (eu-west-2 currently) to the current live region (eu-west-1).
-
-The runbook below outlines the steps to be taken. It is important to follow this in the correct order. It is recommended that this is done from a local machine in order to provision these resources, for speed.
+This runbook documents the approach to stand the service up in a different region (eu-west-2 currently) to the current live region (eu-west-1).
 
 ## Caveats & Prerequesites
 
