@@ -18,10 +18,43 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         When I click "add-extra-preferences"
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
+        # Test word > 85 chars in instruction is rejected
         And I fill out
-            | instruction | Some instructions |
+            | instruction | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
             | preferences | Some preferences |
         When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | No single word in your instructions can be more than 85 characters long |
+        # Test word > 85 chars in preference is rejected
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | No single word in your preferences can be more than 85 characters long |
+        # Test http link in instruction is rejected
+        When I fill out
+            | instruction | See http://example.com for details |
+            | preferences | Some preferences |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Web links (http:// and https://) are not allowed in instructions |
+        # Test https link in preference is rejected
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | See https://example.com for details |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Web links (http:// and https://) are not allowed in preferences |
+        # Submit valid data and continue
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | Some preferences |
+        And I click "save"
         Then I am taken to the applicant page
         When I click the last occurrence of "accordion-view-change"
         Then I see in the page text
@@ -30,44 +63,4 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         When I click "save"
         Then I am taken to the applicant page
         When I visit link containing "preview the LPA"
-
-    @focus @CleanupFixtures
-    Scenario: Instructions and Preferences rejects words longer than 85 characters
-        When I log in as appropriate test user
-        And I visit the instructions page for the test fixture lpa
-        When I click "add-extra-preferences"
-        And I fill out
-            | instruction | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
-            | preferences | Some preferences |
-        When I click "save"
-        Then I see in the page text
-            | There is a problem |
-            | No single word in your instructions can be more than 85 characters long |
-        When I fill out
-            | instruction | Some instructions |
-            | preferences | bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb |
-        When I click "save"
-        Then I see in the page text
-            | There is a problem |
-            | No single word in your preferences can be more than 85 characters long |
-
-    @focus @CleanupFixtures
-    Scenario: Instructions and Preferences rejects http and https links
-        When I log in as appropriate test user
-        And I visit the instructions page for the test fixture lpa
-        When I click "add-extra-preferences"
-        And I fill out
-            | instruction | See http://example.com for details |
-            | preferences | Some preferences |
-        When I click "save"
-        Then I see in the page text
-            | There is a problem |
-            | Web links (http:// and https://) are not allowed in instructions |
-        When I fill out
-            | instruction | Some instructions |
-            | preferences | See https://example.com for details |
-        When I click "save"
-        Then I see in the page text
-            | There is a problem |
-            | Web links (http:// and https://) are not allowed in preferences |
 
