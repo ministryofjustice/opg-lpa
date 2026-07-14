@@ -1,11 +1,11 @@
 data "aws_cognito_user_pools" "make_a_lasting_power_of_attorney_admin" {
   provider = aws.identity
-  name     = "make-a-lasting-power-of-attorney-admin"
+  name     = local.environment.cognito.admin_cognito_user_pool_name
 }
 
 data "aws_ssm_parameter" "make_a_lasting_power_of_attorney_admin_domain" {
   provider = aws.identity
-  name     = "make_a_lasting_power_of_attorney_admin_domain"
+  name     = local.environment.cognito.admin_cognito_user_pool_domain_name
 }
 
 locals {
@@ -19,7 +19,7 @@ resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_admin"
   user_pool_id                         = local.admin_cognito_user_pool_id
   allowed_oauth_flows                  = ["code"]
   allowed_oauth_scopes                 = ["openid"]
-  supported_identity_providers         = ["EntraID"]
+  supported_identity_providers         = local.environment.cognito.admin_cognito_client_supported_identity_providers
   allowed_oauth_flows_user_pool_client = true
   explicit_auth_flows = [
     "ALLOW_CUSTOM_AUTH",
