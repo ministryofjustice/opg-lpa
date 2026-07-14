@@ -19,7 +19,7 @@ OPG Digital uses an embedded WebOps, which means infrastructure engineers are em
 ### Notes
 
 - The service will be replaced when the Modernised Digital LPA becomes publicly available.
-- Since October 2025 a seperate squad has been created to address some technical debt and ensure product support until decommissioned.
+- Since October 2025 a separate squad has been created to address some technical debt and ensure product support until decommissioned.
 
 ## Service Scope
 
@@ -83,7 +83,7 @@ The following roles are part of the process:
 
 Any team member can call an incident using the incident management applications [automated Slack tooling](https://docs.opg.service.justice.gov.uk/documentation/incidents/process.html#declare-an-incident). The OPG incident tool records timelines and actions from the incident channel automatically and produces a report for reference purposes. They are given the reporter role by default.
 
-[Incident leads](https://docs.opg.service.justice.gov.uk/documentation/incidents/process.html#incident-lead) are a rotating list of Technical Architects, Lead Webops and Senior Webops members of OPG Digital. Managed in pagerduty. They are looped in to coordinate responses, this can be done via pagerduty via the incident app or via Slack.
+[Incident leads](https://docs.opg.service.justice.gov.uk/documentation/incidents/process.html#incident-lead) are a rotating list of Technical Architects, Lead Webops and Senior Webops members of OPG Digital. Managed in Pagerduty. They are looped in to coordinate responses, this can be done via Pagerduty via the incident app or via Slack.
 
 Developers and Webops from the team will be brought into the incident channel as the team to solve the issue.
 
@@ -123,9 +123,12 @@ In the unlikely event that the main AWS region becomes unavailable, the Make An 
 
 IAC model allows us to stand up a new version of the service in another AWS account with relative ease as long as backups as preserved.
 
+**Regional failover process was last tested fully on 14/07/2026.**
+
 ### Recovery Time and Recovery Point Objectives
 
-Currently TBC.
+Recovery Time Objective: 2 hours
+Recover Point Objective: 24 hours
 
 ## Backup & Restore Plans (configuration and Testing)
 
@@ -135,7 +138,7 @@ The team can manually restore from a backup database if the active database is d
 
 The Infrastructure as Code model allows us to stand up a new version of the service easily (this is the process we use for ephemeral development environments).
 
-**Restore process was last tested fully on 25/11/2025.**
+**Restore process was last tested fully on 07/07/2026.**
 
 ## Supporting Information (Risk & Test Tracker Links)
 
