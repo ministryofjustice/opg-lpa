@@ -18,7 +18,6 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         When I click "add-extra-preferences"
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
-        # Test word > 85 chars in instruction is rejected
         And I fill out
             | instruction | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
             | preferences | Some preferences |
@@ -26,7 +25,6 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | No single word in your instructions can be more than 85 characters long |
-        # Test word > 85 chars in preference is rejected
         When I fill out
             | instruction | Some instructions |
             | preferences | bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb |
@@ -34,7 +32,6 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | No single word in your preferences can be more than 85 characters long |
-        # Test http link in instruction is rejected
         When I fill out
             | instruction | See http://example.com for details |
             | preferences | Some preferences |
@@ -42,7 +39,6 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Web links (http:// and https://) are not allowed in instructions |
-        # Test https link in preference is rejected
         When I fill out
             | instruction | Some instructions |
             | preferences | See https://example.com for details |
@@ -50,7 +46,6 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         Then I see in the page text
             | There is a problem |
             | Web links (http:// and https://) are not allowed in preferences |
-        # Submit valid data and continue
         When I fill out
             | instruction | Some instructions |
             | preferences | Some preferences |
