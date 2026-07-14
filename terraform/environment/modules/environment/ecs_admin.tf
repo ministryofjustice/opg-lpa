@@ -218,7 +218,8 @@ locals {
       secrets = [
         { name = "OPG_LPA_ADMIN_JWT_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" }
+        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
+        { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" }
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "${local.dns_namespace_env}${local.admin_dns} localhost 127.0.0.1" },
@@ -235,7 +236,6 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
-        { name = "OPG_LPA_ADMIN_SERVICE_SECRET_ARN", value = data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn },
         { name = "OPG_LPA_SHARED_SECRET_ENABLED", value = tostring(var.environment.shared_secret_enabled) }
       ]
     }

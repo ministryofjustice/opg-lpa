@@ -3,7 +3,6 @@
 namespace App\Service\ApiClient;
 
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
-use MakeShared\Service\SecretService;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -24,14 +23,9 @@ class ClientFactory
 
         $config = $container->get('config');
 
-        $secret = '';
-
-        if ($config['shared_secret_enabled'] === true) {
-            $secret = SecretService::resolve(
-                arn: $config['admin_service_secret_arn'] ?? null,
-                endpoint: $config['secrets_manager_endpoint'] ?? null,
-            );
-        }
+        $secret = $config['shared_secret_enabled'] === true
+            ? ($config['service_secret'] ?? '')
+            : '';
 
         return new Client(
             $httpClient,

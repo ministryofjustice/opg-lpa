@@ -36,10 +36,7 @@ return [
         'account_cleanup_notification_recipients' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS') ?
             explode(',', getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS')) : [],
 
-        // Pre-shared secret for admin service-to-service calls. Fetched at runtime
-        // from Secrets Manager so rotation takes effect without a task restart.
-        'service_secret_arn' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET_ARN') ?: null,
-        'service_secret_sm_endpoint' => getenv('OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT') ?: null,
+        'service_secret' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET') ?: '',
         'shared_secret_enabled' => getenv('OPG_LPA_SHARED_SECRET_ENABLED') === 'true',
     ],
 

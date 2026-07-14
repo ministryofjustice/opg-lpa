@@ -39,7 +39,7 @@ variable "environments" {
         admin_cognito_user_pool_domain_name               = string
         admin_cognito_client_supported_identity_providers = list(string)
       })
-      shared_secret_enabled                  = bool
+      shared_secret_enabled = bool
       database = object({
         cluster_identifier                 = string
         aurora_cross_region_backup_enabled = bool
