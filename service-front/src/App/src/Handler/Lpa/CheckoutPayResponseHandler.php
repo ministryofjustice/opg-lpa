@@ -45,8 +45,8 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         private readonly TemplateRendererInterface $renderer,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService = $communicationService;
-        $this->urlHelper = $urlHelper;
+        $this->communicationService  = $communicationService;
+        $this->urlHelper             = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -129,20 +129,13 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
 
         $govPayEmail = $paymentResponse->email ?? null;
 
-        if (is_string($govPayEmail) && $govPayEmail !== '') {
-            $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
-        } else {
-            $this->getLogger()->warning('GovPay returned no email for completed payment', [
-                'lpaId'            => $lpa->id,
-                'gatewayReference' => $gatewayReference,
-                'email_raw'        => $govPayEmail,
-            ]);
-            $lpa->payment->email = null;
-        }
+        $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
+            ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+            : null;
 
         $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        $this->getLogger()->info('PayResponse: updateApplication complete', [
+        $this->getLogger()->info('PayResponse: updateApplication result', [
             'lpaId'   => $lpa->id,
             'success' => $result !== false,
         ]);
@@ -152,7 +145,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
                 'lpaId'            => $lpa->id,
                 'gatewayReference' => $gatewayReference,
                 'govpay_status'    => $paymentResponse->state->status ?? 'unknown',
-                'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
+                'has_email'        => $lpa->payment->email !== null,
             ]);
         }
 
