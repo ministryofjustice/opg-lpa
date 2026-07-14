@@ -36,7 +36,7 @@ requires 4 major tasks:
 [4. Redirect DNS](#4-provision-environment-level-resources)
 [5. Test the service](#5-test-the-service)
 [6. Set up CI ingress and commit changes](#6-set-up-ci-ingress-and-commit-changes)
-[7. Disable maintenance mode](#7. Disable maintenance mode)
+[7. Disable maintenance mode](#7-disable-maintenance-mode)
 
 ### Notes on replacement values
 
