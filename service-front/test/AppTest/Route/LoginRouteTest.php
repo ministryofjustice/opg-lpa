@@ -21,8 +21,8 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class LoginRouteTest extends TestCase
 {
-    private const ROUTE_PATH = '/login[/{state:(?:timeout|internalSystemError)}]';
-    private const ALLOWED_METHODS = ['GET', 'POST'];
+    private const string ROUTE_PATH = '/login[/{state:(?:timeout|internalSystemError)}]';
+    private const array ALLOWED_METHODS = ['GET', 'POST'];
 
     private FastRouteRouter $router;
 
