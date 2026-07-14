@@ -24,6 +24,7 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   node_type                  = local.account.regions[data.aws_region.current.region].elasticache_node_type
   num_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled = true
+  transit_encryption_mode    = "preferred"
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
   maintenance_window         = "wed:05:00-wed:09:00"
