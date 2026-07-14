@@ -73,7 +73,9 @@
     {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-        <details{{ instructions.getValue() or preferences.getValue() ? ' open' : '' }} class="govuk-details" data-module="govuk-details">
+    {{ macros.formErrorSummary(error,form) }}
+
+        <details{{ instructions.getValue() or preferences.getValue() or form.getMessages|length > 0 ? ' open' : '' }} class="govuk-details" data-module="govuk-details">
             <summary class="govuk-details__summary" data-analytics-click="page:link.reveal:Add extra preferences or instructions for the attorneys? (optional)" data-cy="add-extra-preferences">
                 <span class="govuk-details__summary-text">Add extra preferences or instructions for the attorneys? (optional)</span>
             </summary>

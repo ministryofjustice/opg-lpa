@@ -38,6 +38,11 @@ class UserController extends AbstractLpaController
 
         $result = $this->getService()->fetch($id);
 
+        // No profile exists yet — create one explicitly (e.g. on first login)
+        if ($result === null) {
+            $result = $this->getService()->createProfile($id);
+        }
+
         if ($result instanceof ApiProblem) {
             return $result;
         } elseif ($result instanceof EntityInterface) {
