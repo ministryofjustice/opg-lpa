@@ -26,8 +26,7 @@ return [
     'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: null,
 
     // Pre-shared secret for service-to-service calls to the API.
-    'admin_service_secret_arn' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET_ARN') ?: null,
-    'secrets_manager_endpoint' => getenv('OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT') ?: null,
+    'service_secret' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET') ?: '',
 
     'admin_accounts' => (
         getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ?
