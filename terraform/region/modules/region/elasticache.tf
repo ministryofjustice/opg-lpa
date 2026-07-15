@@ -25,7 +25,7 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   num_cache_clusters         = local.cache_cluster_count
   transit_encryption_enabled = true
   transit_encryption_mode    = "preferred"
-  auth_token                 = data.aws_secretsmanager_secret.elasticache_auth_token.secret_string
+  auth_token                 = data.aws_secretsmanager_secret_version.elasticache_auth_token.secret_string
   auth_token_update_strategy = "ROTATE"
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
