@@ -39,7 +39,6 @@ data "aws_iam_policy_document" "api_permissions_role" {
       aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
-
   statement {
     sid = "APIGatewayAccess"
     actions = [

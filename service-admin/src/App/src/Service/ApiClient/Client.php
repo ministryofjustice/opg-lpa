@@ -2,10 +2,9 @@
 
 namespace App\Service\ApiClient;
 
-use App\Handler\Traits\JwtTrait;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
-use Http\Client\HttpClient;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -14,28 +13,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Client
 {
-    use JwtTrait;
-
-    /**
-     * @var HttpClient
-     */
-    private $httpClient;
-
-    /**
-     * @var string
-     */
-    private $apiBaseUri;
-
-    /**
-     * Client constructor
-     *
-     * @param HttpClient $httpClient
-     * @param string $apiBaseUri
-     */
-    public function __construct(HttpClient $httpClient, string $apiBaseUri)
-    {
-        $this->httpClient = $httpClient;
-        $this->apiBaseUri = $apiBaseUri;
+    public function __construct(
+        private ClientInterface $httpClient,
+        private string $apiBaseUri,
+        #[\SensitiveParameter] private string $serviceSecret,
+    ) {
     }
 
     /**
@@ -108,20 +90,24 @@ class Client
      */
     private function buildHeaders()
     {
-        $headerLines = [
-            'Accept'        => 'application/json, application/problem+json',
-            'Content-Type'  => 'application/json',
-            'User-agent'    => 'LPA-ADMIN'
+        $headers = [
+            'Accept'       => 'application/json, application/problem+json',
+            'Content-Type' => 'application/json',
+            'User-agent'   => 'LPA-ADMIN',
         ];
 
-        $apiToken = $this->getTokenData('token');
+        if ($this->serviceSecret !== '') {
+            $headers['X-Shared-Secret'] = $this->serviceSecret;
+        } else {
+            $apiToken = $_SESSION['jwt-payload']['token'] ?? null;
 
-        //  If the logged in user has an auth token already then set that in the header
-        if (is_string($apiToken)) {
-            $headerLines['token'] = $apiToken;
+            //  If the logged-in user has an auth token already then set that in the header
+            if (is_string($apiToken)) {
+                $headers['token'] = $apiToken;
+            }
         }
 
-        return $headerLines;
+        return $headers;
     }
 
     /**
