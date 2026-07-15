@@ -8,24 +8,25 @@ use App\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use Http\Client\HttpClient as HttpClientInterface;
-use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class Client implements LoggerAwareInterface
+class Client
 {
-    use LoggerTrait;
-
     private array $defaultHeaders;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly HttpClientInterface $httpClient,
         private readonly string $apiBaseUri,
         array $defaultHeaders = [],
         private readonly ?Tracer $tracer = null,
+        ?LoggerInterface $logger = null,
     ) {
         $this->defaultHeaders = $defaultHeaders;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function updateToken(#[\SensitiveParameter] string $token): void
@@ -156,7 +157,7 @@ class Client implements LoggerAwareInterface
         $exception = new ApiException($response);
         $method    = $response->getStatusCode() >= 500 ? 'error' : 'warning';
 
-        $this->getLogger()->$method('API client error response', [
+        $this->logger->{$method}('API client error response', [
             'error_code'   => 'API_CLIENT_ERROR_RESPONSE',
             'status'       => $response->getStatusCode(),
             'responseBody' => $exception->getBody(),

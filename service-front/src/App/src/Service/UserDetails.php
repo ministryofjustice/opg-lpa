@@ -16,15 +16,13 @@ use Exception;
 use Laminas\Http\Response;
 use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\User\User;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
-class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
+class UserDetails implements ApiClientAwareInterface
 {
     use ApiClientTrait;
-    use LoggerTrait;
     use MoneyFormatterTrait;
 
     // Email template identifiers (mirrored from AbstractEmailService)
@@ -47,6 +45,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         private readonly AuthenticationService $authenticationService,
         private readonly array $config,
         private readonly MailTransportInterface $mailTransport,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -124,7 +123,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         try {
             return new User($this->apiClient->httpGet('/v2/user/' . $this->getUserId()));
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to get user details from API', [
+            $this->logger->error('Failed to get user details from API', [
                 'exception' => $ex,
             ]);
         }
@@ -137,7 +136,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
      */
     public function updateAllDetails(array $data): array|null|string
     {
-        $this->getLogger()->info('Updating user details');
+        $this->logger->info('Updating user details');
 
         $userDetails = $this->getUserDetails();
         $userDetails->populateWithFlatArray($data);
@@ -153,7 +152,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         $validator = $userDetails->validate();
 
         if ($validator->hasErrors()) {
-            $this->getLogger()->warning('Unable to validate user details for update', [
+            $this->logger->warning('Unable to validate user details for update', [
                 'status'    => Response::STATUS_CODE_400,
                 'exception' => $validator->getArrayCopy(),
             ]);
@@ -164,7 +163,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         try {
             return $this->apiClient->httpPut('/v2/user/' . $this->getUserId(), $userDetails->toArray());
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to update user details via API', [
+            $this->logger->error('Failed to update user details via API', [
                 'exception' => $ex,
             ]);
 
@@ -178,7 +177,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
     ): bool|string {
         $identity = $this->authenticationService->getIdentity();
 
-        $this->getLogger()->info('Requesting email update to new email');
+        $this->logger->info('Requesting email update to new email');
 
         try {
             $this->apiClient->updateToken($identity->token());
@@ -198,7 +197,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 try {
                     $this->mailTransport->send($mailParameters);
                 } catch (Exception $ex1) {
-                    $this->getLogger()->warning('Failed to send new email address notification to old email address', [
+                    $this->logger->warning('Failed to send new email address notification to old email address', [
                         'exception' => $ex1,
                     ]);
                 }
@@ -218,7 +217,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 try {
                     $this->mailTransport->send($mailParameters);
                 } catch (Exception $ex2) {
-                    $this->getLogger()->error('Failed to send verify new email address email', [
+                    $this->logger->error('Failed to send verify new email address email', [
                         'exception' => $ex2,
                     ]);
 
@@ -228,7 +227,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return true;
             }
         } catch (ApiException $ex3) {
-            $this->getLogger()->error('Failed to request email update via API', [
+            $this->logger->error('Failed to request email update via API', [
                 'exception' => $ex3,
             ]);
 
@@ -244,7 +243,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
     public function updateEmailUsingToken(#[\SensitiveParameter] string $emailUpdateToken): bool
     {
-        $this->getLogger()->info('Update email using token');
+        $this->logger->info('Update email using token');
 
         try {
             $this->apiClient->httpPost('/v2/users/email', [
@@ -253,7 +252,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to request email update using token', [
+            $this->logger->error('Failed to request email update using token', [
                 'exception' => $ex,
             ]);
         }
@@ -267,7 +266,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
     ): bool|string {
         $identity = $this->authenticationService->getIdentity();
 
-        $this->getLogger()->info('Updating password');
+        $this->logger->info('Updating password');
 
         try {
             $this->apiClient->updateToken($identity->token());
@@ -297,7 +296,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                     try {
                         $this->mailTransport->send($mailParameters);
                     } catch (Exception $ex) {
-                        $this->getLogger()->error('Send password changed email', [
+                        $this->logger->error('Send password changed email', [
                             'exception' => $ex,
                         ]);
                     }
@@ -315,7 +314,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Password update request failed', [
+            $this->logger->error('Password update request failed', [
                 'exception' => $ex,
             ]);
         }
@@ -338,7 +337,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
             // part of the session lifecycle and is handled by clearing the identity.
             // Only log at error for unexpected server-side failures.
             $logLevel = $ex->getStatusCode() === 401 ? 'info' : 'error';
-            $this->getLogger()->{$logLevel}('Failed to get token info', [
+            $this->logger->{$logLevel}('Failed to get token info', [
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
@@ -357,26 +356,26 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
     public function delete(): bool
     {
-        $this->getLogger()->info('Deleting user and all their LPAs');
+        $this->logger->info('Deleting user and all their LPAs');
 
         try {
             $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to delete user', [
+            $this->logger->error('Failed to delete user', [
                 'exception' => $ex,
             ]);
 
             return false;
         }
 
-        $this->getLogger()->info('User account deleted');
+        $this->logger->info('User account deleted');
 
         return true;
     }
 
     public function requestPasswordResetEmail(#[\SensitiveParameter] string $email): bool|string
     {
-        $this->getLogger()->info('User requested password reset email');
+        $this->logger->info('User requested password reset email');
 
         try {
             $result = $this->apiClient->httpPost('/v2/users/password-reset', [
@@ -404,7 +403,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                     try {
                         $this->mailTransport->send($mailParameters);
                     } catch (Exception $ex) {
-                        $this->getLogger()->warning('Failed to send password reset email', [
+                        $this->logger->warning('Failed to send password reset email', [
                             'exception' => $ex,
                         ]);
 
@@ -429,7 +428,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 try {
                     $this->mailTransport->send($mailParameters);
                 } catch (Exception $ex) {
-                    $this->getLogger()->error('Failed to send password reset email - no account', [
+                    $this->logger->error('Failed to send password reset email - no account', [
                         'exception' => $ex,
                     ]);
 
@@ -439,7 +438,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return true;
             }
 
-            $this->getLogger()->error('Failed to request password reset email via API', [
+            $this->logger->error('Failed to request password reset email via API', [
                 'exception' => $ex,
             ]);
         }
@@ -466,7 +465,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         try {
             $this->mailTransport->send($mailParameters);
         } catch (Exception $ex) {
-            $this->getLogger()->error('Failed to send account activation email', [
+            $this->logger->error('Failed to send account activation email', [
                 'exception' => $ex,
             ]);
 
@@ -480,7 +479,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         #[\SensitiveParameter] string $restToken,
         #[\SensitiveParameter] string $password,
     ): bool|string {
-        $this->getLogger()->info('Setting new password following password reset');
+        $this->logger->info('Setting new password following password reset');
 
         try {
             $result = $this->apiClient->httpPost('/v2/users/password', [
@@ -492,7 +491,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to set new password', [
+            $this->logger->error('Failed to set new password', [
                 'exception' => $ex,
             ]);
 
@@ -510,7 +509,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
         #[\SensitiveParameter] string $email,
         #[\SensitiveParameter] string $password,
     ): bool|string {
-        $this->getLogger()->info('Account registration attempt');
+        $this->logger->info('Account registration attempt');
 
         try {
             $result = $this->apiClient->httpPost('/v2/users', [
@@ -534,7 +533,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 try {
                     $this->mailTransport->send($mailParameters);
                 } catch (Exception $ex1) {
-                    $this->getLogger()->error('Failed to send account registration email', [
+                    $this->logger->error('Failed to send account registration email', [
                         'exception' => $ex1,
                     ]);
 
@@ -553,7 +552,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 try {
                     $this->mailTransport->send($mailParameters);
                 } catch (Exception $ex3) {
-                    $this->getLogger()->warning('Failed sending warning email', [
+                    $this->logger->warning('Failed sending warning email', [
                         'exception' => $ex3,
                     ]);
 
@@ -563,7 +562,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return 'address-already-registered';
             }
 
-            $this->getLogger()->error('Account registration failed', [
+            $this->logger->error('Account registration failed', [
                 'exception' => $ex2,
             ]);
 
@@ -584,7 +583,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
                 return $this->sendAccountActivateEmail($email, $result['activation_token']);
             }
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to resend activation email', [
+            $this->logger->error('Failed to resend activation email', [
                 'exception' => $ex,
             ]);
         }
@@ -601,7 +600,7 @@ class UserDetails implements ApiClientAwareInterface, LoggerAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $this->getLogger()->error('Failed to activate account', [
+            $this->logger->error('Failed to activate account', [
                 'exception' => $ex,
             ]);
         }

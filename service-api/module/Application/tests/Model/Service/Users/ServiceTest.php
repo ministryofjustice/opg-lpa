@@ -230,13 +230,30 @@ final class ServiceTest extends AbstractServiceTestCase
     {
         $user = FixturesData::getUser();
 
+        $this->authUserRepository
+            ->shouldReceive('getProfile')
+            ->with($user->getId())
+            ->andReturn(null)
+            ->once();
+        $this->authUserRepository
+            ->shouldNotReceive('saveProfile');
+
+        $result = $this->service->fetch($user->getId());
+
+        $this->assertNull($result);
+    }
+
+    public function testCreateProfile()
+    {
+        $user = FixturesData::getUser();
+
         $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
         $this->authUserRepository
             ->shouldReceive('getProfile')
             ->with($user->getId())
             ->andReturn(null)
-            ->twice();
+            ->once();
         $this->authUserRepository
             ->shouldReceive('getById')
             ->with($user->getId())
@@ -246,7 +263,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->shouldReceive('saveProfile')
             ->once();
 
-        $entity = $this->service->fetch($user->getId());
+        $entity = $this->service->createProfile($user->getId());
         $entityArray = $entity->toArray();
 
         $expectedUser = new ProfileUserModel();
@@ -254,7 +271,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $expectedUser->setEmail($user->getEmail());
         $expectedUser->setCreatedAt(new DateTime($entityArray['createdAt']));
         $expectedUser->setUpdatedAt(new DateTime($entityArray['updatedAt']));
-        $expectedUser->setNumberOfLpas(0);
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
     }
 

@@ -16,13 +16,12 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -30,11 +29,10 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAwareInterface
+class CheckoutPayResponseHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
-    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -43,10 +41,11 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         private readonly GovPayClient $paymentClient,
         UrlHelper $urlHelper,
         private readonly TemplateRendererInterface $renderer,
+        private readonly LoggerInterface $logger,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService = $communicationService;
-        $this->urlHelper = $urlHelper;
+        $this->communicationService  = $communicationService;
+        $this->urlHelper             = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -62,7 +61,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
 
         $paymentResponse = $this->paymentClient->getPayment($gatewayReference);
 
-        $this->getLogger()->info('PayResponse: GovPay lookup complete', [
+        $this->logger->info('PayResponse: GovPay lookup complete', [
             'lpaId'            => $lpa->id,
             'gatewayReference' => $gatewayReference,
             'responseIsNull'   => $paymentResponse === null,
@@ -72,7 +71,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         ]);
 
         if ($paymentResponse === null) {
-            $this->getLogger()->error('GovPay payment lookup returned null — payment may not exist yet or gateway reference is invalid', [
+            $this->logger->error('GovPay payment lookup returned null — payment may not exist yet or gateway reference is invalid', [
                 'lpaId'            => $lpa->id,
                 'gatewayReference' => $gatewayReference,
             ]);
@@ -83,7 +82,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
         }
 
         if (!$paymentResponse->isSuccess()) {
-            $this->getLogger()->info('PayResponse: payment not successful, rendering failure/cancel page', [
+            $this->logger->info('PayResponse: payment not successful, rendering failure/cancel page', [
                 'lpaId'     => $lpa->id,
                 'stateCode' => $paymentResponse->state->code ?? null,
                 'status'    => $paymentResponse->state->status ?? null,
@@ -116,7 +115,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
             return new HtmlResponse($html);
         }
 
-        $this->getLogger()->info('PayResponse: payment successful, recording on LPA', [
+        $this->logger->info('PayResponse: payment successful, recording on LPA', [
             'lpaId'            => $lpa->id,
             'gatewayReference' => $gatewayReference,
             'has_email'        => isset($paymentResponse->email) && $paymentResponse->email !== '',
@@ -129,30 +128,23 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface, LoggerAware
 
         $govPayEmail = $paymentResponse->email ?? null;
 
-        if (is_string($govPayEmail) && $govPayEmail !== '') {
-            $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
-        } else {
-            $this->getLogger()->warning('GovPay returned no email for completed payment', [
-                'lpaId'            => $lpa->id,
-                'gatewayReference' => $gatewayReference,
-                'email_raw'        => $govPayEmail,
-            ]);
-            $lpa->payment->email = null;
-        }
+        $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
+            ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+            : null;
 
         $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
-        $this->getLogger()->info('PayResponse: updateApplication complete', [
+        $this->logger->info('PayResponse: updateApplication result', [
             'lpaId'   => $lpa->id,
             'success' => $result !== false,
         ]);
 
         if ($result === false) {
-            $this->getLogger()->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
+            $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
                 'lpaId'            => $lpa->id,
                 'gatewayReference' => $gatewayReference,
                 'govpay_status'    => $paymentResponse->state->status ?? 'unknown',
-                'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
+                'has_email'        => $lpa->payment->email !== null,
             ]);
         }
 

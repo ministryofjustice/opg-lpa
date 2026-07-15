@@ -78,6 +78,12 @@ VOLUME [ "/tmp" ]
 
 CMD ["php-fpm"]
 
+FROM base AS composer-tools
+
+USER root
+COPY --from=composer /usr/bin/composer /usr/bin/
+WORKDIR /app
+
 FROM base AS test-runner
 
 USER "root"

@@ -20,9 +20,9 @@ class LpaApplicationServiceFactory
         $service = new LpaApplicationService(
             $container->get(AuthenticationService::class),
             $config,
+            $container->get(LoggerInterface::class),
         );
         $service->setApiClient($apiClient);
-        $service->setLogger($container->get(LoggerInterface::class));
 
         return $service;
     }

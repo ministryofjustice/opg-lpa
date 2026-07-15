@@ -5,15 +5,16 @@ declare(strict_types=1);
 namespace App\Service\Lpa;
 
 use MakeShared\DataModel\Lpa\Lpa;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
-class Metadata implements LoggerAwareInterface
+class Metadata
 {
-    use LoggerTrait;
-
-    private Application $lpaApplicationService;
+    public function __construct(
+        private readonly Application $lpaApplicationService,
+        private readonly LoggerInterface $logger,
+    ) {
+    }
 
     public function setReplacementAttorneysConfirmed(Lpa $lpa)
     {
@@ -57,7 +58,7 @@ class Metadata implements LoggerAwareInterface
             unset($lpa->metadata[$key]);
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
-                $this->getLogger()->warning('API client failed to remove metadata', [
+                $this->logger->warning('API client failed to remove metadata', [
                     'lpaId' => $lpa->id,
                     'status' => 500,
                 ]);
@@ -89,7 +90,7 @@ class Metadata implements LoggerAwareInterface
             $lpa->metadata[$key] = $value;
 
             if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
-                $this->getLogger()->warning('API client failed to remove metadata by key', [
+                $this->logger->warning('API client failed to remove metadata by key', [
                     'lpaId' => $lpa->id,
                     'status' => 500,
                 ]);
@@ -100,10 +101,5 @@ class Metadata implements LoggerAwareInterface
         }
 
         return false;
-    }
-
-    public function setLpaApplicationService(Application $lpaApplicationService): void
-    {
-        $this->lpaApplicationService = $lpaApplicationService;
     }
 }

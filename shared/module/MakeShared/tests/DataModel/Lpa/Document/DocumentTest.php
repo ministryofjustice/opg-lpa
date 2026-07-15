@@ -88,6 +88,100 @@ class DocumentTest extends TestCase
         $this->assertNotNull($errors['preference']);
     }
 
+    public function testValidationInstructionWordTooLongFailed()
+    {
+        $longWord = str_repeat('a', 86);
+
+        $document = new Document();
+        $document->set('instruction', "Some text {$longWord} more text");
+        $document->set('preference', 'Normal preference');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['instruction']);
+        $this->assertStringContainsString('word-must-be-less-than-or-equal:85', $errors['instruction']['messages'][0]);
+    }
+
+    public function testValidationPreferenceWordTooLongFailed()
+    {
+        $longWord = str_repeat('b', 86);
+
+        $document = new Document();
+        $document->set('instruction', 'Normal instruction');
+        $document->set('preference', "Some text {$longWord} more text");
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['preference']);
+        $this->assertStringContainsString('word-must-be-less-than-or-equal:85', $errors['preference']['messages'][0]);
+    }
+
+    public function testValidationInstructionWordExactly85CharsIsValid()
+    {
+        $exactWord = str_repeat('a', 85);
+
+        $document = new Document();
+        $document->set('instruction', "Some text {$exactWord} more text");
+        $document->set('preference', 'Normal preference');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertFalse($validatorResponse->hasErrors());
+    }
+
+    public function testValidationInstructionWithHttpLinkFailed()
+    {
+        $document = new Document();
+        $document->set('instruction', 'See http://example.com for details');
+        $document->set('preference', 'Normal preference');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['instruction']);
+        $this->assertStringContainsString('no-links-allowed', $errors['instruction']['messages'][0]);
+    }
+
+    public function testValidationInstructionWithHttpsLinkFailed()
+    {
+        $document = new Document();
+        $document->set('instruction', 'See https://example.com for details');
+        $document->set('preference', 'Normal preference');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['instruction']);
+        $this->assertStringContainsString('no-links-allowed', $errors['instruction']['messages'][0]);
+    }
+
+    public function testValidationPreferenceWithHttpLinkFailed()
+    {
+        $document = new Document();
+        $document->set('instruction', 'Normal instruction');
+        $document->set('preference', 'See http://example.com for details');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['preference']);
+        $this->assertStringContainsString('no-links-allowed', $errors['preference']['messages'][0]);
+    }
+
+    public function testValidationPreferenceWithHttpsLinkFailed()
+    {
+        $document = new Document();
+        $document->set('instruction', 'Normal instruction');
+        $document->set('preference', 'See https://example.com for details');
+
+        $validatorResponse = $document->validate(['instruction', 'preference']);
+        $this->assertTrue($validatorResponse->hasErrors());
+        $errors = $validatorResponse->getArrayCopy();
+        $this->assertNotNull($errors['preference']);
+        $this->assertStringContainsString('no-links-allowed', $errors['preference']['messages'][0]);
+    }
+
     public function testValidationTypesFailed()
     {
         $document = new Document();

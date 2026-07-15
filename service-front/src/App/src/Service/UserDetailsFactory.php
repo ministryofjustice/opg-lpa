@@ -33,6 +33,8 @@ class UserDetailsFactory
                     'httpClient' => new GuzzleAdapter(),
                 ]),
                 $emailConfig['notify']['smokeTestEmailAddress'] ?? null,
+                null,
+                $container->get(LoggerInterface::class),
             );
         } else {
             $mailTransport = new class implements MailTransportInterface {
@@ -46,10 +48,14 @@ class UserDetailsFactory
             };
         }
 
-        $userService = new UserDetails($authService, $config, $mailTransport);
+        $userService = new UserDetails(
+            $authService,
+            $config,
+            $mailTransport,
+            $container->get(LoggerInterface::class),
+        );
         $userService->setUrlHelper($container->get(UrlHelper::class));
         $userService->setApiClient($apiClient);
-        $userService->setLogger($container->get(LoggerInterface::class));
         $userService->setSessionStorage($container->get(MezzioSessionStorage::class));
 
         return $userService;

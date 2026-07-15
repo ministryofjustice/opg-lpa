@@ -229,7 +229,7 @@ module "dynamodb_encryption_key" {
 
 
 module "elasticache_encryption_key" {
-  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v0.0.10"
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for ElastiCache at rest encryption"
   alias              = "opg-lpa-${local.account_name}-elasticache-encryption-key"
   usage_services     = ["elasticache.amazonaws.com"]

@@ -21,9 +21,7 @@ final class MetadataTest extends MockeryTestCase
     {
         $this->applicationService = Mockery::mock(Application::class);
 
-        $this->service = new Metadata();
-        $this->service->setLpaApplicationService($this->applicationService);
-        $this->service->setLogger(Mockery::spy(LoggerInterface::class));
+        $this->service = new Metadata($this->applicationService, Mockery::spy(LoggerInterface::class));
     }
 
     public function testSetReplacementAttorneysConfirmed(): void

@@ -6,6 +6,7 @@ namespace App\Service\Session;
 
 use App\Service\Redis\RedisClient;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class SaveHandlerFactory
 {
@@ -15,6 +16,6 @@ class SaveHandlerFactory
 
         return new FilteringSaveHandler($redisClient, [
             static fn() => empty($_SERVER['HTTP_X_SESSIONREADONLY']),
-        ]);
+        ], $container->get(LoggerInterface::class));
     }
 }

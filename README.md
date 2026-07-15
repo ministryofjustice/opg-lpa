@@ -240,3 +240,7 @@ There are additional make shortcuts of the form:
 ```make front-composer-outdated```
 
 for package updates, removals and outdated checks in front or api.
+
+## Developing locally with PHPStorm
+
+If you want to work on this project within PHPStorm you'll probably want to ask a colleague to share their .idea directory from this project with you. This will give you the required settings. This directory used to be committed to git but we found that people accidentally overwrote each other's settings so now we just keep local copies

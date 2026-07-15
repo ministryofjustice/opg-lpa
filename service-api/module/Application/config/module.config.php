@@ -441,6 +441,12 @@ return [
                     'children' => ['user'],
                     'permissions' => [ 'admin' ]
                 ],
+                'admin-service' => [
+                    // An authenticated request from the admin service (service-to-service via pre-shared secret).
+                    // Network-level security (VPC security groups) is the primary control.
+                    'children' => ['admin'],
+                    'permissions' => [ 'admin' ]
+                ],
                 'user' => [
                     // An authenticated request.
                     'children' => ['guest'],
