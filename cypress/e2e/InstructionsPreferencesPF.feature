@@ -19,9 +19,37 @@ Feature: Specify Instructions and Preferences for a Property and Finance LPA
         Then I can find "instruction" and it is visible
         And I can find "preferences" and it is visible
         And I fill out
-            | instruction | Some instructions |
+            | instruction | aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
             | preferences | Some preferences |
         When I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | No single word in your instructions can be more than 85 characters long |
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | No single word in your preferences can be more than 85 characters long |
+        When I fill out
+            | instruction | See http://example.com for details |
+            | preferences | Some preferences |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Web links (http:// and https://) are not allowed in instructions |
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | See https://example.com for details |
+        And I click "save"
+        Then I see in the page text
+            | There is a problem |
+            | Web links (http:// and https://) are not allowed in preferences |
+        When I fill out
+            | instruction | Some instructions |
+            | preferences | Some preferences |
+        And I click "save"
         Then I am taken to the applicant page
         When I click the last occurrence of "accordion-view-change"
         Then I see in the page text

@@ -35,4 +35,10 @@ RUN rm /usr/bin/composer /shared/composer.json /shared/composer.lock && \
 # Clean up build dependencies, but only after everything else we need has been installed
 RUN apk del .build-dependencies
 
+FROM base AS composer-tools
+
+USER root
+COPY --from=composer /usr/bin/composer /usr/bin/
+WORKDIR /shared
+
 FROM base AS test-runner

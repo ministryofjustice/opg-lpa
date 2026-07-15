@@ -263,6 +263,9 @@ services:
 
       LPA_FEE_EFFECTIVE_DATE: "2025-09-17T14:30:00"
 
+      OPG_LPA_SHARED_SECRET_ENABLED: "true"
+      OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
+
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
       OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
       OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
@@ -295,6 +298,24 @@ services:
   # ---------------------------
   # Admin
 
+  mock-cognito:
+    container_name: lpa-mock-cognito
+    image: lpa-mock-cognito
+    build:
+      context: ./mock-cognito
+      dockerfile: docker/Dockerfile
+    ports:
+      - "4548:8080"
+    environment:
+      PORT: "8080"
+      COGNITO_MOCK_ISSUER: "http://mock-cognito:8080"
+      COGNITO_CLIENT_ID: "local-client-id"
+    healthcheck:
+      test: ["CMD", "/healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
   admin-web:
     container_name: lpa-admin-web
     image: lpa-admin-web
@@ -323,6 +344,8 @@ services:
         condition: service_started
       localstack:
         condition: service_healthy
+      mock-cognito:
+        condition: service_healthy
     environment:
       OPG_LPA_STACK_NAME: "local"
       OPG_LPA_STACK_ENVIRONMENT: "dev"
@@ -334,6 +357,13 @@ services:
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
       OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
+
+      OPG_LPA_SHARED_SECRET_ENABLED: "true"
+      OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
+
+      COGNITO_BASE_URL: "http://mock-cognito:8080"
+      COGNITO_ISSUER: "http://mock-cognito:8080"
+      COGNITO_CLIENT_ID: "local-client-id"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
@@ -489,6 +519,7 @@ services:
       SERVICE_API_ROOT: "http://api-web:8080"
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
+      CYPRESS_cognitoMockUrl: "http://mock-cognito:8080"
     volumes:
       - ./cypress:/app/cypress
       - ./cypress.config.js:/app/cypress.config.js
@@ -506,3 +537,57 @@ services:
     entrypoint: npm
     volumes:
       - ./service-front:/home/node
+
+  composer-front:
+    build:
+      context: ./
+      dockerfile: service-front/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-front:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-api:
+    build:
+      context: ./
+      dockerfile: service-api/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-api:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-admin:
+    build:
+      context: ./
+      dockerfile: service-admin/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-admin:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-pdf:
+    build:
+      context: ./
+      dockerfile: service-pdf/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-pdf:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-shared:
+    build:
+      context: ./
+      dockerfile: shared/docker/test-runner/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]

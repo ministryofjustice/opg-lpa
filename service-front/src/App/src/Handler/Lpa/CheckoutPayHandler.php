@@ -19,12 +19,11 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -32,11 +31,10 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
-class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterface
+class CheckoutPayHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
     use CheckoutTrait;
-    use LoggerTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
@@ -44,10 +42,11 @@ class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterfac
         Communication $communicationService,
         private readonly GovPayClient $paymentClient,
         UrlHelper $urlHelper,
+        private readonly LoggerInterface $logger,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService = $communicationService;
-        $this->urlHelper = $urlHelper;
+        $this->communicationService  = $communicationService;
+        $this->urlHelper             = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -93,7 +92,7 @@ class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterfac
         // Check for any existing payments in play
         if (!is_null($lpa->payment->gatewayReference)) {
             $gatewayReference = $lpa->payment->gatewayReference;
-            $payment = $this->paymentClient->getPayment($gatewayReference);
+            $payment          = $this->paymentClient->getPayment($gatewayReference);
 
             if (is_null($payment)) {
                 throw new RuntimeException(
@@ -106,26 +105,19 @@ class CheckoutPayHandler implements RequestHandlerInterface, LoggerAwareInterfac
                 $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
                 $lpa->payment->reference = $payment->reference;
                 $lpa->payment->date      = new \DateTime();
-                $govPayEmail = $payment->email ?? null;
 
-                if (is_string($govPayEmail) && $govPayEmail !== '') {
-                    $lpa->payment->email = new EmailAddress(['address' => strtolower($govPayEmail)]);
-                } else {
-                    $this->getLogger()->debug('GovPay returned no email for completed payment', [
-                        'lpaId'            => $lpa->id,
-                        'gatewayReference' => $gatewayReference,
-                        'email_raw'        => $govPayEmail,
-                    ]);
-                    $lpa->payment->email = null;
-                }
+                $govPayEmail         = $payment->email ?? null;
+                $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
+                    ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+                    : null;
 
                 $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
                 if ($result === false) {
-                    $this->getLogger()->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
+                    $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
                         'lpaId'            => $lpa->id,
                         'gatewayReference' => $gatewayReference,
-                        'has_email'        => is_string($govPayEmail) && $govPayEmail !== '',
+                        'has_email'        => $lpa->payment->email !== null,
                     ]);
                 }
 

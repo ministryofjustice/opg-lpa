@@ -8,20 +8,18 @@ use App\Model\UserDetailsHolder;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use App\View\Twig\Traits\MoneyFormatterTrait;
+use DateInterval;
+use DateTimeZone;
+use Exception;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Helper\UrlHelper;
-use DateTimeZone;
-use DateInterval;
-use Exception;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class Communication implements LoggerAwareInterface
+class Communication
 {
-    use LoggerTrait;
     use MoneyFormatterTrait;
 
     public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        = 'email-lpa-registration-with-payment1';
@@ -36,6 +34,7 @@ class Communication implements LoggerAwareInterface
 
     public function __construct(
         private readonly MailTransportInterface $mailTransport,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -55,7 +54,7 @@ class Communication implements LoggerAwareInterface
         $user = $this->userDetailsHolder?->get();
 
         if (!$user instanceof User) {
-            $this->getLogger()->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
+            $this->logger->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
                 'lpaId' => $lpa->id,
             ]);
             return 'failed-sending-email';
@@ -102,7 +101,7 @@ class Communication implements LoggerAwareInterface
             $mailParameters = new MailParameters($to, $this->emailTemplateRef, $this->data);
             $this->mailTransport->send($mailParameters);
         } catch (Exception $ex) {
-            $this->getLogger()->error('Failed to send registration complete email', [
+            $this->logger->error('Failed to send registration complete email', [
                 'exception' => $ex,
             ]);
 

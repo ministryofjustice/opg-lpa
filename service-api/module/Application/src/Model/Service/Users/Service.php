@@ -3,15 +3,17 @@
 namespace Application\Model\Service\Users;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use ArrayObject;
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
-use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\EntityInterface;
 use Application\Model\Service\PasswordValidatorTrait;
 use Application\Model\Service\TokenGenerationTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
@@ -107,31 +109,44 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
-     * @return DataModelEntity
+     * @param string $id
+     * @return EntityInterface|null Returns null if no profile exists for the given ID.
      */
-    public function fetch($id)
+    public function fetch(string $id): ?EntityInterface
     {
-        // Get existing user
         $user = $this->getUserRepository()->getProfile($id);
 
-        // If there is no user create one now and ensure that the email address is correct
         if (!$user instanceof ProfileUserModel) {
-            $user = $this->save($id);
-        } else {
-            $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
-            $user->setNumberOfLpas($lpaCount);
+            return null;
         }
+
+        $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
+        $user->setNumberOfLpas($lpaCount);
 
         return new DataModelEntity($user);
     }
 
     /**
-     * @param $data
-     * @param $id
-     * @return ValidationApiProblem|DataModelEntity|array|null|object|ProfileUserModel
+     * @param string $id
+     * @return ApiProblem|EntityInterface
      */
-    public function update($data, $id)
+    public function createProfile(string $id): ApiProblem|EntityInterface
+    {
+        $result = $this->save($id);
+
+        if (!$result instanceof ProfileUserModel) {
+            return $result;
+        }
+
+        return new DataModelEntity($result);
+    }
+
+    /**
+     * @param array $data
+     * @param string $id
+     * @return ApiProblem|EntityInterface|null
+     */
+    public function update(array $data, string $id): ApiProblem|EntityInterface|null
     {
         $user = $this->save($id, $data);
 
@@ -144,11 +159,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param string $reason
-     * @return bool
+     * @return ApiProblem|bool
      */
-    public function delete($id, $reason = 'user-initiated')
+    public function delete(string $id, string $reason = 'user-initiated'): ApiProblem|bool
     {
         //  First delete all applications for the user
         $this->applicationsService->deleteAll($id);
@@ -186,11 +201,11 @@ class Service extends AbstractService
     }
 
     /**
-     * @param $id
+     * @param string $id
      * @param array $data
      * @return ValidationApiProblem|ProfileUserModel
      */
-    private function save($id, array $data = [])
+    private function save(string $id, array $data = []): ValidationApiProblem|ProfileUserModel
     {
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);

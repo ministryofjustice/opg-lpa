@@ -87,9 +87,15 @@ VOLUME [ "/tmp" ]
 
 CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
 
+FROM base AS composer-tools
+
+USER root
+COPY --from=composer /usr/bin/composer /usr/bin/
+WORKDIR /app
+
 FROM base AS test-runner
 
-USER "root"
+USER root
 RUN chown -R appuser:appuser /app/vendor
 
 COPY --chown=root:root service-api/composer.json /app/composer.json

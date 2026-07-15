@@ -25,6 +25,9 @@ return [
 
     'api_base_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: null,
 
+    // Pre-shared secret for service-to-service calls to the API.
+    'service_secret' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET') ?: '',
+
     'admin_accounts' => (
         getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ?
             explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []
@@ -51,6 +54,8 @@ return [
             ],
         ],
     ],
+
+    'shared_secret_enabled' => getenv('OPG_LPA_SHARED_SECRET_ENABLED') === 'true',
 
     'mezzio' => [
         // Provide templates for the error handling middleware to use when

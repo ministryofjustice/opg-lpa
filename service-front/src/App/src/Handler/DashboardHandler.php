@@ -11,23 +11,22 @@ use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
-use MakeShared\Logging\LoggerTrait;
+use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class DashboardHandler implements RequestHandlerInterface, LoggerAwareInterface
+class DashboardHandler implements RequestHandlerInterface
 {
-    use LoggerTrait;
     use PaginationTrait;
     use CommonTemplateVariablesTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 

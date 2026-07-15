@@ -36,16 +36,18 @@ class CheckoutPayResponseHandlerTest extends TestCase
     private GovPayClient&MockObject $paymentClient;
     private UrlHelper&MockObject $urlHelper;
     private TemplateRendererInterface&MockObject $renderer;
+    private LoggerInterface&MockObject $logger;
     private CheckoutPayResponseHandler $handler;
 
     protected function setUp(): void
     {
-        $this->formElementManager = $this->createMock(FormElementManager::class);
+        $this->formElementManager    = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->communicationService = $this->createMock(Communication::class);
         $this->paymentClient = $this->createMock(GovPayClient::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->handler = new CheckoutPayResponseHandler(
             $this->formElementManager,
@@ -54,9 +56,8 @@ class CheckoutPayResponseHandlerTest extends TestCase
             $this->paymentClient,
             $this->urlHelper,
             $this->renderer,
+            $this->logger,
         );
-
-        $this->handler->setLogger($this->createMock(LoggerInterface::class));
     }
 
     /**
@@ -219,5 +220,82 @@ class CheckoutPayResponseHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('complete', $response->getHeaderLine('location'));
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: string}>
+     */
+    public static function whitespaceEmailProvider(): array
+    {
+        return [
+            'trailing space'         => ['user@example.com ', 'user@example.com'],
+            'leading space'          => [' user@example.com', 'user@example.com'],
+            'surrounding whitespace' => ["\tuser@example.com\n", 'user@example.com'],
+            'mixed case with space'  => ['User@Example.COM ', 'user@example.com'],
+        ];
+    }
+
+    #[DataProvider('whitespaceEmailProvider')]
+    public function testGovPayEmailIsTrimmedAndLowercasedBeforePersisting(string $govPayEmail, string $expected): void
+    {
+        $lpa                            = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'ref-123';
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'ref-123',
+            'reference'  => 'txn-ref',
+            'email'      => $govPayEmail,
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
+        ]);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+
+        $capturedData = null;
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->willReturnCallback(function (mixed $id, array $data) use (&$capturedData): Lpa {
+                $capturedData = $data;
+                return new Lpa([]);
+            });
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $response = $this->handler->handle($this->createRequest($lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame($expected, $capturedData['payment']['email']['address'] ?? null);
+    }
+
+    public function testMalformedEmailFromGovPayIsPassedThroughUnchanged(): void
+    {
+        $lpa                            = $this->createCompleteLpa();
+        $lpa->payment->gatewayReference = 'ref-123';
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'ref-123',
+            'reference'  => 'txn-ref',
+            'email'      => 'not-a-valid-email',
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
+        ]);
+
+        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->with(
+                $lpa->id,
+                $this->callback(function (array $data): bool {
+                    return ($data['payment']['email']['address'] ?? null) === 'not-a-valid-email';
+                })
+            )
+            ->willReturn(new Lpa([]));
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $response = $this->handler->handle($this->createRequest($lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
     }
 }

@@ -15,9 +15,12 @@ class ApiClientFactory
         $config = $container->get('config');
         $apiUri = $config['api_client']['api_uri'] ?? '';
 
-        $client = new Client(new GuzzleClient(), (string) $apiUri);
-        $client->setLogger($container->get(LoggerInterface::class));
-
-        return $client;
+        return new Client(
+            new GuzzleClient(),
+            (string) $apiUri,
+            [],
+            null,
+            $container->get(LoggerInterface::class),
+        );
     }
 }
