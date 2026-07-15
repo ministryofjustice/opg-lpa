@@ -8,16 +8,19 @@ use App\Service\Redis\RedisClient;
 use App\Service\Session\FilteringSaveHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 final class FilteringSaveHandlerTest extends TestCase
 {
     private RedisClient&MockObject $redisClient;
+    private LoggerInterface&MockObject $logger;
     private FilteringSaveHandler $handler;
 
     protected function setUp(): void
     {
         $this->redisClient = $this->createMock(RedisClient::class);
-        $this->handler = new FilteringSaveHandler($this->redisClient);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->handler = new FilteringSaveHandler($this->redisClient, [], $this->logger);
     }
 
     public function testOpenDelegatesToRedisClient(): void
@@ -60,7 +63,7 @@ final class FilteringSaveHandlerTest extends TestCase
 
     public function testWriteWithFilterReturningFalseDoesNotWriteAndReturnsTrue(): void
     {
-        $handler = new FilteringSaveHandler($this->redisClient, [static fn (): bool => false]);
+        $handler = new FilteringSaveHandler($this->redisClient, [static fn (): bool => false], $this->logger);
 
         $this->redisClient->expects($this->never())->method('write');
 
@@ -69,7 +72,7 @@ final class FilteringSaveHandlerTest extends TestCase
 
     public function testWriteWithFilterReturningTrueWritesToRedis(): void
     {
-        $handler = new FilteringSaveHandler($this->redisClient, [static fn (): bool => true]);
+        $handler = new FilteringSaveHandler($this->redisClient, [static fn (): bool => true], $this->logger);
 
         $this->redisClient->expects($this->once())
             ->method('write')

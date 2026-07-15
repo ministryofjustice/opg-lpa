@@ -70,9 +70,8 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->service = new Application($this->authenticationService, [
             'processing-status' => ['track-from-date' => '2019-01-01'],
-        ]);
+        ], $logger);
         $this->service->setApiClient($this->apiClient);
-        $this->service->setLogger($logger);
     }
 
     public function testGetApplication(): void

@@ -45,8 +45,8 @@ class UserDetailsMiddlewareTest extends TestCase
             $this->userService,
             $this->authenticationService,
             $this->userDetailsHolder,
+            $this->logger,
         );
-        $middleware->setLogger($this->logger);
 
         return $middleware;
     }

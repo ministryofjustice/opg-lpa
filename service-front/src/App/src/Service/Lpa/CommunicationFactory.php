@@ -8,12 +8,16 @@ use App\Model\UserDetailsHolder;
 use App\Service\Mail\Transport\MailTransportInterface;
 use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 class CommunicationFactory
 {
     public function __invoke(ContainerInterface $container): Communication
     {
-        $service = new Communication($container->get(MailTransportInterface::class));
+        $service = new Communication(
+            $container->get(MailTransportInterface::class),
+            $container->get(LoggerInterface::class),
+        );
         $service->setUrlHelper($container->get(UrlHelper::class));
         $service->setUserDetailsHolder($container->get(UserDetailsHolder::class));
 

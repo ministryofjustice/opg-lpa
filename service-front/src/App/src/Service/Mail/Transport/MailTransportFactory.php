@@ -7,6 +7,7 @@ namespace App\Service\Mail\Transport;
 use Alphagov\Notifications\Client as NotifyClient;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 
 final class MailTransportFactory
 {
@@ -30,6 +31,8 @@ final class MailTransportFactory
                 'httpClient' => new GuzzleClient(),
             ]),
             $smokeTestEmail,
+            null,
+            $container->get(LoggerInterface::class),
         );
     }
 }
