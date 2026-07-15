@@ -354,10 +354,16 @@ dc-phpcs-check:
 
 .PHONY: dc-clear-cache
 dc-clear-cache:
-	docker compose exec admin-app rm -f /app/tmp/config-cache-opg-lpa-admin.php
+	docker compose exec admin-app rm -f /tmp/config-cache-opg-lpa-admin.php
 	docker compose exec front-app rm -f /app/data/cache/config-cache.php
 	docker compose exec front-app rm -rf /tmp/twig_cache
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
+
+# Force-recreate admin-app renewing its anonymous /tmp volume (which persists the config cache).
+# Use after Dockerfile changes or when env vars aren't being picked up.
+.PHONY: reset-admin
+reset-admin:
+	docker compose up -d --force-recreate --renew-anon-volumes admin-app
 
 .PHONY: update-secrets-baseline
 update-secrets-baseline:

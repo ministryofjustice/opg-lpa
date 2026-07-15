@@ -9,7 +9,7 @@ Feature: AdminUserAccount
 
     # Check new user exists on admin site
     When I visit the admin sign-in page
-    And I log in to admin
+    And I log in to admin using SSO
     And I find "SignupAndDeleteUser" on the admin site
     Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Activated"

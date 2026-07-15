@@ -2,12 +2,9 @@
 
 namespace App\Middleware\Authorization;
 
-use App\Handler\Traits\JwtTrait;
+use App\RequestAttributes;
 use App\Service\ApiClient\ApiException;
-use App\Service\Authentication\AuthenticationService;
-use App\Service\Authentication\Identity;
-use App\Service\User\UserService;
-use MakeShared\DataModel\User\User;
+use Fig\Http\Message\StatusCodeInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,54 +22,11 @@ use Exception;
  */
 class AuthorizationMiddleware implements MiddlewareInterface
 {
-    use JwtTrait;
-
-    /**
-     * @var AuthenticationService
-     */
-    private $authenticationService;
-
-    /**
-     * @var UserService
-     */
-    private $userService;
-
-    /**
-     * @var UrlHelper
-     */
-    private $urlHelper;
-
-    /**
-     * @var Rbac
-     */
-    private $rbac;
-
-    /**
-     * @var NotFoundHandler
-     */
-    private $notFoundHandler;
-
-    /**
-     * AuthorizationMiddleware constructor.
-     *
-     * @param AuthenticationService $authenticationService
-     * @param UserService $userService
-     * @param UrlHelper $urlHelper
-     * @param Rbac $rbac
-     * @param NotFoundHandler $notFoundHandler
-     */
     public function __construct(
-        AuthenticationService $authenticationService,
-        UserService $userService,
-        UrlHelper $urlHelper,
-        Rbac $rbac,
-        NotFoundHandler $notFoundHandler
+        private readonly UrlHelper $urlHelper,
+        private readonly Rbac $rbac,
+        private readonly NotFoundHandler $notFoundHandler,
     ) {
-        $this->authenticationService = $authenticationService;
-        $this->userService = $userService;
-        $this->urlHelper = $urlHelper;
-        $this->rbac = $rbac;
-        $this->notFoundHandler = $notFoundHandler;
     }
 
     /**
@@ -83,42 +37,12 @@ class AuthorizationMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        // Unauthenticated routes bypass JWT session data and RBAC checks entirely.
-        $routeResult = $request->getAttribute(RouteResult::class);
-        if ($routeResult instanceof RouteResult) {
-            $matchedRoute = $routeResult->getMatchedRoute();
-            $options = $matchedRoute !== false ? $matchedRoute->getOptions() : [];
-            if (!empty($options['unauthenticated_route'])) {
-                return $handler->handle($request);
-            }
-        }
-
-        $token = $this->getTokenData('token');
-
-        $user = null;
+        $claims = $request->getAttribute(RequestAttributes::OIDC_CLAIMS);
 
         $roles = ['guest'];
 
-        if (is_string($token)) {
-            // Attempt to get a user with the token value
-            $result = $this->authenticationService->verify($token);
-
-            $identity = $result->getIdentity();
-
-            if ($identity instanceof Identity) {
-                // Try to get the user details
-                $user = $this->userService->fetch($identity->getUserId() ?? '');
-
-                // There is something wrong with the user here so throw an exception
-                if (!$user instanceof User) {
-                    throw new Exception('Can not find a user for ID ' . $identity->getUserId());
-                }
-
-                $roles[] = 'authenticated-user';
-            } else {
-                // Clear the bad token
-                $this->clearTokenData();
-            }
+        if (!empty($claims['sub']) && !empty($claims['email'])) {
+            $roles[] = 'authenticated-user';
         }
 
         //  Determine the route we are attempting to access
@@ -130,14 +54,28 @@ class AuthorizationMiddleware implements MiddlewareInterface
             return $this->notFoundHandler->handle($request);
         }
 
+        // Routes marked unauthenticated_route => true bypass RBAC entirely.
+        $routeOptions = $matchedRoute->getOptions() ?: [];
+        if (($routeOptions['unauthenticated_route'] ?? false) === true) {
+            return $handler->handle(
+                $request
+                    ->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null)
+                    ->withAttribute(RequestAttributes::USER_ID, $claims['sub'] ?? null)
+            );
+        }
+
         //  Check each role to see if the user has access to the route
         foreach ($roles as $role) {
             if ($this->rbac->hasRole($role) && $this->rbac->isGranted($role, $matchedRoute->getName())) {
                 // Catch any unauthorized exceptions and trigger a sign out if required
                 try {
-                    return $handler->handle($request->withAttribute('user', $user));
+                    return $handler->handle(
+                        $request
+                            ->withAttribute(RequestAttributes::USER_EMAIL, $claims['email'] ?? null)
+                            ->withAttribute(RequestAttributes::USER_ID, $claims['sub'] ?? null)
+                    );
                 } catch (ApiException $ae) {
-                    if ($ae->getCode() === 401) {
+                    if ($ae->getCode() === StatusCodeInterface::STATUS_UNAUTHORIZED) {
                         return new RedirectResponse($this->urlHelper->generate('sign.out'));
                     } else {
                         throw $ae;
@@ -146,12 +84,12 @@ class AuthorizationMiddleware implements MiddlewareInterface
             }
         }
 
-        // If there is no user (not logged in) then redirect to the sign in screen
-        if (is_null($user)) {
+        // No role grants access. If unauthenticated (no claims), redirect to sign-in.
+        // If authenticated but lacking permission, throw 403.
+        if (empty($claims['sub'])) {
             return new RedirectResponse($this->urlHelper->generate('sign.in'));
         }
 
-        //  Throw a forbidden exception
-        throw new Exception('Access forbidden', 403);
+        throw new Exception('Access forbidden', StatusCodeInterface::STATUS_FORBIDDEN);
     }
 }
