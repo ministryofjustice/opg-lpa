@@ -25,6 +25,10 @@ data "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
   name = "${var.account_name}/opg_lpa_admin_jwt_secret"
 }
 
+data "aws_secretsmanager_secret" "opg_lpa_admin_service_secret" {
+  name = "${var.account_name}/opg_lpa_admin_service_secret"
+}
+
 # front secrets
 data "aws_secretsmanager_secret" "opg_lpa_front_gov_pay_key" {
   name = "${var.account_name}/opg_lpa_front_gov_pay_key"

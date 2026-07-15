@@ -21,9 +21,16 @@ class ClientFactory
             'verify' => false,
         ]);
 
-        //  Get the end point targets from the config
         $config = $container->get('config');
 
-        return new Client($httpClient, $config['api_base_uri']);
+        $secret = $config['shared_secret_enabled'] === true
+            ? ($config['service_secret'] ?? '')
+            : '';
+
+        return new Client(
+            $httpClient,
+            $config['api_base_uri'],
+            $secret,
+        );
     }
 }

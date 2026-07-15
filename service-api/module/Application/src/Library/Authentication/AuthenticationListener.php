@@ -34,21 +34,28 @@ class AuthenticationListener implements LoggerAwareInterface
     public function authenticate(MvcEvent $e)
     {
         $serviceManager = $e->getApplication()->getServiceManager();
-
         $authService = $serviceManager->get('Laminas\Authentication\AuthenticationService');
 
-        /*
-         * Do some authentication. Initially this will just be via the token passed from front-2.
-         * This token will have come from Auth-1. As this will be replaced we'll use a custom header value of:
-         *      X-AuthOne
-         *
-         * This will leave the standard 'Authorization' namespace free for when OAuth is done properly.
-         */
-        // Suppress psalm errors caused by bug in laminas-mvc;
-        // see https://github.com/laminas/laminas-mvc/issues/77
-        /**
-         * @psalm-suppress UndefinedInterfaceMethod
-         */
+        // Check for admin service credential first. The admin app authenticates
+        // via a pre-shared secret rather than a user token. Network-level security
+        // (VPC security groups) is the primary control; this provides an explicit identity.
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $adminAuthHeader = $e->getRequest()->getHeader('X-Shared-Secret');
+
+        $config = $serviceManager->get('Config');
+        $sharedSecretEnabled = $config['admin']['shared_secret_enabled'] ?? null;
+
+        if ($adminAuthHeader && $sharedSecretEnabled === true) {
+            $adminServiceSecret = $config['admin']['service_secret'] ?? '';
+
+            if ($adminServiceSecret !== '' && trim($adminAuthHeader->getFieldValue()) === $adminServiceSecret) {
+                $authService->getStorage()->write(new Identity\AdminService());
+                $this->getLogger()->info('Admin service authenticated via service secret');
+                return;
+            }
+        }
+
+        /** @psalm-suppress UndefinedInterfaceMethod */
         $token = $e->getRequest()->getHeader('Token');
 
         if (!$token) {
@@ -64,7 +71,6 @@ class AuthenticationListener implements LoggerAwareInterface
             //  Attempt to authenticate - if successful the identity will be persisted for the request
             /** @var AuthenticationService $authenticationService */
             $authenticationService = $serviceManager->get(AuthenticationService::class);
-            $config = $serviceManager->get('Config');
 
             $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
 
