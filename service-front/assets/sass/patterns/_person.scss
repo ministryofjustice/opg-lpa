@@ -62,6 +62,14 @@
             border: none;
             -webkit-appearance: none;
             cursor: pointer;
+            color: govuk-colour("black");
+            text-decoration: none;
+
+            &:hover {
+                color: govuk-colour("black");
+                text-decoration: underline;
+            }
+
             + .spinner {
                 margin-bottom: -3px;
             }
