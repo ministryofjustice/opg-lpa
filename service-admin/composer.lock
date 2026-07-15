@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f854ca7a10656fd9713936a7296fa6b",
+    "content-hash": "f15df288a852dd6a06c150bff2a792f6",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -1030,6 +1030,84 @@
                 }
             ],
             "time": "2026-06-01T15:37:55+00:00"
+        },
+        {
+            "name": "laminas/laminas-di",
+            "version": "3.16.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laminas/laminas-di.git",
+                "reference": "7af1fdcbd1b79156b07e82a38f314ab6e07c79c0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laminas/laminas-di/zipball/7af1fdcbd1b79156b07e82a38f314ab6e07c79c0",
+                "reference": "7af1fdcbd1b79156b07e82a38f314ab6e07c79c0",
+                "shasum": ""
+            },
+            "require": {
+                "laminas/laminas-stdlib": "^3.21.0",
+                "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+                "psr/container": "^1.1.1",
+                "psr/log": "^1.1.4 || ^2.0.0 ||  ^3.0.0"
+            },
+            "conflict": {
+                "amphp/amp": "<2.6.4",
+                "laminas/laminas-servicemanager": "<3.13.0 || >=4.0.0",
+                "laminas/laminas-servicemanager-di": "*",
+                "zendframework/zend-di": "*"
+            },
+            "require-dev": {
+                "laminas/laminas-coding-standard": "~2.5.0",
+                "laminas/laminas-servicemanager": "^3.22",
+                "mikey179/vfsstream": "^1.6.12",
+                "phpbench/phpbench": "^1.2.7",
+                "phpunit/phpunit": "^11.0",
+                "psalm/plugin-phpunit": "^0.18.0 || ^0.19.0",
+                "squizlabs/php_codesniffer": "^3.7.1",
+                "vimeo/psalm": "^6.0"
+            },
+            "suggest": {
+                "laminas/laminas-servicemanager": "An IoC container without auto wiring capabilities"
+            },
+            "type": "library",
+            "extra": {
+                "laminas": {
+                    "component": "Laminas\\Di",
+                    "config-provider": "Laminas\\Di\\ConfigProvider"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laminas\\Di\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "Automated dependency injection for PSR-11 containers",
+            "homepage": "https://laminas.dev",
+            "keywords": [
+                "PSR-11",
+                "di",
+                "laminas"
+            ],
+            "support": {
+                "chat": "https://laminas.dev/chat",
+                "docs": "https://docs.laminas.dev/laminas-di/",
+                "forum": "https://discourse.laminas.dev",
+                "issues": "https://github.com/laminas/laminas-di/issues",
+                "rss": "https://github.com/laminas/laminas-di/releases.atom",
+                "source": "https://github.com/laminas/laminas-di"
+            },
+            "funding": [
+                {
+                    "url": "https://funding.communitybridge.org/projects/laminas-project",
+                    "type": "community_bridge"
+                }
+            ],
+            "time": "2026-02-05T10:48:44+00:00"
         },
         {
             "name": "laminas/laminas-diactoros",

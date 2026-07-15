@@ -7,14 +7,11 @@ use MakeShared\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class UserService implements LoggerAwareInterface
+class UserService
 {
-    use LoggerTrait;
-
-    public function __construct(private ApiClient $client)
+    public function __construct(private ApiClient $client, private LoggerInterface $logger)
     {
     }
 
@@ -95,7 +92,7 @@ class UserService implements LoggerAwareInterface
         try {
             $userData = $this->client->httpGet('/v2/user/' . $id);
         } catch (Exception $e) {
-            $this->getLogger()->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             return false;
         }
 
@@ -133,7 +130,7 @@ class UserService implements LoggerAwareInterface
 
             return false;
         } catch (Exception $e) {
-            $this->getLogger()->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             return false;
         }
     }
