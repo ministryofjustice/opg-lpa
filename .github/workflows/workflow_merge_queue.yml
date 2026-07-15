@@ -110,6 +110,10 @@ jobs:
     needs:
       - docker_build_scan_push
 
+  lambda_unit_tests:
+    name: Lambda unit tests
+    uses: ./.github/workflows/lambda_unit_tests.yml
+
   terraform_account_preproduction:
     name: TF Preproduction - Account
     needs:
@@ -134,6 +138,7 @@ jobs:
     needs:
       - set_variables
       - snyk_iac_scan
+      - lambda_unit_tests
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}

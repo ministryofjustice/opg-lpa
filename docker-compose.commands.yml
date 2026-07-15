@@ -1,0 +1,6 @@
+## Defines commands we can run from containers
+services:
+  block-ips-tests:
+    build:
+      context: ./lambdas/block_ips
+      dockerfile: Dockerfile
