@@ -60,7 +60,7 @@
         </div>
     </header>
 
-    <?php if (isset($user->name)) { ?>
+    <?php if (isset($userEmail)) { ?>
         <div class="govuk-service-navigation"
              data-module="govuk-service-navigation">
             <div class="govuk-width-container">
@@ -98,11 +98,11 @@
     <?php } ?>
 
     <div class="govuk-width-container">
-        <?php if (isset($user->name)) { ?>
+        <?php if (isset($userEmail)) { ?>
             <div class="govuk-clearfix">
                 <ul class="app-login-header">
                     <li class="govuk-list app-login-header__list govuk-body-s">
-                        Logged in as <b><?= $user->getName(); ?></b>
+                        Logged in as <b><?= htmlspecialchars($userEmail); ?></b>
                     </li>
                     <li class="govuk-list app-login-header__list govuk-body-s">
                         <a class="govuk-link" href="<?= $this->url('sign.out') ?>">Sign Out</a>
