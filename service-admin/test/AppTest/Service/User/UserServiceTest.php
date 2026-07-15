@@ -44,8 +44,7 @@ class UserServiceTest extends TestCase
             'total' => $numLpas
         ]);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->search($email);
 
         $this->assertEquals($id, $actual['userId']);
@@ -80,8 +79,7 @@ class UserServiceTest extends TestCase
         ]]);
 
         // match method on service
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->match($params);
 
         $this->assertEquals($id, $actual[0]['userId']);
@@ -106,8 +104,7 @@ class UserServiceTest extends TestCase
             'total' => 2,
         ]);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->userLpas($userId);
 
         $this->assertEquals($expectedLpas, $actual);
@@ -124,8 +121,7 @@ class UserServiceTest extends TestCase
             'total' => 0,
         ]);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->userLpas($userId);
 
         $this->assertFalse($actual);
@@ -142,8 +138,7 @@ class UserServiceTest extends TestCase
 
         $this->logger->error('API error')->shouldBeCalled();
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->userLpas($userId);
 
         $this->assertFalse($actual);
@@ -161,8 +156,7 @@ class UserServiceTest extends TestCase
             'total' => 0,
         ]);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->userLpas($userId);
 
         $this->assertEquals([], $actual);
@@ -180,8 +174,7 @@ class UserServiceTest extends TestCase
             'isActive' => true,
         ]);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->searchByAReference($aReference);
 
         $this->assertIsArray($actual);
@@ -197,8 +190,7 @@ class UserServiceTest extends TestCase
         // API returns null (404 → client returns null)
         $client->httpGet('/v2/users/search', ['aReference' => $aReference])->willReturn(null);
 
-        $userService = new UserService($client->reveal());
-        $userService->setLogger($this->logger->reveal());
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->searchByAReference($aReference);
 
         $this->assertFalse($actual);
