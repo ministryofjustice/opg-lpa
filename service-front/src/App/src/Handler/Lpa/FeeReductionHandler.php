@@ -212,7 +212,7 @@ class FeeReductionHandler implements RequestHandlerInterface
 
         $options = [
             'reducedFeeReceivesBenefits' => [
-                'id' => 'reductionOptions',
+                'id' => 'reducedFeeReceivesBenefits',
                 'value' => $valueOptions['reducedFeeReceivesBenefits']['value'],
                 'label' => "The donor currently claims one of <a class=\"govuk-link\" "
                     . "href=\"/guide#topic-fees-reductions-and-exemptions\" "
