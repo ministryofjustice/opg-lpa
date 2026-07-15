@@ -11,6 +11,12 @@ use Psr\Log\LoggerInterface;
 
 class UserService
 {
+    /**
+     * As this class is instantiated via autowiring, psalm doesn't think the
+     * constructor is used. Suppress this misunderstanding.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct(private ApiClient $client, private LoggerInterface $logger)
     {
     }
