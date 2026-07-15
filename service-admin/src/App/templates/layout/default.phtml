@@ -25,7 +25,7 @@
     <header class="govuk-header" data-module="govuk-header">
         <div class="govuk-header__container govuk-width-container">
             <div class="govuk-header__logo">
-                <a href="/" class="govuk-header__link govuk-header__link--homepage">
+                <a href="/" class="govuk-header__homepage-link">
                     <svg
                             focusable="false"
                             role="img"
@@ -51,20 +51,19 @@
                     </svg>
                 </a>
             </div>
-
-            <div class="govuk-header__content">
-                <a href="<?= $this->url('home') ?>" class="govuk-header__link govuk-header__service-name">
-                    Make a Lasting Power of Attorney - Admin
-                </a>
-            </div>
         </div>
     </header>
 
-    <?php if (isset($userEmail)) { ?>
-        <div class="govuk-service-navigation"
-             data-module="govuk-service-navigation">
-            <div class="govuk-width-container">
-                <div class="govuk-service-navigation__container">
+    <div class="govuk-service-navigation" data-module="govuk-service-navigation">
+        <div class="govuk-width-container">
+            <div class="govuk-service-navigation__container">
+                <span class="govuk-service-navigation__service-name">
+                    <a href="<?= $this->url('home') ?>" class="govuk-service-navigation__link">
+                        Make a Lasting Power of Attorney - Admin
+                    </a>
+                </span>
+
+                <?php if (isset($userEmail)) { ?>
                     <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
                         <button type="button" class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle" aria-controls="navigation" hidden aria-hidden="true">
                             Menu
@@ -92,10 +91,11 @@
                             </li>
                         </ul>
                     </nav>
-                </div>
+                <?php } ?>
             </div>
         </div>
-    <?php } ?>
+    </div>
+
 
     <div class="govuk-width-container">
         <?php if (isset($userEmail)) { ?>
