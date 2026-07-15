@@ -11,13 +11,11 @@ use App\Service\Mail\MailParameters;
 use App\Service\UserDetails;
 use Laminas\Http\Response;
 use MakeShared\Constants;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterface
+class NotifyMailTransport implements MailTransportInterface
 {
-    use LoggerTrait;
-
     private array $defaultTemplateMap = [
         UserDetails::EMAIL_FEEDBACK                              => '3fb12879-7665-4ffe-a76f-ed90cde7a35d',
         UserDetails::EMAIL_ACCOUNT_ACTIVATE                      => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
@@ -33,13 +31,16 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
     ];
 
     private array $templateMap;
+    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly NotifyClient $client,
         private readonly ?string $smokeTestEmailAddress = null,
         ?array $templateMap = null,
+        ?LoggerInterface $logger = null,
     ) {
         $this->templateMap = $templateMap ?? $this->defaultTemplateMap;
+        $this->logger = $logger ?? new NullLogger();
     }
 
     public function send(MailParameters $mailParameters): void
@@ -58,7 +59,7 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
             try {
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
-                $this->getLogger()->error('Failed sending email via Notify', [
+                $this->logger->error('Failed sending email via Notify', [
                     'status'    => Response::STATUS_CODE_500,
                     'exception' => $ex,
                 ]);
@@ -100,7 +101,7 @@ class NotifyMailTransport implements MailTransportInterface, LoggerAwareInterfac
                 $data,
             );
         } catch (NotifyException $ex) {
-            $this->getLogger()->error('Healthcheck on Notify failed', [
+            $this->logger->error('Healthcheck on Notify failed', [
                 'status'    => Response::STATUS_CODE_500,
                 'exception' => $ex,
             ]);

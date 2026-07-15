@@ -37,10 +37,9 @@ final class CommunicationTest extends MockeryTestCase
         $this->urlHelper = Mockery::mock(UrlHelper::class);
         $this->userDetailsHolder = new UserDetailsHolder();
 
-        $this->service = new Communication($this->mailTransport);
+        $this->service = new Communication($this->mailTransport, Mockery::spy(LoggerInterface::class));
         $this->service->setUrlHelper($this->urlHelper);
         $this->service->setUserDetailsHolder($this->userDetailsHolder);
-        $this->service->setLogger(Mockery::spy(LoggerInterface::class));
 
         $user = new User(['email' => ['address' => 'test@email.com']]);
         $this->userDetailsHolder->set($user);

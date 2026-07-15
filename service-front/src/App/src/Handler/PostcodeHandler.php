@@ -6,23 +6,18 @@ namespace App\Handler;
 
 use App\Service\AddressLookup\OrdnanceSurvey;
 use Laminas\Diactoros\Response\JsonResponse;
-use MakeShared\Logging\LoggerTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
-class PostcodeHandler implements RequestHandlerInterface, LoggerAwareInterface
+class PostcodeHandler implements RequestHandlerInterface
 {
-    use LoggerTrait;
-
     public function __construct(
         private readonly OrdnanceSurvey $addressLookup,
-        LoggerInterface $logger,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->setLogger($logger);
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -43,7 +38,7 @@ class PostcodeHandler implements RequestHandlerInterface, LoggerAwareInterface
         try {
             $addresses = $this->addressLookup->lookupPostcode($postcode);
         } catch (RuntimeException $e) {
-            $this->getLogger()->warning('Exception from postcode lookup', [
+            $this->logger->warning('Exception from postcode lookup', [
                 'exception' => $e,
             ]);
         }

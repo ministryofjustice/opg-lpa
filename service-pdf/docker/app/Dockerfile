@@ -67,9 +67,15 @@ VOLUME [ "/tmp" ]
 
 CMD ["/app/bin/start.sh"]
 
+FROM base AS composer-tools
+
+USER root
+COPY --from=composer /usr/bin/composer /usr/bin/
+WORKDIR /app
+
 FROM base AS test-runner
 
-USER "root"
+USER root
 RUN chown -R appuser:appuser /app/vendor
 
 COPY --chown=root:root service-pdf/composer.json /app/composer.json

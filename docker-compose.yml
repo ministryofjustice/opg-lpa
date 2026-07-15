@@ -531,3 +531,57 @@ services:
     entrypoint: npm
     volumes:
       - ./service-front:/home/node
+
+  composer-front:
+    build:
+      context: ./
+      dockerfile: service-front/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-front:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-api:
+    build:
+      context: ./
+      dockerfile: service-api/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-api:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-admin:
+    build:
+      context: ./
+      dockerfile: service-admin/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-admin:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-pdf:
+    build:
+      context: ./
+      dockerfile: service-pdf/docker/app/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./service-pdf:/app
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]
+
+  composer-shared:
+    build:
+      context: ./
+      dockerfile: shared/docker/test-runner/Dockerfile
+      target: composer-tools
+    volumes:
+      - ./shared:/shared
+    entrypoint: ["composer"]
+    profiles: ["tools"]

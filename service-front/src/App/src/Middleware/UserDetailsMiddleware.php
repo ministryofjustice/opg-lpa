@@ -9,7 +9,6 @@ use App\Service\UserDetails as UserService;
 use App\Model\UserDetailsHolder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\User\User;
-use MakeShared\Logging\LoggerTrait;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -17,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Fetches the authenticated user's details from the API and stores them on
@@ -26,14 +25,13 @@ use Psr\Log\LoggerAwareInterface;
  * record is corrupt/cannot be reconstructed.
  * Must run after AuthenticationMiddleware (which ensures the identity is set).
  */
-class UserDetailsMiddleware implements MiddlewareInterface, LoggerAwareInterface
+class UserDetailsMiddleware implements MiddlewareInterface
 {
-    use LoggerTrait;
-
     public function __construct(
         private readonly UserService $userService,
         private readonly AuthenticationService $authenticationService,
         private readonly UserDetailsHolder $userDetailsHolder,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -71,7 +69,7 @@ class UserDetailsMiddleware implements MiddlewareInterface, LoggerAwareInterface
             $userDataArr = $userDetails->toArray();
             new User($userDataArr);
         } catch (\Exception $ex) {
-            $this->getLogger()->error('constructing User data from session failed', ['exception' => $ex->getMessage()]);
+            $this->logger->error('constructing User data from session failed', ['exception' => $ex->getMessage()]);
 
             $this->authenticationService->clearIdentity();
 

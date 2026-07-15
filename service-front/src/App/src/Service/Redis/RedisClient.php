@@ -5,18 +5,17 @@ declare(strict_types=1);
 namespace App\Service\Redis;
 
 use InvalidArgumentException;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Redis as BaseRedisClient;
 use RedisException;
 
-class RedisClient implements LoggerAwareInterface
+class RedisClient
 {
-    use LoggerTrait;
-
     private ?BaseRedisClient $redisClient = null;
     private string $redisHost;
     private int $redisPort = 6379;
+    private readonly LoggerInterface $logger;
 
     /**
      * TTL for Redis keys, in seconds.
@@ -30,8 +29,13 @@ class RedisClient implements LoggerAwareInterface
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(string $redisUrl, int $ttlMs, ?BaseRedisClient $baseRedisClient = null)
-    {
+    public function __construct(
+        string $redisUrl,
+        int $ttlMs,
+        ?BaseRedisClient $baseRedisClient = null,
+        ?LoggerInterface $logger = null,
+    ) {
+        $this->logger = $logger ?? new NullLogger();
         $urlParts = parse_url($redisUrl);
 
         if (!isset($urlParts['host'])) {
@@ -59,7 +63,7 @@ class RedisClient implements LoggerAwareInterface
             // suppress PHP warning messages (e.g. unresolvable hostname)
             return @$this->redisClient->connect($this->redisHost, $this->redisPort);
         } catch (RedisException $e) {
-            $this->getLogger()->error('Unable to connect to Redis Server', [
+            $this->logger->error('Unable to connect to Redis Server', [
                 'exception' => $e,
                 'host'      => $this->redisHost,
                 'port'      => $this->redisPort,
