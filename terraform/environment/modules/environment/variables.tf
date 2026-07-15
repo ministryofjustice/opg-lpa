@@ -17,6 +17,10 @@ variable "environment" {
     cognito = object({
       admin_cognito_auth_enabled = bool
     })
+    feature_flags = object({
+      onelogin_enabled      = bool
+      organisations_enabled = bool
+    })
     shared_secret_enabled = bool
     database = object({
       cluster_identifier                 = string
