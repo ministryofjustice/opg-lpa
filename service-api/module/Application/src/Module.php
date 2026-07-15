@@ -83,12 +83,8 @@ class Module
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
                 ServiceLocatorInterface::class => 'ServiceManager',
-
                 LoggerInterface::class => 'Logger',
                 ClientInterface::class => Client::class,
-
-                //  Maps the 'FeedbackValidator' key used by ServiceAbstractFactory
-                //  to the concrete class.
                 'FeedbackValidator' => FeedbackValidator::class,
             ],
             'invokables' => [
