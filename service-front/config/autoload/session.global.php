@@ -19,7 +19,7 @@ return [
         ],
         'native_settings' => [
             // Cookie name — must match the legacy app's session cookie name
-            'name' => 'lpa2',
+            'name' => 'lpa3',
 
             // Only send the cookie over HTTPS
             'cookie_secure' => true,
