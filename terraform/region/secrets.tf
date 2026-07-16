@@ -186,3 +186,15 @@ resource "aws_secretsmanager_secret" "elasticache_auth_token" {
     kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
   }
 }
+
+resource "aws_secretsmanager_secret" "mock_onelogin_client_id" {
+  name                           = "${local.account_name}/mock-onelogin-client-id"
+  tags                           = local.front_component_tag
+  kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
+  force_overwrite_replica_secret = true
+
+  replica {
+    region     = "eu-west-2"
+    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
+  }
+}
