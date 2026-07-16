@@ -127,7 +127,7 @@ jobs:
       #     payload: |
       #       channel: "C09M1LWJ2G0"
       #       icon_emoji: ":robot_face:"
-      #       update-ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
+      #       ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
       #       text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release completed"
       #       blocks:
       #         - type: "header"
@@ -160,7 +160,7 @@ jobs:
           payload: |
             channel: "C09M1LWJ2G0"
             icon_emoji: ":robot_face:"
-            update-ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
+            ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
             text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
             blocks:
               - type: "header"
