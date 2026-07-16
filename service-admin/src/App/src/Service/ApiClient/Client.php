@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
@@ -58,24 +60,12 @@ class Client
      */
     private function buildHeaders()
     {
-        $headers = [
+        return [
             'Accept'       => 'application/json, application/problem+json',
             'Content-Type' => 'application/json',
             'User-agent'   => 'LPA-ADMIN',
+            'X-Shared-Secret'   => $this->serviceSecret,
         ];
-
-        if ($this->serviceSecret !== '') {
-            $headers['X-Shared-Secret'] = $this->serviceSecret;
-        } else {
-            $apiToken = $_SESSION['jwt-payload']['token'] ?? null;
-
-            //  If the logged-in user has an auth token already then set that in the header
-            if (is_string($apiToken)) {
-                $headers['token'] = $apiToken;
-            }
-        }
-
-        return $headers;
     }
 
     /**
