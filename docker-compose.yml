@@ -374,8 +374,6 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
-
       OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
