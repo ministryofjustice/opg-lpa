@@ -170,7 +170,7 @@ jobs:
               - type: "context"
                 elements:
                   - type: "mrkdwn"
-                    text: ":cross-red: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Success>"
+                    text: ":cross-red: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Failed>"
                   - type: "mrkdwn"
                     text: ":astronaut: ${{ github.triggering_actor }}"
                   - type: "mrkdwn"
