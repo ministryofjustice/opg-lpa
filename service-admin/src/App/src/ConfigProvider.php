@@ -63,6 +63,7 @@ class ConfigProvider
             'invokables' => [
                 //  Handlers
                 Handler\HomeHandler::class => Handler\HomeHandler::class,
+                Handler\SignInHandler::class => Handler\SignInHandler::class,
 
                 //  Middleware
                 Middleware\Session\CsrfMiddleware::class => Middleware\Session\CsrfMiddleware::class,
@@ -79,7 +80,6 @@ class ConfigProvider
                 //  Note: FeedbackHandler, SystemMessageHandler, UserFindHandler,
                 //  UserLpasHandler and UserSearchHandler are autowired by laminas/laminas-di
                 //  as their constructors only depend on other container-known services.
-                Handler\SignInHandler::class => Handler\SignInHandlerFactory::class,
                 Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
 
                 SessionMiddleware::class => function ($c) {

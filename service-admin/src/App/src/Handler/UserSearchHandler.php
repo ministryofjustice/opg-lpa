@@ -84,7 +84,7 @@ class UserSearchHandler extends AbstractHandler
                     $user = $result;
 
                     $this->auditLog(
-                        $request->getAttribute(RequestAttributes::USER_ID),
+                        $request->getAttribute(RequestAttributes::USER_EMAIL),
                         'admin.user.search',
                         'Admin viewed user data',
                         ['searched_for' => $input],

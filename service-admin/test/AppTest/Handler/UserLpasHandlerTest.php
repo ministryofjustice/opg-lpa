@@ -124,8 +124,8 @@ class UserLpasHandlerTest extends TestCase
                 'Admin viewed user LPAs',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.lpas.view'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && !array_key_exists('viewed_user_email', $context)
                     && $context['viewed_user'] === '123'
                     && $context['lpa_count'] === 1)
@@ -134,7 +134,7 @@ class UserLpasHandlerTest extends TestCase
         $request = (new ServerRequest())
             ->withMethod(RequestMethodInterface::METHOD_GET)
             ->withAttribute('id', '123')
-            ->withAttribute(RequestAttributes::USER_ID, 'admin-id')
+            ->withAttribute(RequestAttributes::USER_EMAIL, 'admin@example.com')
             ->withQueryParams(['email' => 'user@example.com']);
 
         $this->handler->handle($request);
