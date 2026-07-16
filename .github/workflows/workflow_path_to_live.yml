@@ -127,7 +127,7 @@ jobs:
       PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
       SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
-  slack_msg_production_deploy_begin:
+  slack_msg_environment_deploy_begin:
     name: Annouce Production Deployment
     runs-on: ubuntu-latest
     outputs:
@@ -140,58 +140,38 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         with:
-          channel-id: "C09M1LWJ2G0"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
-            {
-              "icon_emoji": ":robot_face:",
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Production Deployment",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Status:*\nStarted :hourglass_flowing_sand:"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Started by:*\n ${{ github.triggering_actor }}"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
-                    }
-                  ]
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
+            channel: "C09M1LWJ2G0"
+            icon_emoji: ":robot_face:"
+            text: "Production Deployment Started"
+            blocks:
+              - type: "header"
+                text:
+                  type: "plain_text"
+                  text: "Production Deployment"
+                  emoji: true
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*Status:*\nStarted :hourglass_flowing_sand:"
+                  - type: "mrkdwn"
+                    text: "*Started by:*\n ${{ github.triggering_actor }}"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
   terraform_account_production:
     name: TF Production - Account
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
-      - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       - snyk_iac_scan
       - set_variables
     with:
@@ -210,7 +190,7 @@ jobs:
     name: TF Production - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
-      - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       - set_variables
       - snyk_iac_scan
       - terraform_account_production
@@ -241,7 +221,7 @@ jobs:
       use_ssh_private_key: true
     needs:
       - docker_build_scan_push
-      - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       - set_variables
       - snyk_iac_scan
       - terraform_region_production
@@ -265,7 +245,7 @@ jobs:
       use_ssh_private_key: true
     needs:
       - docker_build_scan_push
-      - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       - set_variables
       - snyk_iac_scan
       - terraform_region_production
@@ -322,7 +302,7 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs:
-      - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       - run_smoke_tests
       - set_variables
     environment:
@@ -332,94 +312,79 @@ jobs:
       - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
         with:
-          channel-id: "C09M1LWJ2G0"
-          update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Make - production release",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": ":white_check_mark: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Success>"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":astronaut: ${{ github.triggering_actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel: "C09M1LWJ2G0"
+            icon_emoji: ":robot_face:"
+            ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
+            text: "Make - Production release completed"
+            blocks:
+              - type: "header"
+                text:
+                  type: "plain_text"
+                  text: "Make - Production release"
+                  emoji: true
+              - type: "context"
+                elements:
+                  - type: "mrkdwn"
+                    text: ":white_check_mark: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Success>"
+                  - type: "mrkdwn"
+                    text: ":astronaut: ${{ github.triggering_actor }}"
+                  - type: "mrkdwn"
+                    text: ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
       - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
-          channel-id: "C09M1LWJ2G0"
-          update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
-            {
-              "blocks": [
-                {
-                  "type": "header",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "Make - production release",
-                    "emoji": true
-                  }
-                },
-                {
-                  "type": "context",
-                  "elements": [
-                    {
-                      "type": "mrkdwn",
-                      "text": ":cross-red: <https://github.com/${{ github.payload.repository.full_name }}/actions/runs/${{ github.runId }}|Failed>"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":astronaut: ${{ github.triggering_actor }}"
-                    },
-                    {
-                      "type": "mrkdwn",
-                      "text": ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
-                    }
-                  ]
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel: "C09M1LWJ2G0"
+            icon_emoji: ":robot_face:"
+            ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
+            text: "Make - Production release failed"
+            blocks:
+              - type: "header"
+                text:
+                  type: "plain_text"
+                  text: "Make - Production release"
+                  emoji: true
+              - type: "context"
+                elements:
+                  - type: "mrkdwn"
+                    text: ":cross-red: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Failed>"
+                  - type: "mrkdwn"
+                    text: ":astronaut: ${{ github.triggering_actor }}"
+                  - type: "mrkdwn"
+                    text: ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
       - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
-          channel-id: "C09L117EZ27"
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "Production Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
-                  }
-                }
-              ]
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel: "C09L117EZ27"
+            text: "Make - Production release failed"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":cross-red: *Production* Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
