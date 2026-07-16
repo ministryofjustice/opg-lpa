@@ -91,7 +91,7 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.arn,
       data.aws_secretsmanager_secret.elasticache_auth_token.arn,
       data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
-      data.aws_secretsmanager_secret.gov_one_login_mrlpa_client_id.arn,
+      data.aws_secretsmanager_secret.mock_onelogin_client_id.arn,
     ]
   }
 
