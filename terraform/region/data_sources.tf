@@ -10,9 +10,14 @@ data "aws_region" "eu_west_2" {
   provider = aws.eu-west-2
 }
 
-data "aws_secretsmanager_secret" "elasticache_auth_token" {
-  name = "${local.account_name}/elasticache_auth_token"
+# elasticache auth token
+data "aws_secretsmanager_secret" "elasticache_auth_token_eu_west_1" {
+  name     = "${local.account_name}/elasticache_auth_token"
+  provider = aws.eu-west-1
 }
-data "aws_secretsmanager_secret_version" "elasticache_auth_token" {
-  secret_id = data.aws_secretsmanager_secret.elasticache_auth_token.id
+
+# eu-west-2 (if DR is enabled)
+data "aws_secretsmanager_secret" "elasticache_auth_token_eu_west_2" {
+  name     = "${local.account_name}/elasticache_auth_token"
+  provider = aws.eu-west-2
 }
