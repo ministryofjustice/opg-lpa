@@ -167,9 +167,9 @@ jobs:
         uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         with:
           method: chat.postMessage
-          channel-id: "C09M1LWJ2G0"
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
+            channel: "C09M1LWJ2G0"
             {
               "icon_emoji": ":robot_face:",
               "blocks": [
@@ -199,7 +199,7 @@ jobs:
                   "fields": [
                     {
                       "type": "mrkdwn",
-                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.set_variables.outputs.short_sha }}>"
+                      "text": "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
                     }
                   ]
                 },
