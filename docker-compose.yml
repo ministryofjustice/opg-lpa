@@ -377,9 +377,10 @@ services:
       OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
-      COGNITO_BASE_URL: "http://mock-cognito:8080"
-      COGNITO_ISSUER: "http://mock-cognito:8080"
-      COGNITO_CLIENT_ID: "local-client-id"
+      OPG_COGNITO_BASE_URL: "http://mock-cognito:8080"
+      OPG_COGNITO_CLIENT_ID: "local-client-id"
+      OPG_COGNITO_ISSUER: "http://mock-cognito:8080"
+      OPG_COGNITO_LOGOUT_URL: "http://mock-cognito:8080/logout"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"

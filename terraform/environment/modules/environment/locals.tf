@@ -9,6 +9,7 @@ locals {
   track_from_date             = "2019-04-01"
   front_dns                   = "front.lpa"
   admin_dns                   = "admin.lpa"
+  admin_fqdn                  = "${local.dns_namespace_env}${local.dns_namespace_dev_prefix}${local.admin_dns}.opg.service.justice.gov.uk"
   pager_duty_ops_service_name = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                 = var.environment.regions[data.aws_region.current.region].region
   shared_component_tag = {

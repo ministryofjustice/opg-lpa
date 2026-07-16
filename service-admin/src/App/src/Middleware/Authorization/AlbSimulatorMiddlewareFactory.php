@@ -17,13 +17,13 @@ class AlbSimulatorMiddlewareFactory
 
         if (empty($cognitoConfig['base_url'])) {
             throw new RuntimeException(
-                'Missing required Cognito config key "base_url" — check COGNITO_BASE_URL env var'
+                'Missing required Cognito config key "base_url" — check OPG_COGNITO_BASE_URL env var'
             );
         }
 
         return new AlbSimulatorMiddleware(
-            new CognitoClient(new Client(), $cognitoConfig['base_url']),
-            $cognitoConfig['dev_email'] ?? 'dev-admin@local',
+            new CognitoClient(new Client(['timeout' => 5, 'connect_timeout' => 3]), $cognitoConfig['base_url']),
+            $cognitoConfig['test_username'],
         );
     }
 }
