@@ -166,6 +166,7 @@ jobs:
       - id: slack
         uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         with:
+          method: chat.postMessage
           channel-id: "C09M1LWJ2G0"
           payload: |
             {
