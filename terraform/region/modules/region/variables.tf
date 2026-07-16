@@ -54,3 +54,6 @@ variable "elasticache_auth_token_secret_id" {
   sensitive   = true
   description = "The name of the secret in AWS Secrets Manager that contains the ElastiCache auth token."
 }
+
+
+# commenting to re-run pipeline due to conflcit error on UI
