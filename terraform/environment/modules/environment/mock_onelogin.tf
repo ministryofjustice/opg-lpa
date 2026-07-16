@@ -1,5 +1,5 @@
 data "aws_ecr_repository" "mock_onelogin" {
-  name     = "modernising-lpa/mock-onelogin"
+  name     = "mock-onelogin"
   provider = aws.management
 }
 
@@ -18,7 +18,7 @@ module "mock_onelogin" {
     id  = var.ecs_execution_role.id
     arn = var.ecs_execution_role.arn
   }
-  ecs_task_role                   = var.ecs_iam_task_roles.mock_onelogin.arn
+  ecs_task_role                   = var.ecs_iam_task_roles.mock_onelogin
   ecs_service_desired_count       = 1
   ecs_application_log_group_name  = aws_cloudwatch_log_group.application_logs.name
   ecs_capacity_provider           = "FARGATE_SPOT"
@@ -44,4 +44,8 @@ module "mock_onelogin" {
   providers = {
     aws.region = aws
   }
+
+  depends_on = [
+    aws_iam_role_policy.api_permissions_role
+  ]
 }

@@ -134,7 +134,7 @@ resource "aws_iam_role_policy" "mock_onelogin_task_role" {
 }
 
 data "aws_secretsmanager_secret" "gov_one_login_mrlpa_client_id" {
-  name     = "gov-one-login-mrlpa-client-id"
+  name     = "${var.account_name}/mock-onelogin-client-id"
   provider = aws.region
 }
 
