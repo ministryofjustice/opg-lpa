@@ -152,10 +152,12 @@ services:
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
-
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
+
+      ONELOGIN_ENABLED: false
+      ORGANISATIONS_ENABLED: false
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -278,6 +280,9 @@ services:
       XDEBUG_TRIGGER: "true"
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
+
+      ONELOGIN_ENABLED: false
+      ORGANISATIONS_ENABLED: false
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -485,6 +490,8 @@ services:
       OPG_LPA_POSTGRES_NAME: "lpadb"
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
+      ONELOGIN_ENABLED: false
+      ORGANISATIONS_ENABLED: false
 
   phpcs:
     container_name: lpa-phpcs

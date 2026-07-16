@@ -137,6 +137,7 @@ module "secrets_manager_encryption_key" {
   encryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    aws_iam_role.ip_blocker.arn
   ]
   decryption_role_patterns = [
     "proxy-assume-role-",
@@ -144,6 +145,7 @@ module "secrets_manager_encryption_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ci",
+    aws_iam_role.ip_blocker.arn
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
@@ -179,6 +181,7 @@ module "application_log_group_encryption_key" {
     "-seeding-task-role",
     "execution-role-ecs-cluster",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    aws_iam_role.ip_blocker.arn
   ]
   decryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",

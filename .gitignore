@@ -54,3 +54,4 @@ service-pdf/after.png
 service-pdf/*.pdf
 .idea/
 venv/
+lambdas/block_ips/block_ips.zip

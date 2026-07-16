@@ -32,7 +32,7 @@ class User:
         data = {"email": self.account_details["email"], "password": PASSWORD}
         response = self.client.post("/login", data=data)
 
-        if self.client.cookies.get("lpa2") is not None and response.status_code == 200:
+        if self.client.cookies.get("lpa3") is not None and response.status_code == 200:
             logger.info(
                 "%s %s %s logged in successfully using email address: %s",
                 self.account_details["title"],
@@ -202,4 +202,3 @@ class User:
         sha1_obj.update(identifier.encode("utf-8"))
         activation_token = sha1_obj.hexdigest()
         return activation_token
-

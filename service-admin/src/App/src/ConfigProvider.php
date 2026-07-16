@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Logging\LoggingErrorListenerDelegatorFactory;
+use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Logging\RequestLoggingMiddleware;
@@ -69,14 +70,17 @@ class ConfigProvider
                 FlashMessageMiddleware::class => FlashMessageMiddleware::class,
                 SessionPersistenceInterface::class => PhpSessionPersistence::class,
             ],
+            'aliases' => [
+                //  Allows SystemMessageHandler's StorageInterface dependency to be autowired
+                //  to the concrete Cache service.
+                StorageInterface::class => Service\Cache\Cache::class,
+            ],
             'factories' => [
                 //  Handlers
-                Handler\FeedbackHandler::class => Handler\FeedbackHandlerFactory::class,
+                //  Note: FeedbackHandler, SystemMessageHandler, UserFindHandler,
+                //  UserLpasHandler and UserSearchHandler are autowired by laminas/laminas-di
+                //  as their constructors only depend on other container-known services.
                 Handler\SignInHandler::class => Handler\SignInHandlerFactory::class,
-                Handler\SystemMessageHandler::class => Handler\SystemMessageHandlerFactory::class,
-                Handler\UserSearchHandler::class => Handler\UserSearchHandlerFactory::class,
-                Handler\UserFindHandler::class => Handler\UserFindHandlerFactory::class,
-                Handler\UserLpasHandler::class => Handler\UserLpasHandlerFactory::class,
 
                 SessionMiddleware::class => function ($c) {
                     return new SessionMiddleware($c->get(SessionPersistenceInterface::class));
@@ -91,11 +95,10 @@ class ConfigProvider
                 RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
 
                 //  Services
+                //  Note: AuthenticationService, FeedbackService and UserService are autowired
+                //  by laminas/laminas-di as their constructors only depend on the ApiClient service.
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
-                Service\Authentication\AuthenticationService::class => Service\Authentication\AuthenticationServiceFactory::class,
-                Service\Feedback\FeedbackService::class => Service\Feedback\FeedbackServiceFactory::class,
-                Service\User\UserService::class => Service\User\UserServiceFactory::class,
 
             ],
             'initializers' => [

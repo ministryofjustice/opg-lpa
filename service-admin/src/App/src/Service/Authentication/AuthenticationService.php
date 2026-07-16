@@ -19,7 +19,11 @@ class AuthenticationService
     /**
      * AuthenticationService constructor
      *
+     * As this class is instantiated via autowiring, psalm doesn't think the
+     * constructor is used. Suppress this misunderstanding.
+     *
      * @param ApiClient $client
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(ApiClient $client)
     {

@@ -11,6 +11,12 @@ use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 
+/**
+ * As this class is instantiated via autowiring and referenced only by class
+ * name in routes.php, psalm doesn't think it's used. Suppress this
+ * misunderstanding.
+ * @psalm-suppress UnusedClass
+ */
 class SystemMessageHandler extends AbstractHandler
 {
     use JwtTrait;
