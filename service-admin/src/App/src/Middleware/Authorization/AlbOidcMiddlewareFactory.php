@@ -19,7 +19,7 @@ class AlbOidcMiddlewareFactory
         foreach (['base_url', 'issuer', 'client_id'] as $key) {
             if (empty($cognitoConfig[$key])) {
                 throw new RuntimeException(
-                    sprintf('Missing required Cognito config key "%s" — check COGNITO_%s env var', $key, strtoupper($key))
+                    sprintf('Missing required Cognito config key "%s" — check OPG_COGNITO_%s env var', $key, strtoupper($key))
                 );
             }
         }
@@ -27,7 +27,7 @@ class AlbOidcMiddlewareFactory
         // Cache JWKS for 1 hour — keys rotate infrequently. APCu is shared across
         // all PHP-FPM workers on the same host, so only one outbound call is made per TTL.
         return new AlbOidcMiddleware(
-            new CognitoClient(new Client(), $cognitoConfig['base_url']),
+            new CognitoClient(new Client(['timeout' => 5, 'connect_timeout' => 3]), $cognitoConfig['base_url']),
             $cognitoConfig['issuer'],
             $cognitoConfig['client_id'],
             $container->get(UrlHelper::class),
