@@ -133,7 +133,7 @@ resource "aws_iam_role_policy" "mock_onelogin_task_role" {
   provider = aws.region
 }
 
-data "aws_secretsmanager_secret" "gov_one_login_mrlpa_client_id" {
+data "aws_secretsmanager_secret" "mock_onelogin_client_id" {
   name     = "${var.account_name}/mock-onelogin-client-id"
   provider = aws.region
 }
@@ -150,7 +150,7 @@ data "aws_iam_policy_document" "task_role_access_policy" {
     ]
 
     resources = [
-      data.aws_secretsmanager_secret.gov_one_login_mrlpa_client_id.arn,
+      data.aws_secretsmanager_secret.mock_onelogin_client_id.arn,
     ]
   }
 }
@@ -189,7 +189,7 @@ locals {
       secrets = [
         {
           name      = "CLIENT_ID",
-          valueFrom = data.aws_secretsmanager_secret.gov_one_login_mrlpa_client_id.arn
+          valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn
         }
       ],
       environment = [
