@@ -144,7 +144,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
-            icon_emoji: ":robot_face:"
+            icon_emoji: ":production:"
             text: "Production Deployment Started"
             blocks:
               - type: "header"
@@ -316,7 +316,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
-            icon_emoji: ":robot_face:"
+            icon_emoji: ":production:"
             ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
             text: "Make - Production release completed"
             blocks:
@@ -349,7 +349,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
-            icon_emoji: ":robot_face:"
+            icon_emoji: ":production:"
             ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
             text: "Make - Production release failed"
             blocks:
@@ -382,6 +382,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09L117EZ27"
+            icon_emoji: ":production:"
             text: "Make - Production release failed"
             blocks:
               - type: "section"
