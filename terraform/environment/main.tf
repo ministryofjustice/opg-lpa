@@ -7,7 +7,6 @@ module "eu-west-1" {
   container_version = var.container_version
   admin_cognito = {
     id                          = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id
-    issuer                      = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id
     user_pool_id                = local.admin_cognito_user_pool_id
     user_pool_domain_name       = local.admin_cognito_user_pool_domain_name
     user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.client_secret

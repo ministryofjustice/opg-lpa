@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware\Authorization;
 
-use App\Service\Cognito\Client as CognitoClient;
+use App\Service\Alb\MockAlbTokenClient;
 use GuzzleHttp\Client;
 use Psr\Container\ContainerInterface;
 use RuntimeException;
@@ -22,7 +22,7 @@ class AlbSimulatorMiddlewareFactory
         }
 
         return new AlbSimulatorMiddleware(
-            new CognitoClient(new Client(['timeout' => 5, 'connect_timeout' => 3]), $cognitoConfig['base_url']),
+            new MockAlbTokenClient(new Client(['timeout' => 5, 'connect_timeout' => 3]), $cognitoConfig['base_url']),
             $cognitoConfig['test_username'],
         );
     }

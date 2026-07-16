@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware\Authorization;
 
-use App\Service\Cognito\Client as CognitoClient;
+use App\Service\Alb\PublicKeyClient;
 use GuzzleHttp\Client;
 use Mezzio\Helper\UrlHelper;
 use Psr\Container\ContainerInterface;
@@ -14,21 +14,35 @@ class AlbOidcMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): AlbOidcMiddleware
     {
-        $cognitoConfig = $container->get('config')['cognito'] ?? [];
+        $config = $container->get('config');
+        $cognitoConfig = $config['cognito'] ?? [];
+        $albConfig = $config['alb'] ?? [];
 
-        foreach (['base_url', 'issuer', 'client_id'] as $key) {
-            if (empty($cognitoConfig[$key])) {
+        if (empty($cognitoConfig['client_id'])) {
+            throw new RuntimeException(
+                'Missing required Cognito config key "client_id" — check OPG_COGNITO_CLIENT_ID env var'
+            );
+        }
+
+        foreach (['public_key_base_url', 'admin_arn'] as $key) {
+            if (empty($albConfig[$key])) {
                 throw new RuntimeException(
-                    sprintf('Missing required Cognito config key "%s" — check OPG_COGNITO_%s env var', $key, strtoupper($key))
+                    sprintf('Missing required ALB config key "%s" — check OPG_ALB_%s env var', $key, strtoupper($key))
                 );
             }
         }
 
-        // Cache JWKS for 1 hour — keys rotate infrequently. APCu is shared across
-        // all PHP-FPM workers on the same host, so only one outbound call is made per TTL.
+        // Cache each ALB public key for 24 hours — keys rotate infrequently. APCu is
+        // shared across all PHP-FPM workers on the same host, so only one outbound call
+        // is made per TTL.
+        $publicKeyClient = new PublicKeyClient(
+            new Client(['timeout' => 5, 'connect_timeout' => 3]),
+            $albConfig['public_key_base_url'],
+        );
+
         return new AlbOidcMiddleware(
-            new CognitoClient(new Client(['timeout' => 5, 'connect_timeout' => 3]), $cognitoConfig['base_url']),
-            $cognitoConfig['issuer'],
+            $publicKeyClient,
+            $albConfig['admin_arn'],
             $cognitoConfig['client_id'],
             $container->get(UrlHelper::class),
         );

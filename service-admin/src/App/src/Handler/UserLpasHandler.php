@@ -44,7 +44,7 @@ class UserLpasHandler extends AbstractHandler
         }
 
         $this->auditLog(
-            $request->getAttribute(RequestAttributes::USER_ID),
+            $request->getAttribute(RequestAttributes::USER_EMAIL),
             'admin.user.lpas.view',
             'Admin viewed user LPAs',
             [

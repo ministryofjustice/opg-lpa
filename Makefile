@@ -118,7 +118,7 @@ dc-up: all-composer-install ecrlogin
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app; \
+	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
 	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
 	docker compose run --rm npm-front install
@@ -132,7 +132,7 @@ dc-up-debug: all-composer-install ecrlogin
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
 	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
-	docker compose build front-app admin-app api-app pdf-app; \
+	docker compose build front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
 
 .PHONY: dc-build
