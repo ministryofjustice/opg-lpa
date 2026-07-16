@@ -168,6 +168,7 @@ jobs:
         with:
           method: chat.postMessage
           channel-id: "C09M1LWJ2G0"
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             {
               "icon_emoji": ":robot_face:",
@@ -211,8 +212,6 @@ jobs:
                 }
               ]
             }
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN}}
 
   terraform_environment_development:
     name: TF ${{ needs.workflow_variables.outputs.workspace_name }} Environment
