@@ -188,7 +188,6 @@ resource "aws_secretsmanager_secret" "elasticache_auth_token" {
 }
 
 resource "aws_secretsmanager_secret" "mock_onelogin_client_id" {
-  count                          = local.account_name != "production" ? 1 : 0
   name                           = "${local.account_name}/mock-onelogin-client-id"
   tags                           = local.front_component_tag
   kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn

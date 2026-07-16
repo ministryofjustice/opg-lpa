@@ -92,6 +92,6 @@ data "aws_secretsmanager_secret" "elasticache_auth_token" {
   name = "${var.account_name}/elasticache_auth_token"
 }
 
-data "aws_secretsmanager_secret" "gov_one_login_mrlpa_client_id" {
+data "aws_secretsmanager_secret" "mock_onelogin_client_id" {
   name = "${var.account_name}/mock-onelogin-client-id"
 }

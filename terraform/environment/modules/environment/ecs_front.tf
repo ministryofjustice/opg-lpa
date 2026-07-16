@@ -238,7 +238,7 @@ locals {
         { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
         { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" },
         { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn },
-        { name = "CLIENT_ID", valueFrom = data.aws_secretsmanager_secret.gov_one_login_mrlpa_client_id.arn }
+        { name = "CLIENT_ID", valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn }
 
       ],
       environment = [
