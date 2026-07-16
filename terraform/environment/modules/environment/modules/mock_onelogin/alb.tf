@@ -50,7 +50,7 @@ resource "aws_lb_listener" "mock_onelogin_loadbalancer_http_redirect" {
 }
 
 data "aws_acm_certificate" "certificate_mock_onelogin" {
-  domain   = "*.app.modernising.opg.service.justice.gov.uk"
+  domain   = "*.${var.account_name}.front.lpa.opg.service.justice.gov.uk"
   provider = aws.region
 }
 
