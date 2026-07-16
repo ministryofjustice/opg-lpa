@@ -82,28 +82,14 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
-            icon_emoji: ":robot_face:"
+            icon_emoji: ":rocket_fly:"
             text: "${{ needs.workflow_variables.outputs.workspace_name }} Deployment Started"
             blocks:
               - type: "header"
                 text:
                   type: "plain_text"
-                  text: "${{ needs.workflow_variables.outputs.workspace_name }} Deployment"
+                  text: "${{ needs.workflow_variables.outputs.workspace_name }} deployment started"
                   emoji: true
-              - type: "section"
-                fields:
-                  - type: "mrkdwn"
-                    text: "*Status:*\nStarted :hourglass_flowing_sand:"
-                  - type: "mrkdwn"
-                    text: "*Started by:*\n ${{ github.triggering_actor }}"
-              - type: "section"
-                fields:
-                  - type: "mrkdwn"
-                    text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
   terraform_lint:
     name: TF - Lint
