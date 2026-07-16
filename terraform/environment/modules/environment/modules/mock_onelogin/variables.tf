@@ -88,7 +88,7 @@ variable "aws_service_discovery_private_dns_namespace" {
   description = "ID and name of the AWS Service Discovery private DNS namespace"
 }
 
-variable "app_ecs_service_security_group_id" {
+variable "front_app_ecs_service_security_group_id" {
   type        = string
   description = "ID of the security group for the app ECS service"
 }
