@@ -26,6 +26,9 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   transit_encryption_enabled = true
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
+  transit_encryption_mode    = "preferred"
+  auth_token                 = data.aws_secretsmanager_secret_version.elasticache_auth_token.secret_string
+  auth_token_update_strategy = "ROTATE"
   maintenance_window         = "wed:05:00-wed:09:00"
   snapshot_window            = "02:00-04:50"
   notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
