@@ -82,7 +82,7 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
-            icon_emoji: ":rocket_fly:"
+            icon_emoji: ":rocket:"
             text: "${{ needs.workflow_variables.outputs.workspace_name }} Deployment Started"
             blocks:
               - type: "header"
