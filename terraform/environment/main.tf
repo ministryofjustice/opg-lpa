@@ -19,6 +19,7 @@ module "eu-west-1" {
     admin             = aws_iam_role.admin_task_role
     pdf               = aws_iam_role.pdf_task_role
     seeding           = aws_iam_role.seeding_task_role
+    mock_onelogin     = aws_iam_role.mock_onelogin
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
   rds_proxy_iam_role = aws_iam_role.rds_proxy
@@ -50,6 +51,7 @@ module "eu-west-2" {
     admin             = aws_iam_role.admin_task_role
     pdf               = aws_iam_role.pdf_task_role
     seeding           = aws_iam_role.seeding_task_role
+    mock_onelogin     = aws_iam_role.mock_onelogin
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
   rds_proxy_iam_role = aws_iam_role.rds_proxy

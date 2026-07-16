@@ -92,7 +92,7 @@ resource "aws_security_group_rule" "mock_one_login_service_app_ingress" {
   to_port                  = var.container_port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.mock_onelogin_ecs_service.id
-  source_security_group_id = var.app_ecs_service_security_group_id
+  source_security_group_id = var.front_app_ecs_service_security_group_id
   lifecycle {
     create_before_destroy = true
   }

@@ -104,6 +104,11 @@ variable "ecs_iam_task_roles" {
       arn  = string
       id   = string
     })
+    mock_onelogin = object({
+      name = string
+      arn  = string
+      id   = string
+    })
     cloudwatch_events = object({
       name = string
       arn  = string
@@ -117,6 +122,7 @@ variable "ecs_execution_role" {
   type = object({
     name = string
     arn  = string
+    id   = string
   })
   description = "The ARN of the ECS execution role"
 }
