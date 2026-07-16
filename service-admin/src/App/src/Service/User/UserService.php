@@ -7,14 +7,17 @@ use MakeShared\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;
-use MakeShared\Logging\LoggerTrait;
-use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
-class UserService implements LoggerAwareInterface
+class UserService
 {
-    use LoggerTrait;
-
-    public function __construct(private ApiClient $client)
+    /**
+     * As this class is instantiated via autowiring, psalm doesn't think the
+     * constructor is used. Suppress this misunderstanding.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function __construct(private ApiClient $client, private LoggerInterface $logger)
     {
     }
 
@@ -95,7 +98,7 @@ class UserService implements LoggerAwareInterface
         try {
             $userData = $this->client->httpGet('/v2/user/' . $id);
         } catch (Exception $e) {
-            $this->getLogger()->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             return false;
         }
 
@@ -133,7 +136,7 @@ class UserService implements LoggerAwareInterface
 
             return false;
         } catch (Exception $e) {
-            $this->getLogger()->error($e->getMessage());
+            $this->logger->error($e->getMessage());
             return false;
         }
     }
