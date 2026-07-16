@@ -48,3 +48,9 @@ variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
   description = "enable AWSManagedRulesAmazonIpReputationList in this account"
   default     = false
 }
+
+variable "elasticache_auth_token_secret_id" {
+  type        = string
+  sensitive   = true
+  description = "The name of the secret in AWS Secrets Manager that contains the ElastiCache auth token."
+}
