@@ -89,7 +89,9 @@ locals {
         { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
-        { name = "AWS_REGION", value = data.aws_region.current.region }
+        { name = "AWS_REGION", value = data.aws_region.current.region },
+        { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
       ]
   })
 }
