@@ -3,7 +3,7 @@ module "eu-west-1" {
   source                                                 = "./modules/region"
   account                                                = local.account
   account_name                                           = local.account_name
-  elasticache_auth_token_secret_id                       = data.aws_secretsmanager_secret_version.elasticache_auth_token.id
+  elasticache_auth_token_secret_id                       = data.aws_secretsmanager_secret.elasticache_auth_token_eu_west_1.id
   aws_waf_amazon_managed_ip_reputation_list_rule_enabled = local.account.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled
   firewalled_vpc_cidr_range                              = local.account.firewalled_vpc_cidr_ranges.eu_west_1
   providers = {
@@ -18,7 +18,7 @@ module "eu-west-2" {
   count                                                  = local.account.dr_enabled && local.account_name == "development" ? 1 : 0
   account                                                = local.account
   account_name                                           = local.account_name
-  elasticache_auth_token_secret_id                       = data.aws_secretsmanager_secret_version.elasticache_auth_token.id
+  elasticache_auth_token_secret_id                       = data.aws_secretsmanager_secret.elasticache_auth_token_eu_west_2.id
   aws_waf_amazon_managed_ip_reputation_list_rule_enabled = local.account.web_application_firewall.amazon_managed_ip_reputation_list_rule_enabled
   firewalled_vpc_cidr_range                              = local.account.firewalled_vpc_cidr_ranges.eu_west_2
   providers = {
