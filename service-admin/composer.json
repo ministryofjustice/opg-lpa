@@ -26,6 +26,7 @@
         "laminas/laminas-cache": "^3.9",
         "laminas/laminas-cache-storage-adapter-memory": "^2.2",
         "laminas/laminas-config-aggregator": "^1.7",
+        "laminas/laminas-di": "^3.16",
         "laminas/laminas-diactoros": "^3.0.0",
         "laminas/laminas-form": "^3.0.1",
         "laminas/laminas-permissions-rbac": "^3.2.0",

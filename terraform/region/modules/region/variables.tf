@@ -30,6 +30,10 @@ variable "account" {
         account_name = string
       })
     })
+    web_application_firewall = object({
+      amazon_managed_ip_reputation_list_rule_enabled = bool
+      waf_ip_blocking_enabled                        = bool
+    })
   })
 }
 
@@ -43,10 +47,18 @@ variable "firewalled_vpc_cidr_range" {
   description = "The IPv4 CIDR block for the VPC. CIDR can be explicitly set or it can be derived from IPAM using ipv4_netmask_length."
 }
 
-variable "aws_waf_amazon_managed_ip_reputation_list_rule_enabled" {
-  type        = bool
-  description = "enable AWSManagedRulesAmazonIpReputationList in this account"
-  default     = false
+variable "dynamodb_kms_key_arn" {
+  type = string
+}
+
+variable "application_logs_kms_key_arn" {
+  type = string
+}
+
+variable "aws_iam_roles" {
+  type = object({
+    ip_blocker = any
+  })
 }
 
 variable "elasticache_auth_token_secret_id" {

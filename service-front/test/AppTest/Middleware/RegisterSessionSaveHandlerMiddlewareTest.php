@@ -58,7 +58,7 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
     {
         $saveHandler = $this->createMock(\SessionHandlerInterface::class);
         $middleware = new RegisterSessionSaveHandlerMiddleware($saveHandler, [
-            'name'            => 'lpa2-test',
+            'name'            => 'lpa3-test',
             'cookie_secure'   => true,
             'cookie_httponly' => true,
             'gc_probability'  => 0,
@@ -66,7 +66,7 @@ class RegisterSessionSaveHandlerMiddlewareTest extends TestCase
 
         $middleware->process(new ServerRequest(), $this->makeHandler());
 
-        $this->assertSame('lpa2-test', session_name());
+        $this->assertSame('lpa3-test', session_name());
         $this->assertSame('1', ini_get('session.cookie_secure'));
         $this->assertSame('1', ini_get('session.cookie_httponly'));
         $this->assertSame('0', ini_get('session.gc_probability'));

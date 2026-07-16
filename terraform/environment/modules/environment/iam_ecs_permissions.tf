@@ -89,6 +89,7 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.performance_platform_db_username.arn,
       data.aws_secretsmanager_secret.performance_platform_db_password.arn,
       data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.arn,
+      data.aws_secretsmanager_secret.elasticache_auth_token.arn,
       data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
     ]
   }

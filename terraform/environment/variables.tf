@@ -39,6 +39,10 @@ variable "environments" {
         admin_cognito_user_pool_domain_name               = string
         admin_cognito_client_supported_identity_providers = list(string)
       })
+      feature_flags = object({
+        onelogin_enabled      = bool
+        organisations_enabled = bool
+      })
       shared_secret_enabled = bool
       database = object({
         cluster_identifier                 = string

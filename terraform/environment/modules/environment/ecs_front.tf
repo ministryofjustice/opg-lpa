@@ -236,7 +236,8 @@ locals {
         { name = "OPG_LPA_FRONT_GOV_PAY_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
-        { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" }
+        { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" },
+        { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn }
 
       ],
       environment = [
@@ -264,7 +265,9 @@ locals {
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
-        { name = "AWS_REGION", value = data.aws_region.current.region }
+        { name = "AWS_REGION", value = data.aws_region.current.region },
+        { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
       ]
     }
   )
