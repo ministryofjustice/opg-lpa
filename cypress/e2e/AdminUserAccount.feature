@@ -8,8 +8,7 @@ Feature: AdminUserAccount
     Then I see "Account activated" in the title
 
     # Check new user exists on admin site
-    When I visit the admin sign-in page
-    And I log in to admin using SSO
+    When I log in to admin using SSO
     And I find "SignupAndDeleteUser" on the admin site
     Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Activated"
@@ -33,7 +32,7 @@ Feature: AdminUserAccount
     Then I see "We've deleted your account" in the page text
 
     # Check new user deleted on admin site
-    When I visit the admin sign-in page
+    When I log in to admin using SSO
     And I find "SignupAndDeleteUser" on the admin site
     Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Deleted"

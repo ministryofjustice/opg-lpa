@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace AppTest\Middleware\Authorization;
 
 use App\Middleware\Authorization\AlbSimulatorMiddleware;
-use App\Service\Cognito\Client as CognitoClient;
+use App\Service\Alb\MockAlbTokenClient;
 use GuzzleHttp\Psr7\HttpFactory;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
@@ -15,22 +15,22 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class AlbSimulatorMiddlewareTest extends TestCase
 {
-    private CognitoClient|MockObject $cognitoClient;
+    private MockAlbTokenClient|MockObject $mockAlbClient;
     private RequestHandlerInterface|MockObject $handler;
     private AlbSimulatorMiddleware $middleware;
 
     protected function setUp(): void
     {
-        $this->cognitoClient = $this->createMock(CognitoClient::class);
+        $this->mockAlbClient = $this->createMock(MockAlbTokenClient::class);
         $this->handler = $this->createMock(RequestHandlerInterface::class);
-        $this->middleware = new AlbSimulatorMiddleware($this->cognitoClient, 'dev@example.com');
+        $this->middleware = new AlbSimulatorMiddleware($this->mockAlbClient, 'dev@example.com');
     }
 
     public function testPassesThroughWhenAlbHeaderAlreadyPresent(): void
     {
         $request = (new ServerRequest())->withHeader('X-Amzn-Oidc-Data', 'existing-token');
 
-        $this->cognitoClient->expects($this->never())
+        $this->mockAlbClient->expects($this->never())
             ->method('fetchTestToken');
 
         $this->handler->expects($this->once())
@@ -51,7 +51,7 @@ class AlbSimulatorMiddlewareTest extends TestCase
     {
         $request = new ServerRequest();
 
-        $this->cognitoClient->expects($this->once())
+        $this->mockAlbClient->expects($this->once())
             ->method('fetchTestToken')
             ->with('dev@example.com')
             ->willReturn('test-token');
@@ -81,7 +81,7 @@ class AlbSimulatorMiddlewareTest extends TestCase
         $session->expects($this->never())
             ->method('unset');
 
-        $this->cognitoClient->expects($this->never())
+        $this->mockAlbClient->expects($this->never())
             ->method('fetchTestToken');
 
         $this->handler->expects($this->once())
@@ -112,7 +112,7 @@ class AlbSimulatorMiddlewareTest extends TestCase
             ->method('unset')
             ->with('signed_out');
 
-        $this->cognitoClient->expects($this->once())
+        $this->mockAlbClient->expects($this->once())
             ->method('fetchTestToken')
             ->with('dev@example.com')
             ->willReturn('refreshed-token');
