@@ -95,7 +95,7 @@ jobs:
                   - type: "mrkdwn"
                     text: "*Status:*\nStarted :hourglass_flowing_sand:"
                   - type: "mrkdwn"
-                    text"*Started by:*\n ${{ github.triggering_actor }}"
+                    text: "*Started by:*\n ${{ github.triggering_actor }}"
               - type: "section"
                 fields:
                   - type: "mrkdwn"
