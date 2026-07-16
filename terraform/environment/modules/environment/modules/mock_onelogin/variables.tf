@@ -103,3 +103,7 @@ variable "template_sub" {
   type        = string
   description = "Value for TEMPLATE_SUB"
 }
+
+variable "account_name" {
+  type = string
+}
