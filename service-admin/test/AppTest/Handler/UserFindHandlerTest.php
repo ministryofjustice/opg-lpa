@@ -36,15 +36,15 @@ class UserFindHandlerTest extends TestCase
         $this->handler->setLogger($this->mockLogger);
     }
 
-    private function makeRequest(string $method, array $queryParams = [], string $adminId = null): ServerRequest
+    private function makeRequest(string $method, array $queryParams = [], string $adminEmail = null): ServerRequest
     {
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withQueryParams($queryParams)
             ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
 
-        if ($adminId !== null) {
-            $request = $request->withAttribute(RequestAttributes::USER_ID, $adminId);
+        if ($adminEmail !== null) {
+            $request = $request->withAttribute(RequestAttributes::USER_EMAIL, $adminEmail);
         }
 
         return $request;
@@ -71,7 +71,7 @@ class UserFindHandlerTest extends TestCase
             'query' => 'test',
             'offset' => '0',
             'secret' => $secret,
-        ], 'admin-id');
+        ], 'admin@example.com');
 
         $this->mockUserService->expects($this->once())
             ->method('match')
@@ -105,8 +105,8 @@ class UserFindHandlerTest extends TestCase
                 'Admin searched users',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.find'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && $context['query'] === 'test'
                     && $context['results_count'] === 1)
             );
@@ -115,7 +115,7 @@ class UserFindHandlerTest extends TestCase
             'query' => 'test',
             'offset' => '0',
             'secret' => $secret,
-        ], 'admin-id');
+        ], 'admin@example.com');
 
         $this->handler->handle($request);
     }

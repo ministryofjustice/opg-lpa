@@ -44,15 +44,15 @@ class UserSearchHandlerTest extends TestCase
             ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
     }
 
-    private function makePostRequest(array $body, string $adminId = null): ServerRequest
+    private function makePostRequest(array $body, string $adminEmail = null): ServerRequest
     {
         $request = (new ServerRequest())
             ->withMethod(RequestMethodInterface::METHOD_POST)
             ->withParsedBody($body)
             ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
 
-        if ($adminId !== null) {
-            $request = $request->withAttribute(RequestAttributes::USER_ID, $adminId);
+        if ($adminEmail !== null) {
+            $request = $request->withAttribute(RequestAttributes::USER_EMAIL, $adminEmail);
         }
 
         return $request;
@@ -91,7 +91,7 @@ class UserSearchHandlerTest extends TestCase
 
         $this->handler->handle($this->makePostRequest(
             ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret],
-            'admin-id'
+            'admin@example.com'
         ));
     }
 
@@ -114,7 +114,7 @@ class UserSearchHandlerTest extends TestCase
 
         $this->handler->handle($this->makePostRequest(
             ['email' => 'abc123', 'searchType' => 'userId', 'secret' => $secret],
-            'admin-id'
+            'admin@example.com'
         ));
     }
 
@@ -137,7 +137,7 @@ class UserSearchHandlerTest extends TestCase
 
         $this->handler->handle($this->makePostRequest(
             ['email' => 'A-99998888882', 'searchType' => 'aReference', 'secret' => $secret],
-            'admin-id'
+            'admin@example.com'
         ));
     }
 
@@ -158,14 +158,14 @@ class UserSearchHandlerTest extends TestCase
                 'Admin viewed user data',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.search'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && $context['searched_for'] === 'user@example.com')
             );
 
         $this->handler->handle($this->makePostRequest(
             ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret],
-            'admin-id'
+            'admin@example.com'
         ));
     }
 

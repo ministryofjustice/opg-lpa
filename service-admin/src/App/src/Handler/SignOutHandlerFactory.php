@@ -10,8 +10,13 @@ class SignOutHandlerFactory
 {
     public function __invoke(ContainerInterface $container): SignOutHandler
     {
-        $cognitoConfig = $container->get('config')['cognito'] ?? [];
+        $config        = $container->get('config');
+        $cognitoConfig = $config['cognito'] ?? [];
+        $albConfig     = $config['alb'] ?? [];
 
-        return new SignOutHandler($cognitoConfig['logout_url'] ?? null);
+        return new SignOutHandler(
+            $cognitoConfig['logout_url'] ?? null,
+            $albConfig['session_cookie_name'] ?? null,
+        );
     }
 }

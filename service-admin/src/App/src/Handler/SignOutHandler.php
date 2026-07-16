@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\RequestAttributes;
+use Dflydev\FigCookies\FigResponseCookies;
+use Dflydev\FigCookies\SetCookie;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -12,8 +14,18 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class SignOutHandler extends AbstractHandler
 {
-    public function __construct(private readonly ?string $cognitoLogoutUrl)
-    {
+    // The ALB shards its own auth session cookie across multiple numbered cookies
+    // once the encrypted claims exceed ~4KB (see AWS docs on authenticate-oidc).
+    // We don't know in advance how many shards a given session used, so we send
+    // expiry headers for a generous range of indexes; clearing a cookie that was
+    // never set is a no-op for the browser.
+    private const int ALB_SESSION_COOKIE_SHARD_COUNT = 10;
+
+    public function __construct(
+        private readonly ?string $cognitoLogoutUrl,
+        #[\SensitiveParameter]
+        private readonly ?string $albCookiePrefix,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -28,12 +40,28 @@ class SignOutHandler extends AbstractHandler
         $session->clear();
         $session->set('signed_out', true);
 
-        // In production the ALB sets its own auth cookie (AWSELBAuthSessionCookie).
-        // Clearing the PHP session alone doesn't sign the user out of Cognito — they'd
-        // be immediately re-authenticated on the next request. Redirect to Cognito's
-        // hosted UI logout endpoint to clear both the Cognito session and ALB cookie.
+        // In production the ALB caches the authenticated session in its own cookie
+        // (AWSELBAuthSessionCookie), separate from both the PHP session and Cognito's
+        // hosted-UI session. Redirecting to Cognito's logout endpoint only clears the
+        // Cognito session — the ALB will keep re-authenticating from its cached cookie
+        // until it expires (session_timeout), so we must also expire it here.
         if ($this->cognitoLogoutUrl !== null) {
-            return new RedirectResponse($this->cognitoLogoutUrl);
+            $response = new RedirectResponse($this->cognitoLogoutUrl);
+
+            if ($this->albCookiePrefix !== null) {
+                foreach (range(0, self::ALB_SESSION_COOKIE_SHARD_COUNT - 1) as $shard) {
+                    $response = FigResponseCookies::set(
+                        $response,
+                        SetCookie::create(sprintf('%s-%d', $this->albCookiePrefix, $shard))
+                            ->withPath('/')
+                            ->withSecure()
+                            ->withHttpOnly()
+                            ->expire(),
+                    );
+                }
+            }
+
+            return $response;
         }
 
         // Local dev: the signed_out session flag tells AlbSimulatorMiddleware to stop
