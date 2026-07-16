@@ -84,6 +84,7 @@ jobs:
           payload: |
             channel: "C09M1LWJ2G0"
             icon_emoji: ":robot_face:"
+            text: "${{ needs.workflow_variables.outputs.workspace_name }} Deployment Started"
             blocks:
               - type: "header"
                 text:
@@ -126,6 +127,7 @@ jobs:
           payload: |
             channel: "C09M1LWJ2G0"
             icon_emoji: ":robot_face:"
+            text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release completed"
             blocks:
               - type: "header"
                 text:
@@ -158,6 +160,7 @@ jobs:
           payload: |
             channel: "C09M1LWJ2G0"
             icon_emoji: ":robot_face:"
+            text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
             blocks:
               - type: "header"
                 text:
@@ -190,11 +193,12 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09L117EZ27"
+            text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
             blocks:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: "${{ needs.workflow_variables.outputs.workspace_name }} Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
+                  text: ":cross-red: *${{ needs.workflow_variables.outputs.workspace_name }}* Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
 
 
   # terraform_lint:
