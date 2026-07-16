@@ -111,55 +111,56 @@ jobs:
     runs-on: ubuntu-latest
     if: always()
     needs:
-      # - slack_msg_production_deploy_begin
+      - slack_msg_environment_deploy_begin
       # - run_smoke_tests
       - workflow_variables
     environment:
       name: ${{ needs.workflow_variables.outputs.workspace_name }}
       url: "https://www.lastingpowerofattorney.service.gov.uk/home"
     steps:
-      - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
-        # if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
-        with:
-          method: chat.postMessage
-          # update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
-          token: ${{ secrets.SLACK_BOT_TOKEN}}
-          payload: |
-            channel: "C09M1LWJ2G0"
-            icon_emoji: ":robot_face:"
-            text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release completed"
-            blocks:
-              - type: "header"
-                text:
-                  type: "plain_text"
-                  text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release"
-                  emoji: true
-              - type: "context"
-                elements:
-                  - type: "mrkdwn"
-                    text: ":white_check_mark: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Success>"
-                  - type: "mrkdwn"
-                    text: ":astronaut: ${{ github.triggering_actor }}"
-                  - type: "mrkdwn"
-                    text: ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
-              - type: "section"
-                fields:
-                  - type: "mrkdwn"
-                    text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
+      # - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+      #   # if: needs.run_smoke_tests.outputs.smoke_test_status == 'passed'
+      #   if: true
+      #   with:
+      #     method: chat.postMessage
+      #     token: ${{ secrets.SLACK_BOT_TOKEN}}
+      #     payload: |
+      #       channel: "C09M1LWJ2G0"
+      #       icon_emoji: ":robot_face:"
+      #       update-ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
+      #       text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release completed"
+      #       blocks:
+      #         - type: "header"
+      #           text:
+      #             type: "plain_text"
+      #             text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release"
+      #             emoji: true
+      #         - type: "context"
+      #           elements:
+      #             - type: "mrkdwn"
+      #               text: ":white_check_mark: <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{ github.runId }}|Success>"
+      #             - type: "mrkdwn"
+      #               text: ":astronaut: ${{ github.triggering_actor }}"
+      #             - type: "mrkdwn"
+      #               text: ":floppy_disk: <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|Commit>"
+      #         - type: "section"
+      #           fields:
+      #             - type: "mrkdwn"
+      #               text: "*Commit:*\n <https://github.com/ministryofjustice/opg-lpa/commit/${{ github.sha }}|${{ needs.workflow_variables.outputs.short_sha }}>"
+      #         - type: "section"
+      #           text:
+      #             type: "mrkdwn"
+      #             text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
       - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
         # if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
         with:
           method: chat.postMessage
-          # update-ts: ${{ needs.slack_msg_production_deploy_begin.outputs.ts }}
           token: ${{ secrets.SLACK_BOT_TOKEN}}
           payload: |
             channel: "C09M1LWJ2G0"
             icon_emoji: ":robot_face:"
+            update-ts: ${{ needs.slack_msg_environment_deploy_begin.outputs.ts }}
             text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
             blocks:
               - type: "header"
@@ -183,22 +184,20 @@ jobs:
                 text:
                   type: "mrkdwn"
                   text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
-        # if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
-        with:
-          method: chat.postMessage
-          token: ${{ secrets.SLACK_BOT_TOKEN}}
-          payload: |
-            channel: "C09L117EZ27"
-            text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
-            blocks:
-              - type: "section"
-                text:
-                  type: "mrkdwn"
-                  text: ":cross-red: *${{ needs.workflow_variables.outputs.workspace_name }}* Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
+      # - uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+      #   # if: needs.run_smoke_tests.outputs.smoke_test_status != 'passed'
+      #   with:
+      #     method: chat.postMessage
+      #     token: ${{ secrets.SLACK_BOT_TOKEN}}
+      #     payload: |
+      #       channel: "C09L117EZ27"
+      #       text: "Make - ${{ needs.workflow_variables.outputs.workspace_name }} release failed"
+      #       blocks:
+      #         - type: "section"
+      #           text:
+      #             type: "mrkdwn"
+      #             text: ":cross-red: *${{ needs.workflow_variables.outputs.workspace_name }}* Make deployment failed. Please check the <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
 
 
   # terraform_lint:
