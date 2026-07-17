@@ -47,6 +47,14 @@ resource "aws_iam_role" "seeding_task_role" {
   tags               = local.seeding_component_tag
 }
 
+//----------------
+// Mock ECS task role
+resource "aws_iam_role" "mock_onelogin" {
+  name               = "${local.environment_name}-mock-onelogin-task-role"
+  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
+  tags               = local.seeding_component_tag
+}
+
 //------------------------------------------------
 // ECS API Cron task role
 
