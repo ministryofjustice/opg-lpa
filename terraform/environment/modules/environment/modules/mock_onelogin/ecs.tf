@@ -157,7 +157,7 @@ data "aws_iam_policy_document" "task_role_access_policy" {
 
 locals {
   # TODO: fix this url
-  mock_onelogin_url = "https://${data.aws_default_tags.current.tags.environment-name}-mock-onelogin.app.modernising.opg.service.justice.gov.uk"
+  mock_onelogin_url = "https://${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.onelogin.lpa.opg.service.justice.gov.uk"
 
   mock_onelogin = jsonencode(
     {
