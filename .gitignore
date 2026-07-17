@@ -35,6 +35,7 @@ cypress/logs/
 !/cypress/mezzio-regressions/baseline/**
 /cypress/fixtures/
 /cypress/downloads/
+/cypress/reports/
 service-front-v2/app/static
 service-front-v2/govuk_components
 .phpunit.cache/
