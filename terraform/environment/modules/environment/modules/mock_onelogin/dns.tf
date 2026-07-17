@@ -2,7 +2,7 @@ resource "aws_route53_record" "mock_onelogin" {
   count    = data.aws_default_tags.current.tags.environment-name != "production" ? 1 : 0
   provider = aws.management
   zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  name     = "${data.aws_default_tags.current.tags.environment-name}${var.account_name}.onelogin.lpa"
+  name     = "${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.onelogin.lpa"
   type     = "A"
 
   alias {
