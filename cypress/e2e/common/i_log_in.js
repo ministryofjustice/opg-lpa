@@ -45,21 +45,36 @@ When(`I log in to admin using SSO`, () => {
 function logInToAdminViaCognitoHostedUi() {
   const username = Cypress.env('admin_cognito_username');
   const password = Cypress.env('admin_cognito_password');
+  const adminUrl = Cypress.env('adminUrl');
 
-  // cy.visit follows the ALB's redirect to Cognito's hosted UI, landing us there as
-  // the top-level origin — so no cy.origin() wrapper is needed to interact with it.
-  cy.visit(Cypress.env('adminUrl') + '/sign-in');
+  cy.visit(adminUrl + '/sign-in');
 
-  // The Cognito hosted-UI page renders both a mobile and a desktop form (toggled via
-  // Bootstrap's visible-xs/visible-md classes) — only one is actually visible at the
-  // configured viewport size, so select on visibility rather than DOM order.
-  cy.get('input[name="username"]:visible').type(username);
-  cy.get('input[name="password"]:visible').type(password);
-  cy.get('input[name="signInSubmitButton"]:visible').click();
+  cy.url().then((url) => {
+    if (url.startsWith(adminUrl)) {
+      // Already authenticated: the ALB's own session cookie from an earlier login
+      // within this test is still valid, so there's no OAuth flow to complete.
+      // Forcing a redundant Cognito authorize here (by clearing cookies and
+      // re-authenticating) causes an infinite ALB<->Cognito redirect loop
+      return;
+    }
 
-  // Cognito redirects back to the ALB, which sets its auth cookie and forwards the
-  // request on to the originally requested admin page.
-  cy.url().should('include', Cypress.env('adminUrl'));
+    // Not yet authenticated (redirected to Cognito). Clear any cookies left over from
+    // a different scenario's OAuth transaction (e.g. a stale Cognito state/CSRF
+    // cookie) before authenticating, then reload to start a clean attempt.
+    cy.clearCookies();
+    cy.visit(adminUrl + '/sign-in');
+
+    // The Cognito hosted-UI page renders both a mobile and a desktop form (toggled
+    // via Bootstrap's visible-xs/visible-md classes) — only one is actually visible
+    // at the configured viewport size, so select on visibility rather than DOM order.
+    cy.get('input[name="username"]:visible').type(username);
+    cy.get('input[name="password"]:visible').type(password);
+    cy.get('input[name="signInSubmitButton"]:visible').click();
+
+    // Cognito redirects back to the ALB, which sets its auth cookie and forwards the
+    // request on to the originally requested admin page.
+    cy.url().should('include', adminUrl);
+  });
 }
 
 When(`I log in as standard test user`, () => {
