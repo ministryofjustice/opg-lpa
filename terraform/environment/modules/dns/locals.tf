@@ -5,4 +5,5 @@ locals {
   dns_namespace_dev_prefix = var.account_name == "development" ? "development." : ""
   front_dns                = "front.lpa"
   admin_dns                = "admin.lpa"
+  mock_onelogin_dns        = "onelogin.lpa"
 }

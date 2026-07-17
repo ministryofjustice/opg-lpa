@@ -50,3 +50,7 @@ output "vpc_id" {
 output "app_subnet_ids" {
   value = [for subnet in data.aws_subnet.application : subnet.id]
 }
+
+output "mock_onelogin_loadbalancer" {
+  value = module.mock_onelogin[0].load_balancer
+}
