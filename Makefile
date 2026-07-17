@@ -125,7 +125,7 @@ dc-up: all-composer-install ecrlogin
 	docker compose run --rm npm-front run watch
 
 .PHONY: dc-up-debug
-dc-up-debug: all-composer-install
+dc-up-debug: all-composer-install ecrlogin
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
