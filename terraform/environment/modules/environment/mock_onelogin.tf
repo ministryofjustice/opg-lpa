@@ -42,7 +42,8 @@ module "mock_onelogin" {
   }
   front_app_ecs_service_security_group_id = aws_security_group.front_ecs_service.id
   providers = {
-    aws.region = aws
+    aws.region     = aws
+    aws.management = aws.management
   }
 
   depends_on = [
