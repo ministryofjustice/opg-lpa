@@ -2,7 +2,7 @@ module "rds_proxy" {
   source                         = "./modules/rds_proxy"
   environment_name               = var.environment_name
   db_cluster_identifier          = module.api_aurora[0].cluster.id
-  api_rds_credentials_secret_arn = aws_secretsmanager_secret_version.api_rds_credentials.arn
+  api_rds_credentials_secret_arn = aws_secretsmanager_secret_version.api_rds_credentials.secret_arn
   vpc_id                         = data.aws_vpc.main.id
   vpc_subnet_ids                 = [for subnet in data.aws_subnet.data : subnet.id]
   rds_client_security_group_id   = aws_security_group.rds_client.id
