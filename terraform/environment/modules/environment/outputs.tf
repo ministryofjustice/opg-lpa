@@ -52,5 +52,5 @@ output "app_subnet_ids" {
 }
 
 output "mock_onelogin_loadbalancer" {
-  value = module.mock_onelogin[0].load_balancer
+  value = var.environment.feature_flags.onelogin_enabled ? module.mock_onelogin[0].load_balancer : null
 }

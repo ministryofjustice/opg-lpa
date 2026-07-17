@@ -164,23 +164,3 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
 
   provider = aws.us_east_1
 }
-
-
-# mock onelogin
-resource "aws_route53_record" "mock_onelogin" {
-  count    = var.environment_name != "production" ? 1 : 0
-  provider = aws.management
-  zone_id  = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
-  name     = "${local.dns_namespace_env}${local.dns_namespace_dev_prefix}${local.mock_onelogin_dns}"
-  type     = "A"
-
-  alias {
-    evaluate_target_health = false
-    name                   = var.mock_onelogin_dns_name
-    zone_id                = var.mock_onelogin_zone_id
-  }
-
-  lifecycle {
-    create_before_destroy = true
-  }
-}
