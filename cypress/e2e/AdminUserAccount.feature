@@ -2,6 +2,8 @@
 Feature: AdminUserAccount
 
   Scenario: Delete user from user-facing site
+    # This extra login is necessary to deal with cypress cross-origin restrictions (admin -> front -> admin works)
+    Given I log in to admin using SSO
     # Sign up new user on user-facing site
     Given I sign up "SignupAndDeleteUser" test user with password "Pass12345678"
     When I use activation email for "SignupAndDeleteUser" to visit the link
