@@ -282,7 +282,7 @@ class LegacyCompatExtension extends AbstractExtension
 
                 // $message is the raw validation key (e.g. 'cannot-be-empty'),
                 // $replacements maps that key to a human-readable string.
-                $newMessages[$key] = $replacements[$message] ?? $message;
+                $newMessages[$key] = $replacements[$message] ?? $replacements[$key] ?? $message;
             }
 
             $element->setMessages($newMessages);
