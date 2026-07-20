@@ -169,4 +169,9 @@ return [
     'authentication_tokens' => [
         'use_hash_tokens' => getenv('OPG_LPA_AUTH_TOKEN_GENERATION') === 'hash' && getenv('OPG_LPA_STACK_ENVIRONMENT') !== 'production',
     ],
+
+    'onelogin' => [
+        'client_id'     => getenv('ONELOGIN_CLIENT_ID') ?: null,
+        'discovery_url' => getenv('ONELOGIN_DISCOVERY_URL') ?: null,
+    ],
 ];
