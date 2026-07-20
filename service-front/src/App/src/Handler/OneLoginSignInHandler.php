@@ -14,7 +14,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class OneLoginSignInHandler implements RequestHandlerInterface
 {
-    private const SESSION_KEY_ONELOGIN = 'onelogin_auth';
+    private const string SESSION_KEY_ONELOGIN = 'onelogin_auth';
 
     public function __construct(
         private readonly OneLoginService $oneLoginService,
