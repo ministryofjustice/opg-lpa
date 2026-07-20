@@ -27,6 +27,10 @@ RESET  := $(shell tput -Txterm sgr0)
 all:
 	@${MAKE} dc-up
 
+.PHONY: ecrlogin
+ecrlogin:
+	aws-vault exec management -- aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 311462405659.dkr.ecr.eu-west-1.amazonaws.com
+
 .PHONY: reset
 reset:
 	@${MAKE} dc-build-clean
@@ -107,7 +111,7 @@ api-composer-why:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 .PHONY: dc-up
-dc-up: all-composer-install
+dc-up: all-composer-install ecrlogin
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
@@ -121,7 +125,7 @@ dc-up: all-composer-install
 	docker compose run --rm npm-front run watch
 
 .PHONY: dc-up-debug
-dc-up-debug: all-composer-install
+dc-up-debug: all-composer-install ecrlogin
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
