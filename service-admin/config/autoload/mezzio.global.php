@@ -33,15 +33,6 @@ return [
             explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : []
     ),
 
-    'jwt' => [
-        'secret'    => getenv('OPG_LPA_ADMIN_JWT_SECRET') ?: null,
-        'path'      => '/',
-        'header'    => 'lpa-admin',
-        'cookie'    => 'lpa-admin',
-        'ttl'       => 60 * 15, // 15 minutes
-        'algo'      => 'HS256',
-    ],
-
     'cache' => [
         'dynamodb' => [
             'client' => [

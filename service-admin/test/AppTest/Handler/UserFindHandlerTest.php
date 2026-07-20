@@ -6,11 +6,11 @@ namespace AppTest\Handler;
 
 use App\Form\UserFind;
 use App\Handler\UserFindHandler;
+use App\RequestAttributes;
 use App\Service\User\UserService;
 use AppTest\Common;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequest;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
 use PHPUnit\Framework\TestCase;
 use MakeShared\DataModel\User\User;
@@ -31,18 +31,28 @@ class UserFindHandlerTest extends TestCase
         $this->mockUserService = $this->createMock(UserService::class);
         $this->mockLogger = $this->createMock(LoggerInterface::class);
 
-        $_SESSION['jwt-payload'] =  ['csrf' => Common::TEST_CSRF_TOKEN];
-
         $this->handler = new UserFindHandler($this->mockUserService);
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
         $this->handler->setLogger($this->mockLogger);
     }
 
+    private function makeRequest(string $method, array $queryParams = [], string $adminEmail = null): ServerRequest
+    {
+        $request = (new ServerRequest())
+            ->withMethod($method)
+            ->withQueryParams($queryParams)
+            ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
+
+        if ($adminEmail !== null) {
+            $request = $request->withAttribute(RequestAttributes::USER_EMAIL, $adminEmail);
+        }
+
+        return $request;
+    }
+
     public function testRendersForm()
     {
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withQueryParams([]);
+        $request = $this->makeRequest(RequestMethodInterface::METHOD_GET);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
             'app::user-find',
@@ -55,17 +65,13 @@ class UserFindHandlerTest extends TestCase
     public function testSubmitsSearch()
     {
         $user = new User(['name' => new Name(['first' => 'David'])]);
-        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserFind::class);
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withQueryParams([
-                'query' => 'test',
-                'offset' => '0',
-                'secret' => $secret,
-            ])
-            ->withAttribute('user', $adminUser);
+        $request = $this->makeRequest(RequestMethodInterface::METHOD_GET, [
+            'query' => 'test',
+            'offset' => '0',
+            'secret' => $secret,
+        ], 'admin@example.com');
 
         $this->mockUserService->expects($this->once())
             ->method('match')
@@ -85,16 +91,11 @@ class UserFindHandlerTest extends TestCase
 
     public function testAuditLogsSuccessfulFind()
     {
-        $adminUser = new User([
-            'id' => 'admin-id',
-            'email' => new EmailAddress(['address' => 'admin@example.com']),
-        ]);
-        $foundUser = new User(['name' => new Name(['first' => 'David'])]);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserFind::class);
 
         $this->mockUserService->expects($this->once())
             ->method('match')
-            ->willReturn([$foundUser]);
+            ->willReturn([new User(['name' => new Name(['first' => 'David'])])]);
 
         $this->mockTemplateRenderer->method('render')->willReturn('response');
 
@@ -104,35 +105,28 @@ class UserFindHandlerTest extends TestCase
                 'Admin searched users',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.find'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && $context['query'] === 'test'
                     && $context['results_count'] === 1)
             );
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withQueryParams([
-                'query' => 'test',
-                'offset' => '0',
-                'secret' => $secret,
-            ])
-            ->withAttribute('user', $adminUser);
+        $request = $this->makeRequest(RequestMethodInterface::METHOD_GET, [
+            'query' => 'test',
+            'offset' => '0',
+            'secret' => $secret,
+        ], 'admin@example.com');
 
         $this->handler->handle($request);
     }
 
     public function testRequiresCsrf()
     {
-        $secret = 'not_the_real_hash'; // pragma: allowlist secret
-
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withQueryParams([
-                'query' => 'test',
-                'offset' => '0',
-                'secret' => $secret,
-            ]);
+        $request = $this->makeRequest(RequestMethodInterface::METHOD_GET, [
+            'query' => 'test',
+            'offset' => '0',
+            'secret' => 'not_the_real_hash', // pragma: allowlist secret
+        ]);
 
         $this->mockUserService->expects($this->never())->method('match');
 
