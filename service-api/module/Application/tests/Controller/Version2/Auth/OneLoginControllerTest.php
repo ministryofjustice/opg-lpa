@@ -10,7 +10,7 @@ use Mockery;
 
 class OneLoginControllerTest extends AbstractAuthControllerTestCase
 {
-    protected function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
 
