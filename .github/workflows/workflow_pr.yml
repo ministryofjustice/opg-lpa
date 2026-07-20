@@ -66,6 +66,31 @@ jobs:
         with:
           terraform_directory: "./terraform/region"
 
+  slack_msg_environment_deploy_begin:
+    name: Annouce ${{ needs.workflow_variables.outputs.workspace_name }} Deployment
+    runs-on: ubuntu-latest
+    outputs:
+      ts: ${{ steps.slack.outputs.ts }}
+      thread_ts: ${{ steps.slack.outputs.thread_ts }}
+    needs:
+        - workflow_variables
+    steps:
+      - id: slack
+        uses: slackapi/slack-github-action@45a88b9581bfab2566dc881e2cd66d334e621e2c # v3.0.3
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
+          payload: |
+            channel: "C09M1LWJ2G0"
+            icon_emoji: ":rocket:"
+            text: "${{ needs.workflow_variables.outputs.workspace_name }} Deployment Started"
+            blocks:
+              - type: "header"
+                text:
+                  type: "plain_text"
+                  text: "${{ needs.workflow_variables.outputs.workspace_name }} deployment started"
+                  emoji: true
+
   terraform_lint:
     name: TF - Lint
     needs:

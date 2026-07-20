@@ -91,3 +91,7 @@ resource "aws_secretsmanager_secret_version" "api_rds_credentials" {
 data "aws_secretsmanager_secret" "elasticache_auth_token" {
   name = "${var.account_name}/elasticache_auth_token"
 }
+
+data "aws_secretsmanager_secret" "mock_onelogin_client_id" {
+  name = "${var.account_name}/mock-onelogin-client-id"
+}
