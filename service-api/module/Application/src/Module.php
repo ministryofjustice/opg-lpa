@@ -31,7 +31,6 @@ use Laminas\Http\Response;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
@@ -84,9 +83,9 @@ class Module
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
                 ServiceLocatorInterface::class => 'ServiceManager',
-
                 LoggerInterface::class => 'Logger',
                 ClientInterface::class => Client::class,
+                'FeedbackValidator' => FeedbackValidator::class,
             ],
             'invokables' => [
                 HttpClient::class => Guzzle7Client::class,
@@ -180,17 +179,9 @@ class Module
                     );
                 },
 
-                'FeedbackValidator' => function () {
-                    return new FeedbackValidator();
-                },
-
                 'TelemetryTracer' => function ($sm) {
                     $telemetryConfig = $sm->get('config')['telemetry'];
                     return Tracer::create($sm->get(ExporterFactory::class), $telemetryConfig);
-                },
-
-                'Calculator' => function () {
-                    return new Calculator();
                 },
 
                 PingHandler::class => PingHandlerFactory::class,

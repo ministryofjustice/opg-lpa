@@ -15,6 +15,13 @@ return [
         'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         'MakeShared\Telemetry',
+        // Loaded after Application so its abstract_factories entries are
+        // appended after ours (e.g. ServiceAbstractFactory), preventing
+        // AutowireFactory from taking priority over classes that require
+        // custom wiring (repositories, loggers, etc.) at the root
+        // service_manager level. It's still explicitly opted into for the
+        // ControllerManager via the abstract_factories in module.config.php.
+        'Laminas\Di',
     ],
     // These are various options for the listeners attached to the ModuleManager
     'module_listener_options' => [
