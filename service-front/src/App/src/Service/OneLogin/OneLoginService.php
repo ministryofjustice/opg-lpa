@@ -7,7 +7,7 @@ namespace App\Service\OneLogin;
 use App\Service\ApiClient\Client as ApiClient;
 use RuntimeException;
 
-final class OneLoginService
+class OneLoginService
 {
     public function __construct(
         private readonly ApiClient $client,
@@ -41,6 +41,6 @@ final class OneLoginService
             );
         }
 
-        return $result;
+        return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $result['url']];
     }
 }

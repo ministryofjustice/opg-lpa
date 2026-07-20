@@ -17,6 +17,9 @@ class Service extends AbstractService
     private $randomBytes;
     private ?DiscoveryDocumentFetcher $discoveryDocumentFetcher = null;
 
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
     public function __construct()
     {
         $this->randomBytes = random_bytes(...);
@@ -42,6 +45,7 @@ class Service extends AbstractService
      * Optional seam for tests: override the random-byte generator.
      *
      * @param callable(int): string $generator
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setRandomByteGenerator(callable $generator): void
     {
@@ -50,6 +54,8 @@ class Service extends AbstractService
 
     /**
      * Optional seam for tests: override the discovery-document fetcher.
+     *
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setDiscoveryDocumentFetcher(DiscoveryDocumentFetcher $fetcher): void
     {
