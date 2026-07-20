@@ -8,15 +8,16 @@ RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
-
 RUN apk add --no-cache icu fcgi \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
     && docker-php-ext-install intl \
     && docker-php-ext-install bcmath \
     && docker-php-ext-install opcache \
-    && docker-php-ext-install sockets
+    && docker-php-ext-install sockets;
+
+COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
+
+RUN pie install --no-cache phpredis/phpredis:^6.0
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
@@ -56,14 +57,13 @@ RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     chmod a+w /tmp ; \
     chown -R appuser:appuser /app ; \
     apk add --no-cache --virtual .build-dependencies linux-headers pcre-dev ${PHPIZE_DEPS} ; \
-    pecl install xdebug ; \
+    pie install xdebug/xdebug:^3.4 ; \
     echo "xdebug.mode = profile" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
     echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-    docker-php-ext-enable xdebug ; \
     composer dump-autoload ; \
 fi
 
