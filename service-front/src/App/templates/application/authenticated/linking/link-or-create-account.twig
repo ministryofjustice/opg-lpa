@@ -1,0 +1,49 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Link or create account' %}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set form = formErrorTextExchange(form, {
+    'choice': {
+        'isEmpty': 'Select whether to link an existing Make account',
+    },
+}) %}
+
+{% set choice = form.get('choice') %}
+
+{% block content %}
+  <div class="govuk-grid-row govuk-!-margin-top-9">
+    {{ macros.formErrorSummary(error, form) }}
+
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">Link or create account</h1>
+
+      <p class="govuk-body">
+        There is no Make account associated with this OneLogin account.
+        If you have used Make in the past you can link your existing account to see any LPAs that have been made in it.
+      </p>
+
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      <div class="govuk-form-group {{ choice.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <fieldset class="govuk-fieldset">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            Do you want to link an existing Make account?
+          </legend>
+
+          {{ formElementErrorsV2(choice) }}
+
+          <div class="govuk-radios" data-module="govuk-radios">
+            {{ formRadio(choice) }}
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="govuk-button" type="submit">Continue</button>
+      {{ form().closeTag|raw }}
+    </div>
+  </div>
+{% endblock content %}

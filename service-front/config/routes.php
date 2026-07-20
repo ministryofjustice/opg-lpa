@@ -20,6 +20,7 @@ use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
+use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\PostcodeHandler;
@@ -161,6 +162,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
+
+    if (getenv('ONELOGIN_ENABLED') === 'true') {
+        $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account');
+    }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')
         ->setOptions(['allowIncompleteUser' => true]);
