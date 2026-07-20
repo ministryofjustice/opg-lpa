@@ -2,14 +2,15 @@
 Feature: AdminUserAccount
 
   Scenario: Delete user from user-facing site
+    # This extra login is necessary to deal with cypress cross-origin restrictions (admin -> front -> admin works)
+    Given I log in to admin using SSO
     # Sign up new user on user-facing site
     Given I sign up "SignupAndDeleteUser" test user with password "Pass12345678"
     When I use activation email for "SignupAndDeleteUser" to visit the link
     Then I see "Account activated" in the title
 
     # Check new user exists on admin site
-    When I visit the admin sign-in page
-    And I log in to admin
+    When I log in to admin using SSO
     And I find "SignupAndDeleteUser" on the admin site
     Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Activated"
@@ -33,7 +34,7 @@ Feature: AdminUserAccount
     Then I see "We've deleted your account" in the page text
 
     # Check new user deleted on admin site
-    When I visit the admin sign-in page
+    When I log in to admin using SSO
     And I find "SignupAndDeleteUser" on the admin site
     Then there is "a single" '[data-cy="user-summary-card"]' element on the page
     And the first user account status is "Deleted"
