@@ -11,7 +11,6 @@ variable "account" {
       object({
         region                         = string
         is_primary                     = string
-        enable_elasticache_auth_token  = bool
         elasticache_node_type          = string
         codecatalyst_endpoints_enabled = bool
     }))
@@ -66,10 +65,4 @@ variable "elasticache_auth_token_secret_id" {
   type        = string
   sensitive   = true
   description = "The ARN or name of the Secrets Manager secret that contains the auth token for ElastiCache."
-}
-
-variable "enable_elasticache_auth_token" {
-  type        = bool
-  description = "Flag to enable or disable the use of an auth token for ElastiCache."
-  default     = false
 }

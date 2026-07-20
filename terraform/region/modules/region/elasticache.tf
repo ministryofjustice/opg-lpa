@@ -25,9 +25,37 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
   num_cache_clusters         = local.cache_cluster_count
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
-  transit_encryption_enabled = var.enable_elasticache_auth_token
+  transit_encryption_enabled = true
+  maintenance_window         = "wed:05:00-wed:09:00"
+  snapshot_window            = "02:00-04:50"
+  notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
+  subnet_group_name          = aws_elasticache_subnet_group.application_subnets.name
+  security_group_ids         = [aws_security_group.new_front_cache.id]
+
+  tags = local.front_component_tag
+  lifecycle {
+    ignore_changes = [
+      engine_version
+    ]
+  }
+}
+
+# new elasticache replication group so that we can rotate the auth token without downtime
+resource "aws_elasticache_replication_group" "front_cache" {
+  replication_group_id = "${local.account_name_short}-${local.region_name}-front-cache-rg"
+  description          = "front cache replication group"
+  parameter_group_name = "default.redis6.x"
+  engine               = "redis"
+  engine_version       = "6.2"
+  # cache.t2.micro is an invalid node type for the london eu-west-2 region
+  node_type                  = local.account.regions[data.aws_region.current.region].elasticache_node_type
+  num_cache_clusters         = local.cache_cluster_count
+  at_rest_encryption_enabled = true
+  automatic_failover_enabled = true
+  transit_encryption_enabled = true
   transit_encryption_mode    = "preferred"
   auth_token                 = data.aws_secretsmanager_secret_version.elasticache_auth_token.secret_string
+  kms_key_id                 = data.aws_kms_alias.elasticache_encryption_key.target_key_arn
   auth_token_update_strategy = "ROTATE"
   maintenance_window         = "wed:05:00-wed:09:00"
   snapshot_window            = "02:00-04:50"
