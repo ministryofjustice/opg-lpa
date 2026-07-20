@@ -13,7 +13,7 @@ class Service extends AbstractService
 
     private array $config = [];
     private ?Client $client = null;
-    /** @var callable(int): string */
+    /** @var callable(positive-int): string */
     private $randomBytes;
     private ?DiscoveryDocumentFetcher $discoveryDocumentFetcher = null;
 
@@ -44,7 +44,7 @@ class Service extends AbstractService
     /**
      * Optional seam for tests: override the random-byte generator.
      *
-     * @param callable(int): string $generator
+     * @param callable(positive-int): string $generator
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function setRandomByteGenerator(callable $generator): void
@@ -73,11 +73,11 @@ class Service extends AbstractService
         $clientId     = $this->config['onelogin']['client_id'] ?? null;
         $discoveryUrl = $this->config['onelogin']['discovery_url'] ?? null;
 
-        if (empty($clientId)) {
+        if (!is_string($clientId) || $clientId === '') {
             throw new RuntimeException('Missing required config: onelogin.client_id');
         }
 
-        if (empty($discoveryUrl)) {
+        if (!is_string($discoveryUrl) || $discoveryUrl === '') {
             throw new RuntimeException('Missing required config: onelogin.discovery_url');
         }
 
@@ -86,6 +86,10 @@ class Service extends AbstractService
         $state = rtrim(strtr(base64_encode($generator(12)), '+/', '-_'), '=');
 
         $nonce = hash('sha256', $generator(24));
+
+        if ($this->discoveryDocumentFetcher === null && $this->client === null) {
+            throw new RuntimeException('HTTP client must be set via setClient() when no custom DiscoveryDocumentFetcher is provided');
+        }
 
         $fetcher = $this->discoveryDocumentFetcher
             ?? new DiscoveryDocumentFetcher($this->client, $discoveryUrl);

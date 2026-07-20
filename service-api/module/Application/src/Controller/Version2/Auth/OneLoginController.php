@@ -7,6 +7,9 @@ use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Telemetry\TelemetryEventManager;
 
+/**
+ * @psalm-suppress PropertyNotSetInConstructor
+ */
 class OneLoginController extends AbstractAuthController
 {
     protected function getService(): OneLoginService
@@ -35,6 +38,7 @@ class OneLoginController extends AbstractAuthController
 
         TelemetryEventManager::triggerStop();
 
+        /** @psalm-suppress DeprecatedClass */
         return new JsonModel($result);
     }
 }
