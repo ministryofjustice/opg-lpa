@@ -32,16 +32,18 @@ services:
 
   mock-onelogin:
     image: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/mock-onelogin:latest
-    container_name: mock-onelogin
+    container_name: lpa-mock-onelogin
     ports:
-      - "7012:8080"
+      - "4549:8080"
     environment:
-      - PUBLIC_URL=http://localhost:7012
-      - CLIENT_ID=client-id-value
-      - REDIRECT_URL=http://localhost:5050/auth/redirect
-      - TEMPLATE_SUB=1
-      - TEMPLATE_SUB_DEFAULT=random
-      - TEMPLATE_RETURN_CODES=1
+      PORT: "8080"
+      PUBLIC_URL: "http://localhost:4549"
+      INTERNAL_URL: "http://mock-onelogin:8080"
+      REDIRECT_URL: "https://localhost:7002/auth/redirect"
+      CLIENT_ID: "theClientId"
+      TEMPLATE_SUB: "1"
+      TEMPLATE_SUB_DEFAULT: "random"
+      TEMPLATE_RETURN_CODES: "1"
 
   mock-pay:
     container_name: lpa-mock-pay
@@ -169,7 +171,7 @@ services:
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
-      ONELOGIN_ENABLED: false
+      ONELOGIN_ENABLED: true
       ORGANISATIONS_ENABLED: false
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
@@ -294,7 +296,9 @@ services:
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
-      ONELOGIN_ENABLED: false
+      ONELOGIN_ENABLED: true
+      ONELOGIN_CLIENT_ID: "theClientId"
+      ONELOGIN_DISCOVERY_URL: "http://mock-onelogin:8080/.well-known/openid-configuration"
       ORGANISATIONS_ENABLED: false
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]

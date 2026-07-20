@@ -112,6 +112,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-start' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/start',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'start',
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [

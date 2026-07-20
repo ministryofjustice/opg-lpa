@@ -163,6 +163,12 @@ return [
             Handler\LogoutHandler::class                  => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
             ),
+            Handler\LoginHandler::class                   => static fn(ContainerInterface $c) => new Handler\LoginHandler(
+                $c->get(TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(\App\Authentication\AuthenticationService::class),
+                getenv('ONELOGIN_ENABLED') === 'true',
+            ),
             StatusHandler::class                          => static fn(ContainerInterface $c) => new StatusHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),

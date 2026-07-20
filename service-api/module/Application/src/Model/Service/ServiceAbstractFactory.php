@@ -59,7 +59,11 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setConfig' => 'config',
             'setCredentials' => 'AwsCredentials',
             'setAwsSignatureV4' => 'AwsApiGatewaySignature',
-        ]
+        ],
+        OneLogin\Service::class => [
+            'setClient' => Client::class,
+            'setConfig' => 'config',
+        ],
     ];
 
     /**
