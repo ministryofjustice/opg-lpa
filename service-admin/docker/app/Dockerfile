@@ -17,6 +17,8 @@ RUN apk add --no-cache icu fcgi \
     && install-php-extensions gmp \
     && rm /usr/bin/install-php-extensions
 
+COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
+
 # Install composer dependencies
 COPY --chown=root:root service-admin/composer.json /app/composer.json
 COPY --chown=root:root service-admin/composer.lock /app/composer.lock
@@ -46,14 +48,13 @@ WORKDIR /app
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
-      pecl install xdebug ; \
+      pie install xdebug/xdebug:^3.4 ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      docker-php-ext-enable xdebug ; \
       touch /tmp/xdebug.log ; \
       chown appuser:appuser /tmp/xdebug.log ; \
     fi ;
