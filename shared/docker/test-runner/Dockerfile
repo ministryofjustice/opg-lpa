@@ -6,10 +6,11 @@ RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+
 RUN apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS linux-headers && \
-  pecl install xdebug && \
+  pie install xdebug/xdebug:^3.4 && \
   docker-php-ext-install sockets &&\
-  docker-php-ext-enable xdebug &&\
   touch /tmp/xdebug.log &&\
   chown appuser:appuser /tmp/xdebug.log
 
