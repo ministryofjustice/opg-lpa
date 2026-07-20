@@ -223,8 +223,8 @@ jobs:
           push: false
           file: ${{ matrix.dockerfile_path }}/Dockerfile
           target: ${{ matrix.dockerfile_target }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
+          # cache-from: type=local,src=/tmp/.buildx-cache
+          # cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
           build-args: |
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
             ENABLE_XDEBUG=${{ matrix.with_xdebug && '1' || '0' }}
