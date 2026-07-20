@@ -50,6 +50,7 @@ variable "accounts" {
         object({
           region                         = string
           is_primary                     = string
+          enable_elasticache_auth_token  = bool
           elasticache_node_type          = string
           codecatalyst_endpoints_enabled = bool
       }))
