@@ -36,12 +36,11 @@ class FeedbackValidator
     private array $validators = [];
 
     /**
-     * Constructor
-     *
      * @param array $validators Validators to apply to fields;
      *     keys are field names, values are Laminas\Validator
      *     instances. If a validator is not set for a field,
      *     a default is used.
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function __construct(array $validators = [])
     {

@@ -1,7 +1,7 @@
 <?php
 
 use Application\Handler;
-use Application\Library\Http\GuzzleClientFactory;
+use Laminas\Di\Container\ServiceManager\AutowireFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Lmc\Rbac\Role\InMemoryRoleProvider;
@@ -466,18 +466,23 @@ return [
     ],
 
     'controllers' => [
+        'aliases' => [
+            //  The route configuration uses these short names; alias them to the
+            //  real classes so they can be autowired.
+            'Application\Controller\Stats' => Application\Controller\StatsController::class,
+            'Application\Controller\Feedback' => Application\Controller\FeedbackController::class,
+        ],
         'invokables' => [
             'Application\Controller\Index' => 'Application\Controller\IndexController'
         ],
         'factories' => [
-            'Application\Controller\Stats' => Application\ControllerFactory\StatsControllerFactory::class,
-            'Application\Controller\Feedback' => Application\ControllerFactory\FeedbackControllerFactory::class,
             Application\Controller\StatusController::class =>
                 Application\ControllerFactory\StatusControllerFactory::class
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',
             'Application\ControllerFactory\LpaControllerAbstractFactory',
+            AutowireFactory::class,
         ],
     ], // controllers
 
@@ -493,7 +498,6 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
-            GuzzleHttp\Client::class => GuzzleClientFactory::class,
         ],
         'initializers' => [
             function (ServiceLocatorInterface $container, $instance) {
