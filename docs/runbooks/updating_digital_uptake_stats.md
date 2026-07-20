@@ -1,4 +1,4 @@
-# iUpdating the Digital Uptake stats
+# Updating the Digital Uptake stats
 
 For the moment this is a manual process.
 
