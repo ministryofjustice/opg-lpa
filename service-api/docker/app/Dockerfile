@@ -20,6 +20,8 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && install-php-extensions gmp \
     && rm /usr/bin/install-php-extensions
 
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
+
 RUN apk update && apk add --upgrade expat
 
 # Default for AWS. Should be set to 1 for local development.
@@ -65,14 +67,13 @@ WORKDIR /app
 # Enable debug if needed. Should only be used locally
 ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
-      pecl install xdebug ; \
+      pie install xdebug/xdebug:^3.4 ; \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      docker-php-ext-enable xdebug ; \
       touch /tmp/xdebug.log ; \
       chown appuser:appuser /tmp/xdebug.log ; \
     fi ;

@@ -14,13 +14,15 @@ RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS autoconf gcc make musl-dev pkgconfig zlib-dev libpng-dev linux-headers \
     && apk add --upgrade expat \
-    && docker-php-ext-install gd
+    && docker-php-ext-install gd \
+    && docker-php-ext-install sockets
 
+COPY --from=ghcr.io/php/pie:bin /pie /usr/bin/pie
 
 # only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
 ARG VISUAL_TESTS=false
 RUN if [ "$VISUAL_TESTS" = "true" ] ; then apk add --no-cache poppler-utils imagemagick imagemagick-dev \
-    && pecl install imagick && docker-php-ext-enable imagick; fi
+    && pie install --no-cache imagick/imagick:^3.7; fi
 
 # Install composer dependencies
 COPY --chown=root:root service-pdf/composer.json /app/composer.json
@@ -46,14 +48,13 @@ WORKDIR /app
 # Enable debug if needed. Should only be used locally.
 ARG ENABLE_XDEBUG=0
 RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
-        pecl install xdebug ; \
+        pie install xdebug/xdebug:^3.4 ; \
         echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
         echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
         echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
         echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
         echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
         echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-        docker-php-ext-enable xdebug ; \
         touch /tmp/xdebug.log ; \
         chown appuser:appuser /tmp/xdebug.log ; \
     fi
