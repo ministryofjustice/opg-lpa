@@ -82,7 +82,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['accounts' => ['value'], 'shared_secret_enabled' => false]])->once();
+            ->andReturn(['admin' => ['accounts' => ['value']]])->once();
         $this->serviceManager->shouldReceive('get')->with(Service::class)
             ->andReturn(Mockery::mock(Service::class))->once();
 
@@ -109,7 +109,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['accounts' => ['value'], 'shared_secret_enabled' => false]])->once();
+            ->andReturn(['admin' => ['accounts' => ['value']]])->once();
         $this->serviceManager->shouldReceive('get')->with(Service::class)
             ->andReturn(Mockery::mock(Service::class))->once();
 
@@ -154,7 +154,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['shared_secret_enabled' => false]])->once();
+            ->andReturn(['admin' => []])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
@@ -174,7 +174,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['shared_secret_enabled' => true, 'service_secret' => 'correct-secret']])->once();
+            ->andReturn(['admin' => ['service_secret' => 'correct-secret']])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
@@ -195,7 +195,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['shared_secret_enabled' => true, 'service_secret' => 'correct-secret']])->once();
+            ->andReturn(['admin' => ['service_secret' => 'correct-secret']])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
@@ -204,10 +204,11 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->assertNull($result);
     }
 
-    public function testSharedSecretDisabledIgnoresHeader(): void
+    public function testSharedSecretHeaderPresentButNoServiceSecretConfiguredFallsThrough(): void
     {
-        // Even if X-Shared-Secret header is present, shared_secret_enabled=false
-        // means it is ignored and auth falls through to the Token path.
+        // X-Shared-Secret header is present, but no service_secret is configured
+        // (e.g. not set for this environment) — the comparison can never match,
+        // so auth falls through to the Token path without calling getFieldValue().
         $secretHeader = Mockery::mock();
         $this->request->shouldReceive('getHeader')->with('X-Shared-Secret')->andReturn($secretHeader)->once();
         $this->request->shouldReceive('getHeader')->with('Token')->andReturn(null)->once();
@@ -217,7 +218,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['shared_secret_enabled' => false]])->once();
+            ->andReturn(['admin' => []])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
@@ -226,9 +227,10 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testSharedSecretEnabledWithNoHeaderFallsThrough(): void
+    public function testNoSharedSecretHeaderFallsThroughToTokenPath(): void
     {
-        // shared_secret_enabled=true but no X-Shared-Secret header — falls through to Token path.
+        // No X-Shared-Secret header supplied at all — falls straight through to the
+        // Token path.
         $this->request->shouldReceive('getHeader')->with('Token')->andReturn(null)->once();
 
         $storage = Mockery::mock(StorageInterface::class);
@@ -236,7 +238,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
 
         $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['shared_secret_enabled' => true]])->once();
+            ->andReturn(['admin' => []])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);

@@ -235,7 +235,6 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
-        { name = "OPG_LPA_SHARED_SECRET_ENABLED", value = tostring(var.environment.shared_secret_enabled) },
         { name = "OPG_COGNITO_BASE_URL", value = var.admin_cognito.user_pool_domain_name },
         { name = "OPG_COGNITO_CLIENT_ID", value = var.admin_cognito.id },
         { name = "OPG_COGNITO_LOGOUT_URL", value = "${var.admin_cognito.user_pool_domain_name}/logout?client_id=${var.admin_cognito.id}&logout_uri=https://${local.admin_fqdn}/" },

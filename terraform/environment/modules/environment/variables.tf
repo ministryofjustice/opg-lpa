@@ -21,7 +21,6 @@ variable "environment" {
       onelogin_enabled      = bool
       organisations_enabled = bool
     })
-    shared_secret_enabled = bool
     database = object({
       cluster_identifier                 = string
       aurora_cross_region_backup_enabled = bool

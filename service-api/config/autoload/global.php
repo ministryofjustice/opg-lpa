@@ -37,7 +37,6 @@ return [
             explode(',', getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS')) : [],
 
         'service_secret' => getenv('OPG_LPA_ADMIN_SERVICE_SECRET') ?: '',
-        'shared_secret_enabled' => getenv('OPG_LPA_SHARED_SECRET_ENABLED') === 'true',
     ],
 
     'db' => [
