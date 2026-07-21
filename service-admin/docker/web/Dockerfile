@@ -11,7 +11,7 @@ COPY --link service-admin/public/.htaccess public/.htaccess
 COPY --link service-admin/public/robots.txt public/robots.txt
 RUN npm run build
 
-FROM nginx:1.31.2-alpine3.23@sha256:54f2a904c251d5a34adf545a72d32515a15e08418dae0266e23be2e18c66fefa
+FROM nginx:1.31.3-alpine3.24@sha256:818f487daa916d5bad276afac9ec1b219cdad6fd3901c39aee0efaf150b14606
 
 RUN chown -R nginx:nginx /var/cache/nginx && \
     chown -R nginx:nginx /var/log/nginx && \

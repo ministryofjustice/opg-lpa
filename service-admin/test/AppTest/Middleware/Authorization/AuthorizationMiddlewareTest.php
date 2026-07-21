@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace AppTest\Middleware\Authorization;
 
 use App\Middleware\Authorization\AuthorizationMiddleware;
-use App\Service\Authentication\AuthenticationService;
-use App\Service\User\UserService;
 use GuzzleHttp\Psr7\HttpFactory;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Permissions\Rbac\Rbac;
@@ -26,8 +24,6 @@ class AuthorizationMiddlewareTest extends TestCase
     private function makeMiddleware(): AuthorizationMiddleware
     {
         return new AuthorizationMiddleware(
-            $this->prophesize(AuthenticationService::class)->reveal(),
-            $this->prophesize(UserService::class)->reveal(),
             $this->prophesize(UrlHelper::class)->reveal(),
             new Rbac(),
             $this->prophesize(NotFoundHandler::class)->reveal(),
