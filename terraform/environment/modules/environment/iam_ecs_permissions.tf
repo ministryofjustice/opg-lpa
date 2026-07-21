@@ -80,7 +80,6 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.arn,
       data.aws_secretsmanager_secret.opg_lpa_front_csrf_salt.arn,
       data.aws_secretsmanager_secret.opg_lpa_api_notify_api_key.arn,
-      data.aws_secretsmanager_secret.opg_lpa_admin_jwt_secret.arn,
       data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.arn,
       data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.arn,
       data.aws_secretsmanager_secret.opg_lpa_pdf_owner_password.arn,

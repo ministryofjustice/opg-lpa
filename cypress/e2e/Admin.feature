@@ -4,7 +4,7 @@ Feature: Admin
   I want to be able to visit the admin page and carry out admin functions
 
   Background:
-    Given I log in to admin
+    Given I log in to admin using SSO
 
   Scenario: Find users, search for deleted user
     When I click "find-users-link"
