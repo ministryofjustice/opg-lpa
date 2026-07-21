@@ -171,7 +171,7 @@ services:
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
-      ONELOGIN_ENABLED: true
+      ONELOGIN_ENABLED: false
       ORGANISATIONS_ENABLED: false
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
@@ -296,7 +296,7 @@ services:
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
-      ONELOGIN_ENABLED: true
+      ONELOGIN_ENABLED: false
       ONELOGIN_CLIENT_ID: "theClientId"
       ONELOGIN_DISCOVERY_URL: "http://mock-onelogin:8080/.well-known/openid-configuration"
       ORGANISATIONS_ENABLED: false
