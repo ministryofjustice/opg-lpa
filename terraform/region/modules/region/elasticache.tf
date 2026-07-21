@@ -44,7 +44,7 @@ resource "aws_elasticache_replication_group" "new_front_cache" {
 resource "aws_elasticache_replication_group" "front_cache" {
   replication_group_id = "${local.account_name_short}-${local.region_name}-front-cache-rg"
   description          = "front cache replication group"
-  parameter_group_name = "default.redis6.x"
+  parameter_group_name = "default.redis7"
   engine               = "redis"
   engine_version       = "7.1"
   # cache.t2.micro is an invalid node type for the london eu-west-2 region
