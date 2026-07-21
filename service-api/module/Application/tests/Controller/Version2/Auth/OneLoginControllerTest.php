@@ -25,33 +25,32 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         return $controller;
     }
 
-    public function testStartActionReturnsBadRequestWhenRedirectUrlMissing(): void
+    /**
+     * @return array<string, array{string|null}>
+     */
+    public static function invalidRedirectUrlProvider(): array
+    {
+        return [
+            'null'         => [null],
+            'empty string' => [''],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidRedirectUrlProvider
+     */
+    public function testStartActionReturnsBadRequestForInvalidRedirectUrl(string|null $value): void
     {
         $this->params->shouldReceive('fromQuery')
             ->with('redirect_url')
-            ->andReturn(null)
+            ->andReturn($value)
             ->once();
 
-        $controller = $this->getOneLoginController();
-        $result     = $controller->startAction();
+        $result = $this->getOneLoginController()->startAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertSame(400, $result->status);
         $this->assertStringContainsString('redirect_url', $result->detail);
-    }
-
-    public function testStartActionReturnsBadRequestWhenRedirectUrlBlank(): void
-    {
-        $this->params->shouldReceive('fromQuery')
-            ->with('redirect_url')
-            ->andReturn('')
-            ->once();
-
-        $controller = $this->getOneLoginController();
-        $result     = $controller->startAction();
-
-        $this->assertInstanceOf(ApiProblem::class, $result);
-        $this->assertSame(400, $result->status);
     }
 
     public function testStartActionReturnsJsonModelWithServiceResult(): void
@@ -73,8 +72,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->andReturn($serviceResult)
             ->once();
 
-        $controller = $this->getOneLoginController();
-        $result     = $controller->startAction();
+        $result = $this->getOneLoginController()->startAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals($serviceResult, $result->getVariables());
