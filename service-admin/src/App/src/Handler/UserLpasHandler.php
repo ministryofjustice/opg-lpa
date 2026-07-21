@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\RequestAttributes;
 use App\Service\User\UserService;
-use App\Handler\Traits\JwtTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -18,8 +18,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
  */
 class UserLpasHandler extends AbstractHandler
 {
-    use JwtTrait;
-
     public function __construct(private readonly UserService $userService)
     {
     }
@@ -46,7 +44,7 @@ class UserLpasHandler extends AbstractHandler
         }
 
         $this->auditLog(
-            $request->getAttribute('user')->id,
+            $request->getAttribute(RequestAttributes::USER_EMAIL),
             'admin.user.lpas.view',
             'Admin viewed user LPAs',
             [
