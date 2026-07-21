@@ -220,6 +220,8 @@ locals {
         retries     = 3
       },
       volumesFrom = [],
+      privileged  = false,
+      user        = "app-user",
       logConfiguration = {
         logDriver = "awslogs",
         options = {

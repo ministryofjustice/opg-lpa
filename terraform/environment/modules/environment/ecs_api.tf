@@ -264,6 +264,8 @@ locals {
       },
       command     = ["php-fpm"]
       volumesFrom = [],
+      privileged  = false,
+      user        = "app-user",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
