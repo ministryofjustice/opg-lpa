@@ -70,3 +70,8 @@ import {
   to = aws_iam_role_policy.vpc_flow_logs
   id = "vpc_flow_logs:vpc_flow_logs"
 }
+
+import {
+  to = aws_dynamodb_table.workspace_cleanup_table[0]
+  id = "WorkspaceCleanup"
+}
