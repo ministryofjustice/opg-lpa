@@ -6,11 +6,11 @@ namespace AppTest\Handler;
 
 use App\Form\UserSearch;
 use App\Handler\UserSearchHandler;
+use App\RequestAttributes;
 use App\Service\User\UserService;
 use AppTest\Common;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequest;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
@@ -31,11 +31,31 @@ class UserSearchHandlerTest extends TestCase
         $this->mockTemplateRenderer = $this->createMock(TemplateRendererInterface::class);
         $this->mockLogger = $this->createMock(LoggerInterface::class);
 
-        $_SESSION['jwt-payload'] =  ['csrf' => Common::TEST_CSRF_TOKEN];
-
         $this->handler = new UserSearchHandler($this->mockUserService);
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
         $this->handler->setLogger($this->mockLogger);
+    }
+
+    private function makeGetRequest(array $queryParams = []): ServerRequest
+    {
+        return (new ServerRequest())
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withQueryParams($queryParams)
+            ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
+    }
+
+    private function makePostRequest(array $body, string $adminEmail = null): ServerRequest
+    {
+        $request = (new ServerRequest())
+            ->withMethod(RequestMethodInterface::METHOD_POST)
+            ->withParsedBody($body)
+            ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
+
+        if ($adminEmail !== null) {
+            $request = $request->withAttribute(RequestAttributes::USER_EMAIL, $adminEmail);
+        }
+
+        return $request;
     }
 
     public function testRendersForm()
@@ -48,17 +68,12 @@ class UserSearchHandlerTest extends TestCase
                     && $args['form']->get('email')->getValue() === 'user@example.com')
             )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withQueryParams(['email' => 'user@example.com']);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makeGetRequest(['email' => 'user@example.com']));
     }
 
     public function testSubmitsSearch()
     {
         $user = new User(['name' => new Name(['first' => 'David'])]);
-        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserSearch::class);
 
         $this->mockUserService->expects($this->once())
@@ -74,18 +89,15 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === $user)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret])
-            ->withAttribute('user', $adminUser);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret],
+            'admin@example.com'
+        ));
     }
 
     public function testSubmitsSearchByUserId()
     {
         $user = ['userId' => 'abc123', 'isActive' => true];
-        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserSearch::class);
 
         $this->mockUserService->expects($this->once())
@@ -100,18 +112,15 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === $user)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'abc123', 'searchType' => 'userId', 'secret' => $secret])
-            ->withAttribute('user', $adminUser);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'abc123', 'searchType' => 'userId', 'secret' => $secret],
+            'admin@example.com'
+        ));
     }
 
     public function testSubmitsSearchByAReference()
     {
         $user = ['userId' => 'abc123def456', 'isActive' => true];
-        $adminUser = new User(['id' => 'admin-id']);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserSearch::class);
 
         $this->mockUserService->expects($this->once())
@@ -126,27 +135,20 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === $user)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'A-99998888882', 'searchType' => 'aReference', 'secret' => $secret])
-            ->withAttribute('user', $adminUser);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'A-99998888882', 'searchType' => 'aReference', 'secret' => $secret],
+            'admin@example.com'
+        ));
     }
 
     public function testAuditLogsSuccessfulSearch()
     {
-        $adminUser = new User([
-            'id' => 'admin-id',
-            'email' => new EmailAddress(['address' => 'admin@example.com']),
-        ]);
-        $foundUser = new User(['name' => new Name(['first' => 'David'])]);
         $secret = hash('sha512', Common::TEST_CSRF_TOKEN . UserSearch::class);
 
         $this->mockUserService->expects($this->once())
             ->method('search')
             ->with('user@example.com')
-            ->willReturn($foundUser);
+            ->willReturn(new User(['name' => new Name(['first' => 'David'])]));
 
         $this->mockTemplateRenderer->method('render')->willReturn('response');
 
@@ -156,17 +158,15 @@ class UserSearchHandlerTest extends TestCase
                 'Admin viewed user data',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.search'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && $context['searched_for'] === 'user@example.com')
             );
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret])
-            ->withAttribute('user', $adminUser);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret],
+            'admin@example.com'
+        ));
     }
 
     public function testRendersErrorWhenUserNotFound()
@@ -178,7 +178,6 @@ class UserSearchHandlerTest extends TestCase
             ->with('user@example.com')
             ->willReturn(false);
 
-        // No audit log fires when no user is found
         $this->mockLogger->expects($this->never())->method('info');
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
@@ -189,11 +188,9 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === null)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret]);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret]
+        ));
     }
 
     public function testRendersErrorWhenUserNotFoundByUserId()
@@ -215,11 +212,9 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === null)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'abc123', 'searchType' => 'userId', 'secret' => $secret]);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'abc123', 'searchType' => 'userId', 'secret' => $secret]
+        ));
     }
 
     public function testRendersErrorWhenUserNotFoundByAReference()
@@ -241,17 +236,13 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === null)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'A-99998888882', 'searchType' => 'aReference', 'secret' => $secret]);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'A-99998888882', 'searchType' => 'aReference', 'secret' => $secret]
+        ));
     }
 
     public function testRequiresCsrf()
     {
-        $secret = 'not_the_real_hash'; // pragma: allowlist secret
-
         $this->mockUserService->expects($this->never())->method('search');
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
@@ -264,10 +255,8 @@ class UserSearchHandlerTest extends TestCase
                 && $args['user'] === null)
         )->willReturn('response');
 
-        $request = new ServerRequest()
-            ->withMethod(RequestMethodInterface::METHOD_POST)
-            ->withParsedBody(['email' => 'user@example.com', 'searchType' => 'email', 'secret' => $secret]);
-
-        $this->handler->handle($request);
+        $this->handler->handle($this->makePostRequest(
+            ['email' => 'user@example.com', 'searchType' => 'email', 'secret' => 'not_the_real_hash'] // pragma: allowlist secret
+        ));
     }
 }

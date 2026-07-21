@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\ApiClient;
 
 use GuzzleHttp\Psr7\Uri;
@@ -33,7 +35,7 @@ class Client
         $url = new Uri($this->apiBaseUri . $path);
 
         foreach ($query as $name => $value) {
-            $url = Uri::withQueryValue($url, $name, urlencode($value));
+            $url = Uri::withQueryValue($url, $name, urlencode((string) $value));
         }
 
         $request = new Request('GET', $url, $this->buildHeaders());
@@ -52,62 +54,18 @@ class Client
     }
 
     /**
-     * Performs a POST against the API
-     *
-     * @param string $path
-     * @param mixed $payload
-     * @return mixed|null
-     * @throw RuntimeException | ApiException
-     */
-    public function httpPost($path, $payload = [])
-    {
-        $url = new Uri($this->apiBaseUri . $path);
-
-        $encodedPayload = json_encode($payload);
-
-        if (!$encodedPayload) {
-            // JSON parse error
-            throw new \RuntimeException('Invalid JSON payload supplied as POST body');
-        }
-
-        $request = new Request('POST', $url, $this->buildHeaders(), $encodedPayload);
-
-        $response = $this->httpClient->sendRequest($request);
-
-        switch ($response->getStatusCode()) {
-            case 200:
-            case 201:
-                return $this->handleResponse($response);
-            default:
-                return $this->handleErrorResponse($response);
-        }
-    }
-
-    /**
      * Generates the standard set of HTTP headers expected by the API
      *
      * @return array<string, string>
      */
     private function buildHeaders()
     {
-        $headers = [
+        return [
             'Accept'       => 'application/json, application/problem+json',
             'Content-Type' => 'application/json',
             'User-agent'   => 'LPA-ADMIN',
+            'X-Shared-Secret'   => $this->serviceSecret,
         ];
-
-        if ($this->serviceSecret !== '') {
-            $headers['X-Shared-Secret'] = $this->serviceSecret;
-        } else {
-            $apiToken = $_SESSION['jwt-payload']['token'] ?? null;
-
-            //  If the logged-in user has an auth token already then set that in the header
-            if (is_string($apiToken)) {
-                $headers['token'] = $apiToken;
-            }
-        }
-
-        return $headers;
     }
 
     /**

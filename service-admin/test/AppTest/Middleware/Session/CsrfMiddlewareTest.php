@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace AppTest\Middleware\Session;
 
 use App\Middleware\Session\CsrfMiddleware;
+use App\RequestAttributes;
 use GuzzleHttp\Psr7\HttpFactory;
 use Laminas\Diactoros\ServerRequest;
-use Mezzio\Router\Route;
-use Mezzio\Router\RouteResult;
+use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\ServerRequestInterface;
@@ -26,30 +26,59 @@ class CsrfMiddlewareTest extends TestCase
         return $handler->reveal();
     }
 
-    private function makeRouteResult(bool $unauthenticated): RouteResult
+    private function makeSession(?string $csrfToken = null): SessionInterface
     {
-        $route = $this->prophesize(Route::class);
-        $route->getOptions()->willReturn(
-            $unauthenticated ? ['unauthenticated_route' => true] : []
-        );
+        $session = $this->prophesize(SessionInterface::class);
 
-        $result = $this->prophesize(RouteResult::class);
-        $result->getMatchedRoute()->willReturn($route->reveal());
-        return $result->reveal();
+        if ($csrfToken !== null) {
+            $session->has('csrf')->willReturn(true);
+            $session->get('csrf')->willReturn($csrfToken);
+        } else {
+            $token = str_repeat('a', 64);
+            $session->has('csrf')->willReturn(false);
+            $session->set('csrf', \Prophecy\Argument::type('string'))->shouldBeCalled();
+            $session->get('csrf')->willReturn($token);
+        }
+
+        return $session->reveal();
     }
 
-    public function testBypassesJwtSessionForUnauthenticatedRoute(): void
+    public function testSetsCsrfTokenOnRequest(): void
     {
-        // Unauthenticated routes have no $_SESSION['jwt-payload'] — must not throw.
         $middleware = new CsrfMiddleware();
+        $token = str_repeat('x', 64);
 
-        unset($_SESSION['jwt-payload']);
+        $capturedRequest = null;
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler->handle(\Prophecy\Argument::that(function ($req) use (&$capturedRequest) {
+            $capturedRequest = $req;
+            return true;
+        }))->willReturn((new HttpFactory())->createResponse(200));
 
         $request = (new ServerRequest())
-            ->withAttribute(RouteResult::class, $this->makeRouteResult(true));
+            ->withAttribute(SessionInterface::class, $this->makeSession($token));
 
-        $response = $middleware->process($request, $this->makeHandler(200));
+        $middleware->process($request, $handler->reveal());
 
-        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame($token, $capturedRequest->getAttribute(RequestAttributes::CSRF_TOKEN));
+    }
+
+    public function testGeneratesTokenWhenNotInSession(): void
+    {
+        $middleware = new CsrfMiddleware();
+
+        $capturedRequest = null;
+        $handler = $this->prophesize(RequestHandlerInterface::class);
+        $handler->handle(\Prophecy\Argument::that(function ($req) use (&$capturedRequest) {
+            $capturedRequest = $req;
+            return true;
+        }))->willReturn((new HttpFactory())->createResponse(200));
+
+        $request = (new ServerRequest())
+            ->withAttribute(SessionInterface::class, $this->makeSession());
+
+        $middleware->process($request, $handler->reveal());
+
+        $this->assertNotNull($capturedRequest->getAttribute(RequestAttributes::CSRF_TOKEN));
     }
 }
