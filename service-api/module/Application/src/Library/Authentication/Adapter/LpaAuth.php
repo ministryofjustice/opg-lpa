@@ -24,19 +24,14 @@ class LpaAuth implements AdapterInterface, LoggerAwareInterface
     /* @var string */
     private string $token;
 
-    /* @var array */
-    private array $adminAccounts;
-
     /**
      * @param AuthenticationService $authenticationService
      * @param string $token
-     * @param array $adminAccounts
      */
-    public function __construct(AuthenticationService $authenticationService, string $token, array $adminAccounts)
+    public function __construct(AuthenticationService $authenticationService, string $token)
     {
         $this->authenticationService = $authenticationService;
         $this->token = $token;
-        $this->adminAccounts = $adminAccounts;
     }
 
     /**
@@ -70,10 +65,6 @@ class LpaAuth implements AdapterInterface, LoggerAwareInterface
             $username = $data['username'];
 
             $user = new Identity\User($userId, $username);
-
-            if (in_array($username, $this->adminAccounts)) {
-                $user->setAsAdmin();
-            }
         }
 
         return new Result(is_null($user) ? Result::FAILURE_CREDENTIAL_INVALID : Result::SUCCESS, $user);

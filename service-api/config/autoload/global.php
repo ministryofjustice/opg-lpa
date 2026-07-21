@@ -30,9 +30,6 @@ return [
             ],
         ],
 
-        'accounts' => getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS') ?
-            explode(',', getenv('OPG_LPA_COMMON_ADMIN_ACCOUNTS')) : [],
-
         'account_cleanup_notification_recipients' => getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS') ?
             explode(',', getenv('OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS')) : [],
 
