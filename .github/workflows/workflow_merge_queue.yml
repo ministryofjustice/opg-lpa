@@ -114,23 +114,23 @@ jobs:
     name: Lambda unit tests
     uses: ./.github/workflows/lambda_unit_tests.yml
 
-  terraform_account_preproduction:
-    name: TF Preproduction - Account
-    needs:
-      - set_variables
-      - snyk_iac_scan
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
-    with:
-      is_ephemeral: false
-      oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
-      terraform_apply: true
-      terraform_directory: ./terraform/account
-      terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-      terraform_workspace: preproduction
-    secrets:
-      GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-      SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
+  # terraform_account_preproduction:
+  #   name: TF Preproduction - Account
+  #   needs:
+  #     - set_variables
+  #     - snyk_iac_scan
+  #   uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
+  #   with:
+  #     is_ephemeral: false
+  #     oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PREPRODUCTION }}
+  #     terraform_apply: true
+  #     terraform_directory: ./terraform/account
+  #     terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
+  #     terraform_workspace: preproduction
+  #   secrets:
+  #     GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  #     PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
+  #     SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
   terraform_region_preproduction:
     name: TF Preproduction - Region
