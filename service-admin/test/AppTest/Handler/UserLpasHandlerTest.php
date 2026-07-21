@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\UserLpasHandler;
+use App\RequestAttributes;
 use App\Service\User\UserService;
-use AppTest\Common;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequest;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\User\User;
 use PHPUnit\Framework\TestCase;
 use Mezzio\Template\TemplateRendererInterface;
@@ -28,8 +27,6 @@ class UserLpasHandlerTest extends TestCase
         $this->mockTemplateRenderer = $this->createMock(TemplateRendererInterface::class);
         $this->mockUserService = $this->createMock(UserService::class);
         $this->mockLogger = $this->createMock(LoggerInterface::class);
-
-        $_SESSION['jwt-payload'] = ['csrf' => Common::TEST_CSRF_TOKEN];
 
         $this->handler = new UserLpasHandler($this->mockUserService);
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
@@ -112,10 +109,6 @@ class UserLpasHandlerTest extends TestCase
 
     public function testAuditLogsUserLpasView()
     {
-        $adminUser = new User([
-            'id' => 'admin-id',
-            'email' => new EmailAddress(['address' => 'admin@example.com']),
-        ]);
         $lpas = [['uId' => 'M-1234-5678-9012']];
 
         $this->mockUserService->expects($this->once())
@@ -131,17 +124,17 @@ class UserLpasHandlerTest extends TestCase
                 'Admin viewed user LPAs',
                 $this->callback(fn ($context) =>
                     $context['event'] === 'admin.user.lpas.view'
-                    && $context['admin_id'] === 'admin-id'
-                    && !array_key_exists('admin_email', $context)
+                    && $context['admin_email'] === 'admin@example.com'
+                    && !array_key_exists('admin_id', $context)
                     && !array_key_exists('viewed_user_email', $context)
                     && $context['viewed_user'] === '123'
                     && $context['lpa_count'] === 1)
             );
 
-        $request = new ServerRequest()
+        $request = (new ServerRequest())
             ->withMethod(RequestMethodInterface::METHOD_GET)
             ->withAttribute('id', '123')
-            ->withAttribute('user', $adminUser)
+            ->withAttribute(RequestAttributes::USER_EMAIL, 'admin@example.com')
             ->withQueryParams(['email' => 'user@example.com']);
 
         $this->handler->handle($request);
