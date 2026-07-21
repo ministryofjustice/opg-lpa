@@ -60,3 +60,9 @@ variable "aws_iam_roles" {
     ip_blocker = any
   })
 }
+
+variable "elasticache_auth_token_secret_id" {
+  type        = string
+  sensitive   = true
+  description = "The ARN or name of the Secrets Manager secret that contains the auth token for ElastiCache."
+}
