@@ -55,7 +55,7 @@ resource "aws_lb_listener" "admin_loadbalancer" {
         issuer                              = "https://cognito-idp.eu-west-1.amazonaws.com/${var.admin_cognito.user_pool_id}"
         on_unauthenticated_request          = "authenticate"
         scope                               = "openid"
-        session_cookie_name                 = "AWSELBAuthSessionCookie"
+        session_cookie_name                 = local.admin_alb_session_cookie_name
         session_timeout                     = var.admin_cognito.user_pool_id_token_validity
         token_endpoint                      = "${var.admin_cognito.user_pool_domain_name}/oauth2/token"
         user_info_endpoint                  = "${var.admin_cognito.user_pool_domain_name}/oauth2/userInfo"

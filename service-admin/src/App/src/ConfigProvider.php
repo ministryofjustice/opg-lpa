@@ -63,7 +63,7 @@ class ConfigProvider
             'invokables' => [
                 //  Handlers
                 Handler\HomeHandler::class => Handler\HomeHandler::class,
-                Handler\SignOutHandler::class => Handler\SignOutHandler::class,
+                Handler\SignInHandler::class => Handler\SignInHandler::class,
 
                 //  Middleware
                 Middleware\Session\CsrfMiddleware::class => Middleware\Session\CsrfMiddleware::class,
@@ -80,16 +80,16 @@ class ConfigProvider
                 //  Note: FeedbackHandler, SystemMessageHandler, UserFindHandler,
                 //  UserLpasHandler and UserSearchHandler are autowired by laminas/laminas-di
                 //  as their constructors only depend on other container-known services.
-                Handler\SignInHandler::class => Handler\SignInHandlerFactory::class,
+                Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
 
                 SessionMiddleware::class => function ($c) {
                     return new SessionMiddleware($c->get(SessionPersistenceInterface::class));
                 },
 
                 //  Middleware
-                Middleware\Session\JwtMiddleware::class => Middleware\Session\JwtMiddlewareFactory::class,
+                Middleware\Authorization\AlbOidcMiddleware::class => Middleware\Authorization\AlbOidcMiddlewareFactory::class,
+                Middleware\Authorization\AlbSimulatorMiddleware::class => Middleware\Authorization\AlbSimulatorMiddlewareFactory::class,
                 Middleware\Authorization\AuthorizationMiddleware::class => Middleware\Authorization\AuthorizationMiddlewareFactory::class,
-                Middleware\Session\SessionMiddleware::class => Middleware\Session\SessionMiddlewareFactory::class,
                 Middleware\ViewData\ViewDataMiddleware::class => Middleware\ViewData\ViewDataMiddlewareFactory::class,
                 LoggerInterface::class => LoggerFactory::class,
                 RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
@@ -99,7 +99,6 @@ class ConfigProvider
                 //  by laminas/laminas-di as their constructors only depend on the ApiClient service.
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
-
             ],
             'initializers' => [
                 Handler\Initializers\TemplatingSupportInitializer::class,
