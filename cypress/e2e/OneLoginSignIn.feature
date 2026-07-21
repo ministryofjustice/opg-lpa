@@ -1,3 +1,4 @@
+@RequiresOneLogin
 Feature: One Login Sign In
   As a Make User
   When I want to access the service
