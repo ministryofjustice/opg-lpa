@@ -61,8 +61,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setAwsSignatureV4' => 'AwsApiGatewaySignature',
         ],
         OneLogin\Service::class => [
-            'setClient' => Client::class,
-            'setConfig' => 'config',
+            'setConfig'                   => 'config',
+            'setDiscoveryDocumentFetcher' => OneLogin\DiscoveryDocumentFetcher::class,
         ],
     ];
 

@@ -27,12 +27,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->service = new Service();
         $this->service->setLogger($logger);
-        $this->service->setConfig([
-            'onelogin' => [
-                'client_id'     => 'test-client-id',
-                'discovery_url' => 'https://oidc.example.com/.well-known/openid-configuration',
-            ],
-        ]);
+        $this->service->setConfig(['onelogin' => ['client_id' => 'test-client-id']]);
         $this->service->setDiscoveryDocumentFetcher($this->fetcher);
     }
 
@@ -48,11 +43,9 @@ class ServiceTest extends MockeryTestCase
         $this->assertArrayHasKey('nonce', $result);
         $this->assertArrayHasKey('url', $result);
 
-        // state must be 16 chars of [A-Za-z0-9_-] (base64url of 12 bytes)
-        $this->assertMatchesRegularExpression('/^[A-Za-z0-9_-]{16}$/', $result['state']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{24}$/', $result['state']);
 
-        // nonce must be 64 hex chars (sha256 of 24 bytes)
-        $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $result['nonce']);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{32}$/', $result['nonce']);
 
         // Parse the built URL query and assert every required parameter
         $urlParts = parse_url($result['url']);
@@ -89,12 +82,7 @@ class ServiceTest extends MockeryTestCase
 
     public function testMissingClientIdThrows(): void
     {
-        $this->service->setConfig([
-            'onelogin' => [
-                'client_id'     => null,
-                'discovery_url' => 'https://oidc.example.com/.well-known/openid-configuration',
-            ],
-        ]);
+        $this->service->setConfig(['onelogin' => ['client_id' => null]]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('onelogin.client_id');
@@ -102,19 +90,16 @@ class ServiceTest extends MockeryTestCase
         $this->service->createAuthenticationRequest('https://example.com/auth/redirect');
     }
 
-    public function testMissingDiscoveryUrlThrows(): void
+    public function testMissingFetcherThrows(): void
     {
-        $this->service->setConfig([
-            'onelogin' => [
-                'client_id'     => 'test-client-id',
-                'discovery_url' => null,
-            ],
-        ]);
+        $service = new Service();
+        $service->setLogger(Mockery::spy(LoggerInterface::class));
+        $service->setConfig(['onelogin' => ['client_id' => 'test-client-id']]);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('onelogin.discovery_url');
+        $this->expectExceptionMessage('DiscoveryDocumentFetcher');
 
-        $this->service->createAuthenticationRequest('https://example.com/auth/redirect');
+        $service->createAuthenticationRequest('https://example.com/auth/redirect');
     }
 
     /**

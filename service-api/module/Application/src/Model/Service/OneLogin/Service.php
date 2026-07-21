@@ -3,7 +3,6 @@
 namespace Application\Model\Service\OneLogin;
 
 use Application\Model\Service\AbstractService;
-use GuzzleHttp\Client;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
 
@@ -12,10 +11,9 @@ class Service extends AbstractService
     use LoggerTrait;
 
     private array $config = [];
-    private ?Client $client = null;
+    private ?DiscoveryDocumentFetcher $discoveryDocumentFetcher = null;
     /** @var callable(positive-int): string */
     private $randomBytes;
-    private ?DiscoveryDocumentFetcher $discoveryDocumentFetcher = null;
 
     /**
      * @psalm-suppress PossiblyUnusedMethod
@@ -36,30 +34,19 @@ class Service extends AbstractService
     /**
      * @psalm-suppress PossiblyUnusedMethod
      */
-    public function setClient(Client $client): void
+    public function setDiscoveryDocumentFetcher(DiscoveryDocumentFetcher $fetcher): void
     {
-        $this->client = $client;
+        $this->discoveryDocumentFetcher = $fetcher;
     }
 
     /**
      * Optional seam for tests: override the random-byte generator.
      *
      * @param callable(positive-int): string $generator
-     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setRandomByteGenerator(callable $generator): void
     {
         $this->randomBytes = $generator;
-    }
-
-    /**
-     * Optional seam for tests: override the discovery-document fetcher.
-     *
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setDiscoveryDocumentFetcher(DiscoveryDocumentFetcher $fetcher): void
-    {
-        $this->discoveryDocumentFetcher = $fetcher;
     }
 
     /**
@@ -70,31 +57,23 @@ class Service extends AbstractService
      */
     public function createAuthenticationRequest(string $redirectUrl): array
     {
-        $clientId     = $this->config['onelogin']['client_id'] ?? null;
-        $discoveryUrl = $this->config['onelogin']['discovery_url'] ?? null;
+        $clientId = $this->config['onelogin']['client_id'] ?? null;
 
         if (!is_string($clientId) || $clientId === '') {
             throw new RuntimeException('Missing required config: onelogin.client_id');
         }
 
-        if (!is_string($discoveryUrl) || $discoveryUrl === '') {
-            throw new RuntimeException('Missing required config: onelogin.discovery_url');
-        }
-
         $generator = $this->randomBytes;
 
-        $state = rtrim(strtr(base64_encode($generator(12)), '+/', '-_'), '=');
+        $state = bin2hex($generator(12));
 
-        $nonce = hash('sha256', $generator(24));
+        $nonce = bin2hex($generator(16));
 
-        if ($this->discoveryDocumentFetcher === null && $this->client === null) {
-            throw new RuntimeException('HTTP client must be set via setClient() when no custom DiscoveryDocumentFetcher is provided');
+        if ($this->discoveryDocumentFetcher === null) {
+            throw new RuntimeException('DiscoveryDocumentFetcher must be set via setDiscoveryDocumentFetcher()');
         }
 
-        $fetcher = $this->discoveryDocumentFetcher
-            ?? new DiscoveryDocumentFetcher($this->client, $discoveryUrl);
-
-        $authorizationEndpoint = $fetcher->authorizationEndpoint();
+        $authorizationEndpoint = $this->discoveryDocumentFetcher->authorizationEndpoint();
 
         $url = $authorizationEndpoint . '?' . http_build_query([
             'response_type' => 'code',

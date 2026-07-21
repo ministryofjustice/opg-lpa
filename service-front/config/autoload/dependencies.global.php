@@ -167,7 +167,7 @@ return [
                 $c->get(TemplateRendererInterface::class),
                 $c->get(\Laminas\Form\FormElementManager::class),
                 $c->get(\App\Authentication\AuthenticationService::class),
-                getenv('ONELOGIN_ENABLED') === 'true',
+                App\Feature::OneLogin->isEnabled(),
             ),
             StatusHandler::class                          => static fn(ContainerInterface $c) => new StatusHandler(
                 $c->get(TemplateRendererInterface::class),

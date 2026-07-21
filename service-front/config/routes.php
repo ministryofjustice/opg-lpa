@@ -165,7 +165,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
 
-    if (getenv('ONELOGIN_ENABLED') === 'true') {
+    if (App\Feature::OneLogin->isEnabled()) {
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account');
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
