@@ -12,11 +12,6 @@ ignore:
         reason: Scheduled for fix LPAL-1095
         expires: 2026-07-05T13:21:30.702Z
         created: 2026-05-06T13:21:30.709Z
-  SNYK-CC-TF-215:
-    - '*':
-        reason: Scheduled for fix LPAL-2080
-        expires: 2026-07-05T13:24:01.814Z
-        created: 2026-05-06T13:24:01.821Z
   SNYK-CC-TF-119:
     - '*':
         reason: Policy merged with others to produce more restrictive policy
