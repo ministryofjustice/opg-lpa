@@ -80,9 +80,23 @@ class ServiceTest extends MockeryTestCase
         $this->assertNotSame($first['nonce'], $second['nonce']);
     }
 
-    public function testMissingClientIdThrows(): void
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidClientIdProvider(): array
     {
-        $this->service->setConfig(['onelogin' => ['client_id' => null]]);
+        return [
+            'null'         => [null],
+            'empty string' => [''],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidClientIdProvider
+     */
+    public function testInvalidClientIdThrows(mixed $clientId): void
+    {
+        $this->service->setConfig(['onelogin' => ['client_id' => $clientId]]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('onelogin.client_id');
