@@ -21,6 +21,7 @@ class UserService
     {
     }
 
+    /** @psalm-suppress PossiblyUnusedMethod */
     public function fetch(string $id): ?User
     {
         $userData = $this->client->httpGet('/v2/user/' . $id);

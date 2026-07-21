@@ -17,5 +17,11 @@ Cypress.env("email","caspertests+" + userNumber + "@lpa.opg.service.justice.gov.
 Cypress.env("seeded_email", "seeded_test_user@digital.justice.gov.uk");
 Cypress.env("second_seeded_email", "seeded_test_user2@digital.justice.gov.uk");
 Cypress.env("seeded_password", "Pass1234");
+
+// Test user seeded into the admin Cognito user pool, used to sign in via the
+// Cognito hosted UI when running against deployed infra (see i_log_in.js).
+Cypress.env("admin_cognito_username", "seeded_test_user");
+Cypress.env("admin_cognito_password", "Password1234!@£$");
+
 Cypress.env("a11yCheckedPages", new Set());
 Cypress.env("clonedLpa", false);
