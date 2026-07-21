@@ -53,7 +53,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   at_rest_encryption_enabled = true
   automatic_failover_enabled = true
   transit_encryption_enabled = true
-  transit_encryption_mode    = "preferred"
+  transit_encryption_mode    = "required"
   auth_token                 = data.aws_secretsmanager_secret_version.elasticache_auth_token.secret_string
   kms_key_id                 = data.aws_kms_alias.elasticache_encryption_key.target_key_arn
   auth_token_update_strategy = "ROTATE"
