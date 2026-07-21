@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\Feedback;
-use App\Handler\Traits\JwtTrait;
+use App\RequestAttributes;
 use App\Service\Feedback\FeedbackService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,8 +20,6 @@ use DateTime;
  */
 class FeedbackHandler extends AbstractHandler
 {
-    use JwtTrait;
-
     /**
      * @var FeedbackService
      */
@@ -43,7 +41,7 @@ class FeedbackHandler extends AbstractHandler
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $form = new Feedback([
-            'csrf' => $this->getTokenData('csrf'),
+            'csrf' => $request->getAttribute(RequestAttributes::CSRF_TOKEN),
         ]);
 
         $feedback = null;
@@ -82,7 +80,7 @@ class FeedbackHandler extends AbstractHandler
                     $isExport = (array_key_exists('export', $queryParams) && $queryParams['export'] === 'true');
 
                     $this->auditLog(
-                        $request->getAttribute('user')->id,
+                        $request->getAttribute(RequestAttributes::USER_EMAIL),
                         $isExport ? 'admin.feedback.export' : 'admin.feedback.search',
                         $isExport ? 'Admin exported feedback' : 'Admin searched feedback',
                         [
