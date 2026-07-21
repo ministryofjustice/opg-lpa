@@ -5,7 +5,7 @@ variable "default_role" {
 }
 
 variable "pagerduty_token" {
-  description = "pagerduty token"
+  description = "The API token of the PagerDuty service"
   type        = string
   sensitive   = true
 }
