@@ -17,6 +17,15 @@ RUN apk update \
     && docker-php-ext-install gd \
     && docker-php-ext-install sockets
 
+RUN wget -q --timeout=10 -O /dev/null \
+        "https://ghcr.io/token?service=ghcr.io&scope=repository:php/pie:pull" \
+    || { echo ""; \
+         echo "ERROR: The PIE (PHP Installation Engine) registry at ghcr.io is not reachable."; \
+         echo "This build requires the PIE binary from ghcr.io/php/pie to install PHP extensions."; \
+         echo "Check GitHub Container Registry status: https://www.githubstatus.com/"; \
+         echo ""; \
+         exit 1; }
+
 COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
 
 # only install poppler-utils and imagemagick, used by visual diff tests, if VISUAL_TESTS is set to true in the build stage
