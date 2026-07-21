@@ -75,18 +75,6 @@ resource "aws_secretsmanager_secret" "opg_lpa_admin_service_secret" {
   }
 }
 
-resource "aws_secretsmanager_secret" "opg_lpa_admin_jwt_secret" {
-  name                           = "${local.account_name}/opg_lpa_admin_jwt_secret"
-  tags                           = local.admin_component_tag
-  kms_key_id                     = module.secrets_manager_encryption_key.primary_key.arn
-  force_overwrite_replica_secret = true
-
-  replica {
-    region     = "eu-west-2"
-    kms_key_id = module.secrets_manager_encryption_key.replica_keys.eu-west-2.arn
-  }
-}
-
 # front secrets
 resource "aws_secretsmanager_secret" "opg_lpa_front_gov_pay_key" {
   name                           = "${local.account_name}/opg_lpa_front_gov_pay_key"

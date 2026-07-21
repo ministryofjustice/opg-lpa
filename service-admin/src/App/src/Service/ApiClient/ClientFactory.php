@@ -23,9 +23,7 @@ class ClientFactory
 
         $config = $container->get('config');
 
-        $secret = $config['shared_secret_enabled'] === true
-            ? ($config['service_secret'] ?? '')
-            : '';
+        $secret = ($config['service_secret'] ?? '');
 
         return new Client(
             $httpClient,

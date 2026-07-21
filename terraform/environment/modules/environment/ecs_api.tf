@@ -309,7 +309,6 @@ locals {
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "AWS_REGION", value = data.aws_region.current.region },
-        { name = "OPG_LPA_SHARED_SECRET_ENABLED", value = tostring(var.environment.shared_secret_enabled) },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
         { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
       ]

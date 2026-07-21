@@ -41,11 +41,9 @@ class AuthenticationListener implements LoggerAwareInterface
         // (VPC security groups) is the primary control; this provides an explicit identity.
         /** @psalm-suppress UndefinedInterfaceMethod */
         $adminAuthHeader = $e->getRequest()->getHeader('X-Shared-Secret');
-
         $config = $serviceManager->get('Config');
-        $sharedSecretEnabled = $config['admin']['shared_secret_enabled'] ?? null;
 
-        if ($adminAuthHeader && $sharedSecretEnabled === true) {
+        if ($adminAuthHeader) {
             $adminServiceSecret = $config['admin']['service_secret'] ?? '';
 
             if ($adminServiceSecret !== '' && trim($adminAuthHeader->getFieldValue()) === $adminServiceSecret) {
