@@ -81,8 +81,6 @@ class AuthenticationListenerTest extends MockeryTestCase
 
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
-        $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['accounts' => ['value']]])->once();
         $this->serviceManager->shouldReceive('get')->with(Service::class)
             ->andReturn(Mockery::mock(Service::class))->once();
 
@@ -108,8 +106,6 @@ class AuthenticationListenerTest extends MockeryTestCase
 
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
 
-        $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => ['accounts' => ['value']]])->once();
         $this->serviceManager->shouldReceive('get')->with(Service::class)
             ->andReturn(Mockery::mock(Service::class))->once();
 
@@ -152,9 +148,6 @@ class AuthenticationListenerTest extends MockeryTestCase
         $storage->shouldReceive('write')->with(Mockery::type(Guest::class))->once();
 
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
-
-        $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => []])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
@@ -236,9 +229,6 @@ class AuthenticationListenerTest extends MockeryTestCase
         $storage = Mockery::mock(StorageInterface::class);
         $storage->shouldReceive('write')->with(Mockery::type(Guest::class))->once();
         $this->authService->shouldReceive('getStorage')->andReturn($storage)->once();
-
-        $this->serviceManager->shouldReceive('get')->with('Config')
-            ->andReturn(['admin' => []])->once();
 
         $authenticationListener = new AuthenticationListener();
         $authenticationListener->setLogger($this->logger);
