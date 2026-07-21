@@ -15,9 +15,7 @@ class OneLoginController extends AbstractAuthController
     protected function getService(): OneLoginService
     {
         /** @var OneLoginService $service */
-        $service = $this->service;
-
-        return $service;
+        return $this->service;
     }
 
     /**
@@ -38,7 +36,6 @@ class OneLoginController extends AbstractAuthController
 
         TelemetryEventManager::triggerStop();
 
-        /** @psalm-suppress DeprecatedClass */
         return new JsonModel($result);
     }
 }

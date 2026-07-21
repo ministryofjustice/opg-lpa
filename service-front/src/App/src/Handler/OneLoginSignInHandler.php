@@ -11,6 +11,7 @@ use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class OneLoginSignInHandler implements RequestHandlerInterface
 {
@@ -23,13 +24,17 @@ class OneLoginSignInHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $baseUrl     = getenv('ONELOGIN_REDIRECT_BASE_URL') ?: null;
         $uri         = $request->getUri();
-        $redirectUri = $uri->getScheme() . '://' . $uri->getAuthority() . '/auth/redirect';
+        $redirectUri = ($baseUrl ?? ($uri->getScheme() . '://' . $uri->getAuthority())) . '/auth/redirect';
 
         $result = $this->oneLoginService->start($redirectUri);
 
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-        assert($session instanceof SessionInterface);
+
+        if (!$session instanceof SessionInterface) {
+            throw new RuntimeException('Session middleware is not configured');
+        }
 
         $session->set(self::SESSION_KEY_ONELOGIN, [
             'state' => $result['state'],
