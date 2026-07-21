@@ -63,6 +63,8 @@ locals {
         retries     = 3
       },
       volumesFrom = [],
+      privileged  = false,
+      user        = "aoc",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
