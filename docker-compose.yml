@@ -330,8 +330,11 @@ services:
       - "4548:8080"
     environment:
       PORT: "8080"
-      COGNITO_MOCK_ISSUER: "http://mock-cognito:8080"
       COGNITO_CLIENT_ID: "local-client-id"
+      # Must match admin-app's OPG_ADMIN_ALB_ARN below — the mock server signs this into
+      # the "signer" field of the token, exactly as a real ALB would, so admin-app's
+      # AlbOidcMiddleware validates it the same way in local dev as in production.
+      ADMIN_ALB_ARN: "arn:aws:elasticloadbalancing:eu-west-1:000000000000:loadbalancer/app/local-admin/0000000000000000"
     healthcheck:
       test: ["CMD", "/healthcheck"]
       interval: 10s
@@ -378,14 +381,15 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_ADMIN_JWT_SECRET: "test-secret-test-secret-test-secret-test-secret"
-
       OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
-      COGNITO_BASE_URL: "http://mock-cognito:8080"
-      COGNITO_ISSUER: "http://mock-cognito:8080"
-      COGNITO_CLIENT_ID: "local-client-id"
+      OPG_COGNITO_BASE_URL: "http://mock-cognito:8080"
+      OPG_COGNITO_CLIENT_ID: "local-client-id"
+      OPG_COGNITO_LOGOUT_URL: "http://localhost:4548/logout?client_id=local-client-id&logout_uri=https://localhost:7003/"
+      OPG_ADMIN_ALB_ARN: "arn:aws:elasticloadbalancing:eu-west-1:000000000000:loadbalancer/app/local-admin/0000000000000000"
+      OPG_ALB_PUBLIC_KEY_BASE_URL: "http://mock-cognito:8080/public-keys"
+      OPG_ADMIN_ALB_SESSION_COOKIE_NAME: "AWSELBAuthSessionCookie"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
@@ -547,6 +551,7 @@ services:
     volumes:
       - ./cypress:/app/cypress
       - ./cypress.config.js:/app/cypress.config.js
+      - ./.cypress-cucumber-preprocessorrc.json:/app/.cypress-cucumber-preprocessorrc.json
 
   npm-root:
     image: node:24.18.0-alpine3.23@sha256:595398b0081eacda8e1c4c5b97b76cd1020e4d58a8ebcb4843b9bca1e79e7436
