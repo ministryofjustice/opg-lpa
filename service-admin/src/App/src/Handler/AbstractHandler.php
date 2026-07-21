@@ -101,7 +101,7 @@ abstract class AbstractHandler implements
     }
 
     /**
-     * @param string|null $adminId The authenticated admin's user id
+     * @param string|null $adminEmail The authenticated admin's email address
      * @param string $event Dotted event name (e.g. "admin.user.search")
      * @param string $message Human-readable message
      * @param array<string, mixed> $context Additional context fields
@@ -109,7 +109,8 @@ abstract class AbstractHandler implements
      * @return void
      */
     protected function auditLog(
-        ?string $adminId,
+        #[\SensitiveParameter]
+        ?string $adminEmail,
         string $event,
         string $message,
         array $context = [],
@@ -117,7 +118,7 @@ abstract class AbstractHandler implements
     ): void {
         $baseContext = [
             'event' => $event,
-            'admin_id' => $adminId,
+            'admin_email' => $adminEmail,
         ];
 
         $this->getLogger()->{$level}($message, array_merge($baseContext, $context));
