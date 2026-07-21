@@ -214,6 +214,23 @@ jobs:
         with:
           registries: 311462405659
 
+      - name: Check PIE registry availability
+        if: ${{ matrix.with_xdebug }}
+        run: |
+          echo "Checking PIE (PHP Installation Engine) registry availability at ghcr.io/php/pie..."
+          if ! docker manifest inspect ghcr.io/php/pie:bin > /dev/null 2>&1; then
+            echo "::error::The PIE (PHP Installation Engine) registry is not available."
+            echo ""
+            echo "This development build requires the PIE binary from ghcr.io/php/pie to install"
+            echo "PHP extensions (e.g. xdebug). The Docker build will fail without it."
+            echo ""
+            echo "Please check:"
+            echo "  - GitHub Container Registry status: https://www.githubstatus.com/"
+            echo "  - PIE project:                      https://github.com/php/pie"
+            exit 1
+          fi
+          echo "PIE registry is available."
+
       - name: Build Image
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
