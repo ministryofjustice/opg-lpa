@@ -43,6 +43,7 @@ class Service extends AbstractService
      * Optional seam for tests: override the random-byte generator.
      *
      * @param callable(positive-int): string $generator
+     * @psalm-suppress PossiblyUnusedMethod
      */
     public function setRandomByteGenerator(callable $generator): void
     {
