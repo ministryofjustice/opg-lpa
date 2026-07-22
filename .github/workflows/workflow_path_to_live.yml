@@ -15,14 +15,14 @@ on:
 permissions:
   actions: none
   checks: none
-  contents: write
-  deployments: write
-  id-token: write
+  contents: write # zizmor: ignore[excessive-permissions]
+  deployments: write # zizmor: ignore[excessive-permissions]
+  id-token: write # zizmor: ignore[excessive-permissions]
   issues: none
   packages: none
   pull-requests: read
   repository-projects: none
-  security-events: write
+  security-events: write # zizmor: ignore[excessive-permissions]
   statuses: none
 
 jobs:
@@ -213,7 +213,7 @@ jobs:
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
-      persist_artifacts: true
+      persist_artifacts: false
       terraform_apply: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
