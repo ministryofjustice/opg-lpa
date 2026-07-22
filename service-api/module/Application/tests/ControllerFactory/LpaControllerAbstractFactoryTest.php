@@ -10,7 +10,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Laminas\Authentication\AuthenticationService;
 
 class LpaControllerAbstractFactoryTest extends MockeryTestCase
 {
@@ -46,8 +46,8 @@ class LpaControllerAbstractFactoryTest extends MockeryTestCase
 
     public function testCreateServiceWithName()
     {
-        $this->container->shouldReceive('get')->with(AuthorizationService::class)
-            ->andReturn(Mockery::mock(AuthorizationService::class))->once();
+        $this->container->shouldReceive('get')->with(AuthenticationService::class)
+            ->andReturn(Mockery::mock(AuthenticationService::class))->once();
         $this->container->shouldReceive('get')->with(ApplicationsService::class)
             ->andReturn(Mockery::mock(ApplicationsService::class))->once();
 

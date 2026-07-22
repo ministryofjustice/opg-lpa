@@ -5,13 +5,13 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
+use Application\Library\Authentication\Identity\User;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException as LaminasUnauthorizedException;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {
@@ -34,9 +34,9 @@ abstract class AbstractLpaController extends AbstractRestfulController
     protected $lpaId;
 
     /**
-     * @var AuthorizationService
+     * @var AuthenticationService
      */
-    protected $authorizationService;
+    protected $authenticationService;
 
     /**
      * @var mixed
@@ -44,12 +44,12 @@ abstract class AbstractLpaController extends AbstractRestfulController
     protected $service;
 
     /**
-     * @param AuthorizationService $authorizationService
+     * @param AuthenticationService $authenticationService
      * @param AbstractService $service
      */
-    public function __construct(AuthorizationService $authorizationService, AbstractService $service)
+    public function __construct(AuthenticationService $authenticationService, AbstractService $service)
     {
-        $this->authorizationService = $authorizationService;
+        $this->authenticationService = $authenticationService;
         $this->service = $service;
     }
 
@@ -103,15 +103,14 @@ abstract class AbstractLpaController extends AbstractRestfulController
      */
     protected function checkAccess()
     {
-        if (!$this->authorizationService->isGranted('authenticated')) {
-            throw new LaminasUnauthorizedException('You need to be authenticated to access this service');
+        $identity = $this->authenticationService->getIdentity();
+
+        if (!($identity instanceof User)) {
+            throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 
-        if (
-            !$this->authorizationService->isGranted('isAuthorizedToManageUser', $this->routeUserId) &&
-            !$this->authorizationService->isGranted('admin')
-        ) {
-            throw new LaminasUnauthorizedException('You do not have permission to access this service');
+        if ($identity->getId() !== $this->routeUserId && !$identity->hasRole('admin')) {
+            throw new UnauthorizedException('You do not have permission to access this service');
         }
     }
 }

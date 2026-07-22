@@ -6,7 +6,7 @@ use Application\Controller\Version2\Lpa as LpaControllers;
 use Application\Model\Service;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Laminas\Authentication\AuthenticationService;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -74,10 +74,10 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         //  Create the controller injecting the appropriate services
-        $authorizationService = $container->get(AuthorizationService::class);
+        $authenticationService = $container->get(AuthenticationService::class);
         $service = $container->get($this->serviceMappings[$requestedName]);
 
-        $controller = new $requestedName($authorizationService, $service);
+        $controller = new $requestedName($authenticationService, $service);
         $traitsUsed = class_uses($controller);
 
         if (in_array(LoggerTrait::class, $traitsUsed)) {

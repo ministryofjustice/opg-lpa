@@ -8,7 +8,7 @@ use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Applications\Service;
 use Laminas\Paginator\Paginator;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mockery;
 use Mockery\MockInterface;
@@ -24,7 +24,7 @@ class ApplicationControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new ApplicationController($this->authorizationService, $this->service);
+        $controller = new ApplicationController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 
