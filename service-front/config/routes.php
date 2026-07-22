@@ -20,6 +20,7 @@ use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
+use App\Handler\LinkAccountHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
@@ -166,10 +167,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
-        $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account');
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
+            ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
+            ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true]);
     }
 
