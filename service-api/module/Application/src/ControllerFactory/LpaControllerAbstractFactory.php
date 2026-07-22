@@ -11,6 +11,7 @@ use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerAwareInterface;
 
 class LpaControllerAbstractFactory implements AbstractFactoryInterface
 {
@@ -82,6 +83,7 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
         $traitsUsed = class_uses($controller);
 
         if (in_array(LoggerTrait::class, $traitsUsed)) {
+            assert($controller instanceof LoggerAwareInterface);
             $controller->setLogger($container->get('Logger'));
         }
         return $controller;
