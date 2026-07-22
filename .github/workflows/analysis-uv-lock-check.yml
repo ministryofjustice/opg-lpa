@@ -9,6 +9,18 @@ on:
     paths:
       - "**/*.toml"
       - "**/uv.lock"
+permissions:
+  actions: none
+  checks: none
+  contents: read
+  deployments: none
+  id-token: none
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: none
+  statuses: none
 
 jobs:
   uv-lock-check:
