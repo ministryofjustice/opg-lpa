@@ -349,6 +349,7 @@ dc-phpcs-fix:
 
 .PHONY: dc-phpcs-check
 dc-phpcs-check:
+	mkdir -p phpcs/output && chmod a+w phpcs/output
 	docker compose build phpcs
 	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
 
