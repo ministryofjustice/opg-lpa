@@ -1,35 +1,31 @@
 import { When } from '@badeball/cypress-cucumber-preprocessor';
 
-const ONELOGIN_BUTTON = '[data-cy=onelogin-signin-button]';
-
-When(`I log in as {string} test user`, function (name) {
-    logIn(this, Cypress.env(name + '-user'), Cypress.env(name + '-password'));
+When(`I log in as {string} test user`, (name) => {
+  let user = Cypress.env(name + '-user');
+  let password = Cypress.env(name + '-password');
+  logIn(user, password);
 });
 
-When(`I log in with user {string} password {string}`, function (user, password) {
-    logIn(this, user, password);
+When(`I log in with user {string} password {string}`, (user, password) => {
+  logIn(user, password);
 });
 
-When(`I log in as seeded user`, function () {
-    logInAsSeededUser(this);
+When(`I log in as seeded user`, () => {
+  logInAsSeededUser();
 });
 
-When(`I log in as seeded user on the current page`, function () {
-    cy.title().then((title) => {
-        expect(title.toLowerCase()).to.include('sign in');
-    });
+When(`I log in as seeded user on the current page`, () => {
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
 
-    signInOrSkip(this, () => {
-        cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
-        cy.get('[data-cy=login-password]')
-            .clear()
-            .type(Cypress.env('seeded_password'));
-        cy.get('[data-cy=login-submit-button]').click();
-    });
+  cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
+  cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));
+  cy.get('[data-cy=login-submit-button]').click();
 });
 
-When(`I log in as second seeded user`, function () {
-    logInAsSecondSeededUser(this);
+When(`I log in as second seeded user`, () => {
+  logInAsSecondSeededUser();
 });
 
 When(`I log in to admin using SSO`, () => {
@@ -81,58 +77,45 @@ function logInToAdminViaCognitoHostedUi() {
   });
 }
 
-When(`I log in as standard test user`, function () {
-    logInAsStandardUser(this);
+When(`I log in as standard test user`, () => {
+  logInAsStandardUser();
 });
 
-When(`I log in as appropriate test user`, function () {
-    // if we're running under CI , use the newly signed up user, otherwise, use the seeded user
-    if (Cypress.env('CI')) {
-        logInAsStandardUser(this);
-    } else {
-        logInAsSeededUser(this);
-    }
+When(`I log in as appropriate test user`, () => {
+  // if we're running under CI , use the newly signed up user, otherwise, use the seeded user
+  if (Cypress.env('CI')) {
+    logInAsStandardUser();
+  } else {
+    logInAsSeededUser();
+  }
 });
 
-function logInAsStandardUser(ctx) {
-    // log in using the standard user that gets created by running Signup.feature
-    logIn(ctx, Cypress.env('email'), Cypress.env('password'));
+function logInAsStandardUser() {
+  // log in using the standard user that gets created by running Signup.feature
+  logIn(Cypress.env('email'), Cypress.env('password'));
 }
 
-function logInAsSeededUser(ctx) {
-    // log in using seeded_test_user
-    logIn(ctx, Cypress.env('seeded_email'), Cypress.env('seeded_password'));
+function logInAsSeededUser() {
+  // log in using seeded_test_user
+  logIn(Cypress.env('seeded_email'), Cypress.env('seeded_password'));
 }
 
-function logInAsSecondSeededUser(ctx) {
-    // log in using seeded_test_user
-    logIn(ctx, Cypress.env('second_seeded_email'), Cypress.env('seeded_password'));
+function logInAsSecondSeededUser() {
+  // log in using seeded_test_user
+  logIn(Cypress.env('second_seeded_email'), Cypress.env('seeded_password'));
 }
 
-function signInOrSkip(ctx, passwordFormActions) {
-    cy.get('body').then(($body) => {
-        if ($body.find(ONELOGIN_BUTTON).length > 0) {
-            cy.get(ONELOGIN_BUTTON).should('be.visible');
-            cy.then(() => ctx.skip());
-        } else {
-            passwordFormActions();
-        }
-    });
-}
+function logIn(user, password, url) {
+  if (url === undefined) {
+    url = '/login';
+  }
+  cy.visitWithChecks(url);
 
-function logIn(ctx, user, password, url) {
-    if (url === undefined) {
-        url = '/login';
-    }
-    cy.visitWithChecks(url);
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
 
-    cy.title().then((title) => {
-        expect(title.toLowerCase()).to.include('sign in');
-    });
-
-    signInOrSkip(ctx, () => {
-        cy.get('[data-cy=login-email]').clear().type(user);
-        cy.get('[data-cy=login-password]').clear().type(password);
-        cy.get('[data-cy=login-submit-button]').click();
-    });
+  cy.get('[data-cy=login-email]').clear().type(user);
+  cy.get('[data-cy=login-password]').clear().type(password);
+  cy.get('[data-cy=login-submit-button]').click();
 }
