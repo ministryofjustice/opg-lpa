@@ -90,31 +90,12 @@ jobs:
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SNYK_OPG_ORG_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
 
-  # terraform_account_development:
-  #   name: TF Development - Account
-  #   needs:
-  #     - set_variables
-  #     - snyk_iac_scan
-  #   uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
-  #   with:
-  #     is_ephemeral: false
-  #     oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
-  #     terraform_apply: true
-  #     terraform_directory: ./terraform/account
-  #     terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-  #     terraform_workspace: development
-  #   secrets:
-  #     GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-  #     SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
-
   terraform_region_development:
     name: TF Development - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
     needs:
       - set_variables
       - snyk_iac_scan
-      # - terraform_account_development
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
@@ -167,25 +148,6 @@ jobs:
                   type: "mrkdwn"
                   text: "<https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|View workflow>"
 
-  # terraform_account_production:
-  #   name: TF Production - Account
-  #   uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
-  #   needs:
-  #     - slack_msg_environment_deploy_begin
-  #     - snyk_iac_scan
-  #     - set_variables
-  #   with:
-  #     is_ephemeral: false
-  #     oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
-  #     terraform_apply: true
-  #     terraform_directory: ./terraform/account
-  #     terraform_version: ${{ needs.set_variables.outputs.account_terraform_version }}
-  #     terraform_workspace: production
-  #   secrets:
-  #     GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #     PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
-  #     SSH_PRIVATE_KEY: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
-
   terraform_region_production:
     name: TF Production - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@f567efb2782f73a972073276a00bc4bcf92a3728 # v3.19.2
@@ -193,7 +155,6 @@ jobs:
       - slack_msg_environment_deploy_begin
       - set_variables
       - snyk_iac_scan
-      # - terraform_account_production
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_PRODUCTION }}
@@ -261,7 +222,6 @@ jobs:
     needs:
       - terraform_environment_production
       - terraform_region_production
-      # - terraform_account_production
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
