@@ -59,6 +59,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
 
       - name: Configure AWS Credentials - Ingress Management
@@ -86,7 +88,7 @@ jobs:
       - name: Generate Terraform artifact config (dispatch only)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          ENVIRONMENT="${{ inputs.environment }}"
+          ENVIRONMENT="${INPUTS_ENVIRONMENT}"
           ACCOUNT_ID="050256574573"
           FRONT_URL="https://${ENVIRONMENT}.development.front.lpa.opg.service.justice.gov.uk"
 
@@ -118,10 +120,14 @@ jobs:
             "admin_load_balancer_security_group_id": "${ADMIN_SG}"
           }
           EOF
+        env:
+          INPUTS_ENVIRONMENT: ${{ inputs.environment }}
 
       - name: Set FRONT_URL from inputs
         if: inputs.front_url != ''
-        run: echo "FRONT_URL=${{ inputs.front_url }}" >> $GITHUB_ENV
+        run: echo "FRONT_URL=${INPUTS_FRONT_URL}" >> $GITHUB_ENV
+        env:
+          INPUTS_FRONT_URL: ${{ inputs.front_url }}
 
       - name: Download Terraform Task definition
         if: github.event_name != 'workflow_dispatch'
@@ -156,10 +162,12 @@ jobs:
         continue-on-error: true
         env:
           DISABLE_SSL_VERIFY: True
+          INPUTS_USERS: ${{ inputs.users }}
+          INPUTS_RUN_TIME: ${{ inputs.run_time }}
         run: |
           uv sync --locked --directory locust
           cd locust # note- for now need to run locust from within locust dir as it looks for activation_emails dir relative to this
-          uv run --no-project locust --headless -f ./locustfile.py -r 1 --host $FRONT_URL -u ${{ inputs.users }} --run-time ${{ inputs.run_time }}
+          uv run --no-project locust --headless -f ./locustfile.py -r 1 --host $FRONT_URL -u ${INPUTS_USERS} --run-time ${INPUTS_RUN_TIME}
 
       - name: Configure AWS Credentials - Ingress Management
         if: always()
