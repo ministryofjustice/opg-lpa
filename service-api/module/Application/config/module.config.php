@@ -111,6 +111,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-start' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/start',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'start',
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -462,6 +473,13 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
+            Application\Model\Service\OneLogin\DiscoveryDocumentFetcher::class => static function (ServiceLocatorInterface $container): Application\Model\Service\OneLogin\DiscoveryDocumentFetcher {
+                $config = $container->get('config');
+                return new Application\Model\Service\OneLogin\DiscoveryDocumentFetcher(
+                    $container->get(GuzzleHttp\Client::class),
+                    $config['onelogin']['discovery_url'] ?? '',
+                );
+            },
         ],
         'initializers' => [
             function (ServiceLocatorInterface $container, $instance) {
