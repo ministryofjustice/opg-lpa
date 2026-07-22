@@ -172,7 +172,7 @@ locals {
     ]
     volumesFrom = [],
     privileged  = false,
-    user        = "appuser",
+    user        = "nginx",
     logConfiguration = {
       logDriver = "awslogs",
       options = {
