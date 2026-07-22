@@ -53,7 +53,7 @@ RUN chmod +x /usr/local/bin/health-check.sh
 WORKDIR /app
 
 ARG ENABLE_XDEBUG=0
-RUN if [ "$ENABLE_XDEBUG" = "1" ] ; then \
+RUN set -e; if [ "$ENABLE_XDEBUG" = "1" ] ; then \
     chmod a+w /tmp ; \
     chown -R appuser:appuser /app ; \
     apk add --no-cache --virtual .build-dependencies linux-headers pcre-dev ${PHPIZE_DEPS} ; \
