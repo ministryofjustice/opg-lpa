@@ -217,7 +217,6 @@ locals {
       },
       secrets = [
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
         { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" }
       ],
       environment = [
@@ -235,7 +234,6 @@ locals {
         { name = "OPG_NGINX_SSL_FORCE_REDIRECT", value = "TRUE" },
         { name = "OPG_LPA_COMMON_RESQUE_REDIS_HOST", value = "redisback" },
         { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
-        { name = "OPG_LPA_SHARED_SECRET_ENABLED", value = tostring(var.environment.shared_secret_enabled) },
         { name = "OPG_COGNITO_BASE_URL", value = var.admin_cognito.user_pool_domain_name },
         { name = "OPG_COGNITO_CLIENT_ID", value = var.admin_cognito.id },
         { name = "OPG_COGNITO_LOGOUT_URL", value = "${var.admin_cognito.user_pool_domain_name}/logout?client_id=${var.admin_cognito.id}&logout_uri=https://${local.admin_fqdn}/" },
