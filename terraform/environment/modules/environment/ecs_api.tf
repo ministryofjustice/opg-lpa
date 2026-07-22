@@ -279,7 +279,6 @@ locals {
         { name = "OPG_LPA_POSTGRES_USERNAME", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_username.name}" },
         { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
-        { name = "OPG_LPA_COMMON_ADMIN_ACCOUNTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_admin_accounts.name}" },
         { name = "OPG_LPA_AUTH_LOG_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.name}" },
         { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" }
       ],
@@ -309,7 +308,6 @@ locals {
         { name = "OPG_LPA_TELEMETRY_HOST", value = "127.0.0.1" },
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "AWS_REGION", value = data.aws_region.current.region },
-        { name = "OPG_LPA_SHARED_SECRET_ENABLED", value = tostring(var.environment.shared_secret_enabled) },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
         { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
       ]
