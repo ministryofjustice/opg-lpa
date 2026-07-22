@@ -5,6 +5,7 @@ namespace Application\Controller;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
+use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authentication\Identity\User;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
@@ -81,7 +82,8 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        if (!($this->authenticationService->getIdentity() instanceof User)) {
+        $identity = $this->authenticationService->getIdentity();
+        if ($identity === null || $identity instanceof Guest) {
             throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 

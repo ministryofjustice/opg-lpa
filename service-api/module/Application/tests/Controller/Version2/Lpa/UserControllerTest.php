@@ -80,6 +80,7 @@ class UserControllerTest extends AbstractControllerTestCase
         $identity->shouldReceive('id')->andReturn(10);
         $identity->shouldReceive('getId')->andReturn(10);
         $identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
         $identity->shouldReceive('email')->andReturn('identity@email.address');
 
         $authenticationService = Mockery::mock(AuthenticationService::class);
@@ -110,6 +111,7 @@ class UserControllerTest extends AbstractControllerTestCase
         $identity->shouldReceive('id')->andReturn(99);
         $identity->shouldReceive('getId')->andReturn(99);
         $identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
 
         $authenticationService = Mockery::mock(AuthenticationService::class);
         $authenticationService->shouldReceive('getIdentity')->andReturn($identity);
