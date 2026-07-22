@@ -146,9 +146,10 @@ locals {
 locals {
 
   front_web = jsonencode({
-    cpu       = 1,
-    essential = true,
-    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    cpu                    = 1,
+    essential              = true,
+    readonlyRootFilesystem = true,
+    image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
       {
         containerPath = "/etc",
