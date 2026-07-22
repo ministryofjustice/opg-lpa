@@ -77,6 +77,7 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
         $authenticationService = $container->get(AuthenticationService::class);
         $service = $container->get($this->serviceMappings[$requestedName]);
 
+        /** @var class-string<LpaControllers\AbstractLpaController> $requestedName */
         $controller = new $requestedName($authenticationService, $service);
         $traitsUsed = class_uses($controller);
 
