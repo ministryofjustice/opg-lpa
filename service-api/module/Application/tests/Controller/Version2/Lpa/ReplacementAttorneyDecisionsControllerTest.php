@@ -6,7 +6,7 @@ use Application\Controller\Version2\Lpa\ReplacementAttorneyDecisionsController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\AttorneyDecisionsReplacement\Service;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -21,7 +21,7 @@ class ReplacementAttorneyDecisionsControllerTest extends AbstractControllerTestC
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new ReplacementAttorneyDecisionsController($this->authorizationService, $this->service);
+        $controller = new ReplacementAttorneyDecisionsController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 

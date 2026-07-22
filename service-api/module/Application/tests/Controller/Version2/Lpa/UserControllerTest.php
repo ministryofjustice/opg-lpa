@@ -8,8 +8,8 @@ use Application\Library\Authentication\Identity\User as UserIdentity;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Users\Service;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Application\Library\Authorization\UnauthorizedException;
+use Laminas\Authentication\AuthenticationService;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -24,7 +24,7 @@ class UserControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new UserController($this->authorizationService, $this->service);
+        $controller = new UserController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 
@@ -78,20 +78,15 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $identity = Mockery::mock(UserIdentity::class);
         $identity->shouldReceive('id')->andReturn(10);
+        $identity->shouldReceive('getId')->andReturn(10);
+        $identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
         $identity->shouldReceive('email')->andReturn('identity@email.address');
 
-        $authorizationService = Mockery::mock(AuthorizationService::class);
-        $authorizationService->shouldReceive('isGranted')->withArgs(['authenticated'])
-            ->andReturn(true);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['isAuthorizedToManageUser', $this->userId])
-            ->andReturn(false);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['admin'])
-            ->andReturn(true);
-        $authorizationService->shouldReceive('getIdentity')->andReturn($identity);
+        $authenticationService = Mockery::mock(AuthenticationService::class);
+        $authenticationService->shouldReceive('getIdentity')->andReturn($identity);
 
-        $controller = new UserController($authorizationService, $service);
+        $controller = new UserController($authenticationService, $service);
         $this->callDispatch($controller);
         $this->callOnDispatch($controller);
 
@@ -114,19 +109,14 @@ class UserControllerTest extends AbstractControllerTestCase
 
         $identity = Mockery::mock(UserIdentity::class);
         $identity->shouldReceive('id')->andReturn(99);
+        $identity->shouldReceive('getId')->andReturn(99);
+        $identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
 
-        $authorizationService = Mockery::mock(AuthorizationService::class);
-        $authorizationService->shouldReceive('isGranted')->withArgs(['authenticated'])
-            ->andReturn(true);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['isAuthorizedToManageUser', $this->userId])
-            ->andReturn(false);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['admin'])
-            ->andReturn(true);
-        $authorizationService->shouldReceive('getIdentity')->andReturn($identity);
+        $authenticationService = Mockery::mock(AuthenticationService::class);
+        $authenticationService->shouldReceive('getIdentity')->andReturn($identity);
 
-        $controller = new UserController($authorizationService, $service);
+        $controller = new UserController($authenticationService, $service);
         $this->callDispatch($controller);
         $this->callOnDispatch($controller);
 

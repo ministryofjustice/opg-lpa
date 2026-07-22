@@ -10,8 +10,6 @@ return [
         'Laminas\Paginator',
         'Laminas\Router',
         'Laminas\Validator',
-        'Lmc\Rbac',
-        'Lmc\Rbac\Mvc',
         'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         'MakeShared\Telemetry',

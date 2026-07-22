@@ -7,7 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Lock\Service;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -22,7 +22,7 @@ class NotifiedPeopleControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new NotifiedPeopleController($this->authorizationService, $this->service);
+        $controller = new NotifiedPeopleController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 
