@@ -28,7 +28,7 @@ class LpaAuthTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn(['userId' => 'ID', 'username' => 'user name']);
 
-        $lpaAuth = new LpaAuth($this->authenticationService, 'Token', []);
+        $lpaAuth = new LpaAuth($this->authenticationService, 'Token');
         $lpaAuth->setLogger($this->logger);
         $result = $lpaAuth->authenticate();
 
@@ -43,32 +43,12 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user'], $user->getRoles());
     }
 
-    public function testAuthenticateAdminUser(): void
-    {
-        $this->authenticationService->shouldReceive('withToken')->with('Token', true)
-            ->andReturn(['userId' => 'ID', 'username' => 'user name']);
-
-        $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
-        $lpaAuth->setLogger($this->logger);
-        $result = $lpaAuth->authenticate();
-
-        $this->assertNotNull($result);
-        $this->assertInstanceOf(Result::class, $result);
-        $this->assertEquals(Result::SUCCESS, $result->getCode());
-
-        $user = $result->getIdentity();
-        $this->assertInstanceOf(User::class, $user);
-        $this->assertEquals('ID', $user->id());
-        $this->assertEquals('user name', $user->email());
-        $this->assertEquals([0 => 'user', 1 => 'admin'], $user->getRoles());
-    }
-
     public function testAuthenticateFailedToken(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)
             ->andReturn('Invalid token');
 
-        $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $lpaAuth = new LpaAuth($this->authenticationService, 'Token');
         $lpaAuth->setLogger($this->logger);
         $result = $lpaAuth->authenticate();
 
@@ -86,7 +66,7 @@ class LpaAuthTest extends MockeryTestCase
             ->with('Token', true)
             ->andThrow($expectedException);
 
-        $lpaAuth = new LpaAuth($this->authenticationService, 'Token', ['user name']);
+        $lpaAuth = new LpaAuth($this->authenticationService, 'Token');
         $lpaAuth->setLogger($this->logger);
 
         $result = $lpaAuth->authenticate();

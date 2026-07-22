@@ -18,14 +18,4 @@ class User extends AbstractIdentity
     {
         return $this->email;
     }
-
-    /**
-     * Flags this user as an admin
-     */
-    public function setAsAdmin(): void
-    {
-        if (!in_array('admin', $this->roles)) {
-            $this->roles[] = 'admin';
-        }
-    }
 }

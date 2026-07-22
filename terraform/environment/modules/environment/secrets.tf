@@ -1,8 +1,4 @@
 # common
-data "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
-  name = "${var.account_name}/opg_lpa_common_admin_accounts"
-}
-
 data "aws_secretsmanager_secret" "opg_lpa_common_account_cleanup_notification_recipients" {
   name = "${var.account_name}/opg_lpa_common_account_cleanup_notification_recipients"
 }

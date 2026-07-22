@@ -165,7 +165,6 @@ services:
       OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
       OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
-      OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
       XDEBUG_CONFIG: client_host=host.docker.internal
@@ -272,7 +271,6 @@ services:
       # lifetime (in seconds) of authentication tokens
       OPG_LPA_AUTH_TOKEN_TTL: 4500
       OPG_LPA_COMMON_DYNAMODB_AUTO_CREATE: "true"
-      OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
 
       # Local only
       AWS_ACCESS_KEY_ID: "devkey"
@@ -280,7 +278,6 @@ services:
 
       LPA_FEE_EFFECTIVE_DATE: "2025-09-17T14:30:00"
 
-      OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
@@ -381,7 +378,6 @@ services:
       OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE: "Locks"
       OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE: "Sessions"
 
-      OPG_LPA_SHARED_SECRET_ENABLED: "true"
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
       OPG_COGNITO_BASE_URL: "http://mock-cognito:8080"
@@ -399,7 +395,6 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
-      OPG_LPA_COMMON_ADMIN_ACCOUNTS: "${OPG_LPA_COMMON_ADMIN_ACCOUNTS}"
       XDEBUG_CONFIG: client_host=host.docker.internal
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:

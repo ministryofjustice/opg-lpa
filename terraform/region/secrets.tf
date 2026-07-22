@@ -1,5 +1,3 @@
-
-
 # common
 resource "aws_secretsmanager_secret" "opg_lpa_common_admin_accounts" {
   name                           = "${local.account_name}/opg_lpa_common_admin_accounts"

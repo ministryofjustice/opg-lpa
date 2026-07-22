@@ -42,10 +42,8 @@ class AuthenticationListener implements LoggerAwareInterface
         /** @psalm-suppress UndefinedInterfaceMethod */
         $adminAuthHeader = $e->getRequest()->getHeader('X-Shared-Secret');
 
-        $config = $serviceManager->get('Config');
-        $sharedSecretEnabled = $config['admin']['shared_secret_enabled'] ?? null;
-
-        if ($adminAuthHeader && $sharedSecretEnabled === true) {
+        if ($adminAuthHeader) {
+            $config = $serviceManager->get('Config');
             $adminServiceSecret = $config['admin']['service_secret'] ?? '';
 
             if ($adminServiceSecret !== '' && trim($adminAuthHeader->getFieldValue()) === $adminServiceSecret) {
@@ -72,7 +70,7 @@ class AuthenticationListener implements LoggerAwareInterface
             /** @var AuthenticationService $authenticationService */
             $authenticationService = $serviceManager->get(AuthenticationService::class);
 
-            $authAdapter = new Adapter\LpaAuth($authenticationService, $token, $config['admin']['accounts']);
+            $authAdapter = new Adapter\LpaAuth($authenticationService, $token);
 
             // This calls LpaAuth->authenticate() behind the scenes, where we deal with the authentication
             // response, including exceptions thrown due to database issues
