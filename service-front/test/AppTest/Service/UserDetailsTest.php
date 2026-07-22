@@ -852,6 +852,21 @@ final class UserDetailsTest extends TestCase
         $this->assertSame('unknown-error', $this->service->registerAccount('new@example.com', 'Pass@word1'));
     }
 
+    public function testSetOneLoginSub(): void
+    {
+        $oneLoginSub = 'blahblah';
+
+        $this->apiClient->method('updateToken')->with('valid-token');
+
+        $this->apiClient
+            ->method('httpPut')
+            ->with('/v2/user/user-123', ['oneLoginSub' => $oneLoginSub]);
+
+        $result = $this->service->setOneLoginSub($oneLoginSub);
+
+        $this->assertTrue($result);
+    }
+
     private function ensureLaminasHttpResponseClassExists(): void
     {
         if (!class_exists(\Laminas\Http\Response::class)) {

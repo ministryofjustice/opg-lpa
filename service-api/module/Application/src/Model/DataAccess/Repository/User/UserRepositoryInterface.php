@@ -127,4 +127,6 @@ interface UserRepositoryInterface
      * Updates a user's profile. If it doesn't already exist, it's created.
      */
     public function saveProfile(ProfileUserModel $data): void;
+
+    public function setOneLoginSub(string $userId, string $oneLoginSub): void;
 }
