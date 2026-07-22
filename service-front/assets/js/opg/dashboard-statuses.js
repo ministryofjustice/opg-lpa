@@ -33,6 +33,7 @@ $(document).ready(function () {
 
             statusIndicator.removeClass('opg-lozenge-status--' + currentStatus);
             statusIndicator.addClass('opg-lozenge-status--' + newStatus);
+            statusIndicator.attr('data-cy', 'opg-lozenge-status-' + newStatus);
 
             // Update style on status container
             li.removeClass('status-container--' + currentStatus);
