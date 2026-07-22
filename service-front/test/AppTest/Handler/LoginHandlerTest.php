@@ -525,4 +525,45 @@ class LoginHandlerTest extends TestCase
 
         $this->handler->handle($request);
     }
+
+    public function testOneLoginFlagOnRendersOneloginTemplate(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+
+        $handlerWithFlag = new LoginHandler(
+            $this->renderer,
+            $this->formElementManager,
+            $this->authenticationService,
+            true, // oneLoginEnabled
+        );
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/auth/onelogin.twig')
+            ->willReturn('<html>onelogin page</html>');
+
+        $response = $handlerWithFlag->handle($this->createRequestWithSession());
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testOneLoginFlagOnDoesNotCallFormElementManager(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+
+        $handlerWithFlag = new LoginHandler(
+            $this->renderer,
+            $this->formElementManager,
+            $this->authenticationService,
+            true, // oneLoginEnabled
+        );
+
+        $this->renderer->method('render')->willReturn('<html></html>');
+
+        $this->formElementManager->expects($this->never())->method('get');
+
+        $handlerWithFlag->handle($this->createRequestWithSession());
+    }
 }

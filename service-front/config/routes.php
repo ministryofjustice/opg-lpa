@@ -23,6 +23,8 @@ use App\Handler\HomeRedirectHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
+use App\Handler\OneLoginCallbackHandler;
+use App\Handler\OneLoginSignInHandler;
 use App\Handler\PostcodeHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
@@ -163,8 +165,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
 
-    if (getenv('ONELOGIN_ENABLED') === 'true') {
+    if (App\Feature::OneLogin->isEnabled()) {
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account');
+        $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
+            ->setOptions(['unauthenticated_route' => true]);
+        $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
+            ->setOptions(['unauthenticated_route' => true]);
     }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')
