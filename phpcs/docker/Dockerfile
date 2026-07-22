@@ -12,6 +12,8 @@ COPY phpcs/composer.lock /app/composer.lock
 
 RUN composer install --no-interaction --no-progress
 
+RUN mkdir -p /app/output && chmod a+w /app/output
+
 USER appuser
 
 ENTRYPOINT ["/app/vendor/bin/phpcbf", "--standard=/app/config/phpcs.xml.dist"]
