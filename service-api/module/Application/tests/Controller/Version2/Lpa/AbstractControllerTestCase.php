@@ -76,6 +76,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->identity->shouldReceive('getId')->andReturn(99999);
         $this->identity->shouldReceive('id')->andReturn(99999);
         $this->identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $this->identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
         $this->identity->shouldReceive('email')->andReturn('identity@email.address');
 
         $authenticationService = Mockery::mock(AuthenticationService::class);
@@ -121,6 +122,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     protected function setAuthorised(bool $authorised): void
     {
         $this->identity->mockery_findExpectation('hasRole', ['admin'])->andReturn($authorised);
+        $this->identity->mockery_findExpectation('hasRole', ['admin-service'])->andReturn($authorised);
     }
 
     protected function callDispatch(AbstractLpaController $abstractController, array $parameters = [])

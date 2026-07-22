@@ -5,6 +5,7 @@ namespace Application\Controller\Version2\Lpa;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
+use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authentication\Identity\User;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
@@ -105,11 +106,15 @@ abstract class AbstractLpaController extends AbstractRestfulController
     {
         $identity = $this->authenticationService->getIdentity();
 
-        if (!($identity instanceof User)) {
+        if ($identity === null || $identity instanceof Guest) {
             throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 
-        if ($identity->getId() !== $this->routeUserId && !$identity->hasRole('admin')) {
+        if (
+            $identity->getId() !== $this->routeUserId &&
+            !$identity->hasRole('admin') &&
+            !$identity->hasRole('admin-service')
+        ) {
             throw new UnauthorizedException('You do not have permission to access this service');
         }
     }
