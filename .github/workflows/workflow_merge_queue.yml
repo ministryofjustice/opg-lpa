@@ -167,7 +167,6 @@ jobs:
     needs:
       - terraform_environment_preproduction
       - terraform_region_preproduction
-      # - terraform_account_preproduction
 
   preprod_terraform_outputs:
     name: Render terraform outputs
