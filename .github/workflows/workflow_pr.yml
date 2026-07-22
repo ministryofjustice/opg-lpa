@@ -12,14 +12,14 @@ on:
 permissions:
   actions: none
   checks: none
-  contents: write # zizmor: ignore[excessive-permissions]
+  contents: none
   deployments: none
-  id-token: write # zizmor: ignore[excessive-permissions]
+  id-token: none
   issues: none
   packages: none
   pull-requests: read
   repository-projects: none
-  security-events: write # zizmor: ignore[excessive-permissions]
+  security-events: none
   statuses: none
 
 jobs:
