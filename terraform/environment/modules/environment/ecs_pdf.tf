@@ -121,7 +121,7 @@ locals {
       ],
       volumesFrom = [],
       privileged  = false,
-      user        = "app-user",
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
