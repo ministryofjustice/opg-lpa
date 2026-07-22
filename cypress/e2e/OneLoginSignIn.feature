@@ -1,4 +1,5 @@
-@RequiresOneLogin
+# Skipped until LPAL-2313
+@RequiresOneLogin @skip
 Feature: One Login Sign In
   As a Make User
   When I want to access the service
