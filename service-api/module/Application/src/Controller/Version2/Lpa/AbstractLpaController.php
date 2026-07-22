@@ -6,7 +6,6 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
-use Application\Library\Authentication\Identity\User;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
