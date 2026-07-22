@@ -8,10 +8,10 @@ Then(
     // of the statuses for LPAs happening in client-side JS.
     expectedStatus = expectedStatus.toLowerCase();
     const selector =
-      '.opg-lozenge-status--' +
-      expectedStatus +
-      '[data-cy=lpa-status-lozenge-' +
+      'li[data-cy=lpa-' +
       lpaId +
+      '] [data-cy=opg-lozenge-status-' +
+      expectedStatus +
       '][data-refreshed=true]';
 
     cy.get(selector).then((elt) => {
