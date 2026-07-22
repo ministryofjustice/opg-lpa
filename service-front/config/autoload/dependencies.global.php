@@ -163,6 +163,16 @@ return [
             Handler\LogoutHandler::class                  => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
             ),
+            Handler\LoginHandler::class                   => static fn(ContainerInterface $c) => new Handler\LoginHandler(
+                $c->get(TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(\App\Authentication\AuthenticationService::class),
+                App\Feature::OneLogin->isEnabled(),
+            ),
+            Handler\OneLoginSignInHandler::class          => static fn(ContainerInterface $c) => new Handler\OneLoginSignInHandler(
+                $c->get(\App\Service\OneLogin\OneLoginService::class),
+                $c->get('config')['onelogin']['redirect_base_url'] ?? null,
+            ),
             StatusHandler::class                          => static fn(ContainerInterface $c) => new StatusHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),
@@ -214,6 +224,9 @@ return [
     ],
     'api_client'        => [
         'api_uri' => getenv('OPG_LPA_ENDPOINTS_API') ?: null,
+    ],
+    'onelogin'          => [
+        'redirect_base_url' => getenv('ONELOGIN_REDIRECT_BASE_URL') ?: null,
     ],
     'alphagov'          => [
         'pay' => [
