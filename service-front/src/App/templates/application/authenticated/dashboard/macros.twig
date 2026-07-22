@@ -27,7 +27,7 @@
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text govuk-visually-hidden">Application status for A{{ lpa.id }} - {{status}}</p>
-                        <div data-cy="lpa-status-lozenge-{{ lpa.id }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
+                        <div data-cy="opg-lozenge-status-{{ status }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
