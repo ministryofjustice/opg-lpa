@@ -15,7 +15,7 @@ use RuntimeException;
  */
 class UnauthorizedException extends RuntimeException implements ApiProblemExceptionInterface
 {
-    public function __construct($message = "", $code = 401, \Throwable|null $previous = null)
+    public function __construct(string $message = "", int $code = 401, \Throwable|null $previous = null)
     {
         parent::__construct($message, $code, $previous);
     }
