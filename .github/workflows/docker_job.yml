@@ -261,7 +261,7 @@ jobs:
         run: |
           echo "=== SNYK SCAN SUMMARY FOR ${{ matrix.scan_id }} ==="
           echo "SARIF file: $file"
-          echo "scan outcome: ${STEPS_SNYK_SCAN_OUTCOME}"
+          echo "scan outcome: ${SNYK_SCAN_OUTCOME}"
 
           if [ -f "./test-results/${{ matrix.scan_id }}_snyk.sarif" ]; then
             echo "SARIF file exists, counting runs"
@@ -271,7 +271,7 @@ jobs:
             echo "SARIF file does not exist, skipping run count"
           fi
         env:
-          STEPS_SNYK_SCAN_OUTCOME: ${{ steps.snyk_scan.outcome }}
+          SNYK_SCAN_OUTCOME: ${{ steps.snyk_scan.outcome }}
 
       # Split SARIF results if run limit exceeds 20
       - name: Split SARIF results if run limit exceeds 20
