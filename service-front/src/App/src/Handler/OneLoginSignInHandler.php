@@ -19,14 +19,14 @@ class OneLoginSignInHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly OneLoginService $oneLoginService,
+        private readonly ?string $redirectBaseUrl = null,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $baseUrl     = getenv('ONELOGIN_REDIRECT_BASE_URL') ?: null;
         $uri         = $request->getUri();
-        $redirectUri = ($baseUrl ?? ($uri->getScheme() . '://' . $uri->getAuthority())) . '/auth/redirect';
+        $redirectUri = ($this->redirectBaseUrl ?? ($uri->getScheme() . '://' . $uri->getAuthority())) . '/auth/redirect';
 
         $result = $this->oneLoginService->start($redirectUri);
 
