@@ -69,6 +69,6 @@ jobs:
 
       - name: Start ECS task
         working-directory: scripts/pipeline
-        run: uv run python start_task/ecs_start_task.py --task_name ${INPUTS_TASK_NAME}
+        run: uv run python start_task/ecs_start_task.py --task_name ${TASK_NAME}
         env:
-          INPUTS_TASK_NAME: ${{ inputs.task_name }}
+          TASK_NAME: ${{ inputs.task_name }}
