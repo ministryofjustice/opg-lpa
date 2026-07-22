@@ -9,7 +9,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Pdfs\Service;
 use Laminas\Http\Request;
 use Laminas\Stdlib\Parameters;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -24,7 +24,7 @@ class PdfControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new PdfController($this->authorizationService, $this->service);
+        $controller = new PdfController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 
@@ -110,7 +110,7 @@ class PdfControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new PdfController($this->authorizationService, $this->service);
+        $controller = new PdfController($this->authenticationService, $this->service);
 
         $params = new Parameters([]);
 
