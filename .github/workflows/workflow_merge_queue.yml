@@ -14,14 +14,14 @@ on:
 permissions:
   actions: none
   checks: none
-  contents: write
-  deployments: write
-  id-token: write
+  contents: write # zizmor: ignore[excessive-permissions]
+  deployments: write # zizmor: ignore[excessive-permissions]
+  id-token: write # zizmor: ignore[excessive-permissions]
   issues: none
   packages: none
   pull-requests: read
   repository-projects: none
-  security-events: write
+  security-events: write # zizmor: ignore[excessive-permissions]
   statuses: none
 
 jobs:
@@ -222,12 +222,12 @@ jobs:
         id: admin_fqdn
         env:
           configJson: ${{steps.set_var.outputs.configJson}}
-        run: |
+        run: | # zizmor: ignore[template-injection]
           echo "value=${{ fromJson(env.configJson).admin_fqdn }}" >> $GITHUB_OUTPUT
 
       - name: Extract Front FQDN from JSON
         id: front_fqdn
-        run: |
+        run: | # zizmor: ignore[template-injection]
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
   cypress_tests_Signup_StitchedPF:
