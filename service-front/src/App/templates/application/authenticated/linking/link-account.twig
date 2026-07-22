@@ -1,0 +1,65 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Link your Make account to this OneLogin account' -%}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{# Set form fields variables #}
+{% set email = form.get('email') %}
+{% set password = form.get('password') %}
+
+{% set form = formErrorTextExchange(form, {
+    'email': {
+        'cannot-be-empty': 'Enter your email address',
+    },
+    'password' : {
+        'cannot-be-empty' : 'Enter your password'
+    }
+}) %}
+
+{% block content %}
+  <div class="govuk-grid-row govuk-!-margin-top-9">
+    {{ macros.formErrorSummary(error, form) }}
+
+    <div class="govuk-grid-column-two-thirds">
+      {{ email.setAttributes({
+        id: 'email',
+        class: 'govuk-input',
+        'data-cy': 'login-email'
+      }) ? ''}}
+
+      {{ password.setAttributes({
+        id: 'password',
+        class: 'govuk-input',
+        'data-cy': 'login-password'
+      }) ? '' }}
+
+      {{ email.setOptions({ label: 'Email address' }) ? '' }}
+
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      <h1 class="govuk-heading-xl">Link your Make account to this One Login account</h1>
+
+      {{ macros.formGroup2(email) }}
+
+      <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+        <label class="govuk-label" for="{{ password.getAttribute('id') }}">Password</label>
+        {{ formElementErrorsV2(password) }}
+        {{ formElement(password) }}
+        <div>
+          <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password">Show password</a>
+        </div>
+      </div>
+
+      <button type="submit" class="govuk-button">Sign in</button>
+
+      {{ form().closeTag|raw }}
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
+      </p>
+    </div>
+  </div>
+{% endblock content %}
