@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
-use Application\Library\Authentication\Identity\User;
+use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Feedback\Service as FeedbackService;
@@ -44,7 +44,8 @@ class FeedbackController extends AbstractRestfulController
      */
     public function getList()
     {
-        if (!($this->authenticationService->getIdentity() instanceof User)) {
+        $identity = $this->authenticationService->getIdentity();
+        if ($identity === null || $identity instanceof Guest) {
             return new ApiProblemResponse(
                 new ApiProblem(401, 'You need to be authenticated to access this service.')
             );
