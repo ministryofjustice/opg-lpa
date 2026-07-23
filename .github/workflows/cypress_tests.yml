@@ -109,8 +109,8 @@ jobs:
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${CYPRESS_adminUrl}|g" docker-compose.yml
           CYPRESS_userNumber=`python3 cypress/user_number.py`
-          mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline
-          chmod -R a+w cypress/screenshots cypress/regressions
+          mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
+          chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads
           docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="@Signup"
           docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="${CYPRESS_TAGS}"
 
