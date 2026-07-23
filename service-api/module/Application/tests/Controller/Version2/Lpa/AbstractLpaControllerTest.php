@@ -29,7 +29,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
 
     public function testOnDispatchSuccess()
     {
-        $result = $this->callOnDispatch(new TestableAbstractLpaController($this->authorizationService, $this->service));
+        $result = $this->callOnDispatch(new TestableAbstractLpaController($this->authenticationService, $this->service));
 
         $this->assertNotNull($result);
         $this->assertInstanceOf(Response::class, $result);
@@ -46,7 +46,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->expectException(ApiProblemException::class);
         $this->expectExceptionMessage('User identifier missing from URL');
 
-        $controller = new TestableAbstractLpaController($this->authorizationService, $this->service);
+        $controller = new TestableAbstractLpaController($this->authenticationService, $this->service);
         $result = $controller->onDispatch($mvcEvent);
 
         $this->assertNotNull($result);
@@ -60,7 +60,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->routeMatch->mockery_findExpectation('getParam', ['lpaId'])->andReturn(20)->once();
         $this->mvcEvent->mockery_findExpectation('getRequest', [])->andThrow(UnauthorizedException::class)->once();
 
-        $controller = new TestableAbstractLpaController($this->authorizationService, $this->service);
+        $controller = new TestableAbstractLpaController($this->authenticationService, $this->service);
         $result = $controller->onDispatch($this->mvcEvent);
 
         $this->assertNotNull($result);
@@ -78,7 +78,7 @@ class AbstractLpaControllerTest extends AbstractControllerTestCase
         $this->routeMatch->mockery_findExpectation('getParam', ['lpaId'])->andReturn(20)->once();
         $this->mvcEvent->mockery_findExpectation('getRequest', [])->andThrow(LockedException::class)->once();
 
-        $controller = new TestableAbstractLpaController($this->authorizationService, $this->service);
+        $controller = new TestableAbstractLpaController($this->authenticationService, $this->service);
         $result = $controller->onDispatch($this->mvcEvent);
 
         $this->assertNotNull($result);

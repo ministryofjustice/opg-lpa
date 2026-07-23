@@ -15,14 +15,14 @@ on:
 permissions:
   actions: none
   checks: none
-  contents: write
-  deployments: write
-  id-token: write
+  contents: write # zizmor: ignore[excessive-permissions]
+  deployments: write # zizmor: ignore[excessive-permissions]
+  id-token: write # zizmor: ignore[excessive-permissions]
   issues: none
   packages: none
   pull-requests: read
   repository-projects: none
-  security-events: write
+  security-events: write # zizmor: ignore[excessive-permissions]
   statuses: none
 
 jobs:
@@ -43,6 +43,7 @@ jobs:
         with:
           fetch-depth: 0
           fetch-tags: true
+          persist-credentials: false
       - name: Set output to penultimate short SHA
         id: short_sha
         run: |
@@ -173,7 +174,7 @@ jobs:
     with:
       is_ephemeral: false
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
-      persist_artifacts: true
+      persist_artifacts: false
       terraform_apply: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=main-${{ needs.set_variables.outputs.semver_tag }}"
@@ -225,6 +226,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Download Terraform Task definition
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

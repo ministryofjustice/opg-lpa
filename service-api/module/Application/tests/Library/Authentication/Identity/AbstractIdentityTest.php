@@ -27,4 +27,19 @@ class AbstractIdentityTest extends TestCase
     {
         $this->assertEquals([0 => 'A role', 1 => 'Another role'], $this->abstractIdentity->getRoles());
     }
+
+    public function testGetId(): void
+    {
+        $this->assertEquals('ID', $this->abstractIdentity->getId());
+    }
+
+    public function testHasRoleTrue(): void
+    {
+        $this->assertTrue($this->abstractIdentity->hasRole('A role'));
+    }
+
+    public function testHasRoleFalse(): void
+    {
+        $this->assertFalse($this->abstractIdentity->hasRole('Unknown role'));
+    }
 }
