@@ -82,6 +82,26 @@ class DbWrapper
     }
 
     /**
+     * Note: the underlying adapter connection is a shared service, so a
+     * transaction started here also covers writes made via any other
+     * *Data class's DbWrapper in the same request.
+     */
+    public function beginTransaction(): void
+    {
+        $this->adapter->getDriver()->getConnection()->beginTransaction();
+    }
+
+    public function commit(): void
+    {
+        $this->adapter->getDriver()->getConnection()->commit();
+    }
+
+    public function rollback(): void
+    {
+        $this->adapter->getDriver()->getConnection()->rollback();
+    }
+
+    /**
      * Perform a SQL SELECT against the db.
      *
      * @param string $tableName Name of table to select against

@@ -359,6 +359,12 @@ dc-clear-cache:
 reset-admin:
 	docker compose up -d --force-recreate --renew-anon-volumes admin-app
 
+# Re-run the non-live seeding scripts against the running dev stack, truncating
+# and re-populating the test users/applications/feedback/deletion-log tables.
+.PHONY: dc-reseed
+dc-reseed:
+	@docker compose run --rm seeding
+
 .PHONY: update-secrets-baseline
 update-secrets-baseline:
 	detect-secrets scan --baseline .secrets.baseline

@@ -30,22 +30,27 @@ class User
     /** @var array */
     private $roles = ['user'];
 
+    private ?int $sharedSpaceId;
+
     /**
      * @param string $userId The user's internal ID.
      * @param string $token The user's authentication token.
-     * @param int $expiresIn The number of seconds in which the token expires.
+     * @param ?int $expiresIn The number of seconds in which the token expires.
      * @param ?DateTime $lastLogin The DateTime the user logged in, or null if they've never logged in
      * @param bool $isAdmin Whether or not the user is an admin.
+     * @param ?int $sharedSpaceId The id of the shared space the user belongs to (or null if they dont).
      */
     public function __construct(
         #[\SensitiveParameter] string $userId,
         #[\SensitiveParameter] string $token,
         ?int $expiresIn,
         ?DateTime $lastLogin,
-        bool $isAdmin = false
+        bool $isAdmin = false,
+        ?int $sharedSpaceId = null
     ) {
         $this->id = $userId;
         $this->token = $token;
+        $this->sharedSpaceId = $sharedSpaceId;
 
         // If $lastLogin is null, they have not logged in before, so last login is now.
         if (is_null($lastLogin)) {
@@ -124,5 +129,10 @@ class User
     public function toArray(): array
     {
         return get_object_vars($this);
+    }
+
+    public function getSharedSpaceId(): ?int
+    {
+        return $this->sharedSpaceId;
     }
 }

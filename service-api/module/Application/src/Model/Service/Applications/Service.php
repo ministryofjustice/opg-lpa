@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
 use Laminas\Paginator\Adapter\ArrayAdapter;
@@ -18,6 +19,7 @@ use MakeShared\Logging\LoggerTrait;
 class Service extends AbstractService
 {
     use ApplicationRepositoryTrait;
+    use SharedSpaceRepositoryTrait;
     use LoggerTrait;
 
     /**
@@ -32,6 +34,11 @@ class Service extends AbstractService
             $data = [];
         }
 
+        // If the user belongs to a shared space, newly created LPAs are
+        // owned by that shared space from the outset; 'user' always
+        // records the actual creating user (see ownerPredicate()).
+        $sharedSpaceId = $this->getSharedSpaceRepository()->getSharedSpaceIdForUser($userId);
+
         /*
          * A loop is used here to catch any ID clashes. If such a clash happens, a different ID will be tried.
          */
@@ -43,6 +50,7 @@ class Service extends AbstractService
                 'startedAt'         => new MillisecondDateTime(),
                 'updatedAt'         => new MillisecondDateTime(),
                 'user'              => $userId,
+                'sharedSpaceId'     => $sharedSpaceId,
                 'locked'            => false,
                 'whoAreYouAnswered' => false,
                 'document'          => new Document\Document(),
@@ -124,8 +132,9 @@ class Service extends AbstractService
      */
     public function fetch(string $id, string $userId)
     {
-        // Note: user has to match
-        $result = $this->getApplicationRepository()->getById((int) $id, $userId);
+        // Note: user (or their shared space) has to match
+        $sharedSpaceId = $this->getSharedSpaceRepository()->getSharedSpaceIdForUser($userId);
+        $result = $this->getApplicationRepository()->getById((int) $id, $userId, $sharedSpaceId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document ' . $id . ' not found for user ' . $userId);
@@ -138,16 +147,18 @@ class Service extends AbstractService
 
     /**
      * Fetch LPAs with the specified $lpaIds, providing they are owned by
-     * the user with given $userId. If an LPA is requested which is not owned
-     * by the user, that record is not returned.
+     * the user with given $userId (or the shared space they belong to, if
+     * any). If an LPA is requested which is not owned by the user (or their
+     * shared space), that record is not returned.
      *
      * @param array $lpaIds : IDs of LPAs to fetch
-     * @param string $userId : restrict results to this user ID
+     * @param string $userId : restrict results to this user ID (or their shared space)
      * @return Lpa[]
      */
     public function filterByIdsAndUser(array $lpaIds, string $userId): array
     {
-        $records = $this->getApplicationRepository()->getByIdsAndUser($lpaIds, $userId);
+        $sharedSpaceId = $this->getSharedSpaceRepository()->getSharedSpaceIdForUser($userId);
+        $records = $this->getApplicationRepository()->getByIdsAndUser($lpaIds, $userId, $sharedSpaceId);
         $lpas = [];
         foreach ($records as $record) {
             $lpas[] = new Lpa($record);
@@ -162,8 +173,10 @@ class Service extends AbstractService
      */
     public function fetchAll(string $userId, $params = [])
     {
+        $sharedSpaceId = $this->getSharedSpaceRepository()->getSharedSpaceIdForUser($userId);
+
         $filter = [
-            'user' => $userId
+            $this->getApplicationRepository()->ownerPredicate($userId, $sharedSpaceId),
         ];
 
         //  Merge in any filter requirements...
@@ -237,18 +250,26 @@ class Service extends AbstractService
      */
     public function delete($id, string $userId)
     {
-        $result = $this->getApplicationRepository()->getById((int) $id, $userId);
+        $sharedSpaceId = $this->getSharedSpaceRepository()->getSharedSpaceIdForUser($userId);
+
+        $result = $this->getApplicationRepository()->getById((int) $id, $userId, $sharedSpaceId);
 
         if (is_null($result)) {
             return new ApiProblem(404, 'Document not found');
         }
 
-        $this->getApplicationRepository()->deleteById($id, $userId);
+        $this->getApplicationRepository()->deleteById($id, $userId, $sharedSpaceId);
 
         return true;
     }
 
     /**
+     * Delete all LPAs directly owned by this user.
+     *
+     * Note: deliberately does NOT include LPAs owned by a shared space the
+     * user belongs to - deleting one member's account must not delete LPAs
+     * that other members of the shared space still need access to.
+     *
      * @param $userId
      */
     public function deleteAll($userId): void
@@ -256,7 +277,7 @@ class Service extends AbstractService
         $lpas = $this->getApplicationRepository()->fetchByUserId($userId);
 
         foreach ($lpas as $lpa) {
-            $this->delete($lpa['id'], $userId);
+            $this->getApplicationRepository()->deleteById($lpa['id'], $userId);
         }
     }
 }

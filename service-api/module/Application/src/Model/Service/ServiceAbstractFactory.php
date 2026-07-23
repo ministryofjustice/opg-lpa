@@ -6,6 +6,7 @@ use Application\Model\DataAccess\Repository\Application as ApplicationRepository
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
+use Application\Model\DataAccess\Repository\SharedSpace as SharedSpaceRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Users\Service as UsersService;
@@ -138,6 +139,12 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             if (in_array(FeedbackRepository\FeedbackRepositoryTrait::class, $traitsUsed)) {
                 $service->setFeedbackRepository(
                     $container->get(FeedbackRepository\FeedbackRepositoryInterface::class)
+                );
+            }
+
+            if (in_array(SharedSpaceRepository\SharedSpaceRepositoryTrait::class, $traitsUsed)) {
+                $service->setSharedSpaceRepository(
+                    $container->get(SharedSpaceRepository\SharedSpaceRepositoryInterface::class)
                 );
             }
 

@@ -10,15 +10,14 @@ use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Template\TemplateRendererInterface;
 use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 
-class DashboardHandler implements RequestHandlerInterface
+class SharedSpaceDashboardHandler implements RequestHandlerInterface
 {
     use PaginationTrait;
     use CommonTemplateVariablesTrait;
@@ -43,16 +42,11 @@ class DashboardHandler implements RequestHandlerInterface
 
         $lpasPerPage = 50;
 
-        $lpasSummary = $this->lpaApplicationService->getLpaSummaries($search, $page, $lpasPerPage);
+        $lpasSummary = $this->lpaApplicationService->getLpaSummaries($search, $page, $lpasPerPage, $identity->getSharedSpaceId());
         $lpas = $lpasSummary['applications'] ?? [];
         $lpasTotalCount = $lpasSummary['total'] ?? count($lpas);
-
-        // If there are no LPAs and this is NOT a search, redirect to create
-        if (is_null($search) && count($lpas) == 0) {
-            return new RedirectResponse('/user/dashboard/create');
-        }
-
         $pagesInRange = 5;
+
         $paginationControlData = $this->getPaginationControlData(
             $page,
             $lpasPerPage,
@@ -72,12 +66,11 @@ class DashboardHandler implements RequestHandlerInterface
                     'lastLogin' => $identity->lastLogin(),
                 ],
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
-                'env'             => getenv(), // TODO: remove - temporary debug dump
             ]
         );
 
         return new HtmlResponse(
-            $this->renderer->render('application/authenticated/dashboard/index.twig', $routeParams)
+            $this->renderer->render('application/authenticated/shared-space/dashboard.twig', $routeParams)
         );
     }
 }

@@ -62,22 +62,24 @@ class ApplicationDataTest extends MockeryTestCase
             'document' => '{"a":1}',
             'metadata' => '{"b":2}',
             'payment' => null,
+            'sharedSpaceId' => null,
         ]]);
+
+        $applicationData = new ApplicationData($dbWrapperMock, []);
+
+        $expectedOwnerPredicate = $applicationData->ownerPredicate($userId, null);
 
         // expectations
         $dbWrapperMock->shouldReceive('select')
             ->with(
                 ApplicationData::APPLICATIONS_TABLE,
-                Mockery::on(function ($criteriaArg) use ($userId, $lpaIds) {
+                Mockery::on(function ($criteriaArg) use ($lpaIds, $expectedOwnerPredicate) {
                     return $criteriaArg[0] == new InPredicate('id', $lpaIds) &&
-                        $criteriaArg['user'] === $userId;
+                        $criteriaArg[1] == $expectedOwnerPredicate;
                 }),
                 [],
             )
             ->andReturn($resultMock);
-
-        // test method
-        $applicationData = new ApplicationData($dbWrapperMock, []);
 
         // important to call iterator_to_array() to ensure that all the
         // items yielded are gathered
@@ -89,6 +91,7 @@ class ApplicationDataTest extends MockeryTestCase
             'document' => ["a" => 1],
             'metadata' => ["b" => 2],
             'payment' => null,
+            'sharedSpaceId' => null,
         ], $lpas[0]);
     }
 }

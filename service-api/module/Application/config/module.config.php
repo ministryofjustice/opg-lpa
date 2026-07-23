@@ -122,6 +122,29 @@ return [
                         ],
                     ],
 
+                    'shared-space' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/shared-space',
+                            'defaults' => [
+                                'controller' => 'SharedSpaceController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+
+                            'create' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/create',
+                                    'defaults' => [
+                                        'action' => 'create',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
