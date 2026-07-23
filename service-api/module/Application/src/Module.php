@@ -176,6 +176,7 @@ class Module
 
                 'AppAuthenticationService' => function ($sm) {
                     return new AppAuthenticationService(
+                        $sm->get(Repository\SharedSpace\SharedSpaceRepositoryInterface::class),
                         $sm->get('config')['session']['token_ttl'],
                         $sm->get('config')['session']['log_salt']
                     );

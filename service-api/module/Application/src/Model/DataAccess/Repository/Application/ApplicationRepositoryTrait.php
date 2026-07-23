@@ -10,9 +10,9 @@ use MakeShared\DataModel\Lpa\Lpa;
 trait ApplicationRepositoryTrait
 {
     /**
-     * @var ApplicationRepositoryInterface
+     * @var ApplicationRepositoryInterface|null
      */
-    private $applicationRepository;
+    private $applicationRepository = null;
 
     /**
      * @param ApplicationRepositoryInterface $repo
@@ -77,5 +77,26 @@ trait ApplicationRepositoryTrait
             'lpaid' => $lpa->id,
             'updatedAt' => $lpa->updatedAt,
         ]);
+    }
+
+    /**
+     * Move ownership of all of $userId's individually-owned LPAs into the
+     * shared space $sharedSpaceId.
+     *
+     * @param string $userId
+     * @param string $sharedSpaceId
+     * @return int Number of LPAs reassigned
+     */
+    protected function reassignLpaOwner(string $userId, string $sharedSpaceId): int
+    {
+        $reassignedCount = $this->getApplicationRepository()->setSharedSpaceOwner($userId, $sharedSpaceId);
+
+        $this->getLogger()->info('Reassigned LPA ownership', [
+            'userId'        => $userId,
+            'sharedSpaceId' => $sharedSpaceId,
+            'count'         => $reassignedCount,
+        ]);
+
+        return $reassignedCount;
     }
 }

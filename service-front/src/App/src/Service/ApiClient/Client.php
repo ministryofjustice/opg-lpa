@@ -34,6 +34,10 @@ class Client
         $this->defaultHeaders['Token'] = $token;
     }
 
+    /**
+     * @throws ApiException on non-200/204 response, or malformed JSON response
+     * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
+     */
     public function httpGet(
         string $path,
         array $query = [],
@@ -59,6 +63,10 @@ class Client
         };
     }
 
+    /**
+     * @throws ApiException on non-200/201/204 response, or malformed JSON response
+     * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
+     */
     public function httpPost(
         string $path,
         array $payload = [],
@@ -74,6 +82,10 @@ class Client
         };
     }
 
+    /**
+     * @throws ApiException on non-200/201/204 response, or malformed JSON response
+     * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
+     */
     public function httpPut(string $path, array $payload = []): array|null|string
     {
         $request  = new Request('PUT', new Uri($this->apiBaseUri . $path), $this->buildHeaders(), json_encode($payload));
@@ -86,6 +98,10 @@ class Client
         };
     }
 
+    /**
+     * @throws ApiException on non-200/201 response, or malformed JSON response
+     * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
+     */
     public function httpPatch(string $path, array $payload = []): array|null|string
     {
         $request  = new Request('PATCH', new Uri($this->apiBaseUri . $path), $this->buildHeaders(), json_encode($payload));
@@ -97,6 +113,10 @@ class Client
         };
     }
 
+    /**
+     * @throws ApiException on non-204 response
+     * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
+     */
     public function httpDelete(string $path): null
     {
         $request  = new Request('DELETE', new Uri($this->apiBaseUri . $path), $this->buildHeaders());

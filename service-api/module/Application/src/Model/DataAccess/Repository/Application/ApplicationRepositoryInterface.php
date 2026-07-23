@@ -4,27 +4,35 @@ namespace Application\Model\DataAccess\Repository\Application;
 
 use DateTime;
 use Traversable;
+use Laminas\Db\Sql\Predicate\PredicateInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 
 interface ApplicationRepositoryInterface
 {
     /**
-     * Get an LPA by ID, and user ID if provided
+     * Get an LPA by ID, scoped to an owner if provided.
      *
      * @param int $id
-     * @param string $userId
+     * @param string|null $userId If given, only match an LPA owned (directly,
+     *   or via a shared space) by this user - see ownerPredicate() and
+     *   sharedSpacePredicate().
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      * @return array|null
      */
-    public function getById(int $id, ?string $userId = null): ?array;
+    public function getById(int $id, ?string $userId = null, ?string $sharedSpaceId = null): ?array;
 
     /**
-     * Get LPAs whose IDs are in $lpaIds for the specified user
+     * Get LPAs whose IDs are in $lpaIds, owned (directly, or via a shared
+     * space) by the given user.
      *
      * @param array $lpaIds Array of LPA IDs which must be matched
-     * @param string $userId ID of the user to get LPAs for
+     * @param string $userId
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      * @return Traversable containing LPA items
      */
-    public function getByIdsAndUser(array $lpaIds, string $userId): Traversable;
+    public function getByIdsAndUserOrSharedSpace(array $lpaIds, string $userId, ?string $sharedSpaceId = null): Traversable;
 
     /**
      * Counts the number of results for the given criteria.
@@ -42,6 +50,8 @@ interface ApplicationRepositoryInterface
     public function fetch(array $criteria, array $options = []): Traversable;
 
     /**
+     * Get LPAs owned by the given user.
+     *
      * @param string $userId
      * @param array $options
      * @return Traversable
@@ -63,9 +73,50 @@ interface ApplicationRepositoryInterface
 
     /**
      * @param int $lpaId
-     * @param string $userId
+     * @param string $userId The LPA is only deleted if owned (directly, or
+     *   via a shared space) by this user.
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      */
-    public function deleteById(int $lpaId, string $userId): void;
+    public function deleteById(int $lpaId, string $userId, ?string $sharedSpaceId = null): void;
+
+    /**
+     * Move ownership of all of $userId's individually-owned LPAs (i.e. those
+     * not already claimed by a different shared space) into $sharedSpaceId.
+     * Used when a user creates (or joins) a shared space.
+     *
+     * @param string $userId
+     * @param string $sharedSpaceId
+     * @return int Number of LPAs reassigned
+     */
+    public function setSharedSpaceOwner(string $userId, string $sharedSpaceId): int;
+
+    /**
+     * Build the WHERE predicate matching LPAs individually-owned by $userId
+     * directly - i.e. not associated with any shared space.
+     *
+     * Exposed so that callers building their own filter criteria (e.g.
+     * Applications\Service::fetchAll()) can compose it with additional
+     * conditions.
+     *
+     * @param string $userId
+     * @return PredicateInterface
+     */
+    public function ownerPredicate(string $userId): PredicateInterface;
+
+    /**
+     * Build the WHERE predicate matching LPAs owned by the shared space
+     * identified by $sharedSpaceId - i.e. every LPA owned by that shared
+     * space, regardless of which member created it.
+     *
+     * Exposed so that callers building their own filter criteria (e.g.
+     * Applications\Service::fetchAllForSharedSpace()) can compose it with
+     * additional conditions.
+     *
+     * @param string $sharedSpaceId
+     * @return PredicateInterface
+     */
+    public function sharedSpacePredicate(string $sharedSpaceId): PredicateInterface;
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided
