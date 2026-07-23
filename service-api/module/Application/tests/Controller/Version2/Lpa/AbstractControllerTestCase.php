@@ -3,19 +3,19 @@
 namespace ApplicationTest\Controller\Version2\Lpa;
 
 use Application\Controller\Version2\Lpa\AbstractLpaController;
+use Application\Library\Authentication\Identity\User;
 use Application\Model\Service\EntityInterface;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Header\GenericHeader;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Laminas\Stdlib\Parameters;
-use Lmc\Rbac\Identity\IdentityInterface;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
 
 abstract class AbstractControllerTestCase extends MockeryTestCase
 {
@@ -35,9 +35,14 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     protected $eventManager;
 
     /**
-     * @var AuthorizationService|MockInterface
+     * @var AuthenticationService|MockInterface
      */
-    protected $authorizationService;
+    protected $authenticationService;
+
+    /**
+     * @var User|MockInterface
+     */
+    protected $identity;
 
     /**
      * @var RouteMatch|MockInterface
@@ -59,55 +64,42 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->userId = 12345;
         $this->lpaId = 98765;
 
-        // Create mock response for the event manager
         $response = Mockery::mock(Response::class);
         $response->shouldReceive('stopped');
 
-        // Create an event manager for passing into 'dispatch'
         $this->eventManager = Mockery::mock(EventManager::class);
         $this->eventManager->shouldReceive('setIdentifiers');
         $this->eventManager->shouldReceive('attach');
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($response);
 
-        // Create default identity to be returned by the authorisation service
-        $identity = Mockery::mock(IdentityInterface::class);
-        $identity->shouldReceive('getEmail')->andReturn('identity@email.address');
+        $this->identity = Mockery::mock(User::class);
+        $this->identity->shouldReceive('getId')->andReturn(99999);
+        $this->identity->shouldReceive('id')->andReturn(99999);
+        $this->identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
+        $this->identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
+        $this->identity->shouldReceive('email')->andReturn('identity@email.address');
 
-        // Create authorisation service mock, default to return that user is authorised
-        $authorizationService = Mockery::mock(AuthorizationService::class);
-        $authorizationService->shouldReceive('isGranted')->withArgs(['authenticated'])
-            ->andReturn(true);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['isAuthorizedToManageUser', $this->userId])
-            ->andReturn(false);
-        $authorizationService->shouldReceive('isGranted')
-            ->withArgs(['admin'])
-            ->andReturn(true);
+        $authenticationService = Mockery::mock(AuthenticationService::class);
+        $authenticationService->shouldReceive('getIdentity')->andReturn($this->identity);
 
-        $authorizationService->shouldReceive('getIdentity')->andReturn($identity);
-
-        // Create RouteMatch for OnDispatch MvcEvent
         $this->routeMatch = Mockery::mock(RouteMatch::class);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['userId'])->andReturn($this->userId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId'])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId', false])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['action', false])->andReturn(false);
 
-        // Create Request for OnDispatch MvcEvent
         $request = Mockery::mock(Request::class);
         $request->shouldReceive('getMethod')->andReturn('dummy');
 
-        // Create Response for OnDispatch MvcEvent
         $response = Mockery::mock(Response::class);
         $response->shouldReceive('setStatusCode');
 
-        // Create MvcEvent for OnDispatch
         $this->mvcEvent = Mockery::mock(MvcEvent::class);
         $this->mvcEvent->shouldReceive('getRouteMatch')->andReturn($this->routeMatch);
         $this->mvcEvent->shouldReceive('getRequest')->andReturn($request);
         $this->mvcEvent->shouldReceive('getResponse')->andReturn($response);
 
-        $this->authorizationService = $authorizationService;
+        $this->authenticationService = $authenticationService;
     }
 
     /**
@@ -129,8 +121,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
      */
     protected function setAuthorised(bool $authorised): void
     {
-        //Replace the default authorised value set in setUp
-        $this->authorizationService->mockery_findExpectation('isGranted', ['admin'])->andReturn($authorised);
+        $this->identity->mockery_findExpectation('hasRole', ['admin'])->andReturn($authorised);
+        $this->identity->mockery_findExpectation('hasRole', ['admin-service'])->andReturn($authorised);
     }
 
     protected function callDispatch(AbstractLpaController $abstractController, array $parameters = [])

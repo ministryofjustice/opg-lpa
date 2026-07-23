@@ -13,8 +13,21 @@ abstract class AbstractIdentity implements IdentityInterface
         return $this->id;
     }
 
+    /** @psalm-suppress PossiblyUnusedMethod */
+    public function getId(): mixed
+    {
+        return $this->id;
+    }
+
+    /** @psalm-suppress PossiblyUnusedMethod */
     public function getRoles(): iterable
     {
         return $this->roles;
+    }
+
+    /** @psalm-suppress PossiblyUnusedMethod */
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles, true);
     }
 }

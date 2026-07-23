@@ -60,3 +60,9 @@ repos:
     hooks:
       - id: go-imports # replaces go-fmt
       - id: go-mod-tidy
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    # Zizmor version.
+    rev: v1.28.0
+    hooks:
+      # Run the linter.
+      - id: zizmor

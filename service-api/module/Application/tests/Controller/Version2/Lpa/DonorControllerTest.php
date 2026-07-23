@@ -6,7 +6,7 @@ use Application\Controller\Version2\Lpa\DonorController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Donor\Service;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -21,7 +21,7 @@ class DonorControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new DonorController($this->authorizationService, $this->service);
+        $controller = new DonorController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 
