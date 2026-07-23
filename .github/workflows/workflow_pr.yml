@@ -12,14 +12,14 @@ on:
 permissions:
   actions: none
   checks: none
-  contents: write
+  contents: write # zizmor: ignore[excessive-permissions]
   deployments: none
-  id-token: write
+  id-token: write # zizmor: ignore[excessive-permissions]
   issues: none
   packages: none
   pull-requests: read
   repository-projects: none
-  security-events: write
+  security-events: write # zizmor: ignore[excessive-permissions]
   statuses: none
 
 jobs:
@@ -36,14 +36,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
       - name: Set safe branch name
         id: safe_branch_name
         uses: ministryofjustice/opg-github-actions/actions/branch-name@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
       - name: Set workspace name
         id: set_workspace_name
         run: |
-          echo "workspace_name=${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}" >> $GITHUB_OUTPUT
-          echo "## **Workspace Name: ${{ github.event.number }}${{ steps.safe_branch_name.outputs.safe }}**" >> $GITHUB_STEP_SUMMARY
+          echo "workspace_name=${{ github.event.number }}${SAFE_BRANCH_NAME}" >> $GITHUB_OUTPUT
+          echo "## **Workspace Name: ${{ github.event.number }}${SAFE_BRANCH_NAME}**" >> $GITHUB_STEP_SUMMARY
+        env:
+          SAFE_BRANCH_NAME: ${{ steps.safe_branch_name.outputs.safe }}
       - name: Set output to short SHA
         id: short_sha
         env:
@@ -206,6 +210,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Download Terraform Task definition
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
@@ -226,12 +232,12 @@ jobs:
         id: admin_fqdn
         env:
           configJson: ${{steps.set_var.outputs.configJson}}
-        run: |
+        run: | # zizmor: ignore[template-injection]
           echo "value=${{ fromJson(env.configJson).admin_fqdn }}" >> $GITHUB_OUTPUT
 
       - name: Extract Front FQDN from JSON
         id: front_fqdn
-        run: |
+        run: | # zizmor: ignore[template-injection]
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
 
   cypress_tests_Signup_StitchedPF:
@@ -324,12 +330,15 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
-            echo "${{ needs.workflow_variables.outputs.workspace_name }} PR environment tested, built and deployed"
-            echo "Tag Deployed: ${{ needs.workflow_variables.outputs.short_sha }}"
-            echo "URL: https://${{ env.FRONT_URL }}/home"
+            echo "${WORKSPACE_NAME} PR environment tested, built and deployed"
+            echo "Tag Deployed: ${SHORT_SHA}"
+            echo "URL: https://${FRONT_URL}/home"
             exit 0
           else
             echo "Previous jobs in pipeline failed."
             exit 1
           fi
+        env:
+          WORKSPACE_NAME: ${{ needs.workflow_variables.outputs.workspace_name }}
+          SHORT_SHA: ${{ needs.workflow_variables.outputs.short_sha }}
     if: always()

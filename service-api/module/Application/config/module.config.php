@@ -4,7 +4,6 @@ use Application\Handler;
 use Laminas\Di\Container\ServiceManager\AutowireFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Lmc\Rbac\Role\InMemoryRoleProvider;
 use MakeShared\Factories\ListenerAbstractFactory;
 use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
@@ -108,6 +107,17 @@ return [
                             'defaults' => [
                                 'controller' => 'AuthenticateController',
                                 'action'     => 'setSessionExpiry',
+                            ],
+                        ],
+                    ],
+
+                    'onelogin-start' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/start',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'start',
                             ],
                         ],
                     ],
@@ -430,41 +440,6 @@ return [
         ],
     ],
 
-    'lmc_rbac' => [
-        'assertion_map' => [
-            'isAuthorizedToManageUser' => 'Application\Library\Authorization\Assertions\IsAuthorizedToManageUser',
-        ],
-        'role_provider' => [
-            InMemoryRoleProvider::class => [
-                'admin' => [
-                    // An authenticated request with admin rights.
-                    'children' => ['user'],
-                    'permissions' => [ 'admin' ]
-                ],
-                'admin-service' => [
-                    // An authenticated request from the admin service (service-to-service via pre-shared secret).
-                    // Network-level security (VPC security groups) is the primary control.
-                    'children' => ['admin'],
-                    'permissions' => [ 'admin' ]
-                ],
-                'user' => [
-                    // An authenticated request.
-                    'children' => ['guest'],
-                    'permissions' => [ 'authenticated', 'isAuthorizedToManageUser' ]
-                ],
-                'service' => [
-                    // An authenticated request from a service (e.g. auth service)
-                    'children' => ['guest'],
-                    'permissions' => [ 'authenticated', 'isAuthorizedToManageUser' ]
-                ],
-                'guest' => [
-                    // An unauthenticated request.
-                    'permissions' => ['stats']
-                ],
-            ],
-        ],
-    ],
-
     'controllers' => [
         'aliases' => [
             //  The route configuration uses these short names; alias them to the
@@ -498,6 +473,13 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
+            Application\Model\Service\OneLogin\DiscoveryDocumentFetcher::class => static function (ServiceLocatorInterface $container): Application\Model\Service\OneLogin\DiscoveryDocumentFetcher {
+                $config = $container->get('config');
+                return new Application\Model\Service\OneLogin\DiscoveryDocumentFetcher(
+                    $container->get(GuzzleHttp\Client::class),
+                    $config['onelogin']['discovery_url'] ?? '',
+                );
+            },
         ],
         'initializers' => [
             function (ServiceLocatorInterface $container, $instance) {

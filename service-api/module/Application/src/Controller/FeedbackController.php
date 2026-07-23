@@ -4,12 +4,13 @@ namespace Application\Controller;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
+use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Feedback\Service as FeedbackService;
 use DateTime;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use Psr\Log\LoggerInterface;
 
 class FeedbackController extends AbstractRestfulController
@@ -20,20 +21,20 @@ class FeedbackController extends AbstractRestfulController
     private $service;
 
     /**
-     * @var AuthorizationService
+     * @var AuthenticationService
      */
-    protected $authorizationService;
+    protected $authenticationService;
 
 
     /**
      * FeedbackController constructor.
      * @param FeedbackService $service
-     * @param AuthorizationService $authorizationService
+     * @param AuthenticationService $authenticationService
      */
-    public function __construct(FeedbackService $service, AuthorizationService $authorizationService, private readonly LoggerInterface $logger)
+    public function __construct(FeedbackService $service, AuthenticationService $authenticationService, private readonly LoggerInterface $logger)
     {
         $this->service = $service;
-        $this->authorizationService = $authorizationService;
+        $this->authenticationService = $authenticationService;
     }
 
     /**
@@ -43,7 +44,8 @@ class FeedbackController extends AbstractRestfulController
      */
     public function getList()
     {
-        if (!$this->authorizationService->isGranted('authenticated')) {
+        $identity = $this->authenticationService->getIdentity();
+        if ($identity === null || $identity instanceof Guest) {
             return new ApiProblemResponse(
                 new ApiProblem(401, 'You need to be authenticated to access this service.')
             );

@@ -7,7 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Correspondent\Service;
-use Lmc\Rbac\Mvc\Exception\UnauthorizedException;
+use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
@@ -22,7 +22,7 @@ class CorrespondentControllerTest extends AbstractControllerTestCase
     {
         $this->service = Mockery::mock(Service::class);
 
-        $controller = new CorrespondentController($this->authorizationService, $this->service);
+        $controller = new CorrespondentController($this->authenticationService, $this->service);
         $this->callDispatch($controller, $parameters);
         $this->callOnDispatch($controller);
 

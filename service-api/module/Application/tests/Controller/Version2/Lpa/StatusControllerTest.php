@@ -44,7 +44,7 @@ class StatusControllerTest extends AbstractControllerTestCase
         $this->config = ['track-from-date' => '2019-01-01'];
 
         $this->statusController = new StatusController(
-            $this->authorizationService,
+            $this->authenticationService,
             $this->applicationsService,
             $this->processingStatusService,
             $this->config

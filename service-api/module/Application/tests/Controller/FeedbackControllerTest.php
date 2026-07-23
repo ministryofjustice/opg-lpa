@@ -10,7 +10,8 @@ use Application\Model\Service\Feedback\Service as FeedbackService;
 use DateTime;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\PluginManager;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Application\Library\Authentication\Identity\User;
+use Laminas\Authentication\AuthenticationService;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -29,9 +30,9 @@ class FeedbackControllerTest extends MockeryTestCase
     private $feedbackService;
 
     /**
-     * @var AuthorizationService|MockInterface
+     * @var AuthenticationService|MockInterface
      */
-    private $authorizationServiceService;
+    private $authenticationService;
 
     private LoggerInterface&MockInterface $logger;
 
@@ -44,10 +45,10 @@ class FeedbackControllerTest extends MockeryTestCase
     public function setUp(): void
     {
         $this->feedbackService = Mockery::mock(FeedbackService::class);
-        $this->authorizationServiceService = Mockery::mock(AuthorizationService::class);
+        $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->logger = Mockery::mock(LoggerInterface::class);
 
-        $this->controller = new FeedbackController($this->feedbackService, $this->authorizationServiceService, $this->logger);
+        $this->controller = new FeedbackController($this->feedbackService, $this->authenticationService, $this->logger);
 
         $this->pluginManager = Mockery::mock(PluginManager::class);
         $this->pluginManager->shouldReceive('setController');
@@ -67,7 +68,7 @@ class FeedbackControllerTest extends MockeryTestCase
 
         $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
 
-        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(true);
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn(Mockery::mock(User::class));
 
         //----------------------------------
 
@@ -88,7 +89,7 @@ class FeedbackControllerTest extends MockeryTestCase
 
         $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
 
-        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(true);
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn(Mockery::mock(User::class));
 
         //----------------------------------
 
@@ -106,7 +107,7 @@ class FeedbackControllerTest extends MockeryTestCase
 
         $this->pluginManager->shouldReceive('get')->andReturn($paramsPlugin);
 
-        $this->authorizationServiceService->shouldReceive('isGranted')->andReturn(false);
+        $this->authenticationService->shouldReceive('getIdentity')->andReturn(null);
 
         //----------------------------------
 

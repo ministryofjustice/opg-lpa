@@ -5,15 +5,16 @@ namespace Application\Controller;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
+use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
 use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Exception;
+use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\MvcEvent;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -31,8 +32,8 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
     /* @var $applicationsService ApplicationsService */
     private $applicationsService;
 
-    /* @var $authorizationService AuthorizationService */
-    private $authorizationService;
+    /* @var $authenticationService AuthenticationService */
+    private $authenticationService;
 
     /* @var $processingStatusService ProcessingStatusService */
     private $processingStatusService;
@@ -51,16 +52,16 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
     }
 
     /**
-     * @param AuthorizationService $authorizationService
+     * @param AuthenticationService $authenticationService
      * @param ApplicationsService $applicationsService
      * @param ProcessingStatusService $processingStatusService
      */
     public function __construct(
-        AuthorizationService $authorizationService,
+        AuthenticationService $authenticationService,
         ApplicationsService $applicationsService,
         ProcessingStatusService $processingStatusService
     ) {
-        $this->authorizationService = $authorizationService;
+        $this->authenticationService = $authenticationService;
         $this->applicationsService = $applicationsService;
         $this->processingStatusService = $processingStatusService;
     }
@@ -80,7 +81,8 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
             throw new ApiProblemException('User identifier missing from URL', 400);
         }
 
-        if (!$this->authorizationService->isGranted('authenticated')) {
+        $identity = $this->authenticationService->getIdentity();
+        if ($identity === null || $identity instanceof Guest) {
             throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 

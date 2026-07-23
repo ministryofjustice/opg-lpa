@@ -22,10 +22,4 @@ class UserTest extends TestCase
     {
         $this->assertEquals('email@email.com', $this->user->email());
     }
-
-    public function testSetAsAdmin(): void
-    {
-        $this->user->setAsAdmin();
-        $this->assertEquals([0 => 'user', 1 => 'admin'], $this->user->getRoles());
-    }
 }

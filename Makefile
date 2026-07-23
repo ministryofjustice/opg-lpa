@@ -10,10 +10,6 @@ ORDNANCESURVEY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-s
 # Used for emails sent by service-api's account cleanup CLI script.
 NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id local/opg_lpa_api_notify_api_key | jq -r .'SecretString')
 
-# Used in service-admin to determine which logged-in user has admin rights.
-# This user is in the test data seeded into the system.
-ADMIN_USERS := "seeded_test_user@digital.justice.gov.uk"
-
 COMPOSER_VERSION := 2.8.11
 
 # Unique identifier for this version of the application
@@ -116,7 +112,6 @@ dc-up: all-composer-install ecrlogin
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
@@ -130,7 +125,6 @@ dc-up-debug: all-composer-install ecrlogin
 	@export OPG_LPA_FRONT_GOV_PAY_KEY=${GOVPAY}; \
 	export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	export OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY=${ORDNANCESURVEY} ; \
-	export OPG_LPA_COMMON_ADMIN_ACCOUNTS=${ADMIN_USERS}; \
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans

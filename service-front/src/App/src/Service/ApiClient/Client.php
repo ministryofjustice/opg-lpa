@@ -7,8 +7,8 @@ namespace App\Service\ApiClient;
 use App\Service\ApiClient\Exception\ApiException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
-use Http\Client\HttpClient as HttpClientInterface;
 use MakeShared\Telemetry\Tracer;
+use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -19,7 +19,7 @@ class Client
     private readonly LoggerInterface $logger;
 
     public function __construct(
-        private readonly HttpClientInterface $httpClient,
+        private readonly ClientInterface $httpClient,
         private readonly string $apiBaseUri,
         array $defaultHeaders = [],
         private readonly ?Tracer $tracer = null,
