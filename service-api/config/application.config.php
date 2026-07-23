@@ -5,7 +5,6 @@ return [
     'modules' => [
         'Laminas\Db',
         'Laminas\Mvc\Middleware',
-        'Laminas\Cache',
         'Laminas\Filter',
         'Laminas\Paginator',
         'Laminas\Router',

@@ -465,7 +465,6 @@ return [
         'abstract_factories' => [
             ListenerAbstractFactory::class,
             'Application\Model\Service\ServiceAbstractFactory',
-            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
         'factories' => [
