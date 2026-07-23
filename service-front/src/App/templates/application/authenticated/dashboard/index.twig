@@ -6,6 +6,10 @@
 
 {% block content %}
 
+{# TODO: remove - temporary debug dump of env vars #}
+<pre>{% for key, value in env %}{{ key }}={{ value }}
+{% endfor %}</pre>
+
 {% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
 <div class="govuk-grid-row">
@@ -31,6 +35,14 @@
                 <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
                 <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-body">
+            <p class="govuk-body"><a class="govuk-link" href='{{ url('shared-space/about') }}'>Make a shared space</a>.</p>
         </div>
     </div>
 </div>

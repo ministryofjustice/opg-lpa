@@ -43,6 +43,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($apiLpaCollection2);
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -74,6 +75,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -104,6 +106,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -147,6 +150,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository(new Lpa(), $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -178,6 +182,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -207,6 +212,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
@@ -230,6 +236,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $applicationsService = new TestableService();
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
+        $applicationsService->setSharedSpaceRepository($this->getSharedSpaceRepository());
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
         $this->service->setApplicationsService($applicationsService);

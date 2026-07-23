@@ -8,11 +8,13 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
 use ArrayIterator;
 use ArrayObject;
 use DateTime;
+use Laminas\Db\Sql\Predicate\Operator;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -26,12 +28,65 @@ final class ServiceTest extends AbstractServiceTestCase
 {
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
 
+    private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         //  Set up the ApiLpaCollection so it can be enhanced for each test
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
+
+        $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->andReturn(null);
+
+        $this->applicationRepository->shouldReceive('ownerPredicate')
+            ->andReturnUsing(fn ($userId, $sharedSpaceId) => $this->ownerPredicateStub($userId, $sharedSpaceId));
+    }
+
+    /**
+     * @param string $userId
+     * @param string|null $sharedSpaceId
+     * @return Operator
+     */
+    private function ownerPredicateStub(string $userId, ?string $sharedSpaceId)
+    {
+        return new Operator('__ownerPredicate', '=', $userId . '|' . ($sharedSpaceId ?? ''));
+    }
+
+    private function createService(): TestableService
+    {
+        $service = new TestableService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setSharedSpaceRepository($this->sharedSpaceRepository);
+
+        return $service;
+    }
+
+    public function testFetchWithSharedSpace()
+    {
+        $lpa = FixturesData::getHwLpa();
+
+        $user = FixturesData::getUser();
+
+        $sharedSpaceId = 'shared-space-1';
+
+        $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->with($user->getId())
+            ->andReturn($sharedSpaceId);
+
+        $this->applicationRepository->shouldReceive('getById')
+            ->withArgs([$lpa->getId(), $user->getId(), $sharedSpaceId])
+            ->once()
+            ->andReturn($lpa->toArray());
+
+        $service = $this->createService();
+
+        $entity = $service->fetch(strval($lpa->getId()), $user->getId());
+
+        $this->assertTrue($entity instanceof DataModelEntity);
+        $this->assertEquals($lpa, $entity->getData());
     }
 
     public function testFetchNotFound()
@@ -39,12 +94,11 @@ final class ServiceTest extends AbstractServiceTestCase
         $user = FixturesData::getUser();
 
         $this->applicationRepository->shouldReceive('getById')
-            ->withArgs([-1, $user->getId()])
+            ->withArgs([-1, $user->getId(), null])
             ->once()
             ->andReturn(null);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $entity = $service->fetch(strval(-1), $user->getId());
 
@@ -68,8 +122,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setFindOneLpaExpectation($user, $lpa);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $entity = $service->fetch(strval($lpa->getId()), $user->getId());
         $this->assertTrue($entity instanceof DataModelEntity);
@@ -82,8 +135,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setInsertOneExpectations($user);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         /* @var DataModelEntity */
         $createdEntity = $service->create(null, $user->getId());
@@ -100,8 +152,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessageMatches('/A malformed LPA object \(during LPA create\)/');
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $service->create([
             'document' => [
@@ -118,8 +169,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setInsertOneExpectations($user);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         /* @var DataModelEntity */
         $createdEntity = $service->create($lpa->toArray(), $user->getId());
@@ -137,8 +187,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setInsertOneExpectations($user);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         /* @var $createdEntity DataModelEntity */
         $createdEntity = $service->create($lpa->toArray(), $user->getId());
@@ -175,8 +224,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $lpa->setDocument(new Document());
         $lpa->getDocument()->setType('invalid');
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $validationError = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
 
@@ -212,8 +260,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->logger->shouldReceive('info')->once();
         $this->logger->shouldReceive('debug')->once();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         $service->testUpdateLpa($lpa);
@@ -229,8 +276,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var DataModelEntity */
@@ -256,8 +302,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -283,8 +328,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -308,8 +352,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -335,8 +378,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -362,8 +404,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -394,8 +435,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->logger->shouldReceive('info')->twice();
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
@@ -426,8 +466,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setDeleteExpectations($user, -1, null);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->delete(-1, $user->getId());
 
@@ -451,8 +490,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->delete(strval($lpa->getId()), $user->getId());
 
@@ -465,15 +503,16 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $this->setDeleteExpectations($user, $lpa->getId(), $lpa);
-
         $this->applicationRepository->shouldReceive('fetchByUserId')
             ->withArgs([$user->getId()])
             ->once()
             ->andReturn(new ArrayIterator([['id' => $lpa->getId()]]));
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $this->applicationRepository->shouldReceive('deleteById')
+            ->withArgs([$lpa->getId(), $user->getId()])
+            ->once();
+
+        $service = $this->createService();
 
         $service->deleteAll($user->getId());
     }
@@ -482,10 +521,9 @@ final class ServiceTest extends AbstractServiceTestCase
     {
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId()], []);
+        $this->setFetchAllExpectations([$this->ownerPredicateStub($user->getId(), null)], []);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId());
 
@@ -498,10 +536,9 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId()], $lpas);
+        $this->setFetchAllExpectations([$this->ownerPredicateStub($user->getId(), null)], $lpas);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId());
 
@@ -515,10 +552,12 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId(), 'id' => $lpas[1]->id], [$lpas[1]]);
+        $this->setFetchAllExpectations([
+            $this->ownerPredicateStub($user->getId(), null),
+            'id' => $lpas[1]->id,
+        ], [$lpas[1]]);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId(), ['search' => $lpas[1]->id]);
 
@@ -535,12 +574,11 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->setFetchAllExpectations([
             'search' => $lpas[1]->id,
             'filter' => ['user' => 'missing'],
-            'user' => $user->getId(),
+            $this->ownerPredicateStub($user->getId(), null),
             'id' => $lpas[1]->id
         ], []);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId(), ['search' => $lpas[1]->id, 'filter' => ['user' => 'missing']]);
 
@@ -553,10 +591,12 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $this->setFetchAllExpectations(['user' => $user->getId(), 'id' => $lpas[0]->id], [$lpas[0]]);
+        $this->setFetchAllExpectations([
+            $this->ownerPredicateStub($user->getId(), null),
+            'id' => $lpas[0]->id,
+        ], [$lpas[0]]);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId(), ['search' => Formatter::id($lpas[0]->id)]);
 
@@ -571,12 +611,11 @@ final class ServiceTest extends AbstractServiceTestCase
         $user = FixturesData::getUser();
 
         $this->setFetchAllExpectations([
-            'user' => $user->getId(),
+            $this->ownerPredicateStub($user->getId(), null),
             'search' => $name
         ], []);
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->fetchAll($user->getId(), ['search' => $name]);
 
@@ -589,11 +628,10 @@ final class ServiceTest extends AbstractServiceTestCase
         $userId = 'user1';
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
-            ->withArgs([$lpaIds, $userId])
+            ->withArgs([$lpaIds, $userId, null])
             ->andReturn(new ArrayObject());
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->filterByIdsAndUser($lpaIds, $userId);
 
@@ -608,11 +646,10 @@ final class ServiceTest extends AbstractServiceTestCase
         $pfLpa = FixturesData::getPfLpa();
 
         $this->applicationRepository->shouldReceive('getByIdsAndUser')
-            ->withArgs([$lpaIds, $userId])
+            ->withArgs([$lpaIds, $userId, null])
             ->andReturn(new ArrayObject([$hwLpa->toArray(), $pfLpa->toArray()]));
 
-        $service = new TestableService();
-        $service->setApplicationRepository($this->applicationRepository);
+        $service = $this->createService();
 
         $response = $service->filterByIdsAndUser($lpaIds, $userId);
 
@@ -627,7 +664,7 @@ final class ServiceTest extends AbstractServiceTestCase
     {
         //  Return with or without user ID
         $this->applicationRepository->shouldReceive('getById')
-            ->withArgs([$lpa->getId(), $user->getId()])
+            ->withArgs([$lpa->getId(), $user->getId(), null])
             ->andReturn($lpa->toArray());
         $this->applicationRepository->shouldReceive('getById')
             ->withArgs([$lpa->getId()])
@@ -708,13 +745,13 @@ final class ServiceTest extends AbstractServiceTestCase
     {
         $isLpa = ($lpa instanceof Lpa) === true;
         $this->applicationRepository->shouldReceive('getById')
-            ->withArgs([$lpaId, $user->getId()])
+            ->withArgs([$lpaId, $user->getId(), null])
             ->once()
             ->andReturn($isLpa === false ? null : ['id' => $lpa->getId()]);
 
         if ($isLpa === true) {
             $this->applicationRepository->shouldReceive('deleteById')
-                ->withArgs([$lpaId, $user->getId()])
+                ->withArgs([$lpaId, $user->getId(), null])
                 ->once();
         }
     }

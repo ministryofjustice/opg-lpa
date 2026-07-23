@@ -22,6 +22,7 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
         AuthControllers\OneLoginController::class  => Service\OneLogin\Service::class,
         AuthControllers\PasswordController::class  => Service\Password\Service::class,
         AuthControllers\UsersController::class     => Service\Users\Service::class,
+        AuthControllers\SharedSpaceController::class => Service\SharedSpace\SharedSpaceService::class,
     ];
 
     /**

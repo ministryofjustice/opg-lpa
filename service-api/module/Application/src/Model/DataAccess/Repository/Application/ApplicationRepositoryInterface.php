@@ -4,27 +4,34 @@ namespace Application\Model\DataAccess\Repository\Application;
 
 use DateTime;
 use Traversable;
+use Laminas\Db\Sql\Predicate\PredicateInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 
 interface ApplicationRepositoryInterface
 {
     /**
-     * Get an LPA by ID, and user ID if provided
+     * Get an LPA by ID, scoped to an owner if provided.
      *
      * @param int $id
-     * @param string $userId
+     * @param string|null $userId If given, only match an LPA owned (directly,
+     *   or via a shared space) by this user - see ownerPredicate().
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      * @return array|null
      */
-    public function getById(int $id, ?string $userId = null): ?array;
+    public function getById(int $id, ?string $userId = null, ?string $sharedSpaceId = null): ?array;
 
     /**
-     * Get LPAs whose IDs are in $lpaIds for the specified user
+     * Get LPAs whose IDs are in $lpaIds, owned (directly, or via a shared
+     * space) by the given user.
      *
      * @param array $lpaIds Array of LPA IDs which must be matched
-     * @param string $userId ID of the user to get LPAs for
+     * @param string $userId
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      * @return Traversable containing LPA items
      */
-    public function getByIdsAndUser(array $lpaIds, string $userId): Traversable;
+    public function getByIdsAndUser(array $lpaIds, string $userId, ?string $sharedSpaceId = null): Traversable;
 
     /**
      * Counts the number of results for the given criteria.
@@ -42,11 +49,15 @@ interface ApplicationRepositoryInterface
     public function fetch(array $criteria, array $options = []): Traversable;
 
     /**
+     * Get LPAs owned (directly, or via a shared space) by the given user.
+     *
      * @param string $userId
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      * @param array $options
      * @return Traversable
      */
-    public function fetchByUserId(string $userId, array $options = []): Traversable;
+    public function fetchByUserId(string $userId, ?string $sharedSpaceId = null, array $options = []): Traversable;
 
     /**
      * @param Lpa $lpa
@@ -63,9 +74,48 @@ interface ApplicationRepositoryInterface
 
     /**
      * @param int $lpaId
-     * @param string $userId
+     * @param string $userId The LPA is only deleted if owned (directly, or
+     *   via a shared space) by this user.
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
      */
-    public function deleteById(int $lpaId, string $userId): void;
+    public function deleteById(int $lpaId, string $userId, ?string $sharedSpaceId = null): void;
+
+    /**
+     * Move ownership of all of $userId's individually-owned LPAs (i.e. those
+     * not already claimed by a different shared space) into $sharedSpaceId.
+     * Used when a user creates (or joins) a shared space.
+     *
+     * @param string $userId
+     * @param string $sharedSpaceId
+     * @return int Number of LPAs reassigned
+     */
+    public function setSharedSpaceOwner(string $userId, string $sharedSpaceId): int;
+
+    /**
+     * Build the WHERE predicate matching LPAs owned (directly, or via a
+     * shared space) by $userId. Exposed so that callers building their own
+     * filter criteria (e.g. Applications\Service::fetchAll()) can compose it
+     * with additional conditions.
+     *
+     * An LPA is owned by $userId if either:
+     *  - its 'user' column is $userId and it hasn't been moved into a shared
+     *    space ('sharedSpaceId' is null), i.e. $userId owns it directly; or
+     *  - its 'sharedSpaceId' column matches $sharedSpaceId, i.e. $userId is
+     *    a member of the shared space that now owns it.
+     *
+     * Note: this method is deliberately "dumb" - it has no awareness of
+     * shared space membership itself. It is the caller's responsibility to
+     * resolve which shared space (if any) $userId belongs to, and pass its ID
+     * in as $sharedSpaceId (see how Applications\Service::fetch() resolves it
+     * via getSharedSpaceRepository()->getSharedSpaceIdForUser($userId)).
+     *
+     * @param string $userId
+     * @param string|null $sharedSpaceId The shared space $userId currently
+     *   belongs to, if any.
+     * @return PredicateInterface
+     */
+    public function ownerPredicate(string $userId, ?string $sharedSpaceId): PredicateInterface;
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided

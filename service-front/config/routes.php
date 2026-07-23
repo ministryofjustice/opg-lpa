@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Handler\AboutSharedSpacesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\AccessibilityHandler;
 use App\Handler\ChangeEmailAddressHandler;
@@ -23,6 +24,7 @@ use App\Handler\HomeRedirectHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
+use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PostcodeHandler;
@@ -31,6 +33,7 @@ use App\Handler\ResendActivationEmailHandler;
 use App\Handler\ResetPasswordHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
+use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
 use App\Handler\VerifyEmailAddressHandler;
@@ -171,6 +174,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
             ->setOptions(['unauthenticated_route' => true]);
+    }
+
+    if (App\Feature::SharedSpace->isEnabled()) {
+        $app->get('/shared-space/about', AboutSharedSpacesHandler::class, 'shared-space.about');
+        $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
+        $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
     }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')

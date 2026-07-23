@@ -3,6 +3,7 @@
 namespace ApplicationTest\Model\Service;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -38,7 +39,7 @@ abstract class AbstractServiceTestCase extends MockeryTestCase
         if ($user !== null) {
             if ($lpa !== null) {
                 $apiLpaCollection->shouldReceive('getById')
-                    ->withArgs([(int)$lpa->getId(), $user->getId()])
+                    ->withArgs([(int)$lpa->getId(), $user->getId(), null])
                     ->andReturn($lpa->toArray());
                 $apiLpaCollection->shouldReceive('getById')
                     ->withArgs([$lpa->getId()])
@@ -63,5 +64,17 @@ abstract class AbstractServiceTestCase extends MockeryTestCase
 
         /** @var ApplicationRepositoryInterface $apiLpaCollection */
         return $apiLpaCollection;
+    }
+
+    /**
+     * @return SharedSpaceRepositoryInterface|MockInterface
+     */
+    public function getSharedSpaceRepository()
+    {
+        $sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+        $sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->andReturn(null);
+
+        /** @var SharedSpaceRepositoryInterface $sharedSpaceRepository */
+        return $sharedSpaceRepository;
     }
 }

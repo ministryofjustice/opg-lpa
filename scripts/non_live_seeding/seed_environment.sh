@@ -66,12 +66,12 @@ check_tables_exist()
              count_tables=0
          fi
 
-         # ten minutes (40*15)
+         # five minutes (60*5)
          if [ $tries -gt 40 ] ; then
             break
          fi
 
-         sleep 15
+         sleep 5
     done
 
     ret_val=1

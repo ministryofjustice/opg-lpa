@@ -171,7 +171,7 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: false
-      ORGANISATIONS_ENABLED: false
+      SHARED_SPACES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -296,7 +296,7 @@ services:
       ONELOGIN_ENABLED: false
       ONELOGIN_CLIENT_ID: "theClientId"
       ONELOGIN_DISCOVERY_URL: "http://mock-onelogin:8080/.well-known/openid-configuration"
-      ORGANISATIONS_ENABLED: false
+      SHARED_SPACES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -507,7 +507,7 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
       ONELOGIN_ENABLED: false
-      ORGANISATIONS_ENABLED: false
+      SHARED_SPACES_ENABLED: true
 
   phpcs:
     container_name: lpa-phpcs

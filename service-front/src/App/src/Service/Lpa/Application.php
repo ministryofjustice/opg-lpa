@@ -149,7 +149,7 @@ class Application implements ApiClientAwareInterface
         return $this->executeDelete(sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId));
     }
 
-    public function getLpaSummaries(?string $search = null, ?int $page = null, ?int $itemsPerPage = null): array
+    public function getLpaSummaries(?string $search = null, ?int $page = null, ?int $itemsPerPage = null, ?int $sharedSpaceId = null): array
     {
         $queryParams = ['search' => $search];
 
@@ -163,8 +163,12 @@ class Application implements ApiClientAwareInterface
         $result = ['applications' => []];
 
         try {
+            $uri = is_null($sharedSpaceId) ?
+                sprintf('/v2/user/%s/applications', $this->getUserId()) :
+                sprintf('/v2/shared-space/%s/lpas', $sharedSpaceId);
+
             $response = $this->apiClient->httpGet(
-                sprintf('/v2/user/%s/applications', $this->getUserId()),
+                $uri,
                 $queryParams
             );
 

@@ -11,6 +11,8 @@ use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
+use Laminas\Db\Sql\Predicate\PredicateSet;
+use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
 use Application\Model\DataAccess\Repository\Application\LockedException;
@@ -23,7 +25,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     /**
      * The columns in the Postgres database
      */
-    public const TABLE_COLUMNS = ['id', 'user', 'updatedAt', 'startedAt', 'createdAt', 'completedAt',
+    public const TABLE_COLUMNS = ['id', 'user', 'sharedSpaceId', 'updatedAt', 'startedAt', 'createdAt', 'completedAt',
         'lockedAt', 'locked', 'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
 
     /**
@@ -60,6 +62,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         ]);
     }
 
+
     /**
      * @param array $criteria
      * @param array $options
@@ -75,17 +78,13 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * Get an LPA by ID, and user ID if provided
-     *
-     * @param int $id
-     * @param string $userId
-     * @return array|null
+     * @inheritDoc
      */
-    public function getById(int $id, ?string $userId = null): ?array
+    public function getById(int $id, ?string $userId = null, ?string $sharedSpaceId = null): ?array
     {
         $criteria = ['id' => $id];
-        if (is_string($userId)) {
-            $criteria['user'] = $userId;
+        if (!is_null($userId)) {
+            $criteria[] = $this->ownerPredicate($userId, $sharedSpaceId);
         }
 
         $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, ['limit' => 1]);
@@ -119,30 +118,44 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * Get LPAs for the specified user.
-     * @param string $userId
-     * @param array $options
-     * @return Traversable
+     * @inheritDoc
      */
-    public function fetchByUserId(string $userId, array $options = []): Traversable
+    public function fetchByUserId(string $userId, ?string $sharedSpaceId = null, array $options = []): Traversable
     {
-        return $this->fetch(['user' => $userId], $options);
+        return $this->fetch([$this->ownerPredicate($userId, $sharedSpaceId)], $options);
     }
 
     /**
-     * Get LPAs whose IDs are in $lpaIds for the specified user.
-     * @param array $lpaIds Array of LPA IDs which must be matched
-     * @param string $userId ID of the user to get LPAs for
-     * @return Traversable containing LPA items
+     * @inheritDoc
      */
-    public function getByIdsAndUser(array $lpaIds, string $userId): Traversable
+    public function getByIdsAndUser(array $lpaIds, string $userId, ?string $sharedSpaceId = null): Traversable
     {
         $criteria = [
-            'user' => $userId,
             new InPredicate('id', $lpaIds),
+            $this->ownerPredicate($userId, $sharedSpaceId),
         ];
 
         return $this->fetch($criteria);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function ownerPredicate(string $userId, ?string $sharedSpaceId): PredicateInterface
+    {
+        $ownedDirectly = new PredicateSet([
+            new Operator('user', Operator::OPERATOR_EQUAL_TO, $userId),
+            new IsNull('sharedSpaceId'),
+        ], PredicateSet::COMBINED_BY_AND);
+
+        if (is_null($sharedSpaceId)) {
+            return $ownedDirectly;
+        }
+
+        return new PredicateSet([
+            $ownedDirectly,
+            new Operator('sharedSpaceId', Operator::OPERATOR_EQUAL_TO, $sharedSpaceId),
+        ], PredicateSet::COMBINED_BY_OR);
     }
 
     /**
@@ -268,17 +281,16 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     }
 
     /**
-     * @param int $lpaId
-     * @param string $userId
+     * @inheritDoc
      */
-    public function deleteById(int $lpaId, string $userId): void
+    public function deleteById(int $lpaId, string $userId, ?string $sharedSpaceId = null): void
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::APPLICATIONS_TABLE);
 
         $update->where([
             'id' => $lpaId,
-            'user' => $userId,
+            $this->ownerPredicate($userId, $sharedSpaceId),
         ]);
 
         //---
@@ -307,6 +319,31 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $statement = $sql->prepareStatementForSqlObject($update);
         $statement->execute();
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSharedSpaceOwner(string $userId, string $sharedSpaceId): int
+    {
+        $sql = $this->dbWrapper->createSql();
+        $update = $sql->update(self::APPLICATIONS_TABLE);
+
+        $update->where([
+            'user' => $userId,
+            new IsNull('sharedSpaceId'),
+        ]);
+
+        $update->set([
+            'sharedSpaceId' => $sharedSpaceId,
+            'updatedAt'       => gmdate(DbWrapper::TIME_FORMAT),
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $result = $statement->execute();
+
+        return $result->getAffectedRows();
+    }
+
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided
