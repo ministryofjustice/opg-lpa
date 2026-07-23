@@ -5,8 +5,14 @@ RUN apk add --update --no-cache postgresql-client && \
 
 RUN rm -rf /var/cache/apk/* /tmp/*
 
+RUN adduser -D -g '' appuser
+
 COPY scripts/non_live_seeding /app
 
+RUN chown -R appuser:appuser /app
+
 WORKDIR /app
+
+USER appuser
 
 CMD ["/app/seed_environment.sh"]

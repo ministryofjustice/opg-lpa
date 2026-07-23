@@ -13,4 +13,6 @@ FROM gcr.io/distroless/static:${DISTROLESS_VERSION}
 
 COPY --chmod=555 --from=build /tmp/aurora-scheduler /usr/local/bin/app
 
+USER nonroot
+
 CMD ["/usr/local/bin/app"]
