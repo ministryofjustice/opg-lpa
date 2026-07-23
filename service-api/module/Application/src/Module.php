@@ -82,6 +82,7 @@ class Module
                 Repository\Application\WhoRepositoryInterface::class => Postgres\WhoAreYouData::class,
                 Repository\Application\ApplicationRepositoryInterface::class => Postgres\ApplicationData::class,
                 Repository\Feedback\FeedbackRepositoryInterface::class => Postgres\FeedbackData::class,
+                Repository\SharedSpace\SharedSpaceRepositoryInterface::class => Postgres\SharedSpaceData::class,
                 ServiceLocatorInterface::class => 'ServiceManager',
                 LoggerInterface::class => 'Logger',
                 ClientInterface::class => Client::class,
@@ -143,6 +144,7 @@ class Module
                 Postgres\StatsData::class       => Postgres\DataFactory::class,
                 Postgres\WhoAreYouData::class   => Postgres\DataFactory::class,
                 Postgres\FeedbackData::class    => Postgres\DataFactory::class,
+                Postgres\SharedSpaceData::class => Postgres\DataFactory::class,
 
 
                 // Get S3Client Client
@@ -255,14 +257,18 @@ class Module
         }
 
         // typically a response will only have one content-type header,
-        // but just in case something weird happens we'll loop over the values;
-        // NB might also return false, which is OK because AcceptHeader->match()
-        // will count that as a failed match
+        // but just in case something weird happens we'll loop over the values
         $responseContentTypes = $response->getHeaders()->get('content-type');
         if ($responseContentTypes === false) {
-            // no content type in the response; this will give a 406 as
-            // the client's Accept header can't be matched to nothing
-            $responseContentTypes = [];
+            // No content-type header at all usually means the response was
+            // never actually produced by an API action - e.g. the MVC
+            // dispatcher fell through to its built-in "not found"/error
+            // handling (routing failure, missing controller action, etc.)
+            // rather than reaching real controller code. That response
+            // already carries the correct status (e.g. 404), so leave it
+            // alone rather than masking it as a 406, which would hide the
+            // real error from clients and make it much harder to debug.
+            return;
         } elseif (!is_a($responseContentTypes, ArrayIterator::class)) {
             $responseContentTypes = new ArrayIterator([$responseContentTypes]);
         }
