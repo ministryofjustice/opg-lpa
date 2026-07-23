@@ -272,8 +272,8 @@ python-api-venv:
 
 .PHONY: _cypress-prepare-dirs
 _cypress-prepare-dirs:
-	mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline
-	chmod -R a+w cypress/screenshots cypress/regressions
+	mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
+	chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads
 
 .PHONY: cypress-open
 cypress-open: npm-install python-api-venv
