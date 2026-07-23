@@ -43,6 +43,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
 
       - name: Get terraform version
         id: set-terraform-version
@@ -71,5 +73,6 @@ jobs:
         working-directory: ./terraform/environment
         env:
           TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+          SAFE_BRANCH_NAME: ${{ needs.workspace_name.outputs.safe_branch_name }}
         run: |
-          ../../scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ github.event.number }}${{ needs.workspace_name.outputs.safe_branch_name }}
+          ../../scripts/pipeline/workspace_cleanup/destroy_workspace.sh ${{ github.event.number }}${SAFE_BRANCH_NAME}

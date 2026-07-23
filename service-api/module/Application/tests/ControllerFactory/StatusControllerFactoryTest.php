@@ -11,7 +11,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Monolog\Logger;
-use Lmc\Rbac\Mvc\Service\AuthorizationService;
+use Laminas\Authentication\AuthenticationService;
 
 class StatusControllerFactoryTest extends MockeryTestCase
 {
@@ -34,8 +34,8 @@ class StatusControllerFactoryTest extends MockeryTestCase
     public function testInvoke()
     {
         $this->container->shouldReceive('get')
-            ->with(AuthorizationService::class)
-            ->andReturn(Mockery::mock(AuthorizationService::class))
+            ->with(AuthenticationService::class)
+            ->andReturn(Mockery::mock(AuthenticationService::class))
             ->once();
         $this->container->shouldReceive('get')
             ->with(ApplicationsService::class)
