@@ -50,8 +50,9 @@ class MezzioSessionStorage implements StorageInterface
         $tokenExpiresAt = new DateTime($data['tokenExpiresAt']);
         $expiresIn      = max(0, $tokenExpiresAt->getTimestamp() - time());
         $lastLogin      = isset($data['lastLogin']) ? new DateTime($data['lastLogin']) : null;
+        $sharedSpaceId  = $data['sharedSpaceId'] ?? null;
 
-        return new User($data['userId'], $data['token'], $expiresIn, $lastLogin);
+        return new User($data['userId'], $data['token'], $expiresIn, $lastLogin, sharedSpaceId: $sharedSpaceId);
     }
 
     public function write($contents): void
@@ -67,6 +68,7 @@ class MezzioSessionStorage implements StorageInterface
             'token'          => $contents->token(),
             'tokenExpiresAt' => $tokenExpiresAt !== null ? $tokenExpiresAt->format('c') : (new DateTime())->format('c'),
             'lastLogin'      => $contents->lastLogin()?->format('c'),
+            'sharedSpaceId'  => $contents->getSharedSpaceId(),
         ]);
     }
 

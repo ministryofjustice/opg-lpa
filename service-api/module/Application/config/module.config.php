@@ -122,6 +122,39 @@ return [
                         ],
                     ],
 
+                    'shared-space' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/shared-space',
+                            'defaults' => [
+                                'controller' => 'SharedSpaceController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+
+                            'create' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/create',
+                                    'defaults' => [
+                                        'action' => 'create',
+                                    ],
+                                ],
+                            ],
+
+                            'lpas' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/lpas',
+                                    'defaults' => [
+                                        'action' => 'lpas',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
