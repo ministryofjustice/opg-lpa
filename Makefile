@@ -270,6 +270,11 @@ npm-install:
 python-api-venv:
 	@UV_PROJECT_ENVIRONMENT=$(CURDIR)/venv uv sync --locked --directory tests/python-api-client
 
+.PHONY: _cypress-prepare-dirs
+_cypress-prepare-dirs:
+	mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
+	chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads
+
 .PHONY: cypress-open
 cypress-open: npm-install python-api-venv
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
@@ -279,18 +284,18 @@ cypress-open: npm-install python-api-venv
 # Provide name of the spec file (assuming it is in cypress/e2e/) e.g. cypress-run-spec SPEC=Admin.feature
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 .PHONY: cypress-run-spec
-cypress-run-spec:
+cypress-run-spec: _cypress-prepare-dirs
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # This should be used in the form : make cypress-run-tags tags=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
-cypress-run-tags:
+cypress-run-tags: _cypress-prepare-dirs
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
 .PHONY: cypress-run-stitched-suites
-cypress-run-stitched-suites:
+cypress-run-stitched-suites: _cypress-prepare-dirs
 	@pushd cypress && python3 stitch.py && popd
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
@@ -321,7 +326,7 @@ _cypress-stitch:
 
 # Internal helper - runs the baseline cypress commands without stitching. Expects SUITE_TAG to be set.
 .PHONY: _cypress-run-baseline-suite
-_cypress-run-baseline-suite:
+_cypress-run-baseline-suite: _cypress-prepare-dirs
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
@@ -343,6 +348,7 @@ dc-phpcs-fix:
 
 .PHONY: dc-phpcs-check
 dc-phpcs-check:
+	mkdir -p phpcs/output && chmod a+w phpcs/output
 	docker compose build phpcs
 	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
 

@@ -17,4 +17,8 @@ COPY .cypress-cucumber-preprocessorrc.json .
 COPY cypress cypress
 COPY tests/python-api-client tests/python-api-client
 
+RUN chown -R node:node /app
+
+USER node
+
 CMD [ "cypress" ]
