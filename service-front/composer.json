@@ -83,7 +83,7 @@
         "mezzio/mezzio-tooling": "^2.12.0",
         "mockery/mockery": "^1.6",
         "phpunit/phpunit": "^11.5.42",
-        "psalm/plugin-phpunit": "^0.19.5",
+        "psalm/plugin-phpunit": "^0.20.0",
         "roave/security-advisories": "dev-master",
         "symfony/yaml": "^8.0",
         "vimeo/psalm": "^6.13.1"
