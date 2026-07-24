@@ -25,6 +25,7 @@ use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
+use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PostcodeHandler;
 use App\Handler\RegisterHandler;
@@ -167,6 +168,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
+        $app->get('/login-onelogin', OneLoginHandler::class, 'application.login-onelogin')
+            ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
