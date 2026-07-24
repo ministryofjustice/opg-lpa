@@ -1,6 +1,10 @@
 <?php
 
 use Application\Handler;
+use Application\Model\Service\OneLogin as OneLoginService;
+use Facile\OpenIDClient\Service\Builder\AuthorizationServiceBuilder;
+use GuzzleHttp\Client as GuzzleClient;
+use Http\Adapter\Guzzle7\Client as GuzzlePsr18;
 use Laminas\Di\Container\ServiceManager\AutowireFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -9,6 +13,8 @@ use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 
 return [
 
@@ -118,6 +124,17 @@ return [
                             'defaults' => [
                                 'controller' => 'OneLoginController',
                                 'action'     => 'start',
+                            ],
+                        ],
+                    ],
+
+                    'onelogin-callback' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/callback',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'callback',
                             ],
                         ],
                     ],
@@ -472,11 +489,55 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
-            Application\Model\Service\OneLogin\DiscoveryDocumentFetcher::class => static function (ServiceLocatorInterface $container): Application\Model\Service\OneLogin\DiscoveryDocumentFetcher {
+            'OneLoginPsr16Cache' => static function (): Psr16Cache {
+                return new Psr16Cache(new ArrayAdapter());
+            },
+
+            OneLoginService\KeyPairManager::class => static function (ServiceLocatorInterface $container): OneLoginService\KeyPairManager {
                 $config = $container->get('config');
-                return new Application\Model\Service\OneLogin\DiscoveryDocumentFetcher(
-                    $container->get(GuzzleHttp\Client::class),
-                    $config['onelogin']['discovery_url'] ?? '',
+
+                $privateKey = $config['onelogin']['private_key'] ?? null;
+                $keyId      = $config['onelogin']['key_id'] ?? null;
+
+                if (!is_string($privateKey) || $privateKey === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.private_key');
+                }
+
+                if (!is_string($keyId) || $keyId === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.key_id');
+                }
+
+                return new OneLoginService\KeyPairManager($privateKey, $keyId);
+            },
+
+            OneLoginService\AuthorisationClientManager::class => static function (ServiceLocatorInterface $container): OneLoginService\AuthorisationClientManager {
+                $config = $container->get('config');
+
+                $clientId     = $config['onelogin']['client_id'] ?? null;
+                $discoveryUrl = $config['onelogin']['discovery_url'] ?? null;
+
+                if (!is_string($clientId) || $clientId === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.client_id');
+                }
+
+                if (!is_string($discoveryUrl) || $discoveryUrl === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.discovery_url');
+                }
+
+                return new OneLoginService\AuthorisationClientManager(
+                    $clientId,
+                    $discoveryUrl,
+                    $container->get(OneLoginService\KeyPairManager::class),
+                    new GuzzlePsr18($container->get(GuzzleClient::class)),
+                    $container->get('OneLoginPsr16Cache'),
+                );
+            },
+
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (ServiceLocatorInterface $container): OneLoginService\FacileAuthorizationServiceAdapter {
+                return new OneLoginService\FacileAuthorizationServiceAdapter(
+                    (new AuthorizationServiceBuilder())
+                        ->setHttpClient(new GuzzlePsr18($container->get(GuzzleClient::class)))
+                        ->build()
                 );
             },
         ],

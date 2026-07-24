@@ -169,5 +169,7 @@ return [
     'onelogin' => [
         'client_id'     => getenv('ONELOGIN_CLIENT_ID') ?: null,
         'discovery_url' => getenv('ONELOGIN_DISCOVERY_URL') ?: null,
+        'private_key'   => getenv('ONELOGIN_PRIVATE_KEY') ?: null,
+        'key_id'        => getenv('ONELOGIN_KEY_ID') ?: null,
     ],
 ];
