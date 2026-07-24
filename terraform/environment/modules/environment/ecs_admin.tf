@@ -104,6 +104,9 @@ resource "aws_ecs_task_definition" "admin" {
   volume {
     name = "web_run"
   }
+  volume {
+    name = "web_log"
+  }
 }
 
 data "aws_ecr_repository" "lpa_admin_web" {
@@ -157,6 +160,11 @@ locals {
         {
           containerPath = "/run",
           sourceVolume  = "web_run"
+          readOnly      = false
+        },
+        {
+          containerPath = "/var/log/nginx",
+          sourceVolume  = "web_log"
           readOnly      = false
         },
       ],

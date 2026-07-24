@@ -172,6 +172,12 @@ locals {
         sourceVolume  = "web_run"
         readOnly      = false
       },
+      {
+        containerPath = "/var/log/nginx",
+        sourceVolume  = "web_log"
+        readOnly      = false
+      },
+
 
 
     ],
