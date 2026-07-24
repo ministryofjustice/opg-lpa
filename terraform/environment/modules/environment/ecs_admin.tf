@@ -98,6 +98,15 @@ resource "aws_ecs_task_definition" "admin" {
   volume {
     name = "web_etc"
   }
+  volume {
+    name = "web_cache"
+  }
+  volume {
+    name = "web_run"
+  }
+  volume {
+    name = "web_log"
+  }
 }
 
 data "aws_ecr_repository" "lpa_admin_web" {
@@ -133,15 +142,31 @@ data "aws_ecr_image" "lpa_admin_app" {
 locals {
   admin_web = jsonencode(
     {
-      cpu       = 1,
-      essential = true,
-      image     = "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
+      cpu                    = 1,
+      essential              = true,
+      readonlyRootFilesystem = true,
+      image                  = "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
       mountPoints = [
         {
           containerPath = "/etc",
           sourceVolume  = "web_etc"
           readOnly      = false
-        }
+        },
+        {
+          containerPath = "/var/cache/nginx",
+          sourceVolume  = "web_cache"
+          readOnly      = false
+        },
+        {
+          containerPath = "/run",
+          sourceVolume  = "web_run"
+          readOnly      = false
+        },
+        {
+          containerPath = "/var/log/nginx",
+          sourceVolume  = "web_log"
+          readOnly      = false
+        },
       ],
       name = "web",
       portMappings = [

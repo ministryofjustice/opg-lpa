@@ -108,6 +108,12 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "web_etc"
   }
+  volume {
+    name = "web_cache"
+  }
+  volume {
+    name = "web_run"
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -146,15 +152,34 @@ locals {
 locals {
 
   front_web = jsonencode({
-    cpu       = 1,
-    essential = true,
-    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    cpu                    = 1,
+    essential              = true,
+    readonlyRootFilesystem = true,
+    image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
       {
         containerPath = "/etc",
         sourceVolume  = "web_etc"
         readOnly      = false
-      }
+      },
+      {
+        containerPath = "/var/cache/nginx",
+        sourceVolume  = "web_cache"
+        readOnly      = false
+      },
+      {
+        containerPath = "/run",
+        sourceVolume  = "web_run"
+        readOnly      = false
+      },
+      {
+        containerPath = "/var/log/nginx",
+        sourceVolume  = "web_log"
+        readOnly      = false
+      },
+
+
+
     ],
     name = "web",
     portMappings = [
