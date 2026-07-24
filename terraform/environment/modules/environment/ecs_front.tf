@@ -108,6 +108,12 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "web_etc"
   }
+  volume {
+    name = "web_cache"
+  }
+  volume {
+    name = "web_run"
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -155,7 +161,19 @@ locals {
         containerPath = "/etc",
         sourceVolume  = "web_etc"
         readOnly      = false
-      }
+      },
+      {
+        containerPath = "/var/cache/nginx",
+        sourceVolume  = "web_cache"
+        readOnly      = false
+      },
+      {
+        containerPath = "/run",
+        sourceVolume  = "web_run"
+        readOnly      = false
+      },
+
+
     ],
     name = "web",
     portMappings = [
