@@ -215,6 +215,8 @@ locals {
         condition     = "HEALTHY"
       }],
       volumesFrom = [],
+      privileged  = false,
+      user        = "nginx",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -264,6 +266,8 @@ locals {
       },
       command     = ["php-fpm"]
       volumesFrom = [],
+      privileged  = false,
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
