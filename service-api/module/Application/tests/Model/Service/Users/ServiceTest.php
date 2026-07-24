@@ -387,6 +387,22 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals(new DataModelEntity($userUpdate), $entity);
     }
 
+    public function testUpdateOneLoginSub()
+    {
+        $user = FixturesData::getUser();
+
+        $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
+
+        $this->authUserRepository
+            ->shouldReceive('setOneLoginSub')
+            ->once();
+
+        $entity = $this->service->update(['oneLoginSub' => 'blahblah'], $user->getId());
+        $entityArray = $entity->toArray();
+
+        $this->assertEquals(new DataModelEntity(new ProfileUserModel([])), $entity);
+    }
+
     public function testDelete()
     {
         $user = FixturesData::getUser();

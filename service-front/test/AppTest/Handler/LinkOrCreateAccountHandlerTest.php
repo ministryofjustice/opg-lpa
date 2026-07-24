@@ -85,7 +85,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
     public static function validProvider(): array
     {
         return [
-            ['link', 'TODO-link-account'],
+            ['link', '/link-account'],
             ['create', 'TODO-create-account'],
         ];
     }
