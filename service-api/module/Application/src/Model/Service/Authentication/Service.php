@@ -128,23 +128,7 @@ class Service extends AbstractService
         $tokenDetails = [];
 
         if ($createToken) {
-            $expires = new DateTime("+" . $this->tokenTtl . " seconds");
-
-            do {
-                $authToken = make_token(32);
-
-                $created = $this->getUserRepository()->setAuthToken(
-                    $user->id(),
-                    $expires,
-                    $authToken
-                );
-            } while (!$created);
-
-            $tokenDetails = [
-                'token' => $authToken,
-                'expiresIn' => $this->tokenTtl,
-                'expiresAt' => $expires
-            ];
+            $tokenDetails = $this->issueAuthToken($user);
         }
 
         return [
@@ -154,6 +138,30 @@ class Service extends AbstractService
                 'inactivityFlagsCleared' => $inactivityFlagsCleared,
                 'sharedSpaceId' => $this->sharedSpaceRepository->getSharedSpaceIdForUser($user->id()),
             ] + $tokenDetails;
+    }
+
+    /**
+     * @return array{token: string, expiresIn: int, expiresAt: DateTime}
+     */
+    public function issueAuthToken(User $user): array
+    {
+        $expires = new DateTime("+" . $this->tokenTtl . " seconds");
+
+        do {
+            $authToken = make_token(32);
+
+            $created = $this->getUserRepository()->setAuthToken(
+                $user->id(),
+                $expires,
+                $authToken
+            );
+        } while (!$created);
+
+        return [
+            'token'     => $authToken,
+            'expiresIn' => $this->tokenTtl,
+            'expiresAt' => $expires,
+        ];
     }
 
     /**
