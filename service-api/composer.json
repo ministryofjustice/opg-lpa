@@ -28,7 +28,9 @@
         "egulias/email-validator": "^4.0",
         "laminas/laminas-mvc-middleware": "^2.5",
         "ministryofjustice/opg-laminas-db": "^1.0",
-        "laminas/laminas-di": "^3.16"
+        "laminas/laminas-di": "^3.16",
+        "facile-it/php-openid-client": "^0.4.0",
+        "symfony/cache": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
