@@ -114,6 +114,9 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "web_run"
   }
+  volume {
+    name = "web_log"
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
