@@ -214,6 +214,7 @@ locals {
         {
           containerPath = "/tmp",
           sourceVolume  = "app_tmp"
+          readOnly      = false
         }
       ],
       name = "app",
