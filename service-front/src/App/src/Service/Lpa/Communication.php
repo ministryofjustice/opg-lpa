@@ -26,32 +26,22 @@ class Communication
     public const EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
     public const EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
 
-    private ?UrlHelper $urlHelper = null;
-    private ?UserDetailsHolder $userDetailsHolder = null;
     private string $emailTemplateRef;
     private array $data;
     private string $lpaTypeTitleCase;
 
     public function __construct(
         private readonly MailTransportInterface $mailTransport,
+        private readonly UrlHelper $urlHelper,
+        private readonly UserDetailsHolder $userDetailsHolder,
         private readonly LoggerInterface $logger,
     ) {
-    }
-
-    public function setUrlHelper(UrlHelper $urlHelper): void
-    {
-        $this->urlHelper = $urlHelper;
-    }
-
-    public function setUserDetailsHolder(UserDetailsHolder $userDetailsHolder): void
-    {
-        $this->userDetailsHolder = $userDetailsHolder;
     }
 
     public function sendRegistrationCompleteEmail(Lpa $lpa): bool|string
     {
         // Get the signed in user's details from UserDetailsHolder (populated by UserDetailsMiddleware).
-        $user = $this->userDetailsHolder?->get();
+        $user = $this->userDetailsHolder->get();
 
         if (!$user instanceof User) {
             $this->logger->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
@@ -220,20 +210,15 @@ class Communication
 
     private function url(string $routeName, array $params = []): string
     {
-        if ($this->urlHelper === null) {
-            return '';
-        }
+        $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+        $path = $this->urlHelper->generate($routeName, $params);
 
-        return $this->urlHelper->generate($routeName, $params);
+        return $scheme . '://' . $host . $path;
     }
 
     private function formatLpaId(int|string $lpaId): string
     {
         return Formatter::id($lpaId);
-    }
-
-    public function getMailTransport(): MailTransportInterface
-    {
-        return $this->mailTransport;
     }
 }
