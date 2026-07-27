@@ -267,3 +267,47 @@ module "elasticache_encryption_key" {
     data.aws_caller_identity.current.account_id,
   ]
 }
+
+module "sns_encryption_key" {
+  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description = "Customer managed encryption key for SNS"
+  alias       = "opg-lpa-${local.account_name}-sns-encryption-key"
+  usage_services = [
+    "sns.*.amazonaws.com",
+    "cloudwatch.*.amazonaws.com",
+    "events.*.amazonaws.com",
+    "rds.*.amazonaws.com",
+  ]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/*",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/*",
+  ]
+  decryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/*",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/*",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
