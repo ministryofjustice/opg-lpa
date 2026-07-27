@@ -16,7 +16,6 @@ class Service extends AbstractService
     use LoggerTrait;
     use UserRepositoryTrait;
 
-    private array $config = [];
     private ?AuthorisationClientManager $clientManager = null;
     private ?AuthorizationServiceInterface $authorizationService = null;
     private ?AuthenticationService $authenticationService = null;
@@ -29,14 +28,6 @@ class Service extends AbstractService
     public function __construct()
     {
         $this->randomBytes = random_bytes(...);
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setConfig(array $config): void
-    {
-        $this->config = $config;
     }
 
     /**
