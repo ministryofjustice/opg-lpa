@@ -43,4 +43,61 @@ class OneLoginService
 
         return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $result['url']];
     }
+
+    /**
+     * Exchanges the authorisation code for an LPA identity or a pending-link payload.
+     *
+     * @return array{linked: bool, sub: string, email: string, identity?: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string}}
+     * @throws RuntimeException
+     */
+    public function callback(
+        string $code,
+        string $state,
+        string $nonce,
+        string $redirectUri,
+    ): array {
+        /** @var array<string, mixed>|null $result */
+        $result = $this->client->httpPost(
+            '/v2/auth/onelogin/callback',
+            [
+                'code'         => $code,
+                'state'        => $state,
+                'nonce'        => $nonce,
+                'redirect_uri' => $redirectUri,
+            ],
+            anonymous: true,
+        );
+
+        if (
+            !is_array($result)
+            || !array_key_exists('linked', $result)
+            || !is_bool($result['linked'])
+            || empty($result['sub'])
+            || !is_string($result['sub'])
+            || empty($result['email'])
+            || !is_string($result['email'])
+        ) {
+            throw new RuntimeException(
+                'Invalid response from API: linked, sub and email are required'
+            );
+        }
+
+        if ($result['linked']) {
+            if (
+                !isset($result['identity'])
+                || !is_array($result['identity'])
+                || empty($result['identity']['userId'])
+                || empty($result['identity']['token'])
+                || empty($result['identity']['tokenExpiresAt'])
+                || empty($result['identity']['lastLogin'])
+            ) {
+                throw new RuntimeException(
+                    'Invalid response from API: identity fields missing for linked account'
+                );
+            }
+        }
+
+        /** @var array{linked: bool, sub: string, email: string, identity?: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string}} $result */
+        return $result;
+    }
 }

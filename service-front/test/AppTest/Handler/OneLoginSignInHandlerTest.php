@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\OneLoginSignInHandler;
 use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
@@ -19,12 +20,14 @@ class OneLoginSignInHandlerTest extends TestCase
     private OneLoginService&MockObject $oneLoginService;
     private SessionInterface&MockObject $session;
     private OneLoginSignInHandler $handler;
+    private RedirectUriBuilder $redirectUriBuilder;
 
     protected function setUp(): void
     {
-        $this->oneLoginService = $this->createMock(OneLoginService::class);
-        $this->session         = $this->createMock(SessionInterface::class);
-        $this->handler         = new OneLoginSignInHandler($this->oneLoginService);
+        $this->oneLoginService    = $this->createMock(OneLoginService::class);
+        $this->session            = $this->createMock(SessionInterface::class);
+        $this->redirectUriBuilder = new RedirectUriBuilder();
+        $this->handler            = new OneLoginSignInHandler($this->oneLoginService, $this->redirectUriBuilder);
     }
 
     private function buildRequest(string $scheme = 'https', string $host = 'localhost:7002'): ServerRequest
@@ -46,7 +49,11 @@ class OneLoginSignInHandlerTest extends TestCase
         $this->session
             ->expects($this->once())
             ->method('set')
-            ->with('onelogin_auth', ['state' => 'abc', 'nonce' => 'def']);
+            ->with('onelogin_auth', $this->callback(function (array $data): bool {
+                return $data['state'] === 'abc'
+                    && $data['nonce'] === 'def'
+                    && str_ends_with($data['redirect_uri'], '/auth/redirect');
+            }));
 
         $response = $this->handler->handle($this->buildRequest());
 
@@ -73,22 +80,25 @@ class OneLoginSignInHandlerTest extends TestCase
         $this->assertSame('https://localhost:7002/auth/redirect', $capturedRedirectUri);
     }
 
-    public function testPreAuthRequestUrlIsNeverWritten(): void
+    public function testRedirectUriIsPersistentInSession(): void
     {
         $this->oneLoginService
             ->method('start')
             ->willReturn(['state' => 'x', 'nonce' => 'y', 'url' => 'https://auth.example.com']);
 
-        $setCalls = [];
+        $sessionData = null;
         $this->session
             ->method('set')
-            ->willReturnCallback(function (string $key, mixed $value) use (&$setCalls): void {
-                $setCalls[] = $key;
+            ->willReturnCallback(function (string $key, mixed $value) use (&$sessionData): void {
+                if ($key === 'onelogin_auth') {
+                    $sessionData = $value;
+                }
             });
 
-        $this->handler->handle($this->buildRequest());
+        $this->handler->handle($this->buildRequest('https', 'myservice.example.com'));
 
-        $this->assertNotContains('pre_auth_request_url', $setCalls);
+        $this->assertIsArray($sessionData);
+        $this->assertSame('https://myservice.example.com/auth/redirect', $sessionData['redirect_uri']);
     }
 
     public function testSessionReceivesExactStateAndNonceUnderOneloginAuthKey(): void
@@ -103,10 +113,30 @@ class OneLoginSignInHandlerTest extends TestCase
         $this->session
             ->expects($this->once())
             ->method('set')
-            ->with('onelogin_auth', $this->callback(function (array $data) use ($state, $nonce) {
+            ->with('onelogin_auth', $this->callback(function (array $data) use ($state, $nonce): bool {
                 return $data['state'] === $state && $data['nonce'] === $nonce;
             }));
 
         $this->handler->handle($this->buildRequest());
+    }
+
+    public function testConfiguredBaseUrlOverridesRequestUri(): void
+    {
+        $builder = new RedirectUriBuilder('https://production.example.gov.uk');
+        $handler = new OneLoginSignInHandler($this->oneLoginService, $builder);
+
+        $capturedRedirectUri = null;
+        $this->oneLoginService
+            ->method('start')
+            ->willReturnCallback(function (string $redirectUri) use (&$capturedRedirectUri) {
+                $capturedRedirectUri = $redirectUri;
+                return ['state' => 'x', 'nonce' => 'y', 'url' => 'https://auth.example.com'];
+            });
+
+        $this->session->method('set');
+
+        $handler->handle($this->buildRequest('http', 'localhost:7002'));
+
+        $this->assertSame('https://production.example.gov.uk/auth/redirect', $capturedRedirectUri);
     }
 }

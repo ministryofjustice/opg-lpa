@@ -21,9 +21,11 @@ class OneLoginServiceTest extends TestCase
         $this->service   = new OneLoginService($this->apiClient);
     }
 
+    // ─── start() ──────────────────────────────────────────────────────────
+
     public function testStartForwardsCorrectPathQueryAndAnonymousFlag(): void
     {
-        $redirectUri   = 'https://localhost:7002/auth/redirect';
+        $redirectUri    = 'https://localhost:7002/auth/redirect';
         $expectedResult = ['state' => 'abc123', 'nonce' => 'def456', 'url' => 'https://auth.example.com/authorize?x=y'];
 
         $this->apiClient
@@ -86,5 +88,118 @@ class OneLoginServiceTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->service->start('https://localhost:7002/auth/redirect');
+    }
+
+    // ─── callback() ───────────────────────────────────────────────────────
+
+    public function testCallbackPostsCorrectPayloadWithAnonymousFlag(): void
+    {
+        $linkedResponse = [
+            'linked'   => true,
+            'sub'      => 'urn:fdc:gov.uk:2022:abc',
+            'email'    => 'user@example.com',
+            'identity' => [
+                'userId'         => 'uid-1',
+                'token'          => 'tok-abc',
+                'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+                'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            ],
+        ];
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/callback',
+                [
+                    'code'         => 'auth-code-123',
+                    'state'        => 'state-abc',
+                    'nonce'        => 'nonce-xyz',
+                    'redirect_uri' => 'https://service.example.com/auth/redirect',
+                ],
+                [],
+                true,
+            )
+            ->willReturn($linkedResponse);
+
+        $result = $this->service->callback(
+            'auth-code-123',
+            'state-abc',
+            'nonce-xyz',
+            'https://service.example.com/auth/redirect',
+        );
+
+        $this->assertTrue($result['linked']);
+        $this->assertSame('urn:fdc:gov.uk:2022:abc', $result['sub']);
+        $this->assertSame('user@example.com', $result['email']);
+        $this->assertSame($linkedResponse['identity'], $result['identity']);
+    }
+
+    public function testCallbackReturnsUnlinkedShape(): void
+    {
+        $unlinkedResponse = [
+            'linked' => false,
+            'sub'    => 'urn:fdc:gov.uk:2022:new',
+            'email'  => 'new@example.com',
+        ];
+
+        $this->apiClient->method('httpPost')->willReturn($unlinkedResponse);
+
+        $result = $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame('urn:fdc:gov.uk:2022:new', $result['sub']);
+        $this->assertSame('new@example.com', $result['email']);
+        $this->assertArrayNotHasKey('identity', $result);
+    }
+
+    public function testCallbackThrowsWhenLinkedIsMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['sub' => 'x', 'email' => 'x@x.com']);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenSubIsMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'email' => 'x@x.com']);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenEmailIsMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'sub' => 'x']);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenLinkedButIdentityMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn([
+            'linked' => true,
+            'sub'    => 'urn:x',
+            'email'  => 'x@x.com',
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('identity fields missing');
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenResponseIsNull(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(null);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
     }
 }
