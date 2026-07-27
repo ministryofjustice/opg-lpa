@@ -1411,4 +1411,29 @@ class UserDataTest extends MockeryTestCase
         // assertions
         $userData->saveProfile($profileUserModel);
     }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testSetOneLoginSub(): void
+    {
+        $id = 'vansant';
+        $oneLoginSub = 'blahblah';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($oneLoginSub) {
+            return Helpers::isGmDateString($set['updated']) &&
+                $set['one_login_sub'] === $oneLoginSub;
+        }));
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+
+        // assertions
+        $userData->setOneLoginSub($id, $oneLoginSub);
+    }
 }

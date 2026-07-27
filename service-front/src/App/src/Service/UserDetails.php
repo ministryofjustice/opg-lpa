@@ -607,4 +607,22 @@ class UserDetails implements ApiClientAwareInterface
 
         return false;
     }
+
+    public function setOneLoginSub(string $sub): bool
+    {
+        $identity = $this->authenticationService->getIdentity();
+        $this->apiClient->updateToken($identity->token());
+
+        try {
+            $this->apiClient->httpPut('/v2/user/' . $this->getUserId(), ['oneLoginSub' => $sub]);
+
+            return true;
+        } catch (ApiException $ex) {
+            $this->logger->error('Failed to set onelogin sub', [
+                'exception' => $ex,
+            ]);
+        }
+
+        return false;
+    }
 }
