@@ -73,7 +73,7 @@ class Client
         array $additionalHeaders = [],
         bool $anonymous = false,
     ): array|null|string {
-        $request  = new Request('POST', $this->apiBaseUri . $path, $this->buildHeaders($additionalHeaders, $anonymous), json_encode($payload));
+        $request  = new Request('POST', $this->apiBaseUri . $path, $this->buildHeaders($additionalHeaders, $anonymous), json_encode($payload, JSON_THROW_ON_ERROR));
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {

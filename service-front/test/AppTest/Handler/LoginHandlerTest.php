@@ -527,4 +527,47 @@ class LoginHandlerTest extends TestCase
 
         $this->handler->handle($request);
     }
+
+    public function testOneLoginEnabledFalseByDefault(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $this->handler->handle($this->createRequestWithSession());
+
+        $this->assertFalse($capturedParams['oneLoginEnabled']);
+    }
+
+    public function testOneLoginEnabledIsTrueWhenHandlerConstructedWithTrue(): void
+    {
+        $handler = new LoginHandler(
+            $this->renderer,
+            $this->formElementManager,
+            $this->authenticationService,
+            true,
+        );
+
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $handler->handle($this->createRequestWithSession());
+
+        $this->assertTrue($capturedParams['oneLoginEnabled']);
+    }
 }

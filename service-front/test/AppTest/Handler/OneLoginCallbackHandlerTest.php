@@ -26,13 +26,13 @@ class OneLoginCallbackHandlerTest extends TestCase
     private SessionInterface&MockObject $session;
     private OneLoginCallbackHandler $handler;
 
-    private const VALID_SESSION = [
+    private const array VALID_SESSION = [
         'state'        => 'valid-state-abc',
         'nonce'        => 'valid-nonce-xyz',
         'redirect_uri' => 'https://service.example.com/auth/redirect',
     ];
 
-    private const LINKED_RESULT = [
+    private const array LINKED_RESULT = [
         'linked' => true,
         'sub'    => 'urn:fdc:gov.uk:2022:abc123',
         'email'  => 'user@example.com',
@@ -44,7 +44,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         ],
     ];
 
-    private const UNLINKED_RESULT = [
+    private const array UNLINKED_RESULT = [
         'linked' => false,
         'sub'    => 'urn:fdc:gov.uk:2022:newuser',
         'email'  => 'newuser@example.com',

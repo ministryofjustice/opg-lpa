@@ -11,6 +11,7 @@ use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
  * @psalm-suppress PropertyNotSetInConstructor
+ * @psalm-suppress DeprecatedClass
  */
 class OneLoginController extends AbstractAuthController
 {
@@ -48,23 +49,39 @@ class OneLoginController extends AbstractAuthController
      */
     public function callbackAction(): JsonModel|ApiProblem
     {
-        /** @var array<string, mixed>|null $body */
+        /** @var mixed $body */
         $body = json_decode((string) $this->getRequest()->getContent(), true);
 
-        foreach (['code', 'state', 'nonce', 'redirect_uri'] as $field) {
-            if (empty($body[$field]) || !is_string($body[$field])) {
-                return new ApiProblem(400, sprintf('%s must be provided', $field));
-            }
+        if (!is_array($body)) {
+            return new ApiProblem(400, 'A JSON request body must be provided');
+        }
+
+        $code        = $body['code'] ?? null;
+        $state       = $body['state'] ?? null;
+        $nonce       = $body['nonce'] ?? null;
+        $redirectUri = $body['redirect_uri'] ?? null;
+
+        if (!is_string($code) || $code === '') {
+            return new ApiProblem(400, 'code must be provided');
+        }
+        if (!is_string($state) || $state === '') {
+            return new ApiProblem(400, 'state must be provided');
+        }
+        if (!is_string($nonce) || $nonce === '') {
+            return new ApiProblem(400, 'nonce must be provided');
+        }
+        if (!is_string($redirectUri) || $redirectUri === '') {
+            return new ApiProblem(400, 'redirect_uri must be provided');
         }
 
         TelemetryEventManager::triggerStart('OneLoginController.callbackAction');
 
         try {
             $result = $this->getService()->handleCallback(
-                $body['code'],
-                $body['state'],
-                $body['nonce'],
-                $body['redirect_uri'],
+                $code,
+                $state,
+                $nonce,
+                $redirectUri,
             );
         } catch (OneLoginAuthenticationException $e) {
             $this->getLogger()->error('auth.onelogin.callback_failed', ['reason' => $e->reason()]);

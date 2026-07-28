@@ -172,6 +172,7 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
+      MEZZIO_DEBUG: "1"
       SHARED_SPACES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]

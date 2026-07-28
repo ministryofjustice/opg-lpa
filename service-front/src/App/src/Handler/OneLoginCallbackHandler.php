@@ -57,14 +57,17 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
             throw new RuntimeException('Session middleware is not configured');
         }
 
-        /** @var array{state: string, nonce: string, redirect_uri: string}|null $oneLoginAuth */
+        /** @var mixed $oneLoginAuth */
         $oneLoginAuth = $session->get(self::SESSION_KEY_ONELOGIN);
 
+        $expectedState = is_array($oneLoginAuth) ? ($oneLoginAuth['state'] ?? null) : null;
+        $expectedNonce = is_array($oneLoginAuth) ? ($oneLoginAuth['nonce'] ?? null) : null;
+        $redirectUri   = is_array($oneLoginAuth) ? ($oneLoginAuth['redirect_uri'] ?? null) : null;
+
         if (
-            !is_array($oneLoginAuth)
-            || empty($oneLoginAuth['state'])
-            || empty($oneLoginAuth['nonce'])
-            || empty($oneLoginAuth['redirect_uri'])
+            !is_string($expectedState) || $expectedState === ''
+            || !is_string($expectedNonce) || $expectedNonce === ''
+            || !is_string($redirectUri) || $redirectUri === ''
         ) {
             $this->logger->warning('auth.onelogin.session_missing', [
                 'has_code'  => true,
@@ -75,9 +78,9 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         }
 
         try {
-            if (!hash_equals($oneLoginAuth['state'], $state)) {
+            if (!hash_equals($expectedState, $state)) {
                 $this->logger->warning('auth.onelogin.state_mismatch', [
-                    'expected_prefix' => substr($oneLoginAuth['state'], 0, 8),
+                    'expected_prefix' => substr($expectedState, 0, 8),
                 ]);
 
                 return $this->renderError('The sign-in request could not be verified. Please try again.');
@@ -89,8 +92,8 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 $result = $this->oneLoginService->callback(
                     $code,
                     $state,
-                    $oneLoginAuth['nonce'],
-                    $oneLoginAuth['redirect_uri'],
+                    $expectedNonce,
+                    $redirectUri,
                 );
             } catch (RuntimeException $e) {
                 $this->logger->error('auth.onelogin.callback_failed', ['message' => $e->getMessage()]);

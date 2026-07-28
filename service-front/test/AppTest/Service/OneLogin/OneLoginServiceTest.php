@@ -132,7 +132,7 @@ class OneLoginServiceTest extends TestCase
         $this->assertTrue($result['linked']);
         $this->assertSame('urn:fdc:gov.uk:2022:abc', $result['sub']);
         $this->assertSame('user@example.com', $result['email']);
-        $this->assertSame($linkedResponse['identity'], $result['identity']);
+        $this->assertSame($linkedResponse['identity'], $result['identity'] ?? null);
     }
 
     public function testCallbackReturnsUnlinkedShape(): void
