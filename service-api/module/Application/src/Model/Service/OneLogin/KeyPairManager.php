@@ -50,7 +50,11 @@ final class KeyPairManager
 
         $decoded = base64_decode($key, true);
 
-        if ($decoded === false || !str_contains($decoded, 'BEGIN')) {
+        if ($decoded === false) {
+            throw new RuntimeException('OneLogin private key is neither a PEM nor base64-encoded PEM');
+        }
+
+        if (!str_contains($decoded, 'BEGIN')) {
             throw new RuntimeException('OneLogin private key is neither a PEM nor base64-encoded PEM');
         }
 

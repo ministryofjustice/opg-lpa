@@ -561,14 +561,14 @@ return [
                     $clientId,
                     $discoveryUrl,
                     $container->get(OneLoginService\KeyPairManager::class),
-                    new GuzzlePsr18($container->get(GuzzleClient::class)),
+                    new GuzzlePsr18(new GuzzleClient()),
                     $container->get('OneLoginPsr16Cache'),
                 );
             },
 
             OneLoginService\FacileAuthorizationServiceAdapter::class => static function (ServiceLocatorInterface $container): OneLoginService\FacileAuthorizationServiceAdapter {
                 $builder = new AuthorizationServiceBuilder();
-                $builder->setHttpClient(new GuzzlePsr18($container->get(GuzzleClient::class)));
+                $builder->setHttpClient(new GuzzlePsr18(new GuzzleClient()));
                 return new OneLoginService\FacileAuthorizationServiceAdapter(
                     $builder->build()
                 );

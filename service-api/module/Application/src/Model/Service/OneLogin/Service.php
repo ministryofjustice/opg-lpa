@@ -6,7 +6,6 @@ use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use DateTime;
 use Facile\OpenIDClient\Session\AuthSession;
 use MakeShared\Logging\LoggerTrait;
 use RuntimeException;
@@ -107,7 +106,7 @@ class Service extends AbstractService
     /**
      * Exchange the authorisation code and validate the ID token.
      *
-     * @return array{linked: bool, sub: string, email: ?string, identity: ?array}
+     * @return array{linked: bool, sub: string, email: string, identity: ?array}
      * @throws OneLoginAuthenticationException
      */
     public function handleCallback(
@@ -179,16 +178,22 @@ class Service extends AbstractService
             ];
         }
 
-        $this->getUserRepository()->updateLastLoginTime($user->id());
+        $userId = $user->id();
+
+        if ($userId === null) {
+            throw new OneLoginAuthenticationException('missing_user_id');
+        }
+
+        $this->getUserRepository()->updateLastLoginTime($userId);
 
         if ($user->failedLoginAttempts() > 0) {
-            $this->getUserRepository()->resetFailedLoginCounter($user->id());
+            $this->getUserRepository()->resetFailedLoginCounter($userId);
         }
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
         $this->getLogger()->info('auth.onelogin.callback_success', [
-            'user_id' => $user->id(),
+            'user_id' => $userId,
         ]);
 
         return [
@@ -196,10 +201,10 @@ class Service extends AbstractService
             'sub'      => $sub,
             'email'    => $email,
             'identity' => [
-                'userId'         => $user->id(),
+                'userId'         => $userId,
                 'token'          => $tokenDetails['token'],
                 'tokenExpiresAt' => $tokenDetails['expiresAt']->format('c'),
-                'lastLogin'      => ($user->lastLoginAt() ?? new DateTime())->format('c'),
+                'lastLogin'      => ($user->lastLoginAt() ?? new \DateTime())->format('c'),
             ],
         ];
     }
