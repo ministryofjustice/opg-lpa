@@ -8,18 +8,21 @@ Feature: One Login Sign In
   Background:
     Given I visit "/login"
 
-  Scenario: Login page shows the GOV.UK One Login button
+  Scenario: The login page offers GOV.UK One Login
     Then I can find "onelogin-signin-button" and it is visible
 
-  Scenario: Clicking the One Login button redirects to the mock One Login service
+  Scenario: Continuing with One Login leads to the One Login start page
     Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
+    And I am taken to "/login-onelogin"
+    And I can find "onelogin-signin-button" and it is visible
 
-  Scenario: Completing sign-in through One Login hands off to the link-or-create-account page
+  Scenario: Signing in through One Login reaches the link-or-create-account page
     Then I click "onelogin-signin-button"
+    And I am taken to "/login-onelogin"
+    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
-    And I am taken to "/link-or-create-account"
+    And I should be on "/link-or-create-account"
 
   Scenario: The One Login callback fails gracefully when the provider returns an error
     Then the One Login callback shows the problem page for "?error=access_denied"

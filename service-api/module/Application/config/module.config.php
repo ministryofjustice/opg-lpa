@@ -3,6 +3,7 @@
 use Application\Handler;
 use Application\Model\Service\OneLogin as OneLoginService;
 use Facile\OpenIDClient\Service\Builder\AuthorizationServiceBuilder;
+use Facile\OpenIDClient\Service\Builder\UserInfoServiceBuilder;
 use GuzzleHttp\Client as GuzzleClient;
 use Http\Adapter\Guzzle7\Client as GuzzlePsr18;
 use Laminas\Di\Container\ServiceManager\AutowireFactory;
@@ -567,10 +568,17 @@ return [
             },
 
             OneLoginService\FacileAuthorizationServiceAdapter::class => static function (ServiceLocatorInterface $container): OneLoginService\FacileAuthorizationServiceAdapter {
-                $builder = new AuthorizationServiceBuilder();
-                $builder->setHttpClient(new GuzzlePsr18(new GuzzleClient()));
+                $httpClient = new GuzzlePsr18(new GuzzleClient());
+
+                $authBuilder = new AuthorizationServiceBuilder();
+                $authBuilder->setHttpClient($httpClient);
+
+                $userInfoBuilder = new UserInfoServiceBuilder();
+                $userInfoBuilder->setHttpClient($httpClient);
+
                 return new OneLoginService\FacileAuthorizationServiceAdapter(
-                    $builder->build()
+                    $authBuilder->build(),
+                    $userInfoBuilder->build(),
                 );
             },
         ],
