@@ -46,6 +46,30 @@ class KeyPairManagerTest extends TestCase
         $this->assertSame('EC', $jwk->jsonSerialize()['kty']);
     }
 
+    public function testJwkAcceptsBase64EncodedPem(): void
+    {
+        $base64Key = base64_encode(self::testPrivateKey());
+
+        $manager = new KeyPairManager($base64Key, 'test-kid-b64');
+        $jwk     = $manager->jwk();
+
+        $serialised = $jwk->jsonSerialize();
+
+        $this->assertSame('EC', $serialised['kty']);
+        $this->assertSame('ES256', $serialised['alg']);
+        $this->assertSame('test-kid-b64', $serialised['kid']);
+    }
+
+    public function testRawPemAndBase64PemProduceSameKey(): void
+    {
+        $fromPem    = (new KeyPairManager(self::testPrivateKey(), 'k'))->jwk()->jsonSerialize();
+        $fromBase64 = (new KeyPairManager(base64_encode(self::testPrivateKey()), 'k'))->jwk()->jsonSerialize();
+
+        $this->assertSame($fromPem['d'], $fromBase64['d']);
+        $this->assertSame($fromPem['x'], $fromBase64['x']);
+        $this->assertSame($fromPem['y'], $fromBase64['y']);
+    }
+
     public function testEmptyPrivateKeyThrows(): void
     {
         $this->expectException(RuntimeException::class);

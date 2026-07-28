@@ -29,7 +29,7 @@ final class KeyPairManager
     {
         try {
             return JWKFactory::createFromKey(
-                $this->privateKey,
+                $this->resolvePem($this->privateKey),
                 null,
                 ['alg' => self::ALGORITHM, 'use' => 'sig', 'kid' => $this->keyId],
             );
@@ -40,5 +40,20 @@ final class KeyPairManager
                 $e,
             );
         }
+    }
+
+    private function resolvePem(string $key): string
+    {
+        if (str_contains($key, 'BEGIN')) {
+            return $key;
+        }
+
+        $decoded = base64_decode($key, true);
+
+        if ($decoded === false || !str_contains($decoded, 'BEGIN')) {
+            throw new RuntimeException('OneLogin private key is neither a PEM nor base64-encoded PEM');
+        }
+
+        return $decoded;
     }
 }
