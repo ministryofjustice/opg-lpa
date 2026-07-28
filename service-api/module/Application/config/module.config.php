@@ -567,7 +567,7 @@ return [
                 );
             },
 
-            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (ServiceLocatorInterface $container): OneLoginService\FacileAuthorizationServiceAdapter {
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (): OneLoginService\FacileAuthorizationServiceAdapter {
                 $httpClient = new GuzzlePsr18(new GuzzleClient());
 
                 $authBuilder = new AuthorizationServiceBuilder();
