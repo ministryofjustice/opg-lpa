@@ -30,22 +30,47 @@ final class CommunicationTest extends MockeryTestCase
     private MailTransportInterface|MockInterface $mailTransport;
     private UrlHelper|MockInterface $urlHelper;
     private UserDetailsHolder $userDetailsHolder;
+    private ?string $originalHttps;
+    private ?string $originalHost;
 
     public function setUp(): void
     {
+        $this->originalHttps = $_SERVER['HTTPS'] ?? null;
+        $this->originalHost = $_SERVER['HTTP_HOST'] ?? null;
+        $_SERVER['HTTPS'] = 'on';
+        $_SERVER['HTTP_HOST'] = 'front.example';
+
         $this->mailTransport = Mockery::mock(MailTransportInterface::class);
         $this->urlHelper = Mockery::mock(UrlHelper::class);
         $this->userDetailsHolder = new UserDetailsHolder();
 
-        $this->service = new Communication($this->mailTransport, Mockery::spy(LoggerInterface::class));
-        $this->service->setUrlHelper($this->urlHelper);
-        $this->service->setUserDetailsHolder($this->userDetailsHolder);
+        $this->service = new Communication(
+            $this->mailTransport,
+            $this->urlHelper,
+            $this->userDetailsHolder,
+            Mockery::spy(LoggerInterface::class),
+        );
 
         $user = new User(['email' => ['address' => 'test@email.com']]);
         $this->userDetailsHolder->set($user);
 
         // Default URL response — individual tests override with specific expectations where needed
-        $this->urlHelper->shouldReceive('generate')->andReturn('https://some.url')->byDefault();
+        $this->urlHelper->shouldReceive('generate')->andReturn('/some/path')->byDefault();
+    }
+
+    public function tearDown(): void
+    {
+        if ($this->originalHttps === null) {
+            unset($_SERVER['HTTPS']);
+        } else {
+            $_SERVER['HTTPS'] = $this->originalHttps;
+        }
+
+        if ($this->originalHost === null) {
+            unset($_SERVER['HTTP_HOST']);
+        } else {
+            $_SERVER['HTTP_HOST'] = $this->originalHost;
+        }
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentButWithPersonToNotify(): void
@@ -74,10 +99,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -86,8 +111,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => true,
             ]
         );
@@ -117,10 +142,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -129,8 +154,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => false,
             ]
         );
@@ -169,10 +194,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -181,8 +206,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => true,
             ]
         );
@@ -212,10 +237,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -224,8 +249,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => false,
             ]
         );
@@ -264,10 +289,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -276,8 +301,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => true,
             ]
         );
@@ -307,10 +332,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -319,8 +344,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => false,
             ]
         );
@@ -359,10 +384,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -371,8 +396,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => true,
             ]
         );
@@ -402,10 +427,10 @@ final class CommunicationTest extends MockeryTestCase
 
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/view-docs', ['lpa-id' => $lpa->id])
-            ->andReturn('https://view.docs.url');
+            ->andReturn('/view-the-docs');
         $this->urlHelper->shouldReceive('generate')
             ->with('lpa/date-check', ['lpa-id' => $lpa->id])
-            ->andReturn('https://check.dates.url');
+            ->andReturn('/check-the-dates');
 
         $expectedMailParams = new MailParameters(
             ['test@email.com'],
@@ -414,8 +439,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Dr Pete Vamoose',
                 'lpaType' => 'property and financial affairs',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://view.docs.url',
-                'checkDatesUrl' => 'https://check.dates.url',
+                'viewDocsUrl' => 'https://front.example/view-the-docs',
+                'checkDatesUrl' => 'https://front.example/check-the-dates',
                 'PTN' => false,
             ]
         );
@@ -463,8 +488,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'lpaTypeTitleCase' => 'Health and welfare',
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
@@ -513,8 +538,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'lpaTypeTitleCase' => 'Health and welfare',
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
@@ -573,8 +598,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'lpaTypeTitleCase' => 'Health and welfare',
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
@@ -624,8 +649,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'lpaTypeTitleCase' => 'Health and welfare',
                 'lpaPaymentReference' => '12345678',
                 'lpaPaymentDate' => '24 September 2021 - 8:54am',
@@ -682,8 +707,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'PTNOnly' => true,
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => false,
@@ -726,8 +751,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'PTNOnly' => false,
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => false,
@@ -780,8 +805,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'PTNOnly' => false,
                 'FeeFormOnly' => false,
                 'FeeFormPTN' => true,
@@ -826,8 +851,8 @@ final class CommunicationTest extends MockeryTestCase
                 'donorName' => 'Father Spodo Komodo',
                 'lpaType' => 'health and welfare',
                 'lpaId' => Formatter::id($lpa->id),
-                'viewDocsUrl' => 'https://some.url',
-                'checkDatesUrl' => 'https://some.url',
+                'viewDocsUrl' => 'https://front.example/some/path',
+                'checkDatesUrl' => 'https://front.example/some/path',
                 'PTNOnly' => false,
                 'FeeFormOnly' => true,
                 'FeeFormPTN' => false,

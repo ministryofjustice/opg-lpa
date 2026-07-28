@@ -112,6 +112,51 @@ module "aurora_database_encryption_key" {
   ]
 }
 
+module "multi_region_db_snapshot_encryption_key" {
+  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description = "Customer managed encryption key for multi-region DB snapshots"
+  alias       = "opg-lpa-${local.account_name}-multi-region-db-snapshot-encryption-key"
+  usage_services = [
+    "rds.*.amazonaws.com",
+    "backup.*.amazonaws.com",
+  ]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    aws_iam_role.aurora_backup_role.arn,
+  ]
+
+  encryption_role_patterns = [
+    aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+  ]
+  decryption_role_patterns = [
+    aws_iam_role.aurora_backup_role.arn,
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
 module "secrets_manager_encryption_key" {
   source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
   description        = "Customer managed encryption key for Secrets Manager"
@@ -259,6 +304,169 @@ module "elasticache_encryption_key" {
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
   ]
   decryption_role_patterns = [
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+module "sns_encryption_key" {
+  source      = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description = "Customer managed encryption key for SNS"
+  alias       = "opg-lpa-${local.account_name}-sns-encryption-key"
+  usage_services = [
+    "sns.*.amazonaws.com",
+    "cloudwatch.*.amazonaws.com",
+    "events.*.amazonaws.com",
+    "rds.*.amazonaws.com",
+  ]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+  ]
+  decryption_role_patterns = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+module "pdf_sqs_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description        = "Customer managed encryption key for PDF SQS queue"
+  alias              = "opg-lpa-${local.account_name}-pdf-sqs-encryption-key"
+  usage_services     = ["sqs.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "-api-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+module "pdf_cache_s3_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description        = "Customer managed encryption key for PDF cache S3 bucket"
+  alias              = "opg-lpa-${local.account_name}-pdf-cache-s3-encryption-key"
+  usage_services     = ["s3.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "-api-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-pdf-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  caller_accounts = [
+    data.aws_caller_identity.current.account_id,
+  ]
+}
+
+module "redacted_logs_s3_encryption_key" {
+  source             = "git::https://github.com/ministryofjustice/opg-terraform-aws-kms-key.git?ref=v1.0.0"
+  description        = "Customer managed encryption key for redacted logs S3 bucket"
+  alias              = "opg-lpa-${local.account_name}-redacted-logs-s3-encryption-key"
+  usage_services     = ["s3.amazonaws.com"]
+  primary_region     = "eu-west-1"
+  replicas_to_create = ["eu-west-2"]
+
+  administrator_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_roles = [
+    "*",
+  ]
+  encryption_roles = [
+    "*",
+  ]
+  grant_roles = [
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+  ]
+
+  encryption_role_patterns = [
+    "-api-task-role",
+    "-admin-task-role",
+    "-front-task-role",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+  ]
+  decryption_role_patterns = [
+    "-api-task-role",
+    "-admin-task-role",
     "-front-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
