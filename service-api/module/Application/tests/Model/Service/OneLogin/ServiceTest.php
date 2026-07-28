@@ -156,7 +156,7 @@ class ServiceTest extends MockeryTestCase
     {
         $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
 
-        $tokenSet = $this->makeTokenSet($sub, null);
+        $tokenSet = $this->makeTokenSet($sub, 'reset@example.com');
 
         $this->authorizationService->shouldReceive('callback')->once()->andReturn($tokenSet);
 
@@ -235,7 +235,7 @@ class ServiceTest extends MockeryTestCase
     public function testHandleCallbackSubReceived(): void
     {
         $sub      = 'urn:fdc:gov.uk:2022:sub';
-        $tokenSet = $this->makeTokenSet($sub, null);
+        $tokenSet = $this->makeTokenSet($sub, 'reset@example.com');
 
         $this->authorizationService->shouldReceive('callback')->once()->andReturn($tokenSet);
         $this->userRepository->shouldReceive('getByOneLoginSub')->once()->with($sub)->andReturn(null);
@@ -244,6 +244,19 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertSame($sub, $result['sub']);
     }
+
+    public function testHandleCallbackMissingEmailThrows(): void
+    {
+        $tokenSet = $this->makeTokenSet('urn:fdc:gov.uk:2022:sub', null);
+
+        $this->authorizationService->shouldReceive('callback')->once()->andReturn($tokenSet);
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+
+        $this->expectException(OneLoginAuthenticationException::class);
+
+        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+    }
+
 
     private function makeTokenSet(string $sub, ?string $email): MockInterface|TokenSetInterface
     {

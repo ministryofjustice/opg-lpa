@@ -162,7 +162,11 @@ class Service extends AbstractService
             throw new OneLoginAuthenticationException('missing_sub_claim');
         }
 
-        $email = isset($claims['email']) && is_string($claims['email']) ? $claims['email'] : null;
+        $email = $claims['email'] ?? null;
+
+        if (!is_string($email) || $email === '') {
+            throw new OneLoginAuthenticationException('missing_email_claim');
+        }
 
         $user = $this->getUserRepository()->getByOneLoginSub($sub);
 
