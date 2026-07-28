@@ -24,6 +24,14 @@ Before({ tags: '@RequiresOneLogin' }, function () {
     });
 });
 
+Before({ tags: '@RequiresMockOneLogin' }, function () {
+    const baseUrl = Cypress.config('baseUrl') || '';
+    if (!baseUrl.includes('localhost')) {
+        cy.log('Mock One Login only exists locally, skipping');
+        this.skip();
+    }
+});
+
 Then(`I am on the mock One Login page`, () => {
     cy.url().should('include', 'localhost:4549');
     cy.contains('Continue').should('be.visible');

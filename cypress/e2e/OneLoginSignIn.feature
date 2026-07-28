@@ -15,7 +15,7 @@ Feature: One Login Sign In
     Then I click "onelogin-signin-button"
     And I am taken to "/login-onelogin"
     And I can find "onelogin-signin-button" and it is visible
-
+  @RequiresMockOneLogin
   Scenario: Signing in through One Login reaches the link-or-create-account page
     Then I click "onelogin-signin-button"
     And I am taken to "/login-onelogin"
