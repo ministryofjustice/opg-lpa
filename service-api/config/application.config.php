@@ -9,7 +9,6 @@ return [
         'Laminas\Paginator',
         'Laminas\Router',
         'Laminas\Validator',
-        'Laminas\Cache\Storage\Adapter\Memory',
         'Application',
         'MakeShared\Telemetry',
         // Loaded after Application so its abstract_factories entries are

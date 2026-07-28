@@ -25,4 +25,10 @@ interface AuthorizationServiceInterface
         ?AuthSessionInterface $authSession = null,
         ?int $maxAge = null,
     ): TokenSetInterface;
+
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getUserInfo(ClientInterface $client, TokenSetInterface $tokenSet): array;
 }

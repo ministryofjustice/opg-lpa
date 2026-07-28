@@ -6,13 +6,16 @@ namespace Application\Model\Service\OneLogin;
 
 use Facile\OpenIDClient\Client\ClientInterface;
 use Facile\OpenIDClient\Service\AuthorizationService;
+use Facile\OpenIDClient\Service\UserInfoService;
 use Facile\OpenIDClient\Session\AuthSessionInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
 
 final class FacileAuthorizationServiceAdapter implements AuthorizationServiceInterface
 {
-    public function __construct(private readonly AuthorizationService $inner)
-    {
+    public function __construct(
+        private readonly AuthorizationService $inner,
+        private readonly UserInfoService $userInfoService,
+    ) {
     }
 
     public function getAuthorizationUri(ClientInterface $client, array $params = []): string
@@ -28,5 +31,10 @@ final class FacileAuthorizationServiceAdapter implements AuthorizationServiceInt
         ?int $maxAge = null,
     ): TokenSetInterface {
         return $this->inner->callback($client, $params, $redirectUri, $authSession, $maxAge);
+    }
+
+    public function getUserInfo(ClientInterface $client, TokenSetInterface $tokenSet): array
+    {
+        return $this->userInfoService->getUserInfo($client, $tokenSet);
     }
 }

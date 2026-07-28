@@ -172,6 +172,7 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
+      ONELOGIN_REDIRECT_BASE_URL: "https://localhost:7002"
       MEZZIO_DEBUG: "1"
       SHARED_SPACES_ENABLED: true
     healthcheck:

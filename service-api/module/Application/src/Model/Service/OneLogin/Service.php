@@ -133,9 +133,11 @@ class Service extends AbstractService
             'customs' => ['redirect_uri' => $redirectUri],
         ]);
 
+        $client = $this->clientManager->get();
+
         try {
             $tokenSet = $this->authorizationService->callback(
-                $this->clientManager->get(),
+                $client,
                 ['code' => $code, 'state' => $state],
                 $redirectUri,
                 $authSession,
@@ -161,7 +163,16 @@ class Service extends AbstractService
             throw new OneLoginAuthenticationException('missing_sub_claim');
         }
 
-        $email = $claims['email'] ?? null;
+        // GOV.UK One Login returns the email from the UserInfo endpoint, not in the
+        // ID token, so fetch it from there. (getUserInfo also checks the userinfo
+        // `sub` matches the ID token's.)
+        try {
+            $userInfo = $this->authorizationService->getUserInfo($client, $tokenSet);
+        } catch (\Throwable $e) {
+            throw new OneLoginAuthenticationException('userinfo_fetch_failed', '', 0, $e);
+        }
+
+        $email = $userInfo['email'] ?? null;
 
         if (!is_string($email) || $email === '') {
             throw new OneLoginAuthenticationException('missing_email_claim');
