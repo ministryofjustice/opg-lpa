@@ -177,7 +177,7 @@ locals {
       volumesFrom    = [],
       systemControls = [],
       privileged     = false,
-      user           = "aoc",
+      user           = "app",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
