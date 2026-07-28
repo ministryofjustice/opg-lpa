@@ -236,7 +236,7 @@ locals {
         { name = "OPG_LPA_ENDPOINTS_API", value = "http://${local.api_service_fqdn}:8080" },
         { name = "OPG_COGNITO_BASE_URL", value = var.admin_cognito.user_pool_domain_name },
         { name = "OPG_COGNITO_CLIENT_ID", value = var.admin_cognito.id },
-        { name = "OPG_COGNITO_LOGOUT_URL", value = "${var.admin_cognito.user_pool_domain_name}/logout?client_id=${var.admin_cognito.id}&logout_uri=https://${local.admin_fqdn}/" },
+        { name = "OPG_COGNITO_LOGOUT_URL", value = "${var.admin_cognito.user_pool_domain_name}/logout?client_id=${var.admin_cognito.id}&logout_uri=https://${local.front_fqdn}/" },
         { name = "OPG_COGNITO_TEST_USERNAME", value = "seeded_test_user" },
         { name = "OPG_ADMIN_ALB_ARN", value = aws_lb.admin.arn },
         { name = "OPG_ALB_PUBLIC_KEY_BASE_URL", value = "https://public-keys.auth.elb.${var.region_name}.amazonaws.com" },
