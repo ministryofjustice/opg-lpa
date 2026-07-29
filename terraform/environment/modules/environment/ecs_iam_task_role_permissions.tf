@@ -101,6 +101,7 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
     resources = [
       data.aws_kms_key.lpa_pdf_sqs.arn,
+      data.aws_kms_alias.pdf_sqs_encryption_key.target_key_arn,
       data.aws_kms_alias.dynamodb_encryption_key.target_key_arn,
     ]
   }
@@ -343,6 +344,7 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     ]
     resources = [
       data.aws_kms_key.lpa_pdf_sqs.arn,
+      data.aws_kms_alias.pdf_sqs_encryption_key.target_key_arn,
     ]
   }
   statement {
