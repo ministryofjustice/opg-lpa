@@ -79,7 +79,9 @@ resource "aws_vpc_endpoint_policy" "private" {
         Action = [
           "${startswith(each.value, "ecr") ? "ecr" : each.value}:*"
         ],
-        Resource = "*"
+        Resource = [
+          "arn:aws:${startswith(each.value, "ecr") ? "ecr" : each.value}::${data.aws_caller_identity.current.account_id}:*"
+        ]
       }
     ]
   })
