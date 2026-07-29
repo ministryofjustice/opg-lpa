@@ -32,7 +32,22 @@ resource "aws_security_group_rule" "vpc_endpoints_public_subnet_ingress" {
 }
 
 locals {
-  interface_endpoint = toset(var.interface_endpoint_names)
+  interface_endpoint = toset([
+    "ec2",
+    "ec2messages",
+    "ecr.api",
+    "ecr.dkr",
+    "events",
+    "execute-api",
+    "kms",
+    "logs",
+    "monitoring",
+    "rum",
+    "secretsmanager",
+    "sqs",
+    "ssm",
+    "xray",
+  ])
 }
 
 resource "aws_vpc_endpoint" "private" {
@@ -53,18 +68,18 @@ resource "aws_vpc_endpoint_policy" "private" {
   for_each        = local.interface_endpoint
   vpc_endpoint_id = aws_vpc_endpoint.private[each.value].id
   policy = jsonencode({
-    "Version" : "2012-10-17",
-    "Statement" : [
+    Version = "2012-10-17",
+    Statement = [
       {
-        "Sid" : "AllowAll",
-        "Effect" : "Allow",
-        "Principal" : {
-          "AWS" : "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        Sid    = "AllowAll",
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         },
-        "Action" : [
+        Action = [
           "${startswith(each.value, "ecr") ? "ecr" : each.value}:*"
         ],
-        "Resource" : "*"
+        Resource = "*"
       }
     ]
   })
@@ -91,8 +106,6 @@ resource "aws_vpc_endpoint" "dynamodb" {
   policy            = data.aws_iam_policy_document.allow_account_access.json
   tags              = { Name = "dynamodb-private" }
 }
-
-
 
 data "aws_iam_policy_document" "allow_account_access" {
   provider = aws.region
