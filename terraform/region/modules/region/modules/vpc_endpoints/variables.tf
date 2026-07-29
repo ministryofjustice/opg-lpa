@@ -1,8 +1,3 @@
-variable "interface_endpoint_names" {
-  description = "a list of the interfaces to create VPC endpoints for"
-  type        = list(string)
-}
-
 variable "vpc_id" {
   description = "id of the VPC to create interface endpoints in"
   type        = string
