@@ -25,10 +25,6 @@ data "aws_kms_key" "lpa_pdf_cache" {
   key_id = "alias/lpa_pdf_cache-${var.account_name}"
 }
 
-data "aws_kms_alias" "pdf_cache_s3_encryption_key" {
-  name = "alias/opg-lpa-${var.account_name}-pdf-cache-s3-encryption-key"
-}
-
 data "aws_acm_certificate" "certificate_front" {
   domain = "${local.cert_prefix_internal}${local.dns_namespace_dev_prefix}front.lpa.opg.service.justice.gov.uk"
 }
@@ -74,3 +70,15 @@ data "aws_kms_alias" "dynamodb_encryption_key" {
 data "aws_kms_alias" "elasticache_encryption_key" {
   name = "alias/opg-lpa-${var.account_name}-elasticache-encryption-key"
 }
+
+data "aws_kms_alias" "pdf_cache_s3_encryption_key" {
+  name = "alias/opg-lpa-${var.account_name}-pdf-cache-s3-encryption-key"
+}
+
+data "aws_kms_alias" "pdf_sqs_encryption_key" {
+  name = "alias/opg-lpa-${var.account_name}-pdf-sqs-encryption-key"
+}
+
+# data "aws_kms_alias" "redacted_logs_s3_encryption_key" {
+#   name = "alias/opg-lpa-${var.account_name}-redacted-logs-s3-encryption-key"
+# }
