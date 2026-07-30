@@ -29,6 +29,7 @@ class LoginHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly AuthenticationService $authenticationService,
+        private readonly bool $oneLoginEnabled = false,
     ) {
     }
 
@@ -123,6 +124,7 @@ class LoginHandler implements RequestHandlerInterface
                     'authError'             => $authError,
                     'isTimeout'             => $isTimeout,
                     'isInternalSystemError' => $isInternalSystemError,
+                    'oneLoginEnabled'       => $this->oneLoginEnabled,
                 ]
             )
         );

@@ -1,0 +1,23 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'There is a problem' -%}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">There is a problem signing you in</h1>
+
+        {% if error %}
+        <p class="govuk-body">{{ error }}</p>
+        {% else %}
+        <p class="govuk-body">We were unable to complete your sign in.</p>
+        {% endif %}
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="/login">Return to sign in</a>
+        </p>
+    </div>
+</div>
+
+{% endblock content %}
