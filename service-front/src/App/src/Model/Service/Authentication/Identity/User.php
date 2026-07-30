@@ -140,4 +140,9 @@ class User
     {
         $this->sharedSpaceId = $sharedSpaceId;
     }
+
+    public function inSharedSpace(): bool
+    {
+        return $this->sharedSpaceId !== null;
+    }
 }
