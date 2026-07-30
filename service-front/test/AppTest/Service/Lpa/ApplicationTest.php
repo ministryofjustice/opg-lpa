@@ -62,6 +62,7 @@ final class ApplicationTest extends MockeryTestCase
         $logger = Mockery::spy(LoggerInterface::class);
         $identity = Mockery::mock(\App\Model\Service\Authentication\Identity\User::class);
         $identity->shouldReceive('id')->andReturn('4321');
+        $identity->shouldReceive('getSharedSpaceId')->andReturn(null);
 
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
         $this->authenticationService->shouldReceive('getIdentity')->andReturn($identity);
@@ -149,14 +150,14 @@ final class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesNoApplications(): void
+    public function testGetPersonalLpaSummariesNoApplications(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
             ->once()
             ->andReturn(['applications' => []]);
 
-        $result = $this->service->getLpaSummaries();
+        $result = $this->service->getPersonalLpaSummaries();
 
         $this->assertEquals(['applications' => [], 'trackingEnabled' => true], $result);
     }
@@ -164,14 +165,14 @@ final class ApplicationTest extends MockeryTestCase
     /**
      * @throws Exception
      */
-    public function testGetLpaSummariesMultipleApplications(): void
+    public function testGetPersonalLpaSummariesMultipleApplications(): void
     {
         $this->apiClient->shouldReceive('httpGet')
             ->withArgs(['/v2/user/4321/applications', ['search' => null]])
             ->once()
             ->andReturn(['applications' => [FixturesData::getHwLpaJson(), $this->modifiedLPA()]]);
 
-        $result = $this->service->getLpaSummaries();
+        $result = $this->service->getPersonalLpaSummaries();
 
         $this->assertEquals(['applications' => [
             new ArrayObject([
@@ -197,6 +198,27 @@ final class ApplicationTest extends MockeryTestCase
                 'isReusable' => true,
             ]),
         ], 'trackingEnabled' => true], $result);
+    }
+
+    /**
+     * getSharedSpaceLpaSummaries() must always call the dedicated
+     * (unparameterised) shared-space endpoint, which resolves the shared
+     * space from the auth token server-side, regardless of the identity's
+     * own shared space state - the caller (SharedSpaceDashboardHandler)
+     * decides when this is the right scope to use, not this method.
+     *
+     * @throws Exception
+     */
+    public function testGetSharedSpaceLpaSummaries(): void
+    {
+        $this->apiClient->shouldReceive('httpGet')
+            ->withArgs(['/v2/shared-space/lpas', ['search' => null]])
+            ->once()
+            ->andReturn(['applications' => []]);
+
+        $result = $this->service->getSharedSpaceLpaSummaries();
+
+        $this->assertEquals(['applications' => [], 'trackingEnabled' => true], $result);
     }
 
     public function testAttorneyOverflowGetContinuationNoteKeys(): void

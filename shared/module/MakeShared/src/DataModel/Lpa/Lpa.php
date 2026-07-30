@@ -93,6 +93,14 @@ class Lpa extends AbstractData
     protected $user;
 
     /**
+     * @var string|null ID of the shared space that currently owns this LPA,
+     * if it has been moved into one (see SharedSpace\SharedSpaceService::create()).
+     * When set, the LPA is accessible to all members of that shared space,
+     * rather than to $user alone.
+     */
+    protected $sharedSpaceId;
+
+    /**
      * @var Payment status.
      */
     protected $payment;
@@ -162,6 +170,14 @@ class Lpa extends AbstractData
 
         $metadata->addPropertyConstraints('user', [
             new Assert\NotBlank(),
+            new Assert\Type('xdigit'),
+            new Assert\Length(
+                min: 32,
+                max: 32
+            ),
+        ]);
+
+        $metadata->addPropertyConstraints('sharedSpaceId', [
             new Assert\Type('xdigit'),
             new Assert\Length(
                 min: 32,
@@ -424,6 +440,25 @@ class Lpa extends AbstractData
     public function setUser(string $user): Lpa
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getSharedSpaceId(): ?string
+    {
+        return $this->sharedSpaceId;
+    }
+
+    /**
+     * @param string|null $sharedSpaceId
+     * @return $this
+     */
+    public function setSharedSpaceId(?string $sharedSpaceId): Lpa
+    {
+        $this->sharedSpaceId = $sharedSpaceId;
 
         return $this;
     }

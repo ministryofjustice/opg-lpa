@@ -19,7 +19,7 @@ variable "environment" {
     })
     feature_flags = object({
       onelogin_enabled      = bool
-      organisations_enabled = bool
+      shared_spaces_enabled = bool
     })
     database = object({
       cluster_identifier                 = string

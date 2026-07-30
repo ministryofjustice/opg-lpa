@@ -40,7 +40,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $apiLpaCollection2->shouldReceive('getById')
             ->andReturnNull();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($apiLpaCollection2);
         $applicationsService->setLogger($this->logger);
 
@@ -71,7 +71,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
 
@@ -101,7 +101,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
 
@@ -144,7 +144,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository(new Lpa(), $user));
         $applicationsService->setLogger($this->logger);
 
@@ -175,7 +175,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
 
@@ -204,7 +204,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $applicationsService->setLogger($this->logger);
 
@@ -227,7 +227,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $user = FixturesData::getUser();
 
-        $applicationsService = new TestableService();
+        $applicationsService = new TestableService($this->getSharedSpaceRepository());
         $applicationsService->setApplicationRepository($this->getApplicationRepository($seedLpa, $user));
         $applicationsService->setLogger($this->logger);
 
