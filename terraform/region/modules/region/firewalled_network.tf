@@ -70,6 +70,7 @@ module "vpc_endpoints" {
   # codecatalyst endpoints were not available in eu-west-2
   codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
   management_account_id          = data.aws_caller_identity.management.account_id
+  data_lpa_api_account_id        = var.account.data_lpa_api_account_id
   providers = {
     aws.region = aws
   }
