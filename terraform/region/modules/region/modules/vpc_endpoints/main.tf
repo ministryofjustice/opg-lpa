@@ -39,6 +39,25 @@ resource "aws_security_group_rule" "vpc_endpoints_public_subnet_ingress" {
   description       = "Allow Services in Public Subnets of ${data.aws_region.current.region} to connect to VPC Interface Endpoints"
 }
 
+data "aws_iam_policy_document" "gateway_endpoint_allow_account_access" {
+  provider = aws.region
+  statement {
+    sid       = "Allow-callers-from-specific-account"
+    effect    = "Allow"
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
+}
+
 locals {
   interface_endpoint = toset([
     "ec2",
@@ -81,23 +100,4 @@ resource "aws_vpc_endpoint_policy" "private" {
       }
     ]
   })
-}
-
-data "aws_iam_policy_document" "gateway_endpoint_allow_account_access" {
-  provider = aws.region
-  statement {
-    sid       = "Allow-callers-from-specific-account"
-    effect    = "Allow"
-    actions   = ["*"]
-    resources = ["*"]
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
-    condition {
-      test     = "StringEquals"
-      variable = "aws:PrincipalAccount"
-      values   = [data.aws_caller_identity.current.account_id]
-    }
-  }
 }
