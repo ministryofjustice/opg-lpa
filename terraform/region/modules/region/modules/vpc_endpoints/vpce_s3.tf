@@ -11,9 +11,28 @@ resource "aws_vpc_endpoint" "s3" {
 
 data "aws_iam_policy_document" "s3" {
   source_policy_documents = [
-    data.aws_iam_policy_document.gateway_endpoint_allow_account_access.json,
+    data.aws_iam_policy_document.s3_gateway_endpoint_allow_account_access.json,
     data.aws_iam_policy_document.s3_bucket_access.json,
   ]
+}
+
+data "aws_iam_policy_document" "s3_gateway_endpoint_allow_account_access" {
+  provider = aws.region
+  statement {
+    sid       = "Allow-callers-from-specific-account"
+    effect    = "Allow"
+    actions   = ["*"]
+    resources = ["*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
 }
 
 data "aws_iam_policy_document" "s3_bucket_access" {
