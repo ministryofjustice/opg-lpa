@@ -39,3 +39,7 @@ variable "codecatalyst_endpoints_enabled" {
   type        = bool
   default     = true
 }
+
+variable "management_account_id" {
+  type = string
+}

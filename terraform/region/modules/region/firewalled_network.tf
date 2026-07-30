@@ -69,6 +69,7 @@ module "vpc_endpoints" {
   application_route_tables        = data.aws_route_tables.firewalled_network_application
   # codecatalyst endpoints were not available in eu-west-2
   codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
+  management_account_id          = data.aws_caller_identity.management.account_id
   providers = {
     aws.region = aws
   }
