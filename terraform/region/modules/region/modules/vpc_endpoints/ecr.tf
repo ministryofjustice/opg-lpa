@@ -21,7 +21,7 @@ resource "aws_vpc_endpoint" "ecr" {
 resource "aws_vpc_endpoint_policy" "ecr" {
   provider        = aws.region
   for_each        = local.ecr_endpoints
-  vpc_endpoint_id = aws_vpc_endpoint.private[each.value].id
+  vpc_endpoint_id = aws_vpc_endpoint.ecr[each.value].id
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
