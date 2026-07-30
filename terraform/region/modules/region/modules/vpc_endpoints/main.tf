@@ -1,3 +1,11 @@
+data "aws_region" "current" {
+  provider = aws.region
+}
+
+data "aws_caller_identity" "current" {
+  provider = aws.region
+}
+
 resource "aws_security_group" "vpc_endpoints_private" {
   provider    = aws.region
   name_prefix = "vpc-endpoint-access-private-subnets-${var.vpc_id}"
@@ -35,8 +43,6 @@ locals {
   interface_endpoint = toset([
     "ec2",
     "ec2messages",
-    "events",
-    "kms",
   ])
 }
 
@@ -77,28 +83,6 @@ resource "aws_vpc_endpoint_policy" "private" {
   })
 }
 
-resource "aws_vpc_endpoint" "s3" {
-  provider          = aws.region
-  count             = var.s3_endpoint_enabled ? 1 : 0
-  vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
-  route_table_ids   = tolist(var.application_route_tables.ids)
-  vpc_endpoint_type = "Gateway"
-  policy            = data.aws_iam_policy_document.s3.json
-  tags              = { Name = "s3-private" }
-}
-
-resource "aws_vpc_endpoint" "dynamodb" {
-  provider          = aws.region
-  count             = var.dynamodb_endpoint_enabled ? 1 : 0
-  vpc_id            = var.vpc_id
-  service_name      = "com.amazonaws.${data.aws_region.current.region}.dynamodb"
-  route_table_ids   = tolist(var.application_route_tables.ids)
-  vpc_endpoint_type = "Gateway"
-  policy            = data.aws_iam_policy_document.allow_account_access.json
-  tags              = { Name = "dynamodb-private" }
-}
-
 data "aws_iam_policy_document" "allow_account_access" {
   provider = aws.region
   statement {
@@ -114,26 +98,6 @@ data "aws_iam_policy_document" "allow_account_access" {
       test     = "StringEquals"
       variable = "aws:PrincipalAccount"
       values   = [data.aws_caller_identity.current.account_id]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "s3" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.allow_account_access.json,
-    data.aws_iam_policy_document.s3_bucket_access.json,
-  ]
-}
-
-data "aws_iam_policy_document" "s3_bucket_access" {
-  statement {
-    sid       = "Access-to-specific-bucket-only"
-    effect    = "Allow"
-    actions   = ["s3:GetObject"]
-    resources = ["arn:aws:s3:::prod-${data.aws_region.current.region}-starport-layer-bucket/*"]
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
     }
   }
 }
