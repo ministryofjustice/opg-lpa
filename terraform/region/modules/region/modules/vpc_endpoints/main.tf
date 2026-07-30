@@ -37,8 +37,6 @@ locals {
     "ec2messages",
     "events",
     "kms",
-    "monitoring",
-    "ssm",
   ])
 }
 

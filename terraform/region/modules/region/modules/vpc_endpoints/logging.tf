@@ -3,6 +3,7 @@ locals {
     "logs",
     "xray",
     "rum",
+    "monitoring"
   ])
 }
 
