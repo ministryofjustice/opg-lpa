@@ -39,7 +39,7 @@ resource "aws_security_group_rule" "vpc_endpoints_public_subnet_ingress" {
   description       = "Allow Services in Public Subnets of ${data.aws_region.current.region} to connect to VPC Interface Endpoints"
 }
 
-data "aws_iam_policy_document" "gateway_endpoint_allow_account_access" {
+data "aws_iam_policy_document" "allow_account_access" {
   provider = aws.region
   statement {
     sid       = "Allow-callers-from-specific-account"
