@@ -9,10 +9,6 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   max_message_size                  = "262144"
   tags                              = local.pdf_component_tag
 
-  lifecycle {
-    ignore_changes = [kms_master_key_id]
-  }
-
   depends_on = [aws_ecs_service.api]
 }
 
