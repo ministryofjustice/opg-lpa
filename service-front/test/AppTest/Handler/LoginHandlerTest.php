@@ -189,6 +189,7 @@ class LoginHandlerTest extends TestCase
         $identity->method('token')->willReturn('test-token');
         $identity->method('tokenExpiresAt')->willReturn(new DateTime('2026-06-01T00:00:00+00:00'));
         $identity->method('lastLogin')->willReturn(new DateTime('2026-05-20T10:00:00+00:00'));
+        $identity->method('getSharedSpaceId')->willReturn('shared-space-1');
 
         $result = new Result(Result::SUCCESS, $identity, []);
 
@@ -204,7 +205,8 @@ class LoginHandlerTest extends TestCase
                 return $data['userId'] === 'user-123'
                     && $data['token'] === 'test-token'
                     && isset($data['tokenExpiresAt'])
-                    && isset($data['lastLogin']);
+                    && isset($data['lastLogin'])
+                    && $data['sharedSpaceId'] === 'shared-space-1';
             }));
 
         $request = $this->createRequestWithSession('POST', [

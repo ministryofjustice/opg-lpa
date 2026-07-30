@@ -43,7 +43,7 @@ class DashboardHandler implements RequestHandlerInterface
 
         $lpasPerPage = 50;
 
-        $lpasSummary = $this->lpaApplicationService->getLpaSummaries($search, $page, $lpasPerPage);
+        $lpasSummary = $this->lpaApplicationService->getPersonalLpaSummaries($search, $page, $lpasPerPage);
         $lpas = $lpasSummary['applications'] ?? [];
         $lpasTotalCount = $lpasSummary['total'] ?? count($lpas);
 

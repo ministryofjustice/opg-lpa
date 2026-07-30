@@ -1,0 +1,18 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'About shared spaces' -%}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">Some information on what shared spaces are and the consequences of joining one</p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="{{ url('shared-space/make') }}">Continue</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock content %}
