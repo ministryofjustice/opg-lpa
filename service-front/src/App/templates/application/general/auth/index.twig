@@ -67,8 +67,20 @@
 
 {{ form().closeTag|raw }}
 
-<p class="govuk-body">
-    <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
-</p>
+    <p class="govuk-body">
+        <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
+    </p>
+
+    {% if oneLoginEnabled %}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Use GOV.UK One Login</h2>
+        <p class="govuk-body">
+            If you have a GOV.UK One Login that is linked to your LPA account, you can sign in with it.
+        </p>
+        <a href="/login-onelogin" role="button" class="govuk-button govuk-button--secondary" data-cy="onelogin-signin-button">
+            Continue with GOV.UK One Login
+        </a>
+    {% endif %}
 
 {% endblock content %}

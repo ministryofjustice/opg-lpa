@@ -32,6 +32,7 @@ use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\LpaApplicationServiceFactory;
 use App\Service\Mail\Transport\MailTransportFactory;
 use App\Service\Mail\Transport\MailTransportInterface as AppMailTransportInterface;
+use App\Service\OneLogin\RedirectUriBuilder;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Redis\RedisClient;
@@ -163,8 +164,13 @@ return [
             Handler\LogoutHandler::class                  => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
             ),
-            Handler\OneLoginSignInHandler::class          => static fn(ContainerInterface $c) => new Handler\OneLoginSignInHandler(
-                $c->get(\App\Service\OneLogin\OneLoginService::class),
+            Handler\LoginHandler::class                   => static fn(ContainerInterface $c) => new Handler\LoginHandler(
+                $c->get(TemplateRendererInterface::class),
+                $c->get(\Laminas\Form\FormElementManager::class),
+                $c->get(\App\Authentication\AuthenticationService::class),
+                App\Feature::OneLogin->isEnabled(),
+            ),
+            RedirectUriBuilder::class => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,
             ),
             StatusHandler::class                          => static fn(ContainerInterface $c) => new StatusHandler(

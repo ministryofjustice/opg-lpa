@@ -112,13 +112,8 @@ class Service extends AbstractService
         //  If there are then set a boolean value to indicate that they will be cleared
         $inactivityFlagsCleared = !is_null($user->inactivityFlags());
 
-        // Update the last logged-in time to now.
+        // Update the last logged-in time to now, and reset any failed login counter.
         $this->getUserRepository()->updateLastLoginTime($user->id());
-
-        // Ensure 'failed_login_attempts' is reset if needed
-        if ($user->failedLoginAttempts() > 0) {
-            $this->getUserRepository()->resetFailedLoginCounter($user->id());
-        }
 
         $this->log('info', 'User signed in', [
             'event' => 'auth.sign_in.success',
@@ -128,23 +123,7 @@ class Service extends AbstractService
         $tokenDetails = [];
 
         if ($createToken) {
-            $expires = new DateTime("+" . $this->tokenTtl . " seconds");
-
-            do {
-                $authToken = make_token(32);
-
-                $created = $this->getUserRepository()->setAuthToken(
-                    $user->id(),
-                    $expires,
-                    $authToken
-                );
-            } while (!$created);
-
-            $tokenDetails = [
-                'token' => $authToken,
-                'expiresIn' => $this->tokenTtl,
-                'expiresAt' => $expires
-            ];
+            $tokenDetails = $this->issueAuthToken($user);
         }
 
         return [
@@ -154,6 +133,30 @@ class Service extends AbstractService
                 'inactivityFlagsCleared' => $inactivityFlagsCleared,
                 'sharedSpaceId' => $this->sharedSpaceRepository->getSharedSpaceIdForUser($user->id()),
             ] + $tokenDetails;
+    }
+
+    /**
+     * @return array{token: string, expiresIn: int, expiresAt: DateTime}
+     */
+    public function issueAuthToken(User $user): array
+    {
+        $expires = new DateTime("+" . $this->tokenTtl . " seconds");
+
+        do {
+            $authToken = make_token(32);
+
+            $created = $this->getUserRepository()->setAuthToken(
+                $user->id(),
+                $expires,
+                $authToken
+            );
+        } while (!$created);
+
+        return [
+            'token'     => $authToken,
+            'expiresIn' => $this->tokenTtl,
+            'expiresAt' => $expires,
+        ];
     }
 
     /**
