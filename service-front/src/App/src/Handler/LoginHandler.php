@@ -78,6 +78,7 @@ class LoginHandler implements RequestHandlerInterface
                         'token'          => $identity->token(),
                         'tokenExpiresAt' => $identity->tokenExpiresAt()->format('c'),
                         'lastLogin'      => $identity->lastLogin()->format('c'),
+                        'sharedSpaceId'  => $identity->getSharedSpaceId(),
                     ]);
 
                     if ($nextUrl !== null && is_string($nextUrl)) {

@@ -5,6 +5,7 @@ namespace Application\Model\Service\Authentication;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\TokenInterface as Token;
 use Application\Model\DataAccess\Repository\User\UserInterface as User;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\Service\AbstractService;
 use DateMalformedStringException;
 use DateTime;
@@ -29,6 +30,7 @@ class Service extends AbstractService
     public const ACCOUNT_LOCK_TIME = 900; // 15 minutes
 
     public function __construct(
+        private readonly SharedSpaceRepositoryInterface $sharedSpaceRepository,
         // The actual number of seconds before an auth token expires.
         private $tokenTtl = self::TOKEN_TTL,
         // Salt used when hashing user identifiers for audit logs.
@@ -150,13 +152,14 @@ class Service extends AbstractService
                 'username' => $user->username(),
                 'last_login' => $user->lastLoginAt(),
                 'inactivityFlagsCleared' => $inactivityFlagsCleared,
+                'sharedSpaceId' => $this->sharedSpaceRepository->getSharedSpaceIdForUser($user->id()),
             ] + $tokenDetails;
     }
 
     /**
      * @return (DateTime|false|int|mixed|null|string)[]|string
      *
-     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null}
+     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
      */
     public function withToken(string $tokenStr, bool $extendToken): array|string
     {
@@ -177,7 +180,7 @@ class Service extends AbstractService
      * $expiresAt: DateTime|null; if null, defaults to the current time +
      * the tokenTtl on this service
      *
-     * @return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null}
+     * @return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
      * @throws DateMalformedStringException
      */
     public function updateToken(string $tokenStr, bool $needsUpdate = true, bool $throttle = true, DateTime|false|null $expiresAt = null): array|string
@@ -251,6 +254,7 @@ class Service extends AbstractService
             'last_login' => $user->lastLoginAt(),
             'expiresIn' => $expiresIn,
             'expiresAt' => $expiresAt,
+            'sharedSpaceId' => $this->sharedSpaceRepository->getSharedSpaceIdForUser($user->id()),
         ];
     }
 }
