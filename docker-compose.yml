@@ -175,6 +175,7 @@ services:
       ONELOGIN_REDIRECT_BASE_URL: "https://localhost:7002"
       MEZZIO_DEBUG: "1"
       SHARED_SPACES_ENABLED: true
+      CYPRESS_FIXTURES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
