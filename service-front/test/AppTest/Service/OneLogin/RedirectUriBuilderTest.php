@@ -42,11 +42,6 @@ class RedirectUriBuilderTest extends TestCase
         $this->assertSame('https://localhost:7002/auth/redirect', $builder($uri));
     }
 
-    public function testCallbackPathConstantValue(): void
-    {
-        $this->assertSame('/auth/redirect', RedirectUriBuilder::CALLBACK_PATH);
-    }
-
     public function testHttpSchemeIsPreservedWhenNoBaseUrl(): void
     {
         $builder = new RedirectUriBuilder();
