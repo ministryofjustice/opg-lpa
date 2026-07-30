@@ -8,7 +8,7 @@ use Psr\Http\Message\UriInterface;
 
 final class RedirectUriBuilder
 {
-    private const CALLBACK_PATH = '/auth/redirect';
+    public const CALLBACK_PATH = '/auth/redirect';
 
     public function __construct(private readonly ?string $baseUrl = null)
     {
