@@ -7,32 +7,21 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
-use Application\Model\Service\SharedSpace\SharedSpaceService as Service;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use MakeShared\DataModel\Lpa\Lpa;
-use MakeShared\Logging\LoggerTrait;
 use Throwable;
 use Traversable;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 
-class SharedSpaceController extends AbstractAuthController
+class SharedSpaceController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
-    private ?ApplicationsService $applicationsService = null;
-
-    public function setApplicationsService(ApplicationsService $applicationsService): void
-    {
-        $this->applicationsService = $applicationsService;
-    }
-
-    /**
-     * Get the service to use
-     *
-     * @return Service
-     */
-    protected function getService()
-    {
-        return $this->service;
+    public function __construct(
+        private readonly AuthenticationService $authenticationService,
+        private readonly SharedSpaceService $sharedSpaceService,
+        private readonly ApplicationsService $applicationsService
+    ) {
     }
 
     /**
@@ -62,14 +51,14 @@ class SharedSpaceController extends AbstractAuthController
 
         $userId = $result['userId'];
 
-        $data = $this->getBodyContent();
+        $data = $this->processBodyContent($this->getRequest());
 
         if (!isset($data['name']) || trim((string) $data['name']) === '') {
             return new ApiProblem(400, 'A name must be passed for the shared space');
         }
 
         try {
-            $result = $this->getService()->create(trim((string) $data['name']), $userId);
+            $result = $this->sharedSpaceService->create(trim((string) $data['name']), $userId);
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(400, 'user-already-in-shared-space');
         } catch (Throwable $e) {
@@ -138,6 +127,29 @@ class SharedSpaceController extends AbstractAuthController
                 iterator_to_array($items)
             ),
             'total' => $paginator->getTotalItemCount(),
+        ];
+
+        return new Json($response);
+    }
+
+    public function membersAction(): Json|ApiProblem
+    {
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $token = $this->getRequest()->getHeader('Token');
+        if ($token === false) {
+            return new ApiProblem(401, 'invalid-token');
+        }
+
+        $result = $this->authenticationService->withToken($token->getFieldValue(), false);
+        if (is_string($result) || !isset($result['userId'])) {
+            return new ApiProblem(401, 'invalid-token');
+        }
+        if (empty($result['sharedSpaceId'])) {
+            return new ApiProblem(403, 'Access Denied');
+        }
+
+        $response = [
+            'members' => $this->sharedSpaceService->getMembers($result['sharedSpaceId']),
         ];
 
         return new Json($response);

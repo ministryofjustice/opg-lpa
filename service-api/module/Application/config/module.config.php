@@ -139,7 +139,6 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-
                             'create' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -149,13 +148,21 @@ return [
                                     ],
                                 ],
                             ],
-
                             'lpas' => [
                                 'type'    => 'Segment',
                                 'options' => [
                                     'route'       => '/lpas',
                                     'defaults' => [
                                         'action' => 'lpas',
+                                    ],
+                                ],
+                            ],
+                            'members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/members',
+                                    'defaults' => [
+                                        'action' => 'members',
                                     ],
                                 ],
                             ],
@@ -503,7 +510,7 @@ return [
         ],
         'factories' => [
             Application\Controller\StatusController::class =>
-                Application\ControllerFactory\StatusControllerFactory::class
+                Application\ControllerFactory\StatusControllerFactory::class,
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',

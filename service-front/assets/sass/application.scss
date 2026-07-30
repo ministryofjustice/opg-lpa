@@ -68,3 +68,12 @@ $govuk-assets-path: "/assets/v2/";
   margin-left: calc(50% - 50vw);
   margin-right: calc(50% - 50vw);
 }
+
+.app-tabs--no-border .govuk-tabs__panel {
+  border-right: none !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  padding-left: 0;
+  padding-bottom: 0;
+  padding-right: 0;
+}

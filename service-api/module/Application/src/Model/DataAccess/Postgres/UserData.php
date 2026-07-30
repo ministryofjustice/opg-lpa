@@ -691,6 +691,32 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getProfiles(array $ids): array
+    {
+        $profiles = [];
+        $result = $this->dbWrapper->select(self::USERS_TABLE, ['id' => $ids]);
+
+        foreach ($result as $user) {
+            if (!is_array($user) || !isset($user['profile'])) {
+                continue;
+            }
+
+            $profile = array_merge(json_decode($user['profile'], true), [
+                'id' => $user['id'],
+                'createdAt' => $user['created'],
+                'updatedAt' => $user['updated'],
+                'lastLoginAt' => $user['last_login'],
+            ]);
+
+            $profiles[] = new ProfileUserModel($profile);
+        }
+
+        return $profiles;
+    }
+
+    /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
      * @param ProfileUserModel $data
