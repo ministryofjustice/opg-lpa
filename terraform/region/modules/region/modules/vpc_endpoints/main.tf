@@ -37,13 +37,9 @@ locals {
     "ec2messages",
     "events",
     "kms",
-    "logs",
     "monitoring",
-    "rum",
     "secretsmanager",
-    "sqs",
     "ssm",
-    "xray",
   ])
 }
 
@@ -77,7 +73,7 @@ resource "aws_vpc_endpoint_policy" "private" {
           "${each.value}:*"
         ],
         Resource = [
-          "arn:aws:${each.value}::${data.aws_caller_identity.current.account_id}:*"
+          "*"
         ]
       }
     ]
