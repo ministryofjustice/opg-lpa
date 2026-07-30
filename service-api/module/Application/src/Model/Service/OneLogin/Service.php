@@ -197,10 +197,6 @@ class Service extends AbstractService
 
         $this->getUserRepository()->updateLastLoginTime($userId);
 
-        if ($user->failedLoginAttempts() > 0) {
-            $this->getUserRepository()->resetFailedLoginCounter($userId);
-        }
-
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
         $this->getLogger()->info('auth.onelogin.callback_success', [

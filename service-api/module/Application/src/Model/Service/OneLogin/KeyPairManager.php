@@ -8,9 +8,9 @@ use Jose\Component\Core\JWK;
 use Jose\Component\KeyManagement\JWKFactory;
 use RuntimeException;
 
-final class KeyPairManager
+class KeyPairManager
 {
-    public const ALGORITHM = 'ES256';
+    private const ALGORITHM = 'ES256';
 
     public function __construct(
         #[\SensitiveParameter] private readonly string $privateKey,

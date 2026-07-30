@@ -13,14 +13,14 @@ use Facile\OpenIDClient\Token\TokenSetInterface;
 final class FacileAuthorizationServiceAdapter implements AuthorizationServiceInterface
 {
     public function __construct(
-        private readonly AuthorizationService $inner,
+        private readonly AuthorizationService $authorizationService,
         private readonly UserInfoService $userInfoService,
     ) {
     }
 
     public function getAuthorizationUri(ClientInterface $client, array $params = []): string
     {
-        return $this->inner->getAuthorizationUri($client, $params);
+        return $this->authorizationService->getAuthorizationUri($client, $params);
     }
 
     public function callback(
@@ -30,7 +30,7 @@ final class FacileAuthorizationServiceAdapter implements AuthorizationServiceInt
         ?AuthSessionInterface $authSession = null,
         ?int $maxAge = null,
     ): TokenSetInterface {
-        return $this->inner->callback($client, $params, $redirectUri, $authSession, $maxAge);
+        return $this->authorizationService->callback($client, $params, $redirectUri, $authSession, $maxAge);
     }
 
     public function getUserInfo(ClientInterface $client, TokenSetInterface $tokenSet): array

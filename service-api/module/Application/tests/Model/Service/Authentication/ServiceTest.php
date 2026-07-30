@@ -161,9 +161,6 @@ class ServiceTest extends MockeryTestCase
         $this->authUserRepository->shouldReceive('updateLastLoginTime')
             ->withArgs([1])->once();
 
-        $this->authUserRepository->shouldReceive('resetFailedLoginCounter')
-            ->withArgs([1])->once();
-
         $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 

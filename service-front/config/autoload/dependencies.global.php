@@ -32,7 +32,6 @@ use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\LpaApplicationServiceFactory;
 use App\Service\Mail\Transport\MailTransportFactory;
 use App\Service\Mail\Transport\MailTransportInterface as AppMailTransportInterface;
-use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\RedirectUriBuilder;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Payment\GovPay\Client as GovPayClient;
@@ -170,15 +169,6 @@ return [
                 $c->get(\Laminas\Form\FormElementManager::class),
                 $c->get(\App\Authentication\AuthenticationService::class),
                 App\Feature::OneLogin->isEnabled(),
-            ),
-            Handler\OneLoginSignInHandler::class          => static fn(ContainerInterface $c) => new Handler\OneLoginSignInHandler(
-                $c->get(OneLoginService::class),
-                $c->get(RedirectUriBuilder::class),
-            ),
-            Handler\OneLoginCallbackHandler::class        => static fn(ContainerInterface $c) => new Handler\OneLoginCallbackHandler(
-                $c->get(TemplateRendererInterface::class),
-                $c->get(OneLoginService::class),
-                $c->get(LoggerInterface::class),
             ),
             RedirectUriBuilder::class => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,
