@@ -83,7 +83,7 @@ resource "aws_vpc_endpoint_policy" "private" {
   })
 }
 
-data "aws_iam_policy_document" "allow_account_access" {
+data "aws_iam_policy_document" "gateway_endpoint_allow_account_access" {
   provider = aws.region
   statement {
     sid       = "Allow-callers-from-specific-account"
