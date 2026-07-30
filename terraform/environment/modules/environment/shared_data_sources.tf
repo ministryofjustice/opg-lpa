@@ -78,7 +78,3 @@ data "aws_kms_alias" "pdf_cache_s3_encryption_key" {
 data "aws_kms_alias" "pdf_sqs_encryption_key" {
   name = "alias/opg-lpa-${var.account_name}-pdf-sqs-encryption-key"
 }
-
-# data "aws_kms_alias" "redacted_logs_s3_encryption_key" {
-#   name = "alias/opg-lpa-${var.account_name}-redacted-logs-s3-encryption-key"
-# }
