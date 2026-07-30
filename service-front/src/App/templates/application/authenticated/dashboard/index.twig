@@ -35,13 +35,15 @@
     </div>
 </div>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-body">
-            <p class="govuk-body"><a class="govuk-link" href='{{ url('shared-space/about') }}'>Make a shared space</a>.</p>
+{% if sharedSpaceEnabled %}
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-body">
+                <p class="govuk-body"><a class="govuk-link" href='{{ url('shared-space/about') }}'>Make a shared space</a>.</p>
+            </div>
         </div>
     </div>
-</div>
+{% endif %}
 
 {% if shortList %}
 {# With less than 6 LPAs, no search is displayed #}
