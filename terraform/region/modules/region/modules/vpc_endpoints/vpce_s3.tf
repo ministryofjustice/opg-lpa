@@ -11,7 +11,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 data "aws_iam_policy_document" "s3" {
   source_policy_documents = [
-    data.aws_iam_policy_document.allow_account_access.json,
+    data.aws_iam_policy_document.gateway_endpoint_allow_account_access.json,
     data.aws_iam_policy_document.s3_bucket_access.json,
   ]
 }
