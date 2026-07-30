@@ -148,6 +148,12 @@ class Service extends AbstractService
      */
     public function update(array $data, string $id): ApiProblem|EntityInterface|null
     {
+        if (isset($data['oneLoginSub'])) {
+            $this->getUserRepository()->setOneLoginSub($id, $data['oneLoginSub']);
+
+            return new DataModelEntity(new ProfileUserModel([]));
+        }
+
         $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.

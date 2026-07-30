@@ -697,4 +697,21 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ]
         );
     }
+
+    /**
+     * Updates a user's OneLogin sub.
+     *
+     * @param string $userId
+     * @param string $oneLoginSub
+     */
+    public function setOneLoginSub(string $userId, string $oneLoginSub): void
+    {
+        $this->updateRow(
+            ['id' => $userId],
+            [
+                'one_login_sub' => $oneLoginSub,
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
+            ]
+        );
+    }
 }
