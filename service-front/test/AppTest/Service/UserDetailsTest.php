@@ -385,19 +385,6 @@ final class UserDetailsTest extends TestCase
     }
 
     // -------------------------------------------------------------------------
-    // url helper
-    // -------------------------------------------------------------------------
-
-    public function testUrlGeneratesRelativePath(): void
-    {
-        $this->urlHelper->method('generate')
-            ->with('some-route', ['id' => '1'])
-            ->willReturn('/some/path/1');
-
-        $this->assertSame('/some/path/1', $this->service->url('some-route', ['id' => '1']));
-    }
-
-    // -------------------------------------------------------------------------
     // Helpers
     // -------------------------------------------------------------------------
 
@@ -428,17 +415,6 @@ final class UserDetailsTest extends TestCase
     public function testGetMailTransportReturnsInjectedInstance(): void
     {
         $this->assertSame($this->mailTransport, $this->service->getMailTransport());
-    }
-
-    public function testFormatLpaIdReturnsFormattedValue(): void
-    {
-        $this->assertSame('A000 1234 5678', $this->service->formatLpaId(12345678));
-    }
-
-    public function testMoneyFormatReturnsFormattedValue(): void
-    {
-        $this->assertSame('41', $this->service->moneyFormat(41));
-        $this->assertSame('41.50', $this->service->moneyFormat(41.5));
     }
 
     public function testUpdateAllDetailsReturnsApiResponseAfterNormalisingAddressAndDob(): void
@@ -850,6 +826,21 @@ final class UserDetailsTest extends TestCase
         $this->apiClient->method('httpPost')->willReturn(['unexpected' => true]);
 
         $this->assertSame('unknown-error', $this->service->registerAccount('new@example.com', 'Pass@word1'));
+    }
+
+    public function testSetOneLoginSub(): void
+    {
+        $oneLoginSub = 'blahblah';
+
+        $this->apiClient->method('updateToken')->with('valid-token');
+
+        $this->apiClient
+            ->method('httpPut')
+            ->with('/v2/user/user-123', ['oneLoginSub' => $oneLoginSub]);
+
+        $result = $this->service->setOneLoginSub($oneLoginSub);
+
+        $this->assertTrue($result);
     }
 
     private function ensureLaminasHttpResponseClassExists(): void
