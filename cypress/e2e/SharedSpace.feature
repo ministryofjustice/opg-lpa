@@ -1,9 +1,9 @@
-@SharedSpace
+@SharedSpace @CleanupUserFixtures
 Feature: Shared Space
 
-#  TODO: Work out mechanism to either tidy up data or quickly create a user (not via UI)
   Scenario: Can create a shared space from user dashboard
-    Given I log in with user "seeded_test_user_shared@publicguardian.gov.uk" password "Pass1234"
+    Given I create a new user with 5 LPAs
+    When I log in as the newly created fixture user
     Then I should be on "/user/dashboard"
     And there are "five" 'LPA' elements on the page
     When I click element marked "Make a shared space"
