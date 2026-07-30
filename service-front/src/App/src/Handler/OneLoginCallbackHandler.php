@@ -22,7 +22,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
     private const string SESSION_KEY_IDENTITY        = 'identity';
     private const string SESSION_KEY_PENDING_LINK    = 'onelogin_pending_link';
     private const string SESSION_KEY_PRE_AUTH_URL    = 'pre_auth_request_url';
-    private const string ERROR_TEMPLATE              = 'application/general/auth/onelogin-callback.twig';
+    private const string ERROR_TEMPLATE              = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,

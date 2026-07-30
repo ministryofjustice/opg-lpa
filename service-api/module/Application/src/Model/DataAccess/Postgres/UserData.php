@@ -231,6 +231,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             [
                 'last_login' => gmdate(DbWrapper::TIME_FORMAT),
                 'inactivity_flags' => null,
+                'failed_login_attempts' => 0,
             ]
         );
     }

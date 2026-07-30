@@ -167,7 +167,6 @@ class ServiceTest extends MockeryTestCase
 
         $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
         $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-2');
-        $this->userRepository->shouldReceive('resetFailedLoginCounter')->once()->with('user-2');
 
         $this->authenticationService->shouldReceive('issueAuthToken')
             ->once()

@@ -112,13 +112,8 @@ class Service extends AbstractService
         //  If there are then set a boolean value to indicate that they will be cleared
         $inactivityFlagsCleared = !is_null($user->inactivityFlags());
 
-        // Update the last logged-in time to now.
+        // Update the last logged-in time to now, and reset any failed login counter.
         $this->getUserRepository()->updateLastLoginTime($user->id());
-
-        // Ensure 'failed_login_attempts' is reset if needed
-        if ($user->failedLoginAttempts() > 0) {
-            $this->getUserRepository()->resetFailedLoginCounter($user->id());
-        }
 
         $this->log('info', 'User signed in', [
             'event' => 'auth.sign_in.success',
