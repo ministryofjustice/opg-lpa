@@ -23,7 +23,11 @@ class ModuleTest extends TestCase
         $request = Mockery::mock(LaminasRequest::class);
         $request->shouldReceive('getHeader')->with('accept')->andReturn($requestAcceptHeader);
 
-        $responseHeaders = Headers::fromString("Content-Type: $contentType");
+        // when $contentType is null, simulate a response with no
+        // Content-Type header at all (rather than one with an empty value)
+        $responseHeaders = is_null($contentType)
+            ? new Headers()
+            : Headers::fromString("Content-Type: $contentType");
 
         $response = Mockery::mock(LaminasResponse::class);
         $response->shouldReceive('getHeaders')->andReturn($responseHeaders);
@@ -91,27 +95,31 @@ class ModuleTest extends TestCase
 
         $module = new Module();
 
-        // the existing response should be left alone
         $module->negotiateContent($event);
 
-        // check that the response is replaced with an API problem response
-        $actualResponse = $event->getResponse();
-        $this->assertEquals(406, $actualResponse->getStatusCode());
+        // no content-type at all means the response was never actually
+        // produced by an API action (e.g. a routing/dispatch failure that
+        // already set its own status code, such as a 404) - it should be
+        // left alone rather than being masked as a 406
+        $this->assertSame($originalResponse, $event->getResponse());
     }
 
     public function testNegotiateBadContentTypeHeaderOnResponse()
     {
-        $event = $this->makeEvent('application/pdf', null);
+        $event = $this->makeEvent('application/pdf', 'text/html');
 
         $originalResponse = $event->getResponse();
 
         $module = new Module();
 
-        // the existing response should be left alone
         $module->negotiateContent($event);
 
-        // check that the response is replaced with an API problem response
+        // a content-type IS present here but doesn't match the Accept
+        // header, so this is a genuine negotiation failure and should
+        // still be converted to a 406
         $actualResponse = $event->getResponse();
+        $this->assertNotEquals(get_class($originalResponse), get_class($actualResponse));
+        $this->assertEquals(ApiProblemResponse::class, get_class($actualResponse));
         $this->assertEquals(406, $actualResponse->getStatusCode());
     }
 }

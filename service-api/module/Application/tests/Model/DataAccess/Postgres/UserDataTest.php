@@ -833,7 +833,8 @@ class UserDataTest extends MockeryTestCase
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return Helpers::isGmDateString($set['last_login']) &&
-                is_null($set['inactivity_flags']);
+                is_null($set['inactivity_flags']) &&
+                $set['failed_login_attempts'] === 0;
         }));
 
         // test

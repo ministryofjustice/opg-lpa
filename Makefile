@@ -308,7 +308,7 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 # plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
 .PHONY: cypress-run-remaining
 cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
+	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin and not @SharedSpace"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch
@@ -365,13 +365,19 @@ dc-clear-cache:
 reset-admin:
 	docker compose up -d --force-recreate --renew-anon-volumes admin-app
 
+# Re-run the non-live seeding scripts against the running dev stack, truncating
+# and re-populating the test users/applications/feedback/deletion-log tables.
+.PHONY: dc-reseed
+dc-reseed:
+	@docker compose run --rm seeding
+
 .PHONY: update-secrets-baseline
 update-secrets-baseline:
 	detect-secrets scan --baseline .secrets.baseline
 
 .PHONY: psql
 psql:
-	@docker exec -it lpa-postgres psql --username=lpauser --dbname=lpadb
+	@docker exec -it lpa-postgres psql --username=lpauser --dbname=lpadb --pset=expanded=auto
 
 block-ips-tests: ##@unit-tests Run the unit tests for IP blocking lambda.
 	docker compose -f docker-compose.commands.yml up block-ips-tests --build

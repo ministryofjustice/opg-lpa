@@ -91,7 +91,7 @@ locals {
         { name = "OPG_LPA_STACK_ENVIRONMENT", value = var.account_name },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
-        { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
+        { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) }
       ]
   })
 }

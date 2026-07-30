@@ -78,6 +78,23 @@ class AuthenticationService
         return $this->storage->read();
     }
 
+    /**
+     * Update the sharedSpaceId on the current identity and persist it to the
+     * session immediately, so the user doesn't need to log in again to pick
+     * up shared space membership (e.g. right after creating/joining one).
+     */
+    public function refreshSharedSpaceId(?string $sharedSpaceId): void
+    {
+        $identity = $this->getIdentity();
+
+        if ($identity === null || $this->storage === null) {
+            return;
+        }
+
+        $identity->setSharedSpaceId($sharedSpaceId);
+        $this->storage->write($identity);
+    }
+
     public function hasIdentity(): bool
     {
         return $this->getIdentity() !== null;

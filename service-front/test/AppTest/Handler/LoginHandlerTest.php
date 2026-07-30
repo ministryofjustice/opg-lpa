@@ -189,6 +189,7 @@ class LoginHandlerTest extends TestCase
         $identity->method('token')->willReturn('test-token');
         $identity->method('tokenExpiresAt')->willReturn(new DateTime('2026-06-01T00:00:00+00:00'));
         $identity->method('lastLogin')->willReturn(new DateTime('2026-05-20T10:00:00+00:00'));
+        $identity->method('getSharedSpaceId')->willReturn('shared-space-1');
 
         $result = new Result(Result::SUCCESS, $identity, []);
 
@@ -204,7 +205,8 @@ class LoginHandlerTest extends TestCase
                 return $data['userId'] === 'user-123'
                     && $data['token'] === 'test-token'
                     && isset($data['tokenExpiresAt'])
-                    && isset($data['lastLogin']);
+                    && isset($data['lastLogin'])
+                    && $data['sharedSpaceId'] === 'shared-space-1';
             }));
 
         $request = $this->createRequestWithSession('POST', [
@@ -524,5 +526,48 @@ class LoginHandlerTest extends TestCase
         ]);
 
         $this->handler->handle($request);
+    }
+
+    public function testOneLoginEnabledFalseByDefault(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $this->handler->handle($this->createRequestWithSession());
+
+        $this->assertFalse($capturedParams['oneLoginEnabled']);
+    }
+
+    public function testOneLoginEnabledIsTrueWhenHandlerConstructedWithTrue(): void
+    {
+        $handler = new LoginHandler(
+            $this->renderer,
+            $this->formElementManager,
+            $this->authenticationService,
+            true,
+        );
+
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $handler->handle($this->createRequestWithSession());
+
+        $this->assertTrue($capturedParams['oneLoginEnabled']);
     }
 }

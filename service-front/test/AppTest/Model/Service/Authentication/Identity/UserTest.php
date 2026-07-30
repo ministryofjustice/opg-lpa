@@ -89,4 +89,48 @@ final class UserTest extends TestCase
         $this->assertArrayHasKey('tokenExpiresAt', $data);
         $this->assertInstanceOf(DateTime::class, $data['tokenExpiresAt']);
     }
+
+    public function testGetSharedSpaceIdDefaultsToNull(): void
+    {
+        $user = new User('user-123', 'token-123', 60, new DateTime('2024-01-01T00:00:00+00:00'));
+
+        $this->assertNull($user->getSharedSpaceId());
+    }
+
+    public function testGetSharedSpaceIdReturnsConstructorValue(): void
+    {
+        $user = new User(
+            'user-123',
+            'token-123',
+            60,
+            new DateTime('2024-01-01T00:00:00+00:00'),
+            sharedSpaceId: 'shared-space-1',
+        );
+
+        $this->assertSame('shared-space-1', $user->getSharedSpaceId());
+    }
+
+    public function testSetSharedSpaceIdUpdatesValue(): void
+    {
+        $user = new User('user-123', 'token-123', 60, new DateTime('2024-01-01T00:00:00+00:00'));
+
+        $user->setSharedSpaceId('shared-space-2');
+
+        $this->assertSame('shared-space-2', $user->getSharedSpaceId());
+    }
+
+    public function testSetSharedSpaceIdCanClearValue(): void
+    {
+        $user = new User(
+            'user-123',
+            'token-123',
+            60,
+            new DateTime('2024-01-01T00:00:00+00:00'),
+            sharedSpaceId: 'shared-space-1',
+        );
+
+        $user->setSharedSpaceId(null);
+
+        $this->assertNull($user->getSharedSpaceId());
+    }
 }
