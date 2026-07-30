@@ -43,3 +43,7 @@ variable "codecatalyst_endpoints_enabled" {
 variable "management_account_id" {
   type = string
 }
+
+variable "data_lpa_api_account_id" {
+  type = string
+}

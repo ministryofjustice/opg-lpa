@@ -36,7 +36,6 @@ locals {
     "ec2",
     "ec2messages",
     "events",
-    "execute-api",
     "kms",
     "logs",
     "monitoring",
