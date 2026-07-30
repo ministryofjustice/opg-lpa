@@ -38,7 +38,6 @@ locals {
     "events",
     "kms",
     "monitoring",
-    "secretsmanager",
     "ssm",
   ])
 }
