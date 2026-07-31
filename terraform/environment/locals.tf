@@ -8,7 +8,7 @@ locals {
   mandatory_moj_tags = {
     business-unit = "OPG"
     application   = "Online LPA Service"
-    owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
+    owner         = "OPG LPA Product Team: opgteam+online-lpa@digital.justice.gov.uk"
     is-production = local.environment.is_production
     service-area  = "POAS"
   }
