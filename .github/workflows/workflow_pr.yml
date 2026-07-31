@@ -59,11 +59,6 @@ jobs:
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
         with:
           terraform_directory: "./terraform/environment"
-      - name: Set terraform version - account
-        id: terraform_version_account
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
-        with:
-          terraform_directory: "./terraform/account"
       - name: Set terraform version - region
         id: terraform_version_region
         uses: ministryofjustice/opg-github-actions/actions/terraform-version@ceeda9d30ec7f6705c819d0b7664b9a79df99a3b # v4.8.0
