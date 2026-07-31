@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\Service\OneLogin;
 
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -24,6 +25,7 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|AuthorizationServiceInterface $authorizationService;
     private MockInterface|AuthenticationService $authenticationService;
     private MockInterface|UserRepositoryInterface $userRepository;
+    private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ClientInterface $oidcClient;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
@@ -42,6 +44,8 @@ class ServiceTest extends MockeryTestCase
 
         $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
 
+        $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+
         $logger = Mockery::spy(LoggerInterface::class);
 
         $this->service = new Service();
@@ -50,6 +54,7 @@ class ServiceTest extends MockeryTestCase
         $this->service->setAuthorizationService($this->authorizationService);
         $this->service->setAuthenticationService($this->authenticationService);
         $this->service->setUserRepository($this->userRepository);
+        $this->service->setSharedSpaceRepository($this->sharedSpaceRepository);
     }
 
     public function testCreateAuthenticationRequestReturnsExpectedParams(): void
@@ -115,6 +120,20 @@ class ServiceTest extends MockeryTestCase
         $service->createAuthenticationRequest(self::REDIRECT_URI);
     }
 
+    public function testMissingSharedSpaceRepositoryThrows(): void
+    {
+        $service = new Service();
+        $service->setLogger(Mockery::spy(LoggerInterface::class));
+        $service->setAuthorisationClientManager($this->clientManager);
+        $service->setAuthorizationService($this->authorizationService);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('SharedSpaceRepository');
+
+        $service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+    }
+
     public function testHandleCallbackLinkedReturnsIdentity(): void
     {
         $sub   = 'urn:fdc:gov.uk:2022:sub-abc123';
@@ -144,6 +163,11 @@ class ServiceTest extends MockeryTestCase
             ->with($user)
             ->andReturn(['token' => 'tok-xyz', 'expiresIn' => 4500, 'expiresAt' => $expires]);
 
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->once()
+            ->with('user-1')
+            ->andReturn('shared-space-9');
+
         $result = $this->service->handleCallback('auth-code', 'state-abc', 'nonce-xyz', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
@@ -152,6 +176,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('user-1', $result['identity']['userId']);
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
+        $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
     }
 
     public function testHandleCallbackLinkedResetsFailedCounterWhenNonZero(): void
@@ -172,9 +197,15 @@ class ServiceTest extends MockeryTestCase
             ->once()
             ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
 
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->once()
+            ->with('user-2')
+            ->andReturn(null);
+
         $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
+        $this->assertNull($result['identity']['sharedSpaceId']);
     }
 
     public function testHandleCallbackUnlinkedReturnsFalseLinked(): void

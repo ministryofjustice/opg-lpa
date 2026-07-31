@@ -47,7 +47,7 @@ class OneLoginService
     /**
      * Exchanges the authorisation code for an LPA identity or a pending-link payload.
      *
-     * @return array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string}}
+     * @return array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
      * @throws RuntimeException
      */
     public function callback(
@@ -97,7 +97,7 @@ class OneLoginService
             }
         }
 
-        /** @var array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string}} $result */
+        /** @var array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}} $result */
         return $result;
     }
 }
