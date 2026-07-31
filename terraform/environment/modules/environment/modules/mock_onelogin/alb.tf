@@ -1,5 +1,5 @@
 resource "aws_lb_target_group" "mock_onelogin" {
-  name                 = "${data.aws_default_tags.current.tags.environment-name}-mock-onelogin"
+  name                 = "${var.tags.environment-name}-mock-onelogin"
   port                 = 80
   protocol             = "HTTP"
   target_type          = "ip"
@@ -16,7 +16,7 @@ resource "aws_lb_target_group" "mock_onelogin" {
 }
 
 resource "aws_lb" "mock_onelogin" {
-  name                       = "${data.aws_default_tags.current.tags.environment-name}-mock-onelogin"
+  name                       = "${var.tags.environment-name}-mock-onelogin"
   internal                   = false #tfsec:ignore:AWS005 - public alb
   load_balancer_type         = "application"
   drop_invalid_header_fields = true
@@ -26,7 +26,7 @@ resource "aws_lb" "mock_onelogin" {
 
   access_logs {
     bucket  = data.aws_s3_bucket.access_log.bucket
-    prefix  = "mock-onelogin-${data.aws_default_tags.current.tags.environment-name}"
+    prefix  = "mock-onelogin-${var.tags.environment-name}"
     enabled = true
   }
   provider = aws.region
@@ -75,7 +75,7 @@ resource "aws_lb_listener_certificate" "mock_onelogin_loadbalancer_live_service_
 }
 
 resource "aws_security_group" "mock_onelogin_loadbalancer" {
-  name_prefix = "${data.aws_default_tags.current.tags.environment-name}-mock-onelogin-loadbalancer"
+  name_prefix = "${var.tags.environment-name}-mock-onelogin-loadbalancer"
   description = "mock-onelogin service application load balancer"
   vpc_id      = var.network.vpc_id
   lifecycle {
