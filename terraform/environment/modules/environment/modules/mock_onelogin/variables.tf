@@ -109,5 +109,16 @@ variable "account_name" {
 }
 
 variable "tags" {
-  type = any
+  type = object({
+    business-unit          = string
+    application            = string
+    owner                  = string
+    is-production          = string
+    service-area           = string
+    environment-name       = string
+    infrastructure-support = string
+    runbook                = string
+    source-code            = string
+    Name                   = string
+  })
 }
