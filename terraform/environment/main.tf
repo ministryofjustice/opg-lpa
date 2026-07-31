@@ -23,6 +23,7 @@ module "eu-west-1" {
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
   rds_proxy_iam_role = aws_iam_role.rds_proxy
+  tags               = local.default_tags
   providers = {
     aws            = aws.eu_west_1
     aws.management = aws.management
@@ -55,7 +56,7 @@ module "eu-west-2" {
     cloudwatch_events = aws_iam_role.cloudwatch_events_ecs_role
   }
   rds_proxy_iam_role = aws_iam_role.rds_proxy
-
+  tags               = local.default_tags
   providers = {
     aws            = aws.eu_west_2
     aws.management = aws.management

@@ -61,7 +61,7 @@ locals {
 }
 
 resource "aws_security_group" "mock_onelogin_ecs_service" {
-  name_prefix = "${data.aws_default_tags.current.tags.environment-name}-ecs-service"
+  name_prefix = "${var.tags.environment-name}-ecs-service"
   description = "mock-onelogin service security group"
   vpc_id      = var.network.vpc_id
   lifecycle {
@@ -115,7 +115,7 @@ resource "aws_security_group_rule" "mock_onelogin_ecs_service_egress" {
 }
 
 resource "aws_ecs_task_definition" "mock_onelogin" {
-  family                   = "${data.aws_default_tags.current.tags.environment-name}-mock-onelogin"
+  family                   = "${var.tags.environment-name}-mock-onelogin"
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = 256
@@ -127,7 +127,7 @@ resource "aws_ecs_task_definition" "mock_onelogin" {
 }
 
 resource "aws_iam_role_policy" "mock_onelogin_task_role" {
-  name     = "${data.aws_default_tags.current.tags.environment-name}-${data.aws_region.current.region}-mock-onelogin-task-role"
+  name     = "${var.tags.environment-name}-${data.aws_region.current.region}-mock-onelogin-task-role"
   policy   = data.aws_iam_policy_document.task_role_access_policy.json
   role     = var.ecs_task_role.name
   provider = aws.region
@@ -157,7 +157,7 @@ data "aws_iam_policy_document" "task_role_access_policy" {
 
 locals {
   # TODO: fix this url
-  mock_onelogin_url = "https://${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.onelogin.lpa.opg.service.justice.gov.uk"
+  mock_onelogin_url = "https://${var.tags.environment-name}.${var.account_name}.onelogin.lpa.opg.service.justice.gov.uk"
 
   mock_onelogin = jsonencode(
     {
@@ -181,7 +181,7 @@ locals {
         options = {
           awslogs-group         = var.ecs_application_log_group_name,
           awslogs-region        = data.aws_region.current.region,
-          awslogs-stream-prefix = data.aws_default_tags.current.tags.environment-name
+          awslogs-stream-prefix = var.tags.environment-name
           mode                  = "non-blocking"
           max-buffer-size       = "25m"
         }
