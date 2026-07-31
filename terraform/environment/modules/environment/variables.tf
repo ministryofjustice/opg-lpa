@@ -147,3 +147,7 @@ variable "admin_cognito" {
   })
   sensitive = true
 }
+
+variable "tags" {
+  type = any
+}

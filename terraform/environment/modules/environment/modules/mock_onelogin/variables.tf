@@ -107,3 +107,7 @@ variable "template_sub" {
 variable "account_name" {
   type = string
 }
+
+variable "tags" {
+  type = any
+}
