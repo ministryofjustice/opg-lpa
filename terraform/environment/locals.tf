@@ -10,6 +10,7 @@ locals {
     application   = "Online LPA Service"
     owner         = "Amy Wilson: amy.wilson@digital.justice.gov.uk"
     is-production = local.environment.is_production
+    service-area  = "POAS"
   }
 
   optional_tags = {
