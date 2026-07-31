@@ -5,26 +5,46 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
+use App\Handler\Traits\OneLoginPendingLinkTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
+    use OneLoginPendingLinkTrait;
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+
+        if (!$session instanceof SessionInterface) {
+            throw new RuntimeException('Session middleware is not configured');
+        }
+
+        if ($this->pendingLinkSub($session) === null) {
+            $this->logger->warning('auth.onelogin.link_or_create_missing_pending_link');
+
+            return new RedirectResponse('/login');
+        }
+
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         /** @var LinkOrCreateAccountForm $form */
@@ -41,7 +61,7 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $redirectUrl = $form->get('choice')->getValue() === 'link'
                     ? '/link-account'
-                    : 'TODO-create-account';
+                    : '/signup';
 
                 return new RedirectResponse($redirectUrl);
             }

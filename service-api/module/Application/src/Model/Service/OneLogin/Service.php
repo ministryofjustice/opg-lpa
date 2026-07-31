@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\OneLogin;
 
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
@@ -18,6 +19,7 @@ class Service extends AbstractService
     private ?AuthorisationClientManager $clientManager = null;
     private ?AuthorizationServiceInterface $authorizationService = null;
     private ?AuthenticationService $authenticationService = null;
+    private ?SharedSpaceRepositoryInterface $sharedSpaceRepository = null;
     /** @var callable(positive-int): string */
     private $randomBytes;
 
@@ -51,6 +53,14 @@ class Service extends AbstractService
     public function setAuthenticationService(AuthenticationService $authenticationService): void
     {
         $this->authenticationService = $authenticationService;
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function setSharedSpaceRepository(SharedSpaceRepositoryInterface $sharedSpaceRepository): void
+    {
+        $this->sharedSpaceRepository = $sharedSpaceRepository;
     }
 
     /**
@@ -106,7 +116,18 @@ class Service extends AbstractService
     /**
      * Exchange the authorisation code and validate the ID token.
      *
-     * @return array{linked: bool, sub: string, email: string, identity: ?array}
+     * @return array{
+     *     linked: bool,
+     *     sub: string,
+     *     email: string,
+     *     identity: null|array{
+     *         userId: string,
+     *         token: string,
+     *         tokenExpiresAt: string,
+     *         lastLogin: string,
+     *         sharedSpaceId: ?string
+     *     }
+     * }
      * @throws OneLoginAuthenticationException
      */
     public function handleCallback(
@@ -125,6 +146,10 @@ class Service extends AbstractService
 
         if ($this->authenticationService === null) {
             throw new RuntimeException('AuthenticationService must be set');
+        }
+
+        if ($this->sharedSpaceRepository === null) {
+            throw new RuntimeException('SharedSpaceRepository must be set');
         }
 
         $authSession = AuthSession::fromArray([
@@ -212,6 +237,7 @@ class Service extends AbstractService
                 'token'          => $tokenDetails['token'],
                 'tokenExpiresAt' => $tokenDetails['expiresAt']->format('c'),
                 'lastLogin'      => ($user->lastLoginAt() ?? new \DateTime())->format('c'),
+                'sharedSpaceId'  => $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId),
             ],
         ];
     }

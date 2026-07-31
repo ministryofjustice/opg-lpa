@@ -12,15 +12,25 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use Laminas\Form\FormElementManager;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class LinkOrCreateAccountHandlerTest extends TestCase
 {
+    private const array PENDING_LINK = [
+        'sub'   => 'urn:fdc:gov.uk:2022:newuser',
+        'email' => 'newuser@example.com',
+    ];
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
+    private LoggerInterface&MockObject $logger;
+    private SessionInterface&MockObject $session;
     private LinkOrCreateAccountForm $form;
     private LinkOrCreateAccountHandler $handler;
 
@@ -28,6 +38,8 @@ class LinkOrCreateAccountHandlerTest extends TestCase
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->session = $this->createMock(SessionInterface::class);
 
         $this->form = new LinkOrCreateAccountForm();
         $this->form->init();
@@ -37,17 +49,24 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->handler = new LinkOrCreateAccountHandler(
             $this->renderer,
             $this->formElementManager,
+            $this->logger,
         );
     }
 
     private function createRequest(
         string $method = 'GET',
         array $postData = [],
+        ?array $pendingLink = self::PENDING_LINK,
     ): ServerRequest {
+        $this->session
+            ->method('get')
+            ->willReturnCallback(fn(string $key) => $key === 'onelogin_pending_link' ? $pendingLink : null);
+
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withUri(new Uri('/link-or-create-account'))
-            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token')
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);
@@ -71,6 +90,18 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    public function testMissingPendingLinkRedirectsToLogin(): void
+    {
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('auth.onelogin.link_or_create_missing_pending_link');
+
+        $response = $this->handler->handle($this->createRequest('GET', [], null));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/login', $response->getHeaderLine('Location'));
+    }
+
     public function testPostWithInvalidFormRendersForm(): void
     {
         $this->renderer->method('render')->willReturn('<html>form with errors</html>');
@@ -86,7 +117,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
     {
         return [
             ['link', '/link-account'],
-            ['create', 'TODO-create-account'],
+            ['create', '/signup'],
         ];
     }
 
