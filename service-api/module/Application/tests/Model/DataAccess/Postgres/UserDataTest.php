@@ -833,7 +833,8 @@ class UserDataTest extends MockeryTestCase
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return Helpers::isGmDateString($set['last_login']) &&
-                is_null($set['inactivity_flags']);
+                is_null($set['inactivity_flags']) &&
+                $set['failed_login_attempts'] === 0;
         }));
 
         // test
@@ -1367,6 +1368,50 @@ class UserDataTest extends MockeryTestCase
         // test
         $userData = new UserData($dbWrapperMock);
         $userProfile = $userData->getProfile($id);
+        $name = $userProfile->getName();
+
+        // assertions
+        $this->assertInstanceOf(ProfileUserModel::class, $userProfile);
+        $this->assertEquals($id, $userProfile->getId());
+        $this->assertEquals($user['created'], $userProfile->getCreatedAt());
+        $this->assertEquals($user['updated'], $userProfile->getUpdatedAt());
+        $this->assertEquals($user['last_login'], $userProfile->getLastLoginAt());
+        $this->assertEquals('Prof', $name->getTitle());
+        $this->assertEquals('Barr', $name->getFirst());
+        $this->assertEquals('Rrrraaaaa', $name->getLast());
+    }
+
+    public function testGetProfiles(): void
+    {
+        $id = 'barrrraaaaa';
+
+        $user = [
+            'id' => $id,
+            'created' => new DateTime(),
+            'updated' => new DateTime(),
+            'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
+            'last_login' => new DateTime(),
+        ];
+
+        // mocks
+        $result = Mockery::mock(Result::class);
+        $result->shouldReceive('rewind');
+        $result->shouldReceive('valid')->andReturnValues([true, false]);
+        $result->shouldReceive('current')->andReturn($user);
+        $result->shouldReceive('key')->andReturn(0);
+        $result->shouldReceive('next');
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($result);
+
+        // test
+        $userData = new UserData($dbWrapperMock);
+        $userProfiles = $userData->getProfiles([$id]);
+
+        $this->assertCount(1, $userProfiles);
+
+        $userProfile = $userProfiles[0];
         $name = $userProfile->getName();
 
         // assertions

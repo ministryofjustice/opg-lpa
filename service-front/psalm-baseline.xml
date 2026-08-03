@@ -292,6 +292,7 @@
       <code><![CDATA[andReturn]]></code>
       <code><![CDATA[andReturn]]></code>
       <code><![CDATA[andReturn]]></code>
+      <code><![CDATA[andReturn]]></code>
     </UndefinedMagicMethod>
   </file>
   <file src="test/AppTest/Service/Lpa/CommunicationTest.php">

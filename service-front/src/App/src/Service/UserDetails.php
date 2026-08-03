@@ -14,7 +14,6 @@ use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\MoneyFormatterTrait;
 use Exception;
 use Laminas\Http\Response;
-use MakeShared\DataModel\Lpa\Formatter;
 use MakeShared\DataModel\User\User;
 use Mezzio\Helper\UrlHelper;
 use Psr\Log\LoggerInterface;
@@ -86,32 +85,16 @@ class UserDetails implements ApiClientAwareInterface
     /**
      * @param null|string $name
      * @param (mixed|string)[] $params
-     * @param true[] $options
      *
      * @psalm-param array{token?: mixed|string, id?: '1'} $params
-     * @psalm-param array{force_canonical?: true} $options
      */
-    public function url(string|null $name = null, array $params = [], array $options = []): string
+    public function url(string|null $name = null, array $params = []): string
     {
+        $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
+        $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $path = $this->urlHelper->generate((string) $name, $params);
 
-        if (!empty($options['force_canonical'])) {
-            $scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http';
-            $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
-            return $scheme . '://' . $host . $path;
-        }
-
-        return $path;
-    }
-
-    public function formatLpaId(int $lpaId): string
-    {
-        return Formatter::id($lpaId);
-    }
-
-    public function moneyFormat(mixed $money): string
-    {
-        return $this->formatMoney($money);
+        return $scheme . '://' . $host . $path;
     }
 
     // -------------------------------------------------------------------------
@@ -205,7 +188,6 @@ class UserDetails implements ApiClientAwareInterface
                 $changeEmailAddressUrl = $this->url(
                     'user/change-email-address/verify',
                     ['token' => $result['token']],
-                    ['force_canonical' => true]
                 );
 
                 $mailParameters = new MailParameters(
@@ -391,7 +373,6 @@ class UserDetails implements ApiClientAwareInterface
                     $forgotPasswordUrl = $this->url(
                         'forgot-password/callback',
                         ['token' => $result['token']],
-                        ['force_canonical' => true]
                     );
 
                     $mailParameters = new MailParameters(
@@ -417,7 +398,7 @@ class UserDetails implements ApiClientAwareInterface
             return 'unknown-error';
         } catch (ApiException $ex) {
             if ($ex->getCode() == 404) {
-                $signUpUrl = $this->url('register', [], ['force_canonical' => true]);
+                $signUpUrl = $this->url('register', []);
 
                 $mailParameters = new MailParameters(
                     $email,
@@ -453,7 +434,6 @@ class UserDetails implements ApiClientAwareInterface
         $activateAccountUrl = $this->url(
             'register/confirm',
             ['token' => $activationToken],
-            ['force_canonical' => true]
         );
 
         $mailParameters = new MailParameters(
@@ -521,7 +501,6 @@ class UserDetails implements ApiClientAwareInterface
                 $activateAccountUrl = $this->url(
                     'register/confirm',
                     ['token' => $result['activation_token']],
-                    ['force_canonical' => true]
                 );
 
                 $mailParameters = new MailParameters(

@@ -8,7 +8,13 @@ const MapNumberTextToNumber = {
   'a single': 1,
   one: 1,
   two: 2,
+  three: 3,
   four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
   ten: 10,
 };
 
@@ -43,7 +49,7 @@ const checkNumberOfElements = (
 
   let numberExpected = MapNumberTextToNumber[numberText];
   if (numberExpected === undefined) {
-    numberExpected = parseInt(numberExpected);
+    numberExpected = parseInt(numberText);
   }
 
   // select elements matching the specifier and count them
@@ -157,5 +163,12 @@ Then('the instructions expandable element should be present and closed', () => {
   cy.get('[data-cy=details-instructions]').then((els) => {
     const $els = Cypress.$(els);
     expect($els.attr('open')).to.not.exist;
+  });
+});
+
+Then('I can see myself', () => {
+  cy.get('table').within(() => {
+    cy.contains('Shared Space Test User');
+    cy.contains('seeded_test_user_shared@publicguardian.gov.uk');
   });
 });

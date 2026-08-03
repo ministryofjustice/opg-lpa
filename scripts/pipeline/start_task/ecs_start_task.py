@@ -11,7 +11,7 @@ def main():
     )
 
     parser.add_argument(
-        "config_file_path",
+        "--config_file_path",
         nargs="?",
         default="/tmp/environment_pipeline_tasks_config.json",
         type=str,
