@@ -205,6 +205,7 @@ class LegacyCompatExtension extends AbstractExtension
                 'lastLoginAt'      => $lastLoginAt,
                 'route'            => $currentRoute,
                 'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
+                'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
             ],
         ]);
     }
