@@ -1,7 +1,3 @@
-data "aws_kms_key" "lpa_pdf_sqs" {
-  key_id = "alias/mrk_pdf_sqs_encryption_key-${var.account_name}"
-}
-
 data "aws_security_group" "new_front_cache_region" {
   filter {
     name   = "group-name"
