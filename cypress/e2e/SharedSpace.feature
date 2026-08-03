@@ -1,4 +1,4 @@
-@SharedSpace @CleanupUserFixtures
+@SharedSpace
 Feature: Shared Space
 
   Scenario: Can create a shared space from user dashboard

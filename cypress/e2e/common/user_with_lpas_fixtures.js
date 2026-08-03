@@ -1,84 +1,80 @@
 const {
-  Given,
-  When,
-  Before,
-  After,
+    Given,
+    When,
+    Before,
+    After,
 } = require('@badeball/cypress-cucumber-preprocessor');
 
 function createUserWithLpas(lpaCount, lpaType) {
-  return cy
-    .request({
-      method: 'POST',
-      url: '/testing/cypress-fixture',
-      body: { lpaCount, lpaType },
-    })
-    .then((response) => response.body);
+    return cy
+        .request({
+            method: 'POST',
+            url: '/testing/cypress-fixture',
+            body: {lpaCount, lpaType},
+        })
+        .then((response) => response.body);
 }
 
 function deleteUserFixture(email, password) {
-  return cy.request({
-    method: 'DELETE',
-    url: '/testing/cypress-fixture',
-    body: { email, password },
-    failOnStatusCode: false,
-  });
+    return cy.request({
+        method: 'DELETE',
+        url: '/testing/cypress-fixture',
+        body: {email, password},
+        failOnStatusCode: false,
+    });
 }
 
-Before({ tags: '@CleanupUserFixtures' }, () => {
-  cy.wrap(null).as('fixtureUserEmail');
-  cy.wrap(null).as('fixtureUserPassword');
+Before({tags: '@CleanupUserFixtures'}, () => {
+    cy.wrap(null).as('fixtureUser');
 });
 
-After({ tags: '@CleanupUserFixtures' }, () => {
-  cy.log('cleaning up user with LPAs fixture');
-  cy.get('@fixtureUserEmail').then((fixtureUserEmail) => {
-    if (fixtureUserEmail !== null) {
-      cy.get('@fixtureUserPassword').then((fixtureUserPassword) => {
-        deleteUserFixture(fixtureUserEmail, fixtureUserPassword).then(
-          (deleteResponse) => {
-            cy.log(
-              'Deleting fixture user with email ' +
-                fixtureUserEmail +
-                ' (and their LPAs) gave status ' +
-                deleteResponse.status,
+// Not currently in use but we may have instances where we want to do some cleanup
+After({tags: '@CleanupUserFixtures'}, () => {
+    cy.get('@fixtureUser').then(({email, password}) => {
+        if (email !== null && password !== null) {
+            deleteUserFixture(email, password).then(
+                (deleteResponse) => {
+                    cy.task(
+                        'log',
+                        'Deleting fixture user with email ' +
+                        email +
+                        ' (and their LPAs) gave status ' +
+                        deleteResponse.status,
+                    );
+                },
             );
-          },
-        );
-      });
-    }
-  });
+        }
+    });
 });
+
 
 Given(`I create a new user with {int} LPAs`, (lpaCount) => {
-  createUserWithLpas(lpaCount, 'property-and-financial').then(
-    ({ email, password, lpaIds }) => {
-      cy.wrap(email).as('fixtureUserEmail');
-      cy.wrap(password).as('fixtureUserPassword');
-      cy.wrap(lpaIds).as('fixtureUserLpaIds');
+    createUserWithLpas(lpaCount, 'property-and-financial').then(
+        ({email, password, lpaIds}) => {
+            cy.wrap({email, password, lpaIds}).as('fixtureUser');
 
-      cy.log(
-        'Created fixture user ' +
-          email +
-          ' with ' +
-          lpaIds.length +
-          ' LPA(s)',
-      );
-    },
-  );
+            cy.task(
+                'log',
+                'Created fixture user ' +
+                email +
+                ' with ' +
+                lpaIds.length +
+                ' LPA(s)',
+            );
+        },
+    );
 });
 
 When(`I log in as the newly created fixture user`, () => {
-  cy.get('@fixtureUserEmail').then((fixtureUserEmail) => {
-    cy.get('@fixtureUserPassword').then((fixtureUserPassword) => {
-      cy.visitWithChecks('/login');
+    cy.get('@fixtureUser').then(({email, password}) => {
+        cy.visitWithChecks('/login');
 
-      cy.title().then((title) => {
-        expect(title.toLowerCase()).to.include('sign in');
-      });
+        cy.title().then((title) => {
+            expect(title.toLowerCase()).to.include('sign in');
+        });
 
-      cy.get('[data-cy=login-email]').clear().type(fixtureUserEmail);
-      cy.get('[data-cy=login-password]').clear().type(fixtureUserPassword);
-      cy.get('[data-cy=login-submit-button]').click();
+        cy.get('[data-cy=login-email]').clear().type(email);
+        cy.get('[data-cy=login-password]').clear().type(password);
+        cy.get('[data-cy=login-submit-button]').click();
     });
-  });
 });

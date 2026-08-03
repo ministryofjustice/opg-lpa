@@ -268,7 +268,7 @@ locals {
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
-        { name = "CYPRESS_FIXTURES_ENABLED", value = tostring(var.environment.feature_flags.cypress_fixtures_enabled) }
+        { name = "CYPRESS_FIXTURES_ENABLED", value = var.environment_name != "production" && var.environment.feature_flags.cypress_fixtures_enabled ? tostring("true") : tostring("false") }
       ]
     }
   )
