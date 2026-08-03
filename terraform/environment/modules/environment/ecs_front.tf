@@ -171,6 +171,8 @@ locals {
       }
     ]
     volumesFrom = [],
+    privileged  = false,
+    user        = "nginx",
     logConfiguration = {
       logDriver = "awslogs",
       options = {
@@ -220,6 +222,8 @@ locals {
         retries     = 3
       },
       volumesFrom = [],
+      privileged  = false,
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
