@@ -18,10 +18,10 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $serviceMappings = [
-        AuthControllers\EmailController::class     => Service\Email\Service::class,
-        AuthControllers\OneLoginController::class  => Service\OneLogin\Service::class,
-        AuthControllers\PasswordController::class  => Service\Password\Service::class,
-        AuthControllers\UsersController::class     => Service\Users\Service::class,
+        AuthControllers\EmailController::class    => Service\Email\Service::class,
+        AuthControllers\OneLoginController::class => Service\OneLogin\Service::class,
+        AuthControllers\PasswordController::class => Service\Password\Service::class,
+        AuthControllers\UsersController::class    => Service\Users\Service::class,
     ];
 
     /**

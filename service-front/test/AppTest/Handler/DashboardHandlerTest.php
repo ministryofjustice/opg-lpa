@@ -64,7 +64,7 @@ class DashboardHandlerTest extends TestCase
     {
         $this->lpaApplicationService
             ->expects($this->once())
-            ->method('getLpaSummaries')
+            ->method('getPersonalLpaSummaries')
             ->with(null, 1, 50)
             ->willReturn([
                 'applications'    => [],
@@ -91,7 +91,7 @@ class DashboardHandlerTest extends TestCase
 
         $this->lpaApplicationService
             ->expects($this->once())
-            ->method('getLpaSummaries')
+            ->method('getPersonalLpaSummaries')
             ->with(null, 1, 50)
             ->willReturn([
                 'applications'    => $lpas,
@@ -131,7 +131,7 @@ class DashboardHandlerTest extends TestCase
 
         $this->lpaApplicationService
             ->expects($this->once())
-            ->method('getLpaSummaries')
+            ->method('getPersonalLpaSummaries')
             ->with('smith', 1, 50)
             ->willReturn([
                 'applications'    => [],
@@ -162,7 +162,7 @@ class DashboardHandlerTest extends TestCase
 
         $this->lpaApplicationService
             ->expects($this->once())
-            ->method('getLpaSummaries')
+            ->method('getPersonalLpaSummaries')
             ->with(null, 2, 50)
             ->willReturn([
                 'applications'    => [

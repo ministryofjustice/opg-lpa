@@ -14,6 +14,7 @@ class AuthResponse
     private ?string $lastLogin = null;
     private ?bool $inactivityFlagsCleared = null;
     private ?string $errorDescription = null;
+    private ?string $sharedSpaceId = null;
 
     public function __construct(array $array = [])
     {
@@ -24,6 +25,7 @@ class AuthResponse
         $this->expiresIn              = isset($array['expiresIn']) ? (int) $array['expiresIn'] : null;
         $this->expiresAt              = $array['expiresAt'] ?? null;
         $this->inactivityFlagsCleared = $array['inactivityFlagsCleared'] ?? null;
+        $this->sharedSpaceId          = $array['sharedSpaceId'] ?? null;
     }
 
     public static function buildFromResponse(array $result): self
@@ -64,6 +66,11 @@ class AuthResponse
     public function getInactivityFlagsCleared(): ?bool
     {
         return $this->inactivityFlagsCleared;
+    }
+
+    public function getSharedSpaceId(): ?string
+    {
+        return $this->sharedSpaceId;
     }
 
     public function getErrorDescription(): ?string

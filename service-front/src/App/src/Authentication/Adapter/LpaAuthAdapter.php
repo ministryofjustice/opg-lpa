@@ -81,6 +81,7 @@ class LpaAuthAdapter implements AdapterInterface
             $response->getToken(),
             $response->getExpiresIn(),
             $lastLogin,
+            sharedSpaceId: $response->getSharedSpaceId(),
         );
 
         $messages = [];

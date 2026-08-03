@@ -19,7 +19,7 @@ variable "environment" {
     })
     feature_flags = object({
       onelogin_enabled      = bool
-      organisations_enabled = bool
+      shared_spaces_enabled = bool
     })
     database = object({
       cluster_identifier                 = string
@@ -146,4 +146,19 @@ variable "admin_cognito" {
     user_pool_id_token_validity = string
   })
   sensitive = true
+}
+
+variable "tags" {
+  type = object({
+    business-unit          = string
+    application            = string
+    owner                  = string
+    is-production          = string
+    service-area           = string
+    environment-name       = string
+    infrastructure-support = string
+    runbook                = string
+    source-code            = string
+    Name                   = string
+  })
 }

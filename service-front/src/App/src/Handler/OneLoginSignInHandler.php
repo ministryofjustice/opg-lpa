@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -19,14 +20,13 @@ class OneLoginSignInHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly OneLoginService $oneLoginService,
-        private readonly ?string $redirectBaseUrl = null,
+        private readonly RedirectUriBuilder $redirectUriBuilder,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $uri         = $request->getUri();
-        $redirectUri = ($this->redirectBaseUrl ?? ($uri->getScheme() . '://' . $uri->getAuthority())) . '/auth/redirect';
+        $redirectUri = ($this->redirectUriBuilder)($request->getUri());
 
         $result = $this->oneLoginService->start($redirectUri);
 
@@ -37,8 +37,9 @@ class OneLoginSignInHandler implements RequestHandlerInterface
         }
 
         $session->set(self::SESSION_KEY_ONELOGIN, [
-            'state' => $result['state'],
-            'nonce' => $result['nonce'],
+            'state'        => $result['state'],
+            'nonce'        => $result['nonce'],
+            'redirect_uri' => $redirectUri,
         ]);
 
         return new RedirectResponse($result['url']);

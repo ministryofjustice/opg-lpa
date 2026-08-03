@@ -243,4 +243,41 @@ final class AuthenticationServiceTest extends TestCase
 
         $this->assertNull($this->service->setSessionExpiry(600));
     }
+
+    public function testRefreshSharedSpaceIdUpdatesIdentityAndPersistsToStorage(): void
+    {
+        $identity = $this->createMock(User::class);
+
+        $this->storage->method('read')->willReturn($identity);
+
+        $identity->expects($this->once())
+            ->method('setSharedSpaceId')
+            ->with('shared-space-1');
+
+        $this->storage->expects($this->once())
+            ->method('write')
+            ->with($identity);
+
+        $this->service->refreshSharedSpaceId('shared-space-1');
+    }
+
+    public function testRefreshSharedSpaceIdDoesNothingWhenNoIdentity(): void
+    {
+        $this->storage->method('read')->willReturn(null);
+
+        $this->storage->expects($this->never())->method('write');
+
+        $this->service->refreshSharedSpaceId('shared-space-1');
+    }
+
+    public function testRefreshSharedSpaceIdDoesNothingWhenNoStorageSet(): void
+    {
+        $service = new AuthenticationService($this->adapter);
+        // No setStorage() call
+
+        // Should not throw, and there's no storage to assert against.
+        $service->refreshSharedSpaceId('shared-space-1');
+
+        $this->assertNull($service->getIdentity());
+    }
 }

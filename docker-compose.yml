@@ -125,6 +125,7 @@ services:
       - ./service-front/test:/app/test
       - ./service-front/phpunit.xml:/app/phpunit.xml
       - ./service-front/psalm.xml:/app/psalm.xml
+      - ./service-front/psalm-baseline.xml:/app/psalm-baseline.xml
       - ./service-front/phpcs.xml:/app/phpcs.xml
       - ./service-front/content:/app/content
       - ./shared:/shared
@@ -171,7 +172,9 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
-      ORGANISATIONS_ENABLED: false
+      ONELOGIN_REDIRECT_BASE_URL: "https://localhost:7002"
+      MEZZIO_DEBUG: "1"
+      SHARED_SPACES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -296,7 +299,10 @@ services:
       ONELOGIN_ENABLED: true
       ONELOGIN_CLIENT_ID: "theClientId"
       ONELOGIN_DISCOVERY_URL: "http://mock-onelogin:8080/.well-known/openid-configuration"
-      ORGANISATIONS_ENABLED: false
+      ONELOGIN_KEY_ID: "local-dev-key"
+      # Throwaway EC (ES256) key for local dev only.
+      ONELOGIN_PRIVATE_KEY: "LS0tLS1CRUdJTiBQUklWQVRFIEtFWS0tLS0tCk1JR0hBZ0VBTUJNR0J5cUdTTTQ5QWdFR0NDcUdTTTQ5QXdFSEJHMHdhd0lCQVFRZ1UyT3lMTUg4MkQrQnQzVXYKOXpxMFE3ZS9KMG1tWnBGYk9CZk9qTG9MdVdlaFJBTkNBQVJSRUhKdDZMSXR1TytUL3VSN2cvY1RuY1V2UUs5LwpvZENNcTByV2RHTHI5WWI0eTFDT0Rib214SVlyQmdjbnFDUHNnS21xdmwzZkNKSmlYc2tXOE5QZwotLS0tLUVORCBQUklWQVRFIEtFWS0tLS0t"  # pragma: allowlist secret
+      SHARED_SPACES_ENABLED: true
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]
       interval: 10s
@@ -507,7 +513,7 @@ services:
       OPG_LPA_POSTGRES_USERNAME: "lpauser"
       OPG_LPA_POSTGRES_PASSWORD: "lpapass"
       ONELOGIN_ENABLED: true
-      ORGANISATIONS_ENABLED: false
+      SHARED_SPACES_ENABLED: true
 
   phpcs:
     container_name: lpa-phpcs
