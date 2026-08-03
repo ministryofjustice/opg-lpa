@@ -12,3 +12,8 @@ data "aws_kms_alias" "elasticache_encryption_key" {
   name     = "alias/opg-lpa-${var.account_name}-elasticache-encryption-key"
   provider = aws.region
 }
+
+data "aws_kms_alias" "pdf_cache_s3_encryption_key" {
+  name     = "alias/opg-lpa-${var.account_name}-pdf-cache-s3-encryption-key"
+  provider = aws.region
+}
