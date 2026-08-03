@@ -18,11 +18,10 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
      * @var array
      */
     private $serviceMappings = [
-        AuthControllers\EmailController::class     => Service\Email\Service::class,
-        AuthControllers\OneLoginController::class  => Service\OneLogin\Service::class,
-        AuthControllers\PasswordController::class  => Service\Password\Service::class,
-        AuthControllers\UsersController::class     => Service\Users\Service::class,
-        AuthControllers\SharedSpaceController::class => Service\SharedSpace\SharedSpaceService::class,
+        AuthControllers\EmailController::class    => Service\Email\Service::class,
+        AuthControllers\OneLoginController::class => Service\OneLogin\Service::class,
+        AuthControllers\PasswordController::class => Service\Password\Service::class,
+        AuthControllers\UsersController::class    => Service\Users\Service::class,
     ];
 
     /**
@@ -68,10 +67,6 @@ class AuthControllerAbstractFactory implements AbstractFactoryInterface
         }
 
         $controller = new $requestedName($authenticationService, $service);
-
-        if ($controller instanceof AuthControllers\SharedSpaceController) {
-            $controller->setApplicationsService($container->get(Service\Applications\Service::class));
-        }
 
         // Note that class_uses only returns traits in a specific subclass which does not include those in its base class
         // Therefore traits need to be specified again in the subclass for this to work.

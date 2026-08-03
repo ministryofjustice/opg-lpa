@@ -14,3 +14,6 @@ Feature: Shared Space
     When I click element marked "Create shared space"
     Then I should be on "/shared-space/dashboard"
     And there are "five" 'LPA' elements on the page
+    When I click element marked "Manage your Shared Space"
+    Then I should be on "/shared-space/manage"
+    And I can see myself

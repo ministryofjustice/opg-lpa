@@ -38,4 +38,19 @@ class SharedSpaceService
 
         return $result['sharedSpaceId'] ?? null;
     }
+
+    public function getMembers(): mixed
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/members');
+        } catch (\Throwable $e) {
+            $this->logger->error('Retrieve members of shared space failed', [
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        return $result;
+    }
 }
