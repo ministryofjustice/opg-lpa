@@ -9,7 +9,6 @@ use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\DataAccess\Repository\SharedSpace as SharedSpaceRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use GuzzleHttp\Client;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
@@ -109,10 +108,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         // service-api/module/Application/src/Module.php
         if ($requestedName === 'Application\Model\Service\Authentication\Service') {
             $service = $container->get('AppAuthenticationService');
-        } elseif (
-            $requestedName === ApplicationsService::class ||
-            $requestedName === SharedSpaceService::class
-        ) {
+        } elseif ($requestedName === ApplicationsService::class) {
             // These services take their SharedSpaceRepository via constructor DI
             // rather than the generic trait-based setter injection below.
             $service = new $requestedName(

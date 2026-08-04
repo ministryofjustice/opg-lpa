@@ -129,6 +129,14 @@ interface UserRepositoryInterface
     public function getProfile($id): ?ProfileUserModel;
 
     /**
+     * Return a list of user's profile details
+     *
+     * @param array<string> $ids
+     * @return array<ProfileUserModel>
+     */
+    public function getProfiles(array $ids): array;
+
+    /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      */
     public function saveProfile(ProfileUserModel $data): void;

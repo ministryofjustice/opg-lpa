@@ -60,4 +60,9 @@ interface SharedSpaceRepositoryInterface
      * @return string|null
      */
     public function getSharedSpaceIdForUser(string $userId): ?string;
+
+    /**
+     * @return array
+     */
+    public function getMembers(string $sharedSpaceId): array;
 }

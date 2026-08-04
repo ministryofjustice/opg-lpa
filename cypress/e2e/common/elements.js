@@ -165,3 +165,10 @@ Then('the instructions expandable element should be present and closed', () => {
     expect($els.attr('open')).to.not.exist;
   });
 });
+
+Then('I can see myself', () => {
+  cy.get('table').within(() => {
+    cy.contains('Shared Space Test User');
+    cy.contains('seeded_test_user_shared@publicguardian.gov.uk');
+  });
+});

@@ -41,6 +41,7 @@ module "mock_onelogin" {
     name = aws_service_discovery_private_dns_namespace.internal.name
   }
   front_app_ecs_service_security_group_id = aws_security_group.front_ecs_service.id
+  tags                                    = var.tags
   providers = {
     aws.region     = aws
     aws.management = aws.management
