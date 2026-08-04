@@ -103,6 +103,7 @@ class OneLoginServiceTest extends TestCase
                 'token'          => 'tok-abc',
                 'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
                 'lastLogin'      => '2025-01-01T00:00:00+00:00',
+                'sharedSpaceId'  => 'shared-space-9',
             ],
         ];
 
