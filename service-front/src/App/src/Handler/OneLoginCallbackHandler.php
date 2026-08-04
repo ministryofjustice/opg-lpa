@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
@@ -18,15 +19,15 @@ use RuntimeException;
 
 class OneLoginCallbackHandler implements RequestHandlerInterface
 {
-    private const string SESSION_KEY_ONELOGIN        = 'onelogin_auth';
-    private const string SESSION_KEY_IDENTITY        = 'identity';
-    private const string SESSION_KEY_PENDING_LINK    = 'onelogin_pending_link';
-    private const string SESSION_KEY_PRE_AUTH_URL    = 'pre_auth_request_url';
-    private const string ERROR_TEMPLATE              = 'application/general/auth/onelogin-error.twig';
+    private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
+    private const string SESSION_KEY_IDENTITY     = 'identity';
+    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
+    private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly OneLoginService $oneLoginService,
+        private readonly OneLoginSessionManager $sessionManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -117,10 +118,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
             }
 
             // Account not yet linked: stash sub+email so the link/create-account page can use them.
-            $session->set(self::SESSION_KEY_PENDING_LINK, [
-                'sub'   => $result['sub'],
-                'email' => $result['email'],
-            ]);
+            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
 
             return new RedirectResponse('/link-or-create-account');
         } finally {

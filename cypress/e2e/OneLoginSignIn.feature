@@ -33,7 +33,7 @@ Feature: One Login Sign In
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
     And I choose to link an existing Make account
-    And I continue past the link or create choice
+    And I submit the form
     And I should be on "/link-account"
     And I link my seeded Make account
     And I am taken to the dashboard page
@@ -47,7 +47,7 @@ Feature: One Login Sign In
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
     And I choose to create a new Make account
-    And I continue past the link or create choice
+    And I submit the form
     And I should be on "/signup"
 
   Scenario: Reaching the link-account page directly without a One Login session returns to sign in

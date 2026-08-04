@@ -6,8 +6,8 @@ namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
 use App\Form\User\Login;
-use App\Handler\Traits\OneLoginPendingLinkTrait;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\UserDetails;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -24,13 +24,12 @@ use RuntimeException;
 
 class LinkAccountHandler implements RequestHandlerInterface
 {
-    use OneLoginPendingLinkTrait;
-
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly AuthenticationService $authenticationService,
         private readonly UserDetails $userDetails,
+        private readonly OneLoginSessionManager $sessionManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -43,9 +42,9 @@ class LinkAccountHandler implements RequestHandlerInterface
             throw new RuntimeException('Session middleware is not configured');
         }
 
-        $sub = $this->pendingLinkSub($session);
+        $pendingLink = $this->sessionManager->getPendingLink($session);
 
-        if ($sub === null) {
+        if ($pendingLink === null) {
             $this->logger->warning('auth.onelogin.link_missing_pending_sub');
 
             return new RedirectResponse('/login');
@@ -73,8 +72,8 @@ class LinkAccountHandler implements RequestHandlerInterface
                     ->authenticate();
 
                 if ($result->isValid()) {
-                    if ($this->userDetails->setOneLoginSub($sub)) {
-                        $session->unset(self::SESSION_KEY_PENDING_LINK);
+                    if ($this->userDetails->setOneLoginSub($pendingLink->sub)) {
+                        $this->sessionManager->clearPendingLink($session);
 
                         $this->logger->info('auth.onelogin.link_success');
 

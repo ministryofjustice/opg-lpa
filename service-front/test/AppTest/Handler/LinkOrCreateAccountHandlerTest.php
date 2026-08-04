@@ -7,6 +7,7 @@ namespace AppTest\Handler\Lpa;
 use App\Form\User\LinkOrCreateAccountForm;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginSessionManager;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -49,6 +50,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->handler = new LinkOrCreateAccountHandler(
             $this->renderer,
             $this->formElementManager,
+            new OneLoginSessionManager(),
             $this->logger,
         );
     }
