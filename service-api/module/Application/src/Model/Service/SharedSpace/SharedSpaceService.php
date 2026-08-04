@@ -5,21 +5,24 @@ declare(strict_types=1);
 namespace Application\Model\Service\SharedSpace;
 
 use Application\Library\MillisecondDateTime;
-use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
-use Application\Model\Service\AbstractService;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
 
-class SharedSpaceService extends AbstractService
+class SharedSpaceService
 {
-    use ApplicationRepositoryTrait;
-
     /**
-     * @psalm-suppress PossiblyUnusedMethod Called dynamically in ServiceAbstractFactory
+     * @psalm-suppress PossiblyUnusedMethod
      */
-    public function __construct(private readonly SharedSpaceRepositoryInterface $sharedSpaceRepository)
-    {
+    public function __construct(
+        private readonly SharedSpaceRepositoryInterface $sharedSpaceRepository,
+        private readonly ApplicationRepositoryInterface $applicationRepository,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -36,7 +39,7 @@ class SharedSpaceService extends AbstractService
     public function create(string $name, string $userId): array
     {
         if ($this->sharedSpaceRepository->getSharedSpaceIdForUser($userId) !== null) {
-            $this->getLogger()->error('User already belongs to a shared space', [
+            $this->logger->error('User already belongs to a shared space', [
                 'userId' => $userId,
             ]);
 
@@ -66,7 +69,13 @@ class SharedSpaceService extends AbstractService
             }
 
             // Move ownership of all of the user's LPAs into the new shared space.
-            $lpasMoved = $this->reassignLpaOwner($userId, $spaceId);
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $spaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'userId'        => $userId,
+                'sharedSpaceId' => $spaceId,
+                'count'         => $lpasMoved,
+            ]);
 
             // The creating user becomes the first member of the shared space, so
             // they retain access to the LPAs they just moved into it.
@@ -76,7 +85,7 @@ class SharedSpaceService extends AbstractService
         } catch (Throwable $e) {
             $this->sharedSpaceRepository->rollback();
 
-            $this->getLogger()->error('Unable to create shared space: ' . $e->getMessage(), [
+            $this->logger->error('Unable to create shared space: ' . $e->getMessage(), [
                 'class' => $e::class,
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -86,7 +95,7 @@ class SharedSpaceService extends AbstractService
             throw $e;
         }
 
-        $this->getLogger()->info('Shared space created', [
+        $this->logger->info('Shared space created', [
             'event'          => 'shared_space.created',
             'shared_space_id' => $spaceId,
             'user_id'        => $userId,
@@ -98,5 +107,28 @@ class SharedSpaceService extends AbstractService
             'name'          => $name,
             'lpasMoved'     => $lpasMoved,
         ];
+    }
+
+    public function getMembers(string $sharedSpaceId): array
+    {
+        $users = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
+        $profiles = $this->userRepository->getProfiles(array_map(function ($user) {
+            return $user['userId'];
+        }, $users));
+
+        return array_map(function ($profile) use ($users) {
+            $user = array_find($users, function ($user) use ($profile) {
+                return $user['userId'] === $profile->getId();
+            });
+
+            return [
+                'id' => $profile->getId(),
+                'name' => $profile->getName(),
+                'email' => $profile->getEmail(),
+                'lastLoginAt' => $profile->getLastLoginAt(),
+                'isActive' => $user['isActive'] ?? true, // TODO: since we don't set this yet...
+                'isAdmin' => $user['isAdmin'] ?? true, // TODO: or this
+            ];
+        }, $profiles);
     }
 }

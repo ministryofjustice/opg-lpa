@@ -85,6 +85,22 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getMembers(string $sharedSpaceId): array
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, ['sharedSpaceId' => $sharedSpaceId], [
+            'columns' => ['userId'],
+        ]);
+
+        if (!$result->isQueryResult()) {
+            return [];
+        }
+
+        return iterator_to_array($result);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function beginTransaction(): void
     {
         $this->dbWrapper->beginTransaction();
