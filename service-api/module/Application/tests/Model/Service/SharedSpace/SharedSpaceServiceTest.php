@@ -7,19 +7,20 @@ namespace ApplicationTest\Model\Service\SharedSpace;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
-use MakeShared\DataModel\User\User;
-use MakeShared\DataModel\Common\Name;
+use DateTime;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\User\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
-use DateTime;
 
 final class SharedSpaceServiceTest extends MockeryTestCase
 {
@@ -298,5 +299,83 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->andReturn(false);
 
         $this->assertFalse($this->service->isAdmin($sharedSpaceId, $userId));
+    }
+
+    public function testGetInvites()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getInvites')
+            ->with($sharedSpaceId)
+            ->andReturn([
+                new MemberInvite(
+                    firstNames: 'a',
+                    lastName: 'b',
+                    email: 'c',
+                    expires: new DateTime('+1 minute'),
+                    userId: '',
+                    sharedSpaceId: '',
+                    isAdmin: false,
+                    code: '',
+                    created: new DateTime(),
+                ),
+                new MemberInvite(
+                    firstNames: 'd',
+                    lastName: 'e',
+                    email: 'f',
+                    expires: new DateTime('-1 minute'),
+                    userId: '',
+                    sharedSpaceId: '',
+                    isAdmin: false,
+                    code: '',
+                    created: new DateTime(),
+                ),
+            ]);
+
+        $result = $this->service->getInvites($sharedSpaceId);
+
+        $this->assertEquals([
+            [
+                'fullName' => 'a b',
+                'email' => 'c',
+                'isExpired' => false,
+            ],
+            [
+                'fullName' => 'd e',
+                'email' => 'f',
+                'isExpired' => true,
+            ],
+        ], $result);
+    }
+
+    public function testInvite()
+    {
+        $memberInvite = new MemberInvite(
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'c',
+            expires: new DateTime('-1 minute'),
+            userId: 'my user',
+            sharedSpaceId: 'my space',
+            isAdmin: false,
+            code: '12341234',
+            created: new DateTime(),
+        );
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpace')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn('my space');
+
+        $this->sharedSpaceRepository->shouldReceive('createInvite')
+            ->with($memberInvite)
+            ->andReturn(1234);
+
+        $result = $this->service->invite($memberInvite);
+
+        $this->assertEquals([
+            'id' => 1234,
+            'sharedSpaceName' => 'my space',
+            'inviteCode' => $memberInvite->code,
+        ], $result);
     }
 }
