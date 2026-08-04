@@ -226,3 +226,5 @@ resource "aws_s3_bucket_public_access_block" "redacted_logs" {
   restrict_public_buckets = true
   ignore_public_acls      = true
 }
+
+# adding comment to test merge conflict fix
