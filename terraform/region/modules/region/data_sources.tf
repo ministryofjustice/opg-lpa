@@ -22,3 +22,8 @@ data "aws_kms_alias" "sns_encryption_key" {
   name     = "alias/opg-lpa-${var.account_name}-sns-encryption-key"
   provider = aws.region
 }
+
+data "aws_kms_alias" "redacted_logs_s3_encryption_key" {
+  name     = "alias/opg-lpa-${var.account_name}-redacted-logs-s3-encryption-key"
+  provider = aws.region
+}
