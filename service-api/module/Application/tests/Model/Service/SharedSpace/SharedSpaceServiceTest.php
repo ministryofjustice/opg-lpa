@@ -12,6 +12,7 @@ use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use MakeShared\DataModel\User\User;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -122,9 +123,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('getMembers')
             ->with($sharedSpaceId)
             ->andReturn([
-                ['userId' => 'user1'],
-                ['userId' => 'user2', 'isActive' => true, 'isAdmin' => false],
-                ['userId' => 'user3', 'isActive' => false, 'isAdmin' => true],
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user1', 'isAdmin' => true, 'isActive' => true]),
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user2', 'isAdmin' => false, 'isActive' => true]),
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user3', 'isAdmin' => true, 'isActive' => false]),
             ]);
 
         $this->userRepository->shouldReceive('getProfiles')
@@ -178,5 +179,50 @@ final class SharedSpaceServiceTest extends MockeryTestCase
                 'isAdmin' => true,
             ],
         ], $result);
+    }
+
+    public function testUpdateMemberIsAdmin()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once()
+            ->andReturn(true);
+
+        $result = $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+
+        $this->assertTrue($result);
+    }
+
+    public function testUpdateMemberIsAdminReturnsFalseWhenMemberNotFound()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once()
+            ->andReturn(false);
+
+        $result = $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+
+        $this->assertFalse($result);
+    }
+
+    public function testUpdateMemberIsAdminRethrowsException()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once()
+            ->andThrow(new RuntimeException('boom'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
     }
 }

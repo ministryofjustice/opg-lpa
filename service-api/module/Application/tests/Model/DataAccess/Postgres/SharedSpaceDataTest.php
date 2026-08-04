@@ -11,6 +11,7 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
+use Laminas\Db\Sql\Update;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PDOException;
@@ -222,5 +223,103 @@ class SharedSpaceDataTest extends MockeryTestCase
         // assertions
         $expected = ($isQueryResult && $count === 1) ? $sharedSpaceId : null;
         $this->assertSame($expected, $actual);
+    }
+
+    public function testUpdateMemberIsAdmin(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $userId = 'user-1';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        // expectations
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('update')
+            ->with(SharedSpaceData::SHARED_SPACE_MEMBERS)
+            ->andReturn($updateMock);
+
+        $updateMock->shouldReceive('where')
+            ->with(['sharedSpaceId' => $sharedSpaceId, 'userId' => $userId])
+            ->andReturn($updateMock);
+
+        $updateMock->shouldReceive('set')
+            ->with(['isAdmin' => true])
+            ->andReturn($updateMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($updateMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
+
+        // test method
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+
+        // assertions
+        $this->assertTrue($actual);
+    }
+
+    public function testUpdateMemberIsAdminReturnsFalseWhenNoMatchingRow(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $userId = 'user-1';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $updateMock->shouldReceive('where')->andReturn($updateMock);
+        $updateMock->shouldReceive('set')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(0);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+
+        $this->assertFalse($actual);
+    }
+
+    public function testUpdateMemberIsAdminRethrowsInvalidQueryException(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $userId = 'user-1';
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $updateMock->shouldReceive('where')->andReturn($updateMock);
+        $updateMock->shouldReceive('set')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')->andThrow(
+            new InvalidQueryException(
+                'something wrong',
+                1,
+                new PDOException('unique constraint violation', 23505),
+            )
+        );
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InvalidQueryException::class);
+
+        $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
     }
 }

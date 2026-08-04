@@ -104,8 +104,10 @@ use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
 use App\Handler\TermsHandler;
+use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -189,12 +191,18 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
+        $app->route(
+            '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
+            ManageSharedSpaceMemberHandler::class,
+            ['GET', 'POST'],
+            'shared-space.members.manage'
+        );
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {
         $app->route(
-            '/testing/cypress-fixture',
-            \App\Handler\Testing\CypressFixtureHandler::class,
+            '/testing/cypress-fixture/{entity:[a-zA-Z-]+}',
+            CypressFixtureHandler::class,
             ['POST', 'DELETE'],
             'testing.cypress-fixture',
         )->setOptions(['unauthenticated_route' => true]);

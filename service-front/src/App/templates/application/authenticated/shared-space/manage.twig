@@ -44,7 +44,7 @@
                         {{ member.name.first }} {{ member.name.last }}
                       </a> (you)
                     {% else %}
-                      <a class="govuk-link--no-visited-state" href="#">
+                      <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.id) }}">
                         {{ member.name.first }} {{ member.name.last }}
                       </a>
                     {% endif %}

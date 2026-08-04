@@ -40,7 +40,10 @@ class LoginHandler implements RequestHandlerInterface
 
         // If already authenticated, redirect to dashboard
         if ($session->has(self::SESSION_KEY_IDENTITY)) {
-            return new RedirectResponse('/user/dashboard');
+            $existingIdentity = $session->get(self::SESSION_KEY_IDENTITY);
+            $sharedSpaceId = is_array($existingIdentity) ? ($existingIdentity['sharedSpaceId'] ?? null) : null;
+
+            return new RedirectResponse($sharedSpaceId !== null ? '/shared-space/dashboard' : '/user/dashboard');
         }
 
         $form = $this->getLoginForm();
@@ -94,7 +97,9 @@ class LoginHandler implements RequestHandlerInterface
                         ]);
                     }
 
-                    return new RedirectResponse('/user/dashboard');
+                    return new RedirectResponse(
+                        $identity->getSharedSpaceId() !== null ? '/shared-space/dashboard' : '/user/dashboard'
+                    );
                 }
 
                 // Authentication failed — reset form keeping email

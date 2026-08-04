@@ -250,4 +250,114 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(401, $result->toArray()['status']);
     }
+
+    public function testUpdateMemberActionSuccess()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+        $memberUserId = 'member-user';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn($memberUserId);
+
+        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $memberUserId, true)
+            ->andReturn(true)
+            ->once();
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true]);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['success' => true], $body);
+    }
+
+    public function testUpdateMemberActionMissingIsAdmin()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn('member-user');
+
+        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], []);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(400, $result->toArray()['status']);
+    }
+
+    public function testUpdateMemberActionNotFound()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+        $memberUserId = 'member-user';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn($memberUserId);
+
+        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $memberUserId, false)
+            ->andReturn(false)
+            ->once();
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => false]);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(404, $result->toArray()['status']);
+    }
+
+    public function testUpdateMemberActionUnexpectedError()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+        $memberUserId = 'member-user';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn($memberUserId);
+
+        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $memberUserId, true)
+            ->andThrow(new RuntimeException('boom'))
+            ->once();
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true]);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(500, $result->toArray()['status']);
+    }
+
+    public function testUpdateMemberActionDeniedWhenNotInSharedSpace()
+    {
+        $userId = 'my-user';
+
+        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+
+        $this->makeRequest(['userId' => $userId]);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
+    }
+
+    public function testUpdateMemberActionInvalidToken()
+    {
+        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+
+        $this->makeRequest(false);
+        $result = $this->controller->updateMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(401, $result->toArray()['status']);
+    }
 }
