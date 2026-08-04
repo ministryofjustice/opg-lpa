@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
-use App\Handler\Traits\OneLoginPendingLinkTrait;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -22,11 +22,10 @@ use RuntimeException;
 
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
-    use OneLoginPendingLinkTrait;
-
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
+        private readonly OneLoginSessionManager $sessionManager,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -39,7 +38,7 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             throw new RuntimeException('Session middleware is not configured');
         }
 
-        if ($this->pendingLinkSub($session) === null) {
+        if ($this->sessionManager->getPendingLink($session) === null) {
             $this->logger->warning('auth.onelogin.link_or_create_missing_pending_link');
 
             return new RedirectResponse('/login');
@@ -61,7 +60,7 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $redirectUrl = $form->get('choice')->getValue() === 'link'
                     ? '/link-account'
-                    : '/signup';
+                    : 'TODO-create-account';
 
                 return new RedirectResponse($redirectUrl);
             }

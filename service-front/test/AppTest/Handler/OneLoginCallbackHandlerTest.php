@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\OneLoginCallbackHandler;
 use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -60,6 +61,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->handler         = new OneLoginCallbackHandler(
             $this->renderer,
             $this->oneLoginService,
+            new OneLoginSessionManager(),
             $this->logger,
         );
     }

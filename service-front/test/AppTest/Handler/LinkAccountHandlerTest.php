@@ -8,6 +8,7 @@ use App\Authentication\AuthenticationService;
 use App\Form\User\Login;
 use App\Handler\LinkAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\UserDetails;
 use Laminas\Authentication\Result;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -54,6 +55,7 @@ class LinkAccountHandlerTest extends TestCase
             $this->formElementManager,
             $this->authenticationService,
             $this->userDetails,
+            new OneLoginSessionManager(),
             $this->logger,
         );
     }
