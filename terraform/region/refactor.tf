@@ -70,31 +70,3 @@ import {
   to = aws_iam_role_policy.vpc_flow_logs
   id = "vpc_flow_logs:vpc_flow_logs"
 }
-
-removed {
-  from = aws_kms_key.multi_region_access_logs_lb_encryption_key
-  lifecycle {
-    destroy = true
-  }
-}
-
-removed {
-  from = aws_kms_alias.multi_region_access_logs_lb_encryption_alias
-  lifecycle {
-    destroy = true
-  }
-}
-
-removed {
-  from = aws_kms_replica_key.multi_region_access_logs_lb_encryption_key_replica
-  lifecycle {
-    destroy = true
-  }
-}
-
-removed {
-  from = aws_kms_alias.multi_region_access_logs_lb_encryption_alias_replica
-  lifecycle {
-    destroy = true
-  }
-}
