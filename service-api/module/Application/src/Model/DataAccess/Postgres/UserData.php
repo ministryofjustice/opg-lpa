@@ -737,7 +737,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * Updates a user's OneLogin sub.
+     * Links a user to a GOV.UK One Login identity.
+     *
+     * Once linked, authentication happens in One Login, so the local password is
+     * no longer used — we clear it to avoid keeping a redundant credential.
      *
      * @param string $userId
      * @param string $oneLoginSub
@@ -748,6 +751,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
+                'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]
         );

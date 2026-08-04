@@ -145,6 +145,25 @@ class ServiceTest extends MockeryTestCase
         $this->assertEquals('invalid-user-credentials/account-locked', $result);
     }
 
+    public function testWithPasswordRejectsOneLoginLinkedAccountWithNoPassword()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('linked@onelogin.com', new User([
+            'id' => 1,
+            'active' => true,
+            'failed_login_attempts' => 0,
+        ]));
+
+        $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
+            ->withArgs([1])->once();
+
+        $service = new AuthenticationService($this->sharedSpaceRepository);
+        $service->setUserRepository($this->authUserRepository);
+
+        $result = $service->withPassword('linked@onelogin.com', 'any-password', false);
+
+        $this->assertEquals('invalid-user-credentials', $result);
+    }
+
     public function testWithPasswordValidCredentialsResetLoginAttempts()
     {
         $today = new DateTime('today');
