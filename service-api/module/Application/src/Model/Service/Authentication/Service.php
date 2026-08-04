@@ -85,8 +85,12 @@ class Service extends AbstractService
             }
         }
 
-        // Check password
-        if (!password_verify($password, $user->password())) {
+        // Check password. Accounts linked to GOV.UK One Login have no password
+        // (authentication happens in One Login), so password sign-in is always
+        // rejected for them — and we must not pass a null hash to password_verify.
+        $passwordHash = $user->password();
+
+        if ($passwordHash === null || !password_verify($password, $passwordHash)) {
             $this->getUserRepository()->incrementFailedLoginCounter($user->id());
 
             if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {
