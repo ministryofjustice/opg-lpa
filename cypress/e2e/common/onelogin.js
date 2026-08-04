@@ -57,3 +57,17 @@ Then(
         cy.contains('a', 'Return to sign in').should('have.attr', 'href', '/login');
     },
 );
+
+Then(`I choose to link an existing Make account`, () => {
+    cy.get('input[name="choice"][value="link"]').check();
+});
+
+Then(`I choose to create a new Make account`, () => {
+    cy.get('input[name="choice"][value="create"]').check();
+});
+
+Then(`I link my seeded Make account`, () => {
+    cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
+    cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));
+    cy.get('[data-cy=link-account-submit]').click();
+});
