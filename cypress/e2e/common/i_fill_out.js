@@ -1,7 +1,15 @@
-import { When, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
 When(`I type {string} into {string}`, (value, id) => {
   cy.get('[data-cy=' + id + ']')
+    .clear({ force: true })
+    .type(value);
+});
+
+When(`I type {string} into field labelled {string}`, (value, label) => {
+  cy.contains('label', label)
+    .invoke('attr', 'for')
+    .then((id) => cy.get('#' + id))
     .clear({ force: true })
     .type(value);
 });
