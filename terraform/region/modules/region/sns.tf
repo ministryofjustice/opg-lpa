@@ -1,7 +1,8 @@
-#tfsec:ignore:aws-sns-enable-topic-encryption unsupported for this type of alert
+
 resource "aws_sns_topic" "cloudwatch_to_slack_elasticache_alerts" {
-  name = "CloudWatch-to-PagerDuty-${local.account_name}-${local.region_name}-elasticache-alert"
-  tags = local.front_component_tag
+  name              = "CloudWatch-to-PagerDuty-${local.account_name}-${local.region_name}-elasticache-alert"
+  tags              = local.front_component_tag
+  kms_master_key_id = data.aws_kms_alias.sns_encryption_key.target_key_arn
 }
 
 #tfsec:ignore:aws-sns-enable-topic-encryption unsupported for this type of alert
@@ -12,8 +13,9 @@ resource "aws_sns_topic" "cloudwatch_to_account_ops_alerts" {
 
 #tfsec:ignore:aws-sns-enable-topic-encryption - review if changed to Aurora
 resource "aws_sns_topic" "rds_events" {
-  name = "${local.account_name}-${local.region_name}-rds-events"
-  tags = local.db_component_tag
+  name              = "${local.account_name}-${local.region_name}-rds-events"
+  tags              = local.db_component_tag
+  kms_master_key_id = data.aws_kms_alias.sns_encryption_key.target_key_arn
 }
 
 # All events split into different subscriptions by source type to allow filtering based on source type and event type
