@@ -6,6 +6,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
 class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInterface
 {
@@ -43,7 +44,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function addMember(string $sharedSpaceId, string $userId): bool
+    public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool
     {
         $sql = $this->dbWrapper->createSql();
         $insert = $sql->insert(self::SHARED_SPACE_MEMBERS);
@@ -51,6 +52,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         $insert->values([
             'sharedSpaceId' => $sharedSpaceId,
             'userId'        => $userId,
+            'isAdmin'       => $isAdmin,
             'created'       => gmdate(DbWrapper::TIME_FORMAT),
         ]);
 
@@ -88,14 +90,52 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     public function getMembers(string $sharedSpaceId): array
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, ['sharedSpaceId' => $sharedSpaceId], [
-            'columns' => ['userId'],
+            'columns' => ['userId', 'isAdmin', 'isActive', 'created'],
         ]);
 
         if (!$result->isQueryResult()) {
             return [];
         }
 
-        return iterator_to_array($result);
+        $members = [];
+
+        foreach ($result as $row) {
+            $members[] = new SharedSpaceMember([
+                'sharedSpaceId' => $sharedSpaceId,
+                'userId'        => $row['userId'],
+                'isAdmin'       => (bool) $row['isAdmin'],
+                'isActive'      => (bool) $row['isActive'],
+                'createdAt'     => $row['created'],
+            ]);
+        }
+
+        return $members;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): bool
+    {
+        $sql = $this->dbWrapper->createSql();
+        $update = $sql->update(self::SHARED_SPACE_MEMBERS);
+        $update->where([
+            'sharedSpaceId' => $sharedSpaceId,
+            'userId'        => $userId,
+        ]);
+        $update->set([
+            'isAdmin' => $isAdmin,
+        ]);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+
+        try {
+            $result = $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw($e);
+        }
+
+        return $result->getAffectedRows() === 1;
     }
 
     /**

@@ -258,28 +258,23 @@ dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-
 
 .PHONY: dc-front-psalm
 dc-front-psalm:
-	docker compose build front-app-test
-	@docker compose run --rm --no-deps front-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-admin-psalm
 dc-admin-psalm:
-	docker compose build admin-app-test
-	@docker compose run --rm --no-deps admin-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps admin-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-api-psalm
 dc-api-psalm:
-	docker compose build api-app-test
-	@docker compose run --rm --no-deps api-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps api-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-pdf-psalm
 dc-pdf-psalm:
-	docker compose build pdf-app-test
-	@docker compose run --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-shared-psalm
 dc-shared-psalm:
-	docker compose build shared-test
-	@docker compose run --rm --no-deps shared-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps shared-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-psalm
 dc-psalm: dc-front-psalm dc-admin-psalm dc-api-psalm dc-pdf-psalm dc-shared-psalm

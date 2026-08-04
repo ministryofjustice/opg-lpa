@@ -53,4 +53,44 @@ class SharedSpaceService
 
         return $result;
     }
+
+    public function addMember(string $sharedSpaceId, string $userIdToAdd): bool
+    {
+        try {
+            $this->client->httpPost(
+                '/v2/shared-space/members',
+                ['sharedSpaceId' => $sharedSpaceId, 'userIdToAdd' => $userIdToAdd]
+            );
+        } catch (\Throwable $e) {
+            $this->logger->warning('Adding member to shared space failed', [
+                'exception' => $e,
+                'sharedSpaceId' => $sharedSpaceId,
+                'userIdToAdd' => $userIdToAdd,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateMemberIsAdmin(string $memberUserId, bool $isAdmin): bool
+    {
+        try {
+            $this->client->httpPatch(
+                '/v2/shared-space/members/' . $memberUserId,
+                ['isAdmin' => $isAdmin],
+            );
+        } catch (\Throwable $e) {
+            $this->logger->error('Updating shared space member failed', [
+                'exception' => $e,
+                'memberUserId' => $memberUserId,
+                'isAdmin' => $isAdmin,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
 }

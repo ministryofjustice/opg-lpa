@@ -45,12 +45,13 @@ interface SharedSpaceRepositoryInterface
      *
      * @param string $sharedSpaceId
      * @param string $userId
+     * @param bool $isAdmin Whether the new member should have admin permissions in the shared space.
      * @return bool
      * @throws \Exception
      * @psalm-suppress PossiblyUnusedReturnValue The caller (SharedSpaceService::create()) does
      *     not check this; a failed insert throws instead of returning false.
      */
-    public function addMember(string $sharedSpaceId, string $userId): bool;
+    public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool;
 
     /**
      * Get the ID of the shared space that the given user is a member of,
@@ -62,7 +63,18 @@ interface SharedSpaceRepositoryInterface
     public function getSharedSpaceIdForUser(string $userId): ?string;
 
     /**
-     * @return array
+     * @return array<int, \MakeShared\DataModel\SharedSpace\SharedSpaceMember>
      */
     public function getMembers(string $sharedSpaceId): array;
+
+    /**
+     * Updates a member's admin permission within a shared space.
+     *
+     * @param string $sharedSpaceId
+     * @param string $userId
+     * @param bool $isAdmin
+     * @return bool
+     * @throws \Exception
+     */
+    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): bool;
 }
