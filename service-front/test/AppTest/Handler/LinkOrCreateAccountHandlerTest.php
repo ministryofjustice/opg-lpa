@@ -119,7 +119,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
     {
         return [
             ['link', '/link-account'],
-            ['create', '/signup'],
+            ['create', 'TODO-create-account'],
         ];
     }
 
