@@ -191,6 +191,15 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
     }
 
+    if (App\Feature::CypressFixtures->isEnabled()) {
+        $app->route(
+            '/testing/cypress-fixture',
+            \App\Handler\Testing\CypressFixtureHandler::class,
+            ['POST', 'DELETE'],
+            'testing.cypress-fixture',
+        )->setOptions(['unauthenticated_route' => true]);
+    }
+
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')
         ->setOptions(['allowIncompleteUser' => true]);
     $app->get('/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'statuses');
