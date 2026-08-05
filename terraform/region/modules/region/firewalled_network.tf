@@ -71,6 +71,28 @@ module "vpc_endpoints" {
   codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
   management_account_id          = data.aws_caller_identity.management.account_id
   data_lpa_api_account_id        = var.account.data_lpa_api_account_id
+  allowed_s3_bucket_arns = [
+    # allowed buckets
+    "arn:aws:s3:::config-${data.aws_region.current.region}-${var.account_name}-opg-lpa-opg",
+    "arn:aws:s3:::config.${data.aws_region.current.region}.${var.account_name}.opg-lpa.opg.justice.gov.uk", # deprecated config bucket
+    "arn:aws:s3:::config.${var.account_name}.opg-lpa.opg.service.justice.gov.uk",                           # deprecated config bucket
+    "arn:aws:s3:::online-lpa-cloudtrail-${var.account_name}",
+    "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}",
+    "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs",
+    "arn:aws:s3:::online-lpa-${var.account_name}-lb-access-logs",
+    "arn:aws:s3:::redacted-logs.${var.account_name}.${data.aws_region.current.region}.lpa.opg.justice.gov.uk",
+    "arn:aws:s3:::s3-access-logs-opg-opg-lpa-${var.account_name}-${data.aws_region.current.region}",
+    # allowed objects
+    "arn:aws:s3:::config-${data.aws_region.current.region}-${var.account_name}-opg-lpa-opg/*",
+    "arn:aws:s3:::config.${data.aws_region.current.region}.${var.account_name}.opg-lpa.opg.justice.gov.uk/*", # deprecated config bucket
+    "arn:aws:s3:::config.${var.account_name}.opg-lpa.opg.service.justice.gov.uk/*",                           # deprecated config bucket
+    "arn:aws:s3:::online-lpa-cloudtrail-${var.account_name}/*",
+    "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}/*",
+    "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs/*",
+    "arn:aws:s3:::online-lpa-${var.account_name}-lb-access-logs/*",
+    "arn:aws:s3:::redacted-logs.${var.account_name}.${data.aws_region.current.region}.lpa.opg.justice.gov.uk/*",
+    "arn:aws:s3:::s3-access-logs-opg-opg-lpa-${var.account_name}-${data.aws_region.current.region}/*",
+  ]
   providers = {
     aws.region = aws
   }
