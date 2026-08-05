@@ -1,12 +1,13 @@
 variable "account" {
   description = "the account object passed into the region module."
   type = object({
-    account_name_short = string
-    account_id         = string
-    is_production      = string
-    dr_enabled         = bool
-    always_on_aurora   = bool
-    retention_in_days  = number
+    account_name_short      = string
+    account_id              = string
+    is_production           = string
+    dr_enabled              = bool
+    always_on_aurora        = bool
+    data_lpa_api_account_id = string
+    retention_in_days       = number
     regions = map(
       object({
         region                         = string
