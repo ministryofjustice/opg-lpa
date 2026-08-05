@@ -78,6 +78,36 @@ final class SharedSpaceServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testGetMemberReturnsMemberOnSuccess(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpGet')
+            ->with('/v2/shared-space/members/user-1')
+            ->willReturn(['member' => ['id' => 'user-1', 'isAdmin' => true]]);
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertSame(['id' => 'user-1', 'isAdmin' => true], $result);
+    }
+
+    public function testGetMemberReturnsNullWhenResponseMissingMemberKey(): void
+    {
+        $this->client->method('httpGet')->willReturn(['success' => true]);
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertNull($result);
+    }
+
+    public function testGetMemberReturnsNullOnAnyException(): void
+    {
+        $this->client->method('httpGet')->willThrowException(new \RuntimeException('api-error'));
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertNull($result);
+    }
+
     public function testUpdateMemberIsAdminReturnsTrueOnSuccess(): void
     {
         $this->client->expects($this->once())

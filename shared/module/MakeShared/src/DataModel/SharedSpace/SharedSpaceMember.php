@@ -60,7 +60,7 @@ class SharedSpaceMember extends AbstractData
      * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
      */
-    protected function map($property, $value)
+    protected function map($property, $value): mixed
     {
         return match ($property) {
             'createdAt' => (($value instanceof DateTime || is_null($value)) ? $value : new DateTime($value)),

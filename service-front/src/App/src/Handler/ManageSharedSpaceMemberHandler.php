@@ -11,6 +11,7 @@ use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Laminas\Form\Element\Checkbox;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Mezzio\Router\RouteResult;
@@ -35,17 +36,10 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
         $routeResult = $request->getAttribute(RouteResult::class);
         $memberId = $routeResult?->getMatchedParams()['member-id'] ?? null;
 
-        $result = $this->sharedSpaceService->getMembers();
-        $members = $result['members'] ?? [];
-
-        $member = null;
-        foreach ($members as $candidate) {
-            if ($candidate['id'] === $memberId) {
-                $member = $candidate;
-                break;
-            }
-        }
-
+        // The API only returns member details to admins of the shared space,
+        // so a null response here covers both "member not found" and
+        // "signed-in user is not an admin" - either way, redirect back.
+        $member = $this->sharedSpaceService->getMember($memberId);
         if ($member === null) {
             return new RedirectResponse('/shared-space/manage');
         }
@@ -65,16 +59,19 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
             $form->setData($data);
 
             if ($form->isValid()) {
-                $isAdmin = $form->get('permissions')->getValue() === '1';
+                /** @var Checkbox $permissions */
+                $permissions = $form->get('permissions');
 
-                if ($this->sharedSpaceService->updateMemberIsAdmin($memberId, $isAdmin)) {
+                if ($this->sharedSpaceService->updateMemberIsAdmin($memberId, $permissions->isChecked())) {
                     return new RedirectResponse('/shared-space/manage');
                 }
 
                 $error = 'Failed to update member. Please try again.';
             }
         } else {
-            $form->setData(['permissions' => ($member['isAdmin'] ?? false) ? '1' : '0']);
+            /** @var Checkbox $permissions */
+            $permissions = $form->get('permissions');
+            $permissions->setChecked($member['isAdmin']);
         }
 
         return new HtmlResponse($this->renderer->render(

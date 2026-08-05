@@ -39,7 +39,27 @@ class SharedSpaceService
         return $result['sharedSpaceId'] ?? null;
     }
 
-    public function getMembers(): mixed
+    public function getMember(string $memberUserId): ?array
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/members/' . $memberUserId);
+        } catch (\Throwable $e) {
+            $this->logger->error('Retrieve shared space member failed', [
+                'exception' => $e,
+                'memberUserId' => $memberUserId,
+            ]);
+
+            return null;
+        }
+
+        if (!is_array($result) || !isset($result['member']) || !is_array($result['member'])) {
+            return null;
+        }
+
+        return $result['member'];
+    }
+
+    public function getMembers(): ?array
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members');
@@ -51,7 +71,7 @@ class SharedSpaceService
             return null;
         }
 
-        return $result;
+        return is_array($result) ? $result : null;
     }
 
     public function addMember(string $sharedSpaceId, string $userIdToAdd): bool
