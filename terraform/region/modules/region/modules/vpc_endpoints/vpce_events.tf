@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint_policy" "events" {
           "events:*"
         ],
         Resource = [
-          "arn:aws:events::${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:events:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
         ]
       }
     ]

@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint_policy" "ssm" {
           "ssm:*"
         ],
         Resource = [
-          "arn:aws:ssm::${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:ssm:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
         ]
       }
     ]
