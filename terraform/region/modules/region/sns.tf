@@ -20,7 +20,6 @@ resource "aws_sns_topic" "rds_events" {
 
 # All events split into different subscriptions by source type to allow filtering based on source type and event type
 
-#tfsec:ignore:aws-sns-enable-topic-encryption - - review if changed to Aurora
 resource "aws_db_event_subscription" "rds_events_db_cluster" {
   name      = "${local.account_name}-${local.region_name}-rds-event-db-cluster-sub"
   sns_topic = aws_sns_topic.rds_events.arn
@@ -36,7 +35,6 @@ resource "aws_db_event_subscription" "rds_events_db_instance" {
   source_type = "db-instance"
 }
 
-#tfsec:ignore:aws-sns-enable-topic-encryption - - review if changed to Aurora
 resource "aws_db_event_subscription" "rds_events_db_sg" {
   name      = "${local.account_name}-${local.region_name}-rds-event-db-sg-sub"
   sns_topic = aws_sns_topic.rds_events.arn
@@ -51,8 +49,6 @@ resource "aws_db_event_subscription" "rds_events_db_pg" {
 
   source_type = "db-parameter-group"
 }
-
-#tfsec:ignore:aws-sns-enable-topic-encryption - - review if changed to Aurora
 resource "aws_db_event_subscription" "rds_events_db_snapshot" {
   name      = "${local.account_name}-${local.region_name}-rds-event-db-snapshot-sub"
   sns_topic = aws_sns_topic.rds_events.arn
@@ -64,7 +60,6 @@ resource "aws_db_event_subscription" "rds_events_db_snapshot" {
   ]
 }
 
-#tfsec:ignore:aws-sns-enable-topic-encryption - - review if changed to Aurora
 resource "aws_db_event_subscription" "rds_events_db_cluster_snapshot" {
   name      = "${local.account_name}-${local.region_name}-rds-event-db-cluster-snapshot-sub"
   sns_topic = aws_sns_topic.rds_events.arn
