@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint_policy" "sqs" {
           "sqs:*"
         ],
         Resource = [
-          "arn:aws:sqs::${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:sqs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
         ]
       }
     ]

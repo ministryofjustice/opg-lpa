@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint_policy" "rds" {
           "rds:*"
         ],
         Resource = [
-          "arn:aws:rds::${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:rds:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
         ]
       }
     ]

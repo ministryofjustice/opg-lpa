@@ -25,7 +25,7 @@ resource "aws_vpc_endpoint_policy" "secretsmanager" {
           "secretsmanager:*"
         ],
         Resource = [
-          "arn:aws:secretsmanager::${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:secretsmanager:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
         ]
       }
     ]

@@ -35,8 +35,21 @@ resource "aws_vpc_endpoint_policy" "ecr" {
           "${startswith(each.value, "ecr") ? "ecr" : each.value}:*"
         ],
         Resource = [
-          "arn:aws:${startswith(each.value, "ecr") ? "ecr" : each.value}::${data.aws_caller_identity.current.account_id}:*",
-          "arn:aws:${startswith(each.value, "ecr") ? "ecr" : each.value}::${var.management_account_id}:*"
+          "arn:aws:${startswith(each.value, "ecr") ? "ecr" : each.value}:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
+          "arn:aws:${startswith(each.value, "ecr") ? "ecr" : each.value}:${data.aws_region.current.region}:${var.management_account_id}:*"
+        ]
+      },
+      {
+        Sid    = "AllowGetAuthToken",
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
+        },
+        Action = [
+          "ecr:GetAuthorizationToken"
+        ],
+        Resource = [
+          "*",
         ]
       }
     ]

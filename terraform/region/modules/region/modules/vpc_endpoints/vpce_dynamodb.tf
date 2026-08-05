@@ -16,7 +16,7 @@ data "aws_iam_policy_document" "dynamodb_gateway_endpoint_allow_account_access" 
     effect  = "Allow"
     actions = ["*"]
     resources = [
-      "arn:aws:dynamodb::${data.aws_caller_identity.current.account_id}:table/*"
+      "arn:aws:dynamodb:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:table/*"
     ]
     principals {
       type        = "AWS"
