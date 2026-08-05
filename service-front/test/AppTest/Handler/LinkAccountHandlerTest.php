@@ -38,12 +38,12 @@ class LinkAccountHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->renderer = $this->createMock(TemplateRendererInterface::class);
-        $this->formElementManager = $this->createMock(FormElementManager::class);
+        $this->renderer              = $this->createMock(TemplateRendererInterface::class);
+        $this->formElementManager    = $this->createMock(FormElementManager::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
-        $this->userDetails = $this->createMock(UserDetails::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-        $this->session = $this->createMock(SessionInterface::class);
+        $this->userDetails           = $this->createMock(UserDetails::class);
+        $this->logger                = $this->createMock(LoggerInterface::class);
+        $this->session               = $this->createMock(SessionInterface::class);
 
         $this->form = new Login();
         $this->form->init();
@@ -164,6 +164,30 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->userDetails->expects($this->never())->method('setOneLoginSub');
         $this->renderer->method('render')->willReturn('<html>form with errors</html>');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', ['email' => $email, 'password' => $word])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testInvalidAuthPassesAuthErrorToTemplateSoUserIsAdvised(): void
+    {
+        $email = 'my.email@example.com';
+        $word  = 'guessable';
+
+        $this->stubAuthentication($email, $word, false);
+
+        $this->userDetails->expects($this->never())->method('setOneLoginSub');
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/linking/link-account.twig',
+                $this->callback(fn(array $vars) => ($vars['authError'] ?? null) === 'authentication-failed'),
+            )
+            ->willReturn('<html>form with errors</html>');
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['email' => $email, 'password' => $word])

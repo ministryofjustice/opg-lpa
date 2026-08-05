@@ -50,6 +50,39 @@ Feature: One Login Sign In
     And I submit the form
     And I should be on "/signup"
 
+  @RequiresMockOneLogin
+  Scenario: An unlinked user entering incorrect credentials is advised and can retry
+    Then I click "onelogin-signin-button"
+    And I am taken to "/login-onelogin"
+    And I click "onelogin-signin-button"
+    And I am on the mock One Login page
+    And I continue through mock One Login
+    And I should be on "/link-or-create-account"
+    And I choose to link an existing Make account
+    And I submit the form
+    And I should be on "/link-account"
+    And I attempt to link my Make account with an incorrect password
+    And I should be on "/link-account"
+    And I am advised my Make account credentials were not recognised
+    And I link my seeded Make account
+    And I am taken to the dashboard page
+
+  @RequiresMockOneLogin
+  Scenario: An unlinked user who has forgotten their password can go to reset it from the link page
+    Then I click "onelogin-signin-button"
+    And I am taken to "/login-onelogin"
+    And I click "onelogin-signin-button"
+    And I am on the mock One Login page
+    And I continue through mock One Login
+    And I should be on "/link-or-create-account"
+    And I choose to link an existing Make account
+    And I submit the form
+    And I should be on "/link-account"
+    And I attempt to link my Make account with an incorrect password
+    And I am advised my Make account credentials were not recognised
+    And I choose to reset my Make account password
+    And I should be on "/forgot-password"
+
   Scenario: Reaching the link-account page directly without a One Login session returns to sign in
     Then I visit "/link-account" without being logged in
 
