@@ -47,3 +47,7 @@ variable "management_account_id" {
 variable "data_lpa_api_account_id" {
   type = string
 }
+
+variable "allowed_s3_resource_arns" {
+  type = list(string)
+}
