@@ -30,11 +30,12 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
 
         $result = $this->sharedSpaceService->getMembers();
-        $members = $result['members'];
+        $members = $result['members'] ?? [];
+        $isAdmin = false;
 
-        foreach ($members as $key => $member) {
+        foreach ($members as $member) {
             if ($member['id'] === $identity->id()) {
-                $members[$key]['isMe'] = true;
+                $isAdmin = $member['isAdmin'] ?? false;
                 break;
             }
         }
@@ -45,6 +46,7 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'members' => $members,
+                    'signedInUserIsAdmin' => $isAdmin,
                 ],
             ),
         ));

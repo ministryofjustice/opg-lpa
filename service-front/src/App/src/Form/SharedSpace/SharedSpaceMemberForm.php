@@ -21,8 +21,6 @@ class SharedSpaceMemberForm extends AbstractForm
             'name'       => 'permissions',
             'type'       => Checkbox::class,
             'options'    => [
-                'checked_value'   => '1',
-                'unchecked_value' => '0',
                 'label'           => 'Admin',
             ],
             'attributes' => [

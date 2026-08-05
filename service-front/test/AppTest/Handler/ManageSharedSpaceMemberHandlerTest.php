@@ -65,22 +65,26 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testGetRequestDisplaysFormForExistingMember(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+
+        $permissionsElement = new Checkbox('permissions');
 
         $this->form->expects($this->once())
-            ->method('setData')
-            ->with(['permissions' => '1']);
+            ->method('get')
+            ->with('permissions')
+            ->willReturn($permissionsElement);
 
         $this->renderer->method('render')->willReturn('<html>member</html>');
 
         $response = $this->handler->handle($this->createRequest());
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertTrue($permissionsElement->isChecked());
     }
 
     public function testGetRequestRedirectsWhenMemberNotFound(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('unknown-member')->willReturn(null);
 
         $response = $this->handler->handle($this->createRequest('unknown-member'));
 
@@ -88,9 +92,23 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
     }
 
+    public function testGetRequestRedirectsWhenSignedInUserIsNotAdmin(): void
+    {
+        // The API only returns member details to admins of the shared
+        // space, so a non-admin's request results in a null response here.
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(null);
+
+        $this->sharedSpaceService->expects($this->never())->method('updateMemberIsAdmin');
+
+        $response = $this->handler->handle($this->createRequest('member-1'));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+    }
+
     public function testPostValidDataUpdatesMemberAndRedirects(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
@@ -116,7 +134,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostWithoutPermissionsKeyTreatsMemberAsNotAdmin(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
@@ -142,7 +160,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostWhenUpdateFailsShowsError(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
@@ -174,7 +192,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostInvalidDataRedisplaysFormWithoutUpdating(): void
     {
-        $this->sharedSpaceService->method('getMembers')->willReturn(['members' => [self::MEMBER]]);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $this->form->method('isValid')->willReturn(false);
 

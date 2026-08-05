@@ -33,22 +33,21 @@ class ManageSharedSpaceHandlerTest extends TestCase
 
     public function testGetShowsMembers(): void
     {
+        $members = [
+            ['id' => 'a-user', 'isAdmin' => false],
+            ['id' => 'my-user', 'isAdmin' => true],
+            ['id' => 'another-user', 'isAdmin' => false],
+        ];
+
         $this->sharedSpaceService
             ->expects($this->once())
             ->method('getMembers')
-            ->willReturn(['members' => [
-                ['id' => 'a-user'],
-                ['id' => 'my-user'],
-                ['id' => 'another-user'],
-            ]]);
+            ->willReturn(['members' => $members]);
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/manage.twig', [
-                'members' => [
-                    ['id' => 'a-user'],
-                    ['id' => 'my-user', 'isMe' => true],
-                    ['id' => 'another-user'],
-                ],
+                'members' => $members,
+                'signedInUserIsAdmin' => true,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,

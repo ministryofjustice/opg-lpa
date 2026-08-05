@@ -111,6 +111,31 @@ class SharedSpaceService
         ];
     }
 
+    public function getMember(string $sharedSpaceId, string $memberUserId): ?array
+    {
+        $member = $this->sharedSpaceRepository->getMember($sharedSpaceId, $memberUserId);
+
+        if ($member === null) {
+            return null;
+        }
+
+        $profiles = $this->userRepository->getProfiles([$memberUserId]);
+        $profile = $profiles[0] ?? null;
+
+        if ($profile === null) {
+            return null;
+        }
+
+        return [
+            'id' => $profile->getId(),
+            'name' => $profile->getName(),
+            'email' => $profile->getEmail(),
+            'lastLoginAt' => $profile->getLastLoginAt(),
+            'isActive' => $member->getIsActive(),
+            'isAdmin' => $member->getIsAdmin(),
+        ];
+    }
+
     public function getMembers(string $sharedSpaceId): array
     {
         $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
@@ -136,6 +161,14 @@ class SharedSpaceService
         }, $profiles);
     }
 
+    public function isAdmin(string $sharedSpaceId, string $userId): bool
+    {
+        return $this->sharedSpaceRepository->isAdmin($sharedSpaceId, $userId);
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function addMember(string $sharedSpaceId, string $userIdToAdd, string $userIdAddingMember, bool $isAdmin = false): void
     {
         if ($this->sharedSpaceRepository->getSharedSpaceIdForUser($userIdToAdd) !== null) {
@@ -150,10 +183,6 @@ class SharedSpaceService
             $this->sharedSpaceRepository->addMember($sharedSpaceId, $userIdToAdd, $isAdmin);
         } catch (Throwable $e) {
             $this->logger->error('Unable to add member to shared space: ' . $e->getMessage(), [
-                'class' => $e::class,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'stack_trace' => $e->getTraceAsString(),
                 'shared_space_id' => $sharedSpaceId,
             ]);
 
@@ -169,23 +198,12 @@ class SharedSpaceService
         ]);
     }
 
-    /**
-     * Updates whether a member of a shared space has admin permissions.
-     *
-     * @return bool True if a member was updated, false if no matching
-     *     member was found in the given shared space.
-     */
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): bool
+    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
     {
         try {
-            $updated = $this->sharedSpaceRepository->updateMemberIsAdmin($sharedSpaceId, $userId, $isAdmin);
+            $this->sharedSpaceRepository->updateMemberIsAdmin($sharedSpaceId, $userId, $isAdmin);
         } catch (Throwable $e) {
             $this->logger->error('Unable to update shared space member: ' . $e->getMessage(), [
-                'class' => $e::class,
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'stack_trace' => $e->getTraceAsString(),
-                'shared_space_id' => $sharedSpaceId,
                 'user_id' => $userId,
             ]);
 
@@ -197,9 +215,6 @@ class SharedSpaceService
             'shared_space_id' => $sharedSpaceId,
             'user_id'        => $userId,
             'is_admin'       => $isAdmin,
-            'updated'        => $updated,
         ]);
-
-        return $updated;
     }
 }

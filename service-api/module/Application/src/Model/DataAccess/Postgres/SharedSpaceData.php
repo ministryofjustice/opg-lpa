@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Model\DataAccess\Postgres;
 
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
+use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
@@ -87,6 +88,32 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getMember(string $sharedSpaceId, string $memberUserId): ?SharedSpaceMember
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
+            'sharedSpaceId' => $sharedSpaceId,
+            'userId'        => $memberUserId,
+        ], [
+            'columns' => ['userId', 'isAdmin', 'isActive', 'created'],
+            'limit'   => 1,
+        ]);
+
+        if (!$result->isQueryResult() || $result->count() !== 1) {
+            return null;
+        }
+
+        return new SharedSpaceMember([
+            'sharedSpaceId' => $sharedSpaceId,
+            'userId'        => $result->current()['userId'],
+            'isAdmin'       => (bool) $result->current()['isAdmin'],
+            'isActive'      => (bool) $result->current()['isActive'],
+            'createdAt'     => $result->current()['created'],
+        ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getMembers(string $sharedSpaceId): array
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, ['sharedSpaceId' => $sharedSpaceId], [
@@ -115,7 +142,27 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): bool
+    public function isAdmin(string $sharedSpaceId, string $userId): bool
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
+            'sharedSpaceId' => $sharedSpaceId,
+            'userId'        => $userId,
+        ], [
+            'columns' => ['isAdmin'],
+            'limit'   => 1,
+        ]);
+
+        if (!$result->isQueryResult() || $result->count() !== 1) {
+            return false;
+        }
+
+        return (bool) $result->current()['isAdmin'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::SHARED_SPACE_MEMBERS);
@@ -135,7 +182,9 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             throw($e);
         }
 
-        return $result->getAffectedRows() === 1;
+        if ($result->getAffectedRows() !== 1) {
+            throw new MemberNotInSharedSpaceException();
+        }
     }
 
     /**
