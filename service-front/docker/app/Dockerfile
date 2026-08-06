@@ -101,6 +101,7 @@ RUN composer check-platform-reqs -d /app \
 
 RUN chmod -R a+w /tmp
 RUN mkdir -m a+w build
+RUN find vendor -name composer.lock -delete
 
 USER appuser
 
