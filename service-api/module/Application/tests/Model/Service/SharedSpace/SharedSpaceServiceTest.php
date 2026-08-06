@@ -8,10 +8,12 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
+use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use MakeShared\DataModel\User\User;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -122,9 +124,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('getMembers')
             ->with($sharedSpaceId)
             ->andReturn([
-                ['userId' => 'user1'],
-                ['userId' => 'user2', 'isActive' => true, 'isAdmin' => false],
-                ['userId' => 'user3', 'isActive' => false, 'isAdmin' => true],
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user1', 'isAdmin' => true, 'isActive' => true]),
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user2', 'isAdmin' => false, 'isActive' => true]),
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user3', 'isAdmin' => true, 'isActive' => false]),
             ]);
 
         $this->userRepository->shouldReceive('getProfiles')
@@ -178,5 +180,123 @@ final class SharedSpaceServiceTest extends MockeryTestCase
                 'isAdmin' => true,
             ],
         ], $result);
+    }
+
+    public function testGetMember()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getMember')
+            ->with($sharedSpaceId, 'user2')
+            ->andReturn(
+                new SharedSpaceMember(['sharedSpaceId' => $sharedSpaceId, 'userId' => 'user2', 'isAdmin' => false, 'isActive' => true])
+            );
+
+        $this->userRepository->shouldReceive('getProfiles')
+            ->with(['user2'])
+            ->andReturn([
+                new User([
+                    'id' => 'user2',
+                    'name' => ['first' => 'you'],
+                    'email' => ['address' => '2@example.com'],
+                    'lastLoginAt' => new DateTime('2020-01-02'),
+                ]),
+            ]);
+
+        $result = $this->service->getMember($sharedSpaceId, 'user2');
+
+        $this->assertEquals([
+            'id' => 'user2',
+            'name' => new Name(['first' => 'you']),
+            'email' => new EmailAddress(['address' => '2@example.com']),
+            'lastLoginAt' => new DateTime('2020-01-02'),
+            'isActive' => true,
+            'isAdmin' => false,
+        ], $result);
+    }
+
+    public function testGetMemberReturnsNullWhenMemberNotInSharedSpace()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getMember')
+            ->with($sharedSpaceId, 'unknown-user')
+            ->andReturn(null);
+
+        $this->userRepository->shouldNotReceive('getProfiles');
+
+        $result = $this->service->getMember($sharedSpaceId, 'unknown-user');
+
+        $this->assertNull($result);
+    }
+
+    public function testUpdateMemberIsAdmin()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once();
+
+        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+
+        $this->addToAssertionCount(1);
+    }
+
+    public function testUpdateMemberIsAdminThrowsWhenMemberNotFound()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once()
+            ->andThrow(new MemberNotInSharedSpaceException());
+
+        $this->expectException(MemberNotInSharedSpaceException::class);
+
+        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+    }
+
+    public function testUpdateMemberIsAdminRethrowsException()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
+            ->with($sharedSpaceId, $userId, true)
+            ->once()
+            ->andThrow(new RuntimeException('boom'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+    }
+
+    public function testIsAdminReturnsTrueForAdminMember()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->once()
+            ->andReturn(true);
+
+        $this->assertTrue($this->service->isAdmin($sharedSpaceId, $userId));
+    }
+
+    public function testIsAdminReturnsFalseForNonAdminMember()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'user1';
+
+        $this->sharedSpaceRepository->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->once()
+            ->andReturn(false);
+
+        $this->assertFalse($this->service->isAdmin($sharedSpaceId, $userId));
     }
 }

@@ -39,14 +39,18 @@
               {% for member in members %}
                 <tr class="govuk-table__row">
                   <td class="govuk-table__cell">
-                    {% if member.isMe %}
+                    {% if member.id === signedInUser.id %}
                       <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
                         {{ member.name.first }} {{ member.name.last }}
                       </a> (you)
                     {% else %}
-                      <a class="govuk-link--no-visited-state" href="#">
-                        {{ member.name.first }} {{ member.name.last }}
-                      </a>
+                        {% if signedInUserIsAdmin %}
+                          <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.id) }}">
+                            {{ member.name.first }} {{ member.name.last }}
+                          </a>
+                        {% else %}
+                            {{ member.name.first }} {{ member.name.last }}
+                        {% endif %}
                     {% endif %}
                   </td>
                   <td class="govuk-table__cell">

@@ -1,3 +1,6 @@
+---
+applyTo: '**'
+---
 # Copilot instructions
 
 Notes for future coding-agent sessions on this repo. These are meant to save exploration time - update this file whenever you learn something that would otherwise require re-discovering. Lines in this file are intentionally not hard-wrapped - rely on your editor's soft-wrap. Keep entries factual and time-insensitive (describe how the codebase behaves, not what was done in any particular session).
@@ -19,10 +22,10 @@ Notes for future coding-agent sessions on this repo. These are meant to save exp
 - Feature files: `cypress/e2e/*.feature`. Step definitions/fixtures: `cypress/e2e/common/*.js`.
 - Two fixture mechanisms exist, don't confuse them:
   - `../cypress/e2e/common/fixtures.js` (`@CleanupFixtures` tag) - the **legacy** mechanism. Relies on Python scripts in `tests/python-api-client/*.py` run via `cy.runPythonApiCommand(...)`, which call `service-api` directly. Only works where Cypress has direct network access to the API (i.e. locally, NOT in CI). Skips cleanup in CI (`if (!Cypress.env('CI'))`) because it relies on a pre-seeded/shared LPA that must persist for reuse by later scenarios.
-  - `../cypress/e2e/common/user_with_lpas_fixtures.js` (`@CleanupUserFixtures` tag) - creates a brand-new user + N LPAs per scenario by calling a feature-flagged endpoint in `service-front` (`POST`/`DELETE /testing/cypress-fixture`). Works in CI because front-app is reachable there. Cleanup always runs (no CI guard needed - unlike the legacy mechanism, there's no reason to keep the user around).
+  - `../cypress/e2e/common/shared_sapce.js` (`@CleanupUserFixtures` tag) - creates a brand-new user + N LPAs per scenario by calling a feature-flagged endpoint in `service-front` (`POST`/`DELETE /testing/cypress-fixture`). Works in CI because front-app is reachable there. Cleanup always runs (no CI guard needed - unlike the legacy mechanism, there's no reason to keep the user around).
   - Step phrases: `Given I create a new user with {int} LPAs` / `Given I create a new user with {int} HW LPAs`, then `When I log in as the newly created fixture user`.
   - Example scenario: `../cypress/e2e/SharedSpace.feature`
-- **`cy.log()` vs `cy.task('log', ...)`**: `cy.log()` only writes to the Cypress Command Log in the runner UI/video - it is NOT printed to stdout, so it's invisible in CI console output. `cy.task('log', message)` (registered in `../cypress.config.js`) does `console.log(message)` in the Node process, which DOES show up in CI logs. Use `cy.task('log', ...)` (not `cy.log()`) for anything you need to see in CI output, e.g. the fixture user's generated email/password in `user_with_lpas_fixtures.js`.
+- **`cy.log()` vs `cy.task('log', ...)`**: `cy.log()` only writes to the Cypress Command Log in the runner UI/video - it is NOT printed to stdout, so it's invisible in CI console output. `cy.task('log', message)` (registered in `../cypress.config.js`) does `console.log(message)` in the Node process, which DOES show up in CI logs. Use `cy.task('log', ...)` (not `cy.log()`) for anything you need to see in CI output, e.g. the fixture user's generated email/password in `shared_sapce.js`.
 - **Run a single spec**: `make cypress-run-spec SPEC=<Name>.feature` - runs the `cypress` container against the already-running docker-compose stack. It does NOT start the stack itself - `front-app`/`front-web`/`front-ssl` (and `admin-*` if the spec needs the admin app) must already be up (e.g. via `docker compose up -d` or `make dc-up`), otherwise Cypress fails with "could not verify that this server is running".
 - **CI networking constraint** (important, easy to forget): the Cypress container in GitHub Actions only has network access to the front-app and admin-app ALBs. `service-api` is NEVER directly reachable from Cypress in CI. See `../scripts/pipeline/ci_ingress/ci_ingress.py` - it only opens ingress on front/admin security groups. Any fixture mechanism that needs to run in CI must go through front-app or admin-app (e.g. a feature-flagged test-only route), not call the API directly.
 - **Which CI job actually runs Cypress**: `.github/workflows/*` has a "Remaining" test suite job (as opposed to "stitched" jobs) that runs Cypress against seeded DB users / UI-driven signup, NOT the Python fixtures - it excludes all tags associated with Python-fixture scenarios.
@@ -70,7 +73,16 @@ Notes for future coding-agent sessions on this repo. These are meant to save exp
 - `../service-front/src/App/src/Service/Fixture/CypressFixtureService.php` - scaffolds a user + N LPAs server-side (create -> activate -> authenticate -> set-about-you -> create-LPA(s)), replaying the same API calls the real UI/JS fixtures would make. Also has `deleteUser()` for cleanup.
 - `../service-front/src/App/src/Handler/Testing/CypressFixtureHandler.php` - HTTP entrypoint, `POST`/`DELETE /testing/cypress-fixture`, gated behind `Feature::CypressFixtures` (env var `CYPRESS_FIXTURES_ENABLED`).
 - Excluded from PHPUnit coverage in `../service-front/phpunit.xml` (`<exclude>` block covers `src/App/src/Service/Fixture` and `src/App/src/Handler/Testing`) - deliberately has no unit tests (test-only scaffolding code, not worth the coverage/maintenance cost).
-- Consumed from Cypress via `../cypress/e2e/common/user_with_lpas_fixtures.js` (two `cy.request` calls, no direct API access needed).
+- Consumed from Cypress via `../cypress/e2e/common/shared_sapce.js` (two `cy.request` calls, no direct API access needed).
+
+## Shared Space membership - where admin/suspended state lives
+
+- Shared-space-scoped permissions (`isAdmin`, `isActive`) belong on `shared_space_members` (one row per user-per-space, see `MakeShared\DataModel\SharedSpace\SharedSpaceMember`), NOT on `users` - they describe a user's *membership* of a specific space, not their account globally.
+- The `members` route on `SharedSpaceController` handles both listing (GET) and adding (POST) members via a single `membersAction()` that branches on `$request->isPost()`, rather than separate REST actions.
+
+## Running Phinx migrations locally
+
+- No `make` target exists yet - run `vendor/bin/phinx migrate`/`rollback` from `service-api/`, passing `OPG_LPA_POSTGRES_*` env vars pointed at the dockerised Postgres (host port `5434`, see `docker-compose.yml`).
 
 ## Verification commands worth knowing
 

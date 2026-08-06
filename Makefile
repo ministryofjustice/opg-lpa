@@ -235,51 +235,66 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
+ifdef TESTFILE
+	@docker compose run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage $(TESTFILE)
+else
 	@docker compose run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage
+endif
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
+ifdef TESTFILE
+	@docker compose run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit $(TESTFILE)
+else
 	@docker compose run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
+ifdef TESTFILE
+	@docker compose run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit $(TESTFILE)
+else
 	@docker compose run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
+ifdef TESTFILE
+	@docker compose run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit $(TESTFILE)
+else
 	@docker compose run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-shared-unit-tests
 dc-shared-unit-tests:
+ifdef TESTFILE
+	@docker compose run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit $(TESTFILE)
+else
 	@docker compose run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+endif
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
 
 .PHONY: dc-front-psalm
 dc-front-psalm:
-	docker compose build front-app-test
-	@docker compose run --rm --no-deps front-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-admin-psalm
 dc-admin-psalm:
-	docker compose build admin-app-test
-	@docker compose run --rm --no-deps admin-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps admin-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-api-psalm
 dc-api-psalm:
-	docker compose build api-app-test
-	@docker compose run --rm --no-deps api-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps api-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-pdf-psalm
 dc-pdf-psalm:
-	docker compose build pdf-app-test
-	@docker compose run --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-shared-psalm
 dc-shared-psalm:
-	docker compose build shared-test
-	@docker compose run --rm --no-deps shared-test vendor/bin/psalm --no-cache
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps shared-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-psalm
 dc-psalm: dc-front-psalm dc-admin-psalm dc-api-psalm dc-pdf-psalm dc-shared-psalm

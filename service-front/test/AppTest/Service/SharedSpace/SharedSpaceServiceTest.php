@@ -56,4 +56,76 @@ final class SharedSpaceServiceTest extends TestCase
 
         $this->assertNull($result);
     }
+
+    public function testAddMemberReturnsTrueOnSuccess(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/members', ['sharedSpaceId' => 'shared-space-1', 'userIdToAdd' => 'user-1'])
+            ->willReturn(['success' => true]);
+
+        $result = $this->service->addMember('shared-space-1', 'user-1');
+
+        $this->assertTrue($result);
+    }
+
+    public function testAddMemberReturnsFalseOnAnyException(): void
+    {
+        $this->client->method('httpPost')->willThrowException(new \RuntimeException('api-error'));
+
+        $result = $this->service->addMember('shared-space-1', 'user-1');
+
+        $this->assertFalse($result);
+    }
+
+    public function testGetMemberReturnsMemberOnSuccess(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpGet')
+            ->with('/v2/shared-space/members/user-1')
+            ->willReturn(['member' => ['id' => 'user-1', 'isAdmin' => true]]);
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertSame(['id' => 'user-1', 'isAdmin' => true], $result);
+    }
+
+    public function testGetMemberReturnsNullWhenResponseMissingMemberKey(): void
+    {
+        $this->client->method('httpGet')->willReturn(['success' => true]);
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertNull($result);
+    }
+
+    public function testGetMemberReturnsNullOnAnyException(): void
+    {
+        $this->client->method('httpGet')->willThrowException(new \RuntimeException('api-error'));
+
+        $result = $this->service->getMember('user-1');
+
+        $this->assertNull($result);
+    }
+
+    public function testUpdateMemberIsAdminReturnsTrueOnSuccess(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPatch')
+            ->with('/v2/shared-space/members/user-1', ['isAdmin' => true])
+            ->willReturn(['success' => true]);
+
+        $result = $this->service->updateMemberIsAdmin('user-1', true);
+
+        $this->assertTrue($result);
+    }
+
+    public function testUpdateMemberIsAdminReturnsFalseOnAnyException(): void
+    {
+        $this->client->method('httpPatch')->willThrowException(new \RuntimeException('api-error'));
+
+        $result = $this->service->updateMemberIsAdmin('user-1', true);
+
+        $this->assertFalse($result);
+    }
 }

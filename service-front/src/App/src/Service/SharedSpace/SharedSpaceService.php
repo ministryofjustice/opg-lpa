@@ -39,7 +39,27 @@ class SharedSpaceService
         return $result['sharedSpaceId'] ?? null;
     }
 
-    public function getMembers(): mixed
+    public function getMember(string $memberUserId): ?array
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/members/' . $memberUserId);
+        } catch (\Throwable $e) {
+            $this->logger->error('Retrieve shared space member failed', [
+                'exception' => $e,
+                'memberUserId' => $memberUserId,
+            ]);
+
+            return null;
+        }
+
+        if (!is_array($result) || !isset($result['member']) || !is_array($result['member'])) {
+            return null;
+        }
+
+        return $result['member'];
+    }
+
+    public function getMembers(): ?array
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members');
@@ -51,6 +71,46 @@ class SharedSpaceService
             return null;
         }
 
-        return $result;
+        return is_array($result) ? $result : null;
+    }
+
+    public function addMember(string $sharedSpaceId, string $userIdToAdd): bool
+    {
+        try {
+            $this->client->httpPost(
+                '/v2/shared-space/members',
+                ['sharedSpaceId' => $sharedSpaceId, 'userIdToAdd' => $userIdToAdd]
+            );
+        } catch (\Throwable $e) {
+            $this->logger->warning('Adding member to shared space failed', [
+                'exception' => $e,
+                'sharedSpaceId' => $sharedSpaceId,
+                'userIdToAdd' => $userIdToAdd,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function updateMemberIsAdmin(string $memberUserId, bool $isAdmin): bool
+    {
+        try {
+            $this->client->httpPatch(
+                '/v2/shared-space/members/' . $memberUserId,
+                ['isAdmin' => $isAdmin],
+            );
+        } catch (\Throwable $e) {
+            $this->logger->error('Updating shared space member failed', [
+                'exception' => $e,
+                'memberUserId' => $memberUserId,
+                'isAdmin' => $isAdmin,
+            ]);
+
+            return false;
+        }
+
+        return true;
     }
 }
