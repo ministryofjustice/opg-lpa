@@ -192,9 +192,10 @@ locals {
 
   api_web = jsonencode(
     {
-      cpu       = 1,
-      essential = true,
-      image     = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
+      cpu                    = 1,
+      essential              = true,
+      readonlyRootFilesystem = false,
+      image                  = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
       mountPoints = [
         {
           containerPath = "/etc",
@@ -240,7 +241,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       name                   = "app",
       mountPoints = [

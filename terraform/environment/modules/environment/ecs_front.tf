@@ -31,10 +31,10 @@ resource "aws_ecs_service" "front" {
     ]
   }
 
-  deployment_circuit_breaker {
-    enable   = true
-    rollback = true
-  }
+  # deployment_circuit_breaker {
+  #   enable   = true
+  #   rollback = true
+  # }
 
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
@@ -146,15 +146,16 @@ locals {
 locals {
 
   front_web = jsonencode({
-    cpu       = 1,
-    essential = true,
-    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    cpu                    = 1,
+    essential              = true,
+    readonlyRootFilesystem = false,
+    image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
       {
         containerPath = "/etc",
         sourceVolume  = "web_etc"
         readOnly      = false
-      }
+      },
     ],
     name = "web",
     portMappings = [
@@ -197,7 +198,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = local.front_app_image
       mountPoints = [
         {
