@@ -250,8 +250,7 @@ class Service extends AbstractService
      * Link an existing Make account (identified by email + password) to a GOV.UK
      * One Login identity that isn't yet associated with any Make account.
      *
-     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
-     *     |array{linked: false, reason: string}
+     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string}
      */
     public function linkExistingAccount(
         #[\SensitiveParameter] string $username,

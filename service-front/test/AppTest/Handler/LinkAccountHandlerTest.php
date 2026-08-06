@@ -18,6 +18,7 @@ use MakeShared\OneLogin\LinkReason;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -192,9 +193,7 @@ class LinkAccountHandlerTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider correctableFailureProvider
-     */
+    #[DataProvider('correctableFailureProvider')]
     public function testCorrectableFailureStaysOnFormWithInlineError(string $reason, string $expectedAuthError): void
     {
         $email = 'my.email@example.com';

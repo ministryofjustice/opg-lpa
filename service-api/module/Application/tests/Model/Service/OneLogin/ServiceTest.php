@@ -330,11 +330,13 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub);
 
         $this->assertTrue($result['linked']);
-        $this->assertSame('user-1', $result['identity']['userId']);
-        $this->assertSame('tok-xyz', $result['identity']['token']);
-        $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
-        $this->assertSame($lastLogin->format('c'), $result['identity']['lastLogin']);
-        $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
+        $identity = $result['identity'] ?? null;
+        $this->assertIsArray($identity);
+        $this->assertSame('user-1', $identity['userId']);
+        $this->assertSame('tok-xyz', $identity['token']);
+        $this->assertSame($expires->format('c'), $identity['tokenExpiresAt']);
+        $this->assertSame($lastLogin->format('c'), $identity['lastLogin']);
+        $this->assertSame('shared-space-9', $identity['sharedSpaceId']);
     }
 
     public function testLinkExistingAccountReturnsAccountNotFoundWhenNoUserAndNoDeletionLog(): void
@@ -346,7 +348,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason']);
+        $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
     }
 
     public function testLinkExistingAccountReturnsAccountDeletedWhenDeletionLogExists(): void
@@ -359,7 +361,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::ACCOUNT_DELETED, $result['reason']);
+        $this->assertSame(LinkReason::ACCOUNT_DELETED, $result['reason'] ?? null);
     }
 
     public function testLinkExistingAccountReturnsAlreadyLinkedWhenSubDiffers(): void
@@ -374,7 +376,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::ALREADY_LINKED, $result['reason']);
+        $this->assertSame(LinkReason::ALREADY_LINKED, $result['reason'] ?? null);
     }
 
     public function testLinkExistingAccountMapsInvalidCredentials(): void
@@ -389,7 +391,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::INVALID_CREDENTIALS, $result['reason']);
+        $this->assertSame(LinkReason::INVALID_CREDENTIALS, $result['reason'] ?? null);
     }
 
     public function testLinkExistingAccountMapsLockedAccount(): void
@@ -403,7 +405,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::ACCOUNT_LOCKED, $result['reason']);
+        $this->assertSame(LinkReason::ACCOUNT_LOCKED, $result['reason'] ?? null);
     }
 
     public function testLinkExistingAccountMapsInactiveAccount(): void
@@ -417,7 +419,7 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
 
         $this->assertFalse($result['linked']);
-        $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason']);
+        $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason'] ?? null);
     }
 
     private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface
