@@ -194,7 +194,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
       mountPoints = [
         {
@@ -239,7 +239,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       name                   = "app",
       mountPoints = [
