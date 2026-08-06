@@ -112,7 +112,7 @@ class OneLoginService
         #[\SensitiveParameter] string $password,
         string $oneLoginSub,
     ): array {
-        /** @var array<string, mixed>|null $result */
+        /** @var array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string} $result */
         $result = $this->client->httpPost(
             '/v2/auth/onelogin/link',
             [
@@ -123,30 +123,6 @@ class OneLoginService
             anonymous: true,
         );
 
-        if (!is_array($result) || !array_key_exists('linked', $result) || !is_bool($result['linked'])) {
-            throw new RuntimeException('Invalid response from API: linked is required');
-        }
-
-        if ($result['linked'] === false) {
-            $reason = $result['reason'] ?? null;
-
-            return ['linked' => false, 'reason' => is_string($reason) && $reason !== '' ? $reason : 'unknown'];
-        }
-
-        if (
-            !isset($result['identity'])
-            || !is_array($result['identity'])
-            || empty($result['identity']['userId'])
-            || empty($result['identity']['token'])
-            || empty($result['identity']['tokenExpiresAt'])
-            || empty($result['identity']['lastLogin'])
-        ) {
-            throw new RuntimeException(
-                'Invalid response from API: identity fields missing for linked account'
-            );
-        }
-
-        /** @var array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}} $result */
         return $result;
     }
 }

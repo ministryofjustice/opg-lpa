@@ -291,18 +291,16 @@ class Service extends AbstractService
             'user_id' => $authResult['userId'],
         ]);
 
-        $lastLogin = $authResult['last_login'] instanceof DateTime ? $authResult['last_login'] : new DateTime();
-        $expiresAt = $authResult['expiresAt'] instanceof DateTime ? $authResult['expiresAt'] : new DateTime();
-        $sharedSpaceId = $authResult['sharedSpaceId'] ?? null;
+        $lastLogin = $authResult['last_login'] ?? new DateTime();
 
         return [
             'linked'   => true,
             'identity' => [
-                'userId'         => (string) $authResult['userId'],
-                'token'          => (string) $authResult['token'],
-                'tokenExpiresAt' => $expiresAt->format('c'),
+                'userId'         => $authResult['userId'],
+                'token'          => $authResult['token'],
+                'tokenExpiresAt' => $authResult['expiresAt']->format('c'),
                 'lastLogin'      => $lastLogin->format('c'),
-                'sharedSpaceId'  => is_string($sharedSpaceId) ? $sharedSpaceId : null,
+                'sharedSpaceId'  => $authResult['sharedSpaceId'],
             ],
         ];
     }
