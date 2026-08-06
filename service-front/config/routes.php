@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Handler\AboutSharedSpacesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\AccessibilityHandler;
+use App\Handler\CannotLinkAccountHandler;
 use App\Handler\ChangeEmailAddressHandler;
 use App\Handler\ChangePasswordHandler;
 use App\Handler\ConfirmRegistrationHandler;
@@ -183,6 +184,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
             ->setOptions(['unauthenticated_route' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
+            ->setOptions(['unauthenticated_route' => true]);
+        $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
             ->setOptions(['unauthenticated_route' => true]);
     }
 

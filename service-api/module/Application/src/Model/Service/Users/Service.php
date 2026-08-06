@@ -149,6 +149,13 @@ class Service extends AbstractService
     public function update(array $data, string $id): ApiProblem|EntityInterface|null
     {
         if (isset($data['oneLoginSub'])) {
+            $existing = $this->getUserRepository()->getById($id);
+            $currentSub = $existing instanceof UserInterface ? $existing->oneLoginSub() : null;
+
+            if (is_string($currentSub) && $currentSub !== '' && $currentSub !== $data['oneLoginSub']) {
+                return new ApiProblem(409, 'Account is already linked to a different One Login identity');
+            }
+
             $this->getUserRepository()->setOneLoginSub($id, $data['oneLoginSub']);
 
             return new DataModelEntity(new ProfileUserModel([]));

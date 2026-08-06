@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ApplicationTest\Model\Service\Users;
 
+use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Postgres\UserModel as CollectionUser;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
@@ -394,6 +395,11 @@ final class ServiceTest extends AbstractServiceTestCase
         $collectionUser = new CollectionUser(['identity' => $user->getEmail()->getAddress()]);
 
         $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($user->getId())
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
             ->shouldReceive('setOneLoginSub')
             ->once();
 
@@ -401,6 +407,29 @@ final class ServiceTest extends AbstractServiceTestCase
         $entityArray = $entity->toArray();
 
         $this->assertEquals(new DataModelEntity(new ProfileUserModel([])), $entity);
+    }
+
+    public function testUpdateOneLoginSubRefusesToOverwriteDifferentExistingSub()
+    {
+        $user = FixturesData::getUser();
+
+        $collectionUser = new CollectionUser([
+            'identity'      => $user->getEmail()->getAddress(),
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:someone-else',
+        ]);
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($user->getId())
+            ->andReturn($collectionUser)
+            ->once();
+        $this->authUserRepository
+            ->shouldNotReceive('setOneLoginSub');
+
+        $result = $this->service->update(['oneLoginSub' => 'urn:fdc:gov.uk:2022:me'], $user->getId());
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(409, $result->status);
     }
 
     public function testDelete()

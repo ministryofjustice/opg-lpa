@@ -203,4 +203,84 @@ class OneLoginServiceTest extends TestCase
 
         $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
     }
+
+    public function testLinkExistingAccountPostsPayloadAndReturnsIdentityOnSuccess(): void
+    {
+        $identity = [
+            'userId'         => 'uid-1',
+            'token'          => 'tok-abc',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => 'shared-space-9',
+        ];
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/link',
+                [
+                    'username'    => 'user@example.com',
+                    'password'    => 'sup3r-secret', //pragma: allowlist secret
+                    'oneLoginSub' => 'urn:fdc:gov.uk:2022:new',
+                ],
+                [],
+                true,
+            )
+            ->willReturn(['linked' => true, 'identity' => $identity]);
+
+        $result = $this->service->linkExistingAccount('user@example.com', 'sup3r-secret', 'urn:fdc:gov.uk:2022:new');
+
+        $this->assertTrue($result['linked']);
+        $this->assertSame($identity, $result['identity'] ?? null);
+    }
+
+    public function testLinkExistingAccountReturnsReasonWhenNotLinked(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'reason' => 'already-linked']);
+
+        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame('already-linked', $result['reason'] ?? null);
+        $this->assertArrayNotHasKey('identity', $result);
+    }
+
+    public function testLinkExistingAccountDefaultsReasonWhenBlankOrMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false]);
+
+        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame('unknown', $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountThrowsWhenLinkedMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['reason' => 'x']);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+    }
+
+    public function testLinkExistingAccountThrowsWhenLinkedButIdentityMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => true]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('identity fields missing');
+
+        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+    }
+
+    public function testLinkExistingAccountThrowsWhenResponseIsNull(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(null);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+    }
 }

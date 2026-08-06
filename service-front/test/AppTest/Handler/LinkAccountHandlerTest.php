@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace AppTest\Handler\Lpa;
 
-use App\Authentication\AuthenticationService;
 use App\Form\User\Login;
 use App\Handler\LinkAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
-use App\Service\UserDetails;
-use Laminas\Authentication\Result;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use Laminas\Form\FormElementManager;
+use MakeShared\OneLogin\LinkReason;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -29,8 +28,7 @@ class LinkAccountHandlerTest extends TestCase
 
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
-    private AuthenticationService&MockObject $authenticationService;
-    private UserDetails&MockObject $userDetails;
+    private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
     private SessionInterface&MockObject $session;
     private Login $form;
@@ -38,12 +36,11 @@ class LinkAccountHandlerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->renderer              = $this->createMock(TemplateRendererInterface::class);
-        $this->formElementManager    = $this->createMock(FormElementManager::class);
-        $this->authenticationService = $this->createMock(AuthenticationService::class);
-        $this->userDetails           = $this->createMock(UserDetails::class);
-        $this->logger                = $this->createMock(LoggerInterface::class);
-        $this->session               = $this->createMock(SessionInterface::class);
+        $this->renderer           = $this->createMock(TemplateRendererInterface::class);
+        $this->formElementManager = $this->createMock(FormElementManager::class);
+        $this->oneLoginService    = $this->createMock(OneLoginService::class);
+        $this->logger             = $this->createMock(LoggerInterface::class);
+        $this->session            = $this->createMock(SessionInterface::class);
 
         $this->form = new Login();
         $this->form->init();
@@ -53,8 +50,7 @@ class LinkAccountHandlerTest extends TestCase
         $this->handler = new LinkAccountHandler(
             $this->renderer,
             $this->formElementManager,
-            $this->authenticationService,
-            $this->userDetails,
+            $this->oneLoginService,
             new OneLoginSessionManager(),
             $this->logger,
         );
@@ -86,13 +82,6 @@ class LinkAccountHandlerTest extends TestCase
         return $request;
     }
 
-    private function stubAuthentication(string $email, string $password, bool $valid): void
-    {
-        $this->authenticationService->method('setEmail')->with($email)->willReturn($this->authenticationService);
-        $this->authenticationService->method('setPassword')->with($password)->willReturn($this->authenticationService);
-        $this->authenticationService->method('authenticate')->willReturn(new Result($valid ? 1 : 0, null));
-    }
-
     public function testGetRendersForm(): void
     {
         $this->renderer->expects($this->once())
@@ -122,6 +111,7 @@ class LinkAccountHandlerTest extends TestCase
 
     public function testPostWithInvalidFormRendersForm(): void
     {
+        $this->oneLoginService->expects($this->never())->method('linkExistingAccount');
         $this->renderer->method('render')->willReturn('<html>form with errors</html>');
 
         $response = $this->handler->handle(
@@ -131,21 +121,29 @@ class LinkAccountHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostWithValidFormAndValidAuthLinksSessionSubAndRedirectsToDashboard(): void
+    public function testSuccessfulLinkEstablishesSessionAndRedirectsToDashboard(): void
     {
         $email = 'my.email@example.com';
-        $word = 'guessable';
+        $word  = 'guessable';
 
-        $this->stubAuthentication($email, $word, true);
+        $identity = [
+            'userId'         => 'uid-1',
+            'token'          => 'tok-abc',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
 
-        $this->userDetails->expects($this->once())
-            ->method('setOneLoginSub')
-            ->with(self::PENDING_SUB)
-            ->willReturn(true);
+        $this->oneLoginService->expects($this->once())
+            ->method('linkExistingAccount')
+            ->with($email, $word, self::PENDING_SUB)
+            ->willReturn(['linked' => true, 'identity' => $identity]);
 
+        $this->session->expects($this->once())->method('regenerate');
+        $this->session->expects($this->once())->method('clear');
         $this->session->expects($this->once())
-            ->method('unset')
-            ->with('onelogin_pending_link');
+            ->method('set')
+            ->with('identity', $identity);
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['email' => $email, 'password' => $word])
@@ -155,62 +153,68 @@ class LinkAccountHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 
-    public function testPostWithValidFormAndInvalidAuthRendersForm(): void
+    public function testAlreadyLinkedRedirectsToCannotLinkPage(): void
     {
         $email = 'my.email@example.com';
-        $word = 'guessable';
+        $word  = 'guessable';
 
-        $this->stubAuthentication($email, $word, false);
+        $this->oneLoginService->expects($this->once())
+            ->method('linkExistingAccount')
+            ->with($email, $word, self::PENDING_SUB)
+            ->willReturn(['linked' => false, 'reason' => LinkReason::ALREADY_LINKED]);
 
-        $this->userDetails->expects($this->never())->method('setOneLoginSub');
-        $this->renderer->method('render')->willReturn('<html>form with errors</html>');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('auth.onelogin.link_rejected', ['reason' => LinkReason::ALREADY_LINKED]);
+
+        // A rejected link must not sign the user in.
+        $this->session->expects($this->never())->method('set');
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['email' => $email, 'password' => $word])
         );
 
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/cannot-link-account', $response->getHeaderLine('Location'));
     }
 
-    public function testInvalidAuthPassesAuthErrorToTemplateSoUserIsAdvised(): void
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function correctableFailureProvider(): array
+    {
+        return [
+            'wrong password'  => [LinkReason::INVALID_CREDENTIALS, 'authentication-failed'],
+            'unknown account' => [LinkReason::ACCOUNT_NOT_FOUND, 'authentication-failed'],
+            'deleted account' => [LinkReason::ACCOUNT_DELETED, 'authentication-failed'],
+            'locked account'  => [LinkReason::ACCOUNT_LOCKED, 'locked'],
+            'inactive'        => [LinkReason::ACCOUNT_NOT_ACTIVE, 'not-activated'],
+        ];
+    }
+
+    /**
+     * @dataProvider correctableFailureProvider
+     */
+    public function testCorrectableFailureStaysOnFormWithInlineError(string $reason, string $expectedAuthError): void
     {
         $email = 'my.email@example.com';
         $word  = 'guessable';
 
-        $this->stubAuthentication($email, $word, false);
+        $this->oneLoginService->expects($this->once())
+            ->method('linkExistingAccount')
+            ->with($email, $word, self::PENDING_SUB)
+            ->willReturn(['linked' => false, 'reason' => $reason]);
 
-        $this->userDetails->expects($this->never())->method('setOneLoginSub');
+        // A correctable failure keeps the user on the form and never signs them in.
+        $this->session->expects($this->never())->method('set');
 
         $this->renderer->expects($this->once())
             ->method('render')
             ->with(
                 'application/authenticated/linking/link-account.twig',
-                $this->callback(fn(array $vars) => ($vars['authError'] ?? null) === 'authentication-failed'),
+                $this->callback(fn(array $vars) => ($vars['authError'] ?? null) === $expectedAuthError),
             )
             ->willReturn('<html>form with errors</html>');
-
-        $response = $this->handler->handle(
-            $this->createRequest('POST', ['email' => $email, 'password' => $word])
-        );
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    public function testPostWithValidFormAndValidAuthCannotSetSubRendersForm(): void
-    {
-        $email = 'my.email@example.com';
-        $word = 'guessable';
-
-        $this->stubAuthentication($email, $word, true);
-
-        $this->userDetails->method('setOneLoginSub')->willReturn(false);
-
-        $this->session->expects($this->never())->method('unset');
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with('auth.onelogin.link_persist_failed');
-
-        $this->renderer->method('render')->willReturn('<html>form with errors</html>');
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['email' => $email, 'password' => $word])
