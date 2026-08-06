@@ -3,17 +3,21 @@
 namespace Application\Model\Service\OneLogin;
 
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use DateTime;
 use Facile\OpenIDClient\Session\AuthSession;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\OneLogin\LinkReason;
 use RuntimeException;
 
 class Service extends AbstractService
 {
     use LoggerTrait;
+    use LogRepositoryTrait;
     use UserRepositoryTrait;
 
     private ?AuthorisationClientManager $clientManager = null;
@@ -240,5 +244,94 @@ class Service extends AbstractService
                 'sharedSpaceId'  => $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId),
             ],
         ];
+    }
+
+    /**
+     * Link an existing Make account (identified by email + password) to a GOV.UK
+     * One Login identity that isn't yet associated with any Make account.
+     *
+     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
+     *     |array{linked: false, reason: string}
+     */
+    public function linkExistingAccount(
+        #[\SensitiveParameter] string $username,
+        #[\SensitiveParameter] string $password,
+        string $oneLoginSub,
+    ): array {
+        if ($this->authenticationService === null) {
+            throw new RuntimeException('AuthenticationService must be set');
+        }
+
+        if ($this->sharedSpaceRepository === null) {
+            throw new RuntimeException('SharedSpaceRepository must be set');
+        }
+
+        $user = $this->getUserRepository()->getByUsername($username);
+
+        if (!$user instanceof UserInterface) {
+            $deletionLog = $this->getLogRepository()->getLogByIdentityHash($this->hashIdentity($username));
+
+            return $this->rejectLink(is_array($deletionLog) ? LinkReason::ACCOUNT_DELETED : LinkReason::ACCOUNT_NOT_FOUND);
+        }
+
+        $existingSub = $user->oneLoginSub();
+
+        if (is_string($existingSub) && $existingSub !== '' && $existingSub !== $oneLoginSub) {
+            return $this->rejectLink(LinkReason::ALREADY_LINKED);
+        }
+
+        $authResult = $this->authenticationService->withPassword($username, $password, true);
+
+        if (is_string($authResult)) {
+            return $this->rejectLink($this->mapAuthFailure($authResult));
+        }
+
+        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub);
+
+        $this->getLogger()->info('auth.onelogin.link_success', [
+            'user_id' => $authResult['userId'],
+        ]);
+
+        $lastLogin = $authResult['last_login'] instanceof DateTime ? $authResult['last_login'] : new DateTime();
+        $expiresAt = $authResult['expiresAt'] instanceof DateTime ? $authResult['expiresAt'] : new DateTime();
+        $sharedSpaceId = $authResult['sharedSpaceId'] ?? null;
+
+        return [
+            'linked'   => true,
+            'identity' => [
+                'userId'         => (string) $authResult['userId'],
+                'token'          => (string) $authResult['token'],
+                'tokenExpiresAt' => $expiresAt->format('c'),
+                'lastLogin'      => $lastLogin->format('c'),
+                'sharedSpaceId'  => is_string($sharedSpaceId) ? $sharedSpaceId : null,
+            ],
+        ];
+    }
+
+    /**
+     * @return array{linked: false, reason: string}
+     */
+    private function rejectLink(string $reason): array
+    {
+        $this->getLogger()->info('auth.onelogin.link_rejected', [
+            'reason' => $reason,
+        ]);
+
+        return ['linked' => false, 'reason' => $reason];
+    }
+
+    private function mapAuthFailure(string $result): string
+    {
+        return match ($result) {
+            'account-not-active' => LinkReason::ACCOUNT_NOT_ACTIVE,
+            'account-locked/max-login-attempts',
+            'invalid-user-credentials/account-locked' => LinkReason::ACCOUNT_LOCKED,
+            default => LinkReason::INVALID_CREDENTIALS,
+        };
+    }
+
+    private function hashIdentity(#[\SensitiveParameter] string $identity): string
+    {
+        return hash('sha512', strtolower(trim($identity)));
     }
 }
