@@ -22,7 +22,7 @@ data "aws_iam_policy_document" "s3_gateway_endpoint_allow_account_access" {
     sid       = "Allow-callers-from-specific-account"
     effect    = "Allow"
     actions   = ["*"]
-    resources = ["*"]
+    resources = var.allowed_s3_resource_arns
     principals {
       type        = "AWS"
       identifiers = ["*"]

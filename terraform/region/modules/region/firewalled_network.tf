@@ -60,6 +60,17 @@ data "aws_route_tables" "firewalled_network_application" {
   }
 }
 
+locals {
+  allowed_s3_resource_arns = [
+    # allowed buckets
+    "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}",
+    "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs",
+    # allowed objects
+    "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}/*",
+    "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs/*",
+  ]
+}
+
 module "vpc_endpoints" {
   source                          = "./modules/vpc_endpoints"
   vpc_id                          = module.network.vpc.id
@@ -71,6 +82,7 @@ module "vpc_endpoints" {
   codecatalyst_endpoints_enabled = local.account.regions[data.aws_region.current.region].codecatalyst_endpoints_enabled
   management_account_id          = data.aws_caller_identity.management.account_id
   data_lpa_api_account_id        = var.account.data_lpa_api_account_id
+  allowed_s3_resource_arns       = var.account_name != "production" ? local.allowed_s3_resource_arns : ["*"]
   providers = {
     aws.region = aws
   }
