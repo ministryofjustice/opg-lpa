@@ -359,7 +359,7 @@ class SharedSpaceDataTest extends MockeryTestCase
             ->andReturn($updateMock);
 
         $updateMock->shouldReceive('set')
-            ->with(['isAdmin' => true])
+            ->with(['isAdmin' => true, 'isActive' => true])
             ->andReturn($updateMock);
 
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
@@ -371,7 +371,7 @@ class SharedSpaceDataTest extends MockeryTestCase
 
         // test method
         $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
-        $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
 
         // no exception thrown means the row was updated successfully
         $this->addToAssertionCount(1);
@@ -401,7 +401,7 @@ class SharedSpaceDataTest extends MockeryTestCase
 
         $this->expectException(MemberNotInSharedSpaceException::class);
 
-        $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
     }
 
     public function testUpdateMemberIsAdminRethrowsInvalidQueryException(): void
@@ -432,7 +432,7 @@ class SharedSpaceDataTest extends MockeryTestCase
 
         $this->expectException(InvalidQueryException::class);
 
-        $sharedSpaceData->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
     }
 
     public function testGetInvites(): void

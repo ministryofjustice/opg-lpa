@@ -236,11 +236,11 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $sharedSpaceId = 'my-space';
         $userId = 'user1';
 
-        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $userId, true)
+        $this->sharedSpaceRepository->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $userId, true, false)
             ->once();
 
-        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $this->service->updateMember($sharedSpaceId, $userId, true, false);
 
         $this->addToAssertionCount(1);
     }
@@ -250,14 +250,14 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $sharedSpaceId = 'my-space';
         $userId = 'user1';
 
-        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $userId, true)
+        $this->sharedSpaceRepository->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $userId, true, false)
             ->once()
             ->andThrow(new MemberNotInSharedSpaceException());
 
         $this->expectException(MemberNotInSharedSpaceException::class);
 
-        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $this->service->updateMember($sharedSpaceId, $userId, true, false);
     }
 
     public function testUpdateMemberIsAdminRethrowsException()
@@ -265,14 +265,14 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $sharedSpaceId = 'my-space';
         $userId = 'user1';
 
-        $this->sharedSpaceRepository->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $userId, true)
+        $this->sharedSpaceRepository->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $userId, true, false)
             ->once()
             ->andThrow(new RuntimeException('boom'));
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->updateMemberIsAdmin($sharedSpaceId, $userId, true);
+        $this->service->updateMember($sharedSpaceId, $userId, true, false);
     }
 
     public function testIsAdminReturnsTrueForAdminMember()

@@ -181,7 +181,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         $sql = $this->dbWrapper->createSql();
         $update = $sql->update(self::SHARED_SPACE_MEMBERS);
@@ -191,6 +191,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         ]);
         $update->set([
             'isAdmin' => $isAdmin,
+            'isActive' => $isActive,
         ]);
 
         $statement = $sql->prepareStatementForSqlObject($update);

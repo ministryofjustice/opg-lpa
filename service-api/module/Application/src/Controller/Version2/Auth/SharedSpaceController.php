@@ -331,10 +331,11 @@ class SharedSpaceController extends AbstractRestfulController
         $data = $this->processBodyContent($this->getRequest());
 
         try {
-            $this->sharedSpaceService->updateMemberIsAdmin(
+            $this->sharedSpaceService->updateMember(
                 $result['sharedSpaceId'],
                 $memberUserId,
                 (bool)$data['isAdmin'],
+                (bool)$data['isActive'],
             );
         } catch (MemberNotInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, $e->getMessage());
