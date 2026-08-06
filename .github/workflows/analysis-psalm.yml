@@ -44,7 +44,7 @@ jobs:
           docker compose run --rm \
             --volume ./output:/tmp/output \
             ${{ matrix.scan.service }} \
-            vendor/bin/psalm --report=/tmp/output/psalm-results.sarif --no-cache
+            vendor/bin/psalm --report=/tmp/output/psalm-results.sarif --no-cache --force-jit
         continue-on-error: ${{ matrix.scan.ignoreFailures == true }}
 
       - name: Add prefix to Psalm paths

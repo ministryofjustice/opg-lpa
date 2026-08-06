@@ -90,7 +90,9 @@ CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
 
 FROM base AS composer-tools
 
+
 USER root
+RUN apk add git
 COPY --from=composer /usr/bin/composer /usr/bin/
 WORKDIR /app
 

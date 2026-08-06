@@ -5,15 +5,19 @@ declare(strict_types=1);
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
+use Fig\Http\Message\StatusCodeInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use Throwable;
 use Traversable;
 use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\MvcEvent;
 
 class SharedSpaceController extends AbstractRestfulController
 {
@@ -22,6 +26,27 @@ class SharedSpaceController extends AbstractRestfulController
         private readonly SharedSpaceService $sharedSpaceService,
         private readonly ApplicationsService $applicationsService
     ) {
+    }
+
+    /**
+     * AbstractRestfulController doesn't know how to turn a bare ApiProblem
+     * value returned from an action into a Response with the correct HTTP
+     * status code - without this, ApiProblem responses (e.g. 400/401/403/500)
+     * are sent to clients as a 200 with a malformed body. See
+     * AbstractAuthController::onDispatch() for the equivalent used by
+     * controllers that extend it.
+     *
+     * @return mixed|ApiProblemResponse
+     */
+    public function onDispatch(MvcEvent $e)
+    {
+        $return = parent::onDispatch($e);
+
+        if ($return instanceof ApiProblem) {
+            return new ApiProblemResponse($return);
+        }
+
+        return $return;
     }
 
     /**
@@ -40,13 +65,13 @@ class SharedSpaceController extends AbstractRestfulController
         $token = $this->getRequest()->getHeader('Token');
 
         if ($token === false) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
 
         $result = $this->authenticationService->withToken($token->getFieldValue(), false);
 
         if (is_string($result) || !isset($result['userId'])) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
 
         $userId = $result['userId'];
@@ -54,15 +79,15 @@ class SharedSpaceController extends AbstractRestfulController
         $data = $this->processBodyContent($this->getRequest());
 
         if (!isset($data['name']) || trim((string) $data['name']) === '') {
-            return new ApiProblem(400, 'A name must be passed for the shared space');
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'A name must be passed for the shared space');
         }
 
         try {
             $result = $this->sharedSpaceService->create(trim((string) $data['name']), $userId);
         } catch (UserAlreadyInSharedSpaceException $e) {
-            return new ApiProblem(400, 'user-already-in-shared-space');
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'user-already-in-shared-space');
         } catch (Throwable $e) {
-            return new ApiProblem(500, 'Unable to process request ' . $e->getMessage());
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
         }
 
         return new Json($result);
@@ -83,17 +108,17 @@ class SharedSpaceController extends AbstractRestfulController
         $token = $this->getRequest()->getHeader('Token');
 
         if ($token === false) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
 
         $result = $this->authenticationService->withToken($token->getFieldValue(), false);
 
         if (is_string($result) || !isset($result['userId'])) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
 
         if (empty($result['sharedSpaceId'])) {
-            return new ApiProblem(403, 'Access Denied');
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
         }
 
         $query = $this->params()->fromQuery();
@@ -132,20 +157,58 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json($response);
     }
 
+    /**
+     * Returns a single member's details within the requesting user's shared
+     * space. Only an admin member of the shared space may access this, since
+     * it's used to render the permissions-management form for that member.
+     *
+     * @return Json|ApiProblem
+     */
+    public function memberAction(): Json|ApiProblem
+    {
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $token = $this->getRequest()->getHeader('Token');
+        if ($token === false) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+
+        $result = $this->authenticationService->withToken($token->getFieldValue(), false);
+        if (is_string($result) || !isset($result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+        if (empty($result['sharedSpaceId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($result['sharedSpaceId'], $result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $memberUserId = $this->params()->fromRoute('memberUserId');
+
+        $member = $this->sharedSpaceService->getMember($result['sharedSpaceId'], $memberUserId);
+
+        if ($member === null) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'Member not found');
+        }
+
+        return new Json(['member' => $member]);
+    }
+
     public function membersAction(): Json|ApiProblem
     {
         /** @psalm-suppress UndefinedInterfaceMethod */
         $token = $this->getRequest()->getHeader('Token');
         if ($token === false) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
 
         $result = $this->authenticationService->withToken($token->getFieldValue(), false);
         if (is_string($result) || !isset($result['userId'])) {
-            return new ApiProblem(401, 'invalid-token');
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
         }
         if (empty($result['sharedSpaceId'])) {
-            return new ApiProblem(403, 'Access Denied');
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
         }
 
         $response = [
@@ -153,5 +216,95 @@ class SharedSpaceController extends AbstractRestfulController
         ];
 
         return new Json($response);
+    }
+
+    /**
+     * Adds an existing user as a member of the requesting user's shared space.
+     *
+     * @return Json|ApiProblem
+     */
+    public function addMemberAction(): Json|ApiProblem
+    {
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $token = $this->getRequest()->getHeader('Token');
+        if ($token === false) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+
+        $result = $this->authenticationService->withToken($token->getFieldValue(), false);
+        if (is_string($result) || !isset($result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+        if (empty($result['sharedSpaceId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $data = $this->processBodyContent($this->getRequest());
+
+        if (!isset($data['userIdToAdd']) || !isset($data['isAdmin']) || trim((string) $data['userIdToAdd']) === '') {
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'A userIdToAdd must be passed to add a member to the shared space');
+        }
+
+        try {
+            $this->sharedSpaceService->addMember(
+                $result['sharedSpaceId'],
+                trim((string) $data['userIdToAdd']),
+                $result['userId'],
+                (bool) $data['isAdmin'],
+            );
+        } catch (UserAlreadyInSharedSpaceException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'user-already-in-shared-space');
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return new Json(['success' => true], StatusCodeInterface::STATUS_CREATED);
+    }
+
+    /**
+     * Updates a member's admin permission within the requesting user's
+     * shared space. Only an admin member of the shared space (i.e. whose
+     * auth token resolves to this shared space, and who has admin
+     * permissions within it) may access this.
+     *
+     * @return Json|ApiProblem
+     */
+    public function updateMemberAction(): Json|ApiProblem
+    {
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $token = $this->getRequest()->getHeader('Token');
+        if ($token === false) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+
+        $result = $this->authenticationService->withToken($token->getFieldValue(), false);
+        if (is_string($result) || !isset($result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+        if (empty($result['sharedSpaceId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $memberUserId = $this->params()->fromRoute('memberUserId');
+
+        if (!$this->sharedSpaceService->isAdmin($result['sharedSpaceId'], $result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $data = $this->processBodyContent($this->getRequest());
+
+        try {
+            $this->sharedSpaceService->updateMemberIsAdmin(
+                $result['sharedSpaceId'],
+                $memberUserId,
+                (bool)$data['isAdmin'],
+            );
+        } catch (MemberNotInSharedSpaceException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, $e->getMessage());
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return new Json(['success' => true]);
     }
 }

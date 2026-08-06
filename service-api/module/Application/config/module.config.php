@@ -160,9 +160,57 @@ return [
                             'members' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/members',
-                                    'defaults' => [
-                                        'action' => 'members',
+                                    'route' => '/members',
+                                ],
+                                'may_terminate' => false,
+                                'child_routes' => [
+                                    'list' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'get',
+                                            'defaults' => [
+                                                'action' => 'members',
+                                            ],
+                                        ],
+                                    ],
+                                    'add' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'addMember',
+                                            ],
+                                        ],
+                                    ],
+                                    'update' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/:memberUserId',
+                                            'constraints' => [
+                                                'memberUserId' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                        'may_terminate' => false,
+                                        'child_routes'  => [
+                                            'get' => [
+                                                'type'    => 'Method',
+                                                'options' => [
+                                                    'verb'     => 'get',
+                                                    'defaults' => [
+                                                        'action' => 'member',
+                                                    ],
+                                                ],
+                                            ],
+                                            'patch' => [
+                                                'type'    => 'Method',
+                                                'options' => [
+                                                    'verb'     => 'patch',
+                                                    'defaults' => [
+                                                        'action' => 'updateMember',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],

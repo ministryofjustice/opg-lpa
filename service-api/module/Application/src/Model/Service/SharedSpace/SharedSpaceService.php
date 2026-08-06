@@ -8,6 +8,7 @@ use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -72,14 +73,15 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $spaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'userId'        => $userId,
-                'sharedSpaceId' => $spaceId,
+                'user_id'        => $userId,
+                'shared_space_id' => $spaceId,
                 'count'         => $lpasMoved,
             ]);
 
             // The creating user becomes the first member of the shared space, so
-            // they retain access to the LPAs they just moved into it.
-            $this->sharedSpaceRepository->addMember($spaceId, $userId);
+            // they retain access to the LPAs they just moved into it. They're
+            // made an admin so they can manage the shared space's membership.
+            $this->sharedSpaceRepository->addMember($spaceId, $userId, isAdmin: true);
 
             $this->sharedSpaceRepository->commit();
         } catch (Throwable $e) {
@@ -89,7 +91,7 @@ class SharedSpaceService
                 'class' => $e::class,
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'stackTrace' => $e->getTraceAsString(),
+                'stack_trace' => $e->getTraceAsString(),
             ]);
 
             throw $e;
@@ -109,16 +111,43 @@ class SharedSpaceService
         ];
     }
 
+    public function getMember(string $sharedSpaceId, string $memberUserId): ?array
+    {
+        $member = $this->sharedSpaceRepository->getMember($sharedSpaceId, $memberUserId);
+
+        if ($member === null) {
+            return null;
+        }
+
+        $profiles = $this->userRepository->getProfiles([$memberUserId]);
+        $profile = $profiles[0] ?? null;
+
+        if ($profile === null) {
+            return null;
+        }
+
+        return [
+            'id' => $profile->getId(),
+            'name' => $profile->getName(),
+            'email' => $profile->getEmail(),
+            'lastLoginAt' => $profile->getLastLoginAt(),
+            'isActive' => $member->getIsActive(),
+            'isAdmin' => $member->getIsAdmin(),
+        ];
+    }
+
     public function getMembers(string $sharedSpaceId): array
     {
-        $users = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
-        $profiles = $this->userRepository->getProfiles(array_map(function ($user) {
-            return $user['userId'];
-        }, $users));
+        $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
+        $ids = array_map(function (SharedSpaceMember $member) {
+            return $member->getUserId();
+        }, $members);
 
-        return array_map(function ($profile) use ($users) {
-            $user = array_find($users, function ($user) use ($profile) {
-                return $user['userId'] === $profile->getId();
+        $profiles = $this->userRepository->getProfiles($ids);
+
+        return array_map(function ($profile) use ($members) {
+            $member = array_find($members, function (SharedSpaceMember $member) use ($profile) {
+                return $member->getUserId() === $profile->getId();
             });
 
             return [
@@ -126,9 +155,66 @@ class SharedSpaceService
                 'name' => $profile->getName(),
                 'email' => $profile->getEmail(),
                 'lastLoginAt' => $profile->getLastLoginAt(),
-                'isActive' => $user['isActive'] ?? true, // TODO: since we don't set this yet...
-                'isAdmin' => $user['isAdmin'] ?? true, // TODO: or this
+                'isActive' => $member->getIsActive(),
+                'isAdmin' => $member->getIsAdmin(),
             ];
         }, $profiles);
+    }
+
+    public function isAdmin(string $sharedSpaceId, string $userId): bool
+    {
+        return $this->sharedSpaceRepository->isAdmin($sharedSpaceId, $userId);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function addMember(string $sharedSpaceId, string $userIdToAdd, string $userIdAddingMember, bool $isAdmin = false): void
+    {
+        if ($this->sharedSpaceRepository->getSharedSpaceIdForUser($userIdToAdd) !== null) {
+            $this->logger->error('User already belongs to a shared space', [
+                'user_id' => $userIdToAdd,
+            ]);
+
+            throw new UserAlreadyInSharedSpaceException();
+        }
+
+        try {
+            $this->sharedSpaceRepository->addMember($sharedSpaceId, $userIdToAdd, $isAdmin);
+        } catch (Throwable $e) {
+            $this->logger->error('Unable to add member to shared space: ' . $e->getMessage(), [
+                'shared_space_id' => $sharedSpaceId,
+            ]);
+
+            throw $e;
+        }
+
+        $this->logger->info('Member added to shared space', [
+            'event'          => 'shared_space.member_added',
+            'shared_space_id' => $sharedSpaceId,
+            'added_user_id'        => $userIdToAdd,
+            'added_by_user_id' => $userIdAddingMember,
+            'is_admin' => $isAdmin,
+        ]);
+    }
+
+    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
+    {
+        try {
+            $this->sharedSpaceRepository->updateMemberIsAdmin($sharedSpaceId, $userId, $isAdmin);
+        } catch (Throwable $e) {
+            $this->logger->error('Unable to update shared space member: ' . $e->getMessage(), [
+                'user_id' => $userId,
+            ]);
+
+            throw $e;
+        }
+
+        $this->logger->info('Shared space member updated', [
+            'event'          => 'shared_space.member_updated',
+            'shared_space_id' => $sharedSpaceId,
+            'user_id'        => $userId,
+            'is_admin'       => $isAdmin,
+        ]);
     }
 }
