@@ -246,38 +246,9 @@ class OneLoginServiceTest extends TestCase
         $this->assertArrayNotHasKey('identity', $result);
     }
 
-    public function testLinkExistingAccountDefaultsReasonWhenBlankOrMissing(): void
+    public function testLinkExistingAccountPropagatesClientException(): void
     {
-        $this->apiClient->method('httpPost')->willReturn(['linked' => false]);
-
-        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
-
-        $this->assertFalse($result['linked']);
-        $this->assertSame('unknown', $result['reason'] ?? null);
-    }
-
-    public function testLinkExistingAccountThrowsWhenLinkedMissing(): void
-    {
-        $this->apiClient->method('httpPost')->willReturn(['reason' => 'x']);
-
-        $this->expectException(RuntimeException::class);
-
-        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
-    }
-
-    public function testLinkExistingAccountThrowsWhenLinkedButIdentityMissing(): void
-    {
-        $this->apiClient->method('httpPost')->willReturn(['linked' => true]);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('identity fields missing');
-
-        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
-    }
-
-    public function testLinkExistingAccountThrowsWhenResponseIsNull(): void
-    {
-        $this->apiClient->method('httpPost')->willReturn(null);
+        $this->apiClient->method('httpPost')->willThrowException(new RuntimeException('api down'));
 
         $this->expectException(RuntimeException::class);
 

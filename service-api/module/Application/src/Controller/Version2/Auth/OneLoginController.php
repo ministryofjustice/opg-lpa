@@ -93,38 +93,25 @@ class OneLoginController extends AbstractAuthController
         return new JsonModel($result);
     }
 
+
     /**
      * Link an existing Make account to a One Login identity that is not yet associated with any Make account.
      *
-     * @return JsonModel|ApiProblem
+     * @return JsonModel
      */
-    public function linkAction(): JsonModel|ApiProblem
+    public function linkAction(): JsonModel
     {
-        /** @var mixed $body */
+        /** @var array{username: string, password: string, oneLoginSub: string} $body */
         $body = json_decode((string) $this->getRequest()->getContent(), true);
-
-        if (!is_array($body)) {
-            return new ApiProblem(400, 'A JSON request body must be provided');
-        }
-
-        $username    = $body['username'] ?? null;
-        $password    = $body['password'] ?? null;
-        $oneLoginSub = $body['oneLoginSub'] ?? null;
-
-        if (!is_string($username) || $username === '') {
-            return new ApiProblem(400, 'username must be provided');
-        }
-        if (!is_string($password) || $password === '') {
-            return new ApiProblem(400, 'password must be provided');
-        }
-        if (!is_string($oneLoginSub) || $oneLoginSub === '') {
-            return new ApiProblem(400, 'oneLoginSub must be provided');
-        }
 
         TelemetryEventManager::triggerStart('OneLoginController.linkAction');
 
         try {
-            $result = $this->getService()->linkExistingAccount($username, $password, $oneLoginSub);
+            $result = $this->getService()->linkExistingAccount(
+                $body['username'],
+                $body['password'],
+                $body['oneLoginSub'],
+            );
         } finally {
             TelemetryEventManager::triggerStop();
         }

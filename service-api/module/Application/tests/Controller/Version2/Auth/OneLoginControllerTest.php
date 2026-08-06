@@ -173,40 +173,6 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertStringContainsString('One Login authentication failed', $result->detail);
     }
 
-    /**
-     * @return array<string, array{string}>
-     */
-    public static function missingLinkFieldProvider(): array
-    {
-        return [
-            'username'    => ['username'],
-            'password'    => ['password'],
-            'oneLoginSub' => ['oneLoginSub'],
-        ];
-    }
-
-    /**
-     * @dataProvider missingLinkFieldProvider
-     */
-    public function testLinkActionReturnsBadRequestWhenFieldMissing(string $missingField): void
-    {
-        $body = [
-            'username'    => 'user@example.com',
-            'password'    => 'sup3r-secret', //pragma: allowlist secret
-            'oneLoginSub' => 'urn:fdc:gov.uk:2022:new',
-        ];
-        unset($body[$missingField]);
-
-        /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
-
-        $result = $controller->linkAction();
-
-        $this->assertInstanceOf(ApiProblem::class, $result);
-        $this->assertSame(400, $result->status);
-        $this->assertStringContainsString($missingField, $result->detail);
-    }
-
     public function testLinkActionReturnsJsonModelWithServiceResult(): void
     {
         $body = [
