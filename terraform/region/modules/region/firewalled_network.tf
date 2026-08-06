@@ -75,11 +75,9 @@ module "vpc_endpoints" {
     # allowed buckets
     "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}",
     "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs",
-    "arn:aws:s3:::online-lpa-${var.account_name}-lb-access-logs",
     # allowed objects
     "arn:aws:s3:::online-lpa-pdf-cache-${var.account_name}-${data.aws_region.current.region}/*",
     "arn:aws:s3:::online-lpa-${var.account_name}-${data.aws_region.current.region}-lb-access-logs/*",
-    "arn:aws:s3:::online-lpa-${var.account_name}-lb-access-logs/*",
   ]
   providers = {
     aws.region = aws
