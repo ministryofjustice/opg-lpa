@@ -102,10 +102,9 @@ class OneLoginService
     }
 
     /**
-     * Attempt to link an existing Make account (email + password) to the One Login identity.
+     * Attempt to link an existing Make account to the One Login identity.
      *
-     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
-     *     |array{linked: false, reason: string}
+     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string}
      * @throws RuntimeException
      */
     public function linkExistingAccount(
