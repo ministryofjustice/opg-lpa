@@ -87,27 +87,44 @@ Given(/^I create a new user with (\d+) LPAs?(?: that belongs to a shared space c
 
 When(`I log in as the newly created fixture user`, () => {
     cy.get('@fixtureUser').then(({email, password}) => {
-        cy.visitWithChecks('/login');
-
-        cy.title().then((title) => {
-            expect(title.toLowerCase()).to.include('sign in');
-        });
-
-        cy.get('[data-cy=login-email]').clear().type(email);
-        cy.get('[data-cy=login-password]').clear().type(password);
-        cy.get('[data-cy=login-submit-button]').click();
+      login(email, password)
     });
+});
+
+When(`I (try to) log in as the member added to the shared space`, () => {
+  cy.contains('Sign Out').click();
+  cy.get('@addedMember').then(({email, password}) => {
+    login(email, password)
+  });
+});
+
+function login(email, password) {
+  cy.visitWithChecks('/login');
+
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
+
+  cy.get('[data-cy=login-email]').clear().type(email);
+  cy.get('[data-cy=login-password]').clear().type(password);
+  cy.get('[data-cy=login-submit-button]').click();
+}
+
+Then(`I should not be logged in and I see a suspended account error`, () => {
+  cy.url().should('include', Cypress.config().baseUrl + '/login');
+  cy.contains('This user account has been suspended').should('exist');
 });
 
 Given(`the shared space has a member called {string} who is a(n) {string}`, (memberName, adminStatus) => {
   cy.get('@fixtureUser').then(({email: userAddingEmail, sharedSpaceId}) => {
     createUserWithLpas(0, '', memberName).then(
-      ({email, userId}) => {
+      ({email, password, userId}) => {
         cy.task('log', `Created fixture user ${email} with 0 LPA(s)`);
 
         addMemberToSharedSpace(sharedSpaceId, userId, userAddingEmail, adminStatus === 'admin').then(
           () => {
             cy.task('log', `Added member ${memberName} to shared space with ID ${sharedSpaceId} as ${adminStatus}`);
+            cy.wrap({email, password}).as('addedMember');
           },
         );
       },
@@ -115,12 +132,22 @@ Given(`the shared space has a member called {string} who is a(n) {string}`, (mem
   });
 });
 
-Then(`{string} should be a(n) {string}`, (memberName, adminStatus) => {
+Then(`{string} permissions should be set to {string}`, (memberName, adminStatus) => {
     cy.contains('tr', memberName).within(() => {
-        if (adminStatus === 'admin') {
+        if (adminStatus.toLowerCase() === 'admin') {
             cy.contains('Admin').should('exist');
         } else {
             cy.contains('Admin').should('not.exist');
         }
     });
+});
+
+Then(`{string} status should be {string}`, (memberName, activeStatus) => {
+  cy.contains('tr', memberName).within(() => {
+    if (activeStatus.toLowerCase() === 'active') {
+      cy.contains('Active').should('exist');
+    } else {
+      cy.contains('Suspended').should('exist');
+    }
+  });
 });

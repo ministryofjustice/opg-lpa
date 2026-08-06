@@ -20,6 +20,7 @@ use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -110,29 +111,37 @@ class LoginHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 
-    public function testTimeoutStateIsPassedToTemplate(): void
+    public static function stateDataProvider(): array
     {
-        $this->session->method('has')->with('identity')->willReturn(false);
-
-        $this->renderer
-            ->expects($this->once())
-            ->method('render')
-            ->with(
-                'application/general/auth/index.twig',
-                $this->callback(function ($params) {
-                    return $params['isTimeout'] === true
-                        && $params['isInternalSystemError'] === false;
-                })
-            )
-            ->willReturn('<html>login form</html>');
-
-        $response = $this->handler->handle($this->createRequestWithSession(state: 'timeout'));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        return [
+            'timeout' => [
+                'state' => 'timeout',
+                'authError' => null,
+                'isTimeout' => true,
+                'isInternalSystemError' => false,
+            ],
+            'internal-system-error' => [
+                'state' => 'internal-system-error',
+                'authError' => null,
+                'isTimeout' => false,
+                'isInternalSystemError' => true,
+            ],
+            'member-suspended' => [
+                'state' => 'member-suspended',
+                'authError' => 'member-suspended',
+                'isTimeout' => false,
+                'isInternalSystemError' => false,
+            ],
+        ];
     }
 
-    public function testInternalSystemErrorStateIsPassedToTemplate(): void
-    {
+    #[DataProvider('stateDataProvider')]
+    public function testStateIsPassedToTemplate(
+        string $state,
+        ?string $authError,
+        bool $isTimeout,
+        bool $isInternalSystemError
+    ): void {
         $this->session->method('has')->with('identity')->willReturn(false);
 
         $this->renderer
@@ -140,14 +149,15 @@ class LoginHandlerTest extends TestCase
             ->method('render')
             ->with(
                 'application/general/auth/index.twig',
-                $this->callback(function ($params) {
-                    return $params['isTimeout'] === false
-                        && $params['isInternalSystemError'] === true;
+                $this->callback(function ($params) use ($authError, $isTimeout, $isInternalSystemError) {
+                    return $params['isTimeout'] === $isTimeout
+                        && $params['isInternalSystemError'] === $isInternalSystemError
+                        && $params['authError'] === $authError;
                 })
             )
             ->willReturn('<html>login form</html>');
 
-        $response = $this->handler->handle($this->createRequestWithSession(state: 'internalSystemError'));
+        $response = $this->handler->handle($this->createRequestWithSession(state: $state));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }

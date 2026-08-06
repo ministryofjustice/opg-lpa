@@ -117,10 +117,10 @@ final class SharedSpaceServiceTest extends TestCase
     {
         $this->client->expects($this->once())
             ->method('httpPatch')
-            ->with('/v2/shared-space/members/user-1', ['isAdmin' => true])
+            ->with('/v2/shared-space/members/user-1', ['isAdmin' => true, 'isActive' => true])
             ->willReturn(['success' => true]);
 
-        $result = $this->service->updateMemberIsAdmin('user-1', true);
+        $result = $this->service->updateMember('user-1', true, true);
 
         $this->assertTrue($result);
     }
@@ -129,7 +129,7 @@ final class SharedSpaceServiceTest extends TestCase
     {
         $this->client->method('httpPatch')->willThrowException(new \RuntimeException('api-error'));
 
-        $result = $this->service->updateMemberIsAdmin('user-1', true);
+        $result = $this->service->updateMember('user-1', true, true);
 
         $this->assertFalse($result);
     }

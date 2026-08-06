@@ -620,9 +620,10 @@ final class LegacyCompatExtensionTest extends TestCase
             'div-attributes' => ['class' => 'govuk-radios__item'],
         ]);
         $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+        /** @psalm-suppress InvalidArgument */
         $radio->setValueOptions([
             'donor'    => ['label' => 'The donor',     'value' => 'donor'],
-            'attorney' => ['label' => 'The attorneys', 'value' => '1,2'],
+            'attorney' => ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],
         ]);
 
         $html = $this->extension->formRadio($radio);
@@ -636,6 +637,7 @@ final class LegacyCompatExtensionTest extends TestCase
         // No legacy classes
         $this->assertStringNotContainsString('multiple-choice', $html);
         $this->assertStringNotContainsString('block-label', $html);
+        $this->assertStringContainsString('<div id="whoIsRegistering-1,2-hint" class="govuk-hint govuk-radios__hint">A hint</div>', $html);
     }
 
     public function testFormRadioElementLevelClassDetectionTakesPriorityOverPerOptionDetection(): void

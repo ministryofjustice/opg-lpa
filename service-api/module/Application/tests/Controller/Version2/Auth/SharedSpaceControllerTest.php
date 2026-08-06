@@ -462,12 +462,12 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn(true)
             ->once();
 
-        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $memberUserId, true)
+        $this->sharedSpaceService->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $memberUserId, true, true)
             ->andReturn(true)
             ->once();
 
-        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true]);
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true, 'isActive' => true]);
         $result = $this->controller->updateMemberAction();
 
         $this->assertInstanceOf(Json::class, $result);
@@ -476,7 +476,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertEquals(['success' => true], $body);
     }
 
-    public function testUpdateMemberActionNotFound()
+    public function testUpdateMemberWhenMemberNotInSharedSpace()
     {
         $userId = 'my-user';
         $sharedSpaceId = 'my-space';
@@ -491,12 +491,12 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn(true)
             ->once();
 
-        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $memberUserId, false)
+        $this->sharedSpaceService->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $memberUserId, false, false)
             ->andThrow(new MemberNotInSharedSpaceException())
             ->once();
 
-        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => false]);
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => false, 'isActive' => false]);
         $result = $this->controller->updateMemberAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
@@ -518,12 +518,12 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn(true)
             ->once();
 
-        $this->sharedSpaceService->shouldReceive('updateMemberIsAdmin')
-            ->with($sharedSpaceId, $memberUserId, true)
+        $this->sharedSpaceService->shouldReceive('updateMember')
+            ->with($sharedSpaceId, $memberUserId, true, false)
             ->andThrow(new RuntimeException('boom'))
             ->once();
 
-        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true]);
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true, 'isActive' => false]);
         $result = $this->controller->updateMemberAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
@@ -544,7 +544,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn(false)
             ->once();
 
-        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+        $this->sharedSpaceService->shouldNotReceive('updateMember');
 
         $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId], ['isAdmin' => true]);
         $result = $this->controller->updateMemberAction();
@@ -558,7 +558,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $userId = 'my-user';
 
         $this->sharedSpaceService->shouldNotReceive('isAdmin');
-        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+        $this->sharedSpaceService->shouldNotReceive('updateMember');
 
         $this->makeRequest(['userId' => $userId]);
         $result = $this->controller->updateMemberAction();
@@ -570,7 +570,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
     public function testUpdateMemberActionInvalidToken()
     {
         $this->sharedSpaceService->shouldNotReceive('isAdmin');
-        $this->sharedSpaceService->shouldNotReceive('updateMemberIsAdmin');
+        $this->sharedSpaceService->shouldNotReceive('updateMember');
 
         $this->makeRequest(false);
         $result = $this->controller->updateMemberAction();
