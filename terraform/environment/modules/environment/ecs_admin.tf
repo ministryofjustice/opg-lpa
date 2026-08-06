@@ -31,10 +31,10 @@ resource "aws_ecs_service" "admin" {
     ]
   }
 
-  deployment_circuit_breaker {
-    enable   = true
-    rollback = true
-  }
+  # deployment_circuit_breaker {
+  #   enable   = true
+  #   rollback = true
+  # }
 
   timeouts {
     create = var.environment_name == "production" ? "20m" : "10m"
@@ -206,7 +206,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = true,
+      readonlyRootFilesystem = false,
       image                  = "${data.aws_ecr_repository.lpa_admin_app.repository_url}@${data.aws_ecr_image.lpa_admin_app.image_digest}",
       mountPoints = [
         {

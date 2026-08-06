@@ -29,4 +29,4 @@ RUN apk upgrade --no-cache
 USER nginx
 COPY --from=asset-env --chown=nginx:nginx /app/public /web
 COPY --chown=nginx:nginx service-admin/docker/web/etc /etc
-VOLUME [ "/etc" ]
+VOLUME ["/etc"]
