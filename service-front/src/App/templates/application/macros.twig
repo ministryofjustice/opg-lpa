@@ -50,7 +50,6 @@
 
 {# Text input #}
 {% macro formGroup(element) %}
-
 <div class="govuk-form-group{{ element.getMessages|length >0 ? ' govuk-form-group--error'}}">
     {{ formElementErrorsV2(element) }}
     <label class="govuk-label" for="{{ element.getAttribute('id') }}">
@@ -58,7 +57,6 @@
     </label>
     {{ formElement(element) }}
 </div>
-
 {% endmacro %}
 
 {% macro formGroup2(element) %}

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Application\Model\Service\SharedSpace;
 
 use Application\Library\MillisecondDateTime;
+use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -190,11 +192,11 @@ class SharedSpaceService
         }
 
         $this->logger->info('Member added to shared space', [
-            'event'          => 'shared_space.member_added',
-            'shared_space_id' => $sharedSpaceId,
-            'added_user_id'        => $userIdToAdd,
+            'event'            => 'shared_space.member_added',
+            'shared_space_id'  => $sharedSpaceId,
+            'added_user_id'    => $userIdToAdd,
             'added_by_user_id' => $userIdAddingMember,
-            'is_admin' => $isAdmin,
+            'is_admin'         => $isAdmin,
         ]);
     }
 
@@ -211,10 +213,38 @@ class SharedSpaceService
         }
 
         $this->logger->info('Shared space member updated', [
-            'event'          => 'shared_space.member_updated',
+            'event'           => 'shared_space.member_updated',
             'shared_space_id' => $sharedSpaceId,
-            'user_id'        => $userId,
-            'is_admin'       => $isAdmin,
+            'user_id'         => $userId,
+            'is_admin'        => $isAdmin,
         ]);
+    }
+
+    public function getInvites(string $sharedSpaceId): array
+    {
+        $invites = $this->sharedSpaceRepository->getInvites($sharedSpaceId);
+
+        return array_map(function (MemberInvite $invite) {
+            return [
+                'fullName' => $invite->firstNames . ' ' . $invite->lastName,
+                'email' => $invite->email,
+                'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
+            ];
+        }, $invites);
+    }
+
+    /**
+     * @return array{id: int, sharedSpaceName: string, inviteCode: string}
+     */
+    public function invite(MemberInvite $memberInvite): array
+    {
+        $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($memberInvite->sharedSpaceId);
+        $id = $this->sharedSpaceRepository->createInvite($memberInvite);
+
+        return [
+            'id' => $id,
+            'sharedSpaceName' => $sharedSpaceName,
+            'inviteCode' => $memberInvite->code,
+        ];
     }
 }
