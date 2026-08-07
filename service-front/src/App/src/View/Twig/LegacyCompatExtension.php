@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\View\Twig;
 
+use App\Feature;
 use App\Form\Error\FormLinkedErrors;
 use App\Model\FlashMessagesHolder;
 use App\Model\FormFlowChecker;
@@ -206,6 +207,7 @@ class LegacyCompatExtension extends AbstractExtension
                 'route'            => $currentRoute,
                 'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
                 'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
+                'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
             ],
         ]);
     }

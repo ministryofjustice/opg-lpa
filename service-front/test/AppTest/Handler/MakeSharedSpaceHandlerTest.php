@@ -89,7 +89,7 @@ class MakeSharedSpaceHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/dashboard', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space/created', $response->getHeaderLine('Location'));
     }
 
     public function testPostWhenCreationFailsShowsErrorAndDoesNotRefreshIdentity(): void
