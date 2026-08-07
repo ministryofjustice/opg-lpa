@@ -21,7 +21,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 class LoginRouteTest extends TestCase
 {
-    private const string ROUTE_PATH = '/login[/{state:(?:timeout|internalSystemError)}]';
+    private const string ROUTE_PATH = '/login[/{state:(?:timeout|internal-system-error)}]';
     private const array ALLOWED_METHODS = ['GET', 'POST'];
 
     private FastRouteRouter $router;
@@ -57,8 +57,8 @@ class LoginRouteTest extends TestCase
             'POST /login'                     => ['POST', 'http://localhost/login'],
             'GET /login/timeout'              => ['GET',  'http://localhost/login/timeout'],
             'POST /login/timeout'             => ['POST', 'http://localhost/login/timeout'],
-            'GET /login/internalSystemError'  => ['GET',  'http://localhost/login/internalSystemError'],
-            'POST /login/internalSystemError' => ['POST', 'http://localhost/login/internalSystemError'],
+            'GET /login/internal-system-error'  => ['GET',  'http://localhost/login/internal-system-error'],
+            'POST /login/internal-system-error' => ['POST', 'http://localhost/login/internal-system-error'],
         ];
     }
 

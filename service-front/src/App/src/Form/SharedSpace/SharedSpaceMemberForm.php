@@ -6,6 +6,7 @@ namespace App\Form\SharedSpace;
 
 use App\Form\AbstractForm;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Radio;
 
 /**
  * @template T
@@ -27,6 +28,31 @@ class SharedSpaceMemberForm extends AbstractForm
                 'id'      => 'permissions',
                 'class'   => 'govuk-checkboxes__input',
                 'data-cy' => 'permissions',
+            ],
+        ]);
+
+        $this->add([
+            'name'       => 'status',
+            'type'       => Radio::class,
+            'attributes' => [
+                'id'             => 'status',
+                'class'          => 'govuk-radios__input',
+                'div-attributes' => ['class' => 'govuk-radios__item'],
+            ],
+            'options' => [
+                'value_options' => [
+                    'allow' => [
+                        'label'      => 'Allow access to this shared space',
+                        'value'      => 'active',
+                        'attributes' => ['data-cy' => 'active'],
+                    ],
+                    'suspend' => [
+                        'label'      => 'Suspend access to this shared space',
+                        'value'      => 'inactive',
+                        'attributes' => ['data-cy' => 'inactive'],
+                        'hint'       => 'Allow access to this shared space',
+                    ],
+                ],
             ],
         ]);
 
