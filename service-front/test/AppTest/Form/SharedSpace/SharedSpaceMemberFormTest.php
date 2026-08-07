@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace AppTest\Form\SharedSpace;
 
-use App\Form\AbstractForm;
 use App\Form\SharedSpace\SharedSpaceMemberForm;
 use Laminas\Form\Element\Checkbox;
 use PHPUnit\Framework\TestCase;
@@ -24,42 +23,44 @@ final class SharedSpaceMemberFormTest extends TestCase
         $this->assertSame('sharedSpaceMember', $this->form->getName());
     }
 
-    public function testIsAbstractForm(): void
-    {
-        $this->assertInstanceOf(AbstractForm::class, $this->form);
-    }
-
     public function testHasPermissionsCheckboxElement(): void
     {
         $this->assertTrue($this->form->has('permissions'));
         $this->assertInstanceOf(Checkbox::class, $this->form->get('permissions'));
     }
 
-    public function testIsValidWhenCheckboxIsChecked(): void
+    public function testIsValidWhenPermissionsAndStatusSet(): void
     {
-        $this->form->setData(['permissions' => '1']);
+        $this->form->setData(['permissions' => '1', 'status' => 'active']);
         $this->assertTrue($this->form->isValid());
 
         $data = $this->form->getData();
         $this->assertIsArray($data);
         $this->assertSame('1', $data['permissions']);
+        $this->assertSame('active', $data['status']);
     }
 
     public function testIsValidWhenCheckboxIsUncheckedAndSubmittedAsZero(): void
     {
-        $this->form->setData(['permissions' => '0']);
+        $this->form->setData(['permissions' => '0', 'status' => 'active']);
 
         $this->assertTrue($this->form->isValid());
 
         $data = $this->form->getData();
         $this->assertIsArray($data);
         $this->assertSame('0', $data['permissions']);
+        $this->assertSame('active', $data['status']);
     }
 
     public function testIsValidWhenCheckboxFieldIsMissingEntirely(): void
     {
-        $this->form->setData([]);
+        $this->form->setData(['status' => 'active']);
 
         $this->assertTrue($this->form->isValid());
+
+        $data = $this->form->getData();
+        $this->assertIsArray($data);
+        $this->assertNull($data['permissions']);
+        $this->assertSame('active', $data['status']);
     }
 }

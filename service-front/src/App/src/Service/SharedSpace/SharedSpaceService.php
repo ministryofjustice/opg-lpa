@@ -100,18 +100,19 @@ class SharedSpaceService
         return true;
     }
 
-    public function updateMemberIsAdmin(string $memberUserId, bool $isAdmin): bool
+    public function updateMember(string $memberUserId, bool $isAdmin, bool $isActive): bool
     {
         try {
             $this->client->httpPatch(
                 '/v2/shared-space/members/' . $memberUserId,
-                ['isAdmin' => $isAdmin],
+                ['isAdmin' => $isAdmin, 'isActive' => $isActive],
             );
         } catch (\Throwable $e) {
             $this->logger->error('Updating shared space member failed', [
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
                 'isAdmin' => $isAdmin,
+                'isActive' => $isActive,
             ]);
 
             return false;
