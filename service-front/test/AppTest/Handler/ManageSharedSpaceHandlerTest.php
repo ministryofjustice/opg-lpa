@@ -11,6 +11,7 @@ use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -31,23 +32,37 @@ class ManageSharedSpaceHandlerTest extends TestCase
         );
     }
 
-    public function testGetShowsMembers(): void
+    public static function getShowsMembersAndInvitesProvider(): array
     {
-        $members = [
-            ['id' => 'a-user', 'isAdmin' => false],
-            ['id' => 'my-user', 'isAdmin' => true],
-            ['id' => 'another-user', 'isAdmin' => false],
+        return [
+            [['invite' => 'success'], false, true],
+            [[], true, false],
+        ];
+    }
+
+    #[DataProvider('getShowsMembersAndInvitesProvider')]
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess): void
+    {
+        $response = [
+            'members' => [
+                ['id' => 'a-user', 'isAdmin' => false],
+                ['id' => 'my-user', 'isAdmin' => $isAdmin],
+                ['id' => 'another-user', 'isAdmin' => false],
+            ],
+            'invites' => ['a' => 'b'],
         ];
 
         $this->sharedSpaceService
             ->expects($this->once())
-            ->method('getMembers')
-            ->willReturn(['members' => $members]);
+            ->method('getMembersAndInvites')
+            ->willReturn($response);
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/manage.twig', [
-                'members' => $members,
-                'signedInUserIsAdmin' => true,
+                'members' => $response['members'],
+                'invites' => $response['invites'],
+                'inviteSuccess' => $inviteSuccess,
+                'signedInUserIsAdmin' => $isAdmin,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,
@@ -58,7 +73,8 @@ class ManageSharedSpaceHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
-            ->withMethod('GET');
+            ->withMethod('GET')
+            ->withQueryParams($query);
 
         $response = $this->handler->handle($request);
 

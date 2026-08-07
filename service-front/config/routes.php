@@ -21,6 +21,7 @@ use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
+use App\Handler\InviteMemberHandler;
 use App\Handler\LinkAccountHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
@@ -197,6 +198,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ['GET', 'POST'],
             'shared-space.members.manage'
         );
+        $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {
