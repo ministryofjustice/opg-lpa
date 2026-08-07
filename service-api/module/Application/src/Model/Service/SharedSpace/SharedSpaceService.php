@@ -200,10 +200,10 @@ class SharedSpaceService
         ]);
     }
 
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         try {
-            $this->sharedSpaceRepository->updateMemberIsAdmin($sharedSpaceId, $userId, $isAdmin);
+            $this->sharedSpaceRepository->updateMember($sharedSpaceId, $userId, $isAdmin, $isActive);
         } catch (Throwable $e) {
             $this->logger->error('Unable to update shared space member: ' . $e->getMessage(), [
                 'user_id' => $userId,
@@ -217,6 +217,7 @@ class SharedSpaceService
             'shared_space_id' => $sharedSpaceId,
             'user_id'         => $userId,
             'is_admin'        => $isAdmin,
+            'is_active'       => $isActive,
         ]);
     }
 

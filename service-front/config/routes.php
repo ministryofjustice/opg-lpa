@@ -150,7 +150,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/stats', StatsHandler::class, 'stats')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route('/login[/{state:(?:timeout|internalSystemError)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
+    $app->route('/login[/{state:(?:timeout|internal-system-error|member-suspended)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);

@@ -90,16 +90,6 @@ interface SharedSpaceRepositoryInterface
     public function isAdmin(string $sharedSpaceId, string $userId): bool;
 
     /**
-     * Updates a member's admin permission within a shared space.
-     *
-     * @param string $sharedSpaceId
-     * @param string $userId
-     * @param bool $isAdmin
-     * @throws Exception
-     */
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void;
-
-    /**
      * @return array<MemberInvite>
      */
     public function getInvites(string $sharedSpaceId): array;
@@ -108,4 +98,6 @@ interface SharedSpaceRepositoryInterface
      * Create an invite to a new shared space member.
      */
     public function createInvite(MemberInvite $memberInvite): int;
+
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
 }

@@ -4,6 +4,7 @@
 {%- set overridePageTitle = 'Manage members' -%}
 
 {% set permissions = form.get('permissions') %}
+{% set status = form.get('status') %}
 
 {% block content %}
 
@@ -41,6 +42,20 @@
                                 Admins can manage members and change the shared space’s details.
                             </div>
                         </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-form-group {{ status.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <fieldset class="govuk-fieldset" aria-describedby="status-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Status
+                    </legend>
+
+                    {{ formElementErrorsV2(status) }}
+
+                    <div class="govuk-radios" data-module="govuk-radios" data-govuk-radios-init="">
+                        {{ formRadio(status) }}
                     </div>
                 </fieldset>
             </div>

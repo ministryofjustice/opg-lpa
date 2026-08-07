@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Middleware\AuthenticationMiddleware;
+use App\Middleware\CheckMemberStatusMiddleware;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
@@ -49,6 +50,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(CsrfValidationMiddleware::class);
     $app->pipe(PersistentSessionDetailsMiddleware::class);
     $app->pipe(AuthenticationMiddleware::class);
+    $app->pipe(CheckMemberStatusMiddleware::class);
     $app->pipe(UserDetailsMiddleware::class);
     $app->pipe(TermsAndConditionsMiddleware::class);
     $app->pipe(DispatchMiddleware::class);
