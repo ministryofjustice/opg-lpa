@@ -85,6 +85,7 @@ use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
 use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceHandler;
+use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
@@ -99,6 +100,7 @@ use App\Handler\ResetPasswordHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
+use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
@@ -107,7 +109,6 @@ use App\Handler\TermsHandler;
 use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
-use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -189,6 +190,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     if (App\Feature::SharedSpace->isEnabled()) {
         $app->get('/shared-space/about', AboutSharedSpacesHandler::class, 'shared-space.about');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
+        $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
         $app->route(

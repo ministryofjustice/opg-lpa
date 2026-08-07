@@ -1,7 +1,8 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Make a shared space' -%}
+{%- set pageTitle = 'Your shared space’s name' -%}
+{% block mainTitle %}{% endblock mainTitle %}
 
 {% set form = formErrorTextExchange(form, {
     'space-name': {
@@ -12,26 +13,23 @@
 {% set spaceName = form.get('space-name') %}
 
 {% block content %}
-    <div class="govuk-grid-row">
+    <div class="govuk-grid-row govuk-!-margin-top-9">
         {{ macros.formErrorSummary(error, form) }}
 
         <div class="govuk-grid-column-two-thirds">
-            <p class="govuk-body">Some information on naming a shared space</p>
-
             {{ form.prepare() ? '' }}
             {{ form().openTag( form )|raw }}
             <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
             <div class="govuk-form-group {{ spaceName.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-                <fieldset class="govuk-fieldset">
-                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                        Shared space name
-                    </legend>
+              <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--l" for="space-name">
+                  Your shared space’s name
+                </label>
+              </h1>
 
-                    {{ formElementErrorsV2(spaceName) }}
-
-                    {{ macros.formGroup(spaceName) }}
-                </fieldset>
+              {{ formElementErrorsV2(spaceName) }}
+              {{ formElement(spaceName) }}
             </div>
 
             <button class="govuk-button" type="submit">Create shared space</button>
