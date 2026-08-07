@@ -6,6 +6,7 @@ namespace Application\Model\DataAccess\Repository\SharedSpace;
 
 use Exception;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Application\Model\Entity\MemberInvite;
 
 interface SharedSpaceRepositoryInterface
 {
@@ -56,6 +57,8 @@ interface SharedSpaceRepositoryInterface
      */
     public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool;
 
+    public function getSharedSpace(string $id): ?string;
+
     /**
      * Get the ID of the shared space that the given user is a member of,
      * if any. A user can only be a member of one shared space at a time.
@@ -95,4 +98,14 @@ interface SharedSpaceRepositoryInterface
      * @throws Exception
      */
     public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void;
+
+    /**
+     * @return array<MemberInvite>
+     */
+    public function getInvites(string $sharedSpaceId): array;
+
+    /**
+     * Create an invite to a new shared space member.
+     */
+    public function createInvite(MemberInvite $memberInvite): int;
 }
