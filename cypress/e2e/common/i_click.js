@@ -38,6 +38,10 @@ Then(`I click element marked {string}`, (text) => {
   cy.contains(text).click();
 });
 
+Then(`I click link {string}`, (text) => {
+  cy.contains("a", text).click();
+});
+
 Then(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
   cy.get('[data-cy=lpa-' + LpaId + ']')
     .find('[data-cy=' + clickable + ']')
