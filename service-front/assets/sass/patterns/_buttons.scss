@@ -9,7 +9,7 @@
 // the overall spacing matches what form-group previously provided.
 
 .govuk-button-group {
-    .govuk-button {
+    .govuk-button:not(.app-use-standard) {
         margin-bottom: govuk-spacing(2);
     }
 }
@@ -17,7 +17,7 @@
 // Standalone govuk-button elements (not inside a button-group) also carry
 // GOV.UK Frontend's default ~32px margin-bottom. Reduce to match the spacing
 // that the legacy form-group wrapper previously provided.
-.govuk-button {
+.govuk-button:not(.app-use-standard) {
     margin-bottom: govuk-spacing(2);
 }
 

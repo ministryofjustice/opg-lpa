@@ -5,13 +5,19 @@ declare(strict_types=1);
 namespace App\Service\SharedSpace;
 
 use App\Service\ApiClient\Client;
+use App\Service\Mail\MailParameters;
+use App\Service\Mail\Transport\MailTransportInterface;
 use Psr\Log\LoggerInterface;
+use Exception;
 
 class SharedSpaceService
 {
+    public const string EMAIL_INVITE_MEMBER = 'email-invite-member';
+
     public function __construct(
         private readonly Client $client,
-        private LoggerInterface $logger
+        private readonly MailTransportInterface $mailTransport,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -59,12 +65,12 @@ class SharedSpaceService
         return $result['member'];
     }
 
-    public function getMembers(): ?array
+    public function getMembersAndInvites(): mixed
     {
         try {
-            $result = $this->client->httpGet('/v2/shared-space/members');
+            $result = $this->client->httpGet('/v2/shared-space/members-and-invites');
         } catch (\Throwable $e) {
-            $this->logger->error('Retrieve members of shared space failed', [
+            $this->logger->error('Retrieve members and invites of shared space failed', [
                 'exception' => $e,
             ]);
 
@@ -106,6 +112,50 @@ class SharedSpaceService
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
                 'isAdmin' => $isAdmin,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
+    {
+        try {
+            $result = $this->client->httpPost(
+                '/v2/shared-space/invite',
+                [
+                    'firstNames' => $firstNames,
+                    'lastName' => $lastName,
+                    'email' => $email,
+                    'isAdmin' => $isAdmin,
+                ],
+            );
+        } catch (\Throwable $e) {
+            $this->logger->warning('Invite failed', [
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
+
+        $params = new MailParameters(
+            $email,
+            self::EMAIL_INVITE_MEMBER,
+            [
+                'inviteeFullName' => $firstNames . ' ' . $lastName,
+                'inviterEmail' => $inviterEmail,
+                'sharedSpaceName' => $result['sharedSpaceName'],
+                'inviteCode' => $result['inviteCode'],
+            ],
+        );
+
+        try {
+            $this->mailTransport->send($params);
+        } catch (Exception $e) {
+            $this->logger->error('Failed to send invite email', [
+                'inviteId' => $result['id'],
             ]);
 
             return false;

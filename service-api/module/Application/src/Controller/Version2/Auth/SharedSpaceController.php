@@ -7,24 +7,27 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
+use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
+use DateInterval;
+use DateTimeImmutable;
 use Fig\Http\Message\StatusCodeInterface;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Laminas\Mvc\MvcEvent;
 use MakeShared\DataModel\Lpa\Lpa;
 use Throwable;
 use Traversable;
-use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 
 class SharedSpaceController extends AbstractRestfulController
 {
     public function __construct(
         private readonly AuthenticationService $authenticationService,
         private readonly SharedSpaceService $sharedSpaceService,
-        private readonly ApplicationsService $applicationsService
+        private readonly ApplicationsService $applicationsService,
     ) {
     }
 
@@ -102,23 +105,9 @@ class SharedSpaceController extends AbstractRestfulController
      */
     public function lpasAction(): Json|ApiProblem
     {
-        /**
-         * @psalm-suppress UndefinedInterfaceMethod
-         */
-        $token = $this->getRequest()->getHeader('Token');
-
-        if ($token === false) {
-            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
-        }
-
-        $result = $this->authenticationService->withToken($token->getFieldValue(), false);
-
-        if (is_string($result) || !isset($result['userId'])) {
-            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
-        }
-
-        if (empty($result['sharedSpaceId'])) {
-            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        $result = $this->checkToken();
+        if ($result instanceof ApiProblem) {
+            return $result;
         }
 
         $query = $this->params()->fromQuery();
@@ -195,8 +184,60 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json(['member' => $member]);
     }
 
-    public function membersAction(): Json|ApiProblem
+    public function membersAndInvitesAction(): Json|ApiProblem
     {
+        $result = $this->checkToken();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        $response = [
+            'members' => $this->sharedSpaceService->getMembers($result['sharedSpaceId']),
+            'invites' => $this->sharedSpaceService->getInvites($result['sharedSpaceId']),
+        ];
+
+        return new Json($response);
+    }
+
+    public function inviteAction(): Json|ApiProblem
+    {
+        $result = $this->checkToken();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($result['sharedSpaceId'], $result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $data = $this->processBodyContent($this->getRequest());
+
+        $code = sprintf('%08d', random_int(0, 99999999));
+        $created = new DateTimeImmutable('now');
+
+        try {
+            $params = $this->sharedSpaceService->invite(new MemberInvite(
+                $result['userId'],
+                $result['sharedSpaceId'],
+                $data['firstNames'],
+                $data['lastName'],
+                $data['email'],
+                $data['isAdmin'],
+                $code,
+                $created,
+                $created->add(DateInterval::createFromDateString('7 days')),
+            ));
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return new Json($params);
+    }
+
+    private function checkToken(): array|ApiProblem
+    {
+        // Suppress psalm errors caused by bug in laminas-mvc;
+        // see https://github.com/laminas/laminas-mvc/issues/77
         /** @psalm-suppress UndefinedInterfaceMethod */
         $token = $this->getRequest()->getHeader('Token');
         if ($token === false) {
@@ -211,11 +252,7 @@ class SharedSpaceController extends AbstractRestfulController
             return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
         }
 
-        $response = [
-            'members' => $this->sharedSpaceService->getMembers($result['sharedSpaceId']),
-        ];
-
-        return new Json($response);
+        return $result;
     }
 
     /**
