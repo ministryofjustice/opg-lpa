@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace AppTest\Service\SharedSpace;
 
 use App\Service\ApiClient\Client;
+use App\Service\Mail\MailParameters;
+use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\SharedSpace\SharedSpaceService;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -12,15 +14,18 @@ use Psr\Log\LoggerInterface;
 
 final class SharedSpaceServiceTest extends TestCase
 {
-    private Client&MockObject $client;
-    private LoggerInterface&MockObject $logger;
+    private MockObject&Client $client;
+    private MockObject&LoggerInterface $logger;
+    private MockObject&MailTransportInterface $mailTransport;
     private SharedSpaceService $service;
 
     protected function setUp(): void
     {
         $this->client = $this->createMock(Client::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->service = new SharedSpaceService($this->client, $this->logger);
+        $this->mailTransport = $this->createMock(MailTransportInterface::class);
+
+        $this->service = new SharedSpaceService($this->client, $this->mailTransport, $this->logger);
     }
 
     public function testCreateReturnsSharedSpaceIdOnSuccess(): void
@@ -127,5 +132,43 @@ final class SharedSpaceServiceTest extends TestCase
         $result = $this->service->updateMemberIsAdmin('user-1', true);
 
         $this->assertFalse($result);
+    }
+
+    public function testGetMembersAndInvites(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpGet')
+            ->with('/v2/shared-space/members-and-invites')
+            ->willReturn(['a' => 'b']);
+
+        $result = $this->service->getMembersAndInvites();
+
+        $this->assertEquals(['a' => 'b'], $result);
+    }
+
+    public function testInvite(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/invite', [
+                'firstNames' => 'a',
+                'lastName' => 'b',
+                'email' => 'you@example.com',
+                'isAdmin' => true,
+            ])
+            ->willReturn(['sharedSpaceName' => 'my space', 'inviteCode' => '12341234']);
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with(new MailParameters('you@example.com', SharedSpaceService::EMAIL_INVITE_MEMBER, [
+                'inviteeFullName' => 'a b',
+                'inviterEmail' => 'me@example.com',
+                'sharedSpaceName' => 'my space',
+                'inviteCode' => '12341234',
+            ]));
+
+        $result = $this->service->invite('me@example.com', 'a', 'b', 'you@example.com', true);
+
+        $this->assertTrue($result);
     }
 }
