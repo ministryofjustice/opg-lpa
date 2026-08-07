@@ -8,6 +8,7 @@ use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
+use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails;
 use Laminas\Http\Response;
 use MakeShared\Constants;
@@ -28,6 +29,7 @@ class NotifyMailTransport implements MailTransportInterface
         UserDetails::EMAIL_PASSWORD_RESET                        => 'a4f2c358-0484-431f-8148-6d1280d79f44',
         UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT             => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
         UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING           => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
+        SharedSpaceService::EMAIL_INVITE_MEMBER                  => '4fa3649b-4606-4856-85f6-6874fce5a001',
     ];
 
     private array $templateMap;

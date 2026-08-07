@@ -38,3 +38,25 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space/manage"
     And "Member 1" should be a "admin"
+
+  Scenario: Can invite a member to a shared space
+    Given I create a new user with 1 LPAs
+    When I log in as the newly created fixture user
+    Then I should be on "/user/dashboard"
+    When I click element marked "Make a shared space"
+    Then I should be on "/shared-space/about"
+    When I click element marked "Continue"
+    Then I should be on "/shared-space/make"
+    When I type "Example Organisation" into "space-name"
+    When I click element marked "Create shared space"
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Manage your Shared Space"
+    Then I should be on "/shared-space/manage"
+    When I click element marked "Invite member"
+    Then I should be on "/shared-space/invite"
+    When I type "John" into field labelled "First names"
+    And I type "Smith" into field labelled "Last name"
+    And I type "john.smith@example.com" into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space/manage"
+    And I see a success notification with content "Invite sent"
