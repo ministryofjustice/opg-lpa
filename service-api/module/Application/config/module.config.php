@@ -237,6 +237,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-link' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/link',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'link',
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
