@@ -1,11 +1,11 @@
 [project]
 name = "pipeline-scripts"
 version = "0.0.0"
-requires-python = "==3.14.5"
+requires-python = "==3.14.6"
 dependencies = [
-    "awscli==1.44.83",
-    "boto3==1.42.93",
-    "requests==2.33.1",
+    "awscli==1.45.28",
+    "boto3==1.43.62",
+    "requests==2.34.2",
     "pipelinescriptslib",
 ]
 [tool.uv]
