@@ -70,3 +70,43 @@ import {
   to = aws_iam_role_policy.vpc_flow_logs
   id = "vpc_flow_logs:vpc_flow_logs"
 }
+
+moved {
+  from = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint.private["ecr.dkr"]
+  to   = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint.ecr["ecr.dkr"]
+}
+
+moved {
+  from = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint.private["ecr.api"]
+  to   = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint.ecr["ecr.api"]
+}
+
+moved {
+  from = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint_policy.private["ecr.dkr"]
+  to   = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint_policy.ecr["ecr.dkr"]
+}
+
+moved {
+  from = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint_policy.private["ecr.api"]
+  to   = module.eu-west-1[0].module.vpc_endpoints.aws_vpc_endpoint_policy.ecr["ecr.api"]
+}
+
+moved {
+  from = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint.private["ecr.dkr"]
+  to   = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint.ecr["ecr.dkr"]
+}
+
+moved {
+  from = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint.private["ecr.api"]
+  to   = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint.ecr["ecr.api"]
+}
+
+moved {
+  from = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint_policy.private["ecr.dkr"]
+  to   = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint_policy.ecr["ecr.dkr"]
+}
+
+moved {
+  from = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint_policy.private["ecr.api"]
+  to   = module.eu-west-2[0].module.vpc_endpoints.aws_vpc_endpoint_policy.ecr["ecr.api"]
+}

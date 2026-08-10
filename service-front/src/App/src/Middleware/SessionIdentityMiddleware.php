@@ -52,6 +52,8 @@ class SessionIdentityMiddleware implements MiddlewareInterface
                     $data['token'],
                     $expiresIn,
                     $lastLogin,
+                    false,
+                    $data['sharedSpaceId'] ?? null
                 );
 
                 // Write the identity into the auth service storage so that

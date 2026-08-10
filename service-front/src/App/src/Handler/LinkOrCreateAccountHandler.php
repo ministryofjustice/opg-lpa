@@ -6,25 +6,44 @@ namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
+use Mezzio\Session\SessionInterface;
+use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
+use RuntimeException;
 
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
+        private readonly OneLoginSessionManager $sessionManager,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+
+        if (!$session instanceof SessionInterface) {
+            throw new RuntimeException('Session middleware is not configured');
+        }
+
+        if ($this->sessionManager->getPendingLink($session) === null) {
+            $this->logger->warning('auth.onelogin.link_or_create_missing_pending_link');
+
+            return new RedirectResponse('/login');
+        }
+
         $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         /** @var LinkOrCreateAccountForm $form */

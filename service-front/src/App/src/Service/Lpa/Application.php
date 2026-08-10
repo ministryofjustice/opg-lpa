@@ -149,8 +149,43 @@ class Application implements ApiClientAwareInterface
         return $this->executeDelete(sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId));
     }
 
-    public function getLpaSummaries(?string $search = null, ?int $page = null, ?int $itemsPerPage = null): array
+    /**
+     * Fetches the individually-owned LPA summaries for the current user.
+     * These deliberately exclude any LPAs owned by a shared space the user
+     * may belong to - use getSharedSpaceLpaSummaries() for those instead.
+     */
+    public function getPersonalLpaSummaries(?string $search = null, ?int $page = null, ?int $itemsPerPage = null): array
     {
+        $userId = $this->getUserId();
+
+        return $this->fetchLpaSummaries(
+            sprintf('/v2/user/%s/applications', $userId),
+            $search,
+            $page,
+            $itemsPerPage
+        );
+    }
+
+    /**
+     * Fetches the LPA summaries owned by the shared space the current user
+     * belongs to, regardless of which member created them.
+     */
+    public function getSharedSpaceLpaSummaries(?string $search = null, ?int $page = null, ?int $itemsPerPage = null): array
+    {
+        return $this->fetchLpaSummaries(
+            '/v2/shared-space/lpas',
+            $search,
+            $page,
+            $itemsPerPage
+        );
+    }
+
+    private function fetchLpaSummaries(
+        string $uri,
+        ?string $search = null,
+        ?int $page = null,
+        ?int $itemsPerPage = null,
+    ): array {
         $queryParams = ['search' => $search];
 
         if ($page > 0 && $itemsPerPage > 0) {
@@ -164,7 +199,7 @@ class Application implements ApiClientAwareInterface
 
         try {
             $response = $this->apiClient->httpGet(
-                sprintf('/v2/user/%s/applications', $this->getUserId()),
+                $uri,
                 $queryParams
             );
 

@@ -1,0 +1,139 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Manage shared space' -%}
+{% block mainTitle %}{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row govuk-!-margin-top-9">
+    <div class="govuk-grid-column-full">
+      {% if inviteSuccess %}
+        <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+              Success
+            </h2>
+          </div>
+          <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading">
+              Invite sent
+            </h3>
+          </div>
+        </div>
+      {% endif %}
+
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+      <div class="govuk-tabs app-tabs--no-border" data-module="govuk-tabs">
+        <h2 class="govuk-tabs__title">Contents</h2>
+
+        <ul class="govuk-tabs__list" role="tablist">
+          <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
+            <a class="govuk-tabs__tab" href="#members" id="tab_members" role="tab" aria-controls="members" aria-selected="true" tabindex="0">
+              Manage members
+            </a>
+          </li>
+
+          <li class="govuk-tabs__list-item" role="presentation">
+            <a class="govuk-tabs__tab" href="#import" id="tab_import" role="tab" aria-controls="import" aria-selected="false" tabindex="-1">
+              Import LPAs from existing account
+            </a>
+          </li>
+        </ul>
+
+        <div class="govuk-tabs__panel" id="members" role="tabpanel" aria-labelledby="tab_members">
+          {% if signedInUserIsAdmin %}
+            <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite member</a>
+          {% endif %}
+
+          {% if invites|length > 0 %}
+            <table class="govuk-table">
+              <caption class="govuk-table__caption govuk-table__caption--m">Invited members</caption>
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Name</th>
+                  <th scope="col" class="govuk-table__header">Email address</th>
+                  <th scope="col" class="govuk-table__header">Status</th>
+                  <th scope="col" class="govuk-table__header"></th>
+                </tr>
+              </thead>
+
+              <tbody class="govuk-table__body">
+                {% for invite in invites %}
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                      {{ invite.fullName }}
+                    </td>
+                    <td class="govuk-table__cell">{{ invite.email }}</td>
+                    <td class="govuk-table__cell">
+                      {% if invite.isExpired %}
+                        Invite expired
+                      {% else %}
+                        Invite pending
+                      {% endif %}
+                    </td>
+                    <td class="govuk-table__cell">
+                      <a class="govuk-link govuk-link--no-visited-state" href="#">Revoke invite</a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% endif %}
+
+          <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--m">Members</caption>
+            <thead class="govuk-table__head">
+              <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">Name</th>
+                <th scope="col" class="govuk-table__header"></th>
+                <th scope="col" class="govuk-table__header">Email address</th>
+                <th scope="col" class="govuk-table__header">Status</th>
+                <th scope="col" class="govuk-table__header">Last signed in</th>
+              </tr>
+            </thead>
+
+            <tbody class="govuk-table__body">
+              {% for member in members %}
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell">
+                    {% if member.id === signedInUser.id %}
+                      <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
+                        {{ member.name.first }} {{ member.name.last }}
+                      </a> (you)
+                    {% else %}
+                        {% if signedInUserIsAdmin %}
+                          <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.id) }}">
+                            {{ member.name.first }} {{ member.name.last }}
+                          </a>
+                        {% else %}
+                            {{ member.name.first }} {{ member.name.last }}
+                        {% endif %}
+                    {% endif %}
+                  </td>
+                  <td class="govuk-table__cell">
+                    {% if member.isAdmin %}
+                      <strong class="govuk-tag govuk-tag--green">Admin</strong>
+                    {% endif %}
+                  </td>
+                  <td class="govuk-table__cell">{{ member.email.address }}</td>
+                  <td class="govuk-table__cell">
+                    {% if member.isActive %}
+                      Active
+                    {% else %}
+                      Suspended
+                    {% endif %}
+                  </td>
+                  <td class="govuk-table__cell">{{ member.lastLoginAt.date|date('j F Y \\a\\t g:ia', "Europe/London") }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="import" role="tabpanel" aria-labelledby="tab_import">
+          <p>TODO</p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}

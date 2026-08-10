@@ -18,8 +18,11 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
@@ -44,9 +47,9 @@ class AuthenticationMiddlewareTest extends TestCase
     {
         return new class implements MiddlewareInterface {
             public function process(
-                \Psr\Http\Message\ServerRequestInterface $request,
+                ServerRequestInterface $request,
                 RequestHandlerInterface $handler
-            ): \Psr\Http\Message\ResponseInterface {
+            ): ResponseInterface {
                 return $handler->handle($request);
             }
         };
@@ -75,7 +78,7 @@ class AuthenticationMiddlewareTest extends TestCase
     public function testProcessWhenRouteDoesNotRequireAuth(): void
     {
         $routeResult = $this->makeRouteResult('application.login', ['unauthenticated_route' => true]);
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
         $expectedResponse = new PSR7Response();
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -93,7 +96,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->authenticationService->expects($this->once())->method('getIdentity')->willReturn($identity);
 
         $routeResult = $this->makeRouteResult('user/dashboard', ['requires_auth' => true]);
-        $request = (new ServerRequest())->withAttribute(RouteResult::class, $routeResult);
+        $request = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
         $expectedResponse = new PSR7Response();
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -124,7 +127,7 @@ class AuthenticationMiddlewareTest extends TestCase
                 'routeName' => 'lpa/view-docs',
                 'requestPath' => '/lpa/12345678/view-docs',
                 'authFailureCode' => 503,
-                'expectedState' => 'internalSystemError',
+                'expectedState' => 'internal-system-error',
                 'shouldSetPreAuthUrl' => true,
             ],
             'user delete route does not store url' => [
@@ -144,10 +147,7 @@ class AuthenticationMiddlewareTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider unauthenticatedDataProvider
-     */
-    #[\PHPUnit\Framework\Attributes\DataProvider('unauthenticatedDataProvider')]
+    #[DataProvider('unauthenticatedDataProvider')]
     public function testProcessWhenUnauthenticated(
         string $routeName,
         string $requestPath,
@@ -172,7 +172,7 @@ class AuthenticationMiddlewareTest extends TestCase
             ->willReturn($authFailureCode);
 
         $routeResult = $this->makeRouteResult($routeName);
-        $request = (new ServerRequest(uri: $requestPath))
+        $request = new ServerRequest(uri: $requestPath)
             ->withAttribute(RouteResult::class, $routeResult)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
 

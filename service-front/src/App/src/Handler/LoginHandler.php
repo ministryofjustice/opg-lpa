@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
+use App\Form\User\Login;
 use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -29,6 +30,7 @@ class LoginHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly AuthenticationService $authenticationService,
+        private readonly bool $oneLoginEnabled = false,
     ) {
     }
 
@@ -39,7 +41,10 @@ class LoginHandler implements RequestHandlerInterface
 
         // If already authenticated, redirect to dashboard
         if ($session->has(self::SESSION_KEY_IDENTITY)) {
-            return new RedirectResponse('/user/dashboard');
+            $existingIdentity = $session->get(self::SESSION_KEY_IDENTITY);
+            $sharedSpaceId = is_array($existingIdentity) ? ($existingIdentity['sharedSpaceId'] ?? null) : null;
+
+            return new RedirectResponse($sharedSpaceId !== null ? '/shared-space/dashboard' : '/user/dashboard');
         }
 
         $form = $this->getLoginForm();
@@ -78,6 +83,7 @@ class LoginHandler implements RequestHandlerInterface
                         'token'          => $identity->token(),
                         'tokenExpiresAt' => $identity->tokenExpiresAt()->format('c'),
                         'lastLogin'      => $identity->lastLogin()->format('c'),
+                        'sharedSpaceId'  => $identity->getSharedSpaceId(),
                     ]);
 
                     if ($nextUrl !== null && is_string($nextUrl)) {
@@ -92,7 +98,9 @@ class LoginHandler implements RequestHandlerInterface
                         ]);
                     }
 
-                    return new RedirectResponse('/user/dashboard');
+                    return new RedirectResponse(
+                        $identity->getSharedSpaceId() !== null ? '/shared-space/dashboard' : '/user/dashboard'
+                    );
                 }
 
                 // Authentication failed — reset form keeping email
@@ -112,7 +120,8 @@ class LoginHandler implements RequestHandlerInterface
         $state = $request->getAttribute('state');
 
         $isTimeout = ($state === 'timeout');
-        $isInternalSystemError = ($state === 'internalSystemError');
+        $isInternalSystemError = ($state === 'internal-system-error');
+        $authError = $state === 'member-suspended' ? 'member-suspended' : $authError;
 
         return new HtmlResponse(
             $this->renderer->render(
@@ -122,6 +131,7 @@ class LoginHandler implements RequestHandlerInterface
                     'authError'             => $authError,
                     'isTimeout'             => $isTimeout,
                     'isInternalSystemError' => $isInternalSystemError,
+                    'oneLoginEnabled'       => $this->oneLoginEnabled,
                 ]
             )
         );
@@ -130,7 +140,7 @@ class LoginHandler implements RequestHandlerInterface
     private function getLoginForm(): FormInterface
     {
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get(\App\Form\User\Login::class);
+        $form = $this->formElementManager->get(Login::class);
         $form->setAttribute('action', '/login');
 
         return $form;

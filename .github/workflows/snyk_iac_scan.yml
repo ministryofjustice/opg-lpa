@@ -38,8 +38,6 @@ jobs:
         include:
           - name: region
             terraform_configuration_path: ./terraform/region/
-          - name: account
-            terraform_configuration_path: ./terraform/account/
           - name: environment
             terraform_configuration_path: ./terraform/environment/
 

@@ -190,10 +190,12 @@
 
     </fieldset>
 
-    <input type="submit" name="save" id="save" data-cy="save" class="govuk-button" value="Save and continue">
-    {%- if not isNew -%}
-    <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
-    {%- endif -%}
+    <div class="govuk-button-group">
+      <button type="submit" name="save" id="save" data-cy="save" class="govuk-button">Save and continue</button>
+      {%- if not isNew -%}
+        <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
+      {%- endif -%}
+    </div>
 
 {{ form().closeTag|raw }}
 

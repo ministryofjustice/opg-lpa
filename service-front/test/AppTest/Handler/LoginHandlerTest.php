@@ -20,6 +20,7 @@ use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -110,29 +111,37 @@ class LoginHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 
-    public function testTimeoutStateIsPassedToTemplate(): void
+    public static function stateDataProvider(): array
     {
-        $this->session->method('has')->with('identity')->willReturn(false);
-
-        $this->renderer
-            ->expects($this->once())
-            ->method('render')
-            ->with(
-                'application/general/auth/index.twig',
-                $this->callback(function ($params) {
-                    return $params['isTimeout'] === true
-                        && $params['isInternalSystemError'] === false;
-                })
-            )
-            ->willReturn('<html>login form</html>');
-
-        $response = $this->handler->handle($this->createRequestWithSession(state: 'timeout'));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
+        return [
+            'timeout' => [
+                'state' => 'timeout',
+                'authError' => null,
+                'isTimeout' => true,
+                'isInternalSystemError' => false,
+            ],
+            'internal-system-error' => [
+                'state' => 'internal-system-error',
+                'authError' => null,
+                'isTimeout' => false,
+                'isInternalSystemError' => true,
+            ],
+            'member-suspended' => [
+                'state' => 'member-suspended',
+                'authError' => 'member-suspended',
+                'isTimeout' => false,
+                'isInternalSystemError' => false,
+            ],
+        ];
     }
 
-    public function testInternalSystemErrorStateIsPassedToTemplate(): void
-    {
+    #[DataProvider('stateDataProvider')]
+    public function testStateIsPassedToTemplate(
+        string $state,
+        ?string $authError,
+        bool $isTimeout,
+        bool $isInternalSystemError
+    ): void {
         $this->session->method('has')->with('identity')->willReturn(false);
 
         $this->renderer
@@ -140,14 +149,15 @@ class LoginHandlerTest extends TestCase
             ->method('render')
             ->with(
                 'application/general/auth/index.twig',
-                $this->callback(function ($params) {
-                    return $params['isTimeout'] === false
-                        && $params['isInternalSystemError'] === true;
+                $this->callback(function ($params) use ($authError, $isTimeout, $isInternalSystemError) {
+                    return $params['isTimeout'] === $isTimeout
+                        && $params['isInternalSystemError'] === $isInternalSystemError
+                        && $params['authError'] === $authError;
                 })
             )
             ->willReturn('<html>login form</html>');
 
-        $response = $this->handler->handle($this->createRequestWithSession(state: 'internalSystemError'));
+        $response = $this->handler->handle($this->createRequestWithSession(state: $state));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -189,6 +199,7 @@ class LoginHandlerTest extends TestCase
         $identity->method('token')->willReturn('test-token');
         $identity->method('tokenExpiresAt')->willReturn(new DateTime('2026-06-01T00:00:00+00:00'));
         $identity->method('lastLogin')->willReturn(new DateTime('2026-05-20T10:00:00+00:00'));
+        $identity->method('getSharedSpaceId')->willReturn(null);
 
         $result = new Result(Result::SUCCESS, $identity, []);
 
@@ -204,7 +215,8 @@ class LoginHandlerTest extends TestCase
                 return $data['userId'] === 'user-123'
                     && $data['token'] === 'test-token'
                     && isset($data['tokenExpiresAt'])
-                    && isset($data['lastLogin']);
+                    && isset($data['lastLogin'])
+                    && $data['sharedSpaceId'] === null;
             }));
 
         $request = $this->createRequestWithSession('POST', [
@@ -217,6 +229,54 @@ class LoginHandlerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
+
+    public function testSuccessfulLoginForSharedSpaceMemberRedirectsToSharedSpaceDashboard(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->session->method('get')->with('pre_auth_request_url')->willReturn(null);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn([
+            'email' => 'test@example.com',
+            'password' => 'password123', // pragma: allowlist secret
+        ]);
+
+        $identity = $this->createMock(UserIdentity::class);
+        $identity->method('id')->willReturn('user-123');
+        $identity->method('token')->willReturn('test-token');
+        $identity->method('tokenExpiresAt')->willReturn(new DateTime('2026-06-01T00:00:00+00:00'));
+        $identity->method('lastLogin')->willReturn(new DateTime('2026-05-20T10:00:00+00:00'));
+        $identity->method('getSharedSpaceId')->willReturn('shared-space-1');
+
+        $result = new Result(Result::SUCCESS, $identity, []);
+
+        $this->authenticationService->method('setEmail')->willReturnSelf();
+        $this->authenticationService->method('setPassword')->willReturnSelf();
+        $this->authenticationService->method('authenticate')->willReturn($result);
+
+        $this->session->expects($this->once())->method('regenerate');
+        $this->session->expects($this->once())->method('clear');
+        $this->session->expects($this->once())
+            ->method('set')
+            ->with('identity', $this->callback(function ($data) {
+                return $data['userId'] === 'user-123'
+                    && $data['token'] === 'test-token'
+                    && isset($data['tokenExpiresAt'])
+                    && isset($data['lastLogin'])
+                    && $data['sharedSpaceId'] === 'shared-space-1';
+            }));
+
+        $request = $this->createRequestWithSession('POST', [
+            'email' => 'test@example.com',
+            'password' => 'password123', // pragma: allowlist secret
+        ]);
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/shared-space/dashboard', $response->getHeaderLine('Location'));
+    }
+
 
     public function testSuccessfulLoginRedirectsToPreAuthUrl(): void
     {
@@ -524,5 +584,48 @@ class LoginHandlerTest extends TestCase
         ]);
 
         $this->handler->handle($request);
+    }
+
+    public function testOneLoginEnabledFalseByDefault(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $this->handler->handle($this->createRequestWithSession());
+
+        $this->assertFalse($capturedParams['oneLoginEnabled']);
+    }
+
+    public function testOneLoginEnabledIsTrueWhenHandlerConstructedWithTrue(): void
+    {
+        $handler = new LoginHandler(
+            $this->renderer,
+            $this->formElementManager,
+            $this->authenticationService,
+            true,
+        );
+
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->form->method('setAttribute');
+
+        $capturedParams = null;
+        $this->renderer
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $params) use (&$capturedParams): string {
+                $capturedParams = $params;
+                return '<html></html>';
+            });
+
+        $handler->handle($this->createRequestWithSession());
+
+        $this->assertTrue($capturedParams['oneLoginEnabled']);
     }
 }

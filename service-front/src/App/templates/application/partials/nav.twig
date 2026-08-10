@@ -41,6 +41,14 @@
                                 </li>
                             {% endif %}
 
+                            {% if nav.inSharedSpace %}
+                              <li class="govuk-service-navigation__item  {{ nav.route == 'shared-space.manage' ? 'govuk-service-navigation__item--active' : ''}}">
+                                <a class="govuk-service-navigation__link" href="{{ url('shared-space/manage') }}">
+                                  Manage your Shared Space
+                                </a>
+                              </li>
+                            {% endif %}
+
                             <li class="govuk-service-navigation__item">
                                 <a class="govuk-service-navigation__link js-guidance" data-cy="guidance" href="/guide#topic-how-to-make-an-lpa-online">
                                     Help

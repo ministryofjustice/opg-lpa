@@ -3,6 +3,7 @@
 namespace ApplicationTest\Model\Service\Authentication;
 
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use DateInterval;
@@ -23,6 +24,11 @@ class ServiceTest extends MockeryTestCase
     private $authUserRepository;
 
     /**
+     * @var MockInterface|SharedSpaceRepositoryInterface
+     */
+    private $sharedSpaceRepository;
+
+    /**
      * @var MockInterface|LoggerInterface
      */
     private $logger;
@@ -33,13 +39,15 @@ class ServiceTest extends MockeryTestCase
 
         //  Set up the services so they can be enhanced for each test
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
+        $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->byDefault()->andReturnNull();
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->logger->shouldReceive('log')->byDefault();
     }
 
     private function makeService(int $tokenTtl = AuthenticationService::TOKEN_TTL): AuthenticationService
     {
-        $service = new AuthenticationService($tokenTtl, self::TEST_LOG_SALT);
+        $service = new AuthenticationService($this->sharedSpaceRepository, $tokenTtl, self::TEST_LOG_SALT);
         $service->setUserRepository($this->authUserRepository);
         $service->setLogger($this->logger);
         return $service;
@@ -47,7 +55,7 @@ class ServiceTest extends MockeryTestCase
 
     public function testWithPasswordMissingCredentials()
     {
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword(null, null, false);
@@ -68,7 +76,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUserDataSourceGetByUsernameExpectation('not@active.com', new User(['active' => false]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('not@active.com', 'valid', false);
@@ -84,7 +92,7 @@ class ServiceTest extends MockeryTestCase
             'last_failed_login' => new DateTime()
         ]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('max@logins.com', 'valid', false);
@@ -109,7 +117,7 @@ class ServiceTest extends MockeryTestCase
         $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
             ->withArgs([1])->once();
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('max@logins.com', 'valid', false);
@@ -129,12 +137,31 @@ class ServiceTest extends MockeryTestCase
         $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
             ->withArgs([1])->once();
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('max@logins.com', 'valid', false);
 
         $this->assertEquals('invalid-user-credentials/account-locked', $result);
+    }
+
+    public function testWithPasswordRejectsOneLoginLinkedAccountWithNoPassword()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('linked@onelogin.com', new User([
+            'id' => 1,
+            'active' => true,
+            'failed_login_attempts' => 0,
+        ]));
+
+        $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
+            ->withArgs([1])->once();
+
+        $service = new AuthenticationService($this->sharedSpaceRepository);
+        $service->setUserRepository($this->authUserRepository);
+
+        $result = $service->withPassword('linked@onelogin.com', 'any-password', false);
+
+        $this->assertEquals('invalid-user-credentials', $result);
     }
 
     public function testWithPasswordValidCredentialsResetLoginAttempts()
@@ -153,10 +180,7 @@ class ServiceTest extends MockeryTestCase
         $this->authUserRepository->shouldReceive('updateLastLoginTime')
             ->withArgs([1])->once();
 
-        $this->authUserRepository->shouldReceive('resetFailedLoginCounter')
-            ->withArgs([1])->once();
-
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('test@test.com', 'valid', false);
@@ -166,6 +190,7 @@ class ServiceTest extends MockeryTestCase
             'username' => 'test@test.com',
             'last_login' => $today,
             'inactivityFlagsCleared' => false,
+            'sharedSpaceId' => null,
         ], $result);
     }
 
@@ -220,7 +245,7 @@ class ServiceTest extends MockeryTestCase
             })->once()
             ->andReturn(true);
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withPassword('test@test.com', 'valid', true);
@@ -230,6 +255,7 @@ class ServiceTest extends MockeryTestCase
             'username' => 'test@test.com',
             'last_login' => $today,
             'inactivityFlagsCleared' => false,
+            'sharedSpaceId' => null,
         ] + $this->tokenDetails, $result);
     }
 
@@ -237,7 +263,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUserDataSourceGetByAuthTokenExpectation('token', null);
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('token', false);
@@ -249,7 +275,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->setUserDataSourceGetByAuthTokenExpectation('token', new User([]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('token', false);
@@ -265,7 +291,7 @@ class ServiceTest extends MockeryTestCase
             ])
         ]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('expired', false);
@@ -289,7 +315,7 @@ class ServiceTest extends MockeryTestCase
             ])
         ]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('valid', false);
@@ -300,7 +326,8 @@ class ServiceTest extends MockeryTestCase
             'username' => 'test@test.com',
             'last_login' => $today,
             'expiresIn' => 1,
-            'expiresAt' => $expiresAt
+            'expiresAt' => $expiresAt,
+            'sharedSpaceId' => null,
         ], $result);
     }
 
@@ -320,7 +347,7 @@ class ServiceTest extends MockeryTestCase
             ])
         ]));
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('valid', true);
@@ -331,7 +358,8 @@ class ServiceTest extends MockeryTestCase
             'username' => 'test@test.com',
             'last_login' => $today,
             'expiresIn' => 1,
-            'expiresAt' => $expiresAt
+            'expiresAt' => $expiresAt,
+            'sharedSpaceId' => null,
         ], $result);
     }
 
@@ -365,7 +393,7 @@ class ServiceTest extends MockeryTestCase
             })->once()
             ->andReturn(true);
 
-        $service = new AuthenticationService();
+        $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
 
         $result = $service->withToken('valid', true);
@@ -374,7 +402,8 @@ class ServiceTest extends MockeryTestCase
             'token' => 'valid',
             'userId' => '1',
             'username' => 'test@test.com',
-            'last_login' => $today
+            'last_login' => $today,
+            'sharedSpaceId' => null,
         ] + $this->tokenDetails, $result);
     }
 

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Handler\AboutSharedSpacesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\AccessibilityHandler;
 use App\Handler\ChangeEmailAddressHandler;
 use App\Handler\ChangePasswordHandler;
-use App\Handler\ContactHandler;
 use App\Handler\ConfirmRegistrationHandler;
+use App\Handler\ContactHandler;
 use App\Handler\CookiesHandler;
 use App\Handler\DashboardHandler;
 use App\Handler\DeleteAccountConfirmHandler;
@@ -20,61 +21,42 @@ use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
+use App\Handler\InviteMemberHandler;
 use App\Handler\LinkAccountHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
-use App\Handler\OneLoginCallbackHandler;
-use App\Handler\OneLoginHandler;
-use App\Handler\OneLoginSignInHandler;
-use App\Handler\PostcodeHandler;
-use App\Handler\RegisterHandler;
-use App\Handler\ResendActivationEmailHandler;
-use App\Handler\ResetPasswordHandler;
-use App\Handler\SessionKeepAliveHandler;
-use App\Handler\SessionSetExpiryHandler;
-use App\Handler\StatusesHandler;
-use App\Handler\TermsChangedHandler;
-use App\Handler\VerifyEmailAddressHandler;
-use App\Handler\Lpa\ApplicantHandler;
-use App\Handler\Lpa\CheckoutChequeHandler;
-use App\Handler\Lpa\CheckoutConfirmHandler;
-use App\Handler\Lpa\CheckoutIndexHandler;
-use App\Handler\Lpa\CheckoutPayHandler;
-use App\Handler\Lpa\CheckoutPayResponseHandler;
-use App\Handler\Lpa\CreateLpaHandler;
-use App\Handler\Lpa\DonorIndexHandler;
-use App\Handler\Lpa\IndexHandler;
 use App\Handler\LpaTypeHandler;
-use App\Handler\PingHandler;
-use App\Handler\PingHandlerJson;
-use App\Handler\PingHandlerPingdom;
-use App\Handler\PrivacyHandler;
-use App\Handler\SessionExpiryHandler;
-use App\Handler\StatsHandler;
-use App\Handler\TermsHandler;
-use App\Handler\TypeHandler;
+use App\Handler\Lpa\ApplicantHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
+use App\Handler\Lpa\CheckoutChequeHandler;
+use App\Handler\Lpa\CheckoutConfirmHandler;
+use App\Handler\Lpa\CheckoutIndexHandler;
+use App\Handler\Lpa\CheckoutPayHandler;
+use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Handler\Lpa\CompleteIndexHandler;
 use App\Handler\Lpa\CompleteViewDocsHandler;
 use App\Handler\Lpa\ConfirmDeleteLpaHandler;
-use App\Handler\Lpa\DeleteLpaHandler;
 use App\Handler\Lpa\CorrespondentEditHandler;
 use App\Handler\Lpa\CorrespondentHandler;
+use App\Handler\Lpa\CreateLpaHandler;
 use App\Handler\Lpa\DateCheckHandler;
 use App\Handler\Lpa\DateCheckValidHandler;
+use App\Handler\Lpa\DeleteLpaHandler;
 use App\Handler\Lpa\DonorAddHandler;
 use App\Handler\Lpa\DonorEditHandler;
+use App\Handler\Lpa\DonorIndexHandler;
 use App\Handler\Lpa\Download\DownloadCheckHandler;
 use App\Handler\Lpa\Download\DownloadFileHandler;
 use App\Handler\Lpa\Download\DownloadHandler;
 use App\Handler\Lpa\FeeReductionHandler;
 use App\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use App\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
+use App\Handler\Lpa\IndexHandler;
 use App\Handler\Lpa\InstructionsHandler;
 use App\Handler\Lpa\LifeSustainingHandler;
 use App\Handler\Lpa\MoreInfoRequiredHandler;
@@ -83,12 +65,12 @@ use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
+use App\Handler\Lpa\PrimaryAttorneyHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
-use App\Handler\Lpa\PrimaryAttorneyHandler;
 use App\Handler\Lpa\RepeatApplicationHandler;
 use App\Handler\Lpa\ReplacementAttorneyAddHandler;
 use App\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
@@ -102,6 +84,31 @@ use App\Handler\Lpa\SummaryHandler;
 use App\Handler\Lpa\WhenLpaStartsHandler;
 use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
+use App\Handler\MakeSharedSpaceHandler;
+use App\Handler\ManageSharedSpaceHandler;
+use App\Handler\OneLoginCallbackHandler;
+use App\Handler\OneLoginHandler;
+use App\Handler\OneLoginSignInHandler;
+use App\Handler\PingHandler;
+use App\Handler\PingHandlerJson;
+use App\Handler\PingHandlerPingdom;
+use App\Handler\PostcodeHandler;
+use App\Handler\PrivacyHandler;
+use App\Handler\RegisterHandler;
+use App\Handler\ResendActivationEmailHandler;
+use App\Handler\ResetPasswordHandler;
+use App\Handler\SessionExpiryHandler;
+use App\Handler\SessionKeepAliveHandler;
+use App\Handler\SessionSetExpiryHandler;
+use App\Handler\SharedSpaceDashboardHandler;
+use App\Handler\StatsHandler;
+use App\Handler\StatusesHandler;
+use App\Handler\TermsChangedHandler;
+use App\Handler\TermsHandler;
+use App\Handler\Testing\CypressFixtureHandler;
+use App\Handler\TypeHandler;
+use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -143,7 +150,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/stats', StatsHandler::class, 'stats')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route('/login[/{state:(?:timeout|internalSystemError)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
+    $app->route('/login[/{state:(?:timeout|internal-system-error|member-suspended)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
@@ -178,6 +185,29 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true]);
+    }
+
+    if (App\Feature::SharedSpace->isEnabled()) {
+        $app->get('/shared-space/about', AboutSharedSpacesHandler::class, 'shared-space.about');
+        $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
+        $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
+        $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
+        $app->route(
+            '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
+            ManageSharedSpaceMemberHandler::class,
+            ['GET', 'POST'],
+            'shared-space.members.manage'
+        );
+        $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
+    }
+
+    if (App\Feature::CypressFixtures->isEnabled()) {
+        $app->route(
+            '/testing/cypress-fixture/{entity:[a-zA-Z-]+}',
+            CypressFixtureHandler::class,
+            ['POST', 'DELETE'],
+            'testing.cypress-fixture',
+        )->setOptions(['unauthenticated_route' => true]);
     }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')

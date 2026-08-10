@@ -171,6 +171,8 @@ locals {
       }
     ]
     volumesFrom = [],
+    privileged  = false,
+    user        = "nginx",
     logConfiguration = {
       logDriver = "awslogs",
       options = {
@@ -220,6 +222,8 @@ locals {
         retries     = 3
       },
       volumesFrom = [],
+      privileged  = false,
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -267,7 +271,8 @@ locals {
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
-        { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
+        { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
+        { name = "CYPRESS_FIXTURES_ENABLED", value = var.environment_name != "production" && var.environment.feature_flags.cypress_fixtures_enabled ? tostring("true") : tostring("false") }
       ]
     }
   )

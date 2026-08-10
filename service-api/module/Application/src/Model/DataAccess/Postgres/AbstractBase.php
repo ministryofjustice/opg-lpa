@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Model\DataAccess\Postgres;
 
 use MakeShared\Logging\LoggerTrait;
-use Application\Model\DataAccess\Postgres\DbWrapper;
 use Psr\Log\LoggerAwareInterface;
 
 class AbstractBase implements LoggerAwareInterface
@@ -11,25 +12,13 @@ class AbstractBase implements LoggerAwareInterface
     use LoggerTrait;
 
     /**
-     * Wrapper around db adapter and SQL generation.
-     * @var DbWrapper
+     * @psalm-suppress PossiblyUnusedMethod Called (via factory-based instantiation) for every
+     *     class extending AbstractBase; Psalm cannot trace this dynamic instantiation.
      */
-    protected $dbWrapper;
-
-    /**
-     * @var array
-     */
-    protected $config = [];
-
-    /**
-     * Constructor.
-     * @param DbWrapper $dbWrapper
-     * @param array $config
-     */
-    final public function __construct(DbWrapper $dbWrapper, array $config = [])
-    {
-        $this->dbWrapper = $dbWrapper;
-        $this->config = $config;
+    final public function __construct(
+        protected DbWrapper $dbWrapper,
+        protected array $config = []
+    ) {
     }
 
     public function config(): array
