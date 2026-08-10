@@ -37,11 +37,11 @@ jobs:
           - directory: scripts/call_api_gateway
             python-version: "3.14.6"
           - directory: tests/python-api-client
-            python-version: "3.14.6"
+            python-version: "3.14.5"
           - directory: tests/sirius-gateway-mock/scripts
-            python-version: "3.14.6"
+            python-version: "3.14.5"
           - directory: tests/load
-            python-version: "3.14.6"
+            python-version: "3.14.5"
           - directory: locust
             python-version: "3.14.6"
     steps:
