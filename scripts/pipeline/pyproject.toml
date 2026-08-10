@@ -6,6 +6,7 @@ dependencies = [
     "awscli==1.45.28",
     "requests==2.34.2",
     "pipelinescriptslib",
+    "boto3>=1.43.28",
 ]
 [tool.uv]
 package = false
