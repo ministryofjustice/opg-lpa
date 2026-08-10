@@ -97,3 +97,15 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space/manage"
     And "Member 1" status should be "active"
+
+  Scenario: Can join a shared space
+    Given I have been invited to a shared space called "Example Organisation" with 1 LPA
+    When I log in as the newly created fixture user
+    Then I click element marked "Make a shared space"
+    And I click element marked "Join"
+    And I type "Example Organisation" into field labelled "Shared space name"
+    And I type the access code into field labelled "Your shared space access code"
+    And I click element marked "Continue"
+    And I should be on "/shared-space/dashboard"
+    And I click element marked "Manage your Shared Space"
+    And I cannot see any invites

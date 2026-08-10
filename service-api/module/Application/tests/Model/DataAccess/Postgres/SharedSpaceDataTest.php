@@ -8,12 +8,13 @@ use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Postgres\SharedSpaceData;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Entity\MemberInvite;
-use DateTimeImmutable;
+use DateTime;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Delete;
 use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
 use Mockery;
@@ -435,9 +436,11 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
     }
 
-    public function testGetInvites(): void
+    public function testGetInviteByCodeAndSharedSpaceName(): void
     {
+        $sharedSpaceName = 'My Space';
         $invite = new MemberInvite(
+            1,
             'my user',
             'my space',
             'first',
@@ -445,16 +448,15 @@ class SharedSpaceDataTest extends MockeryTestCase
             'email@example.com',
             true,
             '12341234',
-            new DateTimeImmutable(),
-            new DateTimeImmutable('+7 days'),
-            5
+            new DateTime(),
+            new DateTime('+7 days'),
         );
 
         $resultMock = Mockery::mock(Result::class);
         $resultMock->shouldReceive('isQueryResult')->andReturn(true);
-        $resultMock->shouldReceive('rewind');
-        $resultMock->shouldReceive('valid')->andReturnValues([true, false]);
+        $resultMock->shouldReceive('count')->andReturn(1);
         $resultMock->shouldReceive('current')->andReturn([
+            'id' => 1,
             'invitedBy' => $invite->userId,
             'sharedSpaceId' => $invite->sharedSpaceId,
             'firstNames' => $invite->firstNames,
@@ -464,7 +466,109 @@ class SharedSpaceDataTest extends MockeryTestCase
             'code' => $invite->code,
             'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
             'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
-            'id' => 5,
+        ]);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')
+            ->with(['invite' => SharedSpaceData::SHARED_SPACE_INVITES])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('join')
+            ->with(['space' => SharedSpaceData::SHARED_SPACE], 'invite.sharedSpaceId = space.id', ['name'])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('where')
+            ->with(['invite.code' => $invite->code, 'space.name' => $sharedSpaceName])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')
+            ->with(1)
+            ->andReturn($selectMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')
+            ->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($selectMock)
+            ->andReturn($sqlMock);
+        $sqlMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')
+            ->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getInviteByCodeAndSharedSpaceName($invite->code, $sharedSpaceName);
+
+        $this->assertEquals($invite, $actual);
+    }
+
+    #[DataProvider('noResultsProvider')]
+    public function testGetInviteByCodeAndSharedSpaceNameWhenNoResults(bool $isQueryResult, int $count): void
+    {
+        $sharedSpaceName = 'My Space';
+        $code = '1243';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')->andReturn($count);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('join')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('where')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')
+            ->andReturn($selectMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')
+            ->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->andReturn($sqlMock);
+        $sqlMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')
+            ->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getInviteByCodeAndSharedSpaceName($code, $sharedSpaceName);
+
+        $this->assertNull($actual);
+    }
+
+    public function testGetInvites(): void
+    {
+        $invite = new MemberInvite(
+            1,
+            'my user',
+            'my space',
+            'first',
+            'last',
+            'email@example.com',
+            true,
+            '12341234',
+            new DateTime(),
+            new DateTime('+7 days'),
+        );
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturnValues([true, false]);
+        $resultMock->shouldReceive('current')->andReturn([
+            'id' => 1,
+            'invitedBy' => $invite->userId,
+            'sharedSpaceId' => $invite->sharedSpaceId,
+            'firstNames' => $invite->firstNames,
+            'lastName' => $invite->lastName,
+            'email' => $invite->email,
+            'isAdmin' => $invite->isAdmin,
+            'code' => $invite->code,
+            'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
+            'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
         ]);
         $resultMock->shouldReceive('key')->andReturn(0);
         $resultMock->shouldReceive('next');
@@ -504,6 +608,7 @@ class SharedSpaceDataTest extends MockeryTestCase
     public function testCreateInvite(): void
     {
         $invite = new MemberInvite(
+            1,
             'my user',
             'my space',
             'first',
@@ -511,8 +616,8 @@ class SharedSpaceDataTest extends MockeryTestCase
             'email@example.com',
             true,
             '12341234',
-            new DateTimeImmutable(),
-            new DateTimeImmutable('+7 days'),
+            new DateTime(),
+            new DateTime('+7 days'),
         );
 
         $insertMock = Mockery::mock(Insert::class);
@@ -536,7 +641,7 @@ class SharedSpaceDataTest extends MockeryTestCase
         $statementMock = Mockery::mock(StatementInterface::class);
         $statementMock->shouldReceive('execute')->andReturn($resultMock);
         $statementMock->shouldReceive('getSql')->andReturn('SOMETHING');
-        $statementMock->shouldReceive('setSql')->with('SOMETHING RETURNING id')->andReturn($statementMock);
+        $statementMock->shouldReceive('setSql')->with('SOMETHING RETURNING "id"')->andReturn($statementMock);
 
         $sqlMock = Mockery::mock(Sql::class);
         $sqlMock->shouldReceive('insert')
@@ -566,8 +671,6 @@ class SharedSpaceDataTest extends MockeryTestCase
 
         $statementMock = Mockery::mock(StatementInterface::class);
         $statementMock->shouldReceive('execute');
-        $statementMock->shouldReceive('getSql')->andReturn('SOMETHING');
-        $statementMock->shouldReceive('setSql')->with('SOMETHING')->andReturn($statementMock);
 
         $sqlMock = Mockery::mock(Sql::class);
         $sqlMock->shouldReceive('delete')
@@ -576,6 +679,7 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
             ->with($deleteMock)
             ->andReturn($statementMock);
+        $sqlMock->shouldReceive('execute');
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
         $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
