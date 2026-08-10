@@ -31,7 +31,7 @@ jobs:
       matrix:
         include:
           - directory: scripts/pipeline
-            python-version: "3.14.5"
+            python-version: "3.14.6"
           - directory: scripts/pipeline/ci_ingress
             python-version: "3.14.6"
           - directory: scripts/call_api_gateway
