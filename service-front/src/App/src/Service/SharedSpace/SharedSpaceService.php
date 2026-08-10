@@ -9,6 +9,7 @@ use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use Psr\Log\LoggerInterface;
 use Exception;
+use Throwable;
 
 class SharedSpaceService
 {
@@ -34,7 +35,7 @@ class SharedSpaceService
                 '/v2/shared-space/create',
                 ['name' => $sharedSpaceName],
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Shared space creation failed', [
                 'exception' => $e,
             ]);
@@ -49,7 +50,7 @@ class SharedSpaceService
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members/' . $memberUserId);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Retrieve shared space member failed', [
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
@@ -69,7 +70,7 @@ class SharedSpaceService
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members-and-invites');
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Retrieve members and invites of shared space failed', [
                 'exception' => $e,
             ]);
@@ -87,7 +88,7 @@ class SharedSpaceService
                 '/v2/shared-space/members',
                 ['sharedSpaceId' => $sharedSpaceId, 'userIdToAdd' => $userIdToAdd]
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Adding member to shared space failed', [
                 'exception' => $e,
                 'sharedSpaceId' => $sharedSpaceId,
@@ -107,7 +108,7 @@ class SharedSpaceService
                 '/v2/shared-space/members/' . $memberUserId,
                 ['isAdmin' => $isAdmin, 'isActive' => $isActive],
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Updating shared space member failed', [
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
@@ -133,7 +134,7 @@ class SharedSpaceService
                     'isAdmin' => $isAdmin,
                 ],
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Invite failed', [
                 'exception' => $e,
             ]);
@@ -179,5 +180,24 @@ class SharedSpaceService
         }
 
         return true;
+    }
+
+    public function join(string $sharedSpaceName, string $accessCode): string
+    {
+        try {
+            /** @var array{sharedSpaceId: string} $response */
+            $response = $this->client->httpPost(
+                '/v2/shared-space/join',
+                ['sharedSpaceName' => $sharedSpaceName, 'accessCode' => $accessCode],
+            );
+        } catch (Throwable $e) {
+            $this->logger->warning('Join shared space failed', [
+                'exception' => $e,
+            ]);
+
+            throw $e;
+        }
+
+        return $response['sharedSpaceId'];
     }
 }

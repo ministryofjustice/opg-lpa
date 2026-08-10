@@ -69,7 +69,6 @@ interface SharedSpaceRepositoryInterface
      */
     public function getSharedSpaceIdForUser(string $userId): ?string;
 
-
     /**
      * @return SharedSpaceMember|null
      */
@@ -90,6 +89,10 @@ interface SharedSpaceRepositoryInterface
      */
     public function isAdmin(string $sharedSpaceId, string $userId): bool;
 
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
+
+    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite;
+
     /**
      * @return array<MemberInvite>
      */
@@ -106,6 +109,4 @@ interface SharedSpaceRepositoryInterface
      * @throws InvalidQueryException
      */
     public function deleteInvite(int $inviteId): void;
-
-    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
 }

@@ -209,6 +209,43 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql->select()
+            ->from(['invite' => self::SHARED_SPACE_INVITES])
+            ->join(['space' => self::SHARED_SPACE], 'invite.sharedSpaceId = space.id', ['name'])
+            ->where([
+                'invite.code' => $accessCode,
+                'space.name' => $sharedSpaceName,
+            ])
+            ->limit(1);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() !== 1) {
+            return null;
+        }
+
+        $value = $result->current();
+
+        return new MemberInvite(
+            id: (int) $value['id'],
+            userId: $value['invitedBy'],
+            sharedSpaceId: $value['sharedSpaceId'],
+            firstNames: $value['firstNames'],
+            lastName: $value['lastName'],
+            email: $value['email'],
+            isAdmin: $value['isAdmin'],
+            code: $value['code'],
+            created: new DateTime($value['created']),
+            expires: new DateTime($value['expires']),
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getInvites(string $sharedSpaceId): array
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_INVITES, ['sharedSpaceId' => $sharedSpaceId]);
@@ -220,6 +257,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         $invites = [];
         foreach ($result as $value) {
             $invites[] = new MemberInvite(
+                id: $value['id'],
                 userId: $value['invitedBy'],
                 sharedSpaceId: $value['sharedSpaceId'],
                 firstNames: $value['firstNames'],
@@ -229,7 +267,6 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
                 code: $value['code'],
                 created: new DateTime($value['created']),
                 expires: new DateTime($value['expires']),
-                id: $value['id'],
             );
         }
 
@@ -259,7 +296,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         $statement = $sql->prepareStatementForSqlObject($insert);
 
         try {
-            $statement->setSql($statement->getSql() . ' RETURNING id');
+            $statement->setSql($statement->getSql() . ' RETURNING "id"');
             $result = $statement->execute();
         } catch (InvalidQueryException $e) {
             throw $e;
@@ -278,11 +315,8 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             ->delete(self::SHARED_SPACE_INVITES)
             ->where(['id' => $inviteId]);
 
-        $statement = $sql->prepareStatementForSqlObject($delete);
-
         try {
-            $statement->setSql($statement->getSql());
-            $statement->execute();
+            $sql->prepareStatementForSqlObject($delete)->execute();
         } catch (InvalidQueryException $e) {
             throw $e;
         }
