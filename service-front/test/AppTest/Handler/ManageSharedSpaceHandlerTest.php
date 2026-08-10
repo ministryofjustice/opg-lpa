@@ -35,13 +35,14 @@ class ManageSharedSpaceHandlerTest extends TestCase
     public static function getShowsMembersAndInvitesProvider(): array
     {
         return [
-            [['invite' => 'success'], false, true],
-            [[], true, false],
+            [['invite' => 'sent'], false, true, false],
+            [['invite' => 'revoked'], false, false, true],
+            [[], true, false, false],
         ];
     }
 
     #[DataProvider('getShowsMembersAndInvitesProvider')]
-    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess): void
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess): void
     {
         $response = [
             'members' => [
@@ -62,6 +63,7 @@ class ManageSharedSpaceHandlerTest extends TestCase
                 'members' => $response['members'],
                 'invites' => $response['invites'],
                 'inviteSuccess' => $inviteSuccess,
+                'revokeSuccess' => $revokeSuccess,
                 'signedInUserIsAdmin' => $isAdmin,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,

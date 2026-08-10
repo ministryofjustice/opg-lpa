@@ -164,4 +164,20 @@ class SharedSpaceService
 
         return true;
     }
+
+    public function revokeInvite(string $inviteId): bool
+    {
+        try {
+            $this->client->httpPost('/v2/shared-space/revoke-invite/' . $inviteId);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Revoking invite failed', [
+                'exception' => $e,
+                'inviteId' => $inviteId,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
 }

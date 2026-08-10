@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Csrf\CsrfMiddleware;
+use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -50,6 +52,8 @@ class CsrfValidationMiddleware implements MiddlewareInterface
                 // on the same page (popup opens, reuse-details, etc.) don't invalidate the token
                 // embedded in the parent page's main form.
                 if ($postToken === '' || $postToken !== $sessionToken) {
+                    $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                    $flash->flash(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
                     return new RedirectResponse($request->getUri()->getPath());
                 }
             }

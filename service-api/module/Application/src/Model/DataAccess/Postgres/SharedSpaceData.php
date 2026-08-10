@@ -23,16 +23,14 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     public function create(string $id, array $details): bool
     {
         $sql = $this->dbWrapper->createSql();
-        $insert = $sql->insert(self::SHARED_SPACE);
-
-        $data = [
-            'id' => $id,
-            'name' => $details['name'],
-            'created' => $details['created']->format(DbWrapper::TIME_FORMAT),
-            'updated' => $details['last_updated']->format(DbWrapper::TIME_FORMAT),
-        ];
-
-        $insert->values($data);
+        $insert = $sql
+            ->insert(self::SHARED_SPACE)
+            ->values([
+                'id' => $id,
+                'name' => $details['name'],
+                'created' => $details['created']->format(DbWrapper::TIME_FORMAT),
+                'updated' => $details['last_updated']->format(DbWrapper::TIME_FORMAT),
+            ]);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
@@ -51,14 +49,14 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool
     {
         $sql = $this->dbWrapper->createSql();
-        $insert = $sql->insert(self::SHARED_SPACE_MEMBERS);
-
-        $insert->values([
+        $insert = $sql
+            ->insert(self::SHARED_SPACE_MEMBERS)
+            ->values([
             'sharedSpaceId' => $sharedSpaceId,
-            'userId'        => $userId,
-            'isAdmin'       => $isAdmin,
-            'created'       => gmdate(DbWrapper::TIME_FORMAT),
-        ]);
+                'userId'        => $userId,
+                'isAdmin'       => $isAdmin,
+                'created'       => gmdate(DbWrapper::TIME_FORMAT),
+            ]);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
@@ -184,15 +182,16 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         $sql = $this->dbWrapper->createSql();
-        $update = $sql->update(self::SHARED_SPACE_MEMBERS);
-        $update->where([
-            'sharedSpaceId' => $sharedSpaceId,
-            'userId'        => $userId,
-        ]);
-        $update->set([
-            'isAdmin' => $isAdmin,
-            'isActive' => $isActive,
-        ]);
+        $update = $sql
+            ->update(self::SHARED_SPACE_MEMBERS)
+            ->where([
+                'sharedSpaceId' => $sharedSpaceId,
+                'userId'        => $userId,
+            ])
+            ->set([
+                'isAdmin' => $isAdmin,
+                'isActive' => $isActive,
+            ]);
 
         $statement = $sql->prepareStatementForSqlObject($update);
 
@@ -230,6 +229,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
                 code: $value['code'],
                 created: new DateTime($value['created']),
                 expires: new DateTime($value['expires']),
+                id: $value['id'],
             );
         }
 
@@ -242,19 +242,19 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     public function createInvite(MemberInvite $memberInvite): int
     {
         $sql = $this->dbWrapper->createSql();
-        $insert = $sql->insert(self::SHARED_SPACE_INVITES);
-
-        $insert->values([
-            'sharedSpaceId' => $memberInvite->sharedSpaceId,
-            'invitedBy'     => $memberInvite->userId,
-            'firstNames'    => $memberInvite->firstNames,
-            'lastName'      => $memberInvite->lastName,
-            'email'         => $memberInvite->email,
-            'isAdmin'       => $memberInvite->isAdmin,
-            'code'          => $memberInvite->code,
-            'created'       => $memberInvite->created->format(DbWrapper::TIME_FORMAT),
-            'expires'       => $memberInvite->expires->format(DbWrapper::TIME_FORMAT),
-        ]);
+        $insert = $sql
+            ->insert(self::SHARED_SPACE_INVITES)
+            ->values([
+                'sharedSpaceId' => $memberInvite->sharedSpaceId,
+                'invitedBy'     => $memberInvite->userId,
+                'firstNames'    => $memberInvite->firstNames,
+                'lastName'      => $memberInvite->lastName,
+                'email'         => $memberInvite->email,
+                'isAdmin'       => $memberInvite->isAdmin,
+                'code'          => $memberInvite->code,
+                'created'       => $memberInvite->created->format(DbWrapper::TIME_FORMAT),
+                'expires'       => $memberInvite->expires->format(DbWrapper::TIME_FORMAT),
+            ]);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
 
@@ -266,6 +266,26 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
 
         return (int) $result->current();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteInvite(int $inviteId): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $delete = $sql
+            ->delete(self::SHARED_SPACE_INVITES)
+            ->where(['id' => $inviteId]);
+
+        $statement = $sql->prepareStatementForSqlObject($delete);
+
+        try {
+            $statement->setSql($statement->getSql());
+            $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw $e;
+        }
     }
 
     /**

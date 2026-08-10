@@ -223,6 +223,27 @@ return [
                                     ],
                                 ],
                             ],
+                            'revoke-invite' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/revoke-invite/:memberInviteId',
+                                    'constraints' => [
+                                        'memberInviteId' => '[0-9]+',
+                                    ],
+                                ],
+                                'may_terminate' => false,
+                                'child_routes'  => [
+                                    'post' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'revokeInvite',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 

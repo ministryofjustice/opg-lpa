@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace AppTest\Middleware;
 
 use App\Middleware\CsrfValidationMiddleware;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Csrf\CsrfGuardInterface;
 use Mezzio\Csrf\CsrfMiddleware;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessages;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -21,12 +24,14 @@ class CsrfValidationMiddlewareTest extends TestCase
 {
     private CsrfGuardInterface&MockObject $guard;
     private SessionInterface&MockObject $session;
+    private FlashMessages&MockObject $flashMessage;
     private CsrfValidationMiddleware $middleware;
 
     protected function setUp(): void
     {
         $this->guard   = $this->createMock(CsrfGuardInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
+        $this->flashMessage = $this->createMock(FlashMessages::class);
         $this->middleware = new CsrfValidationMiddleware();
     }
 
@@ -34,6 +39,7 @@ class CsrfValidationMiddlewareTest extends TestCase
         string $method = 'GET',
         ?array $body = null,
         bool $withSession = true,
+        bool $withFlash = false,
     ): ServerRequest {
         $request = (new ServerRequest())
             ->withMethod($method)
@@ -41,6 +47,10 @@ class CsrfValidationMiddlewareTest extends TestCase
 
         if ($withSession) {
             $request = $request->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+        }
+
+        if ($withFlash) {
+            $request = $request->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flashMessage);
         }
 
         if ($body !== null) {
@@ -123,11 +133,15 @@ class CsrfValidationMiddlewareTest extends TestCase
         $this->session->method('get')->with('__csrf', '')->willReturn('session-token');
         $this->guard->expects($this->never())->method('validateToken');
         $this->guard->expects($this->never())->method('generateToken');
+        $this->flashMessage
+            ->expects($this->once())->method('flash')
+            ->with(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
 
         $request = (new ServerRequest(uri: 'https://example.com/lpa/123/type'))
             ->withMethod('POST')
             ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flashMessage)
             ->withParsedBody(['__csrf' => 'bad-token']);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
@@ -143,9 +157,12 @@ class CsrfValidationMiddlewareTest extends TestCase
     {
         // Session has a token but POST body doesn't include __csrf
         $this->session->method('get')->with('__csrf', '')->willReturn('some-token');
+        $this->flashMessage
+            ->expects($this->once())->method('flash')
+            ->with(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
 
         $result = $this->middleware->process(
-            $this->makeRequest('POST', ['other' => 'data']),
+            $this->makeRequest('POST', ['other' => 'data'], withFlash: true),
             $this->createMock(RequestHandlerInterface::class)
         );
 
@@ -155,9 +172,12 @@ class CsrfValidationMiddlewareTest extends TestCase
     public function testPostWithEmptyCsrfFieldRedirects(): void
     {
         $this->session->method('get')->with('__csrf', '')->willReturn('some-token');
+        $this->flashMessage
+            ->expects($this->once())->method('flash')
+            ->with(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
 
         $result = $this->middleware->process(
-            $this->makeRequest('POST', ['__csrf' => '']),
+            $this->makeRequest('POST', ['__csrf' => ''], withFlash: true),
             $this->createMock(RequestHandlerInterface::class)
         );
 
@@ -210,12 +230,17 @@ class CsrfValidationMiddlewareTest extends TestCase
     {
         // Confirm that form/urlencoded POST without __csrf is still rejected
         $this->session->method('get')->with('__csrf', '')->willReturn('some-token');
+        $this->flashMessage
+            ->expects($this->once())->method('flash')
+            ->with(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
 
         $request = (new ServerRequest())
             ->withMethod('POST')
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flashMessage)
             ->withParsedBody(['other' => 'data']);
 
         $handler = $this->createMock(RequestHandlerInterface::class);

@@ -62,7 +62,7 @@ class InviteMemberHandler implements RequestHandlerInterface
                 );
 
                 if ($ok) {
-                    return new RedirectResponse('/shared-space/manage?invite=success');
+                    return new RedirectResponse('/shared-space/manage?invite=sent');
                 }
             }
         }
