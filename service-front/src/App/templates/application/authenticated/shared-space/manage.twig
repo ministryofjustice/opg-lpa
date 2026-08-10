@@ -6,7 +6,7 @@
 {% block content %}
   <div class="govuk-grid-row govuk-!-margin-top-9">
     <div class="govuk-grid-column-full">
-      {% if inviteSuccess %}
+      {% if inviteSuccess or revokeSuccess %}
         <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -15,7 +15,11 @@
           </div>
           <div class="govuk-notification-banner__content">
             <h3 class="govuk-notification-banner__heading">
-              Invite sent
+              {% if inviteSuccess %}
+                Invite sent
+              {% elseif revokeSuccess %}
+                Invite revoked
+              {% endif %}
             </h3>
           </div>
         </div>
@@ -72,7 +76,9 @@
                       {% endif %}
                     </td>
                     <td class="govuk-table__cell">
-                      <a class="govuk-link govuk-link--no-visited-state" href="#">Revoke invite</a>
+                        {% if signedInUserIsAdmin %}
+                          <a class="govuk-link govuk-link--no-visited-state" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
+                        {% endif %}
                     </td>
                   </tr>
                 {% endfor %}

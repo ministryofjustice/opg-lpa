@@ -48,7 +48,8 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
                     'members' => $members,
                     'invites' => $result['invites'],
                     'signedInUserIsAdmin' => $isAdmin,
-                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'success',
+                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
+                    'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
                 ],
             ),
         ));

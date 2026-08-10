@@ -227,6 +227,7 @@ class SharedSpaceService
 
         return array_map(function (MemberInvite $invite) {
             return [
+                'id' => $invite->id,
                 'fullName' => $invite->firstNames . ' ' . $invite->lastName,
                 'email' => $invite->email,
                 'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
@@ -247,5 +248,30 @@ class SharedSpaceService
             'sharedSpaceName' => $sharedSpaceName,
             'inviteCode' => $memberInvite->code,
         ];
+    }
+
+
+    /**
+     * @throws Throwable
+     */
+    public function revokeInvite(string $sharedSpaceId, int $inviteId, string $revokedByUserId): void
+    {
+        try {
+            $this->sharedSpaceRepository->deleteInvite($inviteId);
+        } catch (Throwable $e) {
+            $this->logger->error('Unable to revoke shared space invite: ' . $e->getMessage(), [
+                'shared_space_id' => $sharedSpaceId,
+                'invite_id' => $inviteId,
+            ]);
+
+            throw $e;
+        }
+
+        $this->logger->info('Shared space invite revoked', [
+            'event'           => 'shared_space.invite_revoked',
+            'shared_space_id' => $sharedSpaceId,
+            'invite_id'       => $inviteId,
+            'revoked_by'      => $revokedByUserId,
+        ]);
     }
 }

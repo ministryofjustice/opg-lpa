@@ -97,6 +97,7 @@ use App\Handler\PrivacyHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
 use App\Handler\ResetPasswordHandler;
+use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
@@ -199,6 +200,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             'shared-space.members.manage'
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
+        $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {
