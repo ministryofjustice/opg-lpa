@@ -20,6 +20,20 @@ wheels = [
 ]
 
 [[package]]
+name = "boto3"
+version = "1.43.28"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "botocore" },
+    { name = "jmespath" },
+    { name = "s3transfer" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/4e/f2/a976b2a81d8dc7ff675f4b614367a185727061130184a28da0f53f446b97/boto3-1.43.28.tar.gz", hash = "sha256:8391fdcc4d8e1d4e0bf96575a7e5610964a4d401dafa4dccb0a5bade8dd3fbb0", size = 113202, upload-time = "2026-06-11T19:29:01.464Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c3/a5/47db150ea6380f11569b87d3ad064e3c929e5abe227a549d472fab6f5f3a/boto3-1.43.28-py3-none-any.whl", hash = "sha256:4fe6df2163aea02b561eca0d685e2f41a059d71f03721a3e79c3b522e79a3b56", size = 140536, upload-time = "2026-06-11T19:29:00.143Z" },
+]
+
+[[package]]
 name = "botocore"
 version = "1.43.28"
 source = { registry = "https://pypi.org/simple" }
@@ -119,6 +133,7 @@ version = "0.0.0"
 source = { virtual = "." }
 dependencies = [
     { name = "awscli" },
+    { name = "boto3" },
     { name = "pipelinescriptslib" },
     { name = "requests" },
 ]
@@ -126,6 +141,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "awscli", specifier = "==1.45.28" },
+    { name = "boto3", specifier = ">=1.43.28" },
     { name = "pipelinescriptslib", editable = "lib" },
     { name = "requests", specifier = "==2.34.2" },
 ]
