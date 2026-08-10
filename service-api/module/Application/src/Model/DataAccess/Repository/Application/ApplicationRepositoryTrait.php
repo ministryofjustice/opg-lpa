@@ -10,9 +10,9 @@ use MakeShared\DataModel\Lpa\Lpa;
 trait ApplicationRepositoryTrait
 {
     /**
-     * @var ApplicationRepositoryInterface
+     * @var ApplicationRepositoryInterface|null
      */
-    private $applicationRepository;
+    private $applicationRepository = null;
 
     /**
      * @param ApplicationRepositoryInterface $repo

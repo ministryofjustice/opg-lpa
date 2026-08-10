@@ -1,0 +1,34 @@
+services:
+  front-app-test:
+    volumes:
+      - ./service-front/config:/app/config
+      - ./service-front/src:/app/src
+      - ./service-front/test:/app/test
+      - ./service-front/phpunit.xml:/app/phpunit.xml
+      - ./service-front/psalm.xml:/app/psalm.xml
+      - ./service-front/psalm-baseline.xml:/app/psalm-baseline.xml
+      - ./service-front/phpcs.xml:/app/phpcs.xml
+      - ./service-front/content:/app/content
+      - ./shared:/shared
+
+  api-app-test:
+    volumes:
+      - ./service-api:/app
+      - ./shared:/shared
+
+  admin-app-test:
+    volumes:
+      - ./service-admin:/app
+      - ./shared:/shared
+
+  pdf-app-test:
+    volumes:
+      - ./service-pdf:/app
+      - ./shared:/shared
+
+  shared-test:
+    volumes:
+      - ./shared/module:/shared/module
+      - ./shared/src:/shared/src
+      - ./shared/phpunit.xml:/shared/phpunit.xml
+      - ./shared/psalm.xml:/shared/psalm.xml

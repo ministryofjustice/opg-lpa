@@ -1,6 +1,11 @@
 <?php
 
 use Application\Handler;
+use Application\Model\Service\OneLogin as OneLoginService;
+use Facile\OpenIDClient\Service\Builder\AuthorizationServiceBuilder;
+use Facile\OpenIDClient\Service\Builder\UserInfoServiceBuilder;
+use GuzzleHttp\Client as GuzzleClient;
+use Http\Adapter\Guzzle7\Client as GuzzlePsr18;
 use Laminas\Di\Container\ServiceManager\AutowireFactory;
 use Laminas\Mvc\Middleware\PipeSpec;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -9,6 +14,8 @@ use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Psr16Cache;
 
 return [
 
@@ -118,6 +125,114 @@ return [
                             'defaults' => [
                                 'controller' => 'OneLoginController',
                                 'action'     => 'start',
+                            ],
+                        ],
+                    ],
+
+                    'shared-space' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/shared-space',
+                            'defaults' => [
+                                'controller' => 'SharedSpaceController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'create' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/create',
+                                    'defaults' => [
+                                        'action' => 'create',
+                                    ],
+                                ],
+                            ],
+                            'lpas' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/lpas',
+                                    'defaults' => [
+                                        'action' => 'lpas',
+                                    ],
+                                ],
+                            ],
+                            'members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route' => '/members',
+                                ],
+                                'may_terminate' => false,
+                                'child_routes' => [
+                                    'add' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'addMember',
+                                            ],
+                                        ],
+                                    ],
+                                    'update' => [
+                                        'type'    => 'Segment',
+                                        'options' => [
+                                            'route'       => '/:memberUserId',
+                                            'constraints' => [
+                                                'memberUserId' => '[a-zA-Z0-9]+',
+                                            ],
+                                        ],
+                                        'may_terminate' => false,
+                                        'child_routes'  => [
+                                            'get' => [
+                                                'type'    => 'Method',
+                                                'options' => [
+                                                    'verb'     => 'get',
+                                                    'defaults' => [
+                                                        'action' => 'member',
+                                                    ],
+                                                ],
+                                            ],
+                                            'patch' => [
+                                                'type'    => 'Method',
+                                                'options' => [
+                                                    'verb'     => 'patch',
+                                                    'defaults' => [
+                                                        'action' => 'updateMember',
+                                                    ],
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'members-and-invites' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/members-and-invites',
+                                    'defaults' => [
+                                        'action' => 'membersAndInvites',
+                                    ],
+                                ],
+                            ],
+                            'invite' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route'    => '/invite',
+                                    'defaults' => [
+                                        'action' => 'invite',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+
+                    'onelogin-callback' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/callback',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'callback',
                             ],
                         ],
                     ],
@@ -452,7 +567,7 @@ return [
         ],
         'factories' => [
             Application\Controller\StatusController::class =>
-                Application\ControllerFactory\StatusControllerFactory::class
+                Application\ControllerFactory\StatusControllerFactory::class,
         ],
         'abstract_factories' => [
             'Application\ControllerFactory\AuthControllerAbstractFactory',
@@ -465,7 +580,6 @@ return [
         'abstract_factories' => [
             ListenerAbstractFactory::class,
             'Application\Model\Service\ServiceAbstractFactory',
-            'Laminas\Cache\Service\StorageCacheAbstractServiceFactory',
             'Laminas\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory',
         ],
         'factories' => [
@@ -473,11 +587,62 @@ return [
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
-            Application\Model\Service\OneLogin\DiscoveryDocumentFetcher::class => static function (ServiceLocatorInterface $container): Application\Model\Service\OneLogin\DiscoveryDocumentFetcher {
+            'OneLoginPsr16Cache' => static function (): Psr16Cache {
+                return new Psr16Cache(new ArrayAdapter());
+            },
+
+            OneLoginService\KeyPairManager::class => static function (ServiceLocatorInterface $container): OneLoginService\KeyPairManager {
                 $config = $container->get('config');
-                return new Application\Model\Service\OneLogin\DiscoveryDocumentFetcher(
-                    $container->get(GuzzleHttp\Client::class),
-                    $config['onelogin']['discovery_url'] ?? '',
+
+                $privateKey = $config['onelogin']['private_key'] ?? null;
+                $keyId      = $config['onelogin']['key_id'] ?? null;
+
+                if (!is_string($privateKey) || $privateKey === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.private_key');
+                }
+
+                if (!is_string($keyId) || $keyId === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.key_id');
+                }
+
+                return new OneLoginService\KeyPairManager($privateKey, $keyId);
+            },
+
+            OneLoginService\AuthorisationClientManager::class => static function (ServiceLocatorInterface $container): OneLoginService\AuthorisationClientManager {
+                $config = $container->get('config');
+
+                $clientId     = $config['onelogin']['client_id'] ?? null;
+                $discoveryUrl = $config['onelogin']['discovery_url'] ?? null;
+
+                if (!is_string($clientId) || $clientId === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.client_id');
+                }
+
+                if (!is_string($discoveryUrl) || $discoveryUrl === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.discovery_url');
+                }
+
+                return new OneLoginService\AuthorisationClientManager(
+                    $clientId,
+                    $discoveryUrl,
+                    $container->get(OneLoginService\KeyPairManager::class),
+                    new GuzzlePsr18(new GuzzleClient()),
+                    $container->get('OneLoginPsr16Cache'),
+                );
+            },
+
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (): OneLoginService\FacileAuthorizationServiceAdapter {
+                $httpClient = new GuzzlePsr18(new GuzzleClient());
+
+                $authBuilder = new AuthorizationServiceBuilder();
+                $authBuilder->setHttpClient($httpClient);
+
+                $userInfoBuilder = new UserInfoServiceBuilder();
+                $userInfoBuilder->setHttpClient($httpClient);
+
+                return new OneLoginService\FacileAuthorizationServiceAdapter(
+                    $authBuilder->build(),
+                    $userInfoBuilder->build(),
                 );
             },
         ],

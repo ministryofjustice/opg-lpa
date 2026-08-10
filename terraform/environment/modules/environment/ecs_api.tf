@@ -215,6 +215,8 @@ locals {
         condition     = "HEALTHY"
       }],
       volumesFrom = [],
+      privileged  = false,
+      user        = "nginx",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -264,6 +266,8 @@ locals {
       },
       command     = ["php-fpm"]
       volumesFrom = [],
+      privileged  = false,
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -309,7 +313,7 @@ locals {
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
-        { name = "ORGANISATIONS_ENABLED", value = tostring(var.environment.feature_flags.organisations_enabled) }
+        { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) }
       ]
     }
   )

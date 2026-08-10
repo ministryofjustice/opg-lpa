@@ -1,0 +1,71 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'Manage members' -%}
+
+{% set permissions = form.get('permissions') %}
+{% set status = form.get('status') %}
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+        {{ macros.formErrorSummary(error, form) }}
+
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">{{ overridePageTitle }}</span>
+            <h1 class="govuk-heading-xl">{{ member.name.first ~ ' ' ~ member.name.last }}</h1>
+
+            {{ form.prepare() ? '' }}
+            {{ form().openTag( form )|raw }}
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+            <div class="govuk-form-group {{ permissions.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <fieldset class="govuk-fieldset" aria-describedby="permissions-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Permissions
+                    </legend>
+
+                    <div id="permissions-hint" class="govuk-hint">
+                        All members can create and edit LPAs.
+                    </div>
+
+                    {{ formElementErrorsV2(permissions) }}
+
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                            {{ formElement(permissions) }}
+                            <label class="govuk-label govuk-checkboxes__label" for="{{ permissions.getAttribute('id') }}">
+                                {{ permissions.getOption('label')|raw }}
+                            </label>
+
+                            <div id="permissions-item-hint" class="govuk-hint govuk-checkboxes__hint">
+                                Admins can manage members and change the shared space’s details.
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-form-group {{ status.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+                <fieldset class="govuk-fieldset" aria-describedby="status-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        Status
+                    </legend>
+
+                    {{ formElementErrorsV2(status) }}
+
+                    <div class="govuk-radios" data-module="govuk-radios" data-govuk-radios-init="">
+                        {{ formRadio(status) }}
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit" data-cy="save">Save</button>
+            </div>
+
+            {{ form().closeTag|raw }}
+        </div>
+    </div>
+
+{% endblock content %}

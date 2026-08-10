@@ -110,6 +110,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         return new UserModel($user);
     }
 
+    public function getByOneLoginSub(string $sub): ?UserRepository\UserInterface
+    {
+        $user = $this->getByField(['one_login_sub' => $sub]);
+
+        if (!is_array($user)) {
+            return null;
+        }
+
+        return new UserModel($user);
+    }
+
     /**
      * Returns zero or more users by case-insensitive and partial
      * matching
@@ -220,6 +231,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             [
                 'last_login' => gmdate(DbWrapper::TIME_FORMAT),
                 'inactivity_flags' => null,
+                'failed_login_attempts' => 0,
             ]
         );
     }
@@ -679,6 +691,32 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getProfiles(array $ids): array
+    {
+        $profiles = [];
+        $result = $this->dbWrapper->select(self::USERS_TABLE, ['id' => $ids]);
+
+        foreach ($result as $user) {
+            if (!is_array($user) || !isset($user['profile'])) {
+                continue;
+            }
+
+            $profile = array_merge(json_decode($user['profile'], true), [
+                'id' => $user['id'],
+                'createdAt' => $user['created'],
+                'updatedAt' => $user['updated'],
+                'lastLoginAt' => $user['last_login'],
+            ]);
+
+            $profiles[] = new ProfileUserModel($profile);
+        }
+
+        return $profiles;
+    }
+
+    /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
      * @param ProfileUserModel $data
@@ -699,7 +737,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * Updates a user's OneLogin sub.
+     * Links a user to a GOV.UK One Login identity.
+     *
+     * Once linked, authentication happens in One Login, so the local password is
+     * no longer used — we clear it to avoid keeping a redundant credential.
      *
      * @param string $userId
      * @param string $oneLoginSub
@@ -710,6 +751,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
+                'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]
         );

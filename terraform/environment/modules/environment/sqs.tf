@@ -4,7 +4,7 @@ resource "aws_sqs_queue" "pdf_fifo_queue" {
   visibility_timeout_seconds        = "90"
   fifo_queue                        = true
   content_based_deduplication       = true
-  kms_master_key_id                 = "alias/mrk_pdf_sqs_encryption_key-${var.account_name}"
+  kms_master_key_id                 = data.aws_kms_alias.pdf_sqs_encryption_key.name
   kms_data_key_reuse_period_seconds = "300"
   max_message_size                  = "262144"
   tags                              = local.pdf_component_tag
