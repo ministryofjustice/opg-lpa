@@ -144,7 +144,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
 
         $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
 
-        $this->logger->info('LPA updated with payment information', [
+        $this->logger->info('LPA updated with payment information, redirecting to gov.uk pay', [
             'lpaId'            => $lpa->getId(),
             'payment' => $lpa->getPayment()->toJson(),
         ]);
