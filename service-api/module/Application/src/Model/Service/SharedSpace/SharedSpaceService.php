@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Application\Model\Service\SharedSpace;
 
 use Application\Library\MillisecondDateTime;
+use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use DateTime;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -190,18 +192,18 @@ class SharedSpaceService
         }
 
         $this->logger->info('Member added to shared space', [
-            'event'          => 'shared_space.member_added',
-            'shared_space_id' => $sharedSpaceId,
-            'added_user_id'        => $userIdToAdd,
+            'event'            => 'shared_space.member_added',
+            'shared_space_id'  => $sharedSpaceId,
+            'added_user_id'    => $userIdToAdd,
             'added_by_user_id' => $userIdAddingMember,
-            'is_admin' => $isAdmin,
+            'is_admin'         => $isAdmin,
         ]);
     }
 
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         try {
-            $this->sharedSpaceRepository->updateMemberIsAdmin($sharedSpaceId, $userId, $isAdmin);
+            $this->sharedSpaceRepository->updateMember($sharedSpaceId, $userId, $isAdmin, $isActive);
         } catch (Throwable $e) {
             $this->logger->error('Unable to update shared space member: ' . $e->getMessage(), [
                 'user_id' => $userId,
@@ -211,10 +213,107 @@ class SharedSpaceService
         }
 
         $this->logger->info('Shared space member updated', [
-            'event'          => 'shared_space.member_updated',
+            'event'           => 'shared_space.member_updated',
             'shared_space_id' => $sharedSpaceId,
-            'user_id'        => $userId,
-            'is_admin'       => $isAdmin,
+            'user_id'         => $userId,
+            'is_admin'        => $isAdmin,
+            'is_active'       => $isActive,
         ]);
+    }
+
+    public function getInvites(string $sharedSpaceId): array
+    {
+        $invites = $this->sharedSpaceRepository->getInvites($sharedSpaceId);
+
+        return array_map(function (MemberInvite $invite) {
+            return [
+                'id' => $invite->id,
+                'fullName' => $invite->firstNames . ' ' . $invite->lastName,
+                'email' => $invite->email,
+                'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
+            ];
+        }, $invites);
+    }
+
+    /**
+     * @return array{id: int, sharedSpaceName: string, inviteCode: string}
+     */
+    public function invite(MemberInvite $memberInvite): array
+    {
+        $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($memberInvite->sharedSpaceId);
+        $id = $this->sharedSpaceRepository->createInvite($memberInvite);
+
+        return [
+            'id' => $id,
+            'sharedSpaceName' => $sharedSpaceName,
+            'inviteCode' => $memberInvite->code,
+        ];
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function revokeInvite(string $sharedSpaceId, int $inviteId, string $revokedByUserId): void
+    {
+        try {
+            $this->sharedSpaceRepository->deleteInvite($inviteId);
+        } catch (Throwable $e) {
+            $this->logger->error('Unable to revoke shared space invite: ' . $e->getMessage(), [
+                'shared_space_id' => $sharedSpaceId,
+                'invite_id' => $inviteId,
+            ]);
+
+            throw $e;
+        }
+
+        $this->logger->info('Shared space invite revoked', [
+            'event'           => 'shared_space.invite_revoked',
+            'shared_space_id' => $sharedSpaceId,
+            'invite_id'       => $inviteId,
+            'revoked_by'      => $revokedByUserId,
+        ]);
+    }
+
+    public function join(string $userId, string $sharedSpaceName, string $accessCode): string
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+
+        try {
+            $sharedSpaceId = $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId);
+            if ($sharedSpaceId !== null) {
+                throw new UserAlreadyInSharedSpaceException($sharedSpaceId);
+            }
+
+            $invite = $this->sharedSpaceRepository->getInviteByCodeAndSharedSpaceName($accessCode, $sharedSpaceName);
+            if ($invite === null) {
+                throw new InviteNotFoundException();
+            }
+
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'user_id' => $userId,
+                'shared_space_id' => $invite->sharedSpaceId,
+                'count' => $lpasMoved,
+            ]);
+
+            $this->sharedSpaceRepository->addMember($invite->sharedSpaceId, $userId, $invite->isAdmin);
+            $this->sharedSpaceRepository->deleteInvite($invite->id);
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            throw $e;
+        }
+
+        $this->logger->info('User joined shared space', [
+            'event' => 'shared_space.joined',
+            'shared_space_id' => $invite->sharedSpaceId,
+            'user_id' => $userId,
+            'lpas_moved' => $lpasMoved,
+        ]);
+
+        return $invite->sharedSpaceId;
     }
 }

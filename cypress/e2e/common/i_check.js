@@ -3,12 +3,8 @@ import { Then } from '@badeball/cypress-cucumber-preprocessor';
 // should('be.checked')  or not checked exists here to ensure that cypress doesn't race off
 // and carry out the next operation without making sure first that the check or uncheck has taken effect
 
-Then(`I check {string} checkbox`, (fieldName) => {
-    cy.get(`[name="${fieldName}"]`).check()
-});
-
-Then(`I uncheck {string} checkbox`, (fieldName) => {
-  cy.get(`[name="${fieldName}"]`).uncheck()
+Then(/^I (?:check|uncheck|select) (?:radio|checkbox) labelled "(.*?)"$/, (label) => {
+  cy.contains('label', label).click()
 });
 
 Then(`I check {string}`, (checkable) => {

@@ -12,6 +12,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Radio;
 use Laminas\Form\FormElementManager;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
@@ -68,11 +69,17 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $permissionsElement = new Checkbox('permissions');
+        $statusElement = new Radio('status')->setValueOptions([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
 
-        $this->form->expects($this->once())
+        $this->form
             ->method('get')
-            ->with('permissions')
-            ->willReturn($permissionsElement);
+            ->willReturnMap([
+                ['permissions', $permissionsElement],
+                ['status', $statusElement],
+            ]);
 
         $this->renderer->method('render')->willReturn('<html>member</html>');
 
@@ -80,6 +87,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertTrue($permissionsElement->isChecked());
+        $this->assertTrue($statusElement->getValue() === 'active');
     }
 
     public function testGetRequestRedirectsWhenMemberNotFound(): void
@@ -98,7 +106,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         // space, so a non-admin's request results in a null response here.
         $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(null);
 
-        $this->sharedSpaceService->expects($this->never())->method('updateMemberIsAdmin');
+        $this->sharedSpaceService->expects($this->never())->method('updateMember');
 
         $response = $this->handler->handle($this->createRequest('member-1'));
 
@@ -113,13 +121,24 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
 
+        $statusElement = new Radio('status')->setValueOptions([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
+        $statusElement->setValue('active');
+
         $this->form->method('isValid')->willReturn(true);
-        $this->form->method('get')->with('permissions')->willReturn($permissionsElement);
+        $this->form
+            ->method('get')
+            ->willReturnMap([
+                ['permissions', $permissionsElement],
+                ['status', $statusElement],
+            ]);
 
         $this->sharedSpaceService
             ->expects($this->once())
-            ->method('updateMemberIsAdmin')
-            ->with('member-1', false)
+            ->method('updateMember')
+            ->with('member-1', false, true)
             ->willReturn(true);
 
         $request = $this->createRequest()
@@ -137,15 +156,25 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
 
         $permissionsElement = new Checkbox('permissions');
-        $permissionsElement->setChecked(false);
+
+        $statusElement = new Radio('status')->setValueOptions([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
+        $statusElement->setValue('inactive');
 
         $this->form->method('isValid')->willReturn(true);
-        $this->form->method('get')->with('permissions')->willReturn($permissionsElement);
+        $this->form
+            ->method('get')
+            ->willReturnMap([
+                ['permissions', $permissionsElement],
+                ['status', $statusElement],
+            ]);
 
         $this->sharedSpaceService
             ->expects($this->once())
-            ->method('updateMemberIsAdmin')
-            ->with('member-1', false)
+            ->method('updateMember')
+            ->with('member-1', false, false)
             ->willReturn(true);
 
         $request = $this->createRequest()
@@ -165,10 +194,21 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
 
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('get')->with('permissions')->willReturn($permissionsElement);
+        $statusElement = new Radio('status')->setValueOptions([
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ]);
+        $statusElement->setValue('inactive');
 
-        $this->sharedSpaceService->method('updateMemberIsAdmin')->willReturn(false);
+        $this->form->method('isValid')->willReturn(true);
+        $this->form
+            ->method('get')
+            ->willReturnMap([
+                ['permissions', $permissionsElement],
+                ['status', $statusElement],
+            ]);
+
+        $this->sharedSpaceService->method('updateMember')->willReturn(false);
 
         $this->renderer
             ->expects($this->once())
@@ -196,7 +236,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
         $this->form->method('isValid')->willReturn(false);
 
-        $this->sharedSpaceService->expects($this->never())->method('updateMemberIsAdmin');
+        $this->sharedSpaceService->expects($this->never())->method('updateMember');
 
         $this->renderer->method('render')->willReturn('<html>invalid</html>');
 

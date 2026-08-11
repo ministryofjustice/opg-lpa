@@ -51,6 +51,7 @@ class UserModelTest extends MockeryTestCase
             'last_failed_login' => $date,
             'failed_login_attempts' => 2,
             'activation_token' => 'activation-token',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
             'auth_token' => json_encode(['token' => 'auth-token'])
         ]);
 
@@ -66,7 +67,15 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals($date, $user->lastFailedLoginAttemptAt());
         $this->assertEquals(2, $user->failedLoginAttempts());
         $this->assertEquals('activation-token', $user->activationToken());
+        $this->assertEquals('urn:fdc:gov.uk:2022:sub-123', $user->oneLoginSub());
         $this->assertEquals('auth-token', $user->authToken()->id());
         $this->assertEquals(null, $user->numberOfLpas());
+    }
+
+    public function testOneLoginSubReturnsNullWhenNotSet()
+    {
+        $user = new User(['id' => '1', 'identity' => 'unit@test.com']);
+
+        $this->assertNull($user->oneLoginSub());
     }
 }

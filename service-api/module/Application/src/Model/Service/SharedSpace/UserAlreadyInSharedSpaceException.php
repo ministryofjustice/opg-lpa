@@ -12,7 +12,7 @@ use RuntimeException;
  */
 class UserAlreadyInSharedSpaceException extends RuntimeException
 {
-    public function __construct()
+    public function __construct(public readonly ?string $sharedSpaceId = null)
     {
         parent::__construct('User is already a member of a shared space');
     }

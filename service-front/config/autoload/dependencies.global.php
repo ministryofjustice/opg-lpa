@@ -38,6 +38,7 @@ use App\Service\Redis\RedisClient;
 use App\Service\Redis\RedisClientFactory;
 use App\Service\Session\FilteringSaveHandler;
 use App\Service\Session\SaveHandlerFactory;
+use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\System\StatusService;
 use App\Service\System\StatusServiceFactory;
 use App\Service\SystemMessage;
@@ -168,6 +169,7 @@ return [
                 $c->get(FormElementManager::class),
                 $c->get(AuthenticationService::class),
                 Feature::OneLogin->isEnabled(),
+                $c->get(SharedSpaceService::class)
             ),
             RedirectUriBuilder::class                   => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,

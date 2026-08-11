@@ -100,4 +100,29 @@ class OneLoginService
         /** @var array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}} $result */
         return $result;
     }
+
+    /**
+     * Attempt to link an existing Make account to the One Login identity.
+     *
+     * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string}
+     * @throws RuntimeException
+     */
+    public function linkExistingAccount(
+        #[\SensitiveParameter] string $email,
+        #[\SensitiveParameter] string $password,
+        string $oneLoginSub,
+    ): array {
+        /** @var array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string} $result */
+        $result = $this->client->httpPost(
+            '/v2/auth/onelogin/link',
+            [
+                'username'    => $email,
+                'password'    => $password,
+                'oneLoginSub' => $oneLoginSub,
+            ],
+            anonymous: true,
+        );
+
+        return $result;
+    }
 }

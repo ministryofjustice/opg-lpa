@@ -88,3 +88,29 @@ Then(`I am advised my Make account credentials were not recognised`, () => {
 Then(`I choose to reset my Make account password`, () => {
   cy.get('[data-cy=link-account-forgot-password]').click();
 });
+
+Then(
+  `I attempt to link a Make account already linked to another One Login`,
+  () => {
+    cy.get('[data-cy=login-email]')
+      .clear()
+      .type(Cypress.env('already_linked_email'));
+    cy.get('[data-cy=login-password]').clear().type('any-password-here-123');
+    cy.get('[data-cy=link-account-submit]').click();
+  },
+);
+
+Then(`I am advised my account could not be linked`, () => {
+  cy.get('[data-cy=cannot-link-heading]').should(
+    'contain',
+    'We cannot link this account',
+  );
+});
+
+Then(`I choose to link another account`, () => {
+  cy.get('[data-cy=cannot-link-try-again]').click();
+});
+
+Then(`I choose to create a new account instead`, () => {
+  cy.get('[data-cy=cannot-link-create-account]').click();
+});

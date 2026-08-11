@@ -27,7 +27,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 class AuthenticationMiddleware implements MiddlewareInterface
 {
     private const string REASON_TIMEOUT = 'timeout';
-    private const string REASON_INTERNAL_SYSTEM_ERROR = 'internalSystemError';
+    private const string REASON_INTERNAL_SYSTEM_ERROR = 'internal-system-error';
 
     // Mezzio session key used by LoginHandler when storing the pre-auth URL.
     private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
