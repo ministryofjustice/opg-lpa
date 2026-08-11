@@ -19,16 +19,12 @@
             </ul>
 
             <p class="govuk-body">
-                You can try to link a different Make account, or create a new one.
+                You can try again to link a different Make account, or create a new one.
             </p>
 
-            <a href="{{ url('link-account') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button" data-cy="cannot-link-try-again">
-                Link another account
+            <a href="{{ url('link-or-create-account') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button" data-cy="cannot-link-try-again">
+                Try again
             </a>
-
-            <p class="govuk-body">
-                <a class="govuk-link" href="{{ url('register') }}" data-cy="cannot-link-create-account">Create a new account</a>
-            </p>
         </div>
     </div>
 {% endblock content %}
