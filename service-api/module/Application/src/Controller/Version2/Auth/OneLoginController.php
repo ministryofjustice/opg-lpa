@@ -118,4 +118,23 @@ class OneLoginController extends AbstractAuthController
 
         return new JsonModel($result);
     }
+
+    /**
+     * @return JsonModel
+     */
+    public function createAction(): JsonModel
+    {
+        /** @var array{oneLoginSub: string} $body */
+        $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        TelemetryEventManager::triggerStart('OneLoginController.createAction');
+
+        try {
+            $result = $this->getService()->createAndLinkAccount($body['oneLoginSub']);
+        } finally {
+            TelemetryEventManager::triggerStop();
+        }
+
+        return new JsonModel($result);
+    }
 }

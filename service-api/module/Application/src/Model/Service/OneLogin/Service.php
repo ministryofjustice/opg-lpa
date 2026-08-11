@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\OneLogin;
 
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\UserInterface;
@@ -302,6 +303,55 @@ class Service extends AbstractService
                 'lastLogin'      => $lastLogin->format('c'),
                 'sharedSpaceId'  => $authResult['sharedSpaceId'],
             ],
+        ];
+    }
+
+    /**
+     * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: null}
+     */
+    public function createAndLinkAccount(string $sub): array
+    {
+        if ($this->authenticationService === null) {
+            throw new RuntimeException('AuthenticationService must be set');
+        }
+
+        $generator = $this->randomBytes;
+
+        do {
+            $userId = bin2hex($generator(16));
+
+            $created = $this->getUserRepository()->create($userId, [
+                'identity'              => null,
+                'password_hash'         => null,
+                'activation_token'      => null,
+                'active'                => true,
+                'created'               => new MillisecondDateTime(),
+                'last_updated'          => new MillisecondDateTime(),
+                'failed_login_attempts' => 0,
+            ]);
+        } while (!$created);
+
+        $this->getUserRepository()->setOneLoginSub($userId, $sub);
+        $this->getUserRepository()->updateLastLoginTime($userId);
+
+        $user = $this->getUserRepository()->getById($userId);
+
+        if (!$user instanceof UserInterface) {
+            throw new RuntimeException('Failed to load newly created One Login account');
+        }
+
+        $tokenDetails = $this->authenticationService->issueAuthToken($user);
+
+        $this->getLogger()->info('auth.onelogin.create_success', [
+            'user_id' => $userId,
+        ]);
+
+        return [
+            'userId'         => $userId,
+            'token'          => $tokenDetails['token'],
+            'tokenExpiresAt' => $tokenDetails['expiresAt']->format('c'),
+            'lastLogin'      => (new DateTime())->format('c'),
+            'sharedSpaceId'  => null,
         ];
     }
 

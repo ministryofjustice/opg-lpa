@@ -422,6 +422,44 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason'] ?? null);
     }
 
+    public function testCreateAndLinkAccountCreatesActivePasswordlessUserAndReturnsIdentity(): void
+    {
+        $this->service->setRandomByteGenerator(fn(int $n): string => str_repeat("\x00", $n));
+        $userId = str_repeat('0', 32);
+        $sub    = 'urn:fdc:gov.uk:2022:brand-new';
+
+        $this->userRepository->shouldReceive('create')
+            ->once()
+            ->with($userId, Mockery::on(function (array $details): bool {
+                return $details['identity'] === null
+                    && $details['password_hash'] === null
+                    && $details['activation_token'] === null
+                    && $details['active'] === true
+                    && $details['failed_login_attempts'] === 0;
+            }))
+            ->andReturn(true);
+
+        $this->userRepository->shouldReceive('setOneLoginSub')->once()->with($userId, $sub);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with($userId);
+
+        $user = Mockery::mock(UserInterface::class);
+        $this->userRepository->shouldReceive('getById')->once()->with($userId)->andReturn($user);
+
+        $expires = new DateTime('+4500 seconds');
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->with($user)
+            ->andReturn(['token' => 'tok-new', 'expiresIn' => 4500, 'expiresAt' => $expires]);
+
+        $result = $this->service->createAndLinkAccount($sub);
+
+        $this->assertSame($userId, $result['userId']);
+        $this->assertSame('tok-new', $result['token']);
+        $this->assertSame($expires->format('c'), $result['tokenExpiresAt']);
+        $this->assertNull($result['sharedSpaceId']);
+        $this->assertNotEmpty($result['lastLogin']);
+    }
+
     private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface
     {
         $user = Mockery::mock(UserInterface::class);

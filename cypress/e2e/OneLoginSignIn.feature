@@ -48,7 +48,7 @@ Feature: One Login Sign In
     And I should be on "/link-or-create-account"
     And I choose to create a new Make account
     And I submit the form
-    And I should be on "/signup"
+    And I am signed in with my new Make account
 
   @RequiresMockOneLogin
   Scenario: An unlinked user entering incorrect credentials is advised and can retry

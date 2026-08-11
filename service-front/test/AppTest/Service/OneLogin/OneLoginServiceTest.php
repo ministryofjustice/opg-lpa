@@ -254,4 +254,39 @@ class OneLoginServiceTest extends TestCase
 
         $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
     }
+
+    public function testCreateAndLinkAccountPostsSubAndReturnsIdentity(): void
+    {
+        $identity = [
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/create',
+                ['oneLoginSub' => 'urn:fdc:gov.uk:2022:new'],
+                [],
+                true,
+            )
+            ->willReturn($identity);
+
+        $result = $this->service->createAndLinkAccount('urn:fdc:gov.uk:2022:new');
+
+        $this->assertSame($identity, $result);
+    }
+
+    public function testCreateAndLinkAccountPropagatesClientException(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException(new RuntimeException('api down'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->createAndLinkAccount('urn:x');
+    }
 }
