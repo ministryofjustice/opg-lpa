@@ -12,6 +12,7 @@ use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Form\Element\Radio;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Mezzio\Router\RouteResult;
@@ -61,8 +62,10 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 /** @var Checkbox $permissions */
                 $permissions = $form->get('permissions');
+                /** @var Radio $status */
+                $status = $form->get('status');
 
-                if ($this->sharedSpaceService->updateMemberIsAdmin($memberId, $permissions->isChecked())) {
+                if ($this->sharedSpaceService->updateMember($memberId, $permissions->isChecked(), $status->getValue() === 'active')) {
                     return new RedirectResponse('/shared-space/manage');
                 }
 
@@ -72,6 +75,10 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
             /** @var Checkbox $permissions */
             $permissions = $form->get('permissions');
             $permissions->setChecked($member['isAdmin']);
+
+            /** @var Radio $status */
+            $status = $form->get('status');
+            $status->setValue($member['isActive'] ? 'active' : 'inactive');
         }
 
         return new HtmlResponse($this->renderer->render(

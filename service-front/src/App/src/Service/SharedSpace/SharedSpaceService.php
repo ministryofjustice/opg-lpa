@@ -5,13 +5,20 @@ declare(strict_types=1);
 namespace App\Service\SharedSpace;
 
 use App\Service\ApiClient\Client;
+use App\Service\Mail\MailParameters;
+use App\Service\Mail\Transport\MailTransportInterface;
 use Psr\Log\LoggerInterface;
+use Exception;
+use Throwable;
 
 class SharedSpaceService
 {
+    public const string EMAIL_INVITE_MEMBER = 'email-invite-member';
+
     public function __construct(
         private readonly Client $client,
-        private LoggerInterface $logger
+        private readonly MailTransportInterface $mailTransport,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -28,7 +35,7 @@ class SharedSpaceService
                 '/v2/shared-space/create',
                 ['name' => $sharedSpaceName],
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Shared space creation failed', [
                 'exception' => $e,
             ]);
@@ -43,7 +50,7 @@ class SharedSpaceService
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members/' . $memberUserId);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Retrieve shared space member failed', [
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
@@ -59,12 +66,12 @@ class SharedSpaceService
         return $result['member'];
     }
 
-    public function getMembers(): ?array
+    public function getMembersAndInvites(): mixed
     {
         try {
-            $result = $this->client->httpGet('/v2/shared-space/members');
-        } catch (\Throwable $e) {
-            $this->logger->error('Retrieve members of shared space failed', [
+            $result = $this->client->httpGet('/v2/shared-space/members-and-invites');
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve members and invites of shared space failed', [
                 'exception' => $e,
             ]);
 
@@ -81,7 +88,7 @@ class SharedSpaceService
                 '/v2/shared-space/members',
                 ['sharedSpaceId' => $sharedSpaceId, 'userIdToAdd' => $userIdToAdd]
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->warning('Adding member to shared space failed', [
                 'exception' => $e,
                 'sharedSpaceId' => $sharedSpaceId,
@@ -94,23 +101,103 @@ class SharedSpaceService
         return true;
     }
 
-    public function updateMemberIsAdmin(string $memberUserId, bool $isAdmin): bool
+    public function updateMember(string $memberUserId, bool $isAdmin, bool $isActive): bool
     {
         try {
             $this->client->httpPatch(
                 '/v2/shared-space/members/' . $memberUserId,
-                ['isAdmin' => $isAdmin],
+                ['isAdmin' => $isAdmin, 'isActive' => $isActive],
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $this->logger->error('Updating shared space member failed', [
                 'exception' => $e,
                 'memberUserId' => $memberUserId,
                 'isAdmin' => $isAdmin,
+                'isActive' => $isActive,
             ]);
 
             return false;
         }
 
         return true;
+    }
+
+    public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
+    {
+        try {
+            $result = $this->client->httpPost(
+                '/v2/shared-space/invite',
+                [
+                    'firstNames' => $firstNames,
+                    'lastName' => $lastName,
+                    'email' => $email,
+                    'isAdmin' => $isAdmin,
+                ],
+            );
+        } catch (Throwable $e) {
+            $this->logger->warning('Invite failed', [
+                'exception' => $e,
+            ]);
+
+            return false;
+        }
+
+        $params = new MailParameters(
+            $email,
+            self::EMAIL_INVITE_MEMBER,
+            [
+                'inviteeFullName' => $firstNames . ' ' . $lastName,
+                'inviterEmail' => $inviterEmail,
+                'sharedSpaceName' => $result['sharedSpaceName'],
+                'inviteCode' => $result['inviteCode'],
+            ],
+        );
+
+        try {
+            $this->mailTransport->send($params);
+        } catch (Exception $e) {
+            $this->logger->error('Failed to send invite email', [
+                'inviteId' => $result['id'],
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function revokeInvite(string $inviteId): bool
+    {
+        try {
+            $this->client->httpPost('/v2/shared-space/revoke-invite/' . $inviteId);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Revoking invite failed', [
+                'exception' => $e,
+                'inviteId' => $inviteId,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    public function join(string $sharedSpaceName, string $accessCode): string
+    {
+        try {
+            /** @var array{sharedSpaceId: string} $response */
+            $response = $this->client->httpPost(
+                '/v2/shared-space/join',
+                ['sharedSpaceName' => $sharedSpaceName, 'accessCode' => $accessCode],
+            );
+        } catch (Throwable $e) {
+            $this->logger->warning('Join shared space failed', [
+                'exception' => $e,
+            ]);
+
+            throw $e;
+        }
+
+        return $response['sharedSpaceId'];
     }
 }

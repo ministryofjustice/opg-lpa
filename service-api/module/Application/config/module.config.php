@@ -151,7 +151,7 @@ return [
                             'lpas' => [
                                 'type'    => 'Segment',
                                 'options' => [
-                                    'route'       => '/lpas',
+                                    'route'    => '/lpas',
                                     'defaults' => [
                                         'action' => 'lpas',
                                     ],
@@ -164,15 +164,6 @@ return [
                                 ],
                                 'may_terminate' => false,
                                 'child_routes' => [
-                                    'list' => [
-                                        'type'    => 'Method',
-                                        'options' => [
-                                            'verb'     => 'get',
-                                            'defaults' => [
-                                                'action' => 'members',
-                                            ],
-                                        ],
-                                    ],
                                     'add' => [
                                         'type'    => 'Method',
                                         'options' => [
@@ -214,6 +205,54 @@ return [
                                     ],
                                 ],
                             ],
+                            'members-and-invites' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/members-and-invites',
+                                    'defaults' => [
+                                        'action' => 'membersAndInvites',
+                                    ],
+                                ],
+                            ],
+                            'invite' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route'    => '/invite',
+                                    'defaults' => [
+                                        'action' => 'invite',
+                                    ],
+                                ],
+                            ],
+                            'revoke-invite' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/revoke-invite/:memberInviteId',
+                                    'constraints' => [
+                                        'memberInviteId' => '[0-9]+',
+                                    ],
+                                ],
+                                'may_terminate' => false,
+                                'child_routes'  => [
+                                    'post' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'revokeInvite',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                            'join' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route'    => '/join',
+                                    'defaults' => [
+                                        'action' => 'join',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 
@@ -224,6 +263,17 @@ return [
                             'defaults' => [
                                 'controller' => 'OneLoginController',
                                 'action'     => 'callback',
+                            ],
+                        ],
+                    ],
+
+                    'onelogin-link' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/link',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'link',
                             ],
                         ],
                     ],

@@ -61,6 +61,7 @@ class User
 
         $this->tokenExpiresIn($expiresIn);
 
+        // TODO can we remove this now admin is handled by Cognito?
         if ($isAdmin === true) {
             $this->setAsAdmin();
         }

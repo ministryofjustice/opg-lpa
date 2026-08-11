@@ -29,7 +29,7 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
         /** @var User $identity */
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
 
-        $result = $this->sharedSpaceService->getMembers();
+        $result = $this->sharedSpaceService->getMembersAndInvites();
         $members = $result['members'] ?? [];
         $isAdmin = false;
 
@@ -46,7 +46,10 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'members' => $members,
+                    'invites' => $result['invites'],
                     'signedInUserIsAdmin' => $isAdmin,
+                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
+                    'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
                 ],
             ),
         ));

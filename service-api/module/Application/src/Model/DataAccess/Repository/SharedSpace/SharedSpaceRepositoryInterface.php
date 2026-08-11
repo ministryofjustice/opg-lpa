@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Application\Model\DataAccess\Repository\SharedSpace;
 
 use Exception;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Application\Model\Entity\MemberInvite;
 
 interface SharedSpaceRepositoryInterface
 {
@@ -56,6 +58,8 @@ interface SharedSpaceRepositoryInterface
      */
     public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool;
 
+    public function getSharedSpace(string $id): ?string;
+
     /**
      * Get the ID of the shared space that the given user is a member of,
      * if any. A user can only be a member of one shared space at a time.
@@ -64,7 +68,6 @@ interface SharedSpaceRepositoryInterface
      * @return string|null
      */
     public function getSharedSpaceIdForUser(string $userId): ?string;
-
 
     /**
      * @return SharedSpaceMember|null
@@ -86,13 +89,24 @@ interface SharedSpaceRepositoryInterface
      */
     public function isAdmin(string $sharedSpaceId, string $userId): bool;
 
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
+
+    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite;
+
     /**
-     * Updates a member's admin permission within a shared space.
-     *
-     * @param string $sharedSpaceId
-     * @param string $userId
-     * @param bool $isAdmin
-     * @throws Exception
+     * @return array<MemberInvite>
      */
-    public function updateMemberIsAdmin(string $sharedSpaceId, string $userId, bool $isAdmin): void;
+    public function getInvites(string $sharedSpaceId): array;
+
+    /**
+     * Create an invite to a new shared space member.
+     * @throws InvalidQueryException
+     */
+    public function createInvite(MemberInvite $memberInvite): int;
+
+    /**
+     * Revoke an unused invite to a shared space.
+     * @throws InvalidQueryException
+     */
+    public function deleteInvite(int $inviteId): void;
 }

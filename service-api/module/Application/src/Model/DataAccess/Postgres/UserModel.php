@@ -200,6 +200,16 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
+     * The GOV.UK One Login subject identifier this account is linked to, if any.
+     *
+     * @return string|null
+     */
+    public function oneLoginSub(): ?string
+    {
+        return (isset($this->data['one_login_sub'])) ? $this->data['one_login_sub'] : null;
+    }
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return UserRepository\TokenInterface|null

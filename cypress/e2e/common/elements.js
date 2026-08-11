@@ -168,9 +168,13 @@ Then('the instructions expandable element should be present and closed', () => {
 
 Then('I can see myself', () => {
   cy.get('table').within(() => {
-      cy.get('@fixtureUser').then(({ email }) => {
-        cy.contains(email);
-        cy.contains('Fixture User');
-      });
+    cy.get('@fixtureUser').then(({ email }) => {
+      cy.contains(email);
+      cy.contains('Fixture User');
+    });
   });
+});
+
+Then(`I see a success notification with content {string}`, (content) => {
+  cy.contains('.govuk-notification-banner--success', content);
 });

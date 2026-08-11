@@ -7,6 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Laminas\View\Model\JsonModel;
+use MakeShared\OneLogin\LinkReason;
 use Mockery;
 
 class OneLoginControllerTest extends AbstractAuthControllerTestCase
@@ -170,5 +171,29 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertSame(401, $result->status);
         $this->assertStringContainsString('One Login authentication failed', $result->detail);
+    }
+
+    public function testLinkActionReturnsJsonModelWithServiceResult(): void
+    {
+        $body = [
+            'username'    => 'user@example.com',
+            'password'    => 'sup3r-secret', //pragma: allowlist secret
+            'oneLoginSub' => 'urn:fdc:gov.uk:2022:new',
+        ];
+
+        $serviceResult = ['linked' => false, 'reason' => LinkReason::ALREADY_LINKED];
+
+        $this->service->shouldReceive('linkExistingAccount')
+            ->with($body['username'], $body['password'], $body['oneLoginSub'])
+            ->andReturn($serviceResult)
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->linkAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($serviceResult, $result->getVariables());
     }
 }

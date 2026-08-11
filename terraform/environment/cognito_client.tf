@@ -42,5 +42,5 @@ resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_admin"
   write_attributes       = []
 
   callback_urls = ["https://${module.environment_dns.admin_fqdn}/oauth2/idpresponse"]
-  logout_urls   = ["https://${module.environment_dns.admin_fqdn}/"]
+  logout_urls   = ["https://${module.environment_dns.front_fqdn}/"]
 }
