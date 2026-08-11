@@ -109,7 +109,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/
 RUN composer check-platform-reqs -d /app \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
-    && find vendor -name composer.lock -delete \
+    && find /app/vendor -name composer.lock -delete \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
