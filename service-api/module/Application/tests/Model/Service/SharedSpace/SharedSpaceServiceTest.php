@@ -19,6 +19,7 @@ use MakeShared\DataModel\User\User;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
@@ -309,26 +310,26 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->with($sharedSpaceId)
             ->andReturn([
                 new MemberInvite(
+                    userId: '',
+                    sharedSpaceId: '',
                     firstNames: 'a',
                     lastName: 'b',
                     email: 'c',
-                    expires: new DateTime('+1 minute'),
-                    userId: '',
-                    sharedSpaceId: '',
                     isAdmin: false,
                     code: '',
                     created: new DateTime(),
+                    expires: new DateTime('+1 minute'),
                 ),
                 new MemberInvite(
+                    userId: '',
+                    sharedSpaceId: '',
                     firstNames: 'd',
                     lastName: 'e',
                     email: 'f',
-                    expires: new DateTime('-1 minute'),
-                    userId: '',
-                    sharedSpaceId: '',
                     isAdmin: false,
                     code: '',
                     created: new DateTime(),
+                    expires: new DateTime('-1 minute'),
                 ),
             ]);
 
@@ -339,11 +340,13 @@ final class SharedSpaceServiceTest extends MockeryTestCase
                 'fullName' => 'a b',
                 'email' => 'c',
                 'isExpired' => false,
+                'id' => null,
             ],
             [
                 'fullName' => 'd e',
                 'email' => 'f',
                 'isExpired' => true,
+                'id' => null,
             ],
         ], $result);
     }
@@ -351,15 +354,15 @@ final class SharedSpaceServiceTest extends MockeryTestCase
     public function testInvite()
     {
         $memberInvite = new MemberInvite(
+            userId: 'my user',
+            sharedSpaceId: 'my space',
             firstNames: 'a',
             lastName: 'b',
             email: 'c',
-            expires: new DateTime('-1 minute'),
-            userId: 'my user',
-            sharedSpaceId: 'my space',
             isAdmin: false,
             code: '12341234',
             created: new DateTime(),
+            expires: new DateTime('-1 minute'),
         );
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpace')
@@ -377,5 +380,53 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             'sharedSpaceName' => 'my space',
             'inviteCode' => $memberInvite->code,
         ], $result);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testRevokeInvite()
+    {
+        $sharedSpaceId = 'space-id';
+        $inviteId = 5;
+        $revokedByUserId = 'user-id';
+
+        $this->sharedSpaceRepository->shouldReceive('deleteInvite')
+            ->with(5);
+
+        $this->logger->shouldReceive('info')
+            ->with(
+                'Shared space invite revoked',
+                [
+                    'event'           => 'shared_space.invite_revoked',
+                    'shared_space_id' => $sharedSpaceId,
+                    'invite_id'       => $inviteId,
+                    'revoked_by'      => $revokedByUserId,
+                ]
+            );
+
+        $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
+    }
+
+    public function testRevokeInviteWhenRepositoryExceptionIsThrown()
+    {
+        $sharedSpaceId = 'space-id';
+        $inviteId = 5;
+        $revokedByUserId = 'user-id';
+
+        $this->sharedSpaceRepository->shouldReceive('deleteInvite')
+            ->with(5)
+            ->andThrow(new \RuntimeException('Database error'));
+
+        $this->logger->shouldReceive('error')
+            ->with(
+                'Unable to revoke shared space invite: Database error',
+                [
+                    'shared_space_id' => $sharedSpaceId,
+                    'invite_id'       => $inviteId,
+                ]
+            );
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
 }

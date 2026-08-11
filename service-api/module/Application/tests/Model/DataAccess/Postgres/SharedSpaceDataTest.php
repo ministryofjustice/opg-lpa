@@ -12,6 +12,7 @@ use DateTimeImmutable;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
+use Laminas\Db\Sql\Delete;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
@@ -19,6 +20,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 
 class SharedSpaceDataTest extends MockeryTestCase
 {
@@ -336,6 +338,7 @@ class SharedSpaceDataTest extends MockeryTestCase
         $this->assertSame($expected, $actual);
     }
 
+    #[DoesNotPerformAssertions]
     public function testUpdateMemberIsAdmin(): void
     {
         $sharedSpaceId = 'shared-space-1';
@@ -372,9 +375,6 @@ class SharedSpaceDataTest extends MockeryTestCase
         // test method
         $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
         $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
-
-        // no exception thrown means the row was updated successfully
-        $this->addToAssertionCount(1);
     }
 
     public function testUpdateMemberIsAdminThrowsWhenNoMatchingRow(): void
@@ -447,6 +447,7 @@ class SharedSpaceDataTest extends MockeryTestCase
             '12341234',
             new DateTimeImmutable(),
             new DateTimeImmutable('+7 days'),
+            5
         );
 
         $resultMock = Mockery::mock(Result::class);
@@ -463,6 +464,7 @@ class SharedSpaceDataTest extends MockeryTestCase
             'code' => $invite->code,
             'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
             'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
+            'id' => 5,
         ]);
         $resultMock->shouldReceive('key')->andReturn(0);
         $resultMock->shouldReceive('next');
@@ -551,5 +553,34 @@ class SharedSpaceDataTest extends MockeryTestCase
         $id = $sharedSpaceData->createInvite($invite);
 
         $this->assertEquals(4, $id);
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testDeleteInvite(): void
+    {
+        $inviteId = 5;
+        $deleteMock = Mockery::mock(Delete::class);
+        $deleteMock->shouldReceive('where')
+            ->with(['id' => $inviteId])
+            ->andReturn($deleteMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute');
+        $statementMock->shouldReceive('getSql')->andReturn('SOMETHING');
+        $statementMock->shouldReceive('setSql')->with('SOMETHING')->andReturn($statementMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('delete')
+            ->with(SharedSpaceData::SHARED_SPACE_INVITES)
+            ->andReturn($deleteMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($deleteMock)
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $sharedSpaceData->deleteInvite($inviteId);
     }
 }
