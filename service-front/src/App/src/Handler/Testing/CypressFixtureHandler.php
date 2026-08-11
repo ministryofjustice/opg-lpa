@@ -43,12 +43,13 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $method = $request->getMethod();
 
         try {
-            return match (true) {
-                $entity === 'user' && $method === 'POST'          => $this->createUser($data),
-                $entity === 'user' && $method === 'DELETE'         => $this->deleteUser($data),
-                $entity === 'shared-space' && $method === 'POST'   => $this->createSpace($data),
-                $entity === 'shared-space-member' && $method === 'POST'   => $this->addMember($data),
-                default                                            => new EmptyResponse(405),
+            return match ([$method, $entity]) {
+                ['POST', 'user']                => $this->createUser($data),
+                ['DELETE', 'user']              => $this->deleteUser($data),
+                ['POST', 'shared-space']        => $this->createSpace($data),
+                ['POST', 'shared-space-member'] => $this->addMember($data),
+                ['POST', 'shared-space-invite'] => $this->createInvite($data),
+                default                         => new EmptyResponse(405),
             };
         } catch (ApiException $ex) {
             return new JsonResponse(
@@ -114,5 +115,19 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $this->fixtureService->addMember($sharedSpaceId, $userToAddId, $userAddingEmail, (bool) $isAdmin);
 
         return new EmptyResponse(201);
+    }
+
+    private function createInvite(array $data): ResponseInterface
+    {
+        $sharedSpaceId = (string) ($data['sharedSpaceId'] ?? '');
+        $userEmail = (string) ($data['userEmail'] ?? '');
+
+        if ($sharedSpaceId === '' || $userEmail === '') {
+            return new EmptyResponse(400);
+        }
+
+        $result = $this->fixtureService->createInvite($sharedSpaceId, $userEmail);
+
+        return new JsonResponse($result, 200);
     }
 }

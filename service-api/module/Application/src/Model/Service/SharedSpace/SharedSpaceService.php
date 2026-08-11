@@ -250,7 +250,6 @@ class SharedSpaceService
         ];
     }
 
-
     /**
      * @throws Throwable
      */
@@ -273,5 +272,48 @@ class SharedSpaceService
             'invite_id'       => $inviteId,
             'revoked_by'      => $revokedByUserId,
         ]);
+    }
+
+    public function join(string $userId, string $sharedSpaceName, string $accessCode): string
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+
+        try {
+            $sharedSpaceId = $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId);
+            if ($sharedSpaceId !== null) {
+                throw new UserAlreadyInSharedSpaceException($sharedSpaceId);
+            }
+
+            $invite = $this->sharedSpaceRepository->getInviteByCodeAndSharedSpaceName($accessCode, $sharedSpaceName);
+            if ($invite === null) {
+                throw new InviteNotFoundException();
+            }
+
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'user_id' => $userId,
+                'shared_space_id' => $invite->sharedSpaceId,
+                'count' => $lpasMoved,
+            ]);
+
+            $this->sharedSpaceRepository->addMember($invite->sharedSpaceId, $userId, $invite->isAdmin);
+            $this->sharedSpaceRepository->deleteInvite($invite->id);
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            throw $e;
+        }
+
+        $this->logger->info('User joined shared space', [
+            'event' => 'shared_space.joined',
+            'shared_space_id' => $invite->sharedSpaceId,
+            'user_id' => $userId,
+            'lpas_moved' => $lpasMoved,
+        ]);
+
+        return $invite->sharedSpaceId;
     }
 }
