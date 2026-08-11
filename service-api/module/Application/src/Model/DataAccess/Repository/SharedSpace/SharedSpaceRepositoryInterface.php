@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Model\DataAccess\Repository\SharedSpace;
 
 use Exception;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Application\Model\Entity\MemberInvite;
 
@@ -96,8 +97,15 @@ interface SharedSpaceRepositoryInterface
 
     /**
      * Create an invite to a new shared space member.
+     * @throws InvalidQueryException
      */
     public function createInvite(MemberInvite $memberInvite): int;
+
+    /**
+     * Revoke an unused invite to a shared space.
+     * @throws InvalidQueryException
+     */
+    public function deleteInvite(int $inviteId): void;
 
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
 }

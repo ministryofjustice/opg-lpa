@@ -18,6 +18,7 @@ readonly class MemberInvite
         public string $code,
         public DateTimeInterface $created,
         public DateTimeInterface $expires,
+        public ?int $id = null,
     ) {
     }
 }
