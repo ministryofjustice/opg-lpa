@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
@@ -48,9 +47,6 @@ class TypeHandler implements RequestHandlerInterface
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
-
-        // CSRF is validated by CsrfValidationMiddleware before this handler runs.
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         $form = $this->formElementManager->get('App\Form\Lpa\TypeForm');
 
@@ -116,7 +112,6 @@ class TypeHandler implements RequestHandlerInterface
                     'cloneUrl'        => $cloneUrl,
                     'nextUrl'         => $nextUrl,
                     'isChangeAllowed' => $isChangeAllowed,
-                    'csrfToken'       => $csrfToken,
                 ]
             )
         );

@@ -6,7 +6,6 @@ namespace App\Handler;
 
 use App\Form\SharedSpace\InviteMemberForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -33,8 +32,6 @@ class InviteMemberHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var InviteMemberForm $form */
         $form = $this->formElementManager->get(InviteMemberForm::class);
 
@@ -73,7 +70,6 @@ class InviteMemberHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form' => $form,
-                    'csrfToken' => $csrfToken,
                 ],
             ),
         ));

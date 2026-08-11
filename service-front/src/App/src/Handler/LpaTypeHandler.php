@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\View\Twig\FlashMessenger;
@@ -43,8 +42,6 @@ class LpaTypeHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         $form = $this->formElementManager->get('App\Form\Lpa\TypeForm');
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -93,7 +90,6 @@ class LpaTypeHandler implements RequestHandlerInterface
                     'form'             => $form,
                     'isChangeAllowed'  => true,
                     'currentRouteName' => self::ROUTE_NAME,
-                    'csrfToken'        => $csrfToken,
                 ]
             )
         );

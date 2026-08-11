@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Authentication\AuthenticationService;
 use App\Service\UserDetails as UserService;
@@ -32,8 +31,6 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         $form = $this->formElementManager->get(ChangeEmailAddressForm::class);
         $form->setAttribute('action', '/user/change-email-address');
 
@@ -90,7 +87,6 @@ class ChangeEmailAddressHandler implements RequestHandlerInterface
                     'error'                => $error,
                     'currentEmailAddress'  => $currentEmailAddress,
                     'cancelUrl'            => '/user/about-you',
-                    'csrfToken'            => $csrfToken,
                 ]
             )
         );
