@@ -99,7 +99,7 @@ RUN composer check-platform-reqs -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
     && rm /usr/bin/composer \
-    && find vendor -name composer.lock -delete
+    && find /app/vendor -name composer.lock -delete
 
 RUN chmod -R a+w /tmp
 RUN mkdir -m a+w build
