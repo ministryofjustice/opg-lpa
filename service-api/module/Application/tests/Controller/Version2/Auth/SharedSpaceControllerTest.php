@@ -10,6 +10,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
@@ -673,5 +674,50 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $result = $this->controller->revokeInviteAction();
         $this->assertInstanceOf(ApiProblem::class, $result);
+    }
+
+    public function testJoinAction()
+    {
+        $userId = 'my-user';
+        $sharedSpaceName = 'My space';
+        $accessCode = '1234';
+
+        $this->sharedSpaceService->shouldReceive('join')
+            ->with($userId, $sharedSpaceName, $accessCode);
+
+        $this->makeRequest(['userId' => $userId], [
+            'sharedSpaceName' => $sharedSpaceName,
+            'accessCode' => $accessCode,
+        ]);
+        $result = $this->controller->joinAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testJoinActionWhenAlreadyInSharedSpace()
+    {
+        $this->sharedSpaceService->shouldReceive('join')
+            ->andThrow(new UserAlreadyInSharedSpaceException('my space'));
+
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $result = $this->controller->joinAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(400, $result->toArray()['status']);
+        $this->assertEquals('user-already-in-shared-space', $result->toArray()['detail']);
+        $this->assertEquals('my space', $result->toArray()['sharedSpaceId']);
+    }
+
+    public function testJoinActionWhenInviteNotFound()
+    {
+        $this->sharedSpaceService->shouldReceive('join')
+            ->andThrow(new InviteNotFoundException());
+
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $result = $this->controller->joinAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(400, $result->toArray()['status']);
+        $this->assertEquals('invite-not-found', $result->toArray()['detail']);
     }
 }

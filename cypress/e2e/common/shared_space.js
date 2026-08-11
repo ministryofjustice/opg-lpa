@@ -1,28 +1,28 @@
 const {
-    Given,
-    When,
-    Then,
-    Before,
-    After,
+  Given,
+  When,
+  Then,
+  Before,
+  After,
 } = require('@badeball/cypress-cucumber-preprocessor');
 
 function createUserWithLpas(lpaCount, lpaType, name = '') {
-    return cy
-        .request({
-            method: 'POST',
-            url: '/testing/cypress-fixture/user',
-            body: {lpaCount, lpaType, name},
-        })
-        .then((response) => response.body);
+  return cy
+    .request({
+      method: 'POST',
+      url: '/testing/cypress-fixture/user',
+      body: { lpaCount, lpaType, name },
+    })
+    .then((response) => response.body);
 }
 
 function deleteUserFixture(email, password) {
-    return cy.request({
-        method: 'DELETE',
-        url: '/testing/cypress-fixture/user',
-        body: {email, password},
-        failOnStatusCode: false,
-    });
+  return cy.request({
+    method: 'DELETE',
+    url: '/testing/cypress-fixture/user',
+    body: { email, password },
+    failOnStatusCode: false,
+  });
 }
 
 function createSharedSpace(sharedSpaceName, userEmail) {
@@ -30,7 +30,7 @@ function createSharedSpace(sharedSpaceName, userEmail) {
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space',
-      body: {sharedSpaceName, userEmail},
+      body: { sharedSpaceName, userEmail },
     })
     .then((response) => response.body);
 }
@@ -40,60 +40,89 @@ function addMemberToSharedSpace(sharedSpaceId, userToAddId, userAddingEmail, isA
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space-member',
-      body: {sharedSpaceId, userToAddId, userAddingEmail, isAdmin},
+      body: { sharedSpaceId, userToAddId, userAddingEmail, isAdmin },
     })
     .then((response) => response.body);
 }
 
-Before({tags: '@CleanupUserFixtures'}, () => {
-    cy.wrap(null).as('fixtureUser');
+function createInvite(sharedSpaceId, userEmail) {
+  return cy
+    .request({
+      method: 'POST',
+      url: '/testing/cypress-fixture/shared-space-invite',
+      body: { sharedSpaceId, userEmail },
+    })
+    .then((response) => response.body);
+}
+
+Before({ tags: '@CleanupUserFixtures' }, () => {
+  cy.wrap(null).as('fixtureUser');
 });
 
 // Not currently in use but we may have instances where we want to do some cleanup
-After({tags: '@CleanupUserFixtures'}, () => {
-    cy.get('@fixtureUser').then(({email, password}) => {
-        if (email !== null && password !== null) {
-            deleteUserFixture(email, password).then(
-                (deleteResponse) => {
-                    cy.task('log', `Deleting fixture user with email ${email} (and their LPAs) gave status ${deleteResponse.status}`);
-                },
-            );
-        }
-    });
+After({ tags: '@CleanupUserFixtures' }, () => {
+  cy.get('@fixtureUser').then(({ email, password }) => {
+    if (email !== null && password !== null) {
+      deleteUserFixture(email, password).then(
+        (deleteResponse) => {
+          cy.task('log', `Deleting fixture user with email ${email} (and their LPAs) gave status ${deleteResponse.status}`);
+        },
+      );
+    }
+  });
 });
 
 
 Given(/^I create a new user with (\d+) LPAs?(?: that belongs to a shared space called "([^"]*)")?$/, (lpaCountString, sharedSpaceName) => {
-    const lpaCount = parseInt(lpaCountString, 10);
+  const lpaCount = parseInt(lpaCountString, 10);
 
-    createUserWithLpas(lpaCount, 'property-and-financial').then(
-        ({email, password, lpaIds}) => {
-            cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
+  createUserWithLpas(lpaCount, 'property-and-financial').then(
+    ({ email, password, lpaIds }) => {
+      cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
 
-            if (sharedSpaceName) {
-                createSharedSpace(sharedSpaceName, email).then(
-                    ({sharedSpaceId}) => {
-                        cy.wrap({email, password, lpaIds, sharedSpaceId}).as('fixtureUser');
+      if (sharedSpaceName) {
+        createSharedSpace(sharedSpaceName, email).then(
+          ({ sharedSpaceId }) => {
+            cy.wrap({ email, password, lpaIds, sharedSpaceId }).as('fixtureUser');
 
-                        cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
-                    },
-                );
-            } else {
-                cy.wrap({email, password, lpaIds}).as('fixtureUser');
-            }
-        },
-    );
+            cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
+          },
+        );
+      } else {
+        cy.wrap({ email, password, lpaIds }).as('fixtureUser');
+      }
+    },
+  );
+});
+
+Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {
+  const lpaCount = parseInt(lpaCountString, 10);
+
+  createUserWithLpas(lpaCount, 'property-and-financial').then(({ email, password, lpaIds }) => {
+    cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
+    createUserWithLpas(0, 'property-and-financial').then(({ email: spaceEmail }) => {
+      cy.task('log', `Created space fixture user ${spaceEmail}`);
+
+      createSharedSpace(sharedSpaceName, spaceEmail).then(({ sharedSpaceId }) => {
+        cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
+
+        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode }) => {
+          cy.wrap({ email, password, lpaIds, sharedSpaceId, accessCode }).as('fixtureUser');
+        });
+      });
+    });
+  });
 });
 
 When(`I log in as the newly created fixture user`, () => {
-    cy.get('@fixtureUser').then(({email, password}) => {
-      login(email, password)
-    });
+  cy.get('@fixtureUser').then(({ email, password }) => {
+    login(email, password)
+  });
 });
 
 When(`I (try to) log in as the member added to the shared space`, () => {
   cy.contains('Sign Out').click();
-  cy.get('@addedMember').then(({email, password}) => {
+  cy.get('@addedMember').then(({ email, password }) => {
     login(email, password)
   });
 });
@@ -116,15 +145,15 @@ Then(`I should not be logged in and I see a suspended account error`, () => {
 });
 
 Given(`the shared space has a member called {string} who is a(n) {string}`, (memberName, adminStatus) => {
-  cy.get('@fixtureUser').then(({email: userAddingEmail, sharedSpaceId}) => {
+  cy.get('@fixtureUser').then(({ email: userAddingEmail, sharedSpaceId }) => {
     createUserWithLpas(0, '', memberName).then(
-      ({email, password, userId}) => {
+      ({ email, password, userId }) => {
         cy.task('log', `Created fixture user ${email} with 0 LPA(s)`);
 
         addMemberToSharedSpace(sharedSpaceId, userId, userAddingEmail, adminStatus === 'admin').then(
           () => {
             cy.task('log', `Added member ${memberName} to shared space with ID ${sharedSpaceId} as ${adminStatus}`);
-            cy.wrap({email, password}).as('addedMember');
+            cy.wrap({ email, password }).as('addedMember');
           },
         );
       },
@@ -133,13 +162,13 @@ Given(`the shared space has a member called {string} who is a(n) {string}`, (mem
 });
 
 Then(`{string} permissions should be set to {string}`, (memberName, adminStatus) => {
-    cy.contains('tr', memberName).within(() => {
-        if (adminStatus.toLowerCase() === 'admin') {
-            cy.contains('Admin').should('exist');
-        } else {
-            cy.contains('Admin').should('not.exist');
-        }
-    });
+  cy.contains('tr', memberName).within(() => {
+    if (adminStatus.toLowerCase() === 'admin') {
+      cy.contains('Admin').should('exist');
+    } else {
+      cy.contains('Admin').should('not.exist');
+    }
+  });
 });
 
 Then(`{string} status should be {string}`, (memberName, activeStatus) => {
@@ -150,4 +179,18 @@ Then(`{string} status should be {string}`, (memberName, activeStatus) => {
       cy.contains('Suspended').should('exist');
     }
   });
+});
+
+When(`I type the access code into field labelled {string}`, (label) => {
+  cy.get('@fixtureUser').then(({ accessCode }) => {
+    cy.contains('label', label)
+      .invoke('attr', 'for')
+      .then((id) => cy.get('#' + id))
+      .clear({ force: true })
+      .type(accessCode);
+  })
+});
+
+Then('I cannot see any invites', () => {
+  cy.contains('table', 'Invited members').should('not.exist');
 });
