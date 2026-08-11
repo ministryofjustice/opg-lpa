@@ -280,6 +280,7 @@ jobs:
       - cypress_tests_Signup_StitchedHW
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
+      - locust_tests
     environment:
       name: "preproduction"
       url: "https://${{ env.FRONT_URL }}/home"
@@ -293,7 +294,8 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedPF.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Signup_StitchedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
+            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}} &&
+            ${{ contains(needs.locust_tests.result, 'success')}}; then
             echo "Preproduction environment tested, built and deployed"
             echo "Tag Deployed: integration-${SEMVER_TAG}"
             echo "URL: https://${FRONT_URL}/home"
