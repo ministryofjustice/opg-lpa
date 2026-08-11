@@ -270,7 +270,7 @@ class CheckoutPayHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame($expected, $capturedData['payment']['email']['address'] ?? null);
+        $this->assertSame($expected, $capturedData['payment']['email'] ?? null);
     }
 
     /**
@@ -352,7 +352,7 @@ class CheckoutPayHandlerTest extends TestCase
             ->with(
                 $lpa->id,
                 $this->callback(function (array $data): bool {
-                    return ($data['payment']['email']['address'] ?? null) === 'not-a-valid-email';
+                    return ($data['payment']['email'] ?? null) === 'not-a-valid-email';
                 })
             )
             ->willReturn(new Lpa([]));
