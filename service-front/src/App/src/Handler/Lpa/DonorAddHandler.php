@@ -6,7 +6,6 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -42,8 +41,6 @@ class DonorAddHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -130,7 +127,6 @@ class DonorAddHandler implements RequestHandlerInterface
                         'form'      => $form,
                         'cancelUrl' => $this->urlHelper->generate('lpa/donor', ['lpa-id' => $lpa->id]),
                         'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
-                        'csrfToken' => $csrfToken,
                     ];
 
                     if ($isPopup) {
@@ -182,7 +178,6 @@ class DonorAddHandler implements RequestHandlerInterface
             'form'      => $form,
             'cancelUrl' => $cancelUrl,
             'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
-            'csrfToken' => $csrfToken,
         ];
 
         if ($isPopup) {

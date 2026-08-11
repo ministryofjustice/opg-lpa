@@ -6,7 +6,6 @@ namespace App\Handler;
 
 use App\Form\SharedSpace\SharedSpaceMemberForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -48,7 +47,6 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
         /** @var FormInterface $form */
         $form = $this->formElementManager->get(SharedSpaceMemberForm::class);
 
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
         $error = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -88,7 +86,6 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
                 [
                     'member'    => $member,
                     'form'      => $form,
-                    'csrfToken' => $csrfToken,
                     'error'     => $error,
                 ],
             ),

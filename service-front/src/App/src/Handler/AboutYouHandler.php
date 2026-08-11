@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
@@ -59,8 +58,6 @@ class AboutYouHandler implements RequestHandlerInterface
         $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
         $userDetailsArr = $userDetails instanceof UserModel ? $userDetails->flatten() : [];
 
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
             if (!is_array($data)) {
@@ -105,7 +102,6 @@ class AboutYouHandler implements RequestHandlerInterface
                     'form'      => $form,
                     'isNew'     => $isNew,
                     'cancelUrl' => '/user/dashboard',
-                    'csrfToken' => $csrfToken,
                 ]
             )
         );
