@@ -88,8 +88,8 @@ class CheckoutPayHandler implements RequestHandlerInterface
         $this->verifyLpaPaymentAmount($lpa);
 
         // Check for any existing payments in play
-        if (!is_null($lpa->payment->gatewayReference)) {
-            $gatewayReference = $lpa->payment->gatewayReference;
+        if (!is_null($lpa->getPayment()->getGatewayReference())) {
+            $gatewayReference = $lpa->getPayment()->getGatewayReference();
             $payment          = $this->paymentClient->getPayment($gatewayReference);
 
             if (is_null($payment)) {
@@ -111,33 +111,43 @@ class CheckoutPayHandler implements RequestHandlerInterface
         }
 
         // Create a new payment
-        $ref = LpaIdHelper::constructPaymentTransactionId((string) $lpa->id);
+        $ref = LpaIdHelper::constructPaymentTransactionId((string) $lpa->getId());
 
         $description = (
-            $lpa->document->type == 'property-and-financial'
+            $lpa->getDocument()->getType() == 'property-and-financial'
                 ? 'Property and financial affairs'
                 : 'Health and welfare'
         );
-        $description .= ' LPA for ' . (string) $lpa->document->donor->name;
+        $description .= ' LPA for ' . (string) $lpa->getDocument()->getDonor()->getName();
 
         // Build the callback URL using the request URI
         $requestUri = $request->getUri();
         $baseUrl = $requestUri->getScheme() . '://' . $requestUri->getAuthority();
         $callback = $baseUrl . $this->urlHelper->generate(
             'lpa/checkout/pay/response',
-            ['lpa-id' => $lpa->id]
+            ['lpa-id' => $lpa->getId()]
         );
 
         $payment = $this->paymentClient->createPayment(
-            (int) ($lpa->payment->amount * 100.0), // amount in pence
+            (int) ($lpa->getPayment()->getAmount() * 100.0), // amount in pence
             $ref,
             $description,
             new Uri($callback)
         );
 
-        $lpa->payment->gatewayReference = $payment->payment_id;
+        $lpa->getPayment()->setGatewayReference($payment->payment_id);
 
-        $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+        $this->logger->info('payment created with GOV UK Pay', [
+            'lpaId'            => $lpa->getId(),
+            'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
+        ]);
+
+        $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
+
+        $this->logger->info('LPA updated with payment information', [
+            'lpaId'            => $lpa->getId(),
+            'payment' => $lpa->getPayment()->toJson(),
+        ]);
 
         return new RedirectResponse((string) $payment->getPaymentPageUrl());
     }
