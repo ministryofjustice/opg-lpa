@@ -75,6 +75,10 @@ Then(`I choose to create a new Make account`, () => {
   cy.get('input[name="choice"][value="create"]').check();
 });
 
+Then(`I am signed in with my new Make account`, () => {
+  cy.get('[data-cy=sign-out]').should('be.visible');
+});
+
 Then(`I link my seeded Make account`, () => {
   cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
   cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));

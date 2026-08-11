@@ -7,6 +7,7 @@ namespace AppTest\Handler\Lpa;
 use App\Form\User\LinkOrCreateAccountForm;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -16,7 +17,6 @@ use Laminas\Form\FormElementManager;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -30,6 +30,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
 
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
+    private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
     private SessionInterface&MockObject $session;
     private LinkOrCreateAccountForm $form;
@@ -39,6 +40,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
+        $this->oneLoginService = $this->createMock(OneLoginService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
 
@@ -51,6 +53,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
             $this->renderer,
             $this->formElementManager,
             new OneLoginSessionManager(),
+            $this->oneLoginService,
             $this->logger,
         );
     }
@@ -115,23 +118,44 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public static function validProvider(): array
+    public function testLinkChoiceRedirectsToLinkAccount(): void
     {
-        return [
-            ['link', '/link-account'],
-            ['create', 'TODO-create-account'],
-        ];
-    }
+        $this->oneLoginService->expects($this->never())->method('createAndLinkAccount');
 
-    #[DataProvider('validProvider')]
-    public function testPostWithValidFormRedirectsToCorrectUrl(string $value, string $redirectUrl): void
-    {
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['choice' => $value])
+            $this->createRequest('POST', ['choice' => 'link'])
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $location = $response->getHeaderLine('Location');
-        $this->assertEquals($redirectUrl, $location);
+        $this->assertEquals('/link-account', $response->getHeaderLine('Location'));
+    }
+
+    public function testCreateChoiceCreatesAccountEstablishesSessionAndRedirectsToDashboard(): void
+    {
+        $identity = [
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->oneLoginService->expects($this->once())
+            ->method('createAndLinkAccount')
+            ->with(self::PENDING_LINK['sub'])
+            ->willReturn($identity);
+
+        $this->session->expects($this->once())->method('regenerate');
+        $this->session->expects($this->once())->method('clear');
+        $this->session->expects($this->once())
+            ->method('set')
+            ->with('identity', $identity);
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', ['choice' => 'create'])
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 }

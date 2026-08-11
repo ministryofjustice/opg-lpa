@@ -196,4 +196,30 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals($serviceResult, $result->getVariables());
     }
+
+    public function testCreateActionReturnsJsonModelWithServiceResult(): void
+    {
+        $body = ['oneLoginSub' => 'urn:fdc:gov.uk:2022:new'];
+
+        $identity = [
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->service->shouldReceive('createAndLinkAccount')
+            ->with($body['oneLoginSub'])
+            ->andReturn($identity)
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->createAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($identity, $result->getVariables());
+    }
 }

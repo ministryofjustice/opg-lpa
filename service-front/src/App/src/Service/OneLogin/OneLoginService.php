@@ -125,4 +125,20 @@ class OneLoginService
 
         return $result;
     }
+
+    /**
+     * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}
+     * @throws RuntimeException
+     */
+    public function createAndLinkAccount(string $oneLoginSub): array
+    {
+        /** @var array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $result */
+        $result = $this->client->httpPost(
+            '/v2/auth/onelogin/create',
+            ['oneLoginSub' => $oneLoginSub],
+            anonymous: true,
+        );
+
+        return $result;
+    }
 }
