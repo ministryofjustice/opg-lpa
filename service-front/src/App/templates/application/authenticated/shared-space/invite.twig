@@ -36,7 +36,7 @@
 
           <div class="govuk-checkboxes" data-module="govuk-checkboxes">
             <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="permissions" name="{{ permissions.getName() }}" type="checkbox" value="admin" aria-describedby="permissions-item-hint" {% if permissions.isChecked() %}checked{% endif %}>
+              {{ formElement(permissions) }}
               <label class="govuk-label govuk-checkboxes__label" for="permissions">
                 {{ permissions.getOption('label') }}
               </label>
