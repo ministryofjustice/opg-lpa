@@ -70,7 +70,10 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
                     return new RedirectResponse('/link-account');
                 }
 
-                $identity = $this->oneLoginService->createAndLinkAccount($pendingLink->sub);
+                $identity = $this->oneLoginService->createAndLinkAccount(
+                    $pendingLink->sub,
+                    $pendingLink->email,
+                );
 
                 return $this->establishSession($session, $identity);
             }

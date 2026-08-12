@@ -325,9 +325,9 @@ class ServiceTest extends MockeryTestCase
             ]);
 
         $this->userRepository->shouldReceive('setOneLoginSub')
-            ->once()->with('user-1', $sub);
+            ->once()->with('user-1', $sub, 'joe.bloggs@gmail.com');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub);
+        $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub, 'joe.bloggs@gmail.com');
 
         $this->assertTrue($result['linked']);
         $identity = $result['identity'] ?? null;
@@ -345,7 +345,7 @@ class ServiceTest extends MockeryTestCase
         $this->logRepository->shouldReceive('getLogByIdentityHash')->once()->andReturn(null);
         $this->authenticationService->shouldNotReceive('withPassword');
 
-        $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x');
+        $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
@@ -358,7 +358,7 @@ class ServiceTest extends MockeryTestCase
             ->once()->andReturn(['type' => 'account-deleted', 'reason' => 'user-initiated']);
         $this->authenticationService->shouldNotReceive('withPassword');
 
-        $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x');
+        $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_DELETED, $result['reason'] ?? null);
@@ -373,7 +373,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldNotReceive('withPassword');
         $this->userRepository->shouldNotReceive('setOneLoginSub');
 
-        $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me');
+        $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ALREADY_LINKED, $result['reason'] ?? null);
@@ -388,7 +388,7 @@ class ServiceTest extends MockeryTestCase
             ->once()->andReturn('invalid-user-credentials');
         $this->userRepository->shouldNotReceive('setOneLoginSub');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::INVALID_CREDENTIALS, $result['reason'] ?? null);
@@ -402,7 +402,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('withPassword')
             ->once()->andReturn('account-locked/max-login-attempts');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_LOCKED, $result['reason'] ?? null);
@@ -416,7 +416,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('withPassword')
             ->once()->andReturn('account-not-active');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason'] ?? null);
@@ -427,20 +427,24 @@ class ServiceTest extends MockeryTestCase
         $this->service->setRandomByteGenerator(fn(int $n): string => str_repeat("\x00", $n));
         $userId = str_repeat('0', 32);
         $sub    = 'urn:fdc:gov.uk:2022:brand-new';
+        $email  = 'brand.new.user@gmail.com';
 
         $this->userRepository->shouldReceive('create')
             ->once()
-            ->with($userId, Mockery::on(function (array $details): bool {
-                return $details['identity'] === null
+            ->with($userId, Mockery::on(function (array $details) use ($sub, $email): bool {
+                return $details['identity'] === 'onelogin:' . $sub
                     && $details['password_hash'] === null
                     && $details['activation_token'] === null
                     && $details['active'] === true
-                    && $details['failed_login_attempts'] === 0;
+                    && $details['activated'] instanceof DateTime
+                    && $details['failed_login_attempts'] === 0
+                    && $details['one_login_sub'] === $sub
+                    && $details['one_login_email'] === $email;
             }))
             ->andReturn(true);
 
-        $this->userRepository->shouldReceive('setOneLoginSub')->once()->with($userId, $sub);
-        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with($userId);
+        $this->userRepository->shouldNotReceive('setOneLoginSub');
+        $this->userRepository->shouldNotReceive('updateLastLoginTime');
 
         $user = Mockery::mock(UserInterface::class);
         $this->userRepository->shouldReceive('getById')->once()->with($userId)->andReturn($user);
@@ -451,7 +455,7 @@ class ServiceTest extends MockeryTestCase
             ->with($user)
             ->andReturn(['token' => 'tok-new', 'expiresIn' => 4500, 'expiresAt' => $expires]);
 
-        $result = $this->service->createAndLinkAccount($sub);
+        $result = $this->service->createAndLinkAccount($sub, $email);
 
         $this->assertSame($userId, $result['userId']);
         $this->assertSame('tok-new', $result['token']);

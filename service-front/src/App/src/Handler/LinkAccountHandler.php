@@ -73,6 +73,7 @@ class LinkAccountHandler implements RequestHandlerInterface
                         (string) $form->get('email')->getValue(),
                         (string) $form->get('password')->getValue(),
                         $pendingLink->sub,
+                        $pendingLink->email,
                     );
                 } catch (RuntimeException $e) {
                     $this->logger->error('auth.onelogin.link_error', ['message' => $e->getMessage()]);

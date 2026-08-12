@@ -137,7 +137,7 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->oneLoginService->expects($this->once())
             ->method('linkExistingAccount')
-            ->with($email, $word, self::PENDING_SUB)
+            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
             ->willReturn(['linked' => true, 'identity' => $identity]);
 
         $this->session->expects($this->once())->method('regenerate');
@@ -161,7 +161,7 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->oneLoginService->expects($this->once())
             ->method('linkExistingAccount')
-            ->with($email, $word, self::PENDING_SUB)
+            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
             ->willReturn(['linked' => false, 'reason' => LinkReason::ALREADY_LINKED]);
 
         $this->logger->expects($this->once())
@@ -201,7 +201,7 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->oneLoginService->expects($this->once())
             ->method('linkExistingAccount')
-            ->with($email, $word, self::PENDING_SUB)
+            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
             ->willReturn(['linked' => false, 'reason' => $reason]);
 
         // A correctable failure keeps the user on the form and never signs them in.
