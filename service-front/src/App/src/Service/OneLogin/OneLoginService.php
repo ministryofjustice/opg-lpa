@@ -111,14 +111,16 @@ class OneLoginService
         #[\SensitiveParameter] string $email,
         #[\SensitiveParameter] string $password,
         string $oneLoginSub,
+        string $oneLoginEmail,
     ): array {
         /** @var array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string} $result */
         $result = $this->client->httpPost(
             '/v2/auth/onelogin/link',
             [
-                'username'    => $email,
-                'password'    => $password,
-                'oneLoginSub' => $oneLoginSub,
+                'username'      => $email,
+                'password'      => $password,
+                'oneLoginSub'   => $oneLoginSub,
+                'oneLoginEmail' => $oneLoginEmail,
             ],
             anonymous: true,
         );
@@ -130,12 +132,17 @@ class OneLoginService
      * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}
      * @throws RuntimeException
      */
-    public function createAndLinkAccount(string $oneLoginSub): array
-    {
+    public function createAndLinkAccount(
+        string $oneLoginSub,
+        string $oneLoginEmail,
+    ): array {
         /** @var array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $result */
         $result = $this->client->httpPost(
             '/v2/auth/onelogin/create',
-            ['oneLoginSub' => $oneLoginSub],
+            [
+                'oneLoginSub'   => $oneLoginSub,
+                'oneLoginEmail' => $oneLoginEmail,
+            ],
             anonymous: true,
         );
 

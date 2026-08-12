@@ -142,7 +142,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
 
         $this->oneLoginService->expects($this->once())
             ->method('createAndLinkAccount')
-            ->with(self::PENDING_LINK['sub'])
+            ->with(self::PENDING_LINK['sub'], self::PENDING_LINK['email'])
             ->willReturn($identity);
 
         $this->session->expects($this->once())->method('regenerate');

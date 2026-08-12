@@ -1381,6 +1381,58 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals('Rrrraaaaa', $name->getLast());
     }
 
+    public function testGetProfileResolvesContactEmailToOneLoginEmailWhenPresent(): void
+    {
+        $id = 'onelogin-user';
+
+        $user = [
+            'id' => $id,
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub',
+            'one_login_email' => 'joe.bloggs@gmail.com',
+            'created' => new DateTime(),
+            'updated' => new DateTime(),
+            'profile' => '{"name":{"title":"Mx","first":"Joe","last":"Bloggs"},'
+                . '"email":{"address":"onelogin:urn:fdc:gov.uk:2022:sub"}}',
+            'last_login' => new DateTime(),
+        ];
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($this->makeSelectResult(true, 1, $user));
+
+        $userProfile = (new UserData($dbWrapperMock))->getProfile($id);
+
+        // Contact email is the One Login email, not the identity placeholder.
+        $this->assertSame('joe.bloggs@gmail.com', $userProfile->getEmail()->getAddress());
+    }
+
+    public function testGetProfileLeavesStoredEmailUntouchedForNonOneLoginAccounts(): void
+    {
+        $id = 'password-user';
+
+        // Stored profile email deliberately differs from identity: for a non-One-Login
+        // account getProfile must return the stored email untouched (no override), i.e.
+        // production behaviour is unchanged.
+        $user = [
+            'id' => $id,
+            'identity' => 'login@example.com',
+            'one_login_email' => null,
+            'created' => new DateTime(),
+            'updated' => new DateTime(),
+            'profile' => '{"name":{"title":"Mr","first":"Pass","last":"Word"},'
+                . '"email":{"address":"stored@example.com"}}',
+            'last_login' => new DateTime(),
+        ];
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($this->makeSelectResult(true, 1, $user));
+
+        $userProfile = (new UserData($dbWrapperMock))->getProfile($id);
+
+        $this->assertSame('stored@example.com', $userProfile->getEmail()->getAddress());
+    }
+
     public function testGetProfiles(): void
     {
         $id = 'barrrraaaaa';
@@ -1464,23 +1516,177 @@ class UserDataTest extends MockeryTestCase
     {
         $id = 'vansant';
         $oneLoginSub = 'blahblah';
+        $oneLoginEmail = 'joe.bloggs@gmail.com';
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
-        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($oneLoginSub) {
-            return Helpers::isGmDateString($set['updated']) &&
-                $set['one_login_sub'] === $oneLoginSub &&
-                array_key_exists('password_hash', $set) &&
-                $set['password_hash'] === null;
-        }));
+        $updateMock->shouldReceive('set')->with(Mockery::on(
+            function ($set) use ($oneLoginSub, $oneLoginEmail) {
+                return Helpers::isGmDateString($set['updated']) &&
+                    $set['one_login_sub'] === $oneLoginSub &&
+                    $set['one_login_email'] === $oneLoginEmail &&
+                    array_key_exists('password_hash', $set) &&
+                    $set['password_hash'] === null;
+            }
+        ));
 
-        // test
         $userData = new UserData($dbWrapperMock);
 
-        // assertions
+        $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
+    }
+
+    public function testSetOneLoginSubDefaultsEmailToNull(): void
+    {
+        $id = 'vansant';
+        $oneLoginSub = 'blahblah';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            return array_key_exists('one_login_email', $set) &&
+                $set['one_login_email'] === null;
+        }));
+
+        $userData = new UserData($dbWrapperMock);
+
         $userData->setOneLoginSub($id, $oneLoginSub);
+    }
+
+    public function testCreateWritesActivatedTimestampWhenProvided(): void
+    {
+        $id = 'onelogin-user';
+        $activated = new DateTime();
+
+        $details = [
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub',
+            'password_hash' => null,
+            'activation_token' => null,
+            'active' => true,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+            'activated' => $activated,
+        ];
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        $insertMock->shouldReceive('values')
+            ->with(Mockery::on(function ($data) {
+                return array_key_exists('activated', $data)
+                    && Helpers::isGmDateString($data['activated'])
+                    && $data['active'] === true
+                    && $data['password_hash'] === null;
+            }))
+            ->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute');
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertTrue($userData->create($id, $details));
+    }
+
+    public function testCreateOmitsActivatedWhenNotProvided(): void
+    {
+        $id = '1234';
+
+        $details = [
+            'identity' => 'foo',
+            'password_hash' => 'hash',
+            'activation_token' => 'act',
+            'active' => false,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+        ];
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        $insertMock->shouldReceive('values')
+            ->with(Mockery::on(function ($data) {
+                return !array_key_exists('activated', $data)
+                    && !array_key_exists('one_login_sub', $data)
+                    && !array_key_exists('one_login_email', $data);
+            }))
+            ->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute');
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertTrue($userData->create($id, $details));
+    }
+
+    public function testCreateWritesOneLoginFieldsWhenProvided(): void
+    {
+        $id = 'onelogin-user';
+        $sub = 'urn:fdc:gov.uk:2022:sub';
+        $email = 'joe.bloggs@gmail.com';
+
+        $details = [
+            'identity' => 'onelogin:' . $sub,
+            'password_hash' => null,
+            'activation_token' => null,
+            'active' => true,
+            'created' => new DateTime(),
+            'last_updated' => new DateTime(),
+            'failed_login_attempts' => 0,
+            'activated' => new DateTime(),
+            'one_login_sub' => $sub,
+            'one_login_email' => $email,
+        ];
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $insertMock = Mockery::mock(Insert::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('insert')->andReturn($insertMock);
+
+        $insertMock->shouldReceive('values')
+            ->with(Mockery::on(function ($data) use ($sub, $email) {
+                return $data['one_login_sub'] === $sub
+                    && $data['one_login_email'] === $email
+                    && $data['password_hash'] === null
+                    && array_key_exists('activated', $data);
+            }))
+            ->andReturn($insertMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($insertMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute');
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertTrue($userData->create($id, $details));
     }
 }

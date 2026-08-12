@@ -100,6 +100,14 @@ interface UserInterface
     public function oneLoginSub(): ?string;
 
     /**
+     * The email address supplied by GOV.UK One Login for this account.
+     * Held separately from the login email (`identity`).
+     *
+     * @return string|null
+     */
+    public function oneLoginEmail(): ?string;
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return TokenInterface|null

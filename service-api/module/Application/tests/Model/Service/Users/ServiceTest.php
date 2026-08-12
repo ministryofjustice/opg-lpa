@@ -274,6 +274,35 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals(new DataModelEntity($expectedUser), $entity);
     }
 
+    public function testSaveUsesOneLoginEmailForContactWhenPresent()
+    {
+        $user = FixturesData::getUser();
+        $oneLoginEmail = 'joe.bloggs@gmail.com';
+
+        $collectionUser = new CollectionUser([
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub',
+            'one_login_email' => $oneLoginEmail,
+        ]);
+
+        $this->authUserRepository
+            ->shouldReceive('getProfile')->with($user->getId())->andReturn(null)->once();
+        $this->authUserRepository
+            ->shouldReceive('getById')->with($user->getId())->andReturn($collectionUser)->once();
+        $this->authUserRepository
+            ->shouldReceive('saveProfile')->once();
+
+        $entity = $this->service->createProfile($user->getId());
+
+        $this->assertInstanceOf(DataModelEntity::class, $entity);
+        /** @var DataModelEntity $entity */
+        $model = $entity->getData();
+        $this->assertInstanceOf(ProfileUserModel::class, $model);
+        /** @var ProfileUserModel $model */
+        $email = $model->getEmail();
+        $this->assertNotNull($email);
+        $this->assertSame($oneLoginEmail, $email->getAddress());
+    }
+
     public function testFetch()
     {
         $user = FixturesData::getUser();
