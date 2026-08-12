@@ -6,6 +6,8 @@ namespace ApplicationTest\Model\Service\SharedSpace;
 
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
@@ -29,6 +31,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
     private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
     private MockInterface|UserRepositoryInterface $userRepository;
+    private MockInterface|LogRepositoryInterface $logRepository;
     private MockInterface|LoggerInterface $logger;
     private SharedSpaceService $service;
 
@@ -39,6 +42,8 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
         $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
+        $this->logRepository = Mockery::mock(LogRepositoryInterface::class);
+
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->logger->shouldReceive('info')->byDefault();
         $this->logger->shouldReceive('error')->byDefault();
@@ -47,6 +52,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             $this->sharedSpaceRepository,
             $this->applicationRepository,
             $this->userRepository,
+            $this->logRepository,
             $this->logger,
         );
     }
@@ -301,6 +307,59 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->andReturn(false);
 
         $this->assertFalse($this->service->isAdmin($sharedSpaceId, $userId));
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testDeleteMember()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'my-user';
+        $userToDeleteId = 'delete-me';
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->userRepository->shouldReceive('getById')
+            ->with($userToDeleteId)
+            ->andReturn($user);
+        $this->userRepository->shouldReceive('delete')
+            ->with($userToDeleteId)
+            ->andReturn(true);
+
+        $this->logRepository->shouldReceive('addLog')
+            ->with(Mockery::on(function ($args): bool {
+                return $args['type'] === 'account-deleted'
+                    && $args['reason'] === 'Deleted from shared space';
+            }));
+
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('deleteMember')
+            ->with($sharedSpaceId, $userToDeleteId);
+        $this->sharedSpaceRepository->shouldReceive('commit');
+
+        $this->service->deleteMember($sharedSpaceId, $userId, $userToDeleteId);
+    }
+
+    public function testDeleteMemberWhenUserNotDeleted()
+    {
+        $sharedSpaceId = 'my-space';
+        $userId = 'my-user';
+        $userToDeleteId = 'delete-me';
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->userRepository->shouldReceive('getById')
+            ->andReturn($user);
+        $this->userRepository->shouldReceive('delete')
+            ->andReturn(false);
+
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('deleteMember');
+        $this->sharedSpaceRepository->shouldReceive('rollback');
+
+        $this->expectException(\RuntimeException::class);
+        $this->service->deleteMember($sharedSpaceId, $userId, $userToDeleteId);
     }
 
     public function testGetInvites()

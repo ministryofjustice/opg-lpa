@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Model\Service\SharedSpace;
 
 use Application\Library\MillisecondDateTime;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
@@ -24,6 +25,7 @@ class SharedSpaceService
         private readonly SharedSpaceRepositoryInterface $sharedSpaceRepository,
         private readonly ApplicationRepositoryInterface $applicationRepository,
         private readonly UserRepositoryInterface $userRepository,
+        private readonly LogRepositoryInterface $logRepository,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -75,9 +77,9 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $spaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'user_id'        => $userId,
+                'user_id'         => $userId,
                 'shared_space_id' => $spaceId,
-                'count'         => $lpasMoved,
+                'count'           => $lpasMoved,
             ]);
 
             // The creating user becomes the first member of the shared space, so
@@ -181,9 +183,23 @@ class SharedSpaceService
             throw new UserAlreadyInSharedSpaceException();
         }
 
+        $this->sharedSpaceRepository->beginTransaction();
+
         try {
+            // Move ownership of all of the user's LPAs into the new shared space.
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userIdToAdd, $sharedSpaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'user_id'         => $userIdToAdd,
+                'shared_space_id' => $sharedSpaceId,
+                'count'           => $lpasMoved,
+            ]);
+
             $this->sharedSpaceRepository->addMember($sharedSpaceId, $userIdToAdd, $isAdmin);
+            $this->sharedSpaceRepository->commit();
         } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
             $this->logger->error('Unable to add member to shared space: ' . $e->getMessage(), [
                 'shared_space_id' => $sharedSpaceId,
             ]);
@@ -218,6 +234,45 @@ class SharedSpaceService
             'user_id'         => $userId,
             'is_admin'        => $isAdmin,
             'is_active'       => $isActive,
+        ]);
+    }
+
+    public function deleteMember(string $sharedSpaceId, string $userId, string $userToDeleteId): void
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+
+        try {
+            $user = $this->userRepository->getById($userToDeleteId);
+
+            $this->sharedSpaceRepository->deleteMember($sharedSpaceId, $userToDeleteId);
+
+            if (!$this->userRepository->delete($userToDeleteId)) {
+                throw new \RuntimeException('User not deleted');
+            }
+
+            $this->logRepository->addLog([
+                'identity_hash' => hash('sha512', strtolower(trim($user->username()))),
+                'type'          => 'account-deleted',
+                'reason'        => 'Deleted from shared space',
+                'loggedAt'      => new MillisecondDateTime(),
+            ]);
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            $this->logger->error('Unable to delete shared space member: ' . $e->getMessage(), [
+                'user_id' => $userToDeleteId,
+            ]);
+
+            throw $e;
+        }
+
+        $this->logger->info('Shared space member deleted', [
+            'event' => 'shared_space.member_deleted',
+            'shared_space_id' => $sharedSpaceId,
+            'deleted_by_user_id' => $userId,
+            'deleted_user_id' => $userToDeleteId,
         ]);
     }
 
