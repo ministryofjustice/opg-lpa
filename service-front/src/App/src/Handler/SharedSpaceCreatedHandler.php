@@ -11,7 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class AboutSharedSpacesHandler implements RequestHandlerInterface
+class SharedSpaceCreatedHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
@@ -22,7 +22,7 @@ class AboutSharedSpacesHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         return new HtmlResponse($this->renderer->render(
-            'application/authenticated/shared-space/about.twig',
+            'application/authenticated/shared-space/created.twig',
             $this->getTemplateVariables($request),
         ));
     }

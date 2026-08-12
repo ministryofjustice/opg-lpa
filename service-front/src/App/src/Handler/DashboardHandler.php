@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PaginationTrait;
 use App\Middleware\RequestAttribute;
@@ -73,7 +72,6 @@ class DashboardHandler implements RequestHandlerInterface
                     'lastLogin' => $identity->lastLogin(),
                 ],
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
-                'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
             ]
         );
 
