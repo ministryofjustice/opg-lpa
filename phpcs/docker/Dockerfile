@@ -12,6 +12,8 @@ COPY phpcs/composer.lock /app/composer.lock
 
 RUN composer install --no-interaction --no-progress
 
+RUN find vendor -name composer.lock -delete
+
 RUN mkdir -p /app/output && chmod a+w /app/output
 
 USER appuser
