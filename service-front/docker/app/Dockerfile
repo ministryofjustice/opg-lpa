@@ -68,7 +68,8 @@ RUN set -e; if [ "$ENABLE_XDEBUG" = "1" ] ; then \
 fi
 
 RUN rm /usr/bin/composer /app/composer.json /app/composer.lock && \
-    chown -R root:root /app/vendor
+    chown -R root:root /app/vendor && \
+    find vendor -name composer.lock -delete
 
 RUN apk del .build-dependencies
 
@@ -97,11 +98,11 @@ RUN composer check-platform-reqs -d /app \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
     && rm /app/composer.json \
-    && rm /usr/bin/composer
+    && rm /usr/bin/composer \
+    && find /app/vendor -name composer.lock -delete
 
 RUN chmod -R a+w /tmp
 RUN mkdir -m a+w build
-RUN find vendor -name composer.lock -delete
 
 USER appuser
 
