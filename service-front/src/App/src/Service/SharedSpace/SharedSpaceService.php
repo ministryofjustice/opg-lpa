@@ -122,6 +122,22 @@ class SharedSpaceService
         return true;
     }
 
+    public function deleteMember(string $memberUserId): bool
+    {
+        try {
+            $this->client->httpDelete('/v2/shared-space/members/' . $memberUserId);
+        } catch (Throwable $e) {
+            $this->logger->error('Deleting shared space member failed', [
+                'exception' => $e,
+                'memberUserId' => $memberUserId,
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
     public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
     {
         try {

@@ -52,7 +52,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         $insert = $sql
             ->insert(self::SHARED_SPACE_MEMBERS)
             ->values([
-            'sharedSpaceId' => $sharedSpaceId,
+                'sharedSpaceId' => $sharedSpaceId,
                 'userId'        => $userId,
                 'isAdmin'       => $isAdmin,
                 'created'       => gmdate(DbWrapper::TIME_FORMAT),
@@ -199,6 +199,30 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             $result = $statement->execute();
         } catch (InvalidQueryException $e) {
             throw($e);
+        }
+
+        if ($result->getAffectedRows() !== 1) {
+            throw new MemberNotInSharedSpaceException();
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteMember(string $sharedSpaceId, string $userId): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $delete = $sql
+            ->delete(self::SHARED_SPACE_MEMBERS)
+            ->where([
+                'sharedSpaceId' => $sharedSpaceId,
+                'userId'        => $userId,
+            ]);
+
+        try {
+            $result = $sql->prepareStatementForSqlObject($delete)->execute();
+        } catch (InvalidQueryException $e) {
+            throw $e;
         }
 
         if ($result->getAffectedRows() !== 1) {

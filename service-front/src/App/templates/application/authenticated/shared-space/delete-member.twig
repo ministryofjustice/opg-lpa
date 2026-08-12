@@ -1,0 +1,29 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'Delete Member - Manage members' -%}
+
+{% set permissions = form.get('permissions') %}
+{% set status = form.get('status') %}
+
+{% block content %}
+    <div class="govuk-grid-row">
+        {{ macros.formErrorSummary(error, form) }}
+
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage members</span>
+            <h1 class="govuk-heading-xl">Delete {{ member.name.first ~ ' ' ~ member.name.last }}</h1>
+
+            <p class="govuk-body">Are you sure you want to delete this user, they will lose access to all LPAs in this shared space?</p>
+
+            <form novalidate method="post">
+              <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+              <div class="govuk-button-group">
+                <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete</button>
+                <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space.members.manage', {'member-id': member.id}) }}">Cancel</a>
+              </div>
+            </form>
+        </div>
+    </div>
+{% endblock content %}

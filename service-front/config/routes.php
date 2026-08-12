@@ -14,6 +14,7 @@ use App\Handler\CookiesHandler;
 use App\Handler\DashboardHandler;
 use App\Handler\DeleteAccountConfirmHandler;
 use App\Handler\DeleteAccountHandler;
+use App\Handler\DeleteSharedSpaceMemberHandler;
 use App\Handler\DeletedAccountHandler;
 use App\Handler\EnableCookieHandler;
 use App\Handler\FeedbackHandler;
@@ -205,6 +206,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ManageSharedSpaceMemberHandler::class,
             ['GET', 'POST'],
             'shared-space.members.manage'
+        );
+        $app->route(
+            '/shared-space/members/{member-id:[a-zA-Z0-9]+}/delete',
+            DeleteSharedSpaceMemberHandler::class,
+            ['GET', 'POST'],
+            'shared-space.members.delete'
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');

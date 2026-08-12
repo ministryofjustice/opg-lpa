@@ -28,13 +28,15 @@
                                     {% endif %}
                                 </li>
 
-                                <li class="govuk-service-navigation__item {{ nav.route == 'user/dashboard' ? 'govuk-service-navigation__item--active' : ''}}">
-                                    {% if (nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false) or (nav.route == 'user/dashboard') %}
-                                        <a class="govuk-service-navigation__link" href="{{ url('user/dashboard') }}" aria-current="true">
+                                {% set dashboardRoute = nav.sharedSpaceEnabled and nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard' %}
+
+                                <li class="govuk-service-navigation__item {{ nav.route == dashboardRoute ? 'govuk-service-navigation__item--active' : ''}}">
+                                    {% if (nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false) or (nav.route == dashboardRoute) %}
+                                        <a class="govuk-service-navigation__link" href="{{ url(dashboardRoute) }}" aria-current="true">
                                             <strong class="govuk-service-navigation__active-fallback">Your LPAs</strong>
                                         </a>
                                     {% else %}
-                                        <a class="govuk-service-navigation__link" href="{{ url('user/dashboard') }}">
+                                        <a class="govuk-service-navigation__link" href="{{ url(dashboardRoute) }}">
                                             Your LPAs
                                         </a>
                                     {% endif %}
@@ -44,13 +46,13 @@
                             {% if nav.sharedSpaceEnabled %}
                               {% if nav.inSharedSpace %}
                                 <li class="govuk-service-navigation__item  {{ nav.route == 'shared-space.manage' ? 'govuk-service-navigation__item--active' : ''}}">
-                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space/manage') }}">
+                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space.manage') }}">
                                     Manage your Shared Space
                                   </a>
                                 </li>
                               {% else %}
                                 <li class="govuk-service-navigation__item  {{ nav.route == 'shared-space.about' ? 'govuk-service-navigation__item--active' : ''}}">
-                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space/about') }}">
+                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space.about') }}">
                                     Shared Spaces
                                   </a>
                                 </li>

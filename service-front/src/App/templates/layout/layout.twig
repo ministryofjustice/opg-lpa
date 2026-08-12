@@ -101,10 +101,14 @@
 
     {% block errorSummary %}{% endblock %}
     {% block mainTitle %}
+      {% if pageTitle %}
         <h1 class="govuk-heading-xl govuk-!-margin-top-9" data-cy="main-title">
             {{ pageTitle }}
             {% block supportTitleBottom %}{% endblock %}
         </h1>
+      {% else %}
+        <div class="govuk-!-margin-top-9"></div>
+      {% endif %}
     {% endblock %}
 
     <div class="content-body">

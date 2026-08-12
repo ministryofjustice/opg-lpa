@@ -7,6 +7,7 @@ namespace ApplicationTest\Controller\Version2\Auth;
 use Application\Controller\Version2\Auth\SharedSpaceController;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
+use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -719,5 +720,54 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(400, $result->toArray()['status']);
         $this->assertEquals('invite-not-found', $result->toArray()['detail']);
+    }
+
+    public function testDeleteMemberAction()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with('2', '1')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('deleteMember')
+            ->with('2', '1', 'member-id');
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn('member-id');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], []);
+        $result = $this->controller->deleteMemberAction();
+
+        $this->assertInstanceOf(NoContent::class, $result);
+    }
+
+    public function testDeleteMemberActionWhenIsNotAdmin()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(false);
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], []);
+        $result = $this->controller->deleteMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
+    }
+
+    public function testDeleteMemberActionWhenNotInSharedSpace()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('deleteMember')
+            ->andThrow(new MemberNotInSharedSpaceException());
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->andReturn('member-id');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], []);
+        $result = $this->controller->deleteMemberAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(404, $result->toArray()['status']);
     }
 }

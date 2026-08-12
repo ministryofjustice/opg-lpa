@@ -5,10 +5,10 @@ Feature: Check signature dates
   Background:
     Given I ignore application exceptions
     And I log in as seeded user
+    And I am taken to "/user/dashboard"
 
   Scenario: View the Check Signature Dates tool from the dashboard
-    Given I visit the dashboard
-    And I type "A911 5545 3023" into "dashboard-search-box"
+    Given I type "A911 5545 3023" into "dashboard-search-box"
     And I click "dashboard-search-icon"
     When I click "check-signing-dates" for LPA ID 91155453023
     Then I am taken to "/lpa/91155453023/date-check"
