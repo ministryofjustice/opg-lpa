@@ -32,6 +32,15 @@ Before({ tags: '@RequiresMockOneLogin' }, function () {
   }
 });
 
+Then(`I am returned to the appropriate page shown after a password reset`, () => {
+  detectOneLoginEnabled().then((enabled) => {
+    const expected = enabled ? '/home' : '/login';
+    cy.url().should('eq', Cypress.config().baseUrl + expected);
+    cy.OPGCheckA11y();
+  });
+});
+
+
 Then(`I am on the mock One Login page`, () => {
   cy.url().should('include', 'localhost:4549');
   cy.contains('Continue').should('be.visible');
