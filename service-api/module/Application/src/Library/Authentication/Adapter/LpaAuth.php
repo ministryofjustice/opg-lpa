@@ -62,9 +62,10 @@ class LpaAuth implements AdapterInterface, LoggerAwareInterface
 
         if (isset($data['userId']) && isset($data['username'])) {
             $userId = $data['userId'];
-            $username = $data['username'];
 
-            $user = new Identity\User($userId, $username);
+            $email = $data['oneLoginEmail'] ?? $data['username'];
+
+            $user = new Identity\User($userId, $email);
         }
 
         return new Result(is_null($user) ? Result::FAILURE_CREDENTIAL_INVALID : Result::SUCCESS, $user);

@@ -79,17 +79,34 @@ Then(`I am signed in with my new Make account`, () => {
   cy.get('[data-cy=sign-out]').should('be.visible');
 });
 
-Then(`I link my seeded Make account`, () => {
-  cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
+const ONELOGIN_LINK_ACCOUNTS = {
+  seeded: 'seeded_email',
+  retry: 'onelogin_retry_email',
+  forgot: 'onelogin_forgot_email',
+};
+
+function oneLoginLinkEmail(account) {
+  const envKey = ONELOGIN_LINK_ACCOUNTS[account];
+  if (!envKey) {
+    throw new Error(`Unknown One Login link account: ${account}`);
+  }
+  return Cypress.env(envKey);
+}
+
+Then(`I link the {string} Make account`, (account) => {
+  cy.get('[data-cy=login-email]').clear().type(oneLoginLinkEmail(account));
   cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));
   cy.get('[data-cy=link-account-submit]').click();
 });
 
-Then(`I attempt to link my Make account with an incorrect password`, () => {
-  cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
-  cy.get('[data-cy=login-password]').clear().type('this-is-the-wrong-password');
-  cy.get('[data-cy=link-account-submit]').click();
-});
+Then(
+  `I attempt to link the {string} Make account with an incorrect password`,
+  (account) => {
+    cy.get('[data-cy=login-email]').clear().type(oneLoginLinkEmail(account));
+    cy.get('[data-cy=login-password]').clear().type('this-is-the-wrong-password');
+    cy.get('[data-cy=link-account-submit]').click();
+  },
+);
 
 Then(`I am advised my Make account credentials were not recognised`, () => {
   cy.get('[data-cy=link-account-error]').should(
