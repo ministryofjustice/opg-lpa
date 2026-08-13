@@ -166,7 +166,7 @@ class Service extends AbstractService
     /**
      * @return (DateTime|false|int|mixed|null|string)[]|string
      *
-     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
+     * @psalm-return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, oneLoginEmail: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
      */
     public function withToken(string $tokenStr, bool $extendToken): array|string
     {
@@ -187,7 +187,7 @@ class Service extends AbstractService
      * $expiresAt: DateTime|null; if null, defaults to the current time +
      * the tokenTtl on this service
      *
-     * @return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
+     * @return 'invalid-token'|'token-has-expired'|'token-update-not-applied'|array{token: null|string, userId: null|string, username: null|string, oneLoginEmail: null|string, last_login: DateTime|null, expiresIn: int, expiresAt: DateTime|false|mixed|null, sharedSpaceId: string|null}
      * @throws DateMalformedStringException
      */
     public function updateToken(string $tokenStr, bool $needsUpdate = true, bool $throttle = true, DateTime|false|null $expiresAt = null): array|string
