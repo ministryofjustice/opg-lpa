@@ -43,6 +43,26 @@ class LpaAuthTest extends MockeryTestCase
         $this->assertEquals([0 => 'user'], $user->getRoles());
     }
 
+    public function testAuthenticateOneLoginUserUsesOneLoginEmailAsIdentityEmail(): void
+    {
+        $this->authenticationService->shouldReceive('withToken')->with('Token', true)
+            ->andReturn([
+                'userId'        => 'ID',
+                'username'      => 'onelogin:urn:fdc:gov.uk:2022:sub',
+                'oneLoginEmail' => 'joe.bloggs@gmail.com',
+            ]);
+
+        $lpaAuth = new LpaAuth($this->authenticationService, 'Token');
+        $lpaAuth->setLogger($this->logger);
+        $result = $lpaAuth->authenticate();
+
+        $this->assertEquals(Result::SUCCESS, $result->getCode());
+
+        $user = $result->getIdentity();
+        $this->assertInstanceOf(User::class, $user);
+        $this->assertEquals('joe.bloggs@gmail.com', $user->email());
+    }
+
     public function testAuthenticateFailedToken(): void
     {
         $this->authenticationService->shouldReceive('withToken')->with('Token', true)

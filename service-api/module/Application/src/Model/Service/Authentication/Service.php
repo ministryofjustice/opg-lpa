@@ -258,6 +258,7 @@ class Service extends AbstractService
             'token' => $token->id(),
             'userId' => $user->id(),
             'username' => $user->username(),
+            'oneLoginEmail' => $user->oneLoginEmail(),
             'last_login' => $user->lastLoginAt(),
             'expiresIn' => $expiresIn,
             'expiresAt' => $expiresAt,
