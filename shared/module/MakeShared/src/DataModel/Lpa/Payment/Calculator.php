@@ -6,7 +6,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 
 class Calculator
 {
-    public const STANDARD_FEE = 92;
+    public const int STANDARD_FEE = 92;
 
     /**
      * Calculate LPA payment amount
