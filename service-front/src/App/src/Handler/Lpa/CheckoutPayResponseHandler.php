@@ -59,18 +59,18 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         $paymentResponse = $this->paymentClient->getPayment($gatewayReference);
 
         $this->logger->info('PayResponse: GovPay lookup complete', [
-            'lpaId'            => $lpa->getId(),
-            'gatewayReference' => $gatewayReference,
-            'responseIsNull'   => $paymentResponse === null,
+            'lpa_id'            => $lpa->getId(),
+            'gateway_reference' => $gatewayReference,
+            'response_is_null'   => $paymentResponse === null,
             'status'           => $paymentResponse?->state->status ?? null,
             'finished'         => $paymentResponse?->state->finished ?? null,
-            'stateCode'        => $paymentResponse?->state->code ?? null,
+            'state_code'        => $paymentResponse?->state->code ?? null,
         ]);
 
         if ($paymentResponse === null) {
             $this->logger->error('GovPay payment lookup returned null — payment may not exist yet or gateway reference is invalid', [
-                'lpaId'            => $lpa->getId(),
-                'gatewayReference' => $gatewayReference,
+                'lpa_id'            => $lpa->getId(),
+                'gateway_reference' => $gatewayReference,
             ]);
 
             return new RedirectResponse(
@@ -80,8 +80,8 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
 
         if (!$paymentResponse->isSuccess()) {
             $this->logger->info('PayResponse: payment not successful, rendering failure/cancel page', [
-                'lpaId'     => $lpa->getId(),
-                'stateCode' => $paymentResponse->state->code ?? null,
+                'lpa_id'     => $lpa->getId(),
+                'state_code' => $paymentResponse->state->code ?? null,
                 'status'    => $paymentResponse->state->status ?? null,
             ]);
 
@@ -113,8 +113,8 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         }
 
         $this->logger->info('PayResponse: payment successful, recording on LPA', [
-            'lpaId'            => $lpa->getId(),
-            'gatewayReference' => $gatewayReference,
+            'lpa_id'            => $lpa->getId(),
+            'gateway_reference' => $gatewayReference,
             'has_email'        => isset($paymentResponse->email) && $paymentResponse->email !== '',
         ]);
 
@@ -122,7 +122,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         $recorded = $this->cardPayments->recordSuccessfulPayment($lpa, $paymentResponse);
 
         $this->logger->info('PayResponse: updateApplication result', [
-            'lpaId'   => $lpa->getId(),
+            'lpa_id'   => $lpa->getId(),
             'success' => $recorded,
         ]);
 

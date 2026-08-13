@@ -30,7 +30,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         LpaApplicationService $lpaApplicationService,
         Communication $communicationService,
-        UrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly CardPayments $cardPayments,
         private readonly CheckoutHelper $checkoutHelper,
     ) {
@@ -42,7 +42,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
         if ($this->cardPayments->recoverCompletedPayment($lpa)) {
-            return $this->finishCheckout($lpa, $request);
+            return $this->checkoutHelper->finishCheckout($lpa, $request);
         }
 
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;

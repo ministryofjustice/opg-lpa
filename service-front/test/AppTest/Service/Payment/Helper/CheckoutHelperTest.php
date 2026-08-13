@@ -134,14 +134,14 @@ class CheckoutHelperTest extends TestCase
         $this->helper->verifyLpaPaymentAmount($lpa);
     }
 
-    public function testPadLpaIdPadsShortIdWithLeadingZeros(): void
+    public function testConstructPaymentTransactionIdPadsShortIdWithLeadingZeros(): void
     {
-        $this->assertSame('00000012345', $this->helper::padLpaId('12345'));
+        $this->assertSame('00000012345', $this->helper::constructPaymentTransactionId('12345'));
     }
 
-    public function testPadLpaIdReturnsExactLengthIdUnchanged(): void
+    public function testConstructPaymentTransactionIdReturnsExactLengthIdUnchanged(): void
     {
-        $this->assertSame('12345678901', $this->helper::padLpaId('12345678901'));
+        $this->assertSame('12345678901', $this->helper::constructPaymentTransactionId('12345678901'));
     }
 
     public function testPadLpaIdThrowsExceptionWhenIdIsTooLong(): void
@@ -149,12 +149,7 @@ class CheckoutHelperTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('LPA ID is too long');
 
-        $this->helper::padLpaId('123456789012');
-    }
-
-    public function testConstructPaymentTransactionIdDelegatesToPadLpaId(): void
-    {
-        $this->assertSame('00000012345', $this->helper::constructPaymentTransactionId('12345'));
+        $this->helper::constructPaymentTransactionId('123456789012');
     }
 
     private function createRequest(Lpa $lpa, string $backToForm, array $routeOptions = []): ServerRequest

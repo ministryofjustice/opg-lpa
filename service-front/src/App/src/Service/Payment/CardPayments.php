@@ -8,7 +8,6 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use DateTime;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Psr\Log\LoggerInterface;
@@ -118,15 +117,15 @@ class CardPayments
         $govPayEmail = $govPayPayment->email ?? null;
 
         $lpa->getPayment()->setEmail(is_string($govPayEmail) && trim($govPayEmail) !== ''
-            ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+            ? strtolower(trim($govPayEmail))
             : null);
 
         $result = $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
 
         if ($result === false) {
             $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
-                'lpaId'            => $lpa->getId(),
-                'gatewayReference' => $lpa->getPayment()->getGatewayReference(),
+                'lpa_id'            => $lpa->getId(),
+                'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
                 'govpay_status'    => $govPayPayment->state->status ?? 'unknown',
                 'has_email'        => $lpa->getPayment()->getEmail() !== null,
             ]);
