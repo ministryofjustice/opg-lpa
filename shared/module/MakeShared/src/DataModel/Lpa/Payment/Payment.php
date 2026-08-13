@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MakeShared\DataModel\Lpa\Payment;
 
 use MakeShared\DataModel\AbstractData;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Constraints\Valid as ValidConstraintSymfony;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use DateTime;
 
@@ -17,63 +17,63 @@ use DateTime;
  */
 class Payment extends AbstractData
 {
-    public const PAYMENT_TYPE_CARD = 'card';
-    public const PAYMENT_TYPE_CHEQUE = 'cheque';
+    public const string PAYMENT_TYPE_CARD = 'card';
+    public const string PAYMENT_TYPE_CHEQUE = 'cheque';
 
     /**
-     * @var string|null The payment method used (or that will be used).
+     * The payment method used (or that will be used).
      */
-    protected $method;
+    protected ?string $method = null;
 
     /**
-     * @var string The email address that should be used regarding payment.
+     * The email address that should be used regarding payment.
      */
-    protected $email;
+    protected ?string $email = null;
 
     /**
      * null = The amount it undecided.
      * 0 = The donor does not need to pay.
      *
-     * @var null|float The amount that has or should be charged.
+     * The amount that has or should be charged.
      */
-    protected $amount;
+    protected ?float $amount = null;
 
     /**
-     * @var string The OPG payment reference number.
+     * The OPG payment reference number.
      */
-    protected $reference;
+    protected ?string $reference = null;
 
     /**
-     * @var string The payment gateway reference.
+     * The payment gateway reference.
      */
-    protected $gatewayReference;
+    protected ?string $gatewayReference = null;
 
     /**
-     * @var DateTime|null Date the payment was made.
+     * Date the payment was made.
      */
-    protected $date;
+    protected ?\DateTime $date = null;
 
     /**
-     * @var bool Does the donor receive any qualifying benefits.
+     * Does the donor receive any qualifying benefits.
      */
-    protected $reducedFeeReceivesBenefits;
+    protected ?bool $reducedFeeReceivesBenefits = null;
 
     /**
-     * @var bool Has the donor received a personal injury payout, less then the required threshold.
+     * Has the donor received a personal injury payout, less then the required threshold.
      */
-    protected $reducedFeeAwardedDamages;
+    protected ?bool $reducedFeeAwardedDamages = null;
 
     /**
-     * @var bool Does the donor have what is considered a low income.
+     * Does the donor have what is considered a low income.
      */
-    protected $reducedFeeLowIncome;
+    protected ?bool $reducedFeeLowIncome = null;
 
     /**
-     * @var bool Does the donor receive Universal Credit.
+     * Does the donor receive Universal Credit.
      */
-    protected $reducedFeeUniversalCredit;
+    protected ?bool $reducedFeeUniversalCredit = null;
 
-    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    public static function loadValidatorMetadata(ClassMetadata $metadata): void
     {
         $metadata->addPropertyConstraints('method', [
             new Assert\Type('string'),
@@ -86,8 +86,7 @@ class Payment extends AbstractData
         ]);
 
         $metadata->addPropertyConstraints('email', [
-            new Assert\Type('\MakeShared\DataModel\Common\EmailAddress'),
-            new ValidConstraintSymfony(),
+            new Assert\Type('string'),
         ]);
 
         $metadata->addPropertyConstraints('amount', [
@@ -138,205 +137,134 @@ class Payment extends AbstractData
      * @param string $property string Property name
      * @param mixed $value mixed Value to map.
      * @return mixed Mapped value.
+     * @throws \DateMalformedStringException
      */
-    protected function map($property, $value)
+    protected function map($property, $value): mixed
     {
         switch ($property) {
             case 'date':
                 return (($value instanceof \DateTime || is_null($value)) ? $value : new \DateTime($value));
             case 'amount':
                 return (!is_int($value) ? $value : (float)$value);
-            case 'email':
-                return (($value instanceof EmailAddress || is_null($value)) ? $value : new EmailAddress($value));
         }
 
         return parent::map($property, $value);
     }
 
-    /**
-     * @return string|null
-     */
-    public function getMethod()
+    public function getMethod(): ?string
     {
         return $this->method;
     }
 
-    /**
-     * @param string $method
-     * @return $this
-     */
-    public function setMethod($method): Payment
+    public function setMethod(?string $method): Payment
     {
         $this->method = $method;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     * @return $this
-     */
-    public function setEmail($email): Payment
+    public function setEmail(?string $email): Payment
     {
         $this->email = $email;
 
         return $this;
     }
 
-    /**
-     * @return float|null
-     */
-    public function getAmount()
+    public function getAmount(): ?float
     {
         return $this->amount;
     }
 
-    /**
-     * @param float|null $amount
-     * @return $this
-     */
-    public function setAmount($amount)
+    public function setAmount(?float $amount): Payment
     {
         $this->amount = $amount;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getReference()
+    public function getReference(): ?string
     {
         return $this->reference;
     }
 
-    /**
-     * @param string $reference
-     * @return $this
-     */
-    public function setReference($reference): Payment
+    public function setReference(?string $reference): Payment
     {
         $this->reference = $reference;
 
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getGatewayReference()
+    public function getGatewayReference(): ?string
     {
         return $this->gatewayReference;
     }
 
-    /**
-     * @param string $gatewayReference
-     * @return $this
-     */
-    public function setGatewayReference($gatewayReference): Payment
+    public function setGatewayReference(?string $gatewayReference): Payment
     {
         $this->gatewayReference = $gatewayReference;
 
         return $this;
     }
 
-    /**
-     * @return DateTime|null
-     */
-    public function getDate()
+    public function getDate(): ?DateTime
     {
         return $this->date;
     }
 
-    /**
-     * @param DateTime $date
-     * @return $this
-     */
-    public function setDate($date): Payment
+    public function setDate(?DateTime $date): Payment
     {
         $this->date = $date;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReducedFeeReceivesBenefits()
+    public function isReducedFeeReceivesBenefits(): ?bool
     {
         return $this->reducedFeeReceivesBenefits;
     }
 
-    /**
-     * @param bool $reducedFeeReceivesBenefits
-     * @return $this
-     */
-    public function setReducedFeeReceivesBenefits($reducedFeeReceivesBenefits): Payment
+    public function setReducedFeeReceivesBenefits(?bool $reducedFeeReceivesBenefits): Payment
     {
         $this->reducedFeeReceivesBenefits = $reducedFeeReceivesBenefits;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReducedFeeAwardedDamages()
+    public function isReducedFeeAwardedDamages(): ?bool
     {
         return $this->reducedFeeAwardedDamages;
     }
 
-    /**
-     * @param bool $reducedFeeAwardedDamages
-     * @return $this
-     */
-    public function setReducedFeeAwardedDamages($reducedFeeAwardedDamages): Payment
+    public function setReducedFeeAwardedDamages(?bool $reducedFeeAwardedDamages): Payment
     {
         $this->reducedFeeAwardedDamages = $reducedFeeAwardedDamages;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReducedFeeLowIncome()
+    public function isReducedFeeLowIncome(): ?bool
     {
         return $this->reducedFeeLowIncome;
     }
 
-    /**
-     * @param bool $reducedFeeLowIncome
-     * @return $this
-     */
-    public function setReducedFeeLowIncome($reducedFeeLowIncome): Payment
+    public function setReducedFeeLowIncome(?bool $reducedFeeLowIncome): Payment
     {
         $this->reducedFeeLowIncome = $reducedFeeLowIncome;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isReducedFeeUniversalCredit()
+    public function isReducedFeeUniversalCredit(): ?bool
     {
         return $this->reducedFeeUniversalCredit;
     }
 
-    /**
-     * @param bool $reducedFeeUniversalCredit
-     * @return $this
-     */
-    public function setReducedFeeUniversalCredit($reducedFeeUniversalCredit): Payment
+    public function setReducedFeeUniversalCredit(?bool $reducedFeeUniversalCredit): Payment
     {
         $this->reducedFeeUniversalCredit = $reducedFeeUniversalCredit;
 

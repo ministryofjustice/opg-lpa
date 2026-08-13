@@ -9,9 +9,12 @@ var requestBody = JSON.parse(context.request.body);
 // Generate a unique payment ID
 var paymentId = 'pay' + Date.now().toString(36) + Math.random().toString(36).substring(2, 7);
 
+
 var baseUrl = 'http://mock-pay:8080';
-var publicBaseUrl = 'http://localhost:4547';
-var returnUrl = `https://localhost:7002/${requestBody.return_url.split('https://localhost')[1]}`;
+var returnUrl = requestBody.return_url;
+// allow for docker and host access of the mock
+var publicBaseUrl = returnUrl.indexOf('://front-ssl/') !== -1 ? baseUrl : 'http://localhost:4547';
+
 var amount    = requestBody.amount    || 0;
 var reference = requestBody.reference || '';
 var description = requestBody.description || '';

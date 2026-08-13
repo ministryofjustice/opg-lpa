@@ -20,7 +20,7 @@ use RuntimeException;
 
 class CheckoutHelper
 {
-    public const LPA_ID_LENGTH = 11;
+    public const int LPA_ID_LENGTH = 11;
 
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
@@ -31,11 +31,6 @@ class CheckoutHelper
     }
 
     public static function constructPaymentTransactionId(string $lpaId): string
-    {
-        return self::padLpaId($lpaId);
-    }
-
-    public static function padLpaId(string $lpaId): string
     {
         if (strlen($lpaId) > self::LPA_ID_LENGTH) {
             throw new \Exception('LPA ID is too long');
@@ -93,8 +88,8 @@ class CheckoutHelper
 
             if ($existingPaymentAmount !== $lpaPayment->getAmount()) {
                 $this->logger->info('LPA Payment amount does not match current payment amount', [
-                    'lpaId'            => $lpa->getId(),
-                    'current_amount'   => $existingPaymentAmount,
+                    'lpa_id'            => $lpa->getId(),
+                    'current_amount'    => $existingPaymentAmount,
                     'calculated_amount' => $lpaPayment->getAmount(),
                 ]);
 

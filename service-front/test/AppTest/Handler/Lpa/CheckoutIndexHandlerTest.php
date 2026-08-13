@@ -227,20 +227,9 @@ class CheckoutIndexHandlerTest extends TestCase
             ->method('updateApplication')
             ->willReturn($lpa);
 
-        $this->lpaApplicationService->expects($this->once())
-            ->method('lockLpa')
-            ->with($lpa)
-            ->willReturn(true);
-
-        $this->communicationService->expects($this->once())
-            ->method('sendRegistrationCompleteEmail')
-            ->with($lpa)
-            ->willReturn(true);
-
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/complete', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->checkoutHelper->expects($this->once())
+            ->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->id . '/complete'));
 
         $this->renderer->expects($this->never())->method('render');
 

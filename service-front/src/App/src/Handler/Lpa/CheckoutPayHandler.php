@@ -100,6 +100,13 @@ class CheckoutPayHandler implements RequestHandlerInterface
                 // Payment already completed — record it and finish.
                 $this->cardPayments->recordSuccessfulPayment($lpa, $payment);
 
+                $this->logger->info('user returned to checkout with successful payment and updated LPA', [
+                    'lpa_id'            => $lpa->getId(),
+                    'gateway_reference' => $gatewayReference,
+                    'payment_method' => $lpa->getPayment()->getMethod(),
+                    'has_email'        => $lpa->getPayment()->getEmail() !== '',
+                ]);
+
                 return $this->checkoutHelper->finishCheckout($lpa, $request);
             }
 
@@ -136,14 +143,14 @@ class CheckoutPayHandler implements RequestHandlerInterface
         $lpa->getPayment()->setGatewayReference($payment->payment_id);
 
         $this->logger->info('payment created with GOV UK Pay', [
-            'lpaId'            => $lpa->getId(),
+            'lpa_id'            => $lpa->getId(),
             'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
         ]);
 
         $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
 
         $this->logger->info('LPA updated with payment information, redirecting to gov.uk pay', [
-            'lpaId'   => $lpa->getId(),
+            'lpa_id'   => $lpa->getId(),
             'payment' => $lpa->getPayment()->toJson(),
         ]);
 
