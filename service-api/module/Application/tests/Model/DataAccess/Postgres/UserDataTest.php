@@ -1547,7 +1547,7 @@ class UserDataTest extends MockeryTestCase
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return array_key_exists('one_login_email', $set) &&
                 $set['one_login_email'] === null;
-        }));
+        }))->once();
 
         $userData = new UserData($dbWrapperMock);
 
