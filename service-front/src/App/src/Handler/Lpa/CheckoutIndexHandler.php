@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
 use App\Service\Payment\CardPayments;
+use App\Service\Payment\Helper\CheckoutHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Form\FormElementManager;
@@ -24,7 +24,6 @@ use Psr\Http\Server\RequestHandlerInterface;
 class CheckoutIndexHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-    use CheckoutTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -33,10 +32,8 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         Communication $communicationService,
         UrlHelper $urlHelper,
         private readonly CardPayments $cardPayments,
+        private readonly CheckoutHelper $checkoutHelper,
     ) {
-        $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService = $communicationService;
-        $this->urlHelper = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -50,11 +47,11 @@ class CheckoutIndexHandler implements RequestHandlerInterface
 
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
 
-        if ($isPost && !$this->isLpaComplete($lpa, $request)) {
-            return $this->redirectToMoreInfoRequired($lpa, $request);
+        if ($isPost && !$this->checkoutHelper->isLpaComplete($lpa, $request)) {
+            return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
         }
 
-        $isRepeatApplication = ($lpa->repeatCaseNumber != null);
+        $isRepeatApplication = ($lpa->getRepeatCaseNumber() != null);
 
         $lowIncomeFee = Calculator::getLowIncomeFee($isRepeatApplication);
         $fullFee = Calculator::getFullFee($isRepeatApplication);
@@ -66,7 +63,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
 
         $form->setAttribute(
             'action',
-            $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
         );
         $form->setAttribute('class', 'js-single-use');
         $form->get('submit')->setAttribute('value', 'Confirm and pay by card');
@@ -80,7 +77,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                     'form'           => $form,
                     'lowIncomeFee'   => $lowIncomeFee,
                     'fullFee'        => $fullFee,
-                    'lpaIsCompleted' => $this->isLpaComplete($lpa, $request),
+                    'lpaIsCompleted' => $this->checkoutHelper->isLpaComplete($lpa, $request),
                 ]
             )
         );

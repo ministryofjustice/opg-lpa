@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use App\Service\Payment\GovPay\Client as GovPayClient;
-use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Service\Payment\Helper\CheckoutHelper;
 use App\Service\Payment\CardPayments;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -31,21 +31,18 @@ use RuntimeException;
 class CheckoutPayResponseHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-    use CheckoutTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
-        LpaApplicationService $lpaApplicationService,
-        Communication $communicationService,
+        private readonly LpaApplicationService $lpaApplicationService,
+        private readonly Communication $communicationService,
         private readonly GovPayClient $paymentClient,
-        UrlHelper $urlHelper,
+        private readonly UrlHelper $urlHelper,
         private readonly TemplateRendererInterface $renderer,
         private readonly LoggerInterface $logger,
         private readonly CardPayments $cardPayments,
+        private readonly CheckoutHelper $checkoutHelper
     ) {
-        $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService  = $communicationService;
-        $this->urlHelper             = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -53,16 +50,16 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        if (is_null($lpa->payment->gatewayReference)) {
+        if (is_null($lpa->getPayment()->getGatewayReference())) {
             throw new RuntimeException('Payment id needed');
         }
 
-        $gatewayReference = $lpa->payment->gatewayReference;
+        $gatewayReference = $lpa->getPayment()->getGatewayReference();
 
         $paymentResponse = $this->paymentClient->getPayment($gatewayReference);
 
         $this->logger->info('PayResponse: GovPay lookup complete', [
-            'lpaId'            => $lpa->id,
+            'lpaId'            => $lpa->getId(),
             'gatewayReference' => $gatewayReference,
             'responseIsNull'   => $paymentResponse === null,
             'status'           => $paymentResponse?->state->status ?? null,
@@ -72,18 +69,18 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
 
         if ($paymentResponse === null) {
             $this->logger->error('GovPay payment lookup returned null — payment may not exist yet or gateway reference is invalid', [
-                'lpaId'            => $lpa->id,
+                'lpaId'            => $lpa->getId(),
                 'gatewayReference' => $gatewayReference,
             ]);
 
             return new RedirectResponse(
-                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
             );
         }
 
         if (!$paymentResponse->isSuccess()) {
             $this->logger->info('PayResponse: payment not successful, rendering failure/cancel page', [
-                'lpaId'     => $lpa->id,
+                'lpaId'     => $lpa->getId(),
                 'stateCode' => $paymentResponse->state->code ?? null,
                 'status'    => $paymentResponse->state->status ?? null,
             ]);
@@ -95,7 +92,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
 
             $form->setAttribute(
                 'action',
-                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
             );
             $form->setAttribute('class', 'js-single-use');
             $form->get('submit')->setAttribute('value', 'Retry online payment');
@@ -116,7 +113,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         }
 
         $this->logger->info('PayResponse: payment successful, recording on LPA', [
-            'lpaId'            => $lpa->id,
+            'lpaId'            => $lpa->getId(),
             'gatewayReference' => $gatewayReference,
             'has_email'        => isset($paymentResponse->email) && $paymentResponse->email !== '',
         ]);
@@ -125,10 +122,10 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         $recorded = $this->cardPayments->recordSuccessfulPayment($lpa, $paymentResponse);
 
         $this->logger->info('PayResponse: updateApplication result', [
-            'lpaId'   => $lpa->id,
+            'lpaId'   => $lpa->getId(),
             'success' => $recorded,
         ]);
 
-        return $this->finishCheckout($lpa, $request);
+        return $this->checkoutHelper->finishCheckout($lpa, $request);
     }
 }
