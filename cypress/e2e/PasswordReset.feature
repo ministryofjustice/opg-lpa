@@ -23,7 +23,7 @@ Feature: PasswordReset
 
       # use a valid new password
       When I choose a new password
-      Then I am taken to the login page
+      Then I am returned to the appropriate page shown after a password reset
       And I see "Password successfully reset" in the page text
 
       # change password back to old one
