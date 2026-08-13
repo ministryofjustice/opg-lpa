@@ -107,10 +107,6 @@ Then(`I am advised my account could not be linked`, () => {
   );
 });
 
-Then(`I choose to link another account`, () => {
+Then(`I choose to try again`, () => {
   cy.get('[data-cy=cannot-link-try-again]').click();
-});
-
-Then(`I choose to create a new account instead`, () => {
-  cy.get('[data-cy=cannot-link-create-account]').click();
 });

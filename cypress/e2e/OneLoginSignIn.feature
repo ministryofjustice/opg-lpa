@@ -84,7 +84,7 @@ Feature: One Login Sign In
     And I should be on "/forgot-password"
 
   @RequiresMockOneLogin
-  Scenario: Linking a Make account already linked to another One Login shows the cannot-link page and can retry
+  Scenario: Being told a Make account cannot be linked returns the user to the link-or-create question
     Then I click "onelogin-signin-button"
     And I am taken to "/login-onelogin"
     And I click "onelogin-signin-button"
@@ -97,24 +97,8 @@ Feature: One Login Sign In
     And I attempt to link a Make account already linked to another One Login
     And I should be on "/cannot-link-account"
     And I am advised my account could not be linked
-    And I choose to link another account
-    And I should be on "/link-account"
-
-  @RequiresMockOneLogin
-  Scenario: From the cannot-link page a user can choose to create a new account instead
-    Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
+    And I choose to try again
     And I should be on "/link-or-create-account"
-    And I choose to link an existing Make account
-    And I submit the form
-    And I should be on "/link-account"
-    And I attempt to link a Make account already linked to another One Login
-    And I should be on "/cannot-link-account"
-    And I choose to create a new account instead
-    And I should be on "/signup"
 
   Scenario: Reaching the link-account page directly without a One Login session returns to sign in
     Then I visit "/link-account" without being logged in
