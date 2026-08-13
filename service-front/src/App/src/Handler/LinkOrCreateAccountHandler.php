@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
-use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
@@ -26,8 +25,6 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
     private const string SESSION_KEY_IDENTITY     = 'identity';
     private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
-
-    use CommonTemplateVariablesTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -54,6 +51,8 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             return new RedirectResponse('/login');
         }
 
+        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
+
         /** @var LinkOrCreateAccountForm $form */
         $form = $this->formElementManager->get(LinkOrCreateAccountForm::class);
 
@@ -70,23 +69,27 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
                     return new RedirectResponse('/link-account');
                 }
 
-                $identity = $this->oneLoginService->createAndLinkAccount(
-                    $pendingLink->sub,
-                    $pendingLink->email,
-                );
+                try {
+                    $identity = $this->oneLoginService->createAndLinkAccount(
+                        $pendingLink->sub,
+                        $pendingLink->email,
+                    );
 
-                return $this->establishSession($session, $identity);
+                    return $this->establishSession($session, $identity);
+                } catch (RuntimeException $e) {
+                    $this->logger->error('auth.onelogin.create_error', ['message' => $e->getMessage()]);
+                    $error = 'api-error';
+                }
             }
         }
 
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/linking/link-or-create-account.twig',
-            array_merge(
-                $this->getTemplateVariables($request),
-                [
-                    'form' => $form,
-                ]
-            )
+            [
+                'form' => $form,
+                'csrfToken' => $csrfToken,
+                'error' => $error ?? null,
+            ],
         ));
     }
 

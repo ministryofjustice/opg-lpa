@@ -49,6 +49,7 @@ Feature: One Login Sign In
     And I choose to create a new Make account
     And I submit the form
     And I am signed in with my new Make account
+    And I should be on "/user/dashboard/create"
 
   @RequiresMockOneLogin
   Scenario: An unlinked user entering incorrect credentials is advised and can retry

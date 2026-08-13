@@ -444,7 +444,7 @@ class ServiceTest extends MockeryTestCase
             ->andReturn(true);
 
         $this->userRepository->shouldNotReceive('setOneLoginSub');
-        $this->userRepository->shouldNotReceive('updateLastLoginTime');
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with($userId);
 
         $user = Mockery::mock(UserInterface::class);
         $this->userRepository->shouldReceive('getById')->once()->with($userId)->andReturn($user);
