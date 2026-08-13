@@ -40,6 +40,35 @@ permissions:
   statuses: none
 
 jobs:
+  verify_readonly_fs:
+    name: Verify Read-only Filesystem
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Build mounts config
+        id: mounts
+        run: |
+          mounts_json=$(jq -n \
+            --slurpfile nginx terraform/environment/modules/environment/mounts/nginx.json \
+            --slurpfile admin_app terraform/environment/modules/environment/mounts/admin-app.json \
+            '{"nginx": $nginx[0], "admin-app": $admin_app[0]}')
+          echo "mounts_json<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$mounts_json" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Verify docker-compose read_only/tmpfs matches infrastructure
+        uses: ministryofjustice/opg-github-actions/actions/verify-readonly-fs@2ff6ff8092d145e3af9a440e3dd71e4afeb673c3
+        with:
+          mounts_json: ${{ steps.mounts.outputs.mounts_json }}
+          service_json: |
+            {
+              "admin-app": "admin-app",
+              "admin-web": "nginx"
+            }
+
   otel_image_pull_and_scan:
     name: "OTEL_Image_Pull_and_Scan"
     runs-on: ubuntu-latest

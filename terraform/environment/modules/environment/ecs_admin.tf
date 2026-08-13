@@ -105,7 +105,7 @@ resource "aws_ecs_task_definition" "admin" {
     name = "web_run"
   }
   volume {
-    name = "web_log"
+    name = "web_tmp"
   }
 }
 
@@ -148,7 +148,7 @@ locals {
       image                  = "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
       mountPoints = [
         {
-          containerPath = "/etc",
+          containerPath = "/etc/nginx/conf.d",
           sourceVolume  = "web_etc"
           readOnly      = false
         },
@@ -158,13 +158,13 @@ locals {
           readOnly      = false
         },
         {
-          containerPath = "/run",
+          containerPath = "/var/run",
           sourceVolume  = "web_run"
           readOnly      = false
         },
         {
-          containerPath = "/var/log/nginx",
-          sourceVolume  = "web_log"
+          containerPath = "/tmp",
+          sourceVolume  = "web_tmp"
           readOnly      = false
         },
       ],
@@ -208,7 +208,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = false,
+      readonlyRootFilesystem = true,
       image                  = "${data.aws_ecr_repository.lpa_admin_app.repository_url}@${data.aws_ecr_image.lpa_admin_app.image_digest}",
       mountPoints = [
         {
