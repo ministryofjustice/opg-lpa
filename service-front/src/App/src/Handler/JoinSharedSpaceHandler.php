@@ -7,7 +7,6 @@ namespace App\Handler;
 use App\Authentication\AuthenticationService;
 use App\Form\SharedSpace\JoinSharedSpaceForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -36,7 +35,6 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
         /** @var JoinSharedSpaceForm $form */
         $form = $this->formElementManager->get(JoinSharedSpaceForm::class);
 
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
         $joinError = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -80,7 +78,6 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form'      => $form,
-                    'csrfToken' => $csrfToken,
                     'joinError' => $joinError,
                 ]
             )

@@ -7,7 +7,6 @@ namespace App\Handler;
 use App\Authentication\AuthenticationService;
 use App\Form\User\ChangePassword as ChangePasswordForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
@@ -37,8 +36,6 @@ class ChangePasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         $form = $this->formElementManager->get(ChangePasswordForm::class);
         assert($form instanceof ChangePasswordForm);
         $form->setAttribute('action', '/user/change-password');
@@ -101,7 +98,6 @@ class ChangePasswordHandler implements RequestHandlerInterface
                     'error'     => $error,
                     'pageTitle' => 'Change your password',
                     'cancelUrl' => '/user/about-you',
-                    'csrfToken' => $csrfToken,
                 ]
             )
         );
