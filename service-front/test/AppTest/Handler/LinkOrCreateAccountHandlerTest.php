@@ -158,4 +158,32 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
+
+    public function testCreateChoiceApiFailureKeepsUserOnFormWithError(): void
+    {
+        $this->oneLoginService->expects($this->once())
+            ->method('createAndLinkAccount')
+            ->with(self::PENDING_LINK['sub'], self::PENDING_LINK['email'])
+            ->willThrowException(new \RuntimeException('api down'));
+
+        $this->session->expects($this->never())->method('set');
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with('auth.onelogin.create_error', $this->anything());
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/linking/link-or-create-account.twig',
+                $this->callback(fn(array $vars) => ($vars['error'] ?? null) === 'api-error'),
+            )
+            ->willReturn('<html>form with error</html>');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', ['choice' => 'create'])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
 }

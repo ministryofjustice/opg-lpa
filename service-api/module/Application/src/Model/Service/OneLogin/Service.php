@@ -341,6 +341,8 @@ class Service extends AbstractService
             ]);
         } while (!$created);
 
+        $this->getUserRepository()->updateLastLoginTime($userId);
+
         $user = $this->getUserRepository()->getById($userId);
 
         if (!$user instanceof UserInterface) {
