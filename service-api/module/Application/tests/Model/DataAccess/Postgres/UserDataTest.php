@@ -1410,9 +1410,6 @@ class UserDataTest extends MockeryTestCase
     {
         $id = 'password-user';
 
-        // Stored profile email deliberately differs from identity: for a non-One-Login
-        // account getProfile must return the stored email untouched (no override), i.e.
-        // production behaviour is unchanged.
         $user = [
             'id' => $id,
             'identity' => 'login@example.com',
@@ -1543,7 +1540,6 @@ class UserDataTest extends MockeryTestCase
         $id = 'vansant';
         $oneLoginSub = 'blahblah';
 
-        // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         $updateMock = $this->makeUpdateMock($dbWrapperMock);

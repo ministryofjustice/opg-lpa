@@ -93,7 +93,6 @@ class OneLoginController extends AbstractAuthController
         return new JsonModel($result);
     }
 
-
     /**
      * Link an existing Make account to a One Login identity that is not yet associated with any Make account.
      *

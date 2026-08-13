@@ -298,7 +298,6 @@ return [
                         ],
                     ],
 
-
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
