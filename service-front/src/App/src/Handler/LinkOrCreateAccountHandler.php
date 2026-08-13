@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
-use App\Middleware\CsrfValidationMiddleware;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -22,6 +22,8 @@ use RuntimeException;
 
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
@@ -43,8 +45,6 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 
             return new RedirectResponse('/login');
         }
-
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         /** @var LinkOrCreateAccountForm $form */
         $form = $this->formElementManager->get(LinkOrCreateAccountForm::class);
@@ -68,10 +68,12 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/linking/link-or-create-account.twig',
-            [
-                'form' => $form,
-                'csrfToken' => $csrfToken,
-            ],
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                ]
+            )
         ));
     }
 }

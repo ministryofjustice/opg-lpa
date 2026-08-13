@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\Login;
-use App\Middleware\CsrfValidationMiddleware;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
@@ -24,6 +24,8 @@ use RuntimeException;
 
 class LinkAccountHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const string SESSION_KEY_IDENTITY     = 'identity';
     private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
@@ -51,8 +53,6 @@ class LinkAccountHandler implements RequestHandlerInterface
 
             return new RedirectResponse('/login');
         }
-
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         /** @var Login $form */
         $form = $this->formElementManager->get(Login::class);
@@ -103,11 +103,13 @@ class LinkAccountHandler implements RequestHandlerInterface
 
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/linking/link-account.twig',
-            [
-                'form' => $form,
-                'csrfToken' => $csrfToken,
-                'authError' => $authError,
-            ],
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                    'authError' => $authError,
+                ],
+            )
         ));
     }
 
