@@ -201,6 +201,15 @@ return [
                                                     ],
                                                 ],
                                             ],
+                                            'delete' => [
+                                                'type'    => 'Method',
+                                                'options' => [
+                                                    'verb'     => 'delete',
+                                                    'defaults' => [
+                                                        'action' => 'deleteMember',
+                                                    ],
+                                                ],
+                                            ],
                                         ],
                                     ],
                                 ],

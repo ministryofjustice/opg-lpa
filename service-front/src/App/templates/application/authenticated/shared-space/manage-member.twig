@@ -1,18 +1,19 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set overridePageTitle = 'Manage members' -%}
+{%- set overridePageTitle = 'Manage member - Manage members' -%}
 
 {% set permissions = form.get('permissions') %}
 {% set status = form.get('status') %}
 
 {% block content %}
+    <a href="{{ url('shared-space.manage') }}" class="govuk-back-link">Back</a>
 
     <div class="govuk-grid-row">
         {{ macros.formErrorSummary(error, form) }}
 
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">{{ overridePageTitle }}</span>
+            <span class="govuk-caption-xl">Manage members</span>
             <h1 class="govuk-heading-xl">{{ member.name.first ~ ' ' ~ member.name.last }}</h1>
 
             {{ form.prepare() ? '' }}
@@ -62,10 +63,10 @@
 
             <div class="govuk-button-group">
                 <button class="govuk-button" type="submit" data-cy="save">Save</button>
+                <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space.members.delete', {'member-id': member.id}) }}">Delete user</a>
             </div>
 
             {{ form().closeTag|raw }}
         </div>
     </div>
-
 {% endblock content %}

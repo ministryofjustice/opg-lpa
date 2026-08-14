@@ -91,6 +91,8 @@ interface SharedSpaceRepositoryInterface
 
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
 
+    public function deleteMember(string $sharedSpaceId, string $userId): void;
+
     public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite;
 
     /**
