@@ -114,7 +114,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/shared-space/dashboard', $location);
+        $this->assertEquals('/shared-space/dashboard?joined=success', $location);
     }
 
     public function testPostWhenAlreadyInSharedSpace(): void
