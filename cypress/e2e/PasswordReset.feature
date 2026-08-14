@@ -23,11 +23,12 @@ Feature: PasswordReset
 
       # use a valid new password
       When I choose a new password
-      Then I am taken to the login page
+      Then I am returned to the appropriate page shown after a password reset
       And I see "Password successfully reset" in the page text
 
-      # change password back to old one
-      When I log in as "PasswordResetUser" with new password
+      # change password back to old one.
+      When I visit the login page
+      And I log in as "PasswordResetUser" with new password
       And I visit link containing "Your details"
       Then I am taken to "/user/about-you/new"
 

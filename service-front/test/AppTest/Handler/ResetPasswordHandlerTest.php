@@ -30,9 +30,13 @@ class ResetPasswordHandlerTest extends TestCase
     private FlashMessagesInterface&MockObject $flash;
     private FormInterface&MockObject $form;
     private ResetPasswordHandler $handler;
+    private string|false $originalOneLoginEnabled;
 
     protected function setUp(): void
     {
+        $this->originalOneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        putenv('ONELOGIN_ENABLED=false');
+
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
@@ -50,6 +54,17 @@ class ResetPasswordHandlerTest extends TestCase
             $this->formElementManager,
             $this->userService,
         );
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->originalOneLoginEnabled === false) {
+            putenv('ONELOGIN_ENABLED');
+        } else {
+            putenv('ONELOGIN_ENABLED=' . $this->originalOneLoginEnabled);
+        }
+
+        parent::tearDown();
     }
 
     private function createRequest(string $method = 'GET', ?string $token = 'abc123', ?array $parsedBody = null): ServerRequest
@@ -147,6 +162,33 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
+    }
+
+    public function testSuccessfulResetRedirectsToHomeWhenOneLoginEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+
+        $this->session->method('has')->with('identity')->willReturn(false);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn(['password' => 'NewPass123!']); // pragma: allowlist secret
+
+        $this->userService
+            ->expects($this->once())
+            ->method('setNewPassword')
+            ->with('abc123', 'NewPass123!')
+            ->willReturn(true);
+
+        $this->flash
+            ->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['Password successfully reset']);
+
+        $request = $this->createRequest('POST', 'abc123', ['password' => 'NewPass123!', 'password_confirm' => 'NewPass123!']); // pragma: allowlist secret
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/home', $response->getHeaderLine('Location'));
     }
 
     public function testInvalidTokenResultShowsInvalidTokenPage(): void

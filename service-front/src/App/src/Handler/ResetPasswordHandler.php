@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Feature;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -74,7 +75,10 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
                     $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
-                    return new RedirectResponse('/login');
+
+                    $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
+
+                    return new RedirectResponse($destination);
                 }
 
                 if ($result === 'invalid-token') {
