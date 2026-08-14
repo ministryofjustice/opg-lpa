@@ -9,6 +9,10 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Service\Payment\GovPay\Exception\PayException;
+use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -23,6 +27,7 @@ use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class CheckoutIndexHandlerTest extends TestCase
 {
@@ -31,6 +36,8 @@ class CheckoutIndexHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private Communication&MockObject $communicationService;
     private UrlHelper&MockObject $urlHelper;
+    private GovPayClient&MockObject $paymentClient;
+    private LoggerInterface&MockObject $logger;
     private CheckoutIndexHandler $handler;
 
     protected function setUp(): void
@@ -41,12 +48,20 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->communicationService = $this->createMock(Communication::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
 
+        $this->paymentClient = $this->createMock(GovPayClient::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
+
         $this->handler = new CheckoutIndexHandler(
             $this->renderer,
             $this->formElementManager,
             $this->lpaApplicationService,
             $this->communicationService,
             $this->urlHelper,
+            new CardPayments(
+                $this->paymentClient,
+                $this->lpaApplicationService,
+                $this->logger,
+            ),
         );
     }
 
@@ -55,6 +70,18 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = FixturesData::getPfLpa();
         $lpa->payment = new Payment();
         Calculator::calculate($lpa);
+
+        return $lpa;
+    }
+
+    private function createStrandedPaymentLpa(): Lpa
+    {
+        $lpa = $this->createCompleteLpa();
+
+        $lpa->payment->gatewayReference = 'pay-ref-123';
+        $lpa->locked      = false;
+        $lpa->lockedAt    = null;
+        $lpa->completedAt = null;
 
         return $lpa;
     }
@@ -161,5 +188,94 @@ class CheckoutIndexHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('POST', $lpa));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testGovPayIsNotContactedForAnLpaWithNoPaymentInFlight(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $this->mockBlankForm();
+
+        $this->paymentClient->expects($this->never())->method('getPayment');
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
+        $this->renderer->method('render')->willReturn('html');
+
+        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
+    }
+
+    public function testAStrandedPaymentIsRecoveredAndTheUserIsSentToTheCompletedLpa(): void
+    {
+        $lpa = $this->createStrandedPaymentLpa();
+
+        $this->paymentClient->expects($this->once())
+            ->method('getPayment')
+            ->with('pay-ref-123')
+            ->willReturn(new GovPayPayment((array) json_decode((string) json_encode([
+                'payment_id' => 'pay-ref-123',
+                'reference'  => 'A12345678901', // pragma: allowlist secret
+                'email'      => 'payer@example.org',
+                'state'      => ['status' => 'success', 'finished' => true],
+            ]))));
+
+        $this->lpaApplicationService->expects($this->once())
+            ->method('updateApplication')
+            ->willReturn($lpa);
+
+        $this->lpaApplicationService->expects($this->once())
+            ->method('lockLpa')
+            ->with($lpa)
+            ->willReturn(true);
+
+        $this->communicationService->expects($this->once())
+            ->method('sendRegistrationCompleteEmail')
+            ->with($lpa)
+            ->willReturn(true);
+
+        $this->urlHelper->expects($this->once())
+            ->method('generate')
+            ->with('lpa/complete', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/' . $lpa->id . '/complete');
+
+        $this->renderer->expects($this->never())->method('render');
+
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/lpa/' . $lpa->id . '/complete', $response->getHeaderLine('location'));
+    }
+
+    public function testAnUnpaidGatewayReferenceStillShowsTheCheckoutPage(): void
+    {
+        $lpa = $this->createStrandedPaymentLpa();
+        $this->mockBlankForm();
+
+        $this->paymentClient->expects($this->once())
+            ->method('getPayment')
+            ->willReturn(new GovPayPayment((array) json_decode((string) json_encode([
+                'payment_id' => 'pay-ref-123',
+                'state'      => ['status' => 'created', 'finished' => false],
+            ]))));
+
+        $this->lpaApplicationService->expects($this->never())->method('updateApplication');
+        $this->lpaApplicationService->expects($this->never())->method('lockLpa');
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
+        $this->renderer->expects($this->once())->method('render')->willReturn('html');
+
+        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
+    }
+
+    public function testAnUnreachableGovPayStillShowsTheCheckoutPage(): void
+    {
+        $lpa = $this->createStrandedPaymentLpa();
+        $this->mockBlankForm();
+
+        $this->paymentClient->method('getPayment')
+            ->willThrowException(new PayException('GOV.UK Pay unreachable', 503));
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
+        $this->renderer->expects($this->once())->method('render')->willReturn('html');
+
+        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
     }
 }
