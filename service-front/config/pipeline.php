@@ -10,6 +10,7 @@ use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
+use App\Middleware\TelemetryMiddleware;
 use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserIdMiddleware;
@@ -32,6 +33,7 @@ use Psr\Container\ContainerInterface;
 
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
     $app->pipe(ErrorHandler::class);
+    $app->pipe(TelemetryMiddleware::class);
     $app->pipe(ServerUrlMiddleware::class);
     $app->pipe(RegisterSessionSaveHandlerMiddleware::class);
     $app->pipe(SessionMiddleware::class);
