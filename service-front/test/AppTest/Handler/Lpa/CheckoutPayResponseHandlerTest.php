@@ -11,6 +11,7 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -49,6 +50,12 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
 
+        $cardPayments = new CardPayments(
+            $this->paymentClient,
+            $this->lpaApplicationService,
+            $this->logger,
+        );
+
         $this->handler = new CheckoutPayResponseHandler(
             $this->formElementManager,
             $this->lpaApplicationService,
@@ -57,6 +64,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
             $this->urlHelper,
             $this->renderer,
             $this->logger,
+            $cardPayments,
         );
     }
 
