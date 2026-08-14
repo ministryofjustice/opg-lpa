@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
-use App\Middleware\CsrfValidationMiddleware;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
@@ -23,6 +23,8 @@ use RuntimeException;
 
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const string SESSION_KEY_IDENTITY     = 'identity';
     private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
@@ -50,8 +52,6 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 
             return new RedirectResponse('/login');
         }
-
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
 
         /** @var LinkOrCreateAccountForm $form */
         $form = $this->formElementManager->get(LinkOrCreateAccountForm::class);
@@ -85,11 +85,13 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/linking/link-or-create-account.twig',
-            [
-                'form' => $form,
-                'csrfToken' => $csrfToken,
-                'error' => $error ?? null,
-            ],
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                    'error' => $error ?? null,
+                ],
+            ),
         ));
     }
 

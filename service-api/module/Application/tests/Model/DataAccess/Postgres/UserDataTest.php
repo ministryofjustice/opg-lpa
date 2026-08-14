@@ -1535,25 +1535,6 @@ class UserDataTest extends MockeryTestCase
         $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
     }
 
-    public function testSetOneLoginSubDefaultsEmailToNull(): void
-    {
-        $id = 'vansant';
-        $oneLoginSub = 'blahblah';
-
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        $updateMock = $this->makeUpdateMock($dbWrapperMock);
-        $updateMock->shouldReceive('where')->with(['id' => $id]);
-        $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
-            return array_key_exists('one_login_email', $set) &&
-                $set['one_login_email'] === null;
-        }))->once();
-
-        $userData = new UserData($dbWrapperMock);
-
-        $userData->setOneLoginSub($id, $oneLoginSub);
-    }
-
     public function testCreateWritesActivatedTimestampWhenProvided(): void
     {
         $id = 'onelogin-user';

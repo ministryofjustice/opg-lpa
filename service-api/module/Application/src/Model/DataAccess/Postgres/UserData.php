@@ -757,9 +757,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * Links a user to a GOV.UK One Login identity.
      * @param string $userId
      * @param string $oneLoginSub
-     * @param string|null $oneLoginEmail Email supplied by One Login (contact address).
+     * @param string $oneLoginEmail Email supplied by One Login (contact address).
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, ?string $oneLoginEmail = null): void
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void
     {
         $this->updateRow(
             ['id' => $userId],
