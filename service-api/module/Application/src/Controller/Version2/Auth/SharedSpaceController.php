@@ -7,6 +7,7 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
+use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -325,6 +326,30 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new Json(['success' => true]);
+    }
+
+    public function deleteMemberAction(): NoContent|ApiProblem
+    {
+        $token = $this->checkTokenForSharedSpace();
+        if ($token instanceof ApiProblem) {
+            return $token;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $memberUserId = $this->params()->fromRoute('memberUserId');
+
+        try {
+            $this->sharedSpaceService->deleteMember($token['sharedSpaceId'], $token['userId'], $memberUserId);
+        } catch (MemberNotInSharedSpaceException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, $e->getMessage());
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return new NoContent();
     }
 
     private function checkToken(): array|ApiProblem

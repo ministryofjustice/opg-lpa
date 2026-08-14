@@ -139,16 +139,21 @@ function login(email, password) {
   cy.get('[data-cy=login-submit-button]').click();
 }
 
-Then(`I should not be logged in and I see a suspended account error`, () => {
+Then(`I should not be logged in`, () => {
   cy.url().should('include', Cypress.config().baseUrl + '/login');
+});
+
+Then(`I see a suspended account error`, () => {
   cy.contains('This user account has been suspended').should('exist');
 });
 
-Given(`the shared space has a member called {string} who is a(n) {string}`, (memberName, adminStatus) => {
+Given(/the shared space has a member called "([^"]+)" who is an? "(admin|member)"(?: with (\d+) LPAs?)?/, (memberName, adminStatus, lpaCountString) => {
+  const lpaCount = parseInt(lpaCountString, 10);
+
   cy.get('@fixtureUser').then(({ email: userAddingEmail, sharedSpaceId }) => {
-    createUserWithLpas(0, '', memberName).then(
+    createUserWithLpas(lpaCount, 'property-and-financial', memberName).then(
       ({ email, password, userId }) => {
-        cy.task('log', `Created fixture user ${email} with 0 LPA(s)`);
+        cy.task('log', `Created fixture user ${email} with ${lpaCount} LPA(s)`);
 
         addMemberToSharedSpace(sharedSpaceId, userId, userAddingEmail, adminStatus === 'admin').then(
           () => {

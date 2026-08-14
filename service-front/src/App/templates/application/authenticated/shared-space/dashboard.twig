@@ -11,7 +11,26 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <div class="govuk-body">
-            <p class="govuk-body-l">On this page you'll find all the LPAs that members of your shared space have made.</p>
+            <p class="govuk-body-l">On this page you'll find all the LPAs that members of your shared space have made. As well as making a new LPA from scratch, you can:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>
+                <li><span class="govuk-!-font-weight-bold">check the signing dates</span> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
+                </li>
+                <li><span class="govuk-!-font-weight-bold">reuse details from an existing LPA to make a new one</span> - you can do this once you've completed all sections up to and including the person to notify section
+                </li>
+            </ul>
+            <div class="govuk-details__text">
+                If you already have a registered LPA and want to use it online, go to the <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
+            </div>
+        </div>
+    </div>
+    <div class="govuk-grid-column-one-third">
+        <div class="panel-cta tablet-and-up">
+            <div class="panel-heading govuk-heading-m">Make another LPA</div>
+            <div class="panel-body">
+                <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
+                <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+            </div>
         </div>
     </div>
 </div>

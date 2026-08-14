@@ -146,6 +146,26 @@ final class SharedSpaceServiceTest extends TestCase
         $this->assertEquals(['a' => 'b'], $result);
     }
 
+    public function testDeleteMember(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpDelete')
+            ->with('/v2/shared-space/members/member-id');
+
+        $result = $this->service->deleteMember('member-id');
+        $this->assertTrue($result);
+    }
+
+    public function testDeleteMemberWhenError(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpDelete')
+            ->willThrowException(new \RuntimeException('oops'));
+
+        $result = $this->service->deleteMember('member-id');
+        $this->assertFalse($result);
+    }
+
     public function testInvite(): void
     {
         $this->client->expects($this->once())

@@ -436,6 +436,72 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sharedSpaceData->updateMember($sharedSpaceId, $userId, true, true);
     }
 
+    #[DoesNotPerformAssertions]
+    public function testDeleteMember(): void
+    {
+        $sharedSpaceId = 'space-id';
+        $userId = 'user-id';
+
+        $deleteMock = Mockery::mock(Delete::class);
+        $deleteMock->shouldReceive('where')
+            ->with(['sharedSpaceId' => $sharedSpaceId, 'userId' => $userId])
+            ->andReturn($deleteMock);
+
+        $resultMock = Mockery::mock(ResultInterface::class);
+        $resultMock->shouldReceive('getAffectedRows')
+            ->andReturn(1);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('delete')
+            ->with(SharedSpaceData::SHARED_SPACE_MEMBERS)
+            ->andReturn($deleteMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($deleteMock)
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $sharedSpaceData->deleteMember($sharedSpaceId, $userId);
+    }
+
+    public function testDeleteMemberWhenNothingDeleted(): void
+    {
+        $sharedSpaceId = 'space-id';
+        $userId = 'user-id';
+
+        $deleteMock = Mockery::mock(Delete::class);
+        $deleteMock->shouldReceive('where')
+            ->andReturn($deleteMock);
+
+        $resultMock = Mockery::mock(ResultInterface::class);
+        $resultMock->shouldReceive('getAffectedRows')
+            ->andReturn(0);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('delete')
+            ->andReturn($deleteMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(MemberNotInSharedSpaceException::class);
+        $sharedSpaceData->deleteMember($sharedSpaceId, $userId);
+    }
+
     public function testGetInviteByCodeAndSharedSpaceName(): void
     {
         $sharedSpaceName = 'My Space';
@@ -679,7 +745,6 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
             ->with($deleteMock)
             ->andReturn($statementMock);
-        $sqlMock->shouldReceive('execute');
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
         $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
