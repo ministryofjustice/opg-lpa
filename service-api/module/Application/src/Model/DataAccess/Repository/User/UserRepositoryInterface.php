@@ -145,5 +145,5 @@ interface UserRepositoryInterface
      * Links a user to a GOV.UK One Login identity, storing the subject id and the
      * One Login email.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, ?string $oneLoginEmail = null): void;
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void;
 }
