@@ -38,7 +38,7 @@ class CardPayments
     {
         $payment = $lpa->payment;
 
-        rreturn $payment instanceof Payment
+        return $payment instanceof Payment
             && is_string($payment->gatewayReference) && trim($payment->gatewayReference) !== ''
             && $payment->date === null && $payment->method === null
             && $lpa->locked !== true && $lpa->completedAt === null

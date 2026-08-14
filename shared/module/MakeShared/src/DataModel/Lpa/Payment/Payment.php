@@ -21,7 +21,7 @@ class Payment extends AbstractData
     public const PAYMENT_TYPE_CHEQUE = 'cheque';
 
     /**
-     * @var string The payment method used (or that will be used).
+     * @var string|null The payment method used (or that will be used).
      */
     protected $method;
 
@@ -49,7 +49,7 @@ class Payment extends AbstractData
     protected $gatewayReference;
 
     /**
-     * @var DateTime Date the payment was made.
+     * @var DateTime|null Date the payment was made.
      */
     protected $date;
 
@@ -154,7 +154,7 @@ class Payment extends AbstractData
     }
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getMethod()
     {
@@ -249,7 +249,7 @@ class Payment extends AbstractData
     }
 
     /**
-     * @return DateTime
+     * @return DateTime|null
      */
     public function getDate()
     {
