@@ -53,6 +53,8 @@ use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Logging\RequestLoggingMiddleware;
 use MakeShared\Logging\RequestLoggingMiddlewareFactory;
+use MakeShared\Telemetry\Exporter\ExporterFactory;
+use MakeShared\Telemetry\Tracer;
 use Mezzio\Container\ErrorHandlerFactory;
 use Mezzio\Csrf\CsrfGuardFactoryInterface;
 use Mezzio\Csrf\CsrfMiddleware;
@@ -220,6 +222,12 @@ return [
             AuthenticationService::class                => AuthenticationServiceFactory::class,
             LoggerInterface::class                      => LoggerFactory::class,
             RequestLoggingMiddleware::class             => RequestLoggingMiddlewareFactory::class,
+            Tracer::class => function ($sm) {
+                $telemetryConfig = $sm->get('config')['telemetry'];
+                $exporterFactory = new ExporterFactory($sm);
+
+                return Tracer::create($exporterFactory, $telemetryConfig);
+            },
         ],
     ],
     'api_client'        => [
@@ -237,6 +245,19 @@ return [
     'processing-status' => [
         'track-from-date'                      => getenv('OPG_LPA_FRONT_TRACK_FROM_DATE') ?: '2019-04-01',
         'expected-working-days-before-receipt' => 15,
+    ],
+    'telemetry' => [
+        // fraction of requests which will be sampled, e.g. 0.05
+        'requestsSampledFraction' => getenv('OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION') ?: null,
+
+        'exporter' => [
+            'serviceName' => 'service-front',
+
+            // if this value is null, a console exporter will be used;
+            // for a standard XRay (over UDP) exporter, use host='localhost' and port=2000
+            'host' => getenv('OPG_LPA_TELEMETRY_HOST') ?: null,
+            'port' => getenv('OPG_LPA_TELEMETRY_PORT') ?: null,
+        ],
     ],
     'email'             => [
         'notify'              => [
