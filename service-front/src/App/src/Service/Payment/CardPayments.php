@@ -38,23 +38,11 @@ class CardPayments
     {
         $payment = $lpa->payment;
 
-        if (!$payment instanceof Payment) {
-            return false;
-        }
-
-        if (!is_string($payment->gatewayReference) || trim($payment->gatewayReference) === '') {
-            return false;
-        }
-
-        if ($payment->date !== null || $payment->method !== null) {
-            return false;
-        }
-
-        if ($lpa->locked === true || $lpa->completedAt !== null) {
-            return false;
-        }
-
-        return $lpa->hasFinishedCreation();
+        rreturn $payment instanceof Payment
+            && is_string($payment->gatewayReference) && trim($payment->gatewayReference) !== ''
+            && $payment->date === null && $payment->method === null
+            && $lpa->locked !== true && $lpa->completedAt === null
+            && $lpa->hasFinishedCreation();
     }
 
     public function recoverCompletedPayment(Lpa $lpa): bool
