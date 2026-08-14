@@ -93,6 +93,13 @@ interface UserInterface
     public function activationToken(): ?string;
 
     /**
+     * The GOV.UK One Login subject identifier this account is linked to, if any.
+     *
+     * @return string|null
+     */
+    public function oneLoginSub(): ?string;
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return TokenInterface|null

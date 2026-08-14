@@ -30,6 +30,9 @@
             <file>src/App/src/Service/Feedback/FeedbackValidationException.php</file>
             <directory>src/App/src/Service/Mail/Exception</directory>
             <directory>src/App/src/Service/Payment/GovPay/Exception</directory>
+            <!-- Test-only fixture handler used by Cypress; not exercised by PHPUnit -->
+            <directory>src/App/src/Service/Fixture</directory>
+            <directory>src/App/src/Handler/Testing</directory>
         </exclude>
     </source>
 

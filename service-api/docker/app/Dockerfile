@@ -34,6 +34,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/
 RUN composer check-platform-reqs --no-dev -d /app \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --no-dev --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
+    && find /app/vendor -name composer.lock -delete \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
@@ -90,7 +91,9 @@ CMD ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh && php-fpm"]
 
 FROM base AS composer-tools
 
+
 USER root
+RUN apk add git
 COPY --from=composer /usr/bin/composer /usr/bin/
 WORKDIR /app
 
@@ -106,6 +109,7 @@ COPY --from=composer /usr/bin/composer /usr/bin/
 RUN composer check-platform-reqs -d /app \
     && composer install --prefer-dist --no-interaction --no-cache --no-scripts --optimize-autoloader -d /app \
     && chown -R root:root /app/vendor \
+    && find /app/vendor -name composer.lock -delete \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 

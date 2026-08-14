@@ -1472,7 +1472,9 @@ class UserDataTest extends MockeryTestCase
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) use ($oneLoginSub) {
             return Helpers::isGmDateString($set['updated']) &&
-                $set['one_login_sub'] === $oneLoginSub;
+                $set['one_login_sub'] === $oneLoginSub &&
+                array_key_exists('password_hash', $set) &&
+                $set['password_hash'] === null;
         }));
 
         // test

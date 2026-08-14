@@ -6,7 +6,6 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -46,8 +45,6 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -126,7 +123,7 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
                     $html = $this->renderer->render(
                         'application/authenticated/lpa/replacement-attorney/trust-form.twig',
-                        array_merge($this->getTemplateVariables($request), $templateParams + ['csrfToken' => $csrfToken])
+                        array_merge($this->getTemplateVariables($request), $templateParams)
                     );
 
                     return new HtmlResponse($html);
@@ -191,7 +188,7 @@ class ReplacementAttorneyAddTrustHandler implements RequestHandlerInterface
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/replacement-attorney/trust-form.twig',
-            array_merge($this->getTemplateVariables($request), $templateParams + ['csrfToken' => $csrfToken])
+            array_merge($this->getTemplateVariables($request), $templateParams)
         );
 
         return new HtmlResponse($html);

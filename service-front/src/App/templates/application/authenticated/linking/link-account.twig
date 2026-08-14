@@ -19,7 +19,25 @@
 
 {% block content %}
   <div class="govuk-grid-row govuk-!-margin-top-9">
-    {{ macros.formErrorSummary(error, form) }}
+      {% if authError %}
+          <div class="govuk-error-summary govuk-!-margin-top-6" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary" data-module="govuk-error-summary">
+              <h2 class="govuk-error-summary__title" id="error-heading" data-cy="error-heading">There is a problem</h2>
+              <div class="govuk-error-summary__body" data-tracking-context="Linking account">
+                  {% if authError == 'api-error' %}
+                      <p class="govuk-body" data-cy="link-account-error">Sorry, the service is unavailable. Please try again later.</p>
+                  {% elseif authError == 'not-activated' %}
+                      <p class="govuk-body" data-cy="link-account-error">Your account has not been activated. Click on the link in the email sent to you when you created the account.
+                          If you have not received an email, check your spam, bulk or junk email folder or <a class="govuk-link" href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
+                  {% elseif authError == 'locked' %}
+                      <p class="govuk-body" data-cy="link-account-error">This user account has been locked. Please go <a class="govuk-link" href="{{ url('forgot-password') }}">here</a> to reset your password OR you can attempt again in 15 minutes.</p>
+                  {% elseif authError == 'link-failed' %}
+                      <p class="govuk-body" data-cy="link-account-error">Email address and password combination not recognised. Please try again.</p>
+                  {% endif %}
+              </div>
+          </div>
+      {% endif %}
+
+      {{ macros.formErrorSummary(error, form) }}
 
     <div class="govuk-grid-column-two-thirds">
       {{ email.setAttributes({
@@ -53,12 +71,12 @@
         </div>
       </div>
 
-      <button type="submit" class="govuk-button">Sign in</button>
+    <button type="submit" class="govuk-button" data-cy="link-account-submit">Sign in</button>
 
       {{ form().closeTag|raw }}
 
       <p class="govuk-body">
-        <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
+        <a class="govuk-link" href="{{ url('forgot-password') }}" data-cy="link-account-forgot-password">Forgotten your password?</a>
       </p>
     </div>
   </div>

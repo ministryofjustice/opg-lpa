@@ -6,7 +6,6 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\ActorReuseDetailsService;
@@ -37,8 +36,6 @@ class ReuseDetailsHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -123,7 +120,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             'application/authenticated/lpa/reuse-details/index.twig',
             array_merge(
                 $this->getTemplateVariables($request),
-                $templateParams + ['csrfToken' => $csrfToken]
+                $templateParams
             )
         );
 

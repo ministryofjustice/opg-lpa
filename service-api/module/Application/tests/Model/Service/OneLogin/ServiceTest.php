@@ -2,6 +2,8 @@
 
 namespace ApplicationTest\Model\Service\OneLogin;
 
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -12,6 +14,7 @@ use Application\Model\Service\OneLogin\Service;
 use DateTime;
 use Facile\OpenIDClient\Client\ClientInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
+use MakeShared\OneLogin\LinkReason;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -24,6 +27,8 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|AuthorizationServiceInterface $authorizationService;
     private MockInterface|AuthenticationService $authenticationService;
     private MockInterface|UserRepositoryInterface $userRepository;
+    private MockInterface|LogRepositoryInterface $logRepository;
+    private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ClientInterface $oidcClient;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
@@ -42,6 +47,10 @@ class ServiceTest extends MockeryTestCase
 
         $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
 
+        $this->logRepository = Mockery::mock(LogRepositoryInterface::class);
+
+        $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
+
         $logger = Mockery::spy(LoggerInterface::class);
 
         $this->service = new Service();
@@ -50,6 +59,8 @@ class ServiceTest extends MockeryTestCase
         $this->service->setAuthorizationService($this->authorizationService);
         $this->service->setAuthenticationService($this->authenticationService);
         $this->service->setUserRepository($this->userRepository);
+        $this->service->setLogRepository($this->logRepository);
+        $this->service->setSharedSpaceRepository($this->sharedSpaceRepository);
     }
 
     public function testCreateAuthenticationRequestReturnsExpectedParams(): void
@@ -115,6 +126,20 @@ class ServiceTest extends MockeryTestCase
         $service->createAuthenticationRequest(self::REDIRECT_URI);
     }
 
+    public function testMissingSharedSpaceRepositoryThrows(): void
+    {
+        $service = new Service();
+        $service->setLogger(Mockery::spy(LoggerInterface::class));
+        $service->setAuthorisationClientManager($this->clientManager);
+        $service->setAuthorizationService($this->authorizationService);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('SharedSpaceRepository');
+
+        $service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+    }
+
     public function testHandleCallbackLinkedReturnsIdentity(): void
     {
         $sub   = 'urn:fdc:gov.uk:2022:sub-abc123';
@@ -144,6 +169,11 @@ class ServiceTest extends MockeryTestCase
             ->with($user)
             ->andReturn(['token' => 'tok-xyz', 'expiresIn' => 4500, 'expiresAt' => $expires]);
 
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->once()
+            ->with('user-1')
+            ->andReturn('shared-space-9');
+
         $result = $this->service->handleCallback('auth-code', 'state-abc', 'nonce-xyz', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
@@ -152,6 +182,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('user-1', $result['identity']['userId']);
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
+        $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
     }
 
     public function testHandleCallbackLinkedResetsFailedCounterWhenNonZero(): void
@@ -172,9 +203,15 @@ class ServiceTest extends MockeryTestCase
             ->once()
             ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
 
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->once()
+            ->with('user-2')
+            ->andReturn(null);
+
         $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
+        $this->assertNull($result['identity']['sharedSpaceId']);
     }
 
     public function testHandleCallbackUnlinkedReturnsFalseLinked(): void
@@ -264,6 +301,134 @@ class ServiceTest extends MockeryTestCase
         $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
     }
 
+    public function testLinkExistingAccountSuccessSetsSubAndReturnsIdentity(): void
+    {
+        $sub  = 'urn:fdc:gov.uk:2022:new-sub';
+        $user = $this->makeLinkUser(oneLoginSub: null);
+
+        $this->userRepository->shouldReceive('getByUsername')
+            ->once()->with('alice@example.com')->andReturn($user);
+
+        $expires   = new DateTime('+4500 seconds');
+        $lastLogin = new DateTime('2025-01-01 09:00:00');
+
+        $this->authenticationService->shouldReceive('withPassword')
+            ->once()
+            ->with('alice@example.com', 'correct-horse', true)
+            ->andReturn([
+                'userId'        => 'user-1',
+                'token'         => 'tok-xyz',
+                'expiresIn'     => 4500,
+                'expiresAt'     => $expires,
+                'last_login'    => $lastLogin,
+                'sharedSpaceId' => 'shared-space-9',
+            ]);
+
+        $this->userRepository->shouldReceive('setOneLoginSub')
+            ->once()->with('user-1', $sub);
+
+        $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub);
+
+        $this->assertTrue($result['linked']);
+        $identity = $result['identity'] ?? null;
+        $this->assertIsArray($identity);
+        $this->assertSame('user-1', $identity['userId']);
+        $this->assertSame('tok-xyz', $identity['token']);
+        $this->assertSame($expires->format('c'), $identity['tokenExpiresAt']);
+        $this->assertSame($lastLogin->format('c'), $identity['lastLogin']);
+        $this->assertSame('shared-space-9', $identity['sharedSpaceId']);
+    }
+
+    public function testLinkExistingAccountReturnsAccountNotFoundWhenNoUserAndNoDeletionLog(): void
+    {
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn(null);
+        $this->logRepository->shouldReceive('getLogByIdentityHash')->once()->andReturn(null);
+        $this->authenticationService->shouldNotReceive('withPassword');
+
+        $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountReturnsAccountDeletedWhenDeletionLogExists(): void
+    {
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn(null);
+        $this->logRepository->shouldReceive('getLogByIdentityHash')
+            ->once()->andReturn(['type' => 'account-deleted', 'reason' => 'user-initiated']);
+        $this->authenticationService->shouldNotReceive('withPassword');
+
+        $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::ACCOUNT_DELETED, $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountReturnsAlreadyLinkedWhenSubDiffers(): void
+    {
+        $user = $this->makeLinkUser(oneLoginSub: 'urn:fdc:gov.uk:2022:someone-else');
+
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn($user);
+        // Must not attempt a password check or overwrite the existing link.
+        $this->authenticationService->shouldNotReceive('withPassword');
+        $this->userRepository->shouldNotReceive('setOneLoginSub');
+
+        $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::ALREADY_LINKED, $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountMapsInvalidCredentials(): void
+    {
+        $user = $this->makeLinkUser(oneLoginSub: null);
+
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn($user);
+        $this->authenticationService->shouldReceive('withPassword')
+            ->once()->andReturn('invalid-user-credentials');
+        $this->userRepository->shouldNotReceive('setOneLoginSub');
+
+        $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::INVALID_CREDENTIALS, $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountMapsLockedAccount(): void
+    {
+        $user = $this->makeLinkUser(oneLoginSub: null);
+
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn($user);
+        $this->authenticationService->shouldReceive('withPassword')
+            ->once()->andReturn('account-locked/max-login-attempts');
+
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::ACCOUNT_LOCKED, $result['reason'] ?? null);
+    }
+
+    public function testLinkExistingAccountMapsInactiveAccount(): void
+    {
+        $user = $this->makeLinkUser(oneLoginSub: null);
+
+        $this->userRepository->shouldReceive('getByUsername')->once()->andReturn($user);
+        $this->authenticationService->shouldReceive('withPassword')
+            ->once()->andReturn('account-not-active');
+
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x');
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason'] ?? null);
+    }
+
+    private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('oneLoginSub')->andReturn($oneLoginSub);
+
+        return $user;
+    }
 
     private function makeTokenSet(string $sub): MockInterface|TokenSetInterface
     {

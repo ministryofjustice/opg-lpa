@@ -92,4 +92,30 @@ class OneLoginController extends AbstractAuthController
 
         return new JsonModel($result);
     }
+
+
+    /**
+     * Link an existing Make account to a One Login identity that is not yet associated with any Make account.
+     *
+     * @return JsonModel
+     */
+    public function linkAction(): JsonModel
+    {
+        /** @var array{username: string, password: string, oneLoginSub: string} $body */
+        $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        TelemetryEventManager::triggerStart('OneLoginController.linkAction');
+
+        try {
+            $result = $this->getService()->linkExistingAccount(
+                $body['username'],
+                $body['password'],
+                $body['oneLoginSub'],
+            );
+        } finally {
+            TelemetryEventManager::triggerStop();
+        }
+
+        return new JsonModel($result);
+    }
 }

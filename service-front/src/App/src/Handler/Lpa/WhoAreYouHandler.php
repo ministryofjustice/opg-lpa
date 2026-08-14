@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -37,8 +36,6 @@ class WhoAreYouHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -60,7 +57,6 @@ class WhoAreYouHandler implements RequestHandlerInterface
                             ['lpa-id' => $lpa->id],
                             $flowChecker->getRouteOptions($nextRoute)
                         ),
-                        'csrfToken' => $csrfToken,
                     ]
                 )
             );
@@ -238,7 +234,6 @@ class WhoAreYouHandler implements RequestHandlerInterface
                 [
                     'form'       => $form,
                     'whoOptions' => $whoOptions,
-                    'csrfToken'  => $csrfToken,
                 ]
             )
         );

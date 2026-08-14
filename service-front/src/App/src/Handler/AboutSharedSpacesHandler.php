@@ -21,8 +21,9 @@ class AboutSharedSpacesHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $html = $this->renderer->render('application/authenticated/shared-space/about.twig');
-
-        return new HtmlResponse($html);
+        return new HtmlResponse($this->renderer->render(
+            'application/authenticated/shared-space/about.twig',
+            $this->getTemplateVariables($request),
+        ));
     }
 }

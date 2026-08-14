@@ -1,17 +1,30 @@
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'About shared spaces' -%}
+{%- set pageTitle = 'Shared spaces' -%}
 
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body">Some information on what shared spaces are and the consequences of joining one</p>
+        <p class="govuk-body">A shared space allows you to draft LPAs with other people...</p>
+
+        <h2 class="govuk-heading-m">Create a shared space</h2>
+
+        <p class="govuk-body">If you want to invite other people to draft LPAs with you, create a shared space.</p>
 
         <p class="govuk-body">
-            <a class="govuk-link" href="{{ url('shared-space/make') }}">Continue</a>
+            <a class="govuk-button app-use-standard" href="{{ url('shared-space/make') }}">Create new shared space</a>
         </p>
 
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Join a shared space</h2>
+
+        <p class="govuk-body">If you received an email asking you to join a shared space, join it.</p>
+
+        <p class="govuk-body">
+            <a class="govuk-button app-use-standard" href="{{ url('shared-space/join') }}">Join a shared space</a>
+        </p>
     </div>
 </div>
 

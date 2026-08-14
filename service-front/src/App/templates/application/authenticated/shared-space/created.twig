@@ -1,0 +1,19 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Shared space created' -%}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% block content %}
+<div class="govuk-grid-row govuk-!-margin-top-9">
+  <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-panel govuk-panel--confirmation">
+      <h1 class="govuk-panel__title">
+        {{ pageTitle }}
+      </h1>
+    </div>
+
+    <a href="{{ url('shared-space.dashboard') }}" class="govuk-button">Continue</a>
+  </div>
+</div>
+
+{% endblock content %}

@@ -36,6 +36,8 @@
                     If you have not received an email, check your spam, bulk or junk email folder or <a class="govuk-link" href="{{ url('register/resend-email') }}">resend activation email</a>.</p>
             {% elseif authError == 'locked' %}
                <p class="govuk-body" data-tracking-summary="Account has been locked">This user account has been locked. Please go <a class="govuk-link" href="{{ url('forgot-password') }}">here</a> to reset your password OR you can attempt again in 15 minutes.</p>
+            {% elseif authError == 'member-suspended' %}
+                <p class="govuk-body" data-tracking-summary="Account has been suspended">This user account has been suspended. Please contact your shared space admin for assistance.</p>
             {% else %}
                 <p class="govuk-body" data-tracking-summary="Email and password not recognised">Email and password combination not recognised. Please try signing in again below or <a class="govuk-link" href="{{ url('register') }}">create an account</a>.</p>
             {% endif %}

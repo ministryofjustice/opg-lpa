@@ -65,6 +65,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setAuthorisationClientManager' => OneLogin\AuthorisationClientManager::class,
             'setAuthorizationService'       => OneLogin\FacileAuthorizationServiceAdapter::class,
             'setAuthenticationService'      => AuthenticationService::class,
+            'setSharedSpaceRepository'      => SharedSpaceRepository\SharedSpaceRepositoryInterface::class,
         ],
     ];
 

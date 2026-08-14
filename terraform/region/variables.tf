@@ -15,12 +15,13 @@ variable "accounts" {
   description = "the account map loaded from tfvars.json"
   type = map(
     object({
-      account_id         = string
-      account_name_short = string
-      is_production      = string
-      retention_in_days  = number
-      dr_enabled         = bool
-      always_on_aurora   = bool
+      account_id              = string
+      account_name_short      = string
+      is_production           = string
+      retention_in_days       = number
+      dr_enabled              = bool
+      always_on_aurora        = bool
+      data_lpa_api_account_id = string
       dns_firewall = object({
         enabled         = bool
         domains_allowed = list(string)

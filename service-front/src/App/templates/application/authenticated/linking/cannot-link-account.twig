@@ -1,0 +1,30 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'We cannot link this account' -%}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% block content %}
+    <div class="govuk-grid-row govuk-!-margin-top-9">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-xl" data-cy="cannot-link-heading">We cannot link this account</h1>
+
+            <p class="govuk-body" data-cy="cannot-link-intro">
+                We could not link this Make account to your GOV.UK One Login. This could be because:
+            </p>
+
+            <ul class="govuk-list govuk-list--bullet" data-cy="cannot-link-reasons">
+                <li>the account does not exist</li>
+                <li>the account has already been linked</li>
+                <li>the account has been deleted</li>
+            </ul>
+
+            <p class="govuk-body">
+                You can try again to link a different Make account, or create a new one.
+            </p>
+
+            <a href="{{ url('link-or-create-account') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button" data-cy="cannot-link-try-again">
+                Try again
+            </a>
+        </div>
+    </div>
+{% endblock content %}

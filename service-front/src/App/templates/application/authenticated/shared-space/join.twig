@@ -1,0 +1,43 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Join shared space' -%}
+{% block mainTitle %}{% endblock %}
+
+{% set form = formErrorTextExchange(form, {
+    'space-name': {
+        'isEmpty': 'Enter the name of the shared space',
+    },
+}) %}
+
+{% set sharedSpaceName = form.get('sharedSpaceName') %}
+{% set sharedSpaceAccessCode = form.get('sharedSpaceAccessCode') %}
+
+{% block content %}
+  <div class="govuk-grid-row govuk-!-margin-top-9">
+    {{ macros.formErrorSummary(error, form) }}
+
+    {% if joinError %}
+      <div class="govuk-error-summary govuk-!-margin-top-6" role="group" aria-labelledby="error-heading" tabindex="-1">
+        <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading" data-cy="error-heading">There is a problem</h2>
+        <div class="govuk-error-summary__body">
+          <p class="govuk-body">{{ joinError }}</p>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      {{ macros.formGroup2(sharedSpaceName) }}
+      {{ macros.formGroup2(sharedSpaceAccessCode) }}
+
+      <button class="govuk-button" type="submit">Continue</button>
+      {{ form().closeTag|raw }}
+    </div>
+  </div>
+{% endblock content %}

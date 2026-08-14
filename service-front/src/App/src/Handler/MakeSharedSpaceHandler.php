@@ -6,7 +6,6 @@ namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -35,7 +34,6 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
         /** @var FormInterface $form */
         $form = $this->formElementManager->get('App\Form\SharedSpace\MakeSharedSpaceForm');
 
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
         $error = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -51,7 +49,7 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
                 if ($sharedSpaceId !== null) {
                     $this->authenticationService->refreshSharedSpaceId($sharedSpaceId);
 
-                    return new RedirectResponse('/shared-space/dashboard');
+                    return new RedirectResponse('/shared-space/created');
                 }
 
                 $error = 'Failed to create shared space. Please try again.';
@@ -64,7 +62,6 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form'      => $form,
-                    'csrfToken' => $csrfToken,
                     'error'     => $error,
                 ]
             )

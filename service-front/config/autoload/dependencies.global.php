@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Adapter\DynamoDbKeyValueStore;
 use App\Authentication\AuthenticationService;
 use App\Authentication\AuthenticationServiceFactory;
+use App\Feature;
 use App\Form;
 use App\Handler;
 use App\Handler\Lpa\StatusHandler;
@@ -25,8 +26,6 @@ use App\Service\Guidance\GuidanceService;
 use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\ApplicantFactory;
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication as CommunicationService;
-use App\Service\Lpa\CommunicationFactory;
 use App\Service\Lpa\ReplacementAttorneyCleanup as ReplacementAttorneyCleanupService;
 use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\LpaApplicationServiceFactory;
@@ -39,6 +38,7 @@ use App\Service\Redis\RedisClient;
 use App\Service\Redis\RedisClientFactory;
 use App\Service\Session\FilteringSaveHandler;
 use App\Service\Session\SaveHandlerFactory;
+use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\System\StatusService;
 use App\Service\System\StatusServiceFactory;
 use App\Service\SystemMessage;
@@ -48,6 +48,7 @@ use App\Storage\MezzioSessionStorage;
 use App\View;
 use Aws\DynamoDb\DynamoDbClient;
 use Laminas\EventManager\EventManager;
+use Laminas\Form\FormElementManager;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
 use MakeShared\Logging\RequestLoggingMiddleware;
@@ -100,10 +101,9 @@ return [
     ],
     'dependencies'      => [
         'aliases'    => [
-            'Communication'                   => CommunicationService::class,
-            'GovPayClient'                    => GovPayClient::class,
-            'EventManager'                    => EventManager::class,
-            CsrfGuardFactoryInterface::class  => SessionCsrfGuardFactory::class,
+            'GovPayClient'                   => GovPayClient::class,
+            'EventManager'                   => EventManager::class,
+            CsrfGuardFactoryInterface::class => SessionCsrfGuardFactory::class,
         ],
         'invokables' => [
             EventManager::class             => EventManager::class,
@@ -119,7 +119,7 @@ return [
             // Laminas\Stratigility\Middleware\ErrorHandler catches all unhandled Throwables
             // but does not log them by default — this listener ensures every 500 is logged
             // with full exception context (message, class, file, line, trace).
-            ErrorHandler::class                           => static function (ContainerInterface $c): ErrorHandler {
+            ErrorHandler::class                         => static function (ContainerInterface $c): ErrorHandler {
                 /** @var ErrorHandler $handler */
                 $handler = (new ErrorHandlerFactory())($c);
                 $logger  = $c->get(LoggerInterface::class);
@@ -153,49 +153,49 @@ return [
 
                 return $handler;
             },
-            ApiClient::class                              => ApiClientFactory::class,
-            Handler\HomeRedirectHandler::class            => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
+            ApiClient::class                            => ApiClientFactory::class,
+            Handler\HomeRedirectHandler::class          => static fn(ContainerInterface $c) => new Handler\HomeRedirectHandler(
                 $c->get('config'),
             ),
-            Handler\HomeHandler::class                    => static fn(ContainerInterface $c) => new Handler\HomeHandler(
+            Handler\HomeHandler::class                  => static fn(ContainerInterface $c) => new Handler\HomeHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get('config'),
             ),
-            Handler\LogoutHandler::class                  => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
+            Handler\LogoutHandler::class                => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
             ),
-            Handler\LoginHandler::class                   => static fn(ContainerInterface $c) => new Handler\LoginHandler(
+            Handler\LoginHandler::class                 => static fn(ContainerInterface $c) => new Handler\LoginHandler(
                 $c->get(TemplateRendererInterface::class),
-                $c->get(\Laminas\Form\FormElementManager::class),
-                $c->get(\App\Authentication\AuthenticationService::class),
-                App\Feature::OneLogin->isEnabled(),
+                $c->get(FormElementManager::class),
+                $c->get(AuthenticationService::class),
+                Feature::OneLogin->isEnabled(),
+                $c->get(SharedSpaceService::class)
             ),
-            RedirectUriBuilder::class => static fn(ContainerInterface $c) => new RedirectUriBuilder(
+            RedirectUriBuilder::class                   => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,
             ),
-            StatusHandler::class                          => static fn(ContainerInterface $c) => new StatusHandler(
+            StatusHandler::class                        => static fn(ContainerInterface $c) => new StatusHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),
                 $c->get('config'),
             ),
-            Handler\PingHandlerJson::class                => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
+            Handler\PingHandlerJson::class              => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
                 $c->get('config'),
                 $c->get(StatusService::class),
             ),
-            LpaApplicationService::class                  => LpaApplicationServiceFactory::class,
-            CommunicationService::class                   => CommunicationFactory::class,
-            GovPayClient::class                           => AlphagovPayClientFactory::class,
-            ApplicantService::class                       => ApplicantFactory::class,
-            ReplacementAttorneyCleanupService::class      => ReplacementAttorneyCleanupFactory::class,
-            UserDetails::class                            => UserDetailsFactory::class,
-            FeedbackService::class                        => FeedbackServiceFactory::class,
-            GuidanceService::class                        => static fn() => new GuidanceService(
+            LpaApplicationService::class                => LpaApplicationServiceFactory::class,
+            GovPayClient::class                         => AlphagovPayClientFactory::class,
+            ApplicantService::class                     => ApplicantFactory::class,
+            ReplacementAttorneyCleanupService::class    => ReplacementAttorneyCleanupFactory::class,
+            UserDetails::class                          => UserDetailsFactory::class,
+            FeedbackService::class                      => FeedbackServiceFactory::class,
+            GuidanceService::class                      => static fn() => new GuidanceService(
                 getcwd() . '/content/guidance',
             ),
-            OrdnanceSurveyService::class                  => OrdnanceSurveyFactory::class,
-            StatusService::class                          => StatusServiceFactory::class,
-            DynamoDbClient::class                         => DynamoDbClientFactory::class,
-            SystemMessage::class                          => static function (ContainerInterface $c): SystemMessage {
+            OrdnanceSurveyService::class                => OrdnanceSurveyFactory::class,
+            StatusService::class                        => StatusServiceFactory::class,
+            DynamoDbClient::class                       => DynamoDbClientFactory::class,
+            SystemMessage::class                        => static function (ContainerInterface $c): SystemMessage {
                 $config                    = $c->get('config');
                 $dynamoConfig              = $config['admin']['dynamodb'];
                 $dynamoConfig['keyPrefix'] = getenv('OPG_LPA_STACK_NAME') ?: 'local';
@@ -203,23 +203,23 @@ return [
                 $store->setDynamoDbClient($c->get(DynamoDbClient::class));
                 return new SystemMessage($store);
             },
-            RedisClient::class                            => RedisClientFactory::class,
-            FilteringSaveHandler::class                   => SaveHandlerFactory::class,
-            RegisterSessionSaveHandlerMiddleware::class   => static fn(ContainerInterface $c) => new RegisterSessionSaveHandlerMiddleware(
+            RedisClient::class                          => RedisClientFactory::class,
+            FilteringSaveHandler::class                 => SaveHandlerFactory::class,
+            RegisterSessionSaveHandlerMiddleware::class => static fn(ContainerInterface $c) => new RegisterSessionSaveHandlerMiddleware(
                 $c->get(FilteringSaveHandler::class),
                 $c->get('config')['session']['native_settings'] ?? [],
             ),
-            AppMailTransportInterface::class              => MailTransportFactory::class,
-            TermsAndConditionsMiddleware::class           => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
+            AppMailTransportInterface::class            => MailTransportFactory::class,
+            TermsAndConditionsMiddleware::class         => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
                 $c->get('config'),
                 $c->get(AuthenticationService::class),
                 $c->get(UrlHelper::class),
             ),
-            CsrfMiddleware::class                         => CsrfMiddlewareFactory::class,
-            View\Twig\LegacyCompatExtension::class        => View\Twig\LegacyCompatExtensionFactory::class,
-            AuthenticationService::class                  => AuthenticationServiceFactory::class,
-            LoggerInterface::class                        => LoggerFactory::class,
-            RequestLoggingMiddleware::class               => RequestLoggingMiddlewareFactory::class,
+            CsrfMiddleware::class                       => CsrfMiddlewareFactory::class,
+            View\Twig\LegacyCompatExtension::class      => View\Twig\LegacyCompatExtensionFactory::class,
+            AuthenticationService::class                => AuthenticationServiceFactory::class,
+            LoggerInterface::class                      => LoggerFactory::class,
+            RequestLoggingMiddleware::class             => RequestLoggingMiddlewareFactory::class,
         ],
     ],
     'api_client'        => [

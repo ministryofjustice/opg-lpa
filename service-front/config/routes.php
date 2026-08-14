@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Handler\AboutSharedSpacesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\AccessibilityHandler;
+use App\Handler\CannotLinkAccountHandler;
 use App\Handler\ChangeEmailAddressHandler;
 use App\Handler\ChangePasswordHandler;
 use App\Handler\ConfirmRegistrationHandler;
@@ -13,6 +14,7 @@ use App\Handler\CookiesHandler;
 use App\Handler\DashboardHandler;
 use App\Handler\DeleteAccountConfirmHandler;
 use App\Handler\DeleteAccountHandler;
+use App\Handler\DeleteSharedSpaceMemberHandler;
 use App\Handler\DeletedAccountHandler;
 use App\Handler\EnableCookieHandler;
 use App\Handler\FeedbackHandler;
@@ -21,6 +23,8 @@ use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
+use App\Handler\InviteMemberHandler;
+use App\Handler\JoinSharedSpaceHandler;
 use App\Handler\LinkAccountHandler;
 use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
@@ -85,6 +89,7 @@ use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
 use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceHandler;
+use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
@@ -96,14 +101,17 @@ use App\Handler\PrivacyHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
 use App\Handler\ResetPasswordHandler;
+use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
+use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
 use App\Handler\TermsHandler;
+use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
 use App\Middleware\LpaLoaderMiddleware;
@@ -147,7 +155,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/stats', StatsHandler::class, 'stats')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route('/login[/{state:(?:timeout|internalSystemError)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
+    $app->route('/login[/{state:(?:timeout|internal-system-error|member-suspended)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
@@ -182,13 +190,40 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true]);
+        $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
+            ->setOptions(['unauthenticated_route' => true]);
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
         $app->get('/shared-space/about', AboutSharedSpacesHandler::class, 'shared-space.about');
+        $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
+        $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
+        $app->route(
+            '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
+            ManageSharedSpaceMemberHandler::class,
+            ['GET', 'POST'],
+            'shared-space.members.manage'
+        );
+        $app->route(
+            '/shared-space/members/{member-id:[a-zA-Z0-9]+}/delete',
+            DeleteSharedSpaceMemberHandler::class,
+            ['GET', 'POST'],
+            'shared-space.members.delete'
+        );
+        $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
+        $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
+    }
+
+    if (App\Feature::CypressFixtures->isEnabled()) {
+        $app->route(
+            '/testing/cypress-fixture/{entity:[a-zA-Z-]+}',
+            CypressFixtureHandler::class,
+            ['POST', 'DELETE'],
+            'testing.cypress-fixture',
+        )->setOptions(['unauthenticated_route' => true]);
     }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')

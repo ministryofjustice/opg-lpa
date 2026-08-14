@@ -18,8 +18,9 @@ variable "environment" {
       admin_cognito_auth_enabled = bool
     })
     feature_flags = object({
-      onelogin_enabled      = bool
-      shared_spaces_enabled = bool
+      onelogin_enabled         = bool
+      shared_spaces_enabled    = bool
+      cypress_fixtures_enabled = bool
     })
     database = object({
       cluster_identifier                 = string

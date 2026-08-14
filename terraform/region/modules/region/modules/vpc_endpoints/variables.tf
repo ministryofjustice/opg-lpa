@@ -1,8 +1,3 @@
-variable "interface_endpoint_names" {
-  description = "a list of the interfaces to create VPC endpoints for"
-  type        = list(string)
-}
-
 variable "vpc_id" {
   description = "id of the VPC to create interface endpoints in"
   type        = string
@@ -43,4 +38,16 @@ variable "codecatalyst_endpoints_enabled" {
   description = "whether to create codecatalyst required by cloudshell"
   type        = bool
   default     = true
+}
+
+variable "management_account_id" {
+  type = string
+}
+
+variable "data_lpa_api_account_id" {
+  type = string
+}
+
+variable "allowed_s3_resource_arns" {
+  type = list(string)
 }

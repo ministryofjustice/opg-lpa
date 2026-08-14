@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\View\Twig;
 
+use App\Feature;
 use App\Form\Error\FormLinkedErrors;
 use App\Model\FlashMessagesHolder;
 use App\Model\FormFlowChecker;
@@ -206,6 +207,7 @@ class LegacyCompatExtension extends AbstractExtension
                 'route'            => $currentRoute,
                 'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
                 'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
+                'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
             ],
         ]);
     }
@@ -541,12 +543,14 @@ class LegacyCompatExtension extends AbstractExtension
         foreach ($valueOptions as $optValue => $optSpec) {
             $optionAttributes = [];
             $labelAttributes  = [];
+            $hint              = '';
             if (is_array($optSpec)) {
                 $optionAttributes     = $optSpec['attributes'] ?? [];
                 $labelAttributes      = $optSpec['label_attributes'] ?? [];
                 $optValue             = $optSpec['value'] ?? $optValue;
                 $optLabel             = $optSpec['label'] ?? (string) $optValue;
                 $disableHtmlEscape    = (bool) ($optSpec['disable_html_escape'] ?? $elementDisableHtmlEscape);
+                $hint    = $optSpec['hint'] ?? '';
             } else {
                 $optLabel          = (string) $optSpec;
                 $disableHtmlEscape = $elementDisableHtmlEscape;
@@ -579,14 +583,19 @@ class LegacyCompatExtension extends AbstractExtension
             $html .= sprintf(
                 '<div%s>'
                 . '<input %s%s>'
-                . '<label %s>%s</label>'
-                . '</div>',
+                . '<label %s>%s</label>',
                 $divAttrStr,
                 $attrString,
                 $checked,
                 $labelAttrStr,
                 $labelHtml,
             );
+
+            if ($hint !== '') {
+                $html .= sprintf('<div id="%s-hint" class="govuk-hint govuk-radios__hint">%s</div>', $optAttrs['id'], htmlspecialchars($hint, ENT_QUOTES));
+            }
+
+            $html .= '</div>';
         }
 
         return $html;

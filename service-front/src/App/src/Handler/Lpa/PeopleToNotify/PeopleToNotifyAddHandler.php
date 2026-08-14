@@ -7,7 +7,6 @@ namespace App\Handler\Lpa\PeopleToNotify;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PeopleToNotifyHandlerTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -46,8 +45,6 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $csrfToken = $request->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE);
-
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
@@ -193,7 +190,7 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/people-to-notify/form.twig',
-            array_merge($this->getTemplateVariables($request), $templateParams + ['csrfToken' => $csrfToken])
+            array_merge($this->getTemplateVariables($request), $templateParams)
         );
 
         return new HtmlResponse($html);

@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Application\Model\DataAccess\Repository\SharedSpace;
 
+use Exception;
+use Laminas\Db\Adapter\Exception\InvalidQueryException;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Application\Model\Entity\MemberInvite;
+
 interface SharedSpaceRepositoryInterface
 {
     /**
@@ -35,7 +40,7 @@ interface SharedSpaceRepositoryInterface
      * @param string $id
      * @param array $details
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      */
     public function create(string $id, array $details): bool;
 
@@ -45,12 +50,15 @@ interface SharedSpaceRepositoryInterface
      *
      * @param string $sharedSpaceId
      * @param string $userId
+     * @param bool $isAdmin Whether the new member should have admin permissions in the shared space.
      * @return bool
-     * @throws \Exception
+     * @throws Exception
      * @psalm-suppress PossiblyUnusedReturnValue The caller (SharedSpaceService::create()) does
      *     not check this; a failed insert throws instead of returning false.
      */
-    public function addMember(string $sharedSpaceId, string $userId): bool;
+    public function addMember(string $sharedSpaceId, string $userId, bool $isAdmin = false): bool;
+
+    public function getSharedSpace(string $id): ?string;
 
     /**
      * Get the ID of the shared space that the given user is a member of,
@@ -62,7 +70,45 @@ interface SharedSpaceRepositoryInterface
     public function getSharedSpaceIdForUser(string $userId): ?string;
 
     /**
-     * @return array
+     * @return SharedSpaceMember|null
+     */
+    public function getMember(string $sharedSpaceId, string $memberUserId): ?SharedSpaceMember;
+
+    /**
+     * @return array<int, SharedSpaceMember>
      */
     public function getMembers(string $sharedSpaceId): array;
+
+    /**
+     * Whether the given user is an admin member of the given shared space.
+     * Returns false if the user is not a member of the shared space at all.
+     *
+     * @param string $sharedSpaceId
+     * @param string $userId
+     * @return bool
+     */
+    public function isAdmin(string $sharedSpaceId, string $userId): bool;
+
+    public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void;
+
+    public function deleteMember(string $sharedSpaceId, string $userId): void;
+
+    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite;
+
+    /**
+     * @return array<MemberInvite>
+     */
+    public function getInvites(string $sharedSpaceId): array;
+
+    /**
+     * Create an invite to a new shared space member.
+     * @throws InvalidQueryException
+     */
+    public function createInvite(MemberInvite $memberInvite): int;
+
+    /**
+     * Revoke an unused invite to a shared space.
+     * @throws InvalidQueryException
+     */
+    public function deleteInvite(int $inviteId): void;
 }

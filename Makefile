@@ -202,7 +202,7 @@ reset-api:
 .PHONY: dc-restart-web
 dc-restart-web:
 	@echo "Restarting web containers to refresh nginx DNS..."
-	@docker compose restart front-web api-web admin-web
+	@docker compose restart front-web api-web admin-web front-ssl admin-ssl
 	@echo "Waiting for api-web (http://localhost:7001)..."
 	@for i in $$(seq 1 30); do \
 		if curl -s -o /dev/null --max-time 2 http://localhost:7001/; then \
@@ -235,26 +235,69 @@ dc-down:
 
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
-	@docker compose run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage
+ifdef TESTFILE
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage $(TESTFILE)
+else
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage
+endif
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
-	@docker compose run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
+ifdef TESTFILE
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit $(TESTFILE)
+else
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
-	@docker compose run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
+ifdef TESTFILE
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit $(TESTFILE)
+else
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
-	@docker compose run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
+ifdef TESTFILE
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit $(TESTFILE)
+else
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app /app/vendor/bin/phpunit
+endif
 
 .PHONY: dc-shared-unit-tests
 dc-shared-unit-tests:
-	@docker compose run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+ifdef TESTFILE
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit $(TESTFILE)
+else
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps -v `pwd`/shared/build/coverage:/shared/build/coverage pdf-app /app/vendor/bin/phpunit /shared/module/MakeShared/tests
+endif
 
 .PHONY: dc-unit-tests
 dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-unit-tests dc-shared-unit-tests
+
+.PHONY: dc-front-psalm
+dc-front-psalm:
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/psalm --no-cache --force-jit
+
+.PHONY: dc-admin-psalm
+dc-admin-psalm:
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps admin-app-test vendor/bin/psalm --no-cache --force-jit
+
+.PHONY: dc-api-psalm
+dc-api-psalm:
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps api-app-test vendor/bin/psalm --no-cache --force-jit
+
+.PHONY: dc-pdf-psalm
+dc-pdf-psalm:
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache --force-jit
+
+.PHONY: dc-shared-psalm
+dc-shared-psalm:
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps shared-test vendor/bin/psalm --no-cache --force-jit
+
+.PHONY: dc-psalm
+dc-psalm: dc-front-psalm dc-admin-psalm dc-api-psalm dc-pdf-psalm dc-shared-psalm
 
 # Reset ownership of node_modules if it was previously written by Docker (which runs as root),
 # which would cause npm ci to fail with EACCES permission errors. Only runs if the owner is wrong
@@ -308,7 +351,7 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 # plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
 .PHONY: cypress-run-remaining
 cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin and not @SharedSpace"
+	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch
@@ -355,15 +398,21 @@ dc-phpcs-check:
 .PHONY: dc-clear-cache
 dc-clear-cache:
 	docker compose exec admin-app rm -f /tmp/config-cache-opg-lpa-admin.php
-	docker compose exec front-app rm -f /app/data/cache/config-cache.php
+	docker compose exec front-app rm -f /tmp/config-cache.php
 	docker compose exec front-app rm -rf /tmp/twig_cache
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
 
-# Force-recreate admin-app renewing its anonymous /tmp volume (which persists the config cache).
 # Use after Dockerfile changes or when env vars aren't being picked up.
 .PHONY: reset-admin
 reset-admin:
 	docker compose up -d --force-recreate --renew-anon-volumes admin-app
+	@${MAKE} dc-restart-web
+
+# Use after Dockerfile changes or when env vars aren't being picked up.
+.PHONY: reset-front-app
+reset-front-app:
+	docker compose up -d --force-recreate --renew-anon-volumes front-app
+	@${MAKE} dc-restart-web
 
 # Re-run the non-live seeding scripts against the running dev stack, truncating
 # and re-populating the test users/applications/feedback/deletion-log tables.

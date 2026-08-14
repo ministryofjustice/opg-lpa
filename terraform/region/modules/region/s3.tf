@@ -126,7 +126,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "lpa_pdf_cache" {
     blocked_encryption_types = ["SSE-C"]
 
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.lpa_pdf_cache.arn
+      kms_master_key_id = data.aws_kms_alias.pdf_cache_s3_encryption_key.arn
       sse_algorithm     = "aws:kms"
     }
   }
@@ -213,7 +213,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "redacted_logs" {
     blocked_encryption_types = ["SSE-C"]
 
     apply_server_side_encryption_by_default {
-      kms_master_key_id = aws_kms_key.redacted_logs.arn
+      kms_master_key_id = data.aws_kms_alias.redacted_logs_s3_encryption_key.arn
       sse_algorithm     = "aws:kms"
     }
   }

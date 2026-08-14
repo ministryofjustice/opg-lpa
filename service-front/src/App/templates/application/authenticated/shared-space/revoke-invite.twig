@@ -1,0 +1,27 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Revoke invite' -%}
+{% block mainTitle %}{% endblock %}
+
+{% block content %}
+    <div class="govuk-grid-row govuk-!-margin-top-9">
+        {{ macros.formErrorSummary(error, form) }}
+
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-xl">Manage members</span>
+            <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+            <form action="" method="post" name="revokeMemberInvite" novalidate="novalidate" id="revokeMemberInvite">
+                <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+                <p class="govuk-body">Are you sure you want to revoke the invite to <span class="govuk-!-font-weight-bold">{{ email }}</span>?</p>
+
+                <div class="govuk-button-group">
+                    <button class="govuk-button govuk-button--warning" data-module="govuk-button" type="submit">Revoke</button>
+                    <a href="{{ url('shared-space.manage') }}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

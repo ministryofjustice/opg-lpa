@@ -9,6 +9,7 @@ use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use MakeShared\DataModel\User\User;
 
 /**
@@ -203,5 +204,15 @@ class FixturesData
     public static function getPayment()
     {
         return new Payment(self::getPaymentJson());
+    }
+
+    public static function getSharedSpaceMemberJson()
+    {
+        return file_get_contents(__DIR__ . self::$fixturesPath . 'shared-space-member.json');
+    }
+
+    public static function getSharedSpaceMember()
+    {
+        return new SharedSpaceMember(self::getSharedSpaceMemberJson());
     }
 }
