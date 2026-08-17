@@ -45,6 +45,7 @@ payment_choices = [
     "on-benefits",
     "normal-pay-by-cheque",
     "low-income-claiming-reduction",
+    "card-started-not-recorded",
 ]
 parser.add_argument("-pa", type=str, choices=payment_choices, help="Set Payment")
 
@@ -109,4 +110,6 @@ if args.pa:
         setPaymentLowIncomeClaimingReduction(lpaId)
     elif args.pa == "on-benefits":
         setPaymentOnBenefits(lpaId)
+    elif args.pa == "card-started-not-recorded":
+        setPaymentCardStartedButNotRecorded(lpaId)
 print(lpaId)

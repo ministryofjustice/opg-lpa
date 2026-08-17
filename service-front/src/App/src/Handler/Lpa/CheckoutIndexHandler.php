@@ -9,6 +9,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Form\FormElementManager;
@@ -31,6 +32,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         LpaApplicationService $lpaApplicationService,
         Communication $communicationService,
         UrlHelper $urlHelper,
+        private readonly CardPayments $cardPayments,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService = $communicationService;
@@ -41,6 +43,10 @@ class CheckoutIndexHandler implements RequestHandlerInterface
     {
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
+
+        if ($this->cardPayments->recoverCompletedPayment($lpa)) {
+            return $this->finishCheckout($lpa, $request);
+        }
 
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
 

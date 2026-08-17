@@ -10,12 +10,11 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
-use MakeShared\DataModel\Lpa\Payment\Payment;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -42,6 +41,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         UrlHelper $urlHelper,
         private readonly TemplateRendererInterface $renderer,
         private readonly LoggerInterface $logger,
+        private readonly CardPayments $cardPayments,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService  = $communicationService;
@@ -122,31 +122,12 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         ]);
 
         // Payment succeeded at GovPay — record it on the LPA.
-        $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
-        $lpa->payment->reference = $paymentResponse->reference;
-        $lpa->payment->date      = new \DateTime();
-
-        $govPayEmail = $paymentResponse->email ?? null;
-
-        $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
-            ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
-            : null;
-
-        $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+        $recorded = $this->cardPayments->recordSuccessfulPayment($lpa, $paymentResponse);
 
         $this->logger->info('PayResponse: updateApplication result', [
             'lpaId'   => $lpa->id,
-            'success' => $result !== false,
+            'success' => $recorded,
         ]);
-
-        if ($result === false) {
-            $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
-                'lpaId'            => $lpa->id,
-                'gatewayReference' => $gatewayReference,
-                'govpay_status'    => $paymentResponse->state->status ?? 'unknown',
-                'has_email'        => $lpa->payment->email !== null,
-            ]);
-        }
 
         return $this->finishCheckout($lpa, $request);
     }

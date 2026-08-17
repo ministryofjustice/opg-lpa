@@ -480,6 +480,7 @@ def setPayment(
     reducedFeeReceivesBenefits=None,
     reducedFeeLowIncome=None,
     reducedFeeUniversalCredit=None,
+    gatewayReference=None,
 ):
     # default is normal fee, without cheque, used by HW test
     payment = {
@@ -487,7 +488,7 @@ def setPayment(
         "email": None,
         "amount": amount,
         "reference": None,
-        "gatewayReference": None,
+        "gatewayReference": gatewayReference,
         "date": None,
         "reducedFeeReceivesBenefits": reducedFeeReceivesBenefits,
         "reducedFeeAwardedDamages": None,
@@ -513,6 +514,10 @@ def setPaymentLowIncomeClaimingReduction(lpaId):
 
 def setPaymentLowIncomeNotClaimingReduction(lpaId):
     setPayment(lpaId, amount=41)
+
+
+def setPaymentCardStartedButNotRecorded(lpaId, gatewayReference="mockpaystrandedref"):
+    setPayment(lpaId, amount=92, gatewayReference=gatewayReference)
 
 
 def setInstruction(lpaId, instruction="Some instructions"):

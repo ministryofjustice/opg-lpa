@@ -11,19 +11,17 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\LpaIdHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
-use MakeShared\DataModel\Lpa\Payment\Payment;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -42,7 +40,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
         Communication $communicationService,
         private readonly GovPayClient $paymentClient,
         UrlHelper $urlHelper,
-        private readonly LoggerInterface $logger,
+        private readonly CardPayments $cardPayments,
     ) {
         $this->lpaApplicationService = $lpaApplicationService;
         $this->communicationService  = $communicationService;
@@ -102,24 +100,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
 
             if ($payment->isSuccess()) {
                 // Payment already completed — record it and finish.
-                $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
-                $lpa->payment->reference = $payment->reference;
-                $lpa->payment->date      = new \DateTime();
-
-                $govPayEmail         = $payment->email ?? null;
-                $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
-                    ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
-                    : null;
-
-                $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
-
-                if ($result === false) {
-                    $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
-                        'lpaId'            => $lpa->id,
-                        'gatewayReference' => $gatewayReference,
-                        'has_email'        => $lpa->payment->email !== null,
-                    ]);
-                }
+                $this->cardPayments->recordSuccessfulPayment($lpa, $payment);
 
                 return $this->finishCheckout($lpa, $request);
             }

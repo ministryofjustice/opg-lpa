@@ -63,6 +63,12 @@ Then(`If I am on dashboard I click to create lpa`, () => {
   });
 });
 
+Then('I click continue on the dashboard for the test fixture lpa', () => {
+  cy.get('@lpaId').then((lpaId) => {
+    cy.get('[data-cy="view-or-continue-lpa-' + lpaId + '"]').click();
+  });
+});
+
 Then('I click the "Reuse LPA details" link for the test fixture lpa', () => {
   cy.get('@lpaId').then((lpaId) => {
     const selector = 'a[href*="/user/dashboard/create/' + lpaId + '"]';
