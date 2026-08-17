@@ -54,7 +54,7 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
 
                     $this->authenticationService->refreshSharedSpaceId($sharedSpaceId);
 
-                    return new RedirectResponse('/shared-space/dashboard');
+                    return new RedirectResponse('/shared-space/dashboard?joined=success');
                 } catch (ApiException $e) {
                     switch ($e->getBody('detail')) {
                         case 'user-already-in-shared-space':
