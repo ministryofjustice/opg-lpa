@@ -182,9 +182,10 @@ locals {
           condition     = "HEALTHY"
         }
       ],
-      volumesFrom = [],
-      privileged  = false,
-      user        = "nginx",
+      volumesFrom     = [],
+      privileged      = false,
+      user            = "nginx",
+      linuxParameters = jsondecode(file("${path.module}/mounts/nginx.json")),
       logConfiguration = {
         logDriver = "awslogs",
         options = {
