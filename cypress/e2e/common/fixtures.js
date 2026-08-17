@@ -422,6 +422,23 @@ Then(
 );
 
 Then(
+  `I create PF LPA test fixture with a card payment that was never recorded`,
+  () => {
+    cy.runPythonApiCommand(
+      'createLpa.py -d -a -r -cp -pn -i -w donor -co donor -y -ra false -pa card-started-not-recorded',
+    )
+      .its('stdout')
+      .as('lpaId')
+      .then((lpaId) => {
+        cy.log(
+          'Created PF LPA test fixture with an unrecorded card payment through the API with id ' +
+          lpaId,
+        );
+      });
+  },
+);
+
+Then(
   `I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
