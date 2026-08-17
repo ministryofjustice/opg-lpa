@@ -355,6 +355,7 @@ services:
       - /var/cache/nginx:size=67108864
       - /etc/nginx/conf.d:size=16777216
       - /var/run:size=8388608
+      - /run:size=8388608
       - /tmp:size=67108864
     build:
       context: ./
