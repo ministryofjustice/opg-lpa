@@ -8,7 +8,6 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use DateTime;
-use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Psr\Log\LoggerInterface;
@@ -36,12 +35,12 @@ class CardPayments
 
     public function isAwaitingConfirmation(Lpa $lpa): bool
     {
-        $payment = $lpa->payment;
+        $payment = $lpa->getPayment();
 
         return $payment instanceof Payment
-            && is_string($payment->gatewayReference) && trim($payment->gatewayReference) !== ''
-            && $payment->date === null && $payment->method === null
-            && $lpa->locked !== true && $lpa->completedAt === null
+            && is_string($payment->getGatewayReference()) && trim($payment->getGatewayReference()) !== ''
+            && $payment->getDate() === null && $payment->getMethod() === null
+            && $lpa->locked !== true && $lpa->getCompletedAt() === null
             && $lpa->hasFinishedCreation();
     }
 
@@ -51,14 +50,14 @@ class CardPayments
             return false;
         }
 
-        $gatewayReference = $lpa->payment->gatewayReference;
+        $gatewayReference = $lpa->getPayment()->getGatewayReference();
 
         try {
             $govPayPayment = $this->paymentClient->getPayment($gatewayReference);
 
             if ($govPayPayment === null) {
                 $this->logger->info('Payment recovery: GOV.UK Pay has no record of this payment', [
-                    'lpaId'            => $lpa->id,
+                    'lpaId'            => $lpa->getId(),
                     'gatewayReference' => $gatewayReference,
                 ]);
 
@@ -67,7 +66,7 @@ class CardPayments
 
             if (!$govPayPayment->isSuccess()) {
                 $this->logger->info('Payment recovery: outstanding payment did not succeed', [
-                    'lpaId'            => $lpa->id,
+                    'lpaId'            => $lpa->getId(),
                     'gatewayReference' => $gatewayReference,
                     'status'           => $govPayPayment->state->status ?? null,
                     'finished'         => $govPayPayment->state->finished ?? null,
@@ -80,7 +79,7 @@ class CardPayments
 
             if (!is_string($reference) || trim($reference) === '') {
                 $this->logger->warning('Payment recovery: successful payment carries no reference, not recording', [
-                    'lpaId'            => $lpa->id,
+                    'lpaId'            => $lpa->getId(),
                     'gatewayReference' => $gatewayReference,
                 ]);
 
@@ -92,7 +91,7 @@ class CardPayments
             }
         } catch (Throwable $e) {
             $this->logger->warning('Payment recovery: could not check or record the outstanding payment', [
-                'lpaId'            => $lpa->id,
+                'lpaId'            => $lpa->getId(),
                 'gatewayReference' => $gatewayReference,
                 'exception'        => $e,
             ]);
@@ -101,9 +100,9 @@ class CardPayments
         }
 
         $this->logger->warning('Payment recovery: recorded a completed GOV.UK Pay payment that was never saved', [
-            'lpaId'            => $lpa->id,
+            'lpaId'            => $lpa->getId(),
             'gatewayReference' => $gatewayReference,
-            'paymentReference' => $lpa->payment->reference,
+            'paymentReference' => $lpa->getPayment()->getReference(),
         ]);
 
         return true;
@@ -111,24 +110,24 @@ class CardPayments
 
     public function recordSuccessfulPayment(Lpa $lpa, GovPayPayment $govPayPayment): bool
     {
-        $lpa->payment->method    = Payment::PAYMENT_TYPE_CARD;
-        $lpa->payment->reference = $govPayPayment->reference;
-        $lpa->payment->date      = new DateTime();
+        $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CARD);
+        $lpa->getPayment()->setReference($govPayPayment->reference);
+        $lpa->getPayment()->setDate(new DateTime());
 
         $govPayEmail = $govPayPayment->email ?? null;
 
-        $lpa->payment->email = is_string($govPayEmail) && trim($govPayEmail) !== ''
-            ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
-            : null;
+        $lpa->getPayment()->setEmail(is_string($govPayEmail) && trim($govPayEmail) !== ''
+            ? strtolower(trim($govPayEmail))
+            : null);
 
-        $result = $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
+        $result = $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
 
         if ($result === false) {
             $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [
-                'lpaId'            => $lpa->id,
-                'gatewayReference' => $lpa->payment->gatewayReference,
+                'lpa_id'            => $lpa->getId(),
+                'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
                 'govpay_status'    => $govPayPayment->state->status ?? 'unknown',
-                'has_email'        => $lpa->payment->email !== null,
+                'has_email'        => $lpa->getPayment()->getEmail() !== null,
             ]);
 
             return false;

@@ -11,6 +11,7 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\Helper\CheckoutHelper;
 use App\Service\Payment\CardPayments;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -36,6 +37,7 @@ class CheckoutPayHandlerTest extends TestCase
     private GovPayClient&MockObject $paymentClient;
     private UrlHelper&MockObject $urlHelper;
     private LoggerInterface&MockObject $logger;
+    private CheckoutHelper&MockObject $checkoutHelper;
     private CheckoutPayHandler $handler;
 
     protected function setUp(): void
@@ -46,6 +48,7 @@ class CheckoutPayHandlerTest extends TestCase
         $this->paymentClient = $this->createMock(GovPayClient::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
 
         $cardPayments = new CardPayments(
             $this->paymentClient,
@@ -60,6 +63,8 @@ class CheckoutPayHandlerTest extends TestCase
             $this->paymentClient,
             $this->urlHelper,
             $cardPayments,
+            $this->logger,
+            $this->checkoutHelper,
         );
     }
 
@@ -126,8 +131,9 @@ class CheckoutPayHandlerTest extends TestCase
     {
         $lpa = $this->createIncompleteLpa();
 
-        $this->urlHelper->method('generate')
-            ->willReturn('/lpa/91333263035/more-info-required');
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
+        $this->checkoutHelper->method('redirectToMoreInfoRequired')
+            ->willReturn(new RedirectResponse('/lpa/91333263035/more-info-required'));
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa, false));
 
@@ -140,8 +146,9 @@ class CheckoutPayHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockBlankFormInvalid();
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout', ['lpa-id' => $lpa->id], [])
+            ->with('lpa/checkout', ['lpa-id' => $lpa->getId()], [])
             ->willReturn('/lpa/91333263035/checkout');
 
         $response = $this->handler->handle($this->createRequest('POST', $lpa, true, ['some' => 'data']));
@@ -158,6 +165,9 @@ class CheckoutPayHandlerTest extends TestCase
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'new-id',
             'state' => ['status' => 'created', 'finished' => false],
@@ -167,7 +177,7 @@ class CheckoutPayHandlerTest extends TestCase
         $this->paymentClient->expects($this->once())->method('createPayment')->willReturn($govPayPayment);
         $this->lpaApplicationService->expects($this->once())->method('updateApplication');
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->id])
+            ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/checkout/pay/response');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
@@ -185,6 +195,8 @@ class CheckoutPayHandlerTest extends TestCase
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
         $this->paymentClient->method('getPayment')->willReturn(null);
 
         $this->expectException(RuntimeException::class);
@@ -211,13 +223,13 @@ class CheckoutPayHandlerTest extends TestCase
             '_links' => [],
         ]);
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/91333263035/complete'));
+
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
         $this->lpaApplicationService->expects($this->once())->method('updateApplication');
-        $this->lpaApplicationService->expects($this->once())->method('lockLpa');
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail');
-        $this->urlHelper->method('generate')
-            ->with('lpa/complete', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/91333263035/complete');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
@@ -265,12 +277,15 @@ class CheckoutPayHandlerTest extends TestCase
                 $capturedData = $data;
                 return new Lpa([]);
             });
-        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->getId() . '/complete'));
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame($expected, $capturedData['payment']['email']['address'] ?? null);
+        $this->assertSame($expected, $capturedData['payment']['email'] ?? null);
     }
 
     /**
@@ -311,17 +326,21 @@ class CheckoutPayHandlerTest extends TestCase
         $govPayPayment = $this->makeGovPayPayment($paymentData);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->getId() . '/complete'));
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
             ->with(
-                $lpa->id,
+                $lpa->getId(),
                 $this->callback(function (array $data): bool {
                     return array_key_exists('payment', $data)
                         && ($data['payment']['email'] ?? null) === null;
                 })
             )
             ->willReturn(new Lpa([]));
-        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->getId() . '/complete');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
@@ -347,16 +366,20 @@ class CheckoutPayHandlerTest extends TestCase
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->getId() . '/complete'));
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
             ->with(
-                $lpa->id,
+                $lpa->getId(),
                 $this->callback(function (array $data): bool {
-                    return ($data['payment']['email']['address'] ?? null) === 'not-a-valid-email';
+                    return ($data['payment']['email'] ?? null) === 'not-a-valid-email';
                 })
             )
             ->willReturn(new Lpa([]));
-        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->getId() . '/complete');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
@@ -371,6 +394,9 @@ class CheckoutPayHandlerTest extends TestCase
         $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
+
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
 
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'existing-ref',
@@ -395,6 +421,9 @@ class CheckoutPayHandlerTest extends TestCase
         $form->method('setAttribute')->willReturnSelf();
         $this->formElementManager->method('get')->willReturn($form);
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method('verifyLpaPaymentAmount');
+
         $existingPayment = $this->makeGovPayPayment([
             'payment_id' => 'finished-ref',
             'state' => ['status' => 'failed', 'finished' => true],
@@ -410,7 +439,7 @@ class CheckoutPayHandlerTest extends TestCase
         $this->paymentClient->expects($this->once())->method('createPayment')->willReturn($newPayment);
         $this->lpaApplicationService->expects($this->once())->method('updateApplication');
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->id])
+            ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/checkout/pay/response');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
