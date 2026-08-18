@@ -366,7 +366,9 @@ class UserDetails implements ApiClientAwareInterface
 
             if (is_array($result)) {
                 if (isset($result['activation_token'])) {
-                    return $this->sendAccountActivateEmail($email, $result['activation_token']);
+                    $sent = $this->sendAccountActivateEmail($email, $result['activation_token']);
+
+                    return $sent === true ? 'account-not-activated' : $sent;
                 }
 
                 if (isset($result['token'])) {
