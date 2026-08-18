@@ -562,7 +562,10 @@ final class UserDetailsTest extends TestCase
                         ];
                 }));
 
-            $this->assertTrue($this->service->requestPasswordResetEmail('person@example.com'));
+            $this->assertSame(
+                'account-not-activated',
+                $this->service->requestPasswordResetEmail('person@example.com')
+            );
         } finally {
             if ($originalHttps === null) {
                 unset($_SERVER['HTTPS']);
