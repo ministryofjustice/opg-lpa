@@ -9,7 +9,6 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
-use App\Service\Payment\Helper\CheckoutHelper;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Lpa\Document\Document;
@@ -27,7 +26,6 @@ class CheckoutConfirmHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private Communication&MockObject $communicationService;
     private UrlHelper&MockObject $urlHelper;
-    private CheckoutHelper&MockObject $checkoutHelper;
     private CheckoutConfirmHandler $handler;
 
     protected function setUp(): void
@@ -35,13 +33,11 @@ class CheckoutConfirmHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->communicationService = $this->createMock(Communication::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
 
         $this->handler = new CheckoutConfirmHandler(
             $this->lpaApplicationService,
             $this->communicationService,
             $this->urlHelper,
-            $this->checkoutHelper,
         );
     }
 
@@ -80,9 +76,10 @@ class CheckoutConfirmHandlerTest extends TestCase
     {
         $lpa = $this->createIncompleteLpa();
 
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
-        $this->checkoutHelper->method('redirectToMoreInfoRequired')
-            ->willReturn(new RedirectResponse('/lpa/91333263035/more-info-required'));
+        $this->urlHelper->expects($this->once())
+            ->method('generate')
+            ->with('lpa/more-info-required', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/91333263035/more-info-required');
 
         $response = $this->handler->handle($this->createRequest($lpa, false));
 
@@ -94,8 +91,6 @@ class CheckoutConfirmHandlerTest extends TestCase
     {
         $lpa = $this->createCompleteLpa();
         $lpa->payment->amount = 92;
-
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid option');
@@ -109,9 +104,12 @@ class CheckoutConfirmHandlerTest extends TestCase
         $lpa->payment->amount = 0;
         $lpa->payment->reducedFeeUniversalCredit = true;
 
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
-        $this->checkoutHelper->method('finishCheckout')
-            ->willReturn(new RedirectResponse('/lpa/91333263035/complete'));
+        $this->lpaApplicationService->expects($this->once())->method('lockLpa');
+        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail');
+
+        $this->urlHelper->method('generate')
+            ->with('lpa/complete', ['lpa-id' => $lpa->id])
+            ->willReturn('/lpa/91333263035/complete');
 
         $response = $this->handler->handle($this->createRequest($lpa));
 

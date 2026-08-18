@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
-use App\Service\Payment\GovPay\Client as GovPayClient;
-use App\Service\Payment\Helper\CheckoutHelper;
 use App\Service\Payment\CardPayments;
+use App\Service\Payment\Helper\LpaIdHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -21,7 +22,6 @@ use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 /**
@@ -32,17 +32,19 @@ use RuntimeException;
 class CheckoutPayHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
+    use CheckoutTrait;
 
     public function __construct(
         private readonly FormElementManager $formElementManager,
-        private readonly LpaApplicationService $lpaApplicationService,
-        private readonly Communication $communicationService,
+        LpaApplicationService $lpaApplicationService,
+        Communication $communicationService,
         private readonly GovPayClient $paymentClient,
-        private readonly UrlHelper $urlHelper,
+        UrlHelper $urlHelper,
         private readonly CardPayments $cardPayments,
-        private readonly LoggerInterface $logger,
-        private readonly CheckoutHelper $checkoutHelper,
     ) {
+        $this->lpaApplicationService = $lpaApplicationService;
+        $this->communicationService  = $communicationService;
+        $this->urlHelper             = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -53,8 +55,8 @@ class CheckoutPayHandler implements RequestHandlerInterface
         /** @var FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
-        if (!$this->checkoutHelper->isLpaComplete($lpa, $request)) {
-            return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
+        if (!$this->isLpaComplete($lpa, $request)) {
+            return $this->redirectToMoreInfoRequired($lpa, $request);
         }
 
         /** @var \App\Form\Lpa\BlankMainFlowForm $form */
@@ -76,18 +78,18 @@ class CheckoutPayHandler implements RequestHandlerInterface
                 return new RedirectResponse(
                     $this->urlHelper->generate(
                         'lpa/checkout',
-                        ['lpa-id' => $lpa->getId()],
+                        ['lpa-id' => $lpa->id],
                         $flowChecker->getRouteOptions('lpa/checkout')
                     )
                 );
             }
         }
 
-        $this->checkoutHelper->verifyLpaPaymentAmount($lpa);
+        $this->verifyLpaPaymentAmount($lpa);
 
         // Check for any existing payments in play
-        if (!is_null($lpa->getPayment()->getGatewayReference())) {
-            $gatewayReference = $lpa->getPayment()->getGatewayReference();
+        if (!is_null($lpa->payment->gatewayReference)) {
+            $gatewayReference = $lpa->payment->gatewayReference;
             $payment          = $this->paymentClient->getPayment($gatewayReference);
 
             if (is_null($payment)) {
@@ -100,14 +102,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
                 // Payment already completed — record it and finish.
                 $this->cardPayments->recordSuccessfulPayment($lpa, $payment);
 
-                $this->logger->info('user returned to checkout with successful payment and updated LPA', [
-                    'lpa_id'            => $lpa->getId(),
-                    'gateway_reference' => $gatewayReference,
-                    'payment_method' => $lpa->getPayment()->getMethod(),
-                    'has_email'        => $lpa->getPayment()->getEmail() !== '',
-                ]);
-
-                return $this->checkoutHelper->finishCheckout($lpa, $request);
+                return $this->finishCheckout($lpa, $request);
             }
 
             if (!$payment->isFinished()) {
@@ -116,43 +111,33 @@ class CheckoutPayHandler implements RequestHandlerInterface
         }
 
         // Create a new payment
-        $ref = CheckoutHelper::constructPaymentTransactionId((string) $lpa->getId());
+        $ref = LpaIdHelper::constructPaymentTransactionId((string) $lpa->id);
 
         $description = (
-            $lpa->getDocument()->getType() == 'property-and-financial'
+            $lpa->document->type == 'property-and-financial'
                 ? 'Property and financial affairs'
                 : 'Health and welfare'
         );
-        $description .= ' LPA for ' . (string) $lpa->getDocument()->getDonor()->getName();
+        $description .= ' LPA for ' . (string) $lpa->document->donor->name;
 
         // Build the callback URL using the request URI
         $requestUri = $request->getUri();
         $baseUrl = $requestUri->getScheme() . '://' . $requestUri->getAuthority();
         $callback = $baseUrl . $this->urlHelper->generate(
             'lpa/checkout/pay/response',
-            ['lpa-id' => $lpa->getId()]
+            ['lpa-id' => $lpa->id]
         );
 
         $payment = $this->paymentClient->createPayment(
-            (int) ($lpa->getPayment()->getAmount() * 100.0), // amount in pence
+            (int) ($lpa->payment->amount * 100.0), // amount in pence
             $ref,
             $description,
             new Uri($callback)
         );
 
-        $lpa->getPayment()->setGatewayReference($payment->payment_id);
+        $lpa->payment->gatewayReference = $payment->payment_id;
 
-        $this->logger->info('payment created with GOV UK Pay', [
-            'lpa_id'            => $lpa->getId(),
-            'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
-        ]);
-
-        $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
-
-        $this->logger->info('LPA updated with payment information, redirecting to gov.uk pay', [
-            'lpa_id'   => $lpa->getId(),
-            'payment' => $lpa->getPayment()->toJson(),
-        ]);
+        $this->lpaApplicationService->updateApplication($lpa->id, ['payment' => $lpa->payment->toArray()]);
 
         return new RedirectResponse((string) $payment->getPaymentPageUrl());
     }
