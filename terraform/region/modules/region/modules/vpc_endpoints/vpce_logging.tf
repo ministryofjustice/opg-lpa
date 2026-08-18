@@ -58,9 +58,12 @@ resource "aws_vpc_endpoint" "xray" {
 data "aws_iam_policy_document" "xray_gateway_endpoint_allow_account_access" {
   provider = aws.region
   statement {
-    sid       = "Allow-put-traces-from-specific-account"
-    effect    = "Allow"
-    actions   = ["xray:PutTraceSegments"]
+    sid    = "Allow-put-traces-from-specific-account"
+    effect = "Allow"
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords"
+    ]
     resources = ["*"]
     principals {
       type        = "AWS"
