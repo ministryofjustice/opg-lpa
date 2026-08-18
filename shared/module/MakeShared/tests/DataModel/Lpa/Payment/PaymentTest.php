@@ -16,7 +16,7 @@ class PaymentTest extends TestCase
 
         $this->assertEquals(82, $payment->get('amount'));
         $this->assertEquals(new \DateTime('2017-03-24T16:21:52.804000+0000'), $payment->get('date'));
-        $this->assertEquals('test@payment.com', $payment->get('email')->get('address'));
+        $this->assertEquals('test@payment.com', $payment->get('email'));
     }
 
     public function testValidation()
@@ -29,13 +29,13 @@ class PaymentTest extends TestCase
 
     public function testValidationFailed()
     {
-        $address = new Payment();
-        $address->set('method', 'Invalid');
-        $address->set('amount', -1);
-        $address->set('reference', FixturesData::generateRandomString(33));
-        $address->set('gatewayReference', FixturesData::generateRandomString(65));
+        $payment = new Payment();
+        $payment->set('method', 'Invalid');
+        $payment->set('amount', -1);
+        $payment->set('reference', FixturesData::generateRandomString(33));
+        $payment->set('gatewayReference', FixturesData::generateRandomString(65));
 
-        $validatorResponse = $address->validate();
+        $validatorResponse = $payment->validate();
         $this->assertTrue($validatorResponse->hasErrors());
         $errors = $validatorResponse->getArrayCopy();
         $this->assertEquals(4, count($errors));

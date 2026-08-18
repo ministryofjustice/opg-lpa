@@ -1,8 +1,6 @@
 {
   "method" : "cheque",
-  "email" : {
-    "address" : "test@payment.com"
-  },
+  "email" : "test@payment.com",
   "amount" : 82.0,
   "reference" : null,
   "gatewayReference" : null,

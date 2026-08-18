@@ -9,6 +9,7 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\Helper\CheckoutHelper;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\GovPay\Exception\PayException;
@@ -38,6 +39,7 @@ class CheckoutIndexHandlerTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     private GovPayClient&MockObject $paymentClient;
     private LoggerInterface&MockObject $logger;
+    private CheckoutHelper&MockObject $checkoutHelper;
     private CheckoutIndexHandler $handler;
 
     protected function setUp(): void
@@ -47,6 +49,7 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->communicationService = $this->createMock(Communication::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
 
         $this->paymentClient = $this->createMock(GovPayClient::class);
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -62,6 +65,7 @@ class CheckoutIndexHandlerTest extends TestCase
                 $this->lpaApplicationService,
                 $this->logger,
             ),
+            $this->checkoutHelper,
         );
     }
 
@@ -134,6 +138,7 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockBlankForm();
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
@@ -150,6 +155,7 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createIncompleteLpa();
         $this->mockBlankForm();
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
@@ -164,10 +170,9 @@ class CheckoutIndexHandlerTest extends TestCase
     {
         $lpa = $this->createIncompleteLpa();
 
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/more-info-required', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/91333263035/more-info-required');
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
+        $this->checkoutHelper->method('redirectToMoreInfoRequired')
+            ->willReturn(new RedirectResponse('/lpa/91333263035/more-info-required'));
 
         $response = $this->handler->handle($this->createRequest('POST', $lpa, false));
 
@@ -180,6 +185,7 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockBlankForm();
 
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
@@ -221,20 +227,9 @@ class CheckoutIndexHandlerTest extends TestCase
             ->method('updateApplication')
             ->willReturn($lpa);
 
-        $this->lpaApplicationService->expects($this->once())
-            ->method('lockLpa')
-            ->with($lpa)
-            ->willReturn(true);
-
-        $this->communicationService->expects($this->once())
-            ->method('sendRegistrationCompleteEmail')
-            ->with($lpa)
-            ->willReturn(true);
-
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/complete', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->checkoutHelper->expects($this->once())
+            ->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->id . '/complete'));
 
         $this->renderer->expects($this->never())->method('render');
 
