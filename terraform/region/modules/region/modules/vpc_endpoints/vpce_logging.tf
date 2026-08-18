@@ -1,7 +1,6 @@
 locals {
   logging_endpoints = toset([
     "logs",
-    "xray",
     "rum",
     "monitoring"
   ])
@@ -42,4 +41,38 @@ resource "aws_vpc_endpoint_policy" "logging" {
       }
     ]
   })
+}
+
+resource "aws_vpc_endpoint" "xray" {
+  provider            = aws.region
+  vpc_id              = var.vpc_id
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.xray"
+  vpc_endpoint_type   = "Interface"
+  private_dns_enabled = true
+  security_group_ids  = aws_security_group.vpc_endpoints_private[*].id
+  subnet_ids          = var.application_subnets_id
+  policy              = data.aws_iam_policy_document.xray_gateway_endpoint_allow_account_access.json
+  tags                = { Name = "xray-private" }
+}
+
+data "aws_iam_policy_document" "xray_gateway_endpoint_allow_account_access" {
+  provider = aws.region
+  statement {
+    sid    = "Allow-put-traces-from-specific-account"
+    effect = "Allow"
+    actions = [
+      "xray:PutTraceSegments",
+      "xray:PutTelemetryRecords"
+    ]
+    resources = ["*"]
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
+    condition {
+      test     = "StringEquals"
+      variable = "aws:PrincipalAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
+  }
 }
