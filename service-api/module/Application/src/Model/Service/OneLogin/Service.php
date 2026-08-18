@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\OneLogin;
 
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
 use Application\Model\DataAccess\Repository\User\UserInterface;
@@ -247,8 +248,12 @@ class Service extends AbstractService
     }
 
     /**
-     * Link an existing Make account (identified by email + password) to a GOV.UK
-     * One Login identity that isn't yet associated with any Make account.
+     * Link an existing Make account (identified by its current login email +
+     * password) to a GOV.UK One Login identity that isn't yet associated with any
+     * Make account.
+     *
+     * On success the One Login sub and email are stored on the account and the local
+     * password is cleared; the login email (`identity`) is left untouched.
      *
      * @return array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string}
      */
@@ -256,6 +261,7 @@ class Service extends AbstractService
         #[\SensitiveParameter] string $username,
         #[\SensitiveParameter] string $password,
         string $oneLoginSub,
+        string $oneLoginEmail,
     ): array {
         if ($this->authenticationService === null) {
             throw new RuntimeException('AuthenticationService must be set');
@@ -285,7 +291,7 @@ class Service extends AbstractService
             return $this->rejectLink($this->mapAuthFailure($authResult));
         }
 
-        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub);
+        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail);
 
         $this->getLogger()->info('auth.onelogin.link_success', [
             'user_id' => $authResult['userId'],
@@ -302,6 +308,59 @@ class Service extends AbstractService
                 'lastLogin'      => $lastLogin->format('c'),
                 'sharedSpaceId'  => $authResult['sharedSpaceId'],
             ],
+        ];
+    }
+
+    /**
+     * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: null}
+     */
+    public function createAndLinkAccount(string $sub, string $oneLoginEmail): array
+    {
+        if ($this->authenticationService === null) {
+            throw new RuntimeException('AuthenticationService must be set');
+        }
+
+        $generator = $this->randomBytes;
+        $now       = new MillisecondDateTime();
+        $identity  = $this->placeholderIdentity($sub);
+
+        do {
+            $userId = bin2hex($generator(16));
+
+            $created = $this->getUserRepository()->create($userId, [
+                'identity'              => $identity,
+                'password_hash'         => null,
+                'activation_token'      => null,
+                'active'                => true,
+                'activated'             => $now,
+                'created'               => $now,
+                'last_updated'          => $now,
+                'failed_login_attempts' => 0,
+                'one_login_sub'         => $sub,
+                'one_login_email'       => $oneLoginEmail,
+            ]);
+        } while (!$created);
+
+        $this->getUserRepository()->updateLastLoginTime($userId);
+
+        $user = $this->getUserRepository()->getById($userId);
+
+        if (!$user instanceof UserInterface) {
+            throw new RuntimeException('Failed to load newly created One Login account');
+        }
+
+        $tokenDetails = $this->authenticationService->issueAuthToken($user);
+
+        $this->getLogger()->info('auth.onelogin.create_success', [
+            'user_id' => $userId,
+        ]);
+
+        return [
+            'userId'         => $userId,
+            'token'          => $tokenDetails['token'],
+            'tokenExpiresAt' => $tokenDetails['expiresAt']->format('c'),
+            'lastLogin'      => (new DateTime())->format('c'),
+            'sharedSpaceId'  => null,
         ];
     }
 
@@ -330,5 +389,15 @@ class Service extends AbstractService
     private function hashIdentity(#[\SensitiveParameter] string $identity): string
     {
         return hash('sha512', strtolower(trim($identity)));
+    }
+
+    /**
+     * A non-null, guaranteed-unique placeholder for the `identity` (login email)
+     * column of a created One Login account. The `onelogin:` prefix makes it obvious
+     * the value is not a real email; uniqueness follows from the sub being unique.
+     */
+    private function placeholderIdentity(string $sub): string
+    {
+        return 'onelogin:' . $sub;
     }
 }

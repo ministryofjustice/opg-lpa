@@ -176,15 +176,16 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     public function testLinkActionReturnsJsonModelWithServiceResult(): void
     {
         $body = [
-            'username'    => 'user@example.com',
-            'password'    => 'sup3r-secret', //pragma: allowlist secret
-            'oneLoginSub' => 'urn:fdc:gov.uk:2022:new',
+            'username'      => 'user@example.com',
+            'password'      => 'sup3r-secret', //pragma: allowlist secret
+            'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+            'oneLoginEmail' => 'joe.bloggs@gmail.com',
         ];
 
         $serviceResult = ['linked' => false, 'reason' => LinkReason::ALREADY_LINKED];
 
         $this->service->shouldReceive('linkExistingAccount')
-            ->with($body['username'], $body['password'], $body['oneLoginSub'])
+            ->with($body['username'], $body['password'], $body['oneLoginSub'], $body['oneLoginEmail'])
             ->andReturn($serviceResult)
             ->once();
 
@@ -195,5 +196,34 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals($serviceResult, $result->getVariables());
+    }
+
+    public function testCreateActionReturnsJsonModelWithServiceResult(): void
+    {
+        $body = [
+            'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+            'oneLoginEmail' => 'brand.new.user@gmail.com',
+        ];
+
+        $identity = [
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->service->shouldReceive('createAndLinkAccount')
+            ->with($body['oneLoginSub'], $body['oneLoginEmail'])
+            ->andReturn($identity)
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->createAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertEquals($identity, $result->getVariables());
     }
 }

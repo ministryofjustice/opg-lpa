@@ -287,6 +287,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-create' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/create',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'create',
+                            ],
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [

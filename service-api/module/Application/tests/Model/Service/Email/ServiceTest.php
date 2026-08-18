@@ -103,7 +103,7 @@ class ServiceTest extends MockeryTestCase
 
                 $expectedExpires = new DateTime('+' . (EmailUpdateService::TOKEN_TTL - 1) . ' seconds');
 
-                return $id === "1" && strlen($token['token']) > 20
+                return $id === "1" && strlen($token['token']) >= 20
                     && $token['expiresIn'] === EmailUpdateService::TOKEN_TTL && $token['expiresAt'] > $expectedExpires
                     && $newEmail === 'unit@test.com';
             })

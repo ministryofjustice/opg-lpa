@@ -141,5 +141,9 @@ interface UserRepositoryInterface
      */
     public function saveProfile(ProfileUserModel $data): void;
 
-    public function setOneLoginSub(string $userId, string $oneLoginSub): void;
+    /**
+     * Links a user to a GOV.UK One Login identity, storing the subject id and the
+     * One Login email.
+     */
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void;
 }

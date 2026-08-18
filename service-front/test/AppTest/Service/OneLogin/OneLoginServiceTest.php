@@ -220,16 +220,17 @@ class OneLoginServiceTest extends TestCase
             ->with(
                 '/v2/auth/onelogin/link',
                 [
-                    'username'    => 'user@example.com',
-                    'password'    => 'sup3r-secret', //pragma: allowlist secret
-                    'oneLoginSub' => 'urn:fdc:gov.uk:2022:new',
+                    'username'      => 'user@example.com',
+                    'password'      => 'sup3r-secret', //pragma: allowlist secret
+                    'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+                    'oneLoginEmail' => 'joe.bloggs@gmail.com',
                 ],
                 [],
                 true,
             )
             ->willReturn(['linked' => true, 'identity' => $identity]);
 
-        $result = $this->service->linkExistingAccount('user@example.com', 'sup3r-secret', 'urn:fdc:gov.uk:2022:new');
+        $result = $this->service->linkExistingAccount('user@example.com', 'sup3r-secret', 'urn:fdc:gov.uk:2022:new', 'joe.bloggs@gmail.com');
 
         $this->assertTrue($result['linked']);
         $this->assertSame($identity, $result['identity'] ?? null);
@@ -239,7 +240,7 @@ class OneLoginServiceTest extends TestCase
     {
         $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'reason' => 'already-linked']);
 
-        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
 
         $this->assertFalse($result['linked']);
         $this->assertSame('already-linked', $result['reason'] ?? null);
@@ -252,6 +253,44 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x');
+        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+    }
+
+    public function testCreateAndLinkAccountPostsSubAndReturnsIdentity(): void
+    {
+        $identity = [
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/create',
+                [
+                    'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+                    'oneLoginEmail' => 'brand.new.user@gmail.com',
+                ],
+                [],
+                true,
+            )
+            ->willReturn($identity);
+
+        $result = $this->service->createAndLinkAccount('urn:fdc:gov.uk:2022:new', 'brand.new.user@gmail.com');
+
+        $this->assertSame($identity, $result);
+    }
+
+    public function testCreateAndLinkAccountPropagatesClientException(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException(new RuntimeException('api down'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->createAndLinkAccount('urn:x', 'someone@example.com');
     }
 }

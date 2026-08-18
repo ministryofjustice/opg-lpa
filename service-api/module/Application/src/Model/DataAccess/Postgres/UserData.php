@@ -59,7 +59,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'columns' => [
                 'count' => new Expression('COUNT(*)')
             ]
-         ];
+        ];
 
         $result = $this->dbWrapper->select(self::USERS_TABLE, $where, $options);
 
@@ -293,6 +293,18 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'failed_login_attempts' => $details['failed_login_attempts']
         ];
 
+        if (isset($details['activated'])) {
+            $data['activated'] = $details['activated']->format(DbWrapper::TIME_FORMAT);
+        }
+
+        if (isset($details['one_login_sub'])) {
+            $data['one_login_sub'] = $details['one_login_sub'];
+        }
+
+        if (isset($details['one_login_email'])) {
+            $data['one_login_email'] = $details['one_login_email'];
+        }
+
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -306,7 +318,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             if ($previousException instanceof PDOException) {
                 if (
                     $previousException->getCode() == 23505 &&
-                    strpos($previousException->getMessage(), 'users_identity') === false
+                    strpos($previousException->getMessage(), 'users_identity') === false &&
+                    strpos($previousException->getMessage(), 'users_one_login_sub') === false
                 ) {
                     return false;
                 }
@@ -687,6 +700,10 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'lastLoginAt' => $user['last_login'],
         ]);
 
+        if (!empty($user['one_login_email'])) {
+            $profile['email'] = ['address' => $user['one_login_email']];
+        }
+
         return new ProfileUserModel($profile);
     }
 
@@ -738,19 +755,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * Links a user to a GOV.UK One Login identity.
-     *
-     * Once linked, authentication happens in One Login, so the local password is
-     * no longer used — we clear it to avoid keeping a redundant credential.
-     *
      * @param string $userId
      * @param string $oneLoginSub
+     * @param string $oneLoginEmail Email supplied by One Login (contact address).
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub): void
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void
     {
         $this->updateRow(
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
+                'one_login_email' => $oneLoginEmail,
                 'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]

@@ -210,6 +210,15 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
+     * The email address supplied by GOV.UK One Login for this account, if any.
+     * @return string|null
+     */
+    public function oneLoginEmail(): ?string
+    {
+        return (isset($this->data['one_login_email'])) ? $this->data['one_login_email'] : null;
+    }
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return UserRepository\TokenInterface|null

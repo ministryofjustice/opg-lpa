@@ -35,7 +35,7 @@ Feature: One Login Sign In
     And I choose to link an existing Make account
     And I submit the form
     And I should be on "/link-account"
-    And I link my seeded Make account
+    And I link the "seeded" Make account
     And I am taken to the dashboard page
 
   @RequiresMockOneLogin
@@ -48,7 +48,19 @@ Feature: One Login Sign In
     And I should be on "/link-or-create-account"
     And I choose to create a new Make account
     And I submit the form
-    And I should be on "/signup"
+    And I am signed in with my new Make account
+    And I am taken to the your details page for a new user
+    When I select "Mr" on "name-title" with data-inited
+    And I force fill out
+      | name-first | Brand |
+      | name-last | New |
+      | dob-date-day | 1 |
+      | dob-date-month | 2 |
+      | dob-date-year | 1980 |
+      | address-address1 | 123 Test Street |
+      | address-postcode | SW1A 1AA |
+    And I click "save"
+    Then I am taken to the lpa type page
 
   @RequiresMockOneLogin
   Scenario: An unlinked user entering incorrect credentials is advised and can retry
@@ -61,11 +73,11 @@ Feature: One Login Sign In
     And I choose to link an existing Make account
     And I submit the form
     And I should be on "/link-account"
-    And I attempt to link my Make account with an incorrect password
+    And I attempt to link the "retry" Make account with an incorrect password
     And I should be on "/link-account"
     And I am advised my Make account credentials were not recognised
-    And I link my seeded Make account
-    And I am taken to the dashboard page
+    And I link the "retry" Make account
+    And I am taken to the lpa type page
 
   @RequiresMockOneLogin
   Scenario: An unlinked user who has forgotten their password can go to reset it from the link page
@@ -78,7 +90,7 @@ Feature: One Login Sign In
     And I choose to link an existing Make account
     And I submit the form
     And I should be on "/link-account"
-    And I attempt to link my Make account with an incorrect password
+    And I attempt to link the "forgot" Make account with an incorrect password
     And I am advised my Make account credentials were not recognised
     And I choose to reset my Make account password
     And I should be on "/forgot-password"
