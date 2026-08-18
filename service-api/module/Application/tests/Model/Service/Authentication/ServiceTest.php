@@ -324,6 +324,7 @@ class ServiceTest extends MockeryTestCase
             'token' => 'valid',
             'userId' => 1,
             'username' => 'test@test.com',
+            'oneLoginEmail' => null,
             'last_login' => $today,
             'expiresIn' => 1,
             'expiresAt' => $expiresAt,
@@ -356,6 +357,7 @@ class ServiceTest extends MockeryTestCase
             'token' => 'valid',
             'userId' => '1',
             'username' => 'test@test.com',
+            'oneLoginEmail' => null,
             'last_login' => $today,
             'expiresIn' => 1,
             'expiresAt' => $expiresAt,
@@ -399,12 +401,13 @@ class ServiceTest extends MockeryTestCase
         $result = $service->withToken('valid', true);
 
         $this->assertEquals([
-            'token' => 'valid',
-            'userId' => '1',
-            'username' => 'test@test.com',
-            'last_login' => $today,
-            'sharedSpaceId' => null,
-        ] + $this->tokenDetails, $result);
+                'token' => 'valid',
+                'userId' => '1',
+                'username' => 'test@test.com',
+                'oneLoginEmail' => null,
+                'last_login' => $today,
+                'sharedSpaceId' => null,
+            ] + $this->tokenDetails, $result);
     }
 
     public function testAuditLogsSuccessfulSignIn()

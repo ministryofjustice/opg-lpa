@@ -148,12 +148,6 @@ class Service extends AbstractService
      */
     public function update(array $data, string $id): ApiProblem|EntityInterface|null
     {
-        if (isset($data['oneLoginSub'])) {
-            $this->getUserRepository()->setOneLoginSub($id, $data['oneLoginSub']);
-
-            return new DataModelEntity(new ProfileUserModel([]));
-        }
-
         $user = $this->save($id, $data);
 
         // If it's not a user, it's a different kind of response, so return it.
@@ -232,11 +226,10 @@ class Service extends AbstractService
             $user = $user->toArray();
         }
 
-        // Keep email up to date with what's in the auth service (if anything)
         $authUser = $this->getUserRepository()->getById($id);
         if ($authUser instanceof UserInterface) {
             $data['email'] = [
-                'address' => $authUser->username()
+                'address' => $authUser->oneLoginEmail() ?? $authUser->username()
             ];
         }
 

@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Form\User\LinkOrCreateAccountForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -24,10 +25,14 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
+    private const string SESSION_KEY_IDENTITY     = 'identity';
+    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
         private readonly OneLoginSessionManager $sessionManager,
+        private readonly OneLoginService $oneLoginService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -40,7 +45,9 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             throw new RuntimeException('Session middleware is not configured');
         }
 
-        if ($this->sessionManager->getPendingLink($session) === null) {
+        $pendingLink = $this->sessionManager->getPendingLink($session);
+
+        if ($pendingLink === null) {
             $this->logger->warning('auth.onelogin.link_or_create_missing_pending_link');
 
             return new RedirectResponse('/login');
@@ -58,11 +65,21 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             $form->setData($postData);
 
             if ($form->isValid()) {
-                $redirectUrl = $form->get('choice')->getValue() === 'link'
-                    ? '/link-account'
-                    : 'TODO-create-account';
+                if ($form->get('choice')->getValue() === 'link') {
+                    return new RedirectResponse('/link-account');
+                }
 
-                return new RedirectResponse($redirectUrl);
+                try {
+                    $identity = $this->oneLoginService->createAndLinkAccount(
+                        $pendingLink->sub,
+                        $pendingLink->email,
+                    );
+
+                    return $this->establishSession($session, $identity);
+                } catch (RuntimeException $e) {
+                    $this->logger->error('auth.onelogin.create_error', ['message' => $e->getMessage()]);
+                    $error = 'api-error';
+                }
             }
         }
 
@@ -72,8 +89,29 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form' => $form,
-                ]
-            )
+                    'error' => $error ?? null,
+                ],
+            ),
         ));
+    }
+
+    /**
+     * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
+     */
+    private function establishSession(SessionInterface $session, array $identity): RedirectResponse
+    {
+        $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+
+        $session->regenerate();
+        $session->clear();
+        $session->set(self::SESSION_KEY_IDENTITY, $identity);
+
+        $this->logger->info('auth.onelogin.create_and_link_success');
+
+        if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+            return new RedirectResponse($preAuthUrl);
+        }
+
+        return new RedirectResponse('/user/dashboard');
     }
 }
