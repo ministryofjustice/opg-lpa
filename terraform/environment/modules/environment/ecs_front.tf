@@ -157,13 +157,13 @@ locals {
     image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
       {
-        containerPath = "/var/cache/nginx",
-        sourceVolume  = "web_cache"
+        containerPath = "/cache/nginx",
+        sourceVolume  = "web_cache",
         readOnly      = false
       },
       {
         containerPath = "/run",
-        sourceVolume  = "web_run"
+        sourceVolume  = "web_run",
         readOnly      = false
       },
       {
