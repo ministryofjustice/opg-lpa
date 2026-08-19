@@ -66,7 +66,11 @@ jobs:
           service_json: |
             {
               "admin-app": "admin-app",
-              "admin-web": "nginx"
+              "admin-web": "nginx",
+              "api-app": "admin-app",
+              "api-web": "nginx",
+              "front-app": "admin-app",
+              "front-web": "nginx"
             }
 
   otel_image_pull_and_scan:

@@ -96,9 +96,6 @@ resource "aws_ecs_task_definition" "admin" {
     name = "app_tmp"
   }
   volume {
-    name = "web_etc"
-  }
-  volume {
     name = "web_cache"
   }
   volume {
@@ -148,17 +145,12 @@ locals {
       image                  = "${data.aws_ecr_repository.lpa_admin_web.repository_url}@${data.aws_ecr_image.lpa_admin_web.image_digest}",
       mountPoints = [
         {
-          containerPath = "/etc/nginx/conf.d",
-          sourceVolume  = "web_etc"
-          readOnly      = false
-        },
-        {
           containerPath = "/var/cache/nginx",
           sourceVolume  = "web_cache"
           readOnly      = false
         },
         {
-          containerPath = "/var/run",
+          containerPath = "/run",
           sourceVolume  = "web_run"
           readOnly      = false
         },
@@ -182,10 +174,9 @@ locals {
           condition     = "HEALTHY"
         }
       ],
-      volumesFrom     = [],
-      privileged      = false,
-      user            = "nginx",
-      linuxParameters = jsondecode(file("${path.module}/mounts/nginx.json")),
+      volumesFrom = [],
+      privileged  = false,
+      user        = "nginx",
       logConfiguration = {
         logDriver = "awslogs",
         options = {

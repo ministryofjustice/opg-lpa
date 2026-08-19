@@ -1,5 +1,10 @@
+
 {
   "tmpfs": [
-    { "containerPath": "/run", "size": 8, "mountOptions": ["uid=101", "gid=101"] }
+    { "containerPath": "/var/cache/nginx",  "size": 64 },
+    { "containerPath": "/etc/nginx/conf.d", "size": 16 },
+    { "containerPath": "/var/run",          "size": 8  },
+    { "containerPath": "/run",              "size": 8  },
+    { "containerPath": "/tmp",              "size": 64 }
   ]
 }
