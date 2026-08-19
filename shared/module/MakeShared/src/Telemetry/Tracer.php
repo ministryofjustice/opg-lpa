@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MakeShared\Telemetry;
 
 use MakeShared\Constants;
+use MakeShared\Telemetry\Attribute\Aws;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Exporter\ExporterInterface;
 use MakeShared\Telemetry\Segment;
@@ -153,6 +154,12 @@ class Tracer
             $sampled = (mt_rand() / mt_getrandmax()) <= $this->requestsSampledFraction;
         } else {
             $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
+        }
+
+        $attributes['origin'] = 'AWS::ECS::Container';
+        $awsAttribute = Aws::detectECS();
+        if (!is_null($awsAttribute)) {
+            $attributes['aws'] = $awsAttribute;
         }
 
         $this->rootSegment = new Segment(

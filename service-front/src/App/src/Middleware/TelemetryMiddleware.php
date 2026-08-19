@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use MakeShared\Telemetry\Attribute\Http;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,11 +26,17 @@ class TelemetryMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         RequestHandlerInterface $handler
     ): ResponseInterface {
-        $this->tracer->startRootSegment();
+        $rootSegment = $this->tracer->startRootSegment();
 
         try {
-            return $handler->handle($request);
+            $response = $handler->handle($request);
+            return $response;
         } finally {
+            if ($rootSegment !== null && isset($response)) {
+                $httpAttribute = new Http($request, $response);
+                $rootSegment->setAttribute('http', $httpAttribute);
+            }
+
             $this->tracer->stopRootSegment();
         }
     }
