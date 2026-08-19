@@ -25,19 +25,25 @@ class SharedSpaceMemberTest extends TestCase
         $validatorResponse = $member->validate();
         $this->assertTrue($validatorResponse->hasErrors());
         $errors = $validatorResponse->getArrayCopy();
-        $this->assertEquals(3, count($errors));
+
+        $this->assertEquals(6, count($errors));
+
         TestHelper::assertNoDuplicateErrorMessages($errors, $this);
+
         $this->assertNotNull($errors['sharedSpaceId']);
         $this->assertNotNull($errors['userId']);
         $this->assertNotNull($errors['createdAt']);
+        $this->assertNotNull($errors['sharedSpaceName']);
+        $this->assertNotNull($errors['email']);
+        $this->assertNotNull($errors['name']);
     }
 
     public function testDefaultsToNotAdminAndActive()
     {
         $member = new SharedSpaceMember();
 
-        $this->assertFalse($member->getIsAdmin());
-        $this->assertTrue($member->getIsActive());
+        $this->assertFalse($member->isAdmin());
+        $this->assertTrue($member->isActive());
     }
 
     public function testToArrayForMongo()
@@ -64,8 +70,8 @@ class SharedSpaceMemberTest extends TestCase
 
         $this->assertEquals('e551d8b14c408f7efb7358fb258f1b12', $model->getSharedSpaceId());
         $this->assertEquals('f13d97fca1cd06fd7d3e10e5c7bfa123', $model->getUserId());
-        $this->assertTrue($model->getIsAdmin());
-        $this->assertFalse($model->getIsActive());
+        $this->assertTrue($model->isAdmin());
+        $this->assertFalse($model->isActive());
         $this->assertEquals($now, $model->getCreatedAt());
     }
 }

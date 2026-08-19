@@ -9,6 +9,7 @@ use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Entity\MemberInvite;
 use DateTime;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
+use Laminas\Db\Sql\Expression;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
 class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInterface
@@ -107,24 +108,52 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
      */
     public function getMember(string $sharedSpaceId, string $memberUserId): ?SharedSpaceMember
     {
-        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
-            'sharedSpaceId' => $sharedSpaceId,
-            'userId'        => $memberUserId,
-        ], [
-            'columns' => ['userId', 'isAdmin', 'isActive', 'created'],
-            'limit'   => 1,
-        ]);
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql
+            ->select()
+            ->from(['members' => self::SHARED_SPACE_MEMBERS])
+            ->join(['space' => self::SHARED_SPACE], 'members.sharedSpaceId = space.id', ['name'])
+            ->join(
+                ['user' => UserData::USERS_TABLE],
+                'members.userId = user.id',
+                [
+                    'identity',
+                    'one_login_email',
+                    'profile',
+                    'last_login',
+                    'first_name' => new Expression('"user"."profile" -> \'name\' ->> \'first\''),
+                    'last_name'  => new Expression('"user"."profile" -> \'name\' ->> \'last\''),
+                    'title'      => new Expression('"user"."profile" -> \'name\' ->> \'title\''),
+                ]
+            )
+            ->where(['sharedSpaceId' => $sharedSpaceId, 'userId' => $memberUserId])
+            ->columns(['id', 'userId', 'isAdmin', 'isActive', 'created'])
+            ->limit(1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+
+        try {
+            $result = $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw($e);
+        }
 
         if (!$result->isQueryResult() || $result->count() !== 1) {
             return null;
         }
 
+        $row = $result->current();
+
         return new SharedSpaceMember([
-            'sharedSpaceId' => $sharedSpaceId,
-            'userId'        => $result->current()['userId'],
-            'isAdmin'       => (bool) $result->current()['isAdmin'],
-            'isActive'      => (bool) $result->current()['isActive'],
-            'createdAt'     => $result->current()['created'],
+            'sharedSpaceName' => $row['name'],
+            'sharedSpaceId'   => $sharedSpaceId,
+            'userId'          => $row['userId'],
+            'name'            => ['first' => $row['first_name'] ?? '', 'last' => $row['last_name'] ?? '', 'title' => $row['title'] ?? ''],
+            'isAdmin'         => (bool) $row['isAdmin'],
+            'isActive'        => (bool) $row['isActive'],
+            'createdAt'       => $row['created'],
+            'lastLoginAt'     => $row['last_login'],
+            'email'           => $row['one_login_email'] ?? $row['identity'],
         ]);
     }
 
@@ -133,23 +162,48 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
      */
     public function getMembers(string $sharedSpaceId): array
     {
-        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, ['sharedSpaceId' => $sharedSpaceId], [
-            'columns' => ['userId', 'isAdmin', 'isActive', 'created'],
-        ]);
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql
+            ->select()
+            ->from(['members' => self::SHARED_SPACE_MEMBERS])
+            ->join(['space' => self::SHARED_SPACE], 'members.sharedSpaceId = space.id', ['name'])
+            ->join(
+                ['user' => UserData::USERS_TABLE],
+                'members.userId = user.id',
+                [
+                    'identity',
+                    'one_login_email',
+                    'profile',
+                    'last_login',
+                    'first_name' => new Expression('"user"."profile" -> \'name\' ->> \'first\''),
+                    'last_name'  => new Expression('"user"."profile" -> \'name\' ->> \'last\''),
+                    'title'      => new Expression('"user"."profile" -> \'name\' ->> \'title\''),
+                ]
+            )
+            ->where(['sharedSpaceId' => $sharedSpaceId])
+            ->columns(['id', 'userId', 'isAdmin', 'isActive', 'created']);
 
-        if (!$result->isQueryResult()) {
-            return [];
+        $statement = $sql->prepareStatementForSqlObject($select);
+
+        try {
+            $result = $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw($e);
         }
 
         $members = [];
 
         foreach ($result as $row) {
             $members[] = new SharedSpaceMember([
-                'sharedSpaceId' => $sharedSpaceId,
-                'userId'        => $row['userId'],
-                'isAdmin'       => (bool) $row['isAdmin'],
-                'isActive'      => (bool) $row['isActive'],
-                'createdAt'     => $row['created'],
+                'sharedSpaceName' => $row['name'],
+                'sharedSpaceId'   => $sharedSpaceId,
+                'userId'          => $row['userId'],
+                'name'            => ['first' => $row['first_name'] ?? '', 'last' => $row['last_name'] ?? '', 'title' => $row['title'] ?? ''],
+                'isAdmin'         => (bool) $row['isAdmin'],
+                'isActive'        => (bool) $row['isActive'],
+                'createdAt'       => $row['created'],
+                'lastLoginAt'     => $row['last_login'],
+                'email'           => $row['one_login_email'] ?? $row['identity'],
             ]);
         }
 

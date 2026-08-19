@@ -14,6 +14,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\Radio;
 use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -26,14 +27,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
     private SharedSpaceService&MockObject $sharedSpaceService;
     private SharedSpaceMemberForm&MockObject $form;
     private ManageSharedSpaceMemberHandler $handler;
-
-    private const MEMBER = [
-        'id'      => 'member-1',
-        'name'    => ['first' => 'Member', 'last' => 'One'],
-        'email'   => ['address' => 'member1@example.com'],
-        'isAdmin' => true,
-        'isActive' => true,
-    ];
+    private SharedSpaceMember $member;
 
     protected function setUp(): void
     {
@@ -41,6 +35,16 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
         $this->form = $this->createMock(SharedSpaceMemberForm::class);
+        $this->member = new SharedSpaceMember([
+            'userId'      => 'member-1',
+            'name'    => ['first' => 'Member', 'last' => 'One'],
+            'email'   => 'member1@example.com',
+            'isAdmin' => true,
+            'isActive' => true,
+            'createdAt' => new \DateTime('2024-01-01T00:00:00Z'),
+            'sharedSpaceId' => 'shared-space-1',
+            'sharedSpaceName' => 'Test Shared Space',
+        ]);
 
         $this->formElementManager
             ->method('get')
@@ -66,7 +70,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testGetRequestDisplaysFormForExistingMember(): void
     {
-        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn($this->member);
 
         $permissionsElement = new Checkbox('permissions');
         $statusElement = new Radio('status')->setValueOptions([
@@ -116,7 +120,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostValidDataUpdatesMemberAndRedirects(): void
     {
-        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn($this->member);
 
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
@@ -138,7 +142,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->sharedSpaceService
             ->expects($this->once())
             ->method('updateMember')
-            ->with('member-1', false, true)
+            ->with($this->member, false, true)
             ->willReturn(true);
 
         $request = $this->createRequest()
@@ -153,7 +157,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostWithoutPermissionsKeyTreatsMemberAsNotAdmin(): void
     {
-        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn($this->member);
 
         $permissionsElement = new Checkbox('permissions');
 
@@ -174,7 +178,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $this->sharedSpaceService
             ->expects($this->once())
             ->method('updateMember')
-            ->with('member-1', false, false)
+            ->with($this->member, false, false)
             ->willReturn(true);
 
         $request = $this->createRequest()
@@ -189,7 +193,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostWhenUpdateFailsShowsError(): void
     {
-        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn($this->member);
 
         $permissionsElement = new Checkbox('permissions');
         $permissionsElement->setChecked(false);
@@ -232,7 +236,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostInvalidDataRedisplaysFormWithoutUpdating(): void
     {
-        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with('member-1')->willReturn($this->member);
 
         $this->form->method('isValid')->willReturn(false);
 

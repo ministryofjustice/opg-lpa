@@ -14,8 +14,6 @@ use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use MakeShared\DataModel\User\User as ProfileUserModel;
-use Application\Model\DataAccess\Postgres\AbstractBase;
-use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
@@ -705,32 +703,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         }
 
         return new ProfileUserModel($profile);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getProfiles(array $ids): array
-    {
-        $profiles = [];
-        $result = $this->dbWrapper->select(self::USERS_TABLE, ['id' => $ids]);
-
-        foreach ($result as $user) {
-            if (!is_array($user) || !isset($user['profile'])) {
-                continue;
-            }
-
-            $profile = array_merge(json_decode($user['profile'], true), [
-                'id' => $user['id'],
-                'createdAt' => $user['created'],
-                'updatedAt' => $user['updated'],
-                'lastLoginAt' => $user['last_login'],
-            ]);
-
-            $profiles[] = new ProfileUserModel($profile);
-        }
-
-        return $profiles;
     }
 
     /**

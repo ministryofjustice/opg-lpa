@@ -10,6 +10,7 @@ use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,18 +21,23 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private SharedSpaceService&MockObject $sharedSpaceService;
     private DeleteSharedSpaceMemberHandler $handler;
+    private SharedSpaceMember $member;
 
     private const MEMBER_ID = 'member-1';
-    private const MEMBER = [
-        'id'      => 'member-1',
-        'name'    => ['first' => 'Member', 'last' => 'One'],
-        'email'   => ['address' => 'member1@example.com'],
-        'isAdmin' => true,
-        'isActive' => true,
-    ];
 
     protected function setUp(): void
     {
+        $this->member = new SharedSpaceMember([
+            'name'    => ['first' => 'Member', 'last' => 'One'],
+            'email'   => 'member1@example.com',
+            'isAdmin' => true,
+            'isActive' => true,
+            'createdAt' => new \DateTime('2024-01-01T00:00:00Z'),
+            'sharedSpaceId' => 'shared-space-1',
+            'userId' => 'user-1',
+            'sharedSpaceName' => 'Test Shared Space',
+        ]);
+
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
 
@@ -53,11 +59,11 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
     public function testGetRequestDisplaysPageForExistingMember(): void
     {
-        $this->sharedSpaceService->method('getMember')->with(self::MEMBER_ID)->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->with(self::MEMBER_ID)->willReturn($this->member);
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/delete-member.twig', [
-                'member' => self::MEMBER,
+                'member' => $this->member,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,
@@ -84,7 +90,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostDeletesMemberAndRedirects(): void
     {
-        $this->sharedSpaceService->method('getMember')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->willReturn($this->member);
 
         $this->sharedSpaceService
             ->method('deleteMember')
@@ -99,7 +105,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
     public function testPostDeletesMemberWhenError(): void
     {
-        $this->sharedSpaceService->method('getMember')->willReturn(self::MEMBER);
+        $this->sharedSpaceService->method('getMember')->willReturn($this->member);
 
         $this->sharedSpaceService
             ->method('deleteMember')
@@ -108,7 +114,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/delete-member.twig', [
-                'member' => self::MEMBER,
+                'member' => $this->member,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,
