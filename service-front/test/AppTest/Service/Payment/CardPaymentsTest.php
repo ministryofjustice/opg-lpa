@@ -46,13 +46,13 @@ class CardPaymentsTest extends TestCase
     {
         $lpa = FixturesData::getPfLpa();
 
-        $lpa->payment                   = new Payment();
-        $lpa->payment->amount           = 92;
-        $lpa->payment->gatewayReference = self::GATEWAY_REFERENCE;
+        $lpa->setPayment(new Payment());
+        $lpa->getPayment()->setAmount(92);
+        $lpa->getPayment()->setGatewayReference(self::GATEWAY_REFERENCE);
 
-        $lpa->locked      = false;
-        $lpa->lockedAt    = null;
-        $lpa->completedAt = null;
+        $lpa->setLocked(false);
+        $lpa->setLockedAt(null);
+        $lpa->setCompletedAt(null);
 
         return $lpa;
     }
@@ -104,7 +104,7 @@ class CardPaymentsTest extends TestCase
     public function testLpaWithNoUsableGatewayReferenceIsNotAwaitingConfirmation(?string $reference): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->payment->gatewayReference = $reference;
+        $lpa->getPayment()->setGatewayReference($reference);
 
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
     }
@@ -112,7 +112,7 @@ class CardPaymentsTest extends TestCase
     public function testLpaWithAPaymentDateIsNotAwaitingConfirmation(): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->payment->date = new DateTime();
+        $lpa->getPayment()->setDate(new DateTime());
 
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
     }
@@ -120,7 +120,7 @@ class CardPaymentsTest extends TestCase
     public function testLpaPaidByChequeIsNotAwaitingConfirmation(): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+        $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CHEQUE);
 
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
     }
@@ -128,7 +128,7 @@ class CardPaymentsTest extends TestCase
     public function testLockedLpaIsNotAwaitingConfirmation(): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->locked = true;
+        $lpa->setLocked(true);
 
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
     }
@@ -136,7 +136,7 @@ class CardPaymentsTest extends TestCase
     public function testCompletedLpaIsNotAwaitingConfirmation(): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->completedAt = new DateTime();
+        $lpa->setCompletedAt(new DateTime());
 
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
     }
@@ -144,10 +144,10 @@ class CardPaymentsTest extends TestCase
     public function testUnfinishedInstrumentIsNotAwaitingConfirmation(): void
     {
         $lpa = new Lpa();
-        $lpa->id       = 91333263035;
-        $lpa->document = new Document();
-        $lpa->payment  = new Payment();
-        $lpa->payment->gatewayReference = self::GATEWAY_REFERENCE;
+        $lpa->setId(91333263035);
+        $lpa->setDocument(new Document());
+        $lpa->setPayment(new Payment());
+        $lpa->getPayment()->setGatewayReference(self::GATEWAY_REFERENCE);
 
         $this->assertFalse($lpa->hasFinishedCreation(), 'guard precondition');
         $this->assertFalse($this->cardPayments->isAwaitingConfirmation($lpa));
@@ -156,7 +156,7 @@ class CardPaymentsTest extends TestCase
     public function testNoGovPayCallIsMadeWhenTheLpaIsNotStranded(): void
     {
         $lpa = $this->makeStrandedLpa();
-        $lpa->payment->date = new DateTime();
+        $lpa->getPayment()->setDate(new DateTime());
 
         $this->paymentClient->expects($this->never())->method('getPayment');
         $this->lpaApplicationService->expects($this->never())->method('updateApplication');
@@ -178,7 +178,7 @@ class CardPaymentsTest extends TestCase
         $this->lpaApplicationService->expects($this->once())
             ->method('updateApplication')
             ->with(
-                $lpa->id,
+                $lpa->getId(),
                 $this->callback(function (array $data) use (&$recorded): bool {
                     $recorded = $data['payment'] ?? null;
                     return is_array($recorded);
@@ -197,8 +197,8 @@ class CardPaymentsTest extends TestCase
         $this->assertNotNull($recorded['date']);
         $this->assertSame(self::GATEWAY_REFERENCE, $recorded['gatewayReference']);
 
-        $this->assertSame(Payment::PAYMENT_TYPE_CARD, $lpa->payment->method);
-        $this->assertInstanceOf(DateTime::class, $lpa->payment->date);
+        $this->assertSame(Payment::PAYMENT_TYPE_CARD, $lpa->getPayment()->getMethod());
+        $this->assertInstanceOf(DateTime::class, $lpa->getPayment()->getDate());
     }
 
     public function testNothingIsRecordedWhenGovPayHasNoRecordOfThePayment(): void
@@ -211,7 +211,7 @@ class CardPaymentsTest extends TestCase
         $this->logger->expects($this->never())->method('warning');
 
         $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
-        $this->assertNull($lpa->payment->date);
+        $this->assertNull($lpa->getPayment()->getDate());
     }
 
     /**
@@ -242,8 +242,8 @@ class CardPaymentsTest extends TestCase
         $this->logger->expects($this->never())->method('warning');
 
         $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
-        $this->assertNull($lpa->payment->method);
-        $this->assertNull($lpa->payment->date);
+        $this->assertNull($lpa->getPayment()->getMethod());
+        $this->assertNull($lpa->getPayment()->getDate());
     }
 
     public function testAPaymentWithNoReferenceIsNotRecorded(): void
@@ -263,8 +263,8 @@ class CardPaymentsTest extends TestCase
             ->with($this->stringContains('carries no reference'));
 
         $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
-        $this->assertNull($lpa->payment->method);
-        $this->assertNull($lpa->payment->date);
+        $this->assertNull($lpa->getPayment()->getMethod());
+        $this->assertNull($lpa->getPayment()->getDate());
     }
 
     /**
@@ -292,7 +292,7 @@ class CardPaymentsTest extends TestCase
             ->with($this->stringContains('Payment recovery'));
 
         $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
-        $this->assertNull($lpa->payment->date);
+        $this->assertNull($lpa->getPayment()->getDate());
     }
 
     public function testAFailedApiUpdateIsReportedAsCriticalAndDoesNotCompleteCheckout(): void
@@ -334,7 +334,7 @@ class CardPaymentsTest extends TestCase
             $this->makeSuccessfulGovPayPayment($given)
         ));
 
-        $this->assertSame($expected, (string) $lpa->payment->email);
+        $this->assertSame($expected, (string) $lpa->getPayment()->getEmail());
     }
 
     /**
@@ -357,7 +357,7 @@ class CardPaymentsTest extends TestCase
 
         $this->cardPayments->recordSuccessfulPayment($lpa, $this->makeSuccessfulGovPayPayment($given));
 
-        $this->assertNull($lpa->payment->email);
+        $this->assertNull($lpa->getPayment()->getEmail());
     }
 
     public function testAMissingGovPayEmailIsStoredAsNull(): void
@@ -372,6 +372,6 @@ class CardPaymentsTest extends TestCase
             'state'      => ['status' => 'success', 'finished' => true],
         ]));
 
-        $this->assertNull($lpa->payment->email);
+        $this->assertNull($lpa->getPayment()->getEmail());
     }
 }
