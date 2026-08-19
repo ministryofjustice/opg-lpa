@@ -32,11 +32,7 @@
                         </button>
                         <ul class="govuk-service-navigation__list" id="navigation" data-cy="service-nav-list">
                             {% if nav.name %}
-                                {{ _self.navigationItem(
-                                    nav,
-                                    'user/about-you',
-                                    'Your details'
-                                ) }}
+                                {{ _self.navigationItem(nav, 'user/about-you', 'Your details') }}
 
                                 {{ _self.navigationItem(
                                     nav,
@@ -47,11 +43,7 @@
                             {% endif %}
 
                             {% if nav.sharedSpaceEnabled %}
-                                {{ _self.navigationItem(
-                                    nav,
-                                    nav.inSharedSpace ? 'shared-space.manage' : 'shared-space.about',
-                                    'Shared space'
-                                ) }}
+                                {{ _self.navigationItem(nav, 'shared-space', 'Shared space') }}
                             {% endif %}
 
                             <li class="govuk-service-navigation__item">

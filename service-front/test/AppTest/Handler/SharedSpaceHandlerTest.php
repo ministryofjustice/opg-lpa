@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Handler;
 
-use App\Handler\ManageSharedSpaceHandler;
+use App\Handler\SharedSpaceHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
@@ -15,21 +15,47 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class ManageSharedSpaceHandlerTest extends TestCase
+class SharedSpaceHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private SharedSpaceService&MockObject $sharedSpaceService;
-    private ManageSharedSpaceHandler $handler;
+    private SharedSpaceHandler $handler;
 
     protected function setUp(): void
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
 
-        $this->handler = new ManageSharedSpaceHandler(
+        $this->handler = new SharedSpaceHandler(
             $this->renderer,
             $this->sharedSpaceService,
         );
+    }
+
+    public function testGetShowsAboutWhenNotInSpace(): void
+    {
+        $this->sharedSpaceService
+            ->expects($this->once())
+            ->method('getMembersAndInvites')
+            ->willReturn(null);
+
+        $this->renderer->method('render')
+            ->with('application/authenticated/shared-space/about.twig', [
+                'signedInUser' => null,
+                'secondsUntilSessionExpires' => null,
+                'lpa' => null,
+                'currentRouteName' => null,
+                'csrfToken' => null,
+            ])
+            ->willReturn('<html>manage shared space</html>');
+
+        $request = (new ServerRequest())
+            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+            ->withMethod('GET');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public static function getShowsMembersAndInvitesProvider(): array

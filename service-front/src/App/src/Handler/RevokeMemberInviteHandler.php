@@ -39,7 +39,7 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
             $ok = $this->sharedSpaceService->revokeInvite($inviteId);
 
             if ($ok) {
-                return new RedirectResponse('/shared-space/manage?invite=revoked');
+                return new RedirectResponse('/shared-space?invite=revoked');
             }
         }
 
