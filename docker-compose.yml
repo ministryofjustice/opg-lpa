@@ -103,11 +103,11 @@ services:
         condition: service_healthy
     read_only: true
     tmpfs:
-      - /var/cache/nginx:size=67108864
-      - /etc/nginx/conf.d:size=16777216
-      - /var/run:size=8388608
-      - /run:size=8388608
-      - /tmp:size=67108864
+      - /var/cache/nginx
+      - /etc/nginx/conf.d
+      - /var/run
+      - /run
+      - /tmp
     volumes:
       - ./service-front/public:/web
       - ./service-front/docker/web/etc/nginx/templates/default.conf.template:/etc/nginx/templates/default.conf.template:ro
@@ -122,8 +122,6 @@ services:
     container_name: lpa-front-app
     image: lpa-front-app
     read_only: true
-    tmpfs:
-      - /tmp:size=67108864
     build:
       context: ./
       args:
@@ -231,12 +229,6 @@ services:
     depends_on:
       - api-app
     read_only: true
-    tmpfs:
-      - /var/cache/nginx:size=67108864
-      - /etc/nginx/conf.d:size=16777216
-      - /var/run:size=8388608
-      - /run:size=8388608
-      - /tmp:size=67108864
     build:
       context: ./
       dockerfile: service-api/docker/web/Dockerfile
@@ -250,8 +242,6 @@ services:
     container_name: lpa-api-app
     image: lpa-api-app
     read_only: true
-    tmpfs:
-      - /tmp:size=67108864
     build:
       context: ./
       args:
@@ -371,12 +361,6 @@ services:
     depends_on:
       - admin-app
     read_only: true
-    tmpfs:
-      - /var/cache/nginx:size=67108864
-      - /etc/nginx/conf.d:size=16777216
-      - /var/run:size=8388608
-      - /run:size=8388608
-      - /tmp:size=67108864
     build:
       context: ./
       dockerfile: service-admin/docker/web/Dockerfile
@@ -388,8 +372,6 @@ services:
     container_name: lpa-admin-app
     image: lpa-admin-app
     read_only: true
-    tmpfs:
-      - /tmp:size=67108864
     build:
       context: ./
       dockerfile: service-admin/docker/app/Dockerfile
