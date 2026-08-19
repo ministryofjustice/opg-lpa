@@ -17,7 +17,7 @@ variable "boundaried_default_role" {
 }
 
 variable "management_role" {
-  default     = "opg-lpa-ci-boundary"
+  default     = "opg-lpa-ci"
   type        = string
   description = "The default role to use to create resources in the management account"
 }
