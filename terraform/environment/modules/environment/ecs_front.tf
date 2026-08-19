@@ -106,9 +106,6 @@ resource "aws_ecs_task_definition" "front" {
     name = "app_tmp"
   }
   volume {
-    name = "web_cache"
-  }
-  volume {
     name = "web_run"
   }
   volume {
@@ -157,18 +154,13 @@ locals {
     image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
       {
-        containerPath = "/cache/nginx",
-        sourceVolume  = "web_cache",
-        readOnly      = false
-      },
-      {
         containerPath = "/run",
         sourceVolume  = "web_run",
         readOnly      = false
       },
       {
         containerPath = "/tmp",
-        sourceVolume  = "web_tmp"
+        sourceVolume  = "web_tmp",
         readOnly      = false
       },
     ],
