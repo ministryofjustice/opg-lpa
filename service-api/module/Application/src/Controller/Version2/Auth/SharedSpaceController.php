@@ -100,6 +100,11 @@ class SharedSpaceController extends AbstractRestfulController
             return $result;
         }
 
+        $sharedSpaceName = $this->sharedSpaceService->getName($result['sharedSpaceId']);
+        if ($sharedSpaceName === null) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'Shared space not found');
+        }
+
         $query = $this->params()->fromQuery();
         $page = $query['page'] ?? null;
         $perPage = $query['perPage'] ?? null;
@@ -126,6 +131,7 @@ class SharedSpaceController extends AbstractRestfulController
         $items = $paginator->getCurrentItems();
 
         $response = [
+            'name' => $sharedSpaceName,
             'applications' => array_map(
                 fn (Lpa $lpa) => $lpa->toArray(),
                 iterator_to_array($items)

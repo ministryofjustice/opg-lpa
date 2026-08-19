@@ -115,6 +115,11 @@ class SharedSpaceService
         ];
     }
 
+    public function getName(string $sharedSpaceId): ?string
+    {
+        return $this->sharedSpaceRepository->getSharedSpace($sharedSpaceId);
+    }
+
     public function getMember(string $sharedSpaceId, string $memberUserId): ?array
     {
         $member = $this->sharedSpaceRepository->getMember($sharedSpaceId, $memberUserId);

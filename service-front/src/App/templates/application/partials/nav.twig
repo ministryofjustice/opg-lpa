@@ -1,3 +1,19 @@
+{% macro navigationItem(nav, route, name, orActive = false) %}
+    {% if nav.route == route or orActive %}
+        <li class="govuk-service-navigation__item {{ nav.route == route ? 'govuk-service-navigation__item--active' : ''}}">
+            <a class="govuk-service-navigation__link" href="{{ url(route) }}" aria-current="true">
+                <strong class="govuk-service-navigation__active-fallback">{{ name }}</strong>
+            </a>
+        </li>
+    {% else %}
+        <li class="govuk-service-navigation__item">
+            <a class="govuk-service-navigation__link" href="{{ url(route) }}">
+                {{ name }}
+            </a>
+        </li>
+    {% endif %}
+{% endmacro %}
+
 <div class="inner">
     <section aria-label="Service information" class="govuk-service-navigation"
              data-module="govuk-service-navigation">
@@ -16,47 +32,26 @@
                         </button>
                         <ul class="govuk-service-navigation__list" id="navigation" data-cy="service-nav-list">
                             {% if nav.name %}
-                                <li class="govuk-service-navigation__item {{ nav.route == 'user/about-you' ? 'govuk-service-navigation__item--active' : ''}}">
-                                    {% if nav.route == 'user/about-you' %}
-                                        <a class="govuk-service-navigation__link" href="{{ url('user/about-you') }}" aria-current="true">
-                                            <strong class="govuk-service-navigation__active-fallback">Your details</strong>
-                                        </a>
-                                    {% else %}
-                                        <a class="govuk-service-navigation__link" href="{{ url('user/about-you') }}">
-                                            Your details
-                                        </a>
-                                    {% endif %}
-                                </li>
+                                {{ _self.navigationItem(
+                                    nav,
+                                    'user/about-you',
+                                    'Your details'
+                                ) }}
 
-                                {% set dashboardRoute = nav.sharedSpaceEnabled and nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard' %}
-
-                                <li class="govuk-service-navigation__item {{ nav.route == dashboardRoute ? 'govuk-service-navigation__item--active' : ''}}">
-                                    {% if (nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false) or (nav.route == dashboardRoute) %}
-                                        <a class="govuk-service-navigation__link" href="{{ url(dashboardRoute) }}" aria-current="true">
-                                            <strong class="govuk-service-navigation__active-fallback">Your LPAs</strong>
-                                        </a>
-                                    {% else %}
-                                        <a class="govuk-service-navigation__link" href="{{ url(dashboardRoute) }}">
-                                            Your LPAs
-                                        </a>
-                                    {% endif %}
-                                </li>
+                                {{ _self.navigationItem(
+                                    nav,
+                                    nav.sharedSpaceEnabled and nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
+                                    nav.sharedSpaceEnabled and nav.inSharedSpace ? 'Shared LPAs' : 'Your LPAs',
+                                    nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false
+                                ) }}
                             {% endif %}
 
                             {% if nav.sharedSpaceEnabled %}
-                              {% if nav.inSharedSpace %}
-                                <li class="govuk-service-navigation__item  {{ nav.route == 'shared-space.manage' ? 'govuk-service-navigation__item--active' : ''}}">
-                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space.manage') }}">
-                                    Manage your Shared Space
-                                  </a>
-                                </li>
-                              {% else %}
-                                <li class="govuk-service-navigation__item  {{ nav.route == 'shared-space.about' ? 'govuk-service-navigation__item--active' : ''}}">
-                                  <a class="govuk-service-navigation__link" href="{{ url('shared-space.about') }}">
-                                    Shared Spaces
-                                  </a>
-                                </li>
-                              {% endif %}
+                                {{ _self.navigationItem(
+                                    nav,
+                                    nav.inSharedSpace ? 'shared-space.manage' : 'shared-space.about',
+                                    'Shared space'
+                                ) }}
                             {% endif %}
 
                             <li class="govuk-service-navigation__item">

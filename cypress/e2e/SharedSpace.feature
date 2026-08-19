@@ -6,7 +6,7 @@ Feature: Shared Space
     When I log in as the newly created fixture user
     Then I should be on "/user/dashboard"
     And there are "five" 'LPA' elements on the page
-    When I click element marked "Shared Spaces"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/about"
     When I click element marked "Create new shared space"
     Then I should be on "/shared-space/make"
@@ -16,7 +16,7 @@ Feature: Shared Space
     When I click element marked "Continue"
     Then I should be on "/shared-space/dashboard"
     And there are "five" 'LPA' elements on the page
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     And I can see myself
 
@@ -25,7 +25,7 @@ Feature: Shared Space
     And the shared space has a member called "Member 1" who is an "admin"
     And I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     And "Member 1" permissions should be set to "admin"
     When I click element marked "Member 1"
@@ -44,7 +44,7 @@ Feature: Shared Space
   Scenario: Can invite a member to a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     When I click element marked "Invite member"
     Then I should be on "/shared-space/invite"
@@ -58,7 +58,7 @@ Feature: Shared Space
   Scenario: Can revoke a members invite
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     When I click element marked "Invite member"
     Then I should be on "/shared-space/invite"
@@ -79,7 +79,7 @@ Feature: Shared Space
     And the shared space has a member called "Member 1" who is an "admin"
     And I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
@@ -92,7 +92,7 @@ Feature: Shared Space
     And I see a suspended account error
     When I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
@@ -105,7 +105,7 @@ Feature: Shared Space
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
     When I log in as the newly created fixture user
     Then I should be on "/user/dashboard"
-    And I click element marked "Shared Spaces"
+    And I click element marked "Shared space"
     And I should be on "/shared-space/about"
     And I click link "Join a shared space"
     And I should be on "/shared-space/join"
@@ -114,7 +114,7 @@ Feature: Shared Space
     And I click element marked "Continue"
     And I should be on "/shared-space/dashboard"
     And I see a success notification with content "Shared Space joined"
-    And I click element marked "Manage your Shared Space"
+    And I click element marked "Shared space"
     And I cannot see any invites
 
   Scenario: Can delete a member from a shared space
@@ -123,7 +123,7 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
     And there are "two" "LPA" elements on the page
-    When I click element marked "Manage your Shared Space"
+    When I click element marked "Shared space"
     Then I should be on "/shared-space/manage"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
@@ -132,7 +132,7 @@ Feature: Shared Space
     Then I click button "Delete"
     Then I should be on "/shared-space/manage"
     And I see a success notification with content "Member deleted"
-    When I click link "Your LPAs"
+    When I click link "Shared LPAs"
     Then I should be on "/shared-space/dashboard"
     And there are "two" "LPA" elements on the page
     When I try to log in as the member added to the shared space
