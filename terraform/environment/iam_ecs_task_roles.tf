@@ -1,7 +1,3 @@
-data "aws_iam_policy" "default_boundary" {
-  name = "opg-lpa-non-ci-boundary"
-}
-
 //----------------
 // API IAM ECS task role
 
