@@ -1,8 +1,9 @@
 # ECS Cluster Execution Role
 resource "aws_iam_role" "execution_role" {
-  name               = "${local.environment_name}-execution-role-ecs-cluster"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.shared_component_tag
+  name                 = "${local.environment_name}-execution-role-ecs-cluster"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.shared_component_tag
 }
 
 data "aws_iam_policy_document" "ecs_assume_policy" {
