@@ -99,6 +99,9 @@ resource "aws_ecs_task_definition" "admin" {
     name = "web_cache"
   }
   volume {
+    name = "web_nginx_conf_d"
+  }
+  volume {
     name = "web_run"
   }
   volume {
@@ -147,6 +150,11 @@ locals {
         {
           containerPath = "/var/cache/nginx",
           sourceVolume  = "web_cache"
+          readOnly      = false
+        },
+        {
+          containerPath = "/etc/nginx/conf.d",
+          sourceVolume  = "web_nginx_conf_d"
           readOnly      = false
         },
         {

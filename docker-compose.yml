@@ -361,6 +361,11 @@ services:
     depends_on:
       - admin-app
     read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /etc/nginx/conf.d
+      - /run
+      - /tmp
     build:
       context: ./
       dockerfile: service-admin/docker/web/Dockerfile

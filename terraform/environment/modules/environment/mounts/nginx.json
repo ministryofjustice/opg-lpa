@@ -1,9 +1,0 @@
-
-{
-  "tmpfs": [
-    { "containerPath": "/etc/nginx", "size": 16 },
-    { "containerPath": "/var/run",          "size": 8  },
-    { "containerPath": "/run",              "size": 8  },
-    { "containerPath": "/tmp",              "size": 64 }
-  ]
-}

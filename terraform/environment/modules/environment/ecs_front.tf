@@ -106,6 +106,9 @@ resource "aws_ecs_task_definition" "front" {
     name = "app_tmp"
   }
   volume {
+    name = "web_nginx_conf_d"
+  }
+  volume {
     name = "web_run"
   }
   volume {
@@ -153,6 +156,11 @@ locals {
     readonlyRootFilesystem = true,
     image                  = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
     mountPoints = [
+      {
+        containerPath = "/etc/nginx/conf.d",
+        sourceVolume  = "web_nginx_conf_d",
+        readOnly      = false
+      },
       {
         containerPath = "/run",
         sourceVolume  = "web_run",
