@@ -155,7 +155,13 @@ resource "aws_ecs_task_definition" "api" {
     name = "app_tmp"
   }
   volume {
-    name = "web_etc"
+    name = "web_cache"
+  }
+  volume {
+    name = "web_nginx_conf_d"
+  }
+  volume {
+    name = "web_tmp"
   }
 }
 
@@ -194,12 +200,22 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = false,
+      readonlyRootFilesystem = true,
       image                  = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
       mountPoints = [
         {
-          containerPath = "/etc",
-          sourceVolume  = "web_etc"
+          containerPath = "/var/cache/nginx",
+          sourceVolume  = "web_cache"
+          readOnly      = false
+        },
+        {
+          containerPath = "/etc/nginx/conf.d",
+          sourceVolume  = "web_nginx_conf_d"
+          readOnly      = false
+        },
+        {
+          containerPath = "/tmp",
+          sourceVolume  = "web_tmp"
           readOnly      = false
         }
       ],
@@ -241,7 +257,7 @@ locals {
     {
       cpu                    = 1,
       essential              = true,
-      readonlyRootFilesystem = false,
+      readonlyRootFilesystem = true,
       image                  = "${data.aws_ecr_repository.lpa_api_app.repository_url}@${data.aws_ecr_image.lpa_api_app.image_digest}",
       name                   = "app",
       mountPoints = [
