@@ -60,7 +60,7 @@ class Communication
 
         $donorName = '';
         if (!is_null($lpa->getDocument()->getDonor())) {
-            $donorName = $lpa->getDocument()->getDonor()->getName();
+            $donorName = $lpa->getDocument()->getDonor()->getName()->getFullName();
         }
 
         $this->data = [
