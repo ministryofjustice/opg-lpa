@@ -23,6 +23,7 @@ resource "aws_vpc_endpoint" "systems_manager" {
 
 resource "aws_vpc_endpoint_policy" "systems_manager" {
   provider        = aws.region
+  for_each        = local.systems_manager_endpoints
   vpc_endpoint_id = aws_vpc_endpoint.systems_manager[each.value].id
   policy = jsonencode({
     Version = "2012-10-17",
