@@ -1,6 +1,7 @@
 resource "aws_iam_role" "aurora_backup_role" {
-  name               = "aurora_cluster_backup_role"
-  assume_role_policy = data.aws_iam_policy_document.aurora_cluster_backup_role.json
+  name                 = "aurora_cluster_backup_role"
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  assume_role_policy   = data.aws_iam_policy_document.aurora_cluster_backup_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "aurora_backup_role" {
