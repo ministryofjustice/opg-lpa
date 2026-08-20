@@ -7,7 +7,7 @@
 {% set status = form.get('status') %}
 
 {% block content %}
-    <a href="{{ url('shared-space.manage') }}" class="govuk-back-link">Back</a>
+    <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
 
     <div class="govuk-grid-row">
         {{ macros.formErrorSummary(error, form) }}

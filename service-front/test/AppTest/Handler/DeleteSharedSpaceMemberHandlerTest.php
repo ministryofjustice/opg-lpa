@@ -79,7 +79,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest());
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testPostDeletesMemberAndRedirects(): void
@@ -94,7 +94,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest()->withMethod('POST'));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage?member=deleted', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space?member=deleted', $response->getHeaderLine('Location'));
     }
 
     public function testPostDeletesMemberWhenError(): void

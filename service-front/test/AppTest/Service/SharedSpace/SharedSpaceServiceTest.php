@@ -62,6 +62,27 @@ final class SharedSpaceServiceTest extends TestCase
         $this->assertNull($result);
     }
 
+    public function testGet(): void
+    {
+        $this->client->method('httpGet')
+            ->with('/v2/shared-space')
+            ->willReturn(['a' => 'b']);
+
+        $result = $this->service->get();
+
+        $this->assertEquals(['a' => 'b'], $result);
+    }
+
+    public function testGetWhenException(): void
+    {
+        $this->client->method('httpGet')
+            ->willThrowException(new \RuntimeException('err'));
+
+        $result = $this->service->get();
+
+        $this->assertNull($result);
+    }
+
     public function testAddMemberReturnsTrueOnSuccess(): void
     {
         $this->client->expects($this->once())
