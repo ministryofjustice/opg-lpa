@@ -1,0 +1,6 @@
+{
+  "tmpfs": [
+    { "containerPath": "/tmp",       "size": 64 },
+    { "containerPath": "/tmp/cache", "size": 32 }
+  ]
+}

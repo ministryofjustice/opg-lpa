@@ -2,6 +2,11 @@ locals {
   environment_name = lower(replace(terraform.workspace, "_", "-"))
   environment      = contains(keys(var.environments), local.environment_name) ? var.environments[local.environment_name] : var.environments["default"]
   account_name     = local.environment.account_name
+  ecs_mounts_dir   = "${path.module}/modules/environment/mounts"
+  ecs_mounts = {
+    for f in fileset(local.ecs_mounts_dir, "*.json") :
+    trimsuffix(f, ".json") => jsondecode(file("${local.ecs_mounts_dir}/${f}"))
+  }
 
   # this flag enables DR. currently prevented from leaving development, and controlled in tfvars.json.
   dr_enabled = local.account_name == "development" && local.environment.dr_enabled
@@ -48,4 +53,12 @@ locals {
     component = "seeding"
   }
 
+}
+
+resource "aws_ssm_parameter" "ecs_mounts" {
+  name        = "/opg-lpa/${local.environment_name}/ecs-mounts"
+  description = "ECS readonly-root-filesystem tmpfs mount config for the ${local.environment_name} environment"
+  type        = "String"
+  tier        = "Standard"
+  value       = jsonencode(local.ecs_mounts)
 }

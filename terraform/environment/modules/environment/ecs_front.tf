@@ -108,6 +108,15 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "web_etc"
   }
+  volume {
+    name = "web_cache"
+  }
+  volume {
+    name = "web_run"
+  }
+  volume {
+    name = "web_tmp"
+  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -154,6 +163,21 @@ locals {
         containerPath = "/etc",
         sourceVolume  = "web_etc"
         readOnly      = false
+      },
+      {
+        containerPath = "/var/cache/nginx",
+        sourceVolume  = "web_cache"
+        readOnly      = false
+      },
+      {
+        containerPath = "/var/run",
+        sourceVolume  = "web_run"
+        readOnly      = false
+      },
+      {
+        containerPath = "/tmp",
+        sourceVolume  = "web_tmp"
+        readOnly      = false
       }
     ],
     name = "web",
@@ -170,9 +194,10 @@ locals {
         condition     = "START"
       }
     ]
-    volumesFrom = [],
-    privileged  = false,
-    user        = "nginx",
+    volumesFrom            = [],
+    privileged             = false,
+    user                   = "nginx",
+    readonlyRootFilesystem = true,
     logConfiguration = {
       logDriver = "awslogs",
       options = {

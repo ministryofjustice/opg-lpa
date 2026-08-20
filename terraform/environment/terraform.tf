@@ -95,6 +95,7 @@ provider "aws" {
     session_name = "terraform-session"
   }
 }
+
 provider "aws" {
   region = "eu-west-2"
   alias  = "replica"
