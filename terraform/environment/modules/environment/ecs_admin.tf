@@ -165,6 +165,7 @@ locals {
           {
             containerPath = "/etc/nginx/conf.d"
             size          = 10
+            mountOptions  = ["uid=101", "gid=101"]
           }
         ]
       },
