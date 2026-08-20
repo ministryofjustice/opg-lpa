@@ -154,18 +154,6 @@ resource "aws_ecs_task_definition" "api" {
   volume {
     name = "app_tmp"
   }
-  volume {
-    name = "web_etc"
-  }
-  volume {
-    name = "web_cache"
-  }
-  volume {
-    name = "web_run"
-  }
-  volume {
-    name = "web_tmp"
-  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
@@ -201,32 +189,11 @@ locals {
 
   api_web = jsonencode(
     {
-      cpu       = 1,
-      essential = true,
-      image     = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
-      mountPoints = [
-        {
-          containerPath = "/etc",
-          sourceVolume  = "web_etc"
-          readOnly      = false
-        },
-        {
-          containerPath = "/var/cache/nginx",
-          sourceVolume  = "web_cache"
-          readOnly      = false
-        },
-        {
-          containerPath = "/var/run",
-          sourceVolume  = "web_run"
-          readOnly      = false
-        },
-        {
-          containerPath = "/tmp",
-          sourceVolume  = "web_tmp"
-          readOnly      = false
-        }
-      ],
-      name = "web",
+      cpu         = 1,
+      essential   = true,
+      image       = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
+      mountPoints = [],
+      name        = "web",
       portMappings = [
         {
           containerPort = 8080,
@@ -242,6 +209,18 @@ locals {
       privileged             = false,
       user                   = "nginx",
       readonlyRootFilesystem = true,
+      linuxParameters = {
+        tmpfs = [
+          {
+            containerPath = "/tmp"
+            size          = 64
+          },
+          {
+            containerPath = "/etc/nginx/conf.d"
+            size          = 10
+          }
+        ]
+      },
       logConfiguration = {
         logDriver = "awslogs",
         options = {
