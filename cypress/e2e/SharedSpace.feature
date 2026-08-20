@@ -8,8 +8,8 @@ Feature: Shared Space
     And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    And I see "Shared spaces" in the title
-    When I click element marked "Create new shared space"
+    And I see "Shared space" in the title
+    When I click element marked "Create shared space"
     Then I should be on "/shared-space/make"
     When I type "Example Organisation" into "space-name"
     When I click element marked "Create shared space"
@@ -109,8 +109,8 @@ Feature: Shared Space
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
     And I should be on "/shared-space"
-    And I see "Shared spaces" in the title
-    And I click link "Join a shared space"
+    And I see "Shared space" in the title
+    And I click link "Join shared space"
     And I should be on "/shared-space/join"
     And I type "Example Organisation" into field labelled "Shared space name"
     And I type the access code into field labelled "Your shared space access code"
