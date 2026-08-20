@@ -17,7 +17,7 @@ provider "aws" {
     tags = local.default_opg_tags
   }
   assume_role {
-    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.var.boundaried_default_role}"
     session_name = "terraform-session"
   }
 }
@@ -29,7 +29,7 @@ provider "aws" {
     tags = local.default_opg_tags
   }
   assume_role {
-    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.var.boundaried_default_role}"
     session_name = "terraform-session"
   }
 }
@@ -41,7 +41,7 @@ provider "aws" {
     tags = local.default_opg_tags
   }
   assume_role {
-    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.default_role}"
+    role_arn     = "arn:aws:iam::${local.account_id}:role/${var.var.boundaried_default_role}"
     session_name = "terraform-session"
   }
 }
