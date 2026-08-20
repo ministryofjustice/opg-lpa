@@ -1,8 +1,0 @@
-{
-  "tmpfs": [
-    { "containerPath": "/var/cache/nginx",  "size": 64 },
-    { "containerPath": "/etc/nginx/conf.d", "size": 16 },
-    { "containerPath": "/var/run",          "size": 8 },
-    { "containerPath": "/tmp",              "size": 64 }
-  ]
-}
