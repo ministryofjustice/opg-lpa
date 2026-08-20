@@ -171,10 +171,6 @@ locals {
           containerPath = "/tmp"
           size          = 64
         },
-        {
-          containerPath = "/etc/nginx/conf.d"
-          size          = 10
-        }
       ]
     },
     logConfiguration = {
@@ -203,13 +199,14 @@ locals {
       essential              = true,
       readonlyRootFilesystem = true,
       image                  = local.front_app_image
-      mountPoints = [
-        {
-          containerPath = "/tmp",
-          sourceVolume  = "app_tmp"
-          readOnly      = false
-        }
-      ],
+      linuxParameters = {
+        tmpfs = [
+          {
+            containerPath = "/tmp"
+            size          = 64
+          },
+        ]
+      },
       name = "app",
       portMappings = [
         {

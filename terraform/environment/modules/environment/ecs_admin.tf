@@ -159,6 +159,10 @@ locals {
             size          = 64
           },
           {
+            containerPath = "/var/cache/nginx"
+            size          = 64
+          },
+          {
             containerPath = "/etc/nginx/conf.d"
             size          = 10
           }
