@@ -19,6 +19,8 @@ RUN apk del freetype nginx-module-image-filter curl
 # Upgrade vulnerable packages
 RUN apk upgrade --no-cache
 
+RUN chown nginx:nginx /etc/nginx/conf.d
+
 USER nginx
 COPY --from=asset-env --chown=nginx:nginx /app/public /web
 COPY --chown=nginx:nginx service-admin/docker/web/etc /etc
