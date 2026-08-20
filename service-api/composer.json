@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": "8.4.*",
-        "aws/aws-sdk-php": "^3.204.5",
+        "aws/aws-sdk-php": "^3.393.2",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-filter": "^2.12.0",
         "monolog/monolog": "^3.9",

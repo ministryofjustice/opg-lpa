@@ -17,7 +17,7 @@
     },
     "require": {
         "php": "8.4.*",
-        "aws/aws-sdk-php": "^3.81",
+        "aws/aws-sdk-php": "^3.393.2",
         "fig/http-message-util": "^1.1",
         "firebase/php-jwt": "^7.0",
         "guzzlehttp/guzzle": "^7.0",
