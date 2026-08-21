@@ -12,9 +12,9 @@ use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
-use Laminas\Form\Element\Text;
 use Laminas\Form\FormElementManager;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -24,7 +24,7 @@ class MakeSharedSpaceHandlerTest extends TestCase
     private FormElementManager&MockObject $formElementManager;
     private SharedSpaceService&MockObject $sharedSpaceService;
     private AuthenticationService&MockObject $authenticationService;
-    private MakeSharedSpaceForm&MockObject $form;
+    private MakeSharedSpaceForm $form;
     private MakeSharedSpaceHandler $handler;
 
     protected function setUp(): void
@@ -33,12 +33,11 @@ class MakeSharedSpaceHandlerTest extends TestCase
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
-        $this->form = $this->createMock(MakeSharedSpaceForm::class);
 
-        $this->formElementManager
-            ->method('get')
-            ->with('App\Form\SharedSpace\MakeSharedSpaceForm')
-            ->willReturn($this->form);
+        $this->form = new MakeSharedSpaceForm();
+        $this->form->init();
+
+        $this->formElementManager->method('get')->with(MakeSharedSpaceForm::class)->willReturn($this->form);
 
         $this->handler = new MakeSharedSpaceHandler(
             $this->renderer,
@@ -63,18 +62,21 @@ class MakeSharedSpaceHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostValidDataCreatesSharedSpaceRefreshesIdentityAndRedirects(): void
+    public static function validDataProvider(): array
     {
-        $nameElement = new Text('space-name');
-        $nameElement->setValue('My family');
+        return [
+            ['a'],
+            [str_repeat('1', 100)],
+        ];
+    }
 
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('get')->with('space-name')->willReturn($nameElement);
-
+    #[DataProvider('validDataProvider')]
+    public function testPostValidDataCreatesSharedSpaceRefreshesIdentityAndRedirects(string $name): void
+    {
         $this->sharedSpaceService
             ->expects($this->once())
             ->method('create')
-            ->with('My family')
+            ->with($name)
             ->willReturn('shared-space-1');
 
         $this->authenticationService
@@ -84,7 +86,7 @@ class MakeSharedSpaceHandlerTest extends TestCase
 
         $request = $this->createRequest()
             ->withMethod('POST')
-            ->withParsedBody(['space-name' => 'My family']);
+            ->withParsedBody(['space-name' => $name]);
 
         $response = $this->handler->handle($request);
 
@@ -94,12 +96,6 @@ class MakeSharedSpaceHandlerTest extends TestCase
 
     public function testPostWhenCreationFailsShowsErrorAndDoesNotRefreshIdentity(): void
     {
-        $nameElement = new Text('space-name');
-        $nameElement->setValue('My family');
-
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('get')->with('space-name')->willReturn($nameElement);
-
         $this->sharedSpaceService->method('create')->willReturn(null);
 
         $this->authenticationService
@@ -126,10 +122,17 @@ class MakeSharedSpaceHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostInvalidDataRedisplaysFormWithoutCreatingSharedSpace(): void
+    public static function invalidDataProvider(): array
     {
-        $this->form->method('isValid')->willReturn(false);
+        return [
+            [''],
+            [str_repeat('1', 101)],
+        ];
+    }
 
+    #[DataProvider('invalidDataProvider')]
+    public function testPostInvalidDataRedisplaysFormWithoutCreatingSharedSpace(string $name): void
+    {
         $this->sharedSpaceService->expects($this->never())->method('create');
         $this->authenticationService->expects($this->never())->method('refreshSharedSpaceId');
 
@@ -137,7 +140,7 @@ class MakeSharedSpaceHandlerTest extends TestCase
 
         $request = $this->createRequest()
             ->withMethod('POST')
-            ->withParsedBody(['space-name' => '']);
+            ->withParsedBody(['space-name' => $name]);
 
         $response = $this->handler->handle($request);
 

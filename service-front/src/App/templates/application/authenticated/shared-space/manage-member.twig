@@ -6,9 +6,11 @@
 {% set permissions = form.get('permissions') %}
 {% set status = form.get('status') %}
 
-{% block content %}
-    <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+{% block backLink %}
+  <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
+{% block content %}
     <div class="govuk-grid-row">
         {{ macros.formErrorSummary(error, form) }}
 

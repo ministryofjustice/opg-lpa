@@ -99,6 +99,7 @@
     <a name="main-content"></a>
     {{ renderNavigation(currentRouteName|default('')) }}
 
+    {% block backLink %}{% endblock %}
     {% block errorSummary %}{% endblock %}
     {% block mainTitle %}
       {% if pageTitle %}

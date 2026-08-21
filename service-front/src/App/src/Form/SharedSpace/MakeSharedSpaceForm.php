@@ -6,6 +6,7 @@ namespace App\Form\SharedSpace;
 
 use App\Form\AbstractForm;
 use Laminas\Form\Element\Text;
+use Laminas\Validator\StringLength;
 
 /**
  * @template T
@@ -20,11 +21,24 @@ class MakeSharedSpaceForm extends AbstractForm
         $this->add([
             'name'       => 'space-name',
             'type'       => Text::class,
-            'required'   => true,
             'attributes' => [
+                'id'             => 'space-name',
                 'class'          => 'govuk-input',
                 'div-attributes' => ['class' => 'govuk-form-group'],
                 'data-cy'        => 'space-name'
+            ],
+        ]);
+
+        $this->addToInputFilter([
+            'name' => 'space-name',
+            'required' => true,
+            'validators' => [
+                [
+                    'name' => StringLength::class,
+                    'options' => [
+                        'max' => 100,
+                    ],
+                ],
             ],
         ]);
 
