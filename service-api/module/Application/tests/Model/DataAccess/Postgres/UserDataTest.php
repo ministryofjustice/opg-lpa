@@ -771,10 +771,12 @@ class UserDataTest extends MockeryTestCase
         $id = '111111';
         $token = 'tobeornottobe';
         $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
-        $expected = new UserModel(['id' => $id]);
+        $tokenJson = json_encode(['token' => $token, 'expiresAt' => '2099-01-01T00:00:00+00:00']);
+        $rowData = ['id' => $id, 'password_reset_token' => $tokenJson];
+        $expected = new UserModel($rowData);
 
         // mocks
-        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $resultMock = $this->makeSelectResult(true, 1, $rowData);
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
