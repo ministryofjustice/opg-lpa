@@ -1,7 +1,3 @@
-data "aws_kms_key" "lpa_pdf_sqs" {
-  key_id = "alias/mrk_pdf_sqs_encryption_key-${var.account_name}"
-}
-
 data "aws_security_group" "new_front_cache_region" {
   filter {
     name   = "group-name"
@@ -19,10 +15,6 @@ data "aws_s3_bucket" "access_log" {
 
 data "aws_s3_bucket" "lpa_pdf_cache" {
   bucket = lower("online-lpa-pdf-cache-${var.account_name}-${var.region_name}")
-}
-
-data "aws_kms_key" "lpa_pdf_cache" {
-  key_id = "alias/lpa_pdf_cache-${var.account_name}"
 }
 
 data "aws_acm_certificate" "certificate_front" {

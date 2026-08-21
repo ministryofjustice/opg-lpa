@@ -80,7 +80,7 @@ Then(`I am signed in with my new Make account`, () => {
 });
 
 const ONELOGIN_LINK_ACCOUNTS = {
-  seeded: 'seeded_email',
+  link: 'onelogin_link_email',
   retry: 'onelogin_retry_email',
   forgot: 'onelogin_forgot_email',
 };

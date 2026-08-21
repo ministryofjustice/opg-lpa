@@ -14,6 +14,7 @@ use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
 
@@ -649,6 +650,10 @@ return [
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
             'OneLoginPsr16Cache' => static function (): Psr16Cache {
+                if (ApcuAdapter::isSupported()) {
+                    return new Psr16Cache(new ApcuAdapter('onelogin'));
+                }
+
                 return new Psr16Cache(new ArrayAdapter());
             },
 
