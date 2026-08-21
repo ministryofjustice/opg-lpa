@@ -218,7 +218,37 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             return null;
         }
 
+        if (!$this->passwordResetTokenIsLive($user['password_reset_token'] ?? null)) {
+            return null;
+        }
+
         return new UserModel($user);
+    }
+
+    /**
+     * True only if the stored reset token carries an expiry which is still in the
+     * future.
+     */
+    private function passwordResetTokenIsLive(mixed $tokenJson): bool
+    {
+        if (!is_string($tokenJson)) {
+            return false;
+        }
+
+        $tokenDetails = json_decode($tokenJson, true);
+        $expiresAt = is_array($tokenDetails) ? ($tokenDetails['expiresAt'] ?? null) : null;
+
+        if (!is_string($expiresAt)) {
+            return false;
+        }
+
+        try {
+            $expires = new DateTime($expiresAt);
+        } catch (Exception) {
+            return false;
+        }
+
+        return $expires > new DateTime();
     }
 
     /**

@@ -32,6 +32,8 @@ use ApplicationTest\Helpers;
 
 class UserDataTest extends MockeryTestCase
 {
+    private const string RESET_TOKEN = 'tobeornottobe';
+
     // create a PDO Result mock to test queries which use DbWrapper->select()
     // $isQueryResult: bool
     // $count: int
@@ -766,15 +768,58 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(null, $userData->getByAuthToken($token));
     }
 
+    #[DataProvider('unusableResetTokens')]
+    public function testGetByResetTokenReturnsNullForUnusableToken(mixed $storedToken): void
+    {
+        $rowData = ['id' => '111111', 'password_reset_token' => $storedToken];
+
+        $resultMock = $this->makeSelectResult(true, 1, $rowData);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertNull($userData->getByResetToken(self::RESET_TOKEN));
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function unusableResetTokens(): array
+    {
+        $token = self::RESET_TOKEN;
+
+        return [
+            'expired an hour ago' => [json_encode([
+                'token' => $token,
+                'expiresAt' => (new DateTime('-1 hour'))->format(DbWrapper::TIME_FORMAT),
+            ])],
+            'expired a day ago' => [json_encode([
+                'token' => $token,
+                'expiresAt' => (new DateTime('-1 day'))->format(DbWrapper::TIME_FORMAT),
+            ])],
+            'no expiry recorded' => [json_encode(['token' => $token])],
+            'expiry is not a string' => [json_encode(['token' => $token, 'expiresAt' => 1234567890])],
+            'expiry is unparseable' => [json_encode(['token' => $token, 'expiresAt' => 'yesterday-ish'])],
+            'column is not json' => ['not json at all'],
+            'column is json but not an object' => ['"just a string"'],
+            'column is null' => [null],
+            'column is already decoded' => [['token' => $token]],
+        ];
+    }
+
     public function testGetByResetToken(): void
     {
         $id = '111111';
-        $token = 'tobeornottobe';
+        $token = self::RESET_TOKEN;
         $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
-        $expected = new UserModel(['id' => $id]);
+        $tokenJson = json_encode([
+            'token' => $token,
+            'expiresAt' => (new DateTime('+1 day'))->format(DbWrapper::TIME_FORMAT),
+        ]);
+        $rowData = ['id' => $id, 'password_reset_token' => $tokenJson];
+        $expected = new UserModel($rowData);
 
         // mocks
-        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $resultMock = $this->makeSelectResult(true, 1, $rowData);
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
