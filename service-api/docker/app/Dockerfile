@@ -17,7 +17,7 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && docker-php-ext-install opcache \
     && docker-php-ext-install intl \
     && docker-php-ext-install sockets \
-    && install-php-extensions gmp \
+    && install-php-extensions gmp apcu \
     && rm /usr/bin/install-php-extensions
 
 COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
