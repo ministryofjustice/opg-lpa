@@ -376,12 +376,12 @@ final class UserDetailsTest extends TestCase
         $this->assertSame('invalid-token', $this->service->setNewPassword('bad', 'NewPass@1'));
     }
 
-    public function testSetNewPasswordReturnsExceptionMessageOnOtherError(): void
+    public function testSetNewPasswordReturnsApiErrorOnUnrecognisedApiFailure(): void
     {
         $this->apiClient->method('httpPost')
-            ->willThrowException($this->makeApiException(400, 'some-other-error'));
+            ->willThrowException($this->makeApiException(400, 'Malformed JSON response from server'));
 
-        $this->assertSame('some-other-error', $this->service->setNewPassword('tok', 'NewPass@1'));
+        $this->assertSame('api-error', $this->service->setNewPassword('tok', 'NewPass@1'));
     }
 
     // -------------------------------------------------------------------------
@@ -791,11 +791,11 @@ final class UserDetailsTest extends TestCase
         $this->assertTrue($this->service->updatePassword('oldPass', 'newPass'));
     }
 
-    public function testSetNewPasswordReturnsUnknownErrorWhenApiReturnsUnexpectedPayload(): void
+    public function testSetNewPasswordReturnsApiErrorWhenApiReturnsUnexpectedPayload(): void
     {
         $this->apiClient->method('httpPost')->willReturn(['unexpected' => true]);
 
-        $this->assertSame('unknown-error', $this->service->setNewPassword('token', 'NewPass@1'));
+        $this->assertSame('api-error', $this->service->setNewPassword('token', 'NewPass@1'));
     }
 
     public function testRegisterAccountReturnsFailedSendingEmailWhenActivationMailFails(): void

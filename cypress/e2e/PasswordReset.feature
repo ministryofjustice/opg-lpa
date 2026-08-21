@@ -134,6 +134,10 @@ Feature: PasswordReset
     When I visit link containing "Get a new link"
     Then I am taken to "/forgot-password"
 
+    When I visit "/forgot-password/reset/"
+    Then I see "That password link does not work" in the title
+    And I see "changed the link" in the page text
+
   @PasswordReset
   Scenario: The reset screen lets me reveal my password instead of confirming it (LPAL-2289)
     Given I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa"

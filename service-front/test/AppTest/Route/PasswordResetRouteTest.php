@@ -83,6 +83,25 @@ class PasswordResetRouteTest extends TestCase
         return $cases;
     }
 
+    #[DataProvider('truncatedResetLinks')]
+    public function testTruncatedResetLinkStillReachesTheResetHandler(string $path, ?string $expectedToken): void
+    {
+        $result = $this->match('GET', 'http://localhost' . $path);
+
+        $this->assertTrue($result->isSuccess(), "Expected {$path} to match");
+        $this->assertSame(self::ROUTE_NAME, $result->getMatchedRouteName());
+        $this->assertSame($expectedToken, $result->getMatchedParams()['token'] ?? null);
+    }
+
+    /** @return array<string, array{string, ?string}> */
+    public static function truncatedResetLinks(): array
+    {
+        return [
+            'token stripped, slash kept' => ['/forgot-password/reset/', ''],
+            'token and slash stripped'   => ['/forgot-password/reset', null],
+        ];
+    }
+
     public function testTokenContainingNewlinesDoesNotMatch(): void
     {
         $result = $this->match('GET', self::RESET_PATH . 'aaaaaaaaaaaaaaaaaaaa%0d%0aSet-Cookie:evil=1');
@@ -97,7 +116,7 @@ class PasswordResetRouteTest extends TestCase
         $this->assertSame('aaaaaaaaaaaaaaaaaaaa.', $result->getMatchedParams()['token'] ?? null);
     }
 
-    public function testGeneratingTheEmailedLinkRejectsATokenContainingNewlines(): void
+    public function testGeneratingTheEmailedLinkRejectsATokenContainingCarriageReturns(): void
     {
         $this->assertSame(
             '/forgot-password/reset/abc123',

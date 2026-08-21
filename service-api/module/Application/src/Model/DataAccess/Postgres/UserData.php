@@ -218,10 +218,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             return null;
         }
 
-        // A reset token is only good for Password\Service::TOKEN_TTL (24 hours) from
-        // being issued. An expired token is treated exactly as one that does not
-        // exist, so callers report 'invalid-token' and the user is sent to the
-        // "that password link does not work" page without any further mapping.
         if (!$this->passwordResetTokenIsLive($user['password_reset_token'] ?? null)) {
             return null;
         }
@@ -233,7 +229,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * True only if the stored reset token carries an expiry which is still in the
      * future.
      */
-    private function passwordResetTokenIsLive(?string $tokenJson): bool
+    private function passwordResetTokenIsLive(mixed $tokenJson): bool
     {
         if (!is_string($tokenJson)) {
             return false;

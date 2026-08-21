@@ -479,12 +479,12 @@ class UserDetails implements ApiClientAwareInterface
 
             if ($ex->getMessage() === 'Invalid passwordToken') {
                 return 'invalid-token';
-            } elseif ($ex->getMessage() != null) {
-                return trim($ex->getMessage());
             }
+
+            return 'api-error';
         }
 
-        return 'unknown-error';
+        return 'api-error';
     }
 
     public function registerAccount(
