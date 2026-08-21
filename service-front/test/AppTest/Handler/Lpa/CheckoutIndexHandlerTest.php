@@ -6,19 +6,13 @@ namespace AppTest\Handler\Lpa;
 
 use App\Handler\Lpa\CheckoutIndexHandler;
 use App\Middleware\RequestAttribute;
-use App\Model\FormFlowChecker;
-use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
 use App\Service\Payment\CardPayments;
-use App\Service\Payment\GovPay\Client as GovPayClient;
-use App\Service\Payment\GovPay\Exception\PayException;
-use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
+use App\Service\Payment\Helper\CheckoutHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\FormElementManager;
-use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
@@ -27,87 +21,52 @@ use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Log\LoggerInterface;
 
 class CheckoutIndexHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
-    private LpaApplicationService&MockObject $lpaApplicationService;
-    private Communication&MockObject $communicationService;
     private UrlHelper&MockObject $urlHelper;
-    private GovPayClient&MockObject $paymentClient;
-    private LoggerInterface&MockObject $logger;
+    private CheckoutHelper&MockObject $checkoutHelper;
+    private CardPayments&MockObject $cardPayments;
     private CheckoutIndexHandler $handler;
 
     protected function setUp(): void
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
-        $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->communicationService = $this->createMock(Communication::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-
-        $this->paymentClient = $this->createMock(GovPayClient::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
+        $this->cardPayments = $this->createMock(CardPayments::class);
 
         $this->handler = new CheckoutIndexHandler(
             $this->renderer,
             $this->formElementManager,
-            $this->lpaApplicationService,
-            $this->communicationService,
             $this->urlHelper,
-            new CardPayments(
-                $this->paymentClient,
-                $this->lpaApplicationService,
-                $this->logger,
-            ),
+            $this->cardPayments,
+            $this->checkoutHelper,
         );
     }
 
     private function createCompleteLpa(): Lpa
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->payment = new Payment();
+        $lpa->setPayment(new Payment());
         Calculator::calculate($lpa);
-
         return $lpa;
     }
 
-    private function createStrandedPaymentLpa(): Lpa
+    private function createRepeatApplicationLpa(): Lpa
     {
         $lpa = $this->createCompleteLpa();
-
-        $lpa->payment->gatewayReference = 'pay-ref-123';
-        $lpa->locked      = false;
-        $lpa->lockedAt    = null;
-        $lpa->completedAt = null;
-
+        $lpa->setRepeatCaseNumber(123456);
         return $lpa;
     }
 
-    private function createIncompleteLpa(): Lpa
+    private function createRequest(string $method, Lpa $lpa): ServerRequest
     {
-        $lpa = new Lpa();
-        $lpa->id = 91333263035;
-        $lpa->document = new Document();
-        $lpa->payment = new Payment();
-
-        return $lpa;
-    }
-
-    private function createRequest(
-        string $method,
-        Lpa $lpa,
-        bool $lpaComplete = true,
-    ): ServerRequest {
-        $flowChecker = $this->createMock(FormFlowChecker::class);
-        $flowChecker->method('backToForm')->willReturn($lpaComplete ? 'lpa/checkout' : 'lpa/other');
-        $flowChecker->method('getRouteOptions')->willReturn([]);
-
-        $request = (new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->id . '/checkout', $method))
+        $request = new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->getId() . '/checkout', $method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
-            ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/checkout');
 
         if ($method === 'POST') {
@@ -117,7 +76,7 @@ class CheckoutIndexHandlerTest extends TestCase
         return $request;
     }
 
-    private function mockBlankForm(): void
+    private function mockForm(): MockObject
     {
         $submitElement = $this->createMock(Submit::class);
         $submitElement->method('setAttribute')->willReturnSelf();
@@ -126,156 +85,196 @@ class CheckoutIndexHandlerTest extends TestCase
         $form->method('setAttribute')->willReturnSelf();
         $form->method('get')->with('submit')->willReturn($submitElement);
 
-        $this->formElementManager->method('get')->willReturn($form);
+        $this->formElementManager->method('get')
+            ->with('App\Form\Lpa\BlankMainFlowForm', $this->anything())
+            ->willReturn($form);
+
+        return $form;
     }
 
-    public function testGetRendersForm(): void
+    public function testRecoveredPaymentRedirectsToFinishCheckout(): void
     {
         $lpa = $this->createCompleteLpa();
-        $this->mockBlankForm();
+        $finishResponse = new RedirectResponse('/lpa/123/complete');
 
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->with('application/authenticated/lpa/checkout/index.twig')
-            ->willReturn('html');
-
-        $response = $this->handler->handle($this->createRequest('GET', $lpa));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    public function testGetWithIncompleteLpaStillRendersForm(): void
-    {
-        $lpa = $this->createIncompleteLpa();
-        $this->mockBlankForm();
-
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->willReturn('html');
-
-        $response = $this->handler->handle($this->createRequest('GET', $lpa, false));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    public function testPostWithIncompleteLpaRedirectsToMoreInfoRequired(): void
-    {
-        $lpa = $this->createIncompleteLpa();
-
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/more-info-required', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/91333263035/more-info-required');
-
-        $response = $this->handler->handle($this->createRequest('POST', $lpa, false));
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('more-info-required', $response->getHeaderLine('location'));
-    }
-
-    public function testPostWithCompleteLpaRendersForm(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $this->mockBlankForm();
-
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->willReturn('html');
-
-        $response = $this->handler->handle($this->createRequest('POST', $lpa));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    public function testGovPayIsNotContactedForAnLpaWithNoPaymentInFlight(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $this->mockBlankForm();
-
-        $this->paymentClient->expects($this->never())->method('getPayment');
-
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->method('render')->willReturn('html');
-
-        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
-    }
-
-    public function testAStrandedPaymentIsRecoveredAndTheUserIsSentToTheCompletedLpa(): void
-    {
-        $lpa = $this->createStrandedPaymentLpa();
-
-        $this->paymentClient->expects($this->once())
-            ->method('getPayment')
-            ->with('pay-ref-123')
-            ->willReturn(new GovPayPayment((array) json_decode((string) json_encode([
-                'payment_id' => 'pay-ref-123',
-                'reference'  => 'A12345678901', // pragma: allowlist secret
-                'email'      => 'payer@example.org',
-                'state'      => ['status' => 'success', 'finished' => true],
-            ]))));
-
-        $this->lpaApplicationService->expects($this->once())
-            ->method('updateApplication')
-            ->willReturn($lpa);
-
-        $this->lpaApplicationService->expects($this->once())
-            ->method('lockLpa')
+        $this->cardPayments->expects($this->once())
+            ->method('recoverCompletedPayment')
             ->with($lpa)
             ->willReturn(true);
 
-        $this->communicationService->expects($this->once())
-            ->method('sendRegistrationCompleteEmail')
-            ->with($lpa)
-            ->willReturn(true);
-
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/complete', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->checkoutHelper->expects($this->once())
+            ->method('finishCheckout')
+            ->with($lpa, $this->isInstanceOf(ServerRequest::class))
+            ->willReturn($finishResponse);
 
         $this->renderer->expects($this->never())->method('render');
 
         $response = $this->handler->handle($this->createRequest('GET', $lpa));
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/lpa/' . $lpa->id . '/complete', $response->getHeaderLine('location'));
+        $this->assertSame($finishResponse, $response);
     }
 
-    public function testAnUnpaidGatewayReferenceStillShowsTheCheckoutPage(): void
+    public function testPostWithIncompleteLpaRedirectsToMoreInfoRequired(): void
     {
-        $lpa = $this->createStrandedPaymentLpa();
-        $this->mockBlankForm();
+        $lpa = $this->createCompleteLpa();
+        $redirectResponse = new RedirectResponse('/lpa/123/more-info-required');
 
-        $this->paymentClient->expects($this->once())
-            ->method('getPayment')
-            ->willReturn(new GovPayPayment((array) json_decode((string) json_encode([
-                'payment_id' => 'pay-ref-123',
-                'state'      => ['status' => 'created', 'finished' => false],
-            ]))));
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
+        $this->checkoutHelper->expects($this->once())
+            ->method('redirectToMoreInfoRequired')
+            ->with($lpa, $this->isInstanceOf(ServerRequest::class))
+            ->willReturn($redirectResponse);
 
-        $this->lpaApplicationService->expects($this->never())->method('updateApplication');
-        $this->lpaApplicationService->expects($this->never())->method('lockLpa');
+        $this->renderer->expects($this->never())->method('render');
 
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())->method('render')->willReturn('html');
-
-        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa));
+        $this->assertSame($redirectResponse, $response);
     }
 
-    public function testAnUnreachableGovPayStillShowsTheCheckoutPage(): void
+    public function testGetRendersCheckoutForm(): void
     {
-        $lpa = $this->createStrandedPaymentLpa();
-        $this->mockBlankForm();
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
 
-        $this->paymentClient->method('getPayment')
-            ->willThrowException(new PayException('GOV.UK Pay unreachable', 503));
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with('application/authenticated/lpa/checkout/index.twig', $this->anything())
+            ->willReturn('html');
 
-        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())->method('render')->willReturn('html');
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
 
-        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest('GET', $lpa)));
+    public function testPostWithCompleteLpaRendersCheckoutForm(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with('application/authenticated/lpa/checkout/index.twig', $this->anything())
+            ->willReturn('html');
+
+        $response = $this->handler->handle($this->createRequest('POST', $lpa));
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testFormIsConfiguredWithCorrectActionAndClass(): void
+    {
+        $lpa = $this->createCompleteLpa();
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+        $this->renderer->method('render')->willReturn('html');
+
+        $formSetAttributes = [];
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnCallback(
+            function ($key, $value) use (&$formSetAttributes, $form) {
+                $formSetAttributes[] = [$key, $value];
+                return $form;
+            }
+        );
+
+        $submitSetAttributes = [];
+        $submitElement = $this->createMock(Submit::class);
+        $submitElement->method('setAttribute')->willReturnCallback(
+            function ($key, $value) use (&$submitSetAttributes, $submitElement) {
+                $submitSetAttributes[] = [$key, $value];
+                return $submitElement;
+            }
+        );
+
+        $form->method('get')->with('submit')->willReturn($submitElement);
+
+        $this->formElementManager->method('get')
+            ->with('App\Form\Lpa\BlankMainFlowForm', $this->anything())
+            ->willReturn($form);
+
+        $this->handler->handle($this->createRequest('GET', $lpa));
+
+        $this->assertContains(['action', '/lpa/123/checkout/pay'], $formSetAttributes);
+        $this->assertContains(['class', 'js-single-use'], $formSetAttributes);
+        $this->assertContains(['value', 'Confirm and pay by card'], $submitSetAttributes);
+        $this->assertContains(['data-cy', 'confirm-and-pay-by-card'], $submitSetAttributes);
+    }
+
+    public function testNonRepeatApplicationFeesArePassed(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/lpa/checkout/index.twig',
+                $this->callback(function ($data) {
+                    $this->assertSame(Calculator::getLowIncomeFee(false), $data['lowIncomeFee']);
+                    $this->assertSame(Calculator::getFullFee(false), $data['fullFee']);
+                    return true;
+                })
+            )
+            ->willReturn('html');
+
+        $this->handler->handle($this->createRequest('GET', $lpa));
+    }
+
+    public function testRepeatApplicationFeesArePassed(): void
+    {
+        $lpa = $this->createRepeatApplicationLpa();
+        $this->mockForm();
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/lpa/checkout/index.twig',
+                $this->callback(function ($data) {
+                    $this->assertSame(Calculator::getLowIncomeFee(true), $data['lowIncomeFee']);
+                    $this->assertSame(Calculator::getFullFee(true), $data['fullFee']);
+                    return true;
+                })
+            )
+            ->willReturn('html');
+
+        $this->handler->handle($this->createRequest('GET', $lpa));
+    }
+
+    public function testTemplateVariablesIncludeLpaCompletionStatus(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/lpa/checkout/index.twig',
+                $this->callback(function ($data) {
+                    $this->assertArrayHasKey('lpaIsCompleted', $data);
+                    $this->assertTrue($data['lpaIsCompleted']);
+                    return true;
+                })
+            )
+            ->willReturn('html');
+
+        $this->handler->handle($this->createRequest('GET', $lpa));
     }
 }

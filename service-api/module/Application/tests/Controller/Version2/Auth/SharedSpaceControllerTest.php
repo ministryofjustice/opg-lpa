@@ -172,6 +172,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
     {
         $userId = 'user1';
         $sharedSpaceId = 'shared-space-1';
+        $sharedSpaceName = 'My space';
         $lpa = FixturesData::getHwLpa();
 
         $this->withParams()->shouldReceive('fromQuery')
@@ -184,6 +185,9 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn($paginator)
             ->once();
 
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->andReturn($sharedSpaceName);
+
         $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
         $result = $this->controller->lpasAction();
 
@@ -193,6 +197,25 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $this->assertEquals(1, $body['total']);
         $this->assertCount(1, $body['applications']);
+        $this->assertEquals($sharedSpaceName, $body['name']);
+    }
+
+    public function testLpasActionWhenSpaceHasNoName()
+    {
+        $userId = 'user1';
+        $sharedSpaceId = 'shared-space-1';
+
+        $this->withParams()->shouldReceive('fromQuery')
+            ->andReturn(['page' => 1, 'perPage' => 50]);
+
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->andReturn(null);
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
+        $result = $this->controller->lpasAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(404, $result->toArray()['status']);
     }
 
     public function testLpasActionDeniedWhenNotInSharedSpace()

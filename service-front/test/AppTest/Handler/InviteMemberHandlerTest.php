@@ -107,6 +107,6 @@ class InviteMemberHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/shared-space/manage?invite=sent', $location);
+        $this->assertEquals('/shared-space?invite=sent', $location);
     }
 }

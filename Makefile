@@ -78,6 +78,12 @@ front-composer-remove:
 front-composer-outdated:
 	@docker compose run --rm composer-front outdated
 
+# use make front-composer-why PACKAGE=symfony\/validator
+# you'll need to escape the \ and : as above
+.PHONY: front-composer-why
+front-composer-why:
+	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
+
 # Usage: make api-composer-require PACKAGE=vendor\/package
 # For a version constraint: make api-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: api-composer-require
@@ -100,11 +106,29 @@ api-composer-remove:
 api-composer-outdated:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
-# use make api-composer-why PACKAGE=symfony\/validator\:v5.4.43
+# use make api-composer-why PACKAGE=symfony\/validator
 # you'll need to escape the \ and : as above
 .PHONY: api-composer-why
 api-composer-why:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
+
+# use make pdf-composer-update PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: pdf-composer-update
+pdf-composer-update:
+	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+
+# use make pdf-composer-why PACKAGE=symfony\/validator
+# you'll need to escape the \ and : as above
+.PHONY: pdf-composer-why
+pdf-composer-why:
+	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
+
+# use make admin-composer-update PACKAGE=symfony\/validator\:v5.4.43
+# you'll need to escape the \ and : as above
+.PHONY: admin-composer-update
+admin-composer-update:
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
 
 .PHONY: dc-up
 dc-up: all-composer-install ecrlogin

@@ -32,6 +32,7 @@ final class CommunicationTest extends MockeryTestCase
     private UserDetailsHolder $userDetailsHolder;
     private ?string $originalHttps;
     private ?string $originalHost;
+    private ?MailParameters $capturedParams = null;
 
     public function setUp(): void
     {
@@ -117,12 +118,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentNoPersonToNotify(): void
@@ -160,12 +161,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsButWithPersonToNotify(): void
@@ -212,12 +213,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentReceivesBenefitsNoPersonToNotify(): void
@@ -255,12 +256,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesButWithPersonToNotify(): void
@@ -307,12 +308,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentAwardedDamagesNoPersonToNotify(): void
@@ -350,12 +351,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditButWithPersonToNotify(): void
@@ -402,12 +403,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithoutPaymentUniversalCreditNoPersonToNotify(): void
@@ -445,12 +446,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with($this->equalTo($expectedMailParams));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithOnlinePaymentAndPersonToNotify(): void
@@ -502,15 +503,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithOnlinePaymentNoPersonToNotify(): void
@@ -552,15 +550,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithReducedOnlinePaymentAndPersonToNotify(): void
@@ -612,15 +607,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithReducedOnlinePaymentNoPersonToNotify(): void
@@ -663,15 +655,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithChequePaymentAndPersonToNotify(): void
@@ -717,15 +706,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithChequePaymentNoPersonToNotify(): void
@@ -761,15 +747,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithReducedChequePaymentAndPersonToNotify(): void
@@ -815,15 +798,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailWithReducedChequePaymentNoPersonToNotify(): void
@@ -861,15 +841,12 @@ final class CommunicationTest extends MockeryTestCase
             ]
         );
 
-        $this->mailTransport->shouldReceive('send')
-            ->with(Mockery::on(function ($actualMailParams) use ($expectedMailParams): true {
-                $this->assertEquals($expectedMailParams, $actualMailParams);
-                return true;
-            }));
+        $this->setupEmailParamsExpectations();
 
         $result = $this->service->sendRegistrationCompleteEmail($lpa);
 
         $this->assertTrue($result);
+        $this->assertMailParamsEqual($expectedMailParams);
     }
 
     public function testSendRegistrationCompleteEmailSendFails(): void
@@ -893,5 +870,30 @@ final class CommunicationTest extends MockeryTestCase
 
         // Should see the exception converted into failure message
         $this->assertEquals('failed-sending-email', $result);
+    }
+
+    private function setupEmailParamsExpectations(): void
+    {
+        $this->capturedParams = null;
+        $this->mailTransport
+            ->shouldReceive('send')
+            ->once()
+            ->with(Mockery::on(function (MailParameters $actual) {
+                $this->capturedParams = $actual;
+
+                return true;
+            }));
+    }
+
+    private function assertMailParamsEqual(MailParameters $actual): void
+    {
+        $capturedData = $this->capturedParams->getData();
+        ksort($capturedData);
+        $actualData = $actual->getData();
+        ksort($actualData);
+
+        $this->assertSame($this->capturedParams->getToAddresses(), $actual->getToAddresses());
+        $this->assertSame($this->capturedParams->getTemplateRef(), $actual->getTemplateRef());
+        $this->assertSame($capturedData, $actualData);
     }
 }

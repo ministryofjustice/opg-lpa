@@ -46,6 +46,21 @@ class SharedSpaceService
         return $result['sharedSpaceId'] ?? null;
     }
 
+    public function get(): mixed
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space');
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve shared space failed', [
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        return $result;
+    }
+
     public function getMember(string $memberUserId): ?array
     {
         try {

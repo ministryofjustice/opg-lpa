@@ -41,7 +41,7 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
         // "signed-in user is not an admin" - either way, redirect back.
         $member = $this->sharedSpaceService->getMember($memberId);
         if ($member === null) {
-            return new RedirectResponse('/shared-space/manage');
+            return new RedirectResponse('/shared-space');
         }
 
         /** @var FormInterface $form */
@@ -64,7 +64,7 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
                 $status = $form->get('status');
 
                 if ($this->sharedSpaceService->updateMember($memberId, $permissions->isChecked(), $status->getValue() === 'active')) {
-                    return new RedirectResponse('/shared-space/manage');
+                    return new RedirectResponse('/shared-space');
                 }
 
                 $error = 'Failed to update member. Please try again.';

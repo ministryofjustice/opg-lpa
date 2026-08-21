@@ -7,6 +7,7 @@ namespace App\Service\ApiClient;
 use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use MakeShared\Telemetry\Tracer;
 
 class ApiClientFactory
 {
@@ -15,11 +16,13 @@ class ApiClientFactory
         $config = $container->get('config');
         $apiUri = $config['api_client']['api_uri'] ?? '';
 
+        $tracer = $container->get(Tracer::class);
+
         return new Client(
             new GuzzleClient(),
             (string) $apiUri,
             [],
-            null,
+            $tracer,
             $container->get(LoggerInterface::class),
         );
     }

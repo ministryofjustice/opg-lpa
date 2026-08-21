@@ -97,7 +97,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('unknown-member'));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testGetRequestRedirectsWhenSignedInUserIsNotAdmin(): void
@@ -111,7 +111,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('member-1'));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testPostValidDataUpdatesMemberAndRedirects(): void
@@ -148,7 +148,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testPostWithoutPermissionsKeyTreatsMemberAsNotAdmin(): void
@@ -184,7 +184,7 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space/manage', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testPostWhenUpdateFailsShowsError(): void

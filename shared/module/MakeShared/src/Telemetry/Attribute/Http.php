@@ -7,16 +7,15 @@ namespace MakeShared\Telemetry\Attribute;
 use JsonSerializable;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\RequestInterface;
 
 class Http implements JsonSerializable
 {
-    private Request $request;
-    private Response $response;
-
-    public function __construct(Request $request, Response $response)
-    {
-        $this->request = $request;
-        $this->response = $response;
+    public function __construct(
+        private readonly Request|RequestInterface $request,
+        private readonly Response|ResponseInterface $response
+    ) {
     }
 
     public function jsonSerialize(): mixed

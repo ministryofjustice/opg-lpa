@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Handler\AboutSharedSpacesHandler;
 use App\Handler\AboutYouHandler;
 use App\Handler\AccessibilityHandler;
 use App\Handler\CannotLinkAccountHandler;
@@ -88,7 +87,6 @@ use App\Handler\Lpa\WhenLpaStartsHandler;
 use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
 use App\Handler\MakeSharedSpaceHandler;
-use App\Handler\ManageSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginHandler;
@@ -107,6 +105,7 @@ use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
 use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
+use App\Handler\SharedSpaceHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
@@ -195,12 +194,11 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->get('/shared-space/about', AboutSharedSpacesHandler::class, 'shared-space.about');
+        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
         $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
-        $app->get('/shared-space/manage', ManageSharedSpaceHandler::class, 'shared-space.manage');
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
             ManageSharedSpaceMemberHandler::class,

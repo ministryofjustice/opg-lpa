@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class ManageSharedSpaceHandler implements RequestHandlerInterface
+class SharedSpaceHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
@@ -30,6 +30,13 @@ class ManageSharedSpaceHandler implements RequestHandlerInterface
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
 
         $result = $this->sharedSpaceService->getMembersAndInvites();
+        if ($result === null) {
+            return new HtmlResponse($this->renderer->render(
+                'application/authenticated/shared-space/about.twig',
+                $this->getTemplateVariables($request),
+            ));
+        }
+
         $members = $result['members'] ?? [];
         $isAdmin = false;
 
