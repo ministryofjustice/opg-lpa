@@ -117,7 +117,12 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return new RedirectResponse('/user/dashboard');
             }
 
-            // Account not yet linked: stash sub+email so the link/create-account page can use them.
+            $session->clear();
+
+            if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+                $session->set(self::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
+            }
+
             $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
 
             return new RedirectResponse('/link-or-create-account');
