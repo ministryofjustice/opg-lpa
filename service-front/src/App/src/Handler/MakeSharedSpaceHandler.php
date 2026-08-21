@@ -49,7 +49,7 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
                 if ($sharedSpaceId !== null) {
                     $this->authenticationService->refreshSharedSpaceId($sharedSpaceId);
 
-                    return new RedirectResponse('/shared-space/created');
+                    return new RedirectResponse('/shared-space/created?space-name=' . urlencode($form->get('space-name')->getValue()));
                 }
 
                 $error = 'Failed to create shared space. Please try again.';

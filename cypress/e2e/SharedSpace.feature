@@ -14,6 +14,7 @@ Feature: Shared Space
     When I type "Example Organisation" into "space-name"
     When I click element marked "Create shared space"
     Then I should be on "/shared-space/created"
+    And I see a success notification with content "Example Organisation has been successfully created"
     When I click element marked "Continue"
     Then I should be on "/shared-space/dashboard"
     And there are "five" 'LPA' elements on the page
