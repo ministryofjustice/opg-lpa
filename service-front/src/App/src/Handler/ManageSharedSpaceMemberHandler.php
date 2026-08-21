@@ -63,7 +63,13 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
                 /** @var Radio $status */
                 $status = $form->get('status');
 
-                if ($this->sharedSpaceService->updateMember($memberId, $permissions->isChecked(), $status->getValue() === 'active')) {
+                if (
+                    $this->sharedSpaceService->updateMember(
+                        $member,
+                        $permissions->isChecked(),
+                        $status->getValue() === 'active'
+                    )
+                ) {
                     return new RedirectResponse('/shared-space');
                 }
 
@@ -72,11 +78,11 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
         } else {
             /** @var Checkbox $permissions */
             $permissions = $form->get('permissions');
-            $permissions->setChecked($member['isAdmin']);
+            $permissions->setChecked($member->isAdmin());
 
             /** @var Radio $status */
             $status = $form->get('status');
-            $status->setValue($member['isActive'] ? 'active' : 'inactive');
+            $status->setValue($member->isActive() ? 'active' : 'inactive');
         }
 
         return new HtmlResponse($this->renderer->render(

@@ -10,6 +10,7 @@ use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -73,9 +74,9 @@ class SharedSpaceHandlerTest extends TestCase
     {
         $response = [
             'members' => [
-                ['id' => 'a-user', 'isAdmin' => false],
-                ['id' => 'my-user', 'isAdmin' => $isAdmin],
-                ['id' => 'another-user', 'isAdmin' => false],
+                new SharedSpaceMember(['userId' => 'a-user', 'isAdmin' => false]),
+                new SharedSpaceMember(['userId' => 'my-user', 'isAdmin' => $isAdmin]),
+                new SharedSpaceMember(['userId' => 'another-user', 'isAdmin' => false]),
             ],
             'invites' => ['a' => 'b'],
         ];

@@ -104,13 +104,13 @@
               {% for member in members %}
                 <tr class="govuk-table__row">
                   <td class="govuk-table__cell">
-                    {% if member.id === signedInUser.id %}
+                    {% if member.userId === signedInUser.id %}
                       <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
                         {{ member.name.first }} {{ member.name.last }}
                       </a> (you)
                     {% else %}
                         {% if signedInUserIsAdmin %}
-                          <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.id) }}">
+                          <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.userId) }}">
                             {{ member.name.first }} {{ member.name.last }}
                           </a>
                         {% else %}
@@ -123,7 +123,7 @@
                       <strong class="govuk-tag govuk-tag--green">Admin</strong>
                     {% endif %}
                   </td>
-                  <td class="govuk-table__cell">{{ member.email.address }}</td>
+                  <td class="govuk-table__cell">{{ member.email }}</td>
                   <td class="govuk-table__cell">
                     {% if member.isActive %}
                       Active

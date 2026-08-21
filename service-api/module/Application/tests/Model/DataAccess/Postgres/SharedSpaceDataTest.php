@@ -17,6 +17,7 @@ use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PDOException;
@@ -288,6 +289,253 @@ class SharedSpaceDataTest extends MockeryTestCase
         // assertions
         $expected = ($isQueryResult && $count === 1) ? $sharedSpaceId : null;
         $this->assertSame($expected, $actual);
+    }
+
+    public function testGetMember(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $memberUserId = 'user-1';
+
+        $row = [
+            'name'            => 'My Space',
+            'userId'          => $memberUserId,
+            'first_name'      => 'Jane',
+            'last_name'       => 'Doe',
+            'title'           => 'Mrs',
+            'isAdmin'         => true,
+            'isActive'        => true,
+            'created'         => '2024-01-01T00:00:00.000Z',
+            'last_login'      => '2024-01-02T00:00:00.000Z',
+            'one_login_email' => 'jane@example.com',
+            'identity'        => 'jane@example.com',
+        ];
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(1);
+        $resultMock->shouldReceive('current')->andReturn($row);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->with(['members' => SharedSpaceData::SHARED_SPACE_MEMBERS])->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->with(['sharedSpaceId' => $sharedSpaceId, 'userId' => $memberUserId])->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->with(['id', 'userId', 'isAdmin', 'isActive', 'created'])->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')->with(1)->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->with($selectMock)->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getMember($sharedSpaceId, $memberUserId);
+
+        $expected = new SharedSpaceMember([
+            'sharedSpaceName' => $row['name'],
+            'sharedSpaceId'   => $sharedSpaceId,
+            'userId'          => $row['userId'],
+            'name'            => ['first' => 'Jane', 'last' => 'Doe', 'title' => 'Mrs'],
+            'isAdmin'         => true,
+            'isActive'        => true,
+            'createdAt'       => $row['created'],
+            'lastLoginAt'     => $row['last_login'],
+            'email'           => $row['one_login_email'],
+        ]);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    #[DataProvider('noResultsProvider')]
+    public function testGetMemberWhenNoResults(bool $isQueryResult, int $count): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $memberUserId = 'user-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')->andReturn($count);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getMember($sharedSpaceId, $memberUserId);
+
+        $this->assertNull($actual);
+    }
+
+    public function testGetMemberRethrowsInvalidQueryException(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+        $memberUserId = 'user-1';
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andThrow(
+            new InvalidQueryException('something wrong', 1, new PDOException('unique constraint violation', 23505))
+        );
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InvalidQueryException::class);
+
+        $sharedSpaceData->getMember($sharedSpaceId, $memberUserId);
+    }
+
+    public function testGetMembers(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $row = [
+            'name'            => 'My Space',
+            'userId'          => 'user-1',
+            'first_name'      => 'Jane',
+            'last_name'       => 'Doe',
+            'title'           => 'Mrs',
+            'isAdmin'         => false,
+            'isActive'        => true,
+            'created'         => '2024-01-01T00:00:00.000Z',
+            'last_login'      => '2024-01-02T00:00:00.000Z',
+            'one_login_email' => 'jane@example.com',
+            'identity'        => 'jane@example.com',
+        ];
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturnValues([true, false]);
+        $resultMock->shouldReceive('current')->andReturn($row);
+        $resultMock->shouldReceive('key')->andReturn(0);
+        $resultMock->shouldReceive('next');
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->with(['members' => SharedSpaceData::SHARED_SPACE_MEMBERS])->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->with(['sharedSpaceId' => $sharedSpaceId])->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->with(['id', 'userId', 'isAdmin', 'isActive', 'created'])->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->with($selectMock)->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getMembers($sharedSpaceId);
+
+        $expected = new SharedSpaceMember([
+            'sharedSpaceName' => $row['name'],
+            'sharedSpaceId'   => $sharedSpaceId,
+            'userId'          => $row['userId'],
+            'name'            => ['first' => 'Jane', 'last' => 'Doe', 'title' => 'Mrs'],
+            'isAdmin'         => false,
+            'isActive'        => true,
+            'createdAt'       => $row['created'],
+            'lastLoginAt'     => $row['last_login'],
+            'email'           => $row['one_login_email'],
+        ]);
+
+        $this->assertEquals([$expected], $actual);
+    }
+
+    public function testGetMembersWhenNoResults(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturn(false);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getMembers($sharedSpaceId);
+
+        $this->assertEmpty($actual);
+    }
+
+    public function testGetMembersRethrowsInvalidQueryException(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')->andReturn($selectMock);
+        $selectMock->shouldReceive('join')->andReturn($selectMock);
+        $selectMock->shouldReceive('where')->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')->andReturn($selectMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('getSql')->andReturn('SQL');
+        $statementMock->shouldReceive('execute')->andThrow(
+            new InvalidQueryException('something wrong', 1, new PDOException('unique constraint violation', 23505))
+        );
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InvalidQueryException::class);
+
+        $sharedSpaceData->getMembers($sharedSpaceId);
     }
 
     public static function isAdminDataProvider(): array
