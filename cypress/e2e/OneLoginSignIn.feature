@@ -35,7 +35,7 @@ Feature: One Login Sign In
     And I choose to link an existing Make account
     And I submit the form
     And I should be on "/link-account"
-    And I link the "seeded" Make account
+    And I link the "link" Make account
     And I am taken to the dashboard page
 
   @RequiresMockOneLogin
