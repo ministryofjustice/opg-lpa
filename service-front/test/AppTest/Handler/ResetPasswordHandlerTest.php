@@ -18,6 +18,7 @@ use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -95,6 +96,40 @@ class ResetPasswordHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest(token: 'invalid!@#'));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    #[DataProvider('mangledTokens')]
+    public function testMangledTokenShowsInvalidTokenPage(string $token): void
+    {
+        $this->session->method('has')->willReturn(false);
+
+        $this->userService->expects($this->never())->method('setNewPassword');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/invalid-reset-token.twig')
+            ->willReturn('<html>invalid</html>');
+
+        $response = $this->handler->handle($this->createRequest(token: $token));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame([], $response->getHeader('Location'));
+    }
+
+    /** @return array<string, array{string}> */
+    public static function mangledTokens(): array
+    {
+        return [
+            'trailing full stop'  => ['aaaaaaaaaaaaaaaaaaaa.'],
+            'trailing bracket'    => ['aaaaaaaaaaaaaaaaaaaa>'],
+            'trailing comma'      => ['aaaaaaaaaaaaaaaaaaaa,'],
+            'wrapped in brackets' => ['<aaaaaaaaaaaaaaaaaaaa>'],
+            'trailing whitespace' => ['aaaaaaaaaaaaaaaaaaaa '],
+            'trailing slash'      => ['aaaaaaaaaaaaaaaaaaaa/'],
+            'extra path segment'  => ['aaaaaaaaaaaaaaaaaaaa/extra'],
+            'crlf injection'      => ["aaaaaaaaaaaaaaaaaaaa\r\nSet-Cookie: evil=1"],
+        ];
     }
 
     public function testEmptyTokenShowsInvalidTokenPage(): void
