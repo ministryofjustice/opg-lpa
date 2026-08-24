@@ -10,7 +10,6 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use DateTime;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -128,46 +127,32 @@ class SharedSpaceService
             return null;
         }
 
-        $profiles = $this->userRepository->getProfiles([$memberUserId]);
-        $profile = $profiles[0] ?? null;
-
-        if ($profile === null) {
-            return null;
-        }
-
         return [
-            'id' => $profile->getId(),
-            'name' => $profile->getName(),
-            'email' => $profile->getEmail(),
-            'lastLoginAt' => $profile->getLastLoginAt(),
-            'isActive' => $member->getIsActive(),
-            'isAdmin' => $member->getIsAdmin(),
+            'sharedSpaceName' => $member->getSharedSpaceName(),
+            'userId' => $member->getUserId(),
+            'name' => $member->getName(),
+            'email' => $member->getEmail(),
+            'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+            'isActive' => $member->isActive(),
+            'isAdmin' => $member->isAdmin(),
         ];
     }
 
     public function getMembers(string $sharedSpaceId): array
     {
         $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
-        $ids = array_map(function (SharedSpaceMember $member) {
-            return $member->getUserId();
-        }, $members);
 
-        $profiles = $this->userRepository->getProfiles($ids);
-
-        return array_map(function ($profile) use ($members) {
-            $member = array_find($members, function (SharedSpaceMember $member) use ($profile) {
-                return $member->getUserId() === $profile->getId();
-            });
-
+        return array_map(function ($member) {
             return [
-                'id' => $profile->getId(),
-                'name' => $profile->getName(),
-                'email' => $profile->getEmail(),
-                'lastLoginAt' => $profile->getLastLoginAt(),
-                'isActive' => $member->getIsActive(),
-                'isAdmin' => $member->getIsAdmin(),
+                'sharedSpaceName' => $member->getSharedSpaceName(),
+                'userId' => $member->getUserId(),
+                'name' => $member->getName(),
+                'email' => $member->getEmail(),
+                'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+                'isActive' => $member->isActive(),
+                'isAdmin' => $member->isAdmin(),
             ];
-        }, $profiles);
+        }, $members);
     }
 
     public function isAdmin(string $sharedSpaceId, string $userId): bool
@@ -221,6 +206,9 @@ class SharedSpaceService
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         try {
@@ -242,6 +230,9 @@ class SharedSpaceService
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function deleteMember(string $sharedSpaceId, string $userId, string $userToDeleteId): void
     {
         $this->sharedSpaceRepository->beginTransaction();
