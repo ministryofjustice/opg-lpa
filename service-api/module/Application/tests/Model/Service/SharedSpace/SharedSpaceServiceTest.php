@@ -10,14 +10,15 @@ use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
+use Application\Model\Service\Authentication\Service;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
-use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use DateTime;
 use MakeShared\DataModel\Common\EmailAddress;
-use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use MakeShared\DataModel\Common\Name;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -31,6 +32,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
     private MockInterface|UserRepositoryInterface $userRepository;
     private MockInterface|LogRepositoryInterface $logRepository;
+    private MockInterface|Service $authenticationService;
     private MockInterface|LoggerInterface $logger;
     private SharedSpaceService $service;
 
@@ -42,6 +44,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
         $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
         $this->logRepository = Mockery::mock(LogRepositoryInterface::class);
+        $this->authenticationService = Mockery::mock(Service::class);
 
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->logger->shouldReceive('info')->byDefault();
@@ -52,6 +55,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             $this->applicationRepository,
             $this->userRepository,
             $this->logRepository,
+            $this->authenticationService,
             $this->logger,
         );
     }
@@ -572,5 +576,63 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->expectException(InviteNotFoundException::class);
         $this->service->join('my user', 'My Space', '1234');
+    }
+
+    public function testImport()
+    {
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('commit');
+
+        $this->authenticationService->shouldReceive('withPassword')
+            ->with('an-email', 'a-password', false)
+            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
+
+        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
+            ->with('import-user-id', 'space-id')
+            ->andReturn(5);
+
+        $this->userRepository->shouldReceive('delete')
+            ->with('import-user-id')
+            ->andReturn(true);
+
+        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
+        $this->assertNull($result);
+    }
+
+    public function testImportWhenAuthProblem()
+    {
+        $this->authenticationService->shouldReceive('withPassword')
+            ->with('an-email', 'a-password', false)
+            ->andReturn('a-problem');
+
+        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
+        $this->assertEquals('a-problem', $result);
+    }
+
+    public function testImportWhenUserInSharedSpace()
+    {
+        $this->authenticationService->shouldReceive('withPassword')
+            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => 'import-space-id']);
+
+        $this->expectException(UserAlreadyInSharedSpaceException::class);
+        $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
+    }
+
+    public function testImportWhenDeleteFails()
+    {
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('rollback');
+
+        $this->authenticationService->shouldReceive('withPassword')
+            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
+
+        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
+            ->andReturn(5);
+
+        $this->userRepository->shouldReceive('delete')
+            ->andReturn(false);
+
+        $this->expectException(RuntimeException::class);
+        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
     }
 }

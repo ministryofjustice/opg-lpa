@@ -106,6 +106,7 @@ use App\Handler\SessionSetExpiryHandler;
 use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
+use App\Handler\SharedSpaceImportFailedHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
@@ -194,7 +195,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
+        $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
         $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
@@ -213,6 +214,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
+        $app->get('/shared-space/import-failed', SharedSpaceImportFailedHandler::class, 'shared-space.import-failed');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {
