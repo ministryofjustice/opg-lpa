@@ -105,9 +105,6 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "app_tmp"
   }
-  volume {
-    name = "web_etc"
-  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -146,17 +143,11 @@ locals {
 locals {
 
   front_web = jsonencode({
-    cpu       = 1,
-    essential = true,
-    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
-    mountPoints = [
-      {
-        containerPath = "/etc",
-        sourceVolume  = "web_etc"
-        readOnly      = false
-      }
-    ],
-    name = "web",
+    cpu         = 1,
+    essential   = true,
+    image       = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    mountPoints = [],
+    name        = "web",
     portMappings = [
       {
         containerPort = 8080,
@@ -170,9 +161,23 @@ locals {
         condition     = "START"
       }
     ]
-    volumesFrom = [],
-    privileged  = false,
-    user        = "nginx",
+    volumesFrom            = [],
+    privileged             = false,
+    user                   = "nginx",
+    readonlyRootFilesystem = true,
+    linuxParameters = {
+      tmpfs = [
+        {
+          containerPath = "/tmp"
+          size          = 64
+        },
+        {
+          containerPath = "/etc/nginx/conf.d"
+          size          = 10
+          mountOptions  = ["uid=101", "gid=101"]
+        },
+      ]
+    },
     logConfiguration = {
       logDriver = "awslogs",
       options = {
