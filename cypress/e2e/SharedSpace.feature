@@ -12,7 +12,7 @@ Feature: Shared Space
     When I click element marked "Create shared space"
     Then I should be on "/shared-space/make"
     When I type "Example Organisation" into "space-name"
-    When I click element marked "Create shared space"
+    When I click element marked "Save"
     Then I should be on "/shared-space/created"
     When I click element marked "Continue"
     Then I should be on "/shared-space/dashboard"
