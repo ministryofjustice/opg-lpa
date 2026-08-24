@@ -32,32 +32,12 @@ reset:
 	@${MAKE} dc-build-clean
 	@${MAKE} all-composer-install
 
+# ----- Composer front ----- #
 .PHONY: front-composer-install
 front-composer-install:
 	@docker compose run -T --rm composer-front install --prefer-dist --no-interaction --no-scripts --ignore-platform-reqs
 
-.PHONY: pdf-composer-install
-pdf-composer-install:
-	@docker compose run -T --rm composer-pdf install --prefer-dist --no-interaction --no-scripts
-
-.PHONY: api-composer-install
-api-composer-install:
-	@docker compose run -T --rm composer-api install --prefer-dist --no-interaction --no-scripts
-
-.PHONY: admin-composer-install
-admin-composer-install:
-	@docker compose run -T --rm composer-admin install --prefer-dist --no-interaction --no-scripts
-
-.PHONY: shared-composer-install
-shared-composer-install:
-	@docker compose run -T --rm composer-shared install --prefer-dist --no-interaction --no-scripts
-
-.PHONY: all-composer-install
-all-composer-install:
-	${MAKE} -j front-composer-install pdf-composer-install api-composer-install admin-composer-install shared-composer-install
-
 # use make front-composer-update PACKAGE=symfony\/validator\:v5.4.43
-# you'll need to escape the \ and : as above
 .PHONY: front-composer-update
 front-composer-update:
 	@docker compose run --rm composer-front update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
@@ -79,10 +59,14 @@ front-composer-outdated:
 	@docker compose run --rm composer-front outdated
 
 # use make front-composer-why PACKAGE=symfony\/validator
-# you'll need to escape the \ and : as above
 .PHONY: front-composer-why
 front-composer-why:
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
+
+# ----- Composer api ----- #
+.PHONY: api-composer-install
+api-composer-install:
+	@docker compose run -T --rm composer-api install --prefer-dist --no-interaction --no-scripts
 
 # Usage: make api-composer-require PACKAGE=vendor\/package
 # For a version constraint: make api-composer-require PACKAGE=vendor\/package\:^1.0
@@ -91,7 +75,6 @@ api-composer-require:
 	@docker compose run --rm composer-api require $(PACKAGE)
 
 # use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
-# you'll need to escape the \ and : as above
 .PHONY: api-composer-update
 api-composer-update:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
@@ -107,28 +90,49 @@ api-composer-outdated:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer outdated
 
 # use make api-composer-why PACKAGE=symfony\/validator
-# you'll need to escape the \ and : as above
 .PHONY: api-composer-why
 api-composer-why:
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
+.PHONY: pdf-composer-install
+pdf-composer-install:
+	@docker compose run -T --rm composer-pdf install --prefer-dist --no-interaction --no-scripts
+
+# ----- Composer admin ----- #
+.PHONY: admin-composer-install
+admin-composer-install:
+	@docker compose run -T --rm composer-admin install --prefer-dist --no-interaction --no-scripts
+
+# use make admin-composer-update PACKAGE=symfony\/validator\:v5.4.43
+.PHONY: admin-composer-update
+admin-composer-update:
+	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+
+# Usage: make admin-composer-require PACKAGE=vendor\/package
+# For a version constraint: make admin-composer-require PACKAGE=vendor\/package\:^1.0
+.PHONY: admin-composer-require
+admin-composer-require:
+	@docker compose run --rm composer-admin require $(PACKAGE)
+
+# ----- Composer pdf ----- #
 # use make pdf-composer-update PACKAGE=symfony\/validator\:v5.4.43
-# you'll need to escape the \ and : as above
 .PHONY: pdf-composer-update
 pdf-composer-update:
 	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
 
 # use make pdf-composer-why PACKAGE=symfony\/validator
-# you'll need to escape the \ and : as above
 .PHONY: pdf-composer-why
 pdf-composer-why:
 	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
-# use make admin-composer-update PACKAGE=symfony\/validator\:v5.4.43
-# you'll need to escape the \ and : as above
-.PHONY: admin-composer-update
-admin-composer-update:
-	@docker run --rm -v `pwd`/service-admin/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+# ------- Composer shared ----- #
+.PHONY: shared-composer-install
+shared-composer-install:
+	@docker compose run -T --rm composer-shared install --prefer-dist --no-interaction --no-scripts
+
+.PHONY: all-composer-install
+all-composer-install:
+	${MAKE} -j front-composer-install pdf-composer-install api-composer-install admin-composer-install shared-composer-install
 
 .PHONY: dc-up
 dc-up: all-composer-install ecrlogin
