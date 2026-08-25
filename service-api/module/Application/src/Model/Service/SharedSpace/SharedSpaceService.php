@@ -10,6 +10,7 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
+use Application\Model\Service\Authentication\Service;
 use DateTime;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -25,6 +26,7 @@ class SharedSpaceService
         private readonly ApplicationRepositoryInterface $applicationRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly LogRepositoryInterface $logRepository,
+        private readonly Service $authenticationService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -366,5 +368,48 @@ class SharedSpaceService
         ]);
 
         return $invite->sharedSpaceId;
+    }
+
+    public function import(string $sharedSpaceId, string $userId, #[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
+    {
+        $userToImport = $this->authenticationService->withPassword($email, $password, false);
+        if (is_string($userToImport)) {
+            return $userToImport;
+        }
+
+        if ($userToImport['sharedSpaceId'] !== null) {
+            throw new UserAlreadyInSharedSpaceException();
+        }
+
+        $this->sharedSpaceRepository->beginTransaction();
+        try {
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userToImport['userId'], $sharedSpaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'user_id' => $userToImport['userId'],
+                'shared_space_id' => $sharedSpaceId,
+                'count' => $lpasMoved,
+            ]);
+
+            if (!$this->userRepository->delete($userToImport['userId'])) {
+                throw new \RuntimeException('User not deleted');
+            }
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            throw $e;
+        }
+
+        $this->logger->info('User imported to shared space', [
+            'event' => 'shared_space.import',
+            'shared_space_id' => $sharedSpaceId,
+            'user_id' => $userId,
+            'imported_user_id' => $userToImport['userId'],
+            'lpas_moved' => $lpasMoved,
+        ]);
+
+        return null;
     }
 }

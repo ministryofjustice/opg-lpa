@@ -265,4 +265,22 @@ class SharedSpaceService
 
         return $response['sharedSpaceId'];
     }
+
+    public function import(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
+    {
+        try {
+            $response = $this->client->httpPost(
+                '/v2/shared-space/import',
+                ['email' => $email, 'password' => $password],
+            );
+        } catch (Throwable $e) {
+            $this->logger->warning('Import account to shared space failed', [
+                'exception' => $e,
+            ]);
+
+            return 'failed';
+        }
+
+        return $response['problem'] ?? null;
+    }
 }

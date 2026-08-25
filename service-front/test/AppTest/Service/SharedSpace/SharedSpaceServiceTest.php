@@ -252,4 +252,33 @@ final class SharedSpaceServiceTest extends TestCase
 
         $this->assertEquals('my space', $result);
     }
+
+    public function testImport(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/import', [
+                'email' => 'a',
+                'password' => 'b',
+            ]);
+
+        $result = $this->service->import('a', 'b');
+
+        $this->assertNull($result);
+    }
+
+    public function testImportWhenProblem(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/import', [
+                'email' => 'a',
+                'password' => 'b',
+            ])
+            ->willReturn(['problem' => 'there-was-an-issue']);
+
+        $result = $this->service->import('a', 'b');
+
+        $this->assertEquals('there-was-an-issue', $result);
+    }
 }

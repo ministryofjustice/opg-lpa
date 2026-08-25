@@ -793,4 +793,77 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(404, $result->toArray()['status']);
     }
+
+    public function testImportAction()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with('2', '1')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->with('2', '1', 'an email', 'pass');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(NoContent::class, $result);
+    }
+
+    public function testImportActionWhenAuthProblem()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->andReturn('this-problem');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['problem' => 'this-problem'], $body);
+    }
+
+    public function testImportActionWhenUserAlreadyInSpace()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->andThrow(new UserAlreadyInSharedSpaceException());
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['problem' => 'user-already-in-space'], $body);
+    }
+
+    public function testImportActionWhenIsNotAdmin()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(false);
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
+    }
 }
