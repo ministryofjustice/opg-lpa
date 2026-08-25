@@ -18,10 +18,6 @@ locals {
     component = "front"
   }
 
-  pdf_component_tag = {
-    component = "pdf"
-  }
-
   db_component_tag = {
     component = "db"
   }

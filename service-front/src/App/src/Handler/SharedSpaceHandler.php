@@ -9,6 +9,7 @@ use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,12 +38,14 @@ class SharedSpaceHandler implements RequestHandlerInterface
             ));
         }
 
+        /** @var array<int, SharedSpaceMember> $members */
         $members = $result['members'] ?? [];
+        $invites = $result['invites'] ?? [];
         $isAdmin = false;
 
         foreach ($members as $member) {
-            if ($member['id'] === $identity->id()) {
-                $isAdmin = $member['isAdmin'] ?? false;
+            if ($member->getUserId() === $identity->id()) {
+                $isAdmin = $member->isAdmin();
                 break;
             }
         }
@@ -53,7 +56,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'members' => $members,
-                    'invites' => $result['invites'],
+                    'invites' => $invites,
                     'signedInUserIsAdmin' => $isAdmin,
                     'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
                     'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',

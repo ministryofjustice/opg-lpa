@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
+use App\Form\SharedSpace\MakeSharedSpaceForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -32,7 +33,7 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         /** @var FormInterface $form */
-        $form = $this->formElementManager->get('App\Form\SharedSpace\MakeSharedSpaceForm');
+        $form = $this->formElementManager->get(MakeSharedSpaceForm::class);
 
         $error = null;
 
@@ -49,7 +50,7 @@ class MakeSharedSpaceHandler implements RequestHandlerInterface
                 if ($sharedSpaceId !== null) {
                     $this->authenticationService->refreshSharedSpaceId($sharedSpaceId);
 
-                    return new RedirectResponse('/shared-space/created');
+                    return new RedirectResponse('/shared-space/created?space-name=' . urlencode($form->get('space-name')->getValue()));
                 }
 
                 $error = 'Failed to create shared space. Please try again.';

@@ -1,39 +1,46 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Your shared space’s name' -%}
-{% block mainTitle %}{% endblock mainTitle %}
+{%- set overridePageTitle = 'Enter the name of your shared space' -%}
 
 {% set form = formErrorTextExchange(form, {
-    'space-name': {
-        'isEmpty': 'Enter the name of the shared space',
-    },
+  'space-name': {
+    'isEmpty': 'Enter your shared space name',
+    'stringLengthTooLong': 'Your shared space name must be 100 characters or less',
+  },
 }) %}
 
 {% set spaceName = form.get('space-name') %}
 
+{% block backLink %}
+  <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block content %}
-    <div class="govuk-grid-row govuk-!-margin-top-9">
-        {{ macros.formErrorSummary(error, form) }}
+  <div class="govuk-grid-row">
+    {{ macros.formErrorSummary(error, form) }}
 
-        <div class="govuk-grid-column-two-thirds">
-            {{ form.prepare() ? '' }}
-            {{ form().openTag( form )|raw }}
-            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-            <div class="govuk-form-group {{ spaceName.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-              <h1 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l" for="space-name">
-                  Your shared space’s name
-                </label>
-              </h1>
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-              {{ formElementErrorsV2(spaceName) }}
-              {{ formElement(spaceName) }}
-            </div>
-
-            <button class="govuk-button" type="submit">Create shared space</button>
-            {{ form().closeTag|raw }}
+      <div class="govuk-form-group {{ spaceName.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <label class="govuk-label" for="{{ spaceName.getAttribute('id') }}">
+          Your shared space name
+        </label>
+        <div class="govuk-hint">
+          For example, Alzheimer's Society or Joe Bloggs Solicitors.
         </div>
+
+        {{ formElementErrorsV2(spaceName) }}
+        {{ formElement(spaceName) }}
+      </div>
+
+      <button class="govuk-button" type="submit">Save</button>
+      {{ form().closeTag|raw }}
     </div>
+  </div>
 {% endblock content %}

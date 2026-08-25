@@ -34,10 +34,12 @@ class SharedSpaceCreatedHandlerTest extends TestCase
                 'lpa' => null,
                 'currentRouteName' => null,
                 'csrfToken' => null,
+                'sharedSpaceName' => 'Test Space',
             ])
             ->willReturn('<html>make shared space form</html>');
 
-        $response = $this->handler->handle(new ServerRequest());
+        $request = new ServerRequest()->withQueryParams(['space-name' => 'Test Space']);
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }

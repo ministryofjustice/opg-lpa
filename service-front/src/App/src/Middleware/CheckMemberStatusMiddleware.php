@@ -33,7 +33,7 @@ class CheckMemberStatusMiddleware implements MiddlewareInterface
         if ($sharedSpaceId !== null) {
             $memberDetails = $this->sharedSpaceService->getMember($identity->id());
 
-            if (is_array($memberDetails) && !$memberDetails['isActive']) {
+            if (!is_null($memberDetails) && !$memberDetails->isActive()) {
                 $this->authenticationService->clearIdentity();
 
                 $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);

@@ -12,6 +12,7 @@ use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -62,7 +63,7 @@ class CheckMemberStatusMiddlewareTest extends TestCase
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->once())->method('handle')->with($request)->willReturn($expectedResponse);
 
-        $this->sharedSpaceService->expects($this->once())->method('getMember')->with('1')->willReturn(['isActive' => true]);
+        $this->sharedSpaceService->expects($this->once())->method('getMember')->with('1')->willReturn(new SharedSpaceMember(['isActive' => true]));
 
         $result = $this->middleware->process($request, $handler);
 
@@ -83,7 +84,7 @@ class CheckMemberStatusMiddlewareTest extends TestCase
 
         $handler = $this->createMock(RequestHandlerInterface::class);
 
-        $this->sharedSpaceService->expects($this->once())->method('getMember')->with('1')->willReturn(['isActive' => false]);
+        $this->sharedSpaceService->expects($this->once())->method('getMember')->with('1')->willReturn(new SharedSpaceMember(['isActive' => false]));
 
         $this->authenticationService->expects($this->once())->method('clearIdentity');
 
