@@ -41,7 +41,7 @@
 
         <div class="govuk-form-group {{ reuseDetails.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset class="reuse-details-container">
-                <legend class="govuk-heading-m govuk-!-margin-top-8">Which details would you like to reuse?</legend>
+                <legend class="govuk-heading-m">Which details would you like to reuse?</legend>
                 <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
                 <div class="govuk-radios" data-module="govuk-radios">
                     {{ formRadio(reuseDetails) }}

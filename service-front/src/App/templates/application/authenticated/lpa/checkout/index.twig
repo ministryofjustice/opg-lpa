@@ -99,7 +99,7 @@
     {% if (lpaIsCompleted) %}
 
         <div class="appstatus" role="alert">
-            <h2 class="govuk-heading-xl govuk-!-margin-top-9">Confirm and
+            <h2 class="govuk-heading-xl">Confirm and
                 {% if lpa.payment.amount == 0 %}finish{% else %}pay{% endif %}
             </h2>
             {% if lpa.payment.amount is null %}
