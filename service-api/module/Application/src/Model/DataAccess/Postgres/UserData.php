@@ -377,6 +377,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 'deleted' => gmdate(DbWrapper::TIME_FORMAT),
                 'active' => null,
                 'identity' => null,
+                'one_login_sub' => null,
+                'one_login_email' => null,
                 'password_hash' => null,
                 'activation_token' => null,
                 'failed_login_attempts' => null,

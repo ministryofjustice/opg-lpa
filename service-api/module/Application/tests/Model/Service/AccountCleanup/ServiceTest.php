@@ -56,6 +56,9 @@ class ServiceTest extends AbstractServiceTestCase
                 'test3@example.com',
             ],
         ],
+        'onelogin' => [
+            'enabled' => true,
+        ],
     ];
 
     /**

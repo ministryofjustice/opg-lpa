@@ -229,7 +229,7 @@ class Service extends AbstractService
         $authUser = $this->getUserRepository()->getById($id);
         if ($authUser instanceof UserInterface) {
             $data['email'] = [
-                'address' => $authUser->oneLoginEmail() ?? $authUser->username()
+                'address' => $authUser->contactEmail()
             ];
         }
 

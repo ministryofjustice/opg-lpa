@@ -114,6 +114,11 @@ class Service extends AbstractService
         return $result;
     }
 
+    private function oneLoginEnabled(): bool
+    {
+        return ($this->config['onelogin']['enabled'] ?? false) === true;
+    }
+
     /**
      * Pulls back a list of all users who have no logged in for x time and sends them a notification
      * warning when their account will be deleted.
@@ -142,13 +147,30 @@ class Service extends AbstractService
 
         $counter = 0;
 
+        $oneLoginEnabled = $this->oneLoginEnabled();
+
         foreach ($iterator as $user) {
+            if ($oneLoginEnabled) {
+                $recipient = $user->contactEmail();
+
+                if (is_null($recipient) || filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
+                    $this->getLogger()->alert('No contact address for account expiry notification', [
+                        'user_id' => $user->id(),
+                        'warning_type' => $warningType,
+                    ]);
+
+                    continue;
+                }
+            } else {
+                $recipient = $user->username();
+            }
+
             // Tell users the day before, giving them that full day to login.
             $notificationDate = $user->lastLoginAt()->add(\DateInterval::createFromDateString('+9 months'));
 
             try {
                 // Call the notify to send the reminder email - this will thrown an exception on any errors
-                $this->notifyClient->sendEmail($user->username(), $templateId, [
+                $this->notifyClient->sendEmail($recipient, $templateId, [
                     'deletionDate' => $notificationDate->format('j F Y'),
                 ]);
 

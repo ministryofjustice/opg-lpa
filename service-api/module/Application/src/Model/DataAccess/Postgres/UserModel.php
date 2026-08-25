@@ -219,6 +219,19 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
+     * The address the service contacts this user on: the One Login address when
+     * we hold one, otherwise the login email (`identity`).
+     *
+     * @return string|null
+     */
+    public function contactEmail(): ?string
+    {
+        $oneLoginEmail = $this->oneLoginEmail();
+
+        return ($oneLoginEmail !== null && $oneLoginEmail !== '') ? $oneLoginEmail : $this->username();
+    }
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return UserRepository\TokenInterface|null
