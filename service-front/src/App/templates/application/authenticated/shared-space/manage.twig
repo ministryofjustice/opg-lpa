@@ -1,12 +1,25 @@
+{% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
 {%- set pageTitle = 'Manage your Shared Space' -%}
 {% block mainTitle %}{% endblock %}
 
+{% set email = form.get('email') %}
+{% set password = form.get('password') %}
+
+{% set form = formErrorTextExchange(form, {
+    'email': {
+        'cannot-be-empty': 'Enter the email address',
+    },
+    'password' : {
+        'cannot-be-empty' : 'Enter the password'
+    }
+}) %}
+
 {% block content %}
   <div class="govuk-grid-row govuk-!-margin-top-9">
     <div class="govuk-grid-column-full">
-      {% if inviteSuccess or revokeSuccess or memberDeleted %}
+      {% if inviteSuccess or revokeSuccess or memberDeleted or importSuccess %}
         <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -21,8 +34,27 @@
                 Invite revoked
               {% elseif memberDeleted %}
                 Member deleted
+              {% elseif importSuccess %}
+                Import success
               {% endif %}
             </h3>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if authError %}
+        <div class="govuk-error-summary" role="alert" aria-labelledby="error-heading" tabindex="-1" data-module="govuk-error-summary">
+          <h2 class="govuk-error-summary__title" id="error-heading">There is a problem</h2>
+          <div class="govuk-error-summary__body">
+            {% if authError == 'api-error' %}
+              <p class="govuk-body">Sorry, the service is unavailable. Please try again later.</p>
+            {% elseif authError == 'not-activated' %}
+              <p class="govuk-body">The account has not been activated.
+            {% elseif authError == 'locked' %}
+              <p class="govuk-body">The account has been locked.</p>
+            {% elseif authError == 'authentication-failed' %}
+              <p class="govuk-body">Email address and password combination not recognised. Please try again.</p>
+            {% endif %}
           </div>
         </div>
       {% endif %}
@@ -139,7 +171,30 @@
         </div>
 
         <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="import" role="tabpanel" aria-labelledby="tab_import">
-          <p>TODO</p>
+          <p>You can import LPAs from an existing Make account. The account entered will no longer have any LPAs, and will be deleted.</p>
+
+          {{ form.prepare() ? '' }}
+          {{ form().openTag( form )|raw }}
+          <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+          {{ macros.formGroup2(email) }}
+
+          <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+            <label class="govuk-label" for="{{ password.getAttribute('id') }}">Password</label>
+            {{ formElementErrorsV2(password) }}
+            {{ formElement(password) }}
+            <div>
+              <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password">Show password</a>
+            </div>
+          </div>
+
+          <button type="submit" class="govuk-button app-use-standard">Import</button>
+
+          {{ form().closeTag|raw }}
+
+          <p class="govuk-body">
+            <a class="govuk-link" href="{{ url('forgot-password') }}">Forgotten your password?</a>
+          </p>
         </div>
       </div>
     </div>
