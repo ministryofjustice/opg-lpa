@@ -366,7 +366,9 @@ class UserDetails implements ApiClientAwareInterface
 
             if (is_array($result)) {
                 if (isset($result['activation_token'])) {
-                    return $this->sendAccountActivateEmail($email, $result['activation_token']);
+                    $sent = $this->sendAccountActivateEmail($email, $result['activation_token']);
+
+                    return $sent === true ? 'account-not-activated' : $sent;
                 }
 
                 if (isset($result['token'])) {
@@ -477,12 +479,12 @@ class UserDetails implements ApiClientAwareInterface
 
             if ($ex->getMessage() === 'Invalid passwordToken') {
                 return 'invalid-token';
-            } elseif ($ex->getMessage() != null) {
-                return trim($ex->getMessage());
             }
+
+            return 'api-error';
         }
 
-        return 'unknown-error';
+        return 'api-error';
     }
 
     public function registerAccount(

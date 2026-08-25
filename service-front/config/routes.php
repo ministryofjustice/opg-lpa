@@ -167,7 +167,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route(
-        '/forgot-password/reset/{token:[a-zA-Z0-9]+}',
+        '/forgot-password/reset[/{token:[^\r\n]*}]',
         ResetPasswordHandler::class,
         ['GET', 'POST'],
         'forgot-password/callback',

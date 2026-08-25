@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\ForgotPasswordHandler;
 use App\Form\User\ConfirmEmail;
+use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -46,7 +47,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testAuthenticatedUserIsRedirectedToDashboard(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
-            ->withAttribute('identity', new \stdClass());
+            ->withAttribute(RequestAttribute::IDENTITY, new \stdClass());
 
         $response = $this->handler->handle($request);
 
@@ -57,7 +58,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testGetRequestDisplaysForm(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
-            ->withAttribute('identity', null);
+            ->withAttribute(RequestAttribute::IDENTITY, null);
 
         $this->form->expects($this->once())
             ->method('setAttribute')
@@ -79,7 +80,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testValidPostSendsResetEmailAndDisplaysConfirmation(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -107,7 +108,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testAccountNotActivatedFlagIsPassedToTemplate(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -131,7 +132,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testInvalidFormRedisplaysForm(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => '']);
 
         $this->form->method('isValid')->willReturn(false);
@@ -152,7 +153,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testPostNonExistentEmailStillShowsEmailSentPage(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'nonexistent@example.com', 'email_confirm' => 'nonexistent@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -182,7 +183,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testPostWithEmptyBodyHandledSafely(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(null);
 
         $this->form->expects($this->once())
