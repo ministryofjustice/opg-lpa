@@ -252,6 +252,291 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals(null, $result);
     }
 
+    public function testCleanupOneWeekWarningUsesOneLoginEmailForCreatedAccount()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
+            'one_login_email' => 'real.user@example.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['real.user@example.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $service = $this->buildService();
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneWeekWarningUsesOneLoginEmailForLinkedAccount()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => 'old.address@example.com',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-456',
+            'one_login_email' => 'one.login@example.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['one.login@example.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $service = $this->buildService();
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneWeekWarningDoesNotGuardNonOneLoginAccountWhenEnabled()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => '"john doe"@example.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['"john doe"@example.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $this->logger->shouldNotReceive('alert');
+
+        $service = $this->buildService();
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneWeekWarningUsesLoginEmailWhenOneLoginDisabled()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => 'unit@test.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['unit@test.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $service = $this->buildService($this->configWithOneLogin(false));
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneWeekWarningDoesNotGuardAddressWhenOneLoginDisabled()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => 'not-an-email-address',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['not-an-email-address', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $this->logger->shouldNotReceive('alert');
+
+        $service = $this->buildService($this->configWithOneLogin(false));
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupTreatsMissingOneLoginConfigAsDisabled()
+    {
+        $lastLoginDate = new DateTime('-9 months +1 week');
+
+        $this->setAccountsExpectations([], [new User([
+            'id' => 1,
+            'identity' => 'unit@test.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['unit@test.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-week-notice'])
+            ->once();
+
+        $config = $this->config;
+        unset($config['onelogin']);
+
+        $service = $this->buildService($config);
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneWeekWarningSkipsAccountWithNoDeliverableAddress()
+    {
+        $this->setAccountsExpectations([], [new User([
+            'id' => '1',
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-789',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-789',
+            'last_login' => new DateTime('-9 months +1 week'),
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            )
+            ->times(count($this->config['admin']['account_cleanup_notification_recipients']));
+
+        $this->authUserRepository->shouldNotReceive('setInactivityFlag');
+
+        $this->logger->shouldReceive('alert')
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('No contact address for account expiry notification', $message);
+                $this->assertSame('1', $extra['user_id']);
+                $this->assertSame('1-week-notice', $extra['warning_type']);
+
+                return true;
+            });
+
+        $service = $this->buildService();
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
+    public function testCleanupOneMonthWarningUsesOneLoginEmail()
+    {
+        $lastLoginDate = new DateTime('-8 months');
+
+        $this->setAccountsExpectations([], [], [new User([
+            'id' => 1,
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
+            'one_login_email' => 'real.user@example.com',
+            'last_login' => clone $lastLoginDate,
+        ])]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        $lastLoginDate->add(DateInterval::createFromDateString('+9 months'));
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs(['real.user@example.com', '0ef97354-9db2-4d52-a1cf-0aa762444cb1', [
+                'deletionDate' => $lastLoginDate->format('j F Y')
+            ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, '1-month-notice'])
+            ->once();
+
+        $service = $this->buildService();
+
+        $this->assertSame(0, $service->cleanup());
+    }
+
     public function testCleanupOneWeekWarningAccountsNotifyException()
     {
         $this->setAccountsExpectations([], [new User([
@@ -407,6 +692,27 @@ class ServiceTest extends AbstractServiceTestCase
 
         // Function doesn't return anything
         $this->assertEquals(null, $result);
+    }
+
+    private function configWithOneLogin(bool $enabled): array
+    {
+        $config = $this->config;
+        $config['onelogin']['enabled'] = $enabled;
+
+        return $config;
+    }
+
+    private function buildService(?array $config = null): AccountCleanupService
+    {
+        $service = new AccountCleanupService();
+        $service->setApplicationRepository($this->applicationRepository);
+        $service->setUserRepository($this->authUserRepository);
+        $service->setConfig($config ?? $this->config);
+        $service->setNotifyClient($this->notifyClient);
+        $service->setUsersService($this->usersService);
+        $service->setLogger($this->logger);
+
+        return $service;
     }
 
     private function setAccountsExpectations(

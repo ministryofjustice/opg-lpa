@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
@@ -119,6 +120,13 @@ class Service extends AbstractService
         return ($this->config['onelogin']['enabled'] ?? false) === true;
     }
 
+    private function isOneLoginAccount(UserInterface $user): bool
+    {
+        $oneLoginSub = $user->oneLoginSub();
+
+        return $oneLoginSub !== null && $oneLoginSub !== '';
+    }
+
     /**
      * Pulls back a list of all users who have no logged in for x time and sends them a notification
      * warning when their account will be deleted.
@@ -150,7 +158,7 @@ class Service extends AbstractService
         $oneLoginEnabled = $this->oneLoginEnabled();
 
         foreach ($iterator as $user) {
-            if ($oneLoginEnabled) {
+            if ($oneLoginEnabled && $this->isOneLoginAccount($user)) {
                 $recipient = $user->contactEmail();
 
                 if (is_null($recipient) || filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
