@@ -213,3 +213,10 @@ When(/I enter the login details of "([^"]+)"/, (storedAs) => {
     cy.get('#password').type(password);
   });
 });
+
+When(/I enter the email of "([^"]+)"/, (storedAs) => {
+  cy.get(`@${storedAs}`).then(({ email }) => {
+    cy.get('#email').type(email);
+    cy.get('#email_confirm').type(email);
+  });
+});

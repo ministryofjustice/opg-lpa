@@ -173,7 +173,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ['GET', 'POST'],
         'forgot-password/callback',
     )
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
@@ -215,6 +215,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
         $app->get('/shared-space/import-failed', SharedSpaceImportFailedHandler::class, 'shared-space.import-failed');
+        $app->route('/shared-space/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'shared-space.forgot-password');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {

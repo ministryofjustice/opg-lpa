@@ -60,7 +60,7 @@ class Service extends AbstractService
      * @return array|string
      * @throws RandomException
      */
-    public function generateToken(#[\SensitiveParameter] string $username): array|string
+    public function generateToken(#[\SensitiveParameter] string $username, bool $forSharedSpace): array|string
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
@@ -76,7 +76,7 @@ class Service extends AbstractService
             ];
         }
 
-        $token = $this->makeToken($username);
+        $token = ($forSharedSpace ? 'sharedspace' : '') . $this->makeToken($username);
 
         $expires = new DateTime("+" . self::TOKEN_TTL . " seconds");
 

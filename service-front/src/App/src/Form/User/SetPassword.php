@@ -25,16 +25,37 @@ class SetPassword extends AbstractForm
         $this->add([
             'name' => 'password',
             'type' => 'Password',
+            'attributes' => [
+                'id' => 'password',
+                'class' => 'govuk-input',
+                'autocomplete' => 'new-password',
+                'data-cy' => 'password',
+            ],
+            'options' => [
+                'label' => 'Password',
+            ],
         ]);
 
         $this->add([
             'name' => 'password_confirm',
             'type' => 'Password',
+            'attributes' => [
+                'id' => 'password_confirm',
+                'class' => 'govuk-input',
+                'autocomplete' => 'new-password',
+                'data-cy' => 'password_confirm'
+            ],
+            'options' => [
+                'label' => 'Confirm password',
+            ],
         ]);
 
         $this->add([
             'name' => 'skip_confirm_password',
             'type' => 'Hidden',
+            'attributes' => [
+                'id' => 'js-skipConfirmPassword',
+            ],
         ]);
 
         $this->setUseInputFilterDefaults(false);
