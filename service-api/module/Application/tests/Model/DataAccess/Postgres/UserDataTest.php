@@ -1536,6 +1536,37 @@ class UserDataTest extends MockeryTestCase
         $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
     }
 
+    public function testSetOneLoginEmail(): void
+    {
+        $id = 'vansant';
+        $oneLoginEmail = 'new.address@example.com';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $captured = null;
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(
+            function ($set) use (&$captured) {
+                $captured = $set;
+
+                return true;
+            }
+        ));
+
+        $userData = new UserData($dbWrapperMock);
+
+        $userData->setOneLoginEmail($id, $oneLoginEmail);
+
+        $this->assertIsArray($captured);
+        $this->assertSame($oneLoginEmail, $captured['one_login_email']);
+        $this->assertTrue(Helpers::isGmDateString($captured['updated']));
+
+        $this->assertSame(['one_login_email', 'updated'], array_keys($captured));
+    }
+
     public function testCreateWritesActivatedTimestampWhenProvided(): void
     {
         $id = 'onelogin-user';

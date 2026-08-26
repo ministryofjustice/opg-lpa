@@ -204,7 +204,9 @@ class Service extends AbstractService
 
         $email = $userInfo['email'] ?? null;
 
-        if (!is_string($email) || $email === '') {
+        $email = is_string($email) ? $this->normaliseEmail($email) : '';
+
+        if ($email === '') {
             throw new OneLoginAuthenticationException('missing_email_claim');
         }
 
@@ -226,6 +228,8 @@ class Service extends AbstractService
         }
 
         $this->getUserRepository()->updateLastLoginTime($userId);
+
+        $this->refreshOneLoginEmail($userId, $user->oneLoginEmail(), $email);
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
@@ -362,6 +366,39 @@ class Service extends AbstractService
             'lastLogin'      => (new DateTime())->format('c'),
             'sharedSpaceId'  => null,
         ];
+    }
+
+    /**
+     * Stores the email One Login has just given us if it differs from the one we hold.
+     */
+    private function refreshOneLoginEmail(
+        string $userId,
+        #[\SensitiveParameter] ?string $storedEmail,
+        #[\SensitiveParameter] string $incomingEmail,
+    ): void {
+        if ($storedEmail !== null && $this->normaliseEmail($storedEmail) === $this->normaliseEmail($incomingEmail)) {
+            return;
+        }
+
+        try {
+            $this->getUserRepository()->setOneLoginEmail($userId, $incomingEmail);
+        } catch (\Throwable $e) {
+            $this->getLogger()->warning('auth.onelogin.email_refresh_failed', [
+                'user_id' => $userId,
+                'exception' => $e,
+            ]);
+
+            return;
+        }
+
+        $this->getLogger()->info('auth.onelogin.email_refreshed', [
+            'user_id' => $userId,
+        ]);
+    }
+
+    private function normaliseEmail(#[\SensitiveParameter] string $email): string
+    {
+        return strtolower(trim($email));
     }
 
     /**
