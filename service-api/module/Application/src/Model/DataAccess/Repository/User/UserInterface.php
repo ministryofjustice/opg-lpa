@@ -108,6 +108,15 @@ interface UserInterface
     public function oneLoginEmail(): ?string;
 
     /**
+     * The address the service contacts this user on.
+     * For a One Login account that is the address One Login supplied.
+     *
+     * @return string|null
+     */
+    public function contactEmail(): ?string;
+
+
+    /**
      * Returns the user's current authentication token (if present).
      *
      * @return TokenInterface|null

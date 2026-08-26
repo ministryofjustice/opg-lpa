@@ -148,7 +148,7 @@ class Service extends AbstractService
 
             try {
                 // Call the notify to send the reminder email - this will thrown an exception on any errors
-                $this->notifyClient->sendEmail($user->username(), $templateId, [
+                $this->notifyClient->sendEmail($user->contactEmail(), $templateId, [
                     'deletionDate' => $notificationDate->format('j F Y'),
                 ]);
 

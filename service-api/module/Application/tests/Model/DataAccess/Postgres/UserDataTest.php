@@ -944,6 +944,12 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            foreach (['identity', 'one_login_sub', 'one_login_email'] as $identifyingField) {
+                if (!array_key_exists($identifyingField, $set)) {
+                    return false;
+                }
+            }
+
             $ok = true;
 
             foreach ($set as $key => $value) {
