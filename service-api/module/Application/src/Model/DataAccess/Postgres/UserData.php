@@ -773,4 +773,21 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ]
         );
     }
+
+    /**
+     * Refreshes the One Login email held for an already-linked account.
+     *
+     * @param string $userId
+     * @param string $oneLoginEmail Email supplied by One Login (contact address).
+     */
+    public function setOneLoginEmail(string $userId, string $oneLoginEmail): void
+    {
+        $this->updateRow(
+            ['id' => $userId],
+            [
+                'one_login_email' => $oneLoginEmail,
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
+            ]
+        );
+    }
 }
