@@ -325,7 +325,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('stranger@example.com', $result['email']);
     }
 
-    public function testHandleCallbackTrimsIncomingEmailBeforeStoringIt(): void
+    public function testHandleCallbackNormalisesIncomingEmailBeforeStoringIt(): void
     {
         $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
 

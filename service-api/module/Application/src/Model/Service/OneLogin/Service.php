@@ -204,7 +204,7 @@ class Service extends AbstractService
 
         $email = $userInfo['email'] ?? null;
 
-        $email = is_string($email) ? trim($email) : '';
+        $email = is_string($email) ? $this->normaliseEmail($email) : '';
 
         if ($email === '') {
             throw new OneLoginAuthenticationException('missing_email_claim');
@@ -275,8 +275,6 @@ class Service extends AbstractService
             throw new RuntimeException('SharedSpaceRepository must be set');
         }
 
-        $oneLoginEmail = trim($oneLoginEmail);
-
         $user = $this->getUserRepository()->getByUsername($username);
 
         if (!$user instanceof UserInterface) {
@@ -326,10 +324,9 @@ class Service extends AbstractService
             throw new RuntimeException('AuthenticationService must be set');
         }
 
-        $generator     = $this->randomBytes;
-        $now           = new MillisecondDateTime();
-        $identity      = $this->placeholderIdentity($sub);
-        $oneLoginEmail = trim($oneLoginEmail);
+        $generator = $this->randomBytes;
+        $now       = new MillisecondDateTime();
+        $identity  = $this->placeholderIdentity($sub);
 
         do {
             $userId = bin2hex($generator(16));
