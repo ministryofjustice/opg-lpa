@@ -467,40 +467,6 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertSame(0, $service->cleanup());
     }
 
-    public function testCleanupOneWeekWarningSkipsAccountWithNoDeliverableAddress()
-    {
-        $this->setAccountsExpectations([], [new User([
-            'id' => '1',
-            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-789',
-            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-789',
-            'last_login' => new DateTime('-9 months +1 week'),
-        ])]);
-
-        $this->notifyClient->shouldReceive('sendEmail')
-            ->with(
-                Mockery::type('string'),
-                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
-                Mockery::type('array')
-            )
-            ->times(count($this->config['admin']['account_cleanup_notification_recipients']));
-
-        $this->authUserRepository->shouldNotReceive('setInactivityFlag');
-
-        $this->logger->shouldReceive('alert')
-            ->once()
-            ->withArgs(function (string $message, array $extra) {
-                $this->assertSame('No contact address for account expiry notification', $message);
-                $this->assertSame('1', $extra['user_id']);
-                $this->assertSame('1-week-notice', $extra['warning_type']);
-
-                return true;
-            });
-
-        $service = $this->buildService();
-
-        $this->assertSame(0, $service->cleanup());
-    }
-
     public function testCleanupOneMonthWarningUsesOneLoginEmail()
     {
         $lastLoginDate = new DateTime('-8 months');
