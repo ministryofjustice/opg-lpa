@@ -155,22 +155,16 @@ class Service extends AbstractService
 
         $counter = 0;
 
-        $oneLoginEnabled = $this->oneLoginEnabled();
-
         foreach ($iterator as $user) {
-            if ($oneLoginEnabled && $this->isOneLoginAccount($user)) {
-                $recipient = $user->contactEmail();
+            $recipient = $user->contactEmail();
 
-                if (is_null($recipient) || filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
-                    $this->getLogger()->alert('No contact address for account expiry notification', [
-                        'user_id' => $user->id(),
-                        'warning_type' => $warningType,
-                    ]);
+            if (is_null($recipient) || filter_var($recipient, FILTER_VALIDATE_EMAIL) === false) {
+                $this->getLogger()->alert('No contact address for account expiry notification', [
+                    'user_id' => $user->id(),
+                    'warning_type' => $warningType,
+                ]);
 
-                    continue;
-                }
-            } else {
-                $recipient = $user->username();
+                continue;
             }
 
             // Tell users the day before, giving them that full day to login.
