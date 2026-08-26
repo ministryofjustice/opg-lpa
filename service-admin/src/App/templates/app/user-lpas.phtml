@@ -3,7 +3,7 @@
 <?php if (empty($lpas)) { ?>
     <p class="govuk-body">No LPAs found for this user.</p>
 <?php } else { ?>
-    <h1 class="govuk-heading-l">LPAs for <?php if (isset($lpaEmail)) { ?> <?= $lpaEmail; ?> <?php } ?></h1>
+    <h1 class="govuk-heading-l">LPAs for <?= $lpaEmail ?? ($sharedSpaceName ?? 'Unknown'); ?></h1>
 
     <?php foreach ($lpas as $lpa) { ?>
         <div class="govuk-summary-card">

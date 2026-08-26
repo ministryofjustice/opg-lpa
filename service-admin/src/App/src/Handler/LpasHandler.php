@@ -16,25 +16,28 @@ use Laminas\Diactoros\Response\HtmlResponse;
  * misunderstanding.
  * @psalm-suppress UnusedClass
  */
-class UserLpasHandler extends AbstractHandler
+class LpasHandler extends AbstractHandler
 {
-    public function __construct(private readonly UserService $userService)
-    {
+    public function __construct(
+        private readonly UserService $userService,
+    ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $userId = $request->getAttribute('id');
-        $userEmail = $request->getQueryParams()['email'] ?? '';
+        $userId = $request->getAttribute('userId');
+        $sharedSpaceId = $request->getAttribute('sharedSpaceId');
+        $userEmail = $request->getQueryParams()['email'] ?? null;
+        $sharedSpaceName = $request->getQueryParams()['sharedSpaceName'] ?? null;
 
-        if (!isset($request->getQueryParams()['email'])) {
+        if (empty($userId) && empty($sharedSpaceId)) {
             return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
                 'userId' => $userId,
-                'failureReason' => 'missing-email',
+                'failureReason' => 'missing-email-or-shared-space-id',
             ]), 404);
         }
 
-        $lpas = $this->userService->userLpas($userId);
+        $lpas = $sharedSpaceId ? $this->userService->sharedSpaceLpas($sharedSpaceId) : $this->userService->userLpas($userId);
 
         if ($lpas === false) {
             return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
@@ -50,11 +53,13 @@ class UserLpasHandler extends AbstractHandler
             [
                 'viewed_user' => $userId,
                 'lpa_count' => count($lpas),
+                'shared_space_id' => $sharedSpaceId,
             ],
         );
 
         return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
             'lpaEmail' => $userEmail,
+            'sharedSpaceName' => $sharedSpaceName,
             'lpas' => $lpas,
         ]));
     }

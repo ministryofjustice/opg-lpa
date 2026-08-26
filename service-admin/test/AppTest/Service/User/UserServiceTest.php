@@ -7,6 +7,7 @@ namespace AppTest\Service\User;
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\User\UserService;
 use DateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -23,17 +24,22 @@ class UserServiceTest extends TestCase
         $this->logger = $this->prophesize(LoggerInterface::class);
     }
 
-    public function testSearchForUserByEmail()
+    public static function userSearchProvider(): array
     {
-        $id = 'fooman';
-        $email = 'foo@bar';
-        $numLpas = 10;
+        return [
+            'Lay' => ['A', 'a@example.org', 10, null],
+            'Shared space' => ['B', 'a@example.org', 5, null],
+        ];
+    }
 
+    #[DataProvider('userSearchProvider')]
+    public function testSearchForUserByEmail(string $id, string $email, int $numLpas, ?string $sharedSpaceId): void
+    {
         $client = $this->prophesize(ApiClient::class);
 
         // initial search
         $query = ['email' => $email];
-        $client->httpGet('/v2/users/search', $query)->willReturn([
+        $client->httpGet('/v2/admin/search-users', $query)->willReturn([
             'userId' => $id,
             'isActive' => true
         ]);
@@ -68,7 +74,7 @@ class UserServiceTest extends TestCase
             'limit' => 10,
         ];
 
-        $client->httpGet('/v2/users/match', $params)->willReturn([[
+        $client->httpGet('/v2/admin/match-users', $params)->willReturn([[
             'userId' => $id,
             'isActive' => true,
             'numberOfLpas' => $numLpas,
@@ -169,7 +175,7 @@ class UserServiceTest extends TestCase
 
         $client = $this->prophesize(ApiClient::class);
 
-        $client->httpGet('/v2/users/search', ['aReference' => $aReference])->willReturn([
+        $client->httpGet('/v2/admin/search-users', ['aReference' => $aReference])->willReturn([
             'userId' => $userId,
             'isActive' => true,
         ]);
@@ -188,7 +194,7 @@ class UserServiceTest extends TestCase
         $client = $this->prophesize(ApiClient::class);
 
         // API returns null (404 → client returns null)
-        $client->httpGet('/v2/users/search', ['aReference' => $aReference])->willReturn(null);
+        $client->httpGet('/v2/admin/search-users', ['aReference' => $aReference])->willReturn(null);
 
         $userService = new UserService($client->reveal(), $this->logger->reveal());
         $actual = $userService->searchByAReference($aReference);

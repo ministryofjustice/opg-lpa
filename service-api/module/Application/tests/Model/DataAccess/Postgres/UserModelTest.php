@@ -45,7 +45,6 @@ class UserModelTest extends MockeryTestCase
             'password_hash' => 'Password123',
             'created' => $date,
             'updated' => $date,
-            'deleted' => $date,
             'last_login' => $date,
             'activated' => $date,
             'last_failed_login' => $date,
@@ -62,7 +61,6 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals('Password123', $user->password());
         $this->assertEquals($date, $user->createdAt());
         $this->assertEquals($date, $user->updatedAt());
-        $this->assertEquals($date, $user->deleteAt());
         $this->assertEquals($date, $user->lastLoginAt());
         $this->assertEquals($date, $user->activatedAt());
         $this->assertEquals($date, $user->lastFailedLoginAttemptAt());
