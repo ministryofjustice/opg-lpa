@@ -8,9 +8,18 @@ use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;
+use Psr\Log\LoggerInterface;
 
 class ErrorListener extends AbstractListenerAggregate
 {
+    /**
+     * Psalm cannot determine that this is auto-wired
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function __construct(private readonly LoggerInterface $logger)
+    {
+    }
+
     // priority is set to 100 here so that the global MvcEventListener
     // has a chance to log it before it's converted into an API exception
     public function attach(EventManagerInterface $events, $priority = 100)
@@ -36,13 +45,19 @@ class ErrorListener extends AbstractListenerAggregate
             $response = new ApiProblemResponse($problem);
             $e->setResponse($response);
         } elseif ($exception) {
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
-            $logger->error($exception->getMessage(), [
+            $this->logger->error($exception->getMessage(), [
                 'class' => $exception::class,
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
                 'stackTrace' => $exception->getTraceAsString(),
             ]);
+
+            if ($e->getResponse()->getContent() === '') {
+                $problem = new ApiProblem(500, 'An unexpected error occurred');
+                $response = new ApiProblemResponse($problem);
+                $e->setResponse($response);
+                $e->stopPropagation();
+            }
         }
 
         return $response;
