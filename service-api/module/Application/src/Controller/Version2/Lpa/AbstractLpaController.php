@@ -25,11 +25,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
     /**
      * @var string
      */
-    protected $routeUserId;
-
-    /**
-     * @var string
-     */
     protected $lpaId;
 
     /**
@@ -69,14 +64,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
      */
     public function onDispatch(MvcEvent $e)
     {
-        //  If possible get the user and LPA from the ID values in the route
-        $this->routeUserId = $e->getRouteMatch()->getParam('userId');
-
-        if (empty($this->routeUserId)) {
-            //  userId MUST be present in the URL
-            throw new ApiProblemException('User identifier missing from URL', 400);
-        }
-
         //  The lpaId MAY be present in the URL
         $this->lpaId = $e->getRouteMatch()->getParam('lpaId');
 
@@ -97,7 +84,7 @@ abstract class AbstractLpaController extends AbstractRestfulController
         }
 
         if (
-            $identity->getId() !== $this->routeUserId &&
+            $identity->getId() !== $this->params->fromRoute('userId') &&
             !$identity->hasRole('admin') &&
             !$identity->hasRole('admin-service')
         ) {
