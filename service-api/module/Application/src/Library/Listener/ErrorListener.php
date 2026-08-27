@@ -66,7 +66,7 @@ class ErrorListener extends AbstractListenerAggregate
 
     public function onRender(MvcEvent $e): void
     {
-        if ($e->getResult() instanceof ApiProblem) {
+        if ($e->getResult() instanceof ApiProblem && $e->getResponse()->getContent() === '') {
             $response = new ApiProblemResponse($e->getResult());
             $e->setResponse($response);
             $e->stopPropagation();
