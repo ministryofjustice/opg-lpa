@@ -264,41 +264,41 @@ dc-down:
 .PHONY: dc-front-unit-tests
 dc-front-unit-tests:
 ifdef TESTFILE
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage $(TESTFILE)
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app-test vendor/bin/phpunit $(TESTFILE)
 else
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps front-app-test vendor/bin/phpunit --no-coverage
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-front/build/coverage:/app/build/coverage front-app-test vendor/bin/phpunit
 endif
 
 .PHONY: dc-admin-unit-tests
 dc-admin-unit-tests:
 ifdef TESTFILE
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps admin-app /app/vendor/bin/phpunit --no-coverage $(TESTFILE)
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app-test /app/vendor/bin/phpunit $(TESTFILE)
 else
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps admin-app /app/vendor/bin/phpunit --no-coverage
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-admin/build/coverage:/app/build/coverage admin-app-test /app/vendor/bin/phpunit
 endif
 
 .PHONY: dc-api-unit-tests
 dc-api-unit-tests:
 ifdef TESTFILE
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps api-app /app/vendor/bin/phpunit --no-coverage $(TESTFILE)
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app-test /app/vendor/bin/phpunit $(TESTFILE)
 else
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps api-app /app/vendor/bin/phpunit --no-coverage
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-api/build/coverage:/app/build/coverage api-app-test /app/vendor/bin/phpunit
 endif
 
 .PHONY: dc-pdf-unit-tests
 dc-pdf-unit-tests:
 ifdef TESTFILE
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app /app/vendor/bin/phpunit --no-coverage $(TESTFILE)
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app-test /app/vendor/bin/phpunit $(TESTFILE)
 else
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app /app/vendor/bin/phpunit --no-coverage
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/service-pdf/build/coverage:/app/build/coverage pdf-app-test /app/vendor/bin/phpunit
 endif
 
 .PHONY: dc-shared-unit-tests
 dc-shared-unit-tests:
 ifdef TESTFILE
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app /app/vendor/bin/phpunit --no-coverage $(TESTFILE)
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/shared/build/coverage:/app/build/coverage shared-test /shared/vendor/bin/phpunit $(TESTFILE)
 else
-	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --no-deps pdf-app /app/vendor/bin/phpunit --no-coverage /shared/module/MakeShared/tests
+	@docker compose -f docker-compose.yml -f docker-compose.local.yml run --rm --env XDEBUG_MODE=coverage --no-deps -v `pwd`/shared/build/coverage:/app/build/coverage shared-test /shared/vendor/bin/phpunit /shared/module/MakeShared/tests
 endif
 
 .PHONY: dc-unit-tests

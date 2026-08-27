@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\AdminController;
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
@@ -159,15 +160,13 @@ class AdminControllerTest extends MockeryTestCase
 
         $controller = $this->getController();
 
-        /** @var ApiProblem $result */
+        /** @var ApiProblemResponse $result */
         $result = $controller->searchUsersAction();
 
-        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
 
-        $data = $result->toArray();
-
-        $this->assertEquals(404, $data['status']);
-        $this->assertEquals('No user found with supplied email address', $data['detail']);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertEquals('No user found with supplied email address', json_decode($result->getContent(), true)['detail']);
     }
 
     public function testSearchUsersActionByAReference()
@@ -218,12 +217,9 @@ class AdminControllerTest extends MockeryTestCase
         /** @var ApiProblem $result */
         $result = $controller->searchUsersAction();
 
-        $this->assertInstanceOf(ApiProblem::class, $result);
-
-        $data = $result->toArray();
-
-        $this->assertEquals(404, $data['status']);
-        $this->assertEquals('No user found with supplied A Reference', $data['detail']);
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertEquals('No user found with supplied A Reference', json_decode($result->getContent(), true)['detail']);
     }
 
     public function testMatchUsersAction()

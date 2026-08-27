@@ -160,11 +160,11 @@ $this->addErrorMap([
                             <span>
                                 <?php if (intval($user['numberOfLpas']) > 0) { ?>
                                     <?php if ($user['sharedSpaceId'] !== null) { ?>
-                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['id' => $user['sharedSpaceId']], ['sharedSpaceName' => $user['sharedSpaceName']]) ?>">
+                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['sharedSpaceId' => $user['sharedSpaceId']], ['sharedSpaceName' => $user['sharedSpaceName']]) ?>">
                                             <?= intval($user['numberOfLpas']); ?>
                                         </a>
                                     <?php } else { ?>
-                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['id' => $user['userId']], ['email' => $user['username']]) ?>">
+                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['userId' => $user['userId']], ['email' => $user['username']]) ?>">
                                             <?= intval($user['numberOfLpas']); ?>
                                         </a>
                                     <?php } ?>
