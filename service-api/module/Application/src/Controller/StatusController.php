@@ -2,13 +2,11 @@
 
 namespace Application\Controller;
 
-use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
-use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Exception;
@@ -86,13 +84,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
             throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 
-        try {
-            return parent::onDispatch($e);
-        } catch (UnauthorizedException $ex) {
-            return new ApiProblemResponse(new ApiProblem(401, 'Access Denied'));
-        } catch (LockedException $ex) {
-            return new ApiProblemResponse(new ApiProblem(403, 'LPA has been locked'));
-        }
+        return parent::onDispatch($e);
     }
 
     // $lpaId: ID of LPA to update

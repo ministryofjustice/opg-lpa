@@ -26,6 +26,7 @@ class ErrorListener extends AbstractListenerAggregate
     {
         $this->listeners[] = $events->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'onError'], 100);
         $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'onError'], 100);
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_RENDER, [$this, 'onRender'], 100);
     }
 
     /**
@@ -61,5 +62,14 @@ class ErrorListener extends AbstractListenerAggregate
         }
 
         return $response;
+    }
+
+    public function onRender(MvcEvent $e): void
+    {
+        if ($e->getResult() instanceof ApiProblem) {
+            $response = new ApiProblemResponse($e->getResult());
+            $e->setResponse($response);
+            $e->stopPropagation();
+        }
     }
 }

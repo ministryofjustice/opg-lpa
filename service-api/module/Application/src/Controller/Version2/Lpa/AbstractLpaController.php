@@ -7,7 +7,6 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
-use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
@@ -81,19 +80,7 @@ abstract class AbstractLpaController extends AbstractRestfulController
         //  The lpaId MAY be present in the URL
         $this->lpaId = $e->getRouteMatch()->getParam('lpaId');
 
-        try {
-            $return = parent::onDispatch($e);
-        } catch (UnauthorizedException $ex) {
-            $return = new ApiProblem(401, 'Access Denied');
-        } catch (LockedException $ex) {
-            $return = new ApiProblem(403, 'LPA has been locked');
-        }
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
+        return parent::onDispatch($e);
     }
 
     /**
