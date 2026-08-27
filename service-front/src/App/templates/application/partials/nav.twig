@@ -38,11 +38,11 @@
                    nav.sharedSpaceEnabled and nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
                    nav.sharedSpaceEnabled and nav.inSharedSpace ? 'Shared LPAs' : 'Your LPAs',
                    nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false
-              ) }}
-            {% endif %}
+                ) }}
 
-            {% if nav.sharedSpaceEnabled %}
-              {{ _self.navigationItem(nav, 'shared-space', 'Shared space') }}
+              {% if nav.sharedSpaceEnabled %}
+                {{ _self.navigationItem(nav, 'shared-space', 'Shared space') }}
+              {% endif %}
             {% endif %}
 
             <li class="govuk-service-navigation__item">

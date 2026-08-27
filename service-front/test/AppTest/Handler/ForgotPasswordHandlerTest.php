@@ -13,6 +13,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -55,6 +56,32 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 
+    public function testAuthenticatedSharedSpaceUserIsShownForm(): void
+    {
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedRouteName')->willReturn('shared-space.forgot-password');
+
+        $this->form->expects($this->once())
+            ->method('setAttribute')
+            ->with('action', '/shared-space/forgot-password');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/index.twig', $this->callback(
+                fn($data) => isset($data['form']) && $data['error'] === null
+            ))
+            ->willReturn('<html>form</html>');
+
+        $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withAttribute(RequestAttribute::IDENTITY, new \stdClass());
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
     public function testGetRequestDisplaysForm(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
@@ -89,7 +116,39 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->userService
             ->expects($this->once())
             ->method('requestPasswordResetEmail')
-            ->with('test@example.com')
+            ->with('test@example.com', false)
+            ->willReturn(true);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/email-sent.twig', $this->callback(
+                fn($data) => $data['email'] === 'test@example.com' && $data['accountNotActivated'] === false
+            ))
+            ->willReturn('<html>email sent</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testValidPostWhenInSharedSpaceSendsResetEmailAndDisplaysConfirmation(): void
+    {
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedRouteName')->willReturn('shared-space.forgot-password');
+
+        $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
+            ->withAttribute(RequestAttribute::IDENTITY, null)
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn(['email' => 'test@example.com']);
+
+        $this->userService
+            ->expects($this->once())
+            ->method('requestPasswordResetEmail')
+            ->with('test@example.com', true)
             ->willReturn(true);
 
         $this->renderer

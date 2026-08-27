@@ -29,7 +29,7 @@ class CsrfValidationMiddleware implements MiddlewareInterface
         if ($route instanceof RouteResult) {
             $matchedRoute = $route->getMatchedRoute();
             $routeOptions = $matchedRoute !== false ? ($matchedRoute->getOptions() ?: []) : [];
-            if (($routeOptions['unauthenticated_route'] ?? false) === true) {
+            if (($routeOptions['csrf'] ?? false) === false && ($routeOptions['unauthenticated_route'] ?? false) === true) {
                 return $handler->handle($request);
             }
         }

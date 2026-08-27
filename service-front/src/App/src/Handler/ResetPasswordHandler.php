@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Feature;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -22,7 +23,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class ResetPasswordHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const SESSION_KEY_IDENTITY = 'identity';
+    private const SHARED_SPACE_TOKEN_PREFIX = 'sharedspace';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -44,11 +48,17 @@ class ResetPasswordHandler implements RequestHandlerInterface
             );
         }
 
-        // If logged in, clear session and redirect back
+        $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
+
         if ($session->has(self::SESSION_KEY_IDENTITY)) {
-            $session->clear();
-            $session->regenerate();
-            return new RedirectResponse('/forgot-password/reset/' . $token);
+            if (str_starts_with($token, self::SHARED_SPACE_TOKEN_PREFIX)) {
+                $destination = '/shared-space/dashboard';
+            } else {
+                // If logged in, clear session and redirect back
+                $session->clear();
+                $session->regenerate();
+                return new RedirectResponse('/forgot-password/reset/' . $token);
+            }
         }
 
         /** @var FormInterface $form */
@@ -76,14 +86,15 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
                     $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
 
-                    $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
-
                     return new RedirectResponse($destination);
                 }
 
                 if ($result === 'invalid-token') {
                     return new HtmlResponse(
-                        $this->renderer->render('application/general/forgot-password/invalid-reset-token.twig')
+                        $this->renderer->render(
+                            'application/general/forgot-password/invalid-reset-token.twig',
+                            $this->getTemplateVariables($request),
+                        )
                     );
                 }
 
@@ -94,10 +105,13 @@ class ResetPasswordHandler implements RequestHandlerInterface
         return new HtmlResponse(
             $this->renderer->render(
                 'application/general/forgot-password/reset-password.twig',
-                [
-                    'form'  => $form,
-                    'error' => $error,
-                ]
+                array_merge(
+                    $this->getTemplateVariables($request),
+                    [
+                        'form'  => $form,
+                        'error' => $error,
+                    ],
+                ),
             )
         );
     }

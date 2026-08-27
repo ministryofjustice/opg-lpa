@@ -173,3 +173,18 @@ Feature: Shared Space
     Then I should be on "/shared-space/import-failed"
     And I click link "Continue"
     Then I should be on "/shared-space"
+
+  Scenario: Can ask for password reset when importing
+    Given I create a new user stored as "userToImport" with 5 LPAs
+    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click link "Import LPAs from existing account"
+    When I click link "Forgotten your password?"
+    Then I should be on "/shared-space/forgot-password"
+    Then I enter the email of "userToImport"
+    Then I submit the form
+    Then I should be on "/shared-space/forgot-password"
+    Then I see "Thank you" in the page text

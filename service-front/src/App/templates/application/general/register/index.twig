@@ -35,14 +35,10 @@
 }) ? ''}}
 
 {{ password.setAttributes({
-    id: 'password',
-    class: 'govuk-input',
     "data-cy": 'signup-password'
 }) ? ''}}
 
 {{ password_confirm.setAttributes({
-    id: 'password_confirm',
-    class: 'govuk-input',
     "data-cy": 'signup-password-confirm'
 }) ? ''}}
 
@@ -60,8 +56,6 @@
 {# form fields labels #}
 {{ email.setOptions( { label: 'Enter your email address' }) ? '' }}
 {{ email_confirm.setOptions( { label: 'Confirm your email address' }) ? '' }}
-{{ password.setOptions( { label: 'Password' }) ? '' }}
-{{ password_confirm.setOptions( { label: 'Confirm password' }) ? '' }}
 
 <div class="govuk-body">
     <p class="govuk-body-l">You need to enter your email address and create a password. This will allow you to make, save and retrieve LPAs.</p>
