@@ -65,6 +65,12 @@ server {
     add_header X-Content-Type-Options "nosniff";
     add_header Strict-Transport-Security "max-age=3600; includeSubDomains";
 
+    # Simple health check for nginx containers
+    location /nginx-health {
+        access_log /dev/null;
+
+        return 200 "healthy\n";
+    }
 
     location / {
         try_files $uri /index.php$is_args$args;

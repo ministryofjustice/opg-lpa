@@ -186,7 +186,54 @@ data "aws_ecr_image" "lpa_api_app" {
 // api ECS Service Task Container level config
 
 locals {
-
+  api_nginx = jsonencode({
+    cpu       = 0,
+    essential = true,
+    image     = "${data.aws_ecr_repository.nginx.repository_url}@${data.aws_ecr_image.nginx.image_digest}",
+    name      = "api_nginx",
+    portMappings = [{
+      containerPort = 80,
+      hostPort      = 80,
+      protocol      = "tcp"
+    }],
+    healthCheck = {
+      command     = ["CMD-SHELL", "wget -q -O - http://localhost/nginx-health > /dev/null 2>&1"],
+      startPeriod = 30,
+      interval    = 15,
+      timeout     = 10,
+      retries     = 3
+    },
+    dependsOn = [{
+      containerName = "api_app",
+      condition     = "HEALTHY"
+    }],
+    logConfiguration = {
+      logDriver = "awslogs",
+      options = {
+        awslogs-group         = aws_cloudwatch_log_group.sirius.name,
+        awslogs-region        = data.aws_region.current.region,
+        awslogs-stream-prefix = "api"
+      }
+    },
+    environment = [
+      {
+        name  = "APP_HOST",
+        value = "localhost"
+      },
+      {
+        name  = "APP_NAME",
+        value = "api"
+      },
+      {
+        name  = "APP_PORT",
+        value = "9000"
+      },
+      {
+        name  = "NGINX_LOG_LEVEL",
+        value = "info"
+      }
+    ]
+  })
   api_web = jsonencode(
     {
       cpu         = 1,
