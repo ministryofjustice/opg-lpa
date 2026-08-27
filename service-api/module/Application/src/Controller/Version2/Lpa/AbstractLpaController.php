@@ -84,7 +84,7 @@ abstract class AbstractLpaController extends AbstractRestfulController
         }
 
         if (
-            $identity->getId() !== $this->params->fromRoute('userId') &&
+            $identity->getId() !== $this->params()->fromRoute('userId') &&
             !$identity->hasRole('admin') &&
             !$identity->hasRole('admin-service')
         ) {
