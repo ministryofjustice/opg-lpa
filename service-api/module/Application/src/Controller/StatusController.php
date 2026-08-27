@@ -3,7 +3,6 @@
 namespace Application\Controller;
 
 use Application\Library\ApiProblem\ApiProblemException;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Library\Http\Response\Json;
@@ -12,7 +11,6 @@ use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusServic
 use Exception;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
@@ -35,9 +33,6 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
 
     /* @var $processingStatusService ProcessingStatusService */
     private $processingStatusService;
-
-    /* @var $routeUserId string */
-    private $routeUserId;
 
     /**
      * Get the service to use
@@ -64,33 +59,10 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
         $this->processingStatusService = $processingStatusService;
     }
 
-    /**
-     * @param MvcEvent $e
-     * @return mixed|ApiProblemResponse
-     * @throws ApiProblemException
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        //  If possible get the user and LPA from the ID values in the route
-        $this->routeUserId = $e->getRouteMatch()->getParam('userId');
-
-        if (empty($this->routeUserId)) {
-            //  userId MUST be present in the URL
-            throw new ApiProblemException('User identifier missing from URL', 400);
-        }
-
-        $identity = $this->authenticationService->getIdentity();
-        if ($identity === null || $identity instanceof Guest) {
-            throw new UnauthorizedException('You need to be authenticated to access this service');
-        }
-
-        return parent::onDispatch($e);
-    }
-
     // $lpaId: ID of LPA to update
     // $metaData: existing metadata for the LPA; [] if no metadata exists yet
     // $data: data to use to update the existing metadata
-    private function updateMetadata(string $lpaId, $metaData, array $data): void
+    private function updateMetadata(string $lpaId, string $userId, $metaData, array $data): void
     {
         // Update metadata in DB
         $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
@@ -106,7 +78,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
 
         if ($this->hasDifference($newMeta, $metaData)) {
             $metaData = array_merge($metaData, $newMeta);
-            $this->getService()->patch(['metadata' => $metaData], $lpaId, $this->routeUserId);
+            $this->getService()->patch(['metadata' => $metaData], $lpaId, $userId);
             $this->getLogger()->debug('Updated MetaData for LPA', [
                 'lpaId' => $lpaId,
                 'metaData' => $metaData
@@ -157,16 +129,23 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
      */
     public function get($id)
     {
-        if (empty($this->routeUserId)) {
+        $userId = $this->params()->fromRoute('userId');
+
+        if (empty($userId)) {
             //  userId MUST be present in the URL
             throw new ApiProblemException('User identifier missing from URL', 400);
+        }
+
+        $identity = $this->authenticationService->getIdentity();
+        if ($identity === null || $identity instanceof Guest) {
+            throw new UnauthorizedException('You need to be authenticated to access this service');
         }
 
         $explodedIds = explode(',', $id);
 
         // Fetch requested LPAs from db, provided they are owned by the user;
         // this is [] if the db is not available for any reason
-        $lpasFromDb = $this->applicationsService->filterByIdsAndUser($explodedIds, $this->routeUserId);
+        $lpasFromDb = $this->applicationsService->filterByIdsAndUser($explodedIds, $userId);
 
         // Convert db results into a map from ID to metadata
         $lpaMetas = array_reduce($lpasFromDb, function ($sofar, $lpa) {
@@ -257,7 +236,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
                     // in updateMetadata)
                     $metaData = $this->getValue($lpaMetas, $lpaId, []);
                     if ($this->getValue($dbResult, 'inDb')) {
-                        $this->updateMetadata($lpaId, $metaData, $data);
+                        $this->updateMetadata($lpaId, $userId, $metaData, $data);
                     }
 
                     // set found to true here as we got a processing status
