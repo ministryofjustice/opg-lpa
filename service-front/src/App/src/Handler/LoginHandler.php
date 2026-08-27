@@ -119,9 +119,8 @@ class LoginHandler implements RequestHandlerInterface
 
         $state = $request->getAttribute('state');
 
-        $isTimeout = ($state === 'timeout');
-        $isInternalSystemError = ($state === 'internal-system-error');
-        $authError = $state === 'member-suspended' ? 'member-suspended' : $authError;
+        $isTimeout = $state === 'timeout';
+        $isInternalSystemError = $state === 'internal-system-error';
 
         return new HtmlResponse(
             $this->renderer->render(

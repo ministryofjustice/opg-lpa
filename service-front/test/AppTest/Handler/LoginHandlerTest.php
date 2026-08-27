@@ -126,12 +126,6 @@ class LoginHandlerTest extends TestCase
                 'isTimeout' => false,
                 'isInternalSystemError' => true,
             ],
-            'member-suspended' => [
-                'state' => 'member-suspended',
-                'authError' => 'member-suspended',
-                'isTimeout' => false,
-                'isInternalSystemError' => false,
-            ],
         ];
     }
 
