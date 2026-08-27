@@ -6,6 +6,8 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Authentication\Result as AuthenticationResult;
+use Laminas\EventManager\AbstractListenerAggregate;
+use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerExceptionInterface;
@@ -20,9 +22,14 @@ use Psr\Log\LoggerAwareInterface;
  * Class AuthenticationListener
  * @package Application\Library\Authentication
  */
-class AuthenticationListener implements LoggerAwareInterface
+class AuthenticationListener extends AbstractListenerAggregate implements LoggerAwareInterface
 {
     use LoggerTrait;
+
+    public function attach(EventManagerInterface $events, $priority = 500)
+    {
+        $this->listeners[] = $events->attach(MvcEvent::EVENT_ROUTE, [$this, 'authenticate'], $priority);
+    }
 
     /**
      * @param MvcEvent $e

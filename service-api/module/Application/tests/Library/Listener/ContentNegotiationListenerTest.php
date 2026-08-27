@@ -3,7 +3,7 @@
 namespace ApplicationTest;
 
 use Application\Library\ApiProblem\ApiProblemResponse;
-use Application\Module;
+use Application\Library\Listener\ContentNegotiationListener;
 use Laminas\Http\Header\Accept as AcceptHeader;
 use Laminas\Http\Headers;
 use Laminas\Http\Request as LaminasRequest;
@@ -12,7 +12,7 @@ use Laminas\Mvc\MvcEvent;
 use Mockery;
 use PHPUnit\Framework\TestCase;
 
-class ModuleTest extends TestCase
+class ContentNegotiationListenerTest extends TestCase
 {
     private function makeEvent(
         string $accept = 'application/json',
@@ -45,10 +45,10 @@ class ModuleTest extends TestCase
 
         $originalResponse = $event->getResponse();
 
-        $module = new Module();
+        $listener = new ContentNegotiationListener();
 
         // the existing response should be left alone
-        $module->negotiateContent($event);
+        $listener->onFinish($event);
 
         // check that the response is not an API problem and remains untouched
         $this->assertEquals(get_class($originalResponse), get_class($event->getResponse()));
@@ -60,10 +60,10 @@ class ModuleTest extends TestCase
 
         $originalResponse = $event->getResponse();
 
-        $module = new Module();
+        $listener = new ContentNegotiationListener();
 
         // the existing response should be left alone
-        $module->negotiateContent($event);
+        $listener->onFinish($event);
 
         // check that the response is not an API problem and remains untouched
         $this->assertEquals(get_class($originalResponse), get_class($event->getResponse()));
@@ -75,10 +75,10 @@ class ModuleTest extends TestCase
 
         $originalResponse = $event->getResponse();
 
-        $module = new Module();
+        $listener = new ContentNegotiationListener();
 
         // the existing response should be left alone
-        $module->negotiateContent($event);
+        $listener->onFinish($event);
 
         // check that the response is replaced with an API problem response
         $actualResponse = $event->getResponse();
@@ -93,9 +93,9 @@ class ModuleTest extends TestCase
 
         $originalResponse = $event->getResponse();
 
-        $module = new Module();
+        $listener = new ContentNegotiationListener();
 
-        $module->negotiateContent($event);
+        $listener->onFinish($event);
 
         // no content-type at all means the response was never actually
         // produced by an API action (e.g. a routing/dispatch failure that
@@ -110,9 +110,9 @@ class ModuleTest extends TestCase
 
         $originalResponse = $event->getResponse();
 
-        $module = new Module();
+        $listener = new ContentNegotiationListener();
 
-        $module->negotiateContent($event);
+        $listener->onFinish($event);
 
         // a content-type IS present here but doesn't match the Accept
         // header, so this is a genuine negotiation failure and should
