@@ -305,6 +305,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-backchannel-logout' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/backchannel-logout',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'backChannelLogout',
+                            ],
+                        ],
+                    ],
+
                     'onelogin-create' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -710,6 +721,15 @@ return [
                     $discoveryUrl,
                     $container->get(OneLoginService\KeyPairManager::class),
                     new GuzzlePsr18(new GuzzleClient()),
+                    $container->get('OneLoginPsr16Cache'),
+                );
+            },
+
+            OneLoginService\LogoutTokenVerifier::class => static function (
+                ServiceLocatorInterface $container
+            ): OneLoginService\LogoutTokenVerifier {
+                return new OneLoginService\LogoutTokenVerifier(
+                    $container->get(OneLoginService\AuthorisationClientManager::class),
                     $container->get('OneLoginPsr16Cache'),
                 );
             },

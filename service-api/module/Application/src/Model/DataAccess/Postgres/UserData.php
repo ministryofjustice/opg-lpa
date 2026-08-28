@@ -457,6 +457,21 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
+     * Removes the user's auth token, ending every session they currently hold.
+     * @param string $userId
+     */
+    public function clearAuthToken(string $userId): void
+    {
+        $this->updateRow(
+            ['id' => $userId],
+            [
+                'auth_token' => null,
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
+            ]
+        );
+    }
+
+    /**
      * Sets the expiry datetime of the authentication token.
      *
      * @param $userId

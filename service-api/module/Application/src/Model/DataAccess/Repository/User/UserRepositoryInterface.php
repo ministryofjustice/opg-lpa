@@ -71,6 +71,8 @@ interface UserRepositoryInterface
      */
     public function updateAuthTokenExpiry(string $userId, DateTime $expires): bool;
 
+    public function clearAuthToken(string $userId): void;
+
     public function addPasswordResetToken(string $id, array $token): void;
 
     public function updatePasswordUsingToken(string $token, string $passwordHash): ?UpdatePasswordUsingTokenError;
