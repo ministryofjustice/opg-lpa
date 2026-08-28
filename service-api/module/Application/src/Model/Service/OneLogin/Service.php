@@ -32,7 +32,7 @@ class Service extends AbstractService
     /**
      * Must not accept the same jti twice within three minutes.
      */
-    private const LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS = 180;
+    private const int LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS = 180;
     /** @var callable(positive-int): string */
     private $randomBytes;
 
@@ -484,11 +484,13 @@ class Service extends AbstractService
 
     private function hasSeenLogoutToken(string $jti): bool
     {
+        assert($this->cache !== null);
         return $this->cache->has($this->logoutTokenCacheKey($jti));
     }
 
     private function rememberLogoutToken(string $jti): void
     {
+        assert($this->cache !== null);
         $this->cache->set(
             $this->logoutTokenCacheKey($jti),
             true,

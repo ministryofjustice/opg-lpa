@@ -16,8 +16,8 @@ use Psr\Log\LoggerInterface;
 
 class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 {
-    private MockInterface|OneLoginService $oneLoginService;
-    private MockInterface|LoggerInterface $logger;
+    private MockInterface&OneLoginService $oneLoginService;
+    private MockInterface&LoggerInterface $logger;
     private OneLoginBackChannelLogoutHandler $handler;
 
     public function setUp(): void

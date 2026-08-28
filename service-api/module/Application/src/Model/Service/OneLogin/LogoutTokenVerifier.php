@@ -16,11 +16,11 @@ use Throwable;
  */
 class LogoutTokenVerifier
 {
-    public const BACKCHANNEL_LOGOUT_EVENT = 'http://schemas.openid.net/event/backchannel-logout';
+    public const string BACKCHANNEL_LOGOUT_EVENT = 'http://schemas.openid.net/event/backchannel-logout';
 
-    public const CLOCK_TOLERANCE_SECONDS = 60;
+    public const int CLOCK_TOLERANCE_SECONDS = 60;
 
-    private const EXPECTED_ALG = 'ES256';
+    private const string EXPECTED_ALG = 'ES256';
 
     public function __construct(
         private readonly AuthorisationClientManager $clientManager,
