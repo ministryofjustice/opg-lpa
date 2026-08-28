@@ -9,6 +9,7 @@ use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
+use Laminas\Router\RouteMatch;
 use Mockery;
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Log\LoggerInterface;
@@ -51,11 +52,12 @@ class StatusControllerTest extends AbstractControllerTestCase
         );
         $logger = Mockery::spy(LoggerInterface::class);
         $this->statusController->setLogger($logger);
+
+        $this->statusController->getEvent()->setRouteMatch($this->routeMatch);
     }
 
     public function testGetWithFirstUpdateOnValidCase()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
@@ -110,8 +112,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithUpdatesOnValidCase()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
@@ -166,8 +166,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithUpdatesOnValidCaseWithSameStatusDifferentReturnDate()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
@@ -222,8 +220,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithUpdatesOnValidCaseWithDateReturn()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Received']]);
 
@@ -278,8 +274,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithUpdatesOnRejectDateForProcessedCase()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Waiting',
@@ -334,8 +328,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithUpdatesForProcessedCase()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
@@ -394,7 +386,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithNoUpdateOnValidCase()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
@@ -425,8 +416,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithNoUpdateOnValidCaseWithNoPreviousStatus()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
@@ -451,8 +440,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetWithSameStatusAndDates()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa([
             'id' => 98765,
             'completedAt' => new MillisecondDateTime('2019-02-01'),
@@ -490,8 +477,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetNotFoundInDBAndCannotBeSaved()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [Lpa::SIRIUS_PROCESSING_STATUS => 'Checking']]);
 
@@ -524,8 +509,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaAlreadyProcessedWithRegistrationDateSet()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
@@ -576,8 +559,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaAlreadyProcessedWithRejectedDateSet()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
@@ -612,8 +593,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaAlreadyProcessedWithReturnUnpaidSetTrue()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98766, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
@@ -651,8 +630,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaAlreadyProcessedWithReturnUnpaidSetNull()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98766, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Pending'
@@ -689,13 +666,15 @@ class StatusControllerTest extends AbstractControllerTestCase
     {
         $this->expectException(ApiProblemException::class);
         $this->expectExceptionMessage('User identifier missing from URL');
+
+        $emptyRouteMatch = new RouteMatch([]);
+        $this->statusController->getEvent()->setRouteMatch($emptyRouteMatch);
+
         $this->statusController->get('98765');
     }
 
     public function testMultipleStatusUpdateOnValidCases()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa1 = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => []]);
 
@@ -771,8 +750,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaWithInvalidDate()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
@@ -807,8 +784,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaWithWithdrawnDate()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Processed',
@@ -843,8 +818,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaProcessingStatusNotFound()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
@@ -876,8 +849,6 @@ class StatusControllerTest extends AbstractControllerTestCase
 
     public function testGetLpaDeleted()
     {
-        $this->statusController->onDispatch($this->mvcEvent);
-
         $lpa = new Lpa(['id' => 98765, 'completedAt' => new MillisecondDateTime('2019-02-01'),
             'metadata' => [
                 Lpa::SIRIUS_PROCESSING_STATUS => 'Checking',
