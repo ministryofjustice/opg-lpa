@@ -52,8 +52,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(CsrfValidationMiddleware::class);
     $app->pipe(PersistentSessionDetailsMiddleware::class);
     $app->pipe(AuthenticationMiddleware::class);
-    $app->pipe(CheckMemberStatusMiddleware::class);
     $app->pipe(UserDetailsMiddleware::class);
+    $app->pipe(CheckMemberStatusMiddleware::class);
     $app->pipe(TermsAndConditionsMiddleware::class);
     $app->pipe(DispatchMiddleware::class);
     $app->pipe(NotFoundHandler::class);
