@@ -33,7 +33,7 @@ class NotifiedPeopleController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($this->lpaId, $data);
+        $result = $this->getService()->create($this->params()->fromRoute('lpaId'), $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -54,7 +54,7 @@ class NotifiedPeopleController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data, $id);
+        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -74,7 +74,7 @@ class NotifiedPeopleController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($this->lpaId, $id);
+        $result = $this->getService()->delete($this->params()->fromRoute('lpaId'), $id);
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -2,15 +2,11 @@
 
 namespace Application\Controller\Version2\Lpa;
 
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemException;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {
@@ -21,11 +17,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
      * @var string
      */
     protected $identifierName = 'lpaId';
-
-    /**
-     * @var string
-     */
-    protected $lpaId;
 
     /**
      * @var AuthenticationService
@@ -54,21 +45,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
      * @return AbstractService
      */
     abstract protected function getService();
-
-    /**
-     * Execute the request
-     *
-     * @param MvcEvent $e
-     * @return mixed|ApiProblem|ApiProblemResponse
-     * @throws ApiProblemException
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        //  The lpaId MAY be present in the URL
-        $this->lpaId = $e->getRouteMatch()->getParam('lpaId');
-
-        return parent::onDispatch($e);
-    }
 
     /**
      * TODO - Move this code into the dispatch above? Need to make sure that the correct results are returned or thrown
