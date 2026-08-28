@@ -6,6 +6,7 @@ namespace Application\Model\Service\OneLogin;
 
 use Facile\JoseVerifier\Builder\IdTokenVerifierBuilder;
 use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 use Throwable;
 
 /**
@@ -38,10 +39,16 @@ class LogoutTokenVerifier
     {
         $client = $this->clientManager->get();
 
+        $clientId = $client->getMetadata()->getClientId();
+
+        if ($clientId === '') {
+            throw new RuntimeException('OneLogin client id is not configured');
+        }
+
         $verifier = IdTokenVerifierBuilder::create(
             $client->getIssuer()->getMetadata()->toArray(),
             [
-                'client_id' => $client->getMetadata()->getClientId(),
+                'client_id' => $clientId,
                 'id_token_signed_response_alg' => self::EXPECTED_ALG,
             ],
         )

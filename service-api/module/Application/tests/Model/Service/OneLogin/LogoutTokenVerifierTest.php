@@ -108,6 +108,16 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $this->verifierWithJwks([$this->publicKey->all()])->verify('not-a-jwt');
     }
 
+    public function testRejectsAnEmptyClientId(): void
+    {
+        $verifier = $this->verifierWithJwks([$this->publicKey->all()], clientId: '');
+
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('OneLogin client id is not configured');
+
+        $verifier->verify($this->token());
+    }
+
     /**
      * @dataProvider badClaimsProvider
      */
