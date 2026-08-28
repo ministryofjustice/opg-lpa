@@ -9,33 +9,33 @@ use App\Service\ApiClient\Exception\ApiException;
 use App\Service\OneLogin\OneLoginService;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\Expectation;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
+class OneLoginBackChannelLogoutHandlerTest extends TestCase
 {
-    private MockInterface&OneLoginService $oneLoginService;
-    private MockInterface&LoggerInterface $logger;
+    private OneLoginService&MockObject $oneLoginService;
+    private LoggerInterface&MockObject $logger;
     private OneLoginBackChannelLogoutHandler $handler;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
-        $this->oneLoginService = Mockery::mock(OneLoginService::class);
-        $this->logger          = Mockery::spy(LoggerInterface::class);
+        $this->oneLoginService = $this->createMock(OneLoginService::class);
+        $this->logger          = $this->createMock(LoggerInterface::class);
 
         $this->handler = new OneLoginBackChannelLogoutHandler($this->oneLoginService, $this->logger);
     }
 
     public function testReturns200WhenTheTokenIsAccepted(): void
     {
-        /** @var Expectation $exp */
-        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
-        $exp->once()->with('a.logout.token')->andReturn(true);
+        $this->oneLoginService
+            ->expects($this->once())
+            ->method('backChannelLogout')
+            ->with('a.logout.token')
+            ->willReturn(true);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
@@ -45,9 +45,10 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testReturns400WhenTheTokenIsRejected(): void
     {
-        /** @var Expectation $exp */
-        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
-        $exp->once()->andReturn(false);
+        $this->oneLoginService
+            ->expects($this->once())
+            ->method('backChannelLogout')
+            ->willReturn(false);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
@@ -57,7 +58,7 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testReturns400WhenLogoutTokenIsMissing(): void
     {
-        $this->oneLoginService->shouldNotReceive('backChannelLogout');
+        $this->oneLoginService->expects($this->never())->method('backChannelLogout');
 
         $response = $this->handler->handle($this->request([]));
 
@@ -67,7 +68,7 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testReturns400WhenLogoutTokenIsBlank(): void
     {
-        $this->oneLoginService->shouldNotReceive('backChannelLogout');
+        $this->oneLoginService->expects($this->never())->method('backChannelLogout');
 
         $response = $this->handler->handle($this->request(['logout_token' => '   ']));
 
@@ -76,10 +77,10 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testApiFailureIsReportedAsServerErrorNotBadRequest(): void
     {
-        /** @var Expectation $exp */
-        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
-        $exp->once()
-            ->andThrow(new ApiException(new JsonResponse(['detail' => 'API unavailable'], 500)));
+        $this->oneLoginService
+            ->expects($this->once())
+            ->method('backChannelLogout')
+            ->willThrowException(new ApiException(new JsonResponse(['detail' => 'API unavailable'], 500)));
 
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
