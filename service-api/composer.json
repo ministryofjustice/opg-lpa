@@ -29,7 +29,7 @@
         "laminas/laminas-mvc-middleware": "^2.5",
         "ministryofjustice/opg-laminas-db": "^1.0",
         "laminas/laminas-di": "^3.16",
-        "facile-it/php-openid-client": "^0.4.0",
+        "facile-it/php-openid-client": "^1.0.0",
         "symfony/cache": "^7.0",
         "fig/http-message-util": "^1.1"
     },
