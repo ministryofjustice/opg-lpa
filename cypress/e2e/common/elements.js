@@ -178,3 +178,7 @@ Then('I can see myself', () => {
 Then(`I see a success notification with content {string}`, (content) => {
   cy.contains('.govuk-notification-banner--success', content);
 });
+
+Then(`I see a notification with title {string}`, (content) => {
+  cy.contains('.govuk-notification-banner__title', content);
+});

@@ -80,7 +80,8 @@ Feature: Shared Space
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin"
-    And I log in as the newly created fixture user
+
+    When I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
@@ -90,10 +91,12 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "suspended"
+
     When I try to log in as the member added to the shared space
-    Then I should not be logged in
-    And I see a suspended account error
-    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    And I see a notification with title "Access suspended"
+
+    When I try to log in as "fixtureUser"
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"

@@ -29,7 +29,7 @@ class RepeatCaseNumberController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data);
+        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -49,7 +49,7 @@ class RepeatCaseNumberController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($this->lpaId);
+        $result = $this->getService()->delete($this->params()->fromRoute('lpaId'));
 
         if ($result instanceof ApiProblem) {
             return $result;

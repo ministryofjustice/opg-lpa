@@ -27,7 +27,7 @@ class LockController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($this->lpaId);
+        $result = $this->getService()->create($this->params()->fromRoute('lpaId'));
 
         if ($result instanceof ApiProblem) {
             return $result;
