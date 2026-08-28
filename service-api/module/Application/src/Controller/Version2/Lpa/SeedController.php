@@ -29,7 +29,7 @@ class SeedController extends AbstractLpaController
         $this->checkAccess();
 
         $result = $this->getService()->fetch(
-            $this->lpaId,
+            $this->params()->fromRoute('lpaId'),
             $this->authenticationService->getIdentity()->getId()
         );
 
@@ -59,7 +59,7 @@ class SeedController extends AbstractLpaController
         $this->checkAccess();
 
         $result = $this->getService()->update(
-            $this->lpaId,
+            $this->params()->fromRoute('lpaId'),
             $data,
             $this->authenticationService->getIdentity()->getId()
         );
