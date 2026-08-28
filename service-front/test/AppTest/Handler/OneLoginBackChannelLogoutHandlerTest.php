@@ -11,6 +11,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\Expectation;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
 
@@ -32,8 +33,9 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testReturns200WhenTheTokenIsAccepted(): void
     {
-        $this->oneLoginService->shouldReceive('backChannelLogout')
-            ->once()->with('a.logout.token')->andReturn(true);
+        /** @var Expectation $exp */
+        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
+        $exp->once()->with('a.logout.token')->andReturn(true);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
@@ -43,8 +45,9 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testReturns400WhenTheTokenIsRejected(): void
     {
-        $this->oneLoginService->shouldReceive('backChannelLogout')
-            ->once()->andReturn(false);
+        /** @var Expectation $exp */
+        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
+        $exp->once()->andReturn(false);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
@@ -73,8 +76,9 @@ class OneLoginBackChannelLogoutHandlerTest extends MockeryTestCase
 
     public function testApiFailureIsReportedAsServerErrorNotBadRequest(): void
     {
-        $this->oneLoginService->shouldReceive('backChannelLogout')
-            ->once()
+        /** @var Expectation $exp */
+        $exp = $this->oneLoginService->shouldReceive('backChannelLogout');
+        $exp->once()
             ->andThrow(new ApiException(new JsonResponse(['detail' => 'API unavailable'], 500)));
 
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
