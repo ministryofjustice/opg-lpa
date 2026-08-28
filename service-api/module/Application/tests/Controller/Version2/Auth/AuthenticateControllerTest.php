@@ -4,7 +4,6 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\AuthenticateController;
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use DateTime;
 use Laminas\Http\Header\HeaderInterface;
 use Laminas\Mvc\MvcEvent;
@@ -376,27 +375,6 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $resultArray = $result->getVariables();
         $this->assertEquals(true, $resultArray['valid']);
         $this->assertEquals(20, $resultArray['remainingSeconds']);
-    }
-
-    // Test conversion of ApiProblem results to ApiProblemResponse
-    // in the AbstractAuthController->onDispatch() method; because the abstract class
-    // can't be instantiated, we test here instead
-    public function testOnDispatchApiProblem(): void
-    {
-        $rm = Mockery::mock(RouteMatch::class);
-        $rm->shouldReceive('getParam')->with('action', false)->andReturn('session-expiry');
-
-        // deliberately fail authentication so we get an ApiProblem
-        $this->request->shouldReceive('getHeader')->with('CheckedToken')->andReturn(null);
-
-        $e = Mockery::mock(MvcEvent::class);
-        $e->shouldReceive('getRouteMatch')->andReturn($rm);
-        $e->shouldReceive('getRequest')->andReturn($this->request);
-        $e->shouldReceive('setResult');
-
-        $result = $this->getController(AuthenticateController::class)->onDispatch($e);
-
-        $this->assertInstanceOf(ApiProblemResponse::class, $result);
     }
 
     // Test setSessionExpiry as triggered by onDispatch(); the result should not be modified

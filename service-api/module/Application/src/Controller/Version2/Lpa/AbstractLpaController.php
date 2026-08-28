@@ -7,7 +7,6 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
-use Application\Model\DataAccess\Repository\Application\LockedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
@@ -22,11 +21,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
      * @var string
      */
     protected $identifierName = 'lpaId';
-
-    /**
-     * @var string
-     */
-    protected $routeUserId;
 
     /**
      * @var string
@@ -70,30 +64,10 @@ abstract class AbstractLpaController extends AbstractRestfulController
      */
     public function onDispatch(MvcEvent $e)
     {
-        //  If possible get the user and LPA from the ID values in the route
-        $this->routeUserId = $e->getRouteMatch()->getParam('userId');
-
-        if (empty($this->routeUserId)) {
-            //  userId MUST be present in the URL
-            throw new ApiProblemException('User identifier missing from URL', 400);
-        }
-
         //  The lpaId MAY be present in the URL
         $this->lpaId = $e->getRouteMatch()->getParam('lpaId');
 
-        try {
-            $return = parent::onDispatch($e);
-        } catch (UnauthorizedException $ex) {
-            $return = new ApiProblem(401, 'Access Denied');
-        } catch (LockedException $ex) {
-            $return = new ApiProblem(403, 'LPA has been locked');
-        }
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
+        return parent::onDispatch($e);
     }
 
     /**
@@ -110,7 +84,7 @@ abstract class AbstractLpaController extends AbstractRestfulController
         }
 
         if (
-            $identity->getId() !== $this->routeUserId &&
+            $identity->getId() !== $this->params()->fromRoute('userId') &&
             !$identity->hasRole('admin') &&
             !$identity->hasRole('admin-service')
         ) {
