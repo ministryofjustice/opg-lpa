@@ -1494,8 +1494,8 @@ class FormFlowChecker
     {
         $metadata = $this->lpa->getMetadata();
 
-        return count($metadata) === 0
-                && ((array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $this->lpa->getMetadata())
+        return count($metadata) !== 0
+                && ((array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $metadata)
                 && $this->isLpaCertificateProviderSatisfied())
             || $this->lpaHasPeopleToNotify());
     }

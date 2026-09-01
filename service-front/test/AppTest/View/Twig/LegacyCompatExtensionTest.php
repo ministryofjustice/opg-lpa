@@ -621,9 +621,13 @@ final class LegacyCompatExtensionTest extends TestCase
         ]);
         $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
 
+        // Laminas\Form\Element\Radio's declared value-options shape does not include 'hint',
+        // even though MultiCheckbox (which Radio extends) supports it formRadio() reads
+        // it directly from the option array.
+        /** @psalm-suppress InvalidArgument */
         $radio->setValueOptions([
-            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
-            'attorney' => ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],
+            ['label' => 'The donor', 'value' => 'donor'],
+            ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],
         ]);
 
         $html = $this->extension->formRadio($radio);

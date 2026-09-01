@@ -503,15 +503,6 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'instruction' => [
-                                        'type'    => 'Literal',
-                                        'options' => [
-                                            'route'       => '/instruction',
-                                            'defaults' => [
-                                                'controller' => 'InstructionController',
-                                            ],
-                                        ],
-                                    ],
                                     'instruction-preference' => [
                                         'type'    => 'Literal',
                                         'options' => [
@@ -560,15 +551,6 @@ return [
                                             ],
                                             'defaults' => [
                                                 'controller' => 'PdfController',
-                                            ],
-                                        ],
-                                    ],
-                                    'preference' => [
-                                        'type'    => 'Literal',
-                                        'options' => [
-                                            'route'       => '/preference',
-                                            'defaults' => [
-                                                'controller' => 'PreferenceController',
                                             ],
                                         ],
                                     ],

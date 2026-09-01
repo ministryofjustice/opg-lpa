@@ -23,13 +23,11 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
         LpaControllers\CertificateProviderController::class => Service\CertificateProvider\Service::class,
         LpaControllers\CorrespondentController::class => Service\Correspondent\Service::class,
         LpaControllers\DonorController::class => Service\Donor\Service::class,
-        LpaControllers\InstructionController::class => Service\Instruction\Service::class,
         LpaControllers\InstructionPreferenceController::class => Service\InstructionPreference\Service::class,
         LpaControllers\LockController::class => Service\Lock\Service::class,
         LpaControllers\NotifiedPeopleController::class => Service\NotifiedPeople\Service::class,
         LpaControllers\PaymentController::class => Service\Payment\Service::class,
         LpaControllers\PdfController::class => Service\Pdfs\Service::class,
-        LpaControllers\PreferenceController::class => Service\Preference\Service::class,
         LpaControllers\PrimaryAttorneyController::class => Service\AttorneysPrimary\Service::class,
         LpaControllers\PrimaryAttorneyDecisionsController::class
             => Service\AttorneyDecisionsPrimary\Service::class,

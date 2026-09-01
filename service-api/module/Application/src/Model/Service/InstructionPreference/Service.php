@@ -5,8 +5,8 @@ namespace Application\Model\Service\InstructionPreference;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
-use Application\Model\Service\Instruction\Entity as InstructionEntity;
-use Application\Model\Service\Preference\Entity as PreferenceEntity;
+use Application\Model\Service\InstructionPreference\PreferenceEntity as PreferenceEntity;
+use Application\Model\Service\InstructionPreference\InstructionEntity as InstructionEntity;
 use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
