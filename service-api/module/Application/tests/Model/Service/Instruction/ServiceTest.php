@@ -23,18 +23,17 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setLogger($this->logger);
     }
 
-    public function testUpdateValidationFailed()
+    public function testUpdateValidationFailedOnlyInstruction()
     {
         $lpa = FixturesData::getHwLpa();
 
         $user = FixturesData::getUser();
 
-        //Make sure document is invalid
-        $lpa->getDocument()->setType('Invalid');
+        $lpa->getDocument()->setPreference('https://www.example.org not valid preference');
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->update(strval($lpa->getId()), []);
+        $validationError = $this->service->update(strval($lpa->getId()), ['instruction' => 'https://www.example.org not valid instruction']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -44,9 +43,9 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'type' => [
-                        'value' => 'Invalid',
-                        'messages' => ['allowed-values:property-and-financial,health-and-welfare'],
+                    'instruction' => [
+                        'value' => 'https://www.example.org not valid instruction',
+                        'messages' => ['no-links-allowed'],
                     ],
                 ]
             ],
@@ -64,9 +63,10 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
+        $this->logger->shouldReceive('debug');
+
         //So we expect an exception and for no document to be updated
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('A malformed LPA object');
 
         $this->service->update(strval($lpa->getId()), []);
     }

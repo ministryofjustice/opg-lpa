@@ -620,7 +620,7 @@ final class LegacyCompatExtensionTest extends TestCase
             'div-attributes' => ['class' => 'govuk-radios__item'],
         ]);
         $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
-        /** @psalm-suppress InvalidArgument */
+
         $radio->setValueOptions([
             'donor'    => ['label' => 'The donor',     'value' => 'donor'],
             'attorney' => ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],

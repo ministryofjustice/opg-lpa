@@ -24,7 +24,7 @@ class Service extends AbstractService
         $lpa = $this->getLpa($lpaId);
         $lpa->getDocument()->setPreference($preference);
 
-        $validation = $lpa->getDocument()->validate();
+        $validation = $lpa->getDocument()->validate(['preference']);
 
         if ($validation->hasErrors()) {
             return new ValidationApiProblem($validation);

@@ -512,6 +512,15 @@ return [
                                             ],
                                         ],
                                     ],
+                                    'instruction-preference' => [
+                                        'type'    => 'Literal',
+                                        'options' => [
+                                            'route'       => '/instruction-preference',
+                                            'defaults' => [
+                                                'controller' => 'InstructionPreferenceController',
+                                            ],
+                                        ],
+                                    ],
                                     'lock' => [
                                         'type'    => 'Literal',
                                         'options' => [

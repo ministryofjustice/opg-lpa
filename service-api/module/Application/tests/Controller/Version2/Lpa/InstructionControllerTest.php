@@ -10,13 +10,8 @@ use Application\Library\Authorization\UnauthorizedException;
 use Mockery;
 use Mockery\MockInterface;
 
-class InstructionControllerTests extends AbstractControllerTestCase
+class InstructionControllerTest extends AbstractControllerTestCase
 {
-    public function __construct()
-    {
-        parent::__construct(static::class);
-    }
-
     /**
      * @var Service|MockInterface
      */
@@ -24,8 +19,6 @@ class InstructionControllerTests extends AbstractControllerTestCase
 
     public function getController(array $parameters = []): InstructionController
     {
-
-
         $this->service = Mockery::mock(Service::class);
 
         $controller = new InstructionController($this->authenticationService, $this->service);
@@ -89,10 +82,11 @@ class InstructionControllerTests extends AbstractControllerTestCase
 
     public function testUpdateUnauthorised()
     {
-        $controller = $this->getController();
+        $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);
         $this->expectExceptionMessage('You do not have permission to access this service');
 
+        $controller = $this->getController();
         $controller->update(10, []);
     }
 }

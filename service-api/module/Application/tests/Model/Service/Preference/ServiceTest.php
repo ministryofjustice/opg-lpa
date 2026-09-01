@@ -23,17 +23,17 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setLogger($this->logger);
     }
 
-    public function testUpdateValidationFailed()
+    public function testUpdateValidationFailedOnlyPreference()
     {
         $lpa = FixturesData::getHwLpa();
-        //Make sure document is invalid
-        $lpa->getDocument()->setType('Invalid');
+
+        $lpa->getDocument()->setInstruction('https://www.example.org not valid instruction');
 
         $user = FixturesData::getUser();
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->update(strval($lpa->getId()), []);
+        $validationError = $this->service->update(strval($lpa->getId()), ['preference' => 'https://www.example.org not valid preference']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -43,9 +43,9 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'type' => [
-                        'value' => 'Invalid',
-                        'messages' => ['allowed-values:property-and-financial,health-and-welfare']
+                    'preference' => [
+                        'value' => 'https://www.example.org not valid preference',
+                        'messages' => ['no-links-allowed']
                     ],
                 ]
             ],

@@ -133,7 +133,7 @@ class Lpa extends AbstractData
     /**
      * @var array Metadata relating to the LPA. Clients can use this value however they wish.
      */
-    protected $metadata = [];
+    protected array $metadata = [];
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
@@ -577,18 +577,12 @@ class Lpa extends AbstractData
         return $this;
     }
 
-    /**
-     * @return array
-     */
+
     public function getMetadata(): array
     {
         return $this->metadata;
     }
 
-    /**
-     * @param array $metadata
-     * @return $this
-     */
     public function setMetadata(array $metadata): Lpa
     {
         $this->metadata = $metadata;
