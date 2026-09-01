@@ -10,20 +10,20 @@ class UserModel implements UserRepository\UserInterface
 {
     /**
      * The user's data.
-     *
-     * @var array
      */
-    private $data;
+    private array $data;
 
     public function __construct(array $data)
     {
-        // if the numberOfLpas key hasn't been set, set it to null
-        // to mark that the value hasn't been derived
-        if (!array_key_exists('numberOfLpas', $data)) {
-            $data['numberOfLpas'] = null;
-        }
+        $defaults = [
+            'numberOfLpas' => null,
+            'sharedSpaceName' => null,
+            'sharedSpaceId' => null,
+            'isSharedSpaceAdmin' => null,
+            'isActiveInSharedSpace' => null,
+        ];
 
-        $this->data = $data;
+        $this->data = array_merge($defaults, $data);
     }
 
     //---------------------------------------
@@ -31,11 +31,9 @@ class UserModel implements UserRepository\UserInterface
     /**
      * Returns a DateTime for a given key from a range of time formats.
      *
-     * @param string $key
-     * @return DateTime|null
      * @throws DateMalformedStringException
      */
-    private function returnDateField(string $key)
+    private function returnDateField(string $key): ?DateTime
     {
         if (!isset($this->data[$key])) {
             return null;
@@ -51,9 +49,8 @@ class UserModel implements UserRepository\UserInterface
     //---------------------------------------
 
     /**
-     * Returns an array representation of the user's basic info.
-     *
-     * @return array
+     * @inheritDoc
+     * @throws DateMalformedStringException
      */
     public function toArray(): array
     {
@@ -68,15 +65,17 @@ class UserModel implements UserRepository\UserInterface
             'lastFailedLoginAttemptAt' => $this->lastFailedLoginAttemptAt(),
             'failedLoginAttempts' => $this->failedLoginAttempts(),
             'numberOfLpas' => $this->numberOfLpas(),
+            'sharedSpaceName' => $this->sharedSpaceName(),
+            'sharedSpaceId' => $this->sharedSpaceId(),
+            'isSharedSpaceAdmin' => $this->isSharedSpaceAdmin(),
+            'isActiveInSharedSpace' => $this->isActiveInSharedSpace(),
         ];
     }
 
     //---------------------------------------
 
     /**
-     * Returns the user's id.
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function id(): ?string
     {
@@ -84,9 +83,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * Returns the user's username (email address).
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function username(): ?string
     {
@@ -94,9 +91,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * Has the user's account been activated.
-     *
-     * @return bool
+     * @inheritDoc
      */
     public function isActive(): bool
     {
@@ -117,9 +112,8 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The date the user's account was created.
-     *
-     * @return DateTime|null
+     * @inheritDoc
+     * @throws DateMalformedStringException
      */
     public function createdAt(): ?DateTime
     {
@@ -127,9 +121,8 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The date the user's account was last updated.
-     *
-     * @return DateTime|null
+     * @inheritDoc
+     * @throws DateMalformedStringException
      */
     public function updatedAt(): ?DateTime
     {
@@ -137,20 +130,8 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The date the user's account is set to be deleted.
-     *
-     * @return DateTime|null
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function deleteAt(): ?DateTime
-    {
-        return $this->returnDateField('deleted');
-    }
-
-    /**
-     * The date the user's account was last successfully logged into.
-     *
-     * @return DateTime|null
+     * @inheritDoc
+     * @throws DateMalformedStringException
      */
     public function lastLoginAt(): ?DateTime
     {
@@ -158,9 +139,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The date the user's account was activated.
-     *
-     * @return DateTime|null
+     * @inheritDoc
      * @throws DateMalformedStringException
      */
     public function activatedAt(): ?DateTime
@@ -169,9 +148,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The date the user's account was last unsuccessfully tied to be logged in to.
-     *
-     * @return DateTime|null
+     * @inheritDoc
      * @throws DateMalformedStringException
      */
     public function lastFailedLoginAttemptAt(): ?DateTime
@@ -180,9 +157,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The number of consecutive login attempts the user's account has received.
-     *
-     * @return int
+     * @inheritDoc
      */
     public function failedLoginAttempts(): int
     {
@@ -190,9 +165,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The user's activation token.
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function activationToken(): ?string
     {
@@ -200,9 +173,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The GOV.UK One Login subject identifier this account is linked to, if any.
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function oneLoginSub(): ?string
     {
@@ -210,8 +181,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * The email address supplied by GOV.UK One Login for this account, if any.
-     * @return string|null
+     * @inheritDoc
      */
     public function oneLoginEmail(): ?string
     {
@@ -232,9 +202,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * Returns the user's current authentication token (if present).
-     *
-     * @return UserRepository\TokenInterface|null
+     * @inheritDoc
      */
     public function authToken(): ?UserRepository\TokenInterface
     {
@@ -246,9 +214,7 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * Any account inactivity flags that may be set
-     *
-     * @return array|null
+     * @inheritDoc
      */
     public function inactivityFlags(): ?array
     {
@@ -271,12 +237,9 @@ class UserModel implements UserRepository\UserInterface
     }
 
     /**
-     * Number of LPA applications made by the user.
-     * If not set, returns null.
-     *
-     * @return int|null
+     * @inheritDoc
      */
-    public function numberOfLpas()
+    public function numberOfLpas(): ?int
     {
         $value = $this->data['numberOfLpas'];
 
@@ -285,5 +248,45 @@ class UserModel implements UserRepository\UserInterface
         }
 
         return intval($value);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sharedSpaceName(): ?string
+    {
+        return (isset($this->data['sharedSpaceName'])) ? $this->data['sharedSpaceName'] : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sharedSpaceId(): ?string
+    {
+        return (isset($this->data['sharedSpaceId'])) ? $this->data['sharedSpaceId'] : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isSharedSpaceAdmin(): ?bool
+    {
+        if (!isset($this->data['isSharedSpaceAdmin'])) {
+            return null;
+        }
+
+        return ($this->data['isSharedSpaceAdmin'] === true || $this->data['isSharedSpaceAdmin'] === 'Y');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isActiveInSharedSpace(): ?bool
+    {
+        if (!isset($this->data['isActiveInSharedSpace'])) {
+            return null;
+        }
+
+        return ($this->data['isActiveInSharedSpace'] === true || $this->data['isActiveInSharedSpace'] === 'Y');
     }
 }

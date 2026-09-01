@@ -316,6 +316,52 @@ return [
                         ],
                     ],
 
+                    'admin' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/admin',
+                            'defaults' => [
+                                'controller' => 'AdminController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search-users',
+                                    'defaults' => [
+                                        'action' => 'searchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'match-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-users',
+                                    'defaults' => [
+                                        'action' => 'matchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-lpas' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/lpas',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -326,25 +372,6 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-
-                            'search-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/search',
-                                    'defaults' => [
-                                        'action' => 'search',
-                                    ],
-                                ],
-                            ],
-                            'match-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/match',
-                                    'defaults' => [
-                                        'action' => 'match',
-                                    ],
-                                ],
-                            ],
                             'email-change' => [
                                 'type'    => 'Segment',
                                 'options' => [

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Handler;
 
-use App\Handler\UserLpasHandler;
+use App\Handler\LpasHandler;
 use App\RequestAttributes;
 use App\Service\User\UserService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -15,12 +15,12 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 
-class UserLpasHandlerTest extends TestCase
+class LpasHandlerTest extends TestCase
 {
     private TemplateRendererInterface|MockObject $mockTemplateRenderer;
     private UserService|MockObject $mockUserService;
     private LoggerInterface|MockObject $mockLogger;
-    private UserLpasHandler $handler;
+    private LpasHandler $handler;
 
     protected function setUp(): void
     {
@@ -28,23 +28,22 @@ class UserLpasHandlerTest extends TestCase
         $this->mockUserService = $this->createMock(UserService::class);
         $this->mockLogger = $this->createMock(LoggerInterface::class);
 
-        $this->handler = new UserLpasHandler($this->mockUserService);
+        $this->handler = new LpasHandler($this->mockUserService);
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
         $this->handler->setLogger($this->mockLogger);
     }
 
-    public function testReturnsMissingEmailError()
+    public function testReturnsMissingUserIdAndSharedSpaceIdError()
     {
         $request = new ServerRequest()
             ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withAttribute('id', '123')
             ->withQueryParams([]);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
-            'app::user-lpas',
+            'app::view-lpas',
             $this->callback(fn ($args) =>
-                $args['userId'] === '123'
-                && $args['failureReason'] === 'missing-email')
+                $args['userId'] === null
+                && $args['failureReason'] === 'A user email or shared space name must be provided')
         )->willReturn('response');
 
         $response = $this->handler->handle($request);
@@ -55,7 +54,7 @@ class UserLpasHandlerTest extends TestCase
     {
         $request = new ServerRequest()
             ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withAttribute('id', '123')
+            ->withAttribute('userId', '123')
             ->withQueryParams(['email' => 'user@example.com']);
 
         $this->mockUserService->expects($this->once())
@@ -67,10 +66,10 @@ class UserLpasHandlerTest extends TestCase
         $this->mockLogger->expects($this->never())->method('info');
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
-            'app::user-lpas',
+            'app::view-lpas',
             $this->callback(fn ($args) =>
                 $args['userId'] === '123'
-                && $args['failureReason'] === 'no-lpas')
+                && $args['failureReason'] === 'No LPAs found')
         )->willReturn('response');
 
         $response = $this->handler->handle($request);
@@ -87,7 +86,7 @@ class UserLpasHandlerTest extends TestCase
 
         $request = new ServerRequest()
             ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withAttribute('id', '123')
+            ->withAttribute('userId', '123')
             ->withAttribute('user', $adminUser)
             ->withQueryParams(['email' => 'user@example.com']);
 
@@ -97,9 +96,39 @@ class UserLpasHandlerTest extends TestCase
             ->willReturn($lpas);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
-            'app::user-lpas',
+            'app::view-lpas',
             $this->callback(fn ($args) =>
-                $args['lpaEmail'] === 'user@example.com'
+                $args['lpasOwner'] === 'user@example.com'
+                && $args['lpas'] === $lpas)
+        )->willReturn('response');
+
+        $response = $this->handler->handle($request);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testReturnsSharedSpaceLpas()
+    {
+        $lpas = [
+            ['uId' => 'M-1234-5678-9012', 'donor' => 'John Doe'],
+            ['uId' => 'M-9876-5432-1098', 'donor' => 'Jane Smith'],
+        ];
+        $adminUser = new User(['id' => 'admin-id']);
+
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withAttribute('sharedSpaceId', '123')
+            ->withAttribute('user', $adminUser)
+            ->withQueryParams(['sharedSpaceName' => 'Shared Space']);
+
+        $this->mockUserService->expects($this->once())
+            ->method('sharedSpaceLpas')
+            ->with('123')
+            ->willReturn($lpas);
+
+        $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
+            'app::view-lpas',
+            $this->callback(fn ($args) =>
+                $args['lpasOwner'] === 'Shared Space'
                 && $args['lpas'] === $lpas)
         )->willReturn('response');
 
@@ -133,7 +162,7 @@ class UserLpasHandlerTest extends TestCase
 
         $request = (new ServerRequest())
             ->withMethod(RequestMethodInterface::METHOD_GET)
-            ->withAttribute('id', '123')
+            ->withAttribute('userId', '123')
             ->withAttribute(RequestAttributes::USER_EMAIL, 'admin@example.com')
             ->withQueryParams(['email' => 'user@example.com']);
 

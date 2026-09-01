@@ -46,6 +46,9 @@
                             <?= htmlspecialchars($user['username']); ?>
                         </a>
                     </h3>
+                    <?php if (!empty($user['sharedSpaceId']) && $user['sharedSpaceId'] !== '') { ?>
+                        <span class="app-float-right"><strong class="govuk-tag">Shared Space</strong></span>
+                    <?php } ?>
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
@@ -54,9 +57,9 @@
                                 Account status
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                <?php if (array_key_exists('isActive', $user)) { ?>
-                                    <?= ($user['isActive'] ? 'Activated' : 'Not activated'); ?>
-                                <?php } elseif (!empty($user['isDeleted'])) { ?>
+                                <?php if (array_key_exists('activated', $user)) { ?>
+                                    <?= ($user['activated'] ? 'Activated' : 'Not activated'); ?>
+                                <?php } elseif (!empty($user['deleted'])) { ?>
                                     Deleted
                                 <?php } ?>
                             </dd>
@@ -111,12 +114,38 @@
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     <?php if (intval($user['numberOfLpas']) > 0) { ?>
-                                        <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['id' => $user['userId']], ['email' => $user['username']]) ?>">
-                                            <?= intval($user['numberOfLpas']); ?>
-                                        </a>
+                                        <?php if ($user['sharedSpaceId'] !== null) { ?>
+                                            <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['sharedSpaceId' => $user['sharedSpaceId']], ['sharedSpaceName' => $user['sharedSpaceName']]) ?>">
+                                                <?= intval($user['numberOfLpas']); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['userId' => $user['userId']], ['email' => $user['username']]) ?>">
+                                                <?= intval($user['numberOfLpas']); ?>
+                                            </a>
+                                        <?php } ?>
                                     <?php } else { ?>
                                         0
                                     <?php } ?>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (!empty($user['sharedSpaceName'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Shared space name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <?= htmlspecialchars($user['sharedSpaceName']); ?>
+                                </dd>
+                            </div>
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Permissions
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <?= $user['isSharedSpaceAdmin'] ? 'Admin' : 'Member' ?>
                                 </dd>
                             </div>
                         <?php } ?>

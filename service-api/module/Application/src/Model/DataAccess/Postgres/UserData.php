@@ -144,25 +144,58 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $sql = $this->dbWrapper->createSql();
 
         // count applications by user
-        $subselect = $sql->select()->from(['a' => ApplicationData::APPLICATIONS_TABLE])
+        $subselect = $sql->select()->from(['applications' => ApplicationData::APPLICATIONS_TABLE])
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
         // case-insensitive match on user email
         $queryQuoted = $this->dbWrapper->quoteValue(sprintf('%%%s%%', $query));
-        $like = new Expression('u.identity ILIKE ' . $queryQuoted);
+        $like = new Expression('users.identity ILIKE ' . $queryQuoted);
 
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
         // invalid SQL; but this potentially locks the code to Postgres
-        $select = $sql->select()->from(['u' => self::USERS_TABLE])
+        $select = $sql
+            ->select()
+            ->from(['users' => self::USERS_TABLE])
             ->join(
-                ['a' => $subselect],
-                'u.id = a.user',
+                ['applications' => $subselect],
+                'users.id = applications.user',
                 ['numberOfLpas'],
                 'FULL'
             )
+            ->join(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive'
+                ],
+                'FULL'
+            )
+            ->join(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
+                'FULL'
+            )
             ->where($like)
+            ->columns([
+                'id',
+                'identity',
+                'active',
+                'created',
+                'updated',
+                'deleted',
+                'activated',
+                'last_login',
+                'last_failed_login',
+                'failed_login_attempts',
+                'inactivity_flags',
+                'one_login_sub',
+                'one_login_email',
+            ])
             ->order('identity ASC')
             ->offset($offset)
             ->limit($limit);
