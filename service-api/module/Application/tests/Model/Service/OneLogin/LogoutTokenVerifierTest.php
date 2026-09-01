@@ -259,6 +259,7 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         array $keys,
         ?array $reloadReturns = null,
         bool $reloadOnCooldown = false,
+        string $clientId = self::CLIENT_ID,
     ): LogoutTokenVerifier {
         $jwksProvider = Mockery::mock(JwksProviderInterface::class);
         $jwksProvider->shouldReceive('getJwks')->andReturn(['keys' => $keys])->byDefault();
@@ -278,7 +279,7 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $issuer->shouldReceive('getMetadata')->andReturn($issuerMetadata);
 
         $clientMetadata = Mockery::mock(ClientMetadataInterface::class);
-        $clientMetadata->shouldReceive('getClientId')->andReturn(self::CLIENT_ID);
+        $clientMetadata->shouldReceive('getClientId')->andReturn($clientId);
 
         $client = Mockery::mock(ClientInterface::class);
         $client->shouldReceive('getIssuer')->andReturn($issuer);
