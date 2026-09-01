@@ -12,8 +12,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 
 /**
  * As this class is instantiated via autowiring and referenced only by class
- * name in routes.php, psalm doesn't think it's used. Suppress this
- * misunderstanding.
+ * name in routes.php, psalm doesn't think it's used.
  * @psalm-suppress UnusedClass
  */
 class LpasHandler extends AbstractHandler
@@ -30,19 +29,19 @@ class LpasHandler extends AbstractHandler
         $userEmail = $request->getQueryParams()['email'] ?? null;
         $sharedSpaceName = $request->getQueryParams()['sharedSpaceName'] ?? null;
 
-        if (empty($userId) && empty($sharedSpaceId)) {
-            return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
+        if (empty($userEmail) && empty($sharedSpaceName)) {
+            return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
                 'userId' => $userId,
-                'failureReason' => 'missing-email-or-shared-space-id',
+                'failureReason' => 'A user email or shared space name must be provided',
             ]), 404);
         }
 
         $lpas = $sharedSpaceId ? $this->userService->sharedSpaceLpas($sharedSpaceId) : $this->userService->userLpas($userId);
 
         if ($lpas === false) {
-            return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
+            return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
                 'userId' => $userId,
-                'failureReason' => 'no-lpas',
+                'failureReason' => 'No LPAs found',
             ]), 404);
         }
 
@@ -57,9 +56,8 @@ class LpasHandler extends AbstractHandler
             ],
         );
 
-        return new HtmlResponse($this->getTemplateRenderer()->render('app::user-lpas', [
-            'lpaEmail' => $userEmail,
-            'sharedSpaceName' => $sharedSpaceName,
+        return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
+            'lpasOwner' => $userEmail ?: $sharedSpaceName,
             'lpas' => $lpas,
         ]));
     }
