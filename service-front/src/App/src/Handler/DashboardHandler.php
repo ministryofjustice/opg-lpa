@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PaginationTrait;
 use App\Middleware\RequestAttribute;
@@ -47,8 +48,7 @@ class DashboardHandler implements RequestHandlerInterface
         $lpas = $lpasSummary['applications'] ?? [];
         $lpasTotalCount = $lpasSummary['total'] ?? count($lpas);
 
-        // If there are no LPAs and this is NOT a search, redirect to create
-        if (is_null($search) && count($lpas) == 0) {
+        if (!Feature::OneLogin->isEnabled() && is_null($search) && count($lpas) === 0) {
             return new RedirectResponse('/user/dashboard/create');
         }
 

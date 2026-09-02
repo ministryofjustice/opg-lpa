@@ -26,6 +26,7 @@ Feature: ReusedDonorKeepsAllDetails
           | address-address1| 12 VERNAX AVENUE |
           | address-postcode| PC47 9JB |
         And I click "save"
+        And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
         # Choose PF type
