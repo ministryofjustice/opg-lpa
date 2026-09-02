@@ -105,6 +105,7 @@ class SharedSpaceService
                 $result['members'] ?? [],
             ),
             'invites' => $result['invites'] ?? [],
+            'name' => $result['name'] ?? '',
         ];
     }
 

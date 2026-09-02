@@ -92,6 +92,7 @@ class SharedSpaceHandlerTest extends TestCase
                 new SharedSpaceMember(['userId' => 'another-user', 'isAdmin' => false]),
             ],
             'invites' => ['a' => 'b'],
+            'name' => 'Example Shared Space',
         ];
 
         $this->sharedSpaceService
@@ -108,6 +109,7 @@ class SharedSpaceHandlerTest extends TestCase
                 'revokeSuccess' => $revokeSuccess,
                 'memberDeleted' => $memberDeleted,
                 'importSuccess' => $importSuccess,
+                'sharedSpaceName' => 'Example Shared Space',
                 'signedInUserIsAdmin' => $isAdmin,
                 'signedInUser' => null,
                 'secondsUntilSessionExpires' => null,

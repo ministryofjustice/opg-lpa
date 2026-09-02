@@ -356,13 +356,17 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->with($sharedSpaceId)
             ->andReturn(['c' => 'd']);
 
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->with($sharedSpaceId)
+            ->andReturn('Example Shared Space');
+
         $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
         $result = $this->controller->membersAndInvitesAction();
 
         $this->assertInstanceOf(Json::class, $result);
 
         $body = json_decode($result->getContent(), true);
-        $this->assertEquals(['members' => ['a' => 'b'], 'invites' => ['c' => 'd']], $body);
+        $this->assertEquals(['members' => ['a' => 'b'], 'invites' => ['c' => 'd'], 'name' => 'Example Shared Space'], $body);
     }
 
     public function testMembersAndInvitesActionWhenNotInSharedSpace()
