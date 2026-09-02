@@ -60,6 +60,7 @@ Feature: One Login Sign In
       | address-address1 | 123 Test Street |
       | address-postcode | SW1A 1AA |
     And I click "save"
+    And If I am on dashboard I click to create lpa
     Then I am taken to the lpa type page
 
   @RequiresMockOneLogin
@@ -77,6 +78,7 @@ Feature: One Login Sign In
     And I should be on "/link-account"
     And I am advised my Make account credentials were not recognised
     And I link the "retry" Make account
+    And If I am on dashboard I click to create lpa
     And I am taken to the lpa type page
 
   @RequiresMockOneLogin

@@ -58,6 +58,7 @@ Feature: SignupAndChangeDetails
           | address-address1| 12 PARANOIA CLOSE |
           | address-postcode| PC45 9JA |
         And I click "save"
+        And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
         And I see "What type of LPA do you want to make?" in the page text
 
@@ -84,6 +85,7 @@ Feature: SignupAndChangeDetails
         Then I am taken to "/user/about-you"
 
         When I visit link containing "Cancel"
+        And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
     Scenario: Mismatched passwords in password change screen result in error message instead of raw 500 page (LPAL-651)
