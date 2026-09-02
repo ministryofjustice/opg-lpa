@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -57,6 +58,8 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
         // point because they will have been created in an earlier step
         $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
+        $conflictError = null;
+
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -79,42 +82,48 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
                 $howAttorneysAct = $formData['how'];
                 $howDetails = null;
 
-                if ($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
-                    $howDetails = $formData['howDetails'];
-                }
-
-                if (
-                    $primaryAttorneyDecisions->how !== $howAttorneysAct
-                    || $primaryAttorneyDecisions->howDetails !== $howDetails
-                ) {
-                    $primaryAttorneyDecisions->how = $howAttorneysAct;
-                    $primaryAttorneyDecisions->howDetails = $howDetails;
-
-                    $setOk = $this->lpaApplicationService->setPrimaryAttorneyDecisions(
-                        $lpa,
-                        $primaryAttorneyDecisions
-                    );
-
-                    if (!$setOk) {
-                        throw new RuntimeException(
-                            'API client failed to set primary attorney decisions for id: ' . $lpa->id
-                        );
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if ($howAttorneysAct == PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
+                        $howDetails = $formData['howDetails'];
                     }
 
-                    $this->replacementAttorneyCleanup->cleanUp($lpa);
+                    if (
+                        $primaryAttorneyDecisions->how !== $howAttorneysAct
+                            || $primaryAttorneyDecisions->howDetails !== $howDetails
+                    ) {
+                        $primaryAttorneyDecisions->how = $howAttorneysAct;
+                        $primaryAttorneyDecisions->howDetails = $howDetails;
 
-                    $this->applicantService->cleanUp($lpa);
+                        $setOk = $this->lpaApplicationService->setPrimaryAttorneyDecisions(
+                            $lpa,
+                            $primaryAttorneyDecisions,
+                            $ifMatchVersion,
+                        );
+
+                        if (!$setOk) {
+                            throw new RuntimeException(
+                                'API client failed to set primary attorney decisions for id: ' . $lpa->id
+                            );
+                        }
+
+                        $this->replacementAttorneyCleanup->cleanUp($lpa);
+
+                        $this->applicantService->cleanUp($lpa);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $form->bind($primaryAttorneyDecisions->flatten());
@@ -125,7 +134,9 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form'      => $form,
+                    'form' => $form,
+                    'lpaVersion' => $lpa->getVersion(),
+                    'conflictError' => $conflictError,
                 ]
             )
         );

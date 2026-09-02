@@ -12,6 +12,7 @@ use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\ApiClient\Exception\ConflictException;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -58,6 +59,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
         $templateParams = [
             'isPopup' => $isPopup,
+            'lpaVersion' => $lpa->getVersion(),
         ];
 
         /** @var User|null $userDetails */
@@ -97,7 +99,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
         );
         $form->setActorData('attorney', $this->actorReuseDetailsService->getActorsList($lpa, false));
 
-
         if (!$isPost && $reuseDetailsIndexFromQuery !== null) {
             $reuseDetails = $userDetails instanceof User
                 ? $this->actorReuseDetailsService->getActorReuseDetails($userDetails, $lpa)
@@ -125,34 +126,40 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
             if (!$reuseHandled) {
                 $form->setData($postData);
 
+                $ifMatchVersion = (int)$postData['version'];
                 if ($form->isValid()) {
-                    $addOk = $this->lpaApplicationService->addPrimaryAttorney(
-                        $lpa,
-                        new Human($form->getModelDataFromValidatedForm())
-                    );
-
-                    if (!$addOk) {
-                        throw new RuntimeException(
-                            'API client failed to add a primary attorney for id: ' . $lpa->id
+                    try {
+                        $addOk = $this->lpaApplicationService->addPrimaryAttorney(
+                            $lpa,
+                            new Human($form->getModelDataFromValidatedForm()),
+                            $ifMatchVersion,
                         );
+
+                        if (!$addOk) {
+                            throw new RuntimeException(
+                                'API client failed to add a primary attorney for id: ' . $lpa->id
+                            );
+                        }
+
+                        $ifMatchVersion = $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
+                        $ifMatchVersion = $this->applicantService->cleanUp($lpa, $ifMatchVersion);
+
+                        if ($isPopup) {
+                            return new JsonResponse(['success' => true]);
+                        }
+
+                        $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                        return new RedirectResponse(
+                            $this->urlHelper->generate(
+                                $nextRoute,
+                                ['lpa-id' => $lpa->id],
+                                $flowChecker->getRouteOptions($nextRoute)
+                            )
+                        );
+                    } catch (ConflictException $e) {
+                        $templateParams['conflictError'] = ['updatedBy' => $e->getLastUpdatedBy()];
                     }
-
-                    $this->replacementAttorneyCleanup->cleanUp($lpa);
-                    $this->applicantService->cleanUp($lpa);
-
-                    if ($isPopup) {
-                        return new JsonResponse(['success' => true]);
-                    }
-
-                    $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                    return new RedirectResponse(
-                        $this->urlHelper->generate(
-                            $nextRoute,
-                            ['lpa-id' => $lpa->id],
-                            $flowChecker->getRouteOptions($nextRoute)
-                        )
-                    );
                 }
             }
         }

@@ -61,7 +61,7 @@ class PrimaryAttorneyHandler implements RequestHandlerInterface
                     ),
                     'confirmDeleteUrl' => $this->urlHelper->generate(
                         'lpa/primary-attorney/confirm-delete',
-                        $routeParams
+                        $routeParams,
                     ),
                 ];
             }

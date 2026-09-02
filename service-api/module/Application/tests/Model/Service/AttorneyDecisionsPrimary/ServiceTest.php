@@ -36,7 +36,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $decisions = new PrimaryAttorneyDecisions();
         $decisions->set('how', 'invalid');
 
-        $validationError = $this->service->update(strval($lpa->getId()), $decisions->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), 5, $decisions->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -70,7 +70,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->update(strval($lpa->getId()), null);
+        $this->service->update(strval($lpa->getId()), 5, null);
     }
 
     public function testUpdate()
@@ -83,7 +83,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $decisions = new PrimaryAttorneyDecisions();
 
-        $primaryAttorneyDecisionsEntity = $this->service->update(strval($lpa->getId()), $decisions->toArray());
+        $primaryAttorneyDecisionsEntity = $this->service->update(strval($lpa->getId()), 5, $decisions->toArray());
 
         $this->assertEquals(new DataModelEntity($decisions), $primaryAttorneyDecisionsEntity);
     }

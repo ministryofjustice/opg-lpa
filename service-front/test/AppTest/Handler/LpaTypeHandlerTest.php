@@ -132,7 +132,7 @@ class LpaTypeHandlerTest extends TestCase
 
     public function testPostValidFormSetTypeFailureThrowsException(): void
     {
-        $lpa = new Lpa(['id' => 123, 'document' => ['type' => Document::LPA_TYPE_HW]]);
+        $lpa = new Lpa(['id' => 123, 'document' => ['type' => Document::LPA_TYPE_HW], 'version' => 1]);
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn(['type' => Document::LPA_TYPE_HW]);
@@ -148,7 +148,7 @@ class LpaTypeHandlerTest extends TestCase
 
     public function testPostValidFormSuccessfullyCreatesLpaAndRedirects(): void
     {
-        $lpa = new Lpa(['id' => 123, 'document' => ['type' => Document::LPA_TYPE_PF]]);
+        $lpa = new Lpa(['id' => 123, 'document' => ['type' => Document::LPA_TYPE_PF], 'version' => 1]);
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn(['type' => Document::LPA_TYPE_PF]);

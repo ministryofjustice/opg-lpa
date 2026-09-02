@@ -2,10 +2,12 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Authentication\AuthenticationService;
+use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 
 abstract class AbstractLpaController extends AbstractRestfulController
@@ -66,5 +68,18 @@ abstract class AbstractLpaController extends AbstractRestfulController
         ) {
             throw new UnauthorizedException('You do not have permission to access this service');
         }
+    }
+
+    protected function ifMatch(): int
+    {
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $header = $request->getHeader('If-Match');
+
+        if (!$header) {
+            throw new ApiProblemException('If-Match header required', 400);
+        }
+
+        return (int) $header->getFieldValue();
     }
 }

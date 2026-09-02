@@ -58,6 +58,7 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="version" value="{{ lpaVersion }}">
 
         {# Error summary #}
         {{ macros.formErrorSummary(error,form) }}

@@ -81,8 +81,7 @@ if args.cp:
 if args.pn:
     addPersonToNotify(lpaId)
 if args.i:
-    setInstruction(lpaId)
-    setPreference(lpaId)
+    setInstructionPreference(lpaId)
 if args.w:
     # if registrant is not "donor", API expects an array of attorney IDs
     who = args.w

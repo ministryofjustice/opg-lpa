@@ -21,7 +21,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function create(string $lpaId, $data)
+    public function create(string $lpaId, int $ifMatchVersion, $data)
     {
         switch ($data['type']) {
             case 'trust':
@@ -56,7 +56,7 @@ class Service extends AbstractService
 
         $lpa->getDocument()->primaryAttorneys[] = $attorney;
 
-        $this->updateLpa($lpa);
+        $this->updateLpa($lpa, $ifMatchVersion);
 
         return new DataModelEntity($attorney);
     }
@@ -67,7 +67,7 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data, $id)
+    public function update(string $lpaId, int $ifMatchVersion, $data, $id)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -95,7 +95,7 @@ class Service extends AbstractService
 
                 $lpa->getDocument()->primaryAttorneys[$key] = $attorney;
 
-                $this->updateLpa($lpa);
+                $this->updateLpa($lpa, $ifMatchVersion);
 
                 return new DataModelEntity($attorney);
             }
@@ -109,7 +109,7 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|bool
      */
-    public function delete(string $lpaId, $id)
+    public function delete(string $lpaId, int $ifMatchVersion, $id)
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -120,7 +120,7 @@ class Service extends AbstractService
                 // Reset the index sequence. This ensure the value remains an array, not an object, in JSON.
                 $lpa->getDocument()->setPrimaryAttorneys(array_values($lpa->getDocument()->primaryAttorneys));
 
-                $this->updateLpa($lpa);
+                $this->updateLpa($lpa, $ifMatchVersion);
 
                 return true;
             }

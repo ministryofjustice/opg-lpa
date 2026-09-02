@@ -131,6 +131,17 @@ class Lpa extends AbstractData
     protected $document;
 
     /**
+     * User who last updated the Lpa. Set for all LPAs, but only of value for
+     * those in a Shared space.
+     */
+    protected ?string $updatedBy = null;
+
+    /**
+     * Version of the application used to prevent concurrent updates, incremented on each write.
+     */
+    protected int $version;
+
+    /**
      * @var array Metadata relating to the LPA. Clients can use this value however they wish.
      */
     protected array $metadata = [];
@@ -1120,5 +1131,15 @@ class Lpa extends AbstractData
         }
 
         return false;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    public function getUpdatedBy(): ?string
+    {
+        return $this->updatedBy;
     }
 }

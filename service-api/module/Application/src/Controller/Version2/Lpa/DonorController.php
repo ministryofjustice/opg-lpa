@@ -28,7 +28,7 @@ class DonorController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $data);
+        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $this->ifMatch(), $data);
 
         if ($result instanceof ApiProblem) {
             return $result;

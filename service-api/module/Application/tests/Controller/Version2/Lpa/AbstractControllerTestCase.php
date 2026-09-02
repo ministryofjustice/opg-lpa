@@ -8,6 +8,7 @@ use Application\Model\Service\EntityInterface;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Header\GenericHeader;
 use Laminas\EventManager\EventManager;
+use Laminas\Http\Header\IfMatch;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -19,6 +20,8 @@ use Mockery\MockInterface;
 
 abstract class AbstractControllerTestCase extends MockeryTestCase
 {
+    protected const IF_MATCH_VALUE = 5;
+
     /**
      * @var int|null
      */
@@ -137,6 +140,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $request->shouldReceive('getHeader')
             ->with('X-Trace-Id')
             ->andReturn(new GenericHeader('X-Trace-Id', 'trace-id-123'));
+        $request->shouldReceive('getHeader')
+            ->with('If-Match')
+            ->andReturn(new IfMatch(strval(self::IF_MATCH_VALUE)));
 
         $abstractController->dispatch($request);
     }

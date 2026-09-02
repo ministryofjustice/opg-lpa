@@ -65,7 +65,7 @@ class LpaTypeHandler implements RequestHandlerInterface
                 $formData = $form->getData();
                 $lpaType = is_array($formData) ? ($formData['type'] ?? '') : '';
 
-                if (!$this->lpaApplicationService->setType($lpa, $lpaType)) {
+                if (!$this->lpaApplicationService->setType($lpa, $lpaType, $lpa->getVersion())) {
                     throw new RuntimeException('API client failed to set LPA type for id: ' . $lpa->id);
                 }
 

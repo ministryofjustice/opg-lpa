@@ -36,12 +36,17 @@ final class ReplacementAttorneyCleanupTest extends MockeryTestCase
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([$this->equalTo(new Lpa([
-                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
-            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
+            ->withArgs([
+                $this->equalTo(new Lpa([
+                    'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
+                ])),
+                $this->equalTo(new ReplacementAttorneyDecisions()),
+                $this->equalTo(5),
+            ])
             ->once();
 
-        $this->service->cleanUp($lpa);
+        $newVersion = $this->service->cleanUp($lpa, 5);
+        $this->assertEquals(6, $newVersion);
     }
 
     public function testCleanUpHowDecisionsInvalid(): void
@@ -50,11 +55,16 @@ final class ReplacementAttorneyCleanupTest extends MockeryTestCase
 
         $this->lpaApplicationService
             ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([$this->equalTo(new Lpa([
-                'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
-            ])), $this->equalTo(new ReplacementAttorneyDecisions())])
+            ->withArgs([
+                $this->equalTo(new Lpa([
+                    'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
+                ])),
+                $this->equalTo(new ReplacementAttorneyDecisions()),
+                $this->equalTo(6),
+            ])
             ->once();
 
-        $this->service->cleanUp($lpa);
+        $newVersion = $this->service->cleanUp($lpa, 6);
+        $this->assertEquals(7, $newVersion);
     }
 }

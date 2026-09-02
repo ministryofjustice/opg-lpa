@@ -17,7 +17,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update(string $lpaId, int $ifMatchVersion, $data)
     {
         $type = (isset($data['type']) ? $data['type'] : null);
 
@@ -32,7 +32,7 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting type');
 
-        $this->updateLpa($lpa);
+        $this->updateLpa($lpa, $ifMatchVersion);
 
         return new Entity($type);
     }

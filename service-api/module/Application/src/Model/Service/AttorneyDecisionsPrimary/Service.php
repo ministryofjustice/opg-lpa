@@ -19,7 +19,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data)
+    public function update(string $lpaId, int $ifMatch, $data)
     {
         $primaryAttorneyDecisions = new PrimaryAttorneyDecisions($data);
 
@@ -34,7 +34,7 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting primary attorney decisions');
 
-        $this->updateLpa($lpa);
+        $this->updateLpa($lpa, $ifMatch);
 
         return new DataModelEntity($primaryAttorneyDecisions);
     }

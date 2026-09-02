@@ -42,6 +42,7 @@ class DonorEditHandlerTest extends TestCase
         'email' => ['address' => 'unit@test.com'],
         'dob' => ['day' => 1, 'month' => 2, 'year' => 1970],
         'canSign' => true,
+        'version' => '5'
     ];
 
     protected function setUp(): void

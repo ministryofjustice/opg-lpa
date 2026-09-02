@@ -46,7 +46,7 @@ trait ApplicationRepositoryTrait
         return new Lpa($result);
     }
 
-    protected function updateLpa(Lpa $lpa): void
+    protected function updateLpa(Lpa $lpa, ?int $ifMatchVersion = null): void
     {
         $this->getLogger()->info('Updating LPA', [
             'lpaid' => $lpa->id
@@ -71,7 +71,7 @@ trait ApplicationRepositoryTrait
             ));
         }
 
-        $this->getApplicationRepository()->update($lpa);
+        $this->getApplicationRepository()->update($lpa, $ifMatchVersion);
 
         $this->getLogger()->info('LPA updated successfully', [
             'lpaid' => $lpa->id,

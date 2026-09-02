@@ -74,6 +74,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->type = $type;
         $lpa->document->primaryAttorneys = [];
@@ -293,7 +294,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
 
         // POST with invalid form so it falls through to render — back button should be set
         $this->makeHandler($reuseService)->handle(
-            $this->createRequest('POST', ['name-first' => 'Test'], null, $user)
+            $this->createRequest('POST', ['name-first' => 'Test', 'version' => '5'], null, $user)
         );
     }
 
@@ -303,7 +304,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->expects($this->once())->method('render')->willReturn('rendered-html');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test']));
+        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test', 'version' => '6']));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -319,7 +320,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->applicantService->expects($this->once())->method('cleanUp');
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/how-primary-attorneys-make-decision');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test']));
+        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test', 'version' => '7']));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
@@ -334,7 +335,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name-first' => 'Test'], null, null, [], true)
+            $this->createRequest('POST', ['name-first' => 'Test', 'version' => '8'], null, null, [], true)
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -353,7 +354,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('API client failed to add a primary attorney for id: 91333263035');
 
-        $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test']));
+        $this->handler->handle($this->createRequest('POST', ['name-first' => 'Test', 'version' => '5']));
     }
 
     public function testPostWithSingleReuseOptionBindsDataWithoutValidating(): void
@@ -373,7 +374,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->renderer->method('render')->willReturn('html');
 
         $this->makeHandler($reuseService)->handle(
-            $this->createRequest('POST', ['reuse-details' => '0'], null, $user)
+            $this->createRequest('POST', ['reuse-details' => '0', 'version' => '6'], null, $user)
         );
     }
 
@@ -394,7 +395,7 @@ class PrimaryAttorneyAddHandlerTest extends TestCase
         $this->renderer->method('render')->willReturn('html');
 
         $this->makeHandler($reuseService)->handle(
-            $this->createRequest('POST', ['reuse-details' => '0'])
+            $this->createRequest('POST', ['reuse-details' => '0', 'version' => '7'])
         );
     }
 }

@@ -183,6 +183,7 @@
 {# begin form #}
 {{ form().openTag( form )|raw }}
 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+<input type="hidden" name="version" value="{{ lpaVersion }}">
 
     <fieldset class="govuk-fieldset">
         {{ macros.formGroup(title) }}
