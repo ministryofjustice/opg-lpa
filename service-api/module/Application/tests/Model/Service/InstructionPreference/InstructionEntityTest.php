@@ -1,16 +1,16 @@
 <?php
 
-namespace ApplicationTest\Model\Service\Preference;
+namespace ApplicationTest\Model\Service\InstructionPreference;
 
-use Application\Model\Service\Preference\Entity;
+use Application\Model\Service\InstructionPreference\InstructionEntity;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeSharedTest\DataModel\FixturesData;
 use PHPUnit\Framework\TestCase;
 
-class EntityTest extends TestCase
+class InstructionEntityTest extends TestCase
 {
     /**
-     * @var Entity
+     * @var InstructionEntity
      */
     private $entity = null;
 
@@ -28,17 +28,17 @@ class EntityTest extends TestCase
 
         //  Set up an LPA to test
         $this->lpa = FixturesData::getHwLpa();
-        $this->entity = new Entity($this->lpa->getDocument()->getPreference());
+        $this->entity = new InstructionEntity($this->lpa->getDocument()->getInstruction());
     }
 
     public function testToArray()
     {
-        $this->assertEquals(['preference' => $this->lpa->getDocument()->getPreference()], $this->entity->toArray());
+        $this->assertEquals(['instruction' => $this->lpa->getDocument()->getInstruction()], $this->entity->toArray());
     }
 
     public function testToArrayNull()
     {
-        $entity = new Entity(null);
+        $entity = new InstructionEntity(null);
         $this->assertEquals([], $entity->toArray());
     }
 }

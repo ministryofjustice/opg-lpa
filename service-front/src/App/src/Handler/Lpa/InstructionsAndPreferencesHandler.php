@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
+use App\Form\Lpa\InstructionsAndPreferencesForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -21,7 +22,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
 
-class InstructionsHandler implements RequestHandlerInterface
+class InstructionsAndPreferencesHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
@@ -45,7 +46,7 @@ class InstructionsHandler implements RequestHandlerInterface
         $currentRoute = (string) $request->getAttribute(RequestAttribute::CURRENT_ROUTE_NAME);
 
         $form = $this->formElementManager->get(
-            'App\Form\Lpa\InstructionsAndPreferencesForm',
+            InstructionsAndPreferencesForm::class,
             ['lpa' => $lpa]
         );
 
@@ -61,46 +62,33 @@ class InstructionsHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 /** @var array $data */
                 $data = $form->getData();
-                $lpaId = $lpa->id;
+                $lpaId = $lpa->getId();
 
                 // persist data if it has changed
 
                 if (
-                    is_null($lpa->document->instruction)
-                    || $data['instruction'] != $lpa->document->instruction
+                    (is_null($lpa->getDocument()->getInstruction()) || $data['instruction'] != $lpa->getDocument()->getInstruction())
+                    || (is_null($lpa->getDocument()->getPreference()) || $data['preference'] != $lpa->getDocument()->getPreference())
                 ) {
-                    $setOk = $this->lpaApplicationService->setInstructions(
+                    $setOk = $this->lpaApplicationService->setInstructionsPreferences(
                         $lpa,
-                        $data['instruction']
-                    );
-
-                    if (!$setOk) {
-                        throw new RuntimeException(
-                            'API client failed to set LPA instructions for id: ' . $lpaId
-                        );
-                    }
-                }
-
-                if (
-                    is_null($lpa->document->preference)
-                    || $data['preference'] != $lpa->document->preference
-                ) {
-                    $setOk = $this->lpaApplicationService->setPreferences(
-                        $lpa,
+                        $data['instruction'],
                         $data['preference']
                     );
 
                     if (!$setOk) {
                         throw new RuntimeException(
-                            'API client failed to set LPA preferences for id: ' . $lpaId
+                            'API client failed to set LPA instructions and preferences for id: ' . $lpaId
                         );
                     }
                 }
 
+                $metadata = $lpa->getMetadata();
+
                 if (
-                    !isset($lpa->metadata)
-                    || !isset($lpa->metadata['instruction-confirmed'])
-                    || $lpa->metadata['instruction-confirmed'] !== true
+                    count($metadata) === 0
+                    || !isset($metadata['instruction-confirmed'])
+                    || $metadata['instruction-confirmed'] !== true
                 ) {
                     $this->metadata->setInstructionConfirmed($lpa);
                 }
@@ -110,13 +98,13 @@ class InstructionsHandler implements RequestHandlerInterface
                 return new RedirectResponse(
                     $this->urlHelper->generate(
                         $nextRoute,
-                        ['lpa-id' => $lpa->id],
+                        ['lpa-id' => $lpa->getId()],
                         $flowChecker->getRouteOptions($nextRoute)
                     )
                 );
             }
         } else {
-            $form->bind($lpa->document->flatten());
+            $form->bind($lpa->getDocument()->flatten());
         }
 
         $html = $this->renderer->render(

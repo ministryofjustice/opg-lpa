@@ -628,6 +628,24 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
+    public function setInstructionsPreferences(Lpa $lpa, mixed $instructions, mixed $preferences): mixed
+    {
+        $result = $this->executePut(
+            sprintf('/v2/user/%s/applications/%s/instruction-preference', $this->getUserId(), $lpa->getId()),
+            ['instruction' => $instructions, 'preference' => $preferences]
+        );
+
+        if (is_array($result)) {
+            [$instruction, $preference] = $result;
+
+            $lpa->getDocument()->setInstruction($instruction);
+            $lpa->getDocument()->setPreference($preference);
+            return true;
+        }
+
+        return false;
+    }
+
     public function setWhoIsRegistering(Lpa $lpa, array|string|null $whoIsRegistering): bool
     {
         $result = $this->executePut(
