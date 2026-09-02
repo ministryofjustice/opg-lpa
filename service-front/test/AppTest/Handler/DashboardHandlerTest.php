@@ -24,9 +24,15 @@ class DashboardHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private LoggerInterface&MockObject $logger;
     private DashboardHandler $handler;
+    private string|false $originalOneLoginEnabled;
 
     protected function setUp(): void
     {
+        // Default every test to the production configuration: One Login off, so the
+        // pre-existing redirect still applies unless a test opts in.
+        $this->originalOneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        putenv('ONELOGIN_ENABLED=false');
+
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -36,6 +42,17 @@ class DashboardHandlerTest extends TestCase
             $this->lpaApplicationService,
             $this->logger,
         );
+    }
+
+    protected function tearDown(): void
+    {
+        if ($this->originalOneLoginEnabled === false) {
+            putenv('ONELOGIN_ENABLED');
+        } else {
+            putenv('ONELOGIN_ENABLED=' . $this->originalOneLoginEnabled);
+        }
+
+        parent::tearDown();
     }
 
     private function createRequest(
@@ -60,7 +77,10 @@ class DashboardHandlerTest extends TestCase
         return $request;
     }
 
-    public function testRedirectsToDashboardCreateWhenNoLpas(): void
+    /**
+     * Pre-existing behaviour, retained while the flag is off - this is what production does.
+     */
+    public function testRedirectsToDashboardCreateWhenNoLpasAndOneLoginDisabled(): void
     {
         $this->lpaApplicationService
             ->expects($this->once())
@@ -76,6 +96,112 @@ class DashboardHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard/create', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * AC: a user with a Make account and no LPAs lands on the Dashboard rather than being
+     * redirected to create an LPA. Also covers the brand-new-account scenario, which reaches
+     * this handler by the same route.
+     *
+     * The ticket's shared-space scenarios are NOT covered here and need no change: sign-in
+     * sends a shared-space member to /shared-space/dashboard instead (LoginHandler:47), which
+     * is served by SharedSpaceDashboardHandler and has never had this redirect.
+     */
+    public function testRendersDashboardWhenNoLpasAndOneLoginEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+
+        $lastLogin = new DateTime('2026-06-01 10:00:00');
+        $identity = $this->createMock(User::class);
+        $identity->expects($this->once())->method('lastLogin')->willReturn($lastLogin);
+
+        $this->lpaApplicationService
+            ->expects($this->once())
+            ->method('getPersonalLpaSummaries')
+            ->with(null, 1, 50)
+            ->willReturn([
+                'applications'    => [],
+                'total'           => 0,
+                'trackingEnabled' => false,
+            ]);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/dashboard/index.twig',
+                $this->callback(function (array $params) use ($lastLogin): bool {
+                    // The template renders its "You have no LPAs" empty state from these.
+                    return $params['lpas'] === []
+                        && $params['lpaTotalCount'] === 0
+                        && $params['isSearch'] === false
+                        && $params['freeText'] === null
+                        && $params['user']['lastLogin'] === $lastLogin;
+                })
+            )
+            ->willReturn('<html>dashboard</html>');
+
+        $response = $this->handler->handle($this->createRequest(identity: $identity));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testStillRendersDashboardWhenLpasExistAndOneLoginEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+
+        $identity = $this->createMock(User::class);
+        $identity->method('lastLogin')->willReturn(new DateTime('2026-06-01 10:00:00'));
+
+        $this->lpaApplicationService
+            ->expects($this->once())
+            ->method('getPersonalLpaSummaries')
+            ->willReturn([
+                'applications'    => [['id' => 1001, 'donor' => 'Alice Example']],
+                'total'           => 1,
+                'trackingEnabled' => false,
+            ]);
+
+        $this->renderer->expects($this->once())->method('render')->willReturn('<html>dashboard</html>');
+
+        $response = $this->handler->handle($this->createRequest(identity: $identity));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testRendersDashboardWhenSearchHasNoResultsAndOneLoginEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+
+        $identity = $this->createMock(User::class);
+        $identity->method('lastLogin')->willReturn(new DateTime('2026-06-01 10:00:00'));
+
+        $this->lpaApplicationService
+            ->expects($this->once())
+            ->method('getPersonalLpaSummaries')
+            ->with('nothing matches', 1, 50)
+            ->willReturn([
+                'applications'    => [],
+                'total'           => 0,
+                'trackingEnabled' => false,
+            ]);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/dashboard/index.twig',
+                $this->callback(fn(array $params): bool => $params['isSearch'] === true
+                    && $params['freeText'] === 'nothing matches'),
+            )
+            ->willReturn('<html>dashboard</html>');
+
+        $response = $this->handler->handle(
+            $this->createRequest(search: 'nothing matches', identity: $identity),
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testRendersDashboardWhenLpasExist(): void

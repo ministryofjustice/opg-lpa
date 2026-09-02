@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace AppTest\Validator;
 
 use App\Validator\NotEmpty;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class NotEmptyTest extends TestCase
 {
-    public function validProvider(): array
+    public static function validProvider(): array
     {
         return [
             'simple string'          => ['foo'],
@@ -20,7 +21,7 @@ final class NotEmptyTest extends TestCase
             'array with something'   => [[1]],
         ];
     }
-    public function invalidProvider(): array
+    public static function invalidProvider(): array
     {
         return [
             'empty string' => [''],
@@ -30,14 +31,14 @@ final class NotEmptyTest extends TestCase
         ];
     }
 
-    /** @dataProvider validProvider */
+    #[DataProvider('validProvider')]
     public function testItAcceptsExpectedValues(mixed $value): void
     {
         $validator = new NotEmpty();
         self::assertTrue($validator->isValid($value), 'Expected value to be considered NOT empty');
     }
 
-    /** @dataProvider invalidProvider */
+    #[DataProvider('invalidProvider')]
     public function testItRejectsExpectedValues(mixed $value): void
     {
         $validator = new NotEmpty();

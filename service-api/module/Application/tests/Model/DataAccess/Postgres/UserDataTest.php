@@ -10,6 +10,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use DateTime;
 use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
+use Application\Model\DataAccess\Postgres\SharedSpaceData;
 use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Postgres\DbWrapper;
@@ -178,14 +179,14 @@ class UserDataTest extends MockeryTestCase
             ->andReturn($sqlMock);
 
         $sqlMock->shouldReceive('from')
-            ->with(['a' => ApplicationData::APPLICATIONS_TABLE])
+            ->with(['applications' => ApplicationData::APPLICATIONS_TABLE])
             ->andReturn($subselectMock);
 
         $sqlMock->shouldReceive('select')
             ->andReturn($sqlMock);
 
         $sqlMock->shouldReceive('from')
-            ->with(['u' => UserData::USERS_TABLE])
+            ->with(['users' => UserData::USERS_TABLE])
             ->andReturn($selectMock);
 
         $subselectMock->shouldReceive('columns')
@@ -204,9 +205,31 @@ class UserDataTest extends MockeryTestCase
 
         $selectMock->shouldReceive('join')
             ->with(
-                ['a' => $subselectMock],
-                'u.id = a.user',
+                ['applications' => $subselectMock],
+                'users.id = applications.user',
                 ['numberOfLpas'],
+                'FULL'
+            )
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive',
+                ],
+                'FULL'
+            )
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
                 'FULL'
             )
             ->andReturn($selectMock);
@@ -214,8 +237,26 @@ class UserDataTest extends MockeryTestCase
         // key test: is the ILIKE statement case insensitive?
         $selectMock->shouldReceive('where')
             ->with(Mockery::on(function ($expression) use ($query) {
-                return $expression->getExpression() == "u.identity ILIKE %{$query}%";
+                return $expression->getExpression() == "users.identity ILIKE %{$query}%";
             }))
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('columns')
+            ->with([
+                'id',
+                'identity',
+                'active',
+                'created',
+                'updated',
+                'deleted',
+                'activated',
+                'last_login',
+                'last_failed_login',
+                'failed_login_attempts',
+                'inactivity_flags',
+                'one_login_sub',
+                'one_login_email',
+            ])
             ->andReturn($selectMock);
 
         $selectMock->shouldReceive('order')
@@ -1495,7 +1536,12 @@ class UserDataTest extends MockeryTestCase
             'email' => ['address' => 'vansant@nowhere'],
         ]);
 
-        $expectedProfileJson = json_encode($profileUserModel->toArray());
+        // Mirror the production saveProfile() logic to build the expected
+        // JSON payload, so this test doesn't need updating every time a new
+        // field is added to the User data model.
+        $expectedUser = $profileUserModel->toArray();
+        unset($expectedUser['id'], $expectedUser['createdAt'], $expectedUser['updatedAt']);
+        $expectedProfileJson = json_encode($expectedUser);
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -1503,7 +1549,7 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(
-            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"},"lastLoginAt":null,"numberOfLpas":null}']
+            ['profile' => $expectedProfileJson]
         );
 
         // test

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Service\User;
 
 use App\Service\ApiClient\Client as ApiClient;
@@ -62,7 +64,7 @@ class UserService
 
     public function search(#[\SensitiveParameter] string $email)
     {
-        $userData = $this->client->httpGet('/v2/users/search', [
+        $userData = $this->client->httpGet('/v2/admin/search-users', [
             'email' => $email
         ]);
 
@@ -112,7 +114,7 @@ class UserService
 
     public function searchByAReference(string $aReference): array|false
     {
-        $userData = $this->client->httpGet('/v2/users/search', [
+        $userData = $this->client->httpGet('/v2/admin/search-users', [
             'aReference' => $aReference,
         ]);
 
@@ -142,9 +144,33 @@ class UserService
         }
     }
 
+    public function sharedSpaceLpas(string $sharedSpaceId): array|false
+    {
+        try {
+            $lpaData = $this->client->httpGet(sprintf('/v2/admin/shared-space/%s/lpas', $sharedSpaceId), [
+                'page' => 1,
+                'perPage' => 20,
+            ]);
+
+            if (is_array($lpaData) && array_key_exists('applications', $lpaData) && is_array($lpaData['applications'])) {
+                return $lpaData['applications'];
+            }
+
+            return false;
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
+            return false;
+        }
+    }
+
     public function match(array $params): array
     {
-        $users = $this->client->httpGet('/v2/users/match', $params);
+        $users = $this->client->httpGet('/v2/admin/match-users', $params);
+
+        if (!is_array($users)) {
+            return [];
+        }
+
         return array_map(fn ($user) => $this->convertDates($user), $users);
     }
 }
