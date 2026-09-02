@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Handler\Lpa;
 
-use App\Handler\Lpa\InstructionsHandler;
+use App\Handler\Lpa\InstructionsAndPreferencesHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
@@ -22,7 +22,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class InstructionsHandlerTest extends TestCase
+class InstructionsAndPreferencesHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
@@ -31,7 +31,7 @@ class InstructionsHandlerTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     /** @var \App\Form\Lpa\InstructionsAndPreferencesForm&MockObject */
     private $form;
-    private InstructionsHandler $handler;
+    private InstructionsAndPreferencesHandler $handler;
 
     private array $postData = [
         'instruction' => 'Unit test instructions',
@@ -51,7 +51,7 @@ class InstructionsHandlerTest extends TestCase
             ->method('get')
             ->willReturn($this->form);
 
-        $this->handler = new InstructionsHandler(
+        $this->handler = new InstructionsAndPreferencesHandler(
             $this->renderer,
             $this->formElementManager,
             $this->lpaApplicationService,
@@ -66,11 +66,11 @@ class InstructionsHandlerTest extends TestCase
         ?array $metadata = null,
     ): Lpa {
         $lpa = new Lpa();
-        $lpa->id = 91333263035;
-        $lpa->document = new Document();
-        $lpa->document->instruction = $instruction;
-        $lpa->document->preference = $preference;
-        $lpa->metadata = $metadata ?? [];
+        $lpa->setId(91333263035);
+        $lpa->setDocument(new Document());
+        $lpa->getDocument()->setInstruction($instruction);
+        $lpa->getDocument()->setPreference($preference);
+        $lpa->setMetadata($metadata ?? []);
 
         return $lpa;
     }
@@ -136,32 +136,10 @@ class InstructionsHandlerTest extends TestCase
         $this->form->method('getData')->willReturn($this->postData);
 
         $this->lpaApplicationService
-            ->method('setInstructions')
+            ->method('setInstructionsPreferences')
             ->willReturn(false);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('API client failed to set LPA instructions for id: 91333263035');
-
-        $this->handler->handle(
-            $this->createRequest('POST', $this->postData)
-        );
-    }
-
-    public function testPostPreferencesSetFailed(): void
-    {
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('getData')->willReturn($this->postData);
-
-        $this->lpaApplicationService
-            ->method('setInstructions')
-            ->willReturn(true);
-
-        $this->lpaApplicationService
-            ->method('setPreferences')
-            ->willReturn(false);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('API client failed to set LPA preferences for id: 91333263035');
 
         $this->handler->handle(
             $this->createRequest('POST', $this->postData)
@@ -175,12 +153,7 @@ class InstructionsHandlerTest extends TestCase
 
         $this->lpaApplicationService
             ->expects($this->once())
-            ->method('setInstructions')
-            ->willReturn(true);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('setPreferences')
+            ->method('setInstructionsPreferences')
             ->willReturn(true);
 
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/applicant');
@@ -205,11 +178,7 @@ class InstructionsHandlerTest extends TestCase
 
         $this->lpaApplicationService
             ->expects($this->never())
-            ->method('setInstructions');
-
-        $this->lpaApplicationService
-            ->expects($this->never())
-            ->method('setPreferences');
+            ->method('setInstructionsPreferences');
 
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/applicant');
 
@@ -240,8 +209,7 @@ class InstructionsHandlerTest extends TestCase
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($this->postData);
 
-        $this->lpaApplicationService->method('setInstructions')->willReturn(true);
-        $this->lpaApplicationService->method('setPreferences')->willReturn(true);
+        $this->lpaApplicationService->method('setInstructionsPreferences')->willReturn(true);
 
         $this->metadata
             ->expects($this->once())
@@ -264,8 +232,7 @@ class InstructionsHandlerTest extends TestCase
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($this->postData);
 
-        $this->lpaApplicationService->method('setInstructions')->willReturn(true);
-        $this->lpaApplicationService->method('setPreferences')->willReturn(true);
+        $this->lpaApplicationService->method('setInstructionsPreferences')->willReturn(true);
 
         $this->metadata
             ->expects($this->never())

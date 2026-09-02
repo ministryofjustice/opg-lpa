@@ -1,10 +1,10 @@
 <?php
 
-namespace Application\Model\Service\Instruction;
+namespace Application\Model\Service\InstructionPreference;
 
 use Application\Model\Service\EntityInterface;
 
-class Entity implements EntityInterface
+class InstructionEntity implements EntityInterface
 {
     protected $instruction;
 

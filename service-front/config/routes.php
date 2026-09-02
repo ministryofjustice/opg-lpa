@@ -59,7 +59,7 @@ use App\Handler\Lpa\FeeReductionHandler;
 use App\Handler\Lpa\HowPrimaryAttorneysMakeDecisionHandler;
 use App\Handler\Lpa\HowReplacementAttorneysMakeDecisionHandler;
 use App\Handler\Lpa\IndexHandler;
-use App\Handler\Lpa\InstructionsHandler;
+use App\Handler\Lpa\InstructionsAndPreferencesHandler;
 use App\Handler\Lpa\LifeSustainingHandler;
 use App\Handler\Lpa\MoreInfoRequiredHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
@@ -260,7 +260,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/type', $factory->pipeline(LpaLoaderMiddleware::class, TypeHandler::class), ['GET', 'POST'], 'lpa/form-type');
     $app->route('/lpa/{lpa-id:\d+}/when-lpa-starts', $factory->pipeline(LpaLoaderMiddleware::class, WhenLpaStartsHandler::class), ['GET', 'POST'], 'lpa/when-lpa-starts');
     $app->route('/lpa/{lpa-id:\d+}/life-sustaining', $factory->pipeline(LpaLoaderMiddleware::class, LifeSustainingHandler::class), ['GET', 'POST'], 'lpa/life-sustaining');
-    $app->route('/lpa/{lpa-id:\d+}/instructions', $factory->pipeline(LpaLoaderMiddleware::class, InstructionsHandler::class), ['GET', 'POST'], 'lpa/instructions');
+    $app->route('/lpa/{lpa-id:\d+}/instructions', $factory->pipeline(LpaLoaderMiddleware::class, InstructionsAndPreferencesHandler::class), ['GET', 'POST'], 'lpa/instructions');
     $app->route('/lpa/{lpa-id:\d+}/reuse-details', $factory->pipeline(LpaLoaderMiddleware::class, ReuseDetailsHandler::class), ['GET', 'POST'], 'lpa/reuse-details');
 
     $app->get('/lpa/{lpa-id:\d+}/donor', $factory->pipeline(LpaLoaderMiddleware::class, DonorIndexHandler::class), 'lpa/donor');

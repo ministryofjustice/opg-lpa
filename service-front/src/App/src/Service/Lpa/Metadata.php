@@ -53,16 +53,18 @@ class Metadata
 
     public function removeMetadata(Lpa $lpa, string $key): bool
     {
-        if (array_key_exists($key, $lpa->metadata)) {
+        $metaData = $lpa->getMetadata();
+        if (array_key_exists($key, $metaData)) {
             //  Remove the value
-            unset($lpa->metadata[$key]);
+            unset($metaData[$key]);
+            $lpa->setMetadata($metaData);
 
-            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->setMetaData($lpa->getId(), $lpa->getMetadata())) {
                 $this->logger->warning('API client failed to remove metadata', [
-                    'lpaId' => $lpa->id,
+                    'lpaId' => $lpa->getId(),
                     'status' => 500,
                 ]);
-                throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
+                throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->getId(), __METHOD__));
             }
 
             return true;
@@ -85,16 +87,18 @@ class Metadata
 
     private function setMetadataByKey(Lpa $lpa, string $key, $value = true): bool
     {
-        if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
+        $metaData = $lpa->getMetadata();
+        if (!array_key_exists($key, $metaData) || $metaData[$key] !== $value) {
             //  Update the value
-            $lpa->metadata[$key] = $value;
+            $metaData[$key] = $value;
+            $lpa->setMetadata($metaData);
 
-            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
+            if (!$this->setMetaData($lpa->getId(), $lpa->getMetadata())) {
                 $this->logger->warning('API client failed to remove metadata by key', [
-                    'lpaId' => $lpa->id,
+                    'lpaId' => $lpa->getId(),
                     'status' => 500,
                 ]);
-                throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
+                throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->getId(), __METHOD__));
             }
 
             return true;

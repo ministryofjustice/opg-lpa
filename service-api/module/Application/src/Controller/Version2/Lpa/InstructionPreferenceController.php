@@ -4,10 +4,9 @@ namespace Application\Controller\Version2\Lpa;
 
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json as JsonResponse;
-use Application\Model\Service\EntityInterface;
-use Application\Model\Service\Instruction\Service;
+use Application\Model\Service\InstructionPreference\Service;
 
-class InstructionController extends AbstractLpaController
+class InstructionPreferenceController extends AbstractLpaController
 {
     /**
      * Get the service to use
@@ -32,11 +31,9 @@ class InstructionController extends AbstractLpaController
 
         if ($result instanceof ApiProblem) {
             return $result;
-        } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray());
         }
 
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        [$instruction, $preference] = $result;
+        return new JsonResponse([$instruction->toArray(), $preference->toArray()]);
     }
 }
