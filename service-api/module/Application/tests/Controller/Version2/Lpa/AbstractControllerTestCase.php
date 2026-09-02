@@ -61,7 +61,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->userId = 12345;
+        $this->userId = '12345';
         $this->lpaId = 98765;
 
         $response = Mockery::mock(Response::class);
@@ -73,8 +73,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($response);
 
         $this->identity = Mockery::mock(User::class);
-        $this->identity->shouldReceive('getId')->andReturn(99999);
-        $this->identity->shouldReceive('id')->andReturn(99999);
+        $this->identity->shouldReceive('getId')->andReturn(12345);
+        $this->identity->shouldReceive('id')->andReturn(12345);
         $this->identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
         $this->identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
         $this->identity->shouldReceive('email')->andReturn('identity@email.address');
@@ -83,7 +83,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $authenticationService->shouldReceive('getIdentity')->andReturn($this->identity);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
-        $this->routeMatch->shouldReceive('getParam')->withArgs(['userId'])->andReturn($this->userId);
+        $this->routeMatch->shouldReceive('getParam')->withArgs(['userId', null])->andReturn($this->userId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId'])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId', false])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['action', false])->andReturn(false);
@@ -128,6 +128,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     protected function callDispatch(AbstractLpaController $abstractController, array $parameters = [])
     {
         $abstractController->setEventManager($this->eventManager);
+        $abstractController->getEvent()->setRouteMatch($this->routeMatch);
 
         $params = new Parameters($parameters);
 

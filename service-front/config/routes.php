@@ -106,6 +106,7 @@ use App\Handler\SessionSetExpiryHandler;
 use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
+use App\Handler\SharedSpaceImportFailedHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
@@ -154,7 +155,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/stats', StatsHandler::class, 'stats')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route('/login[/{state:(?:timeout|internal-system-error|member-suspended)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
+    $app->route('/login[/{state:(?:timeout|internal-system-error)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
@@ -167,12 +168,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route(
-        '/forgot-password/reset/{token:[a-zA-Z0-9]+}',
+        '/forgot-password/reset[/{token:[^\r\n]*}]',
         ResetPasswordHandler::class,
         ['GET', 'POST'],
         'forgot-password/callback',
     )
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
@@ -194,7 +195,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
+        $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
         $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
@@ -213,6 +214,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
+        $app->get('/shared-space/import-failed', SharedSpaceImportFailedHandler::class, 'shared-space.import-failed');
+        $app->route('/shared-space/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'shared-space.forgot-password');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {

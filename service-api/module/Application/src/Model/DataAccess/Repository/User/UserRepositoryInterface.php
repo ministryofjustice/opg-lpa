@@ -129,14 +129,6 @@ interface UserRepositoryInterface
     public function getProfile($id): ?ProfileUserModel;
 
     /**
-     * Return a list of user's profile details
-     *
-     * @param array<string> $ids
-     * @return array<ProfileUserModel>
-     */
-    public function getProfiles(array $ids): array;
-
-    /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      */
     public function saveProfile(ProfileUserModel $data): void;
@@ -146,4 +138,9 @@ interface UserRepositoryInterface
      * One Login email.
      */
     public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void;
+
+    /**
+     * Refreshes the One Login email held for an already-linked account.
+     */
+    public function setOneLoginEmail(string $userId, string $oneLoginEmail): void;
 }

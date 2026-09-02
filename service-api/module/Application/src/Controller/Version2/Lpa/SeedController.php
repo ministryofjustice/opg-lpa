@@ -28,7 +28,10 @@ class SeedController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->fetch($this->lpaId, $this->routeUserId);
+        $result = $this->getService()->fetch(
+            $this->params()->fromRoute('lpaId'),
+            $this->authenticationService->getIdentity()->getId()
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -55,7 +58,11 @@ class SeedController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->lpaId, $data, $this->routeUserId);
+        $result = $this->getService()->update(
+            $this->params()->fromRoute('lpaId'),
+            $data,
+            $this->authenticationService->getIdentity()->getId()
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -785,6 +785,55 @@ final class LegacyCompatExtensionTest extends TestCase
         $this->assertStringContainsString('value="abc123"', $html);
     }
 
+    public function testFormHiddenRendersElementAttributes(): void
+    {
+        $el = new Element\Hidden('skip_confirm_password');
+        $el->setAttributes(['name' => 'skip_confirm_password', 'id' => 'js-skipConfirmPassword']);
+        $el->setValue('1');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('id="js-skipConfirmPassword"', $html);
+        $this->assertStringContainsString('type="hidden"', $html);
+        $this->assertStringContainsString('name="skip_confirm_password"', $html);
+        $this->assertStringContainsString('value="1"', $html);
+    }
+
+    public function testFormHiddenAlwaysRendersTypeHidden(): void
+    {
+        $el = new Element\Text('company');
+        $el->setAttributes(['name' => 'company', 'id' => 'company-name', 'type' => 'text']);
+        $el->setValue('A Trust Corporation');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('type="hidden"', $html);
+        $this->assertStringNotContainsString('type="text"', $html);
+        $this->assertStringContainsString('value="A Trust Corporation"', $html);
+    }
+
+    public function testFormHiddenFallsBackToElementNameWhenNoNameAttribute(): void
+    {
+        $el = new Element\Hidden('token');
+        $el->setValue('abc123');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('name="token"', $html);
+    }
+
+    public function testFormHiddenEscapesAttributeValues(): void
+    {
+        $el = new Element\Hidden('token');
+        $el->setAttributes(['name' => 'token', 'id' => 'tok"><script>alert(1)</script>']);
+        $el->setValue('"><script>alert(2)</script>');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringContainsString('&lt;script&gt;', $html);
+    }
+
     public function testFormElementReturnsEmptyStringForNull(): void
     {
         $this->assertSame('', $this->extension->formElement(null));

@@ -17,6 +17,7 @@ use RuntimeException;
 class OneLoginSignInHandler implements RequestHandlerInterface
 {
     private const string SESSION_KEY_ONELOGIN = 'onelogin_auth';
+    private const string SESSION_KEY_IDENTITY = 'identity';
 
     public function __construct(
         private readonly OneLoginService $oneLoginService,
@@ -26,15 +27,19 @@ class OneLoginSignInHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $redirectUri = ($this->redirectUriBuilder)($request->getUri());
-
-        $result = $this->oneLoginService->start($redirectUri);
-
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
         if (!$session instanceof SessionInterface) {
             throw new RuntimeException('Session middleware is not configured');
         }
+
+        if ($session->has(self::SESSION_KEY_IDENTITY)) {
+            return new RedirectResponse('/user/dashboard');
+        }
+
+        $redirectUri = ($this->redirectUriBuilder)($request->getUri());
+
+        $result = $this->oneLoginService->start($redirectUri);
 
         $session->set(self::SESSION_KEY_ONELOGIN, [
             'state'        => $result['state'],

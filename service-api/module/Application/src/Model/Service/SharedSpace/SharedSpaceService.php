@@ -10,7 +10,7 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Application\Model\Service\Authentication\Service;
 use DateTime;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
@@ -26,6 +26,7 @@ class SharedSpaceService
         private readonly ApplicationRepositoryInterface $applicationRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly LogRepositoryInterface $logRepository,
+        private readonly Service $authenticationService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -128,46 +129,32 @@ class SharedSpaceService
             return null;
         }
 
-        $profiles = $this->userRepository->getProfiles([$memberUserId]);
-        $profile = $profiles[0] ?? null;
-
-        if ($profile === null) {
-            return null;
-        }
-
         return [
-            'id' => $profile->getId(),
-            'name' => $profile->getName(),
-            'email' => $profile->getEmail(),
-            'lastLoginAt' => $profile->getLastLoginAt(),
-            'isActive' => $member->getIsActive(),
-            'isAdmin' => $member->getIsAdmin(),
+            'sharedSpaceName' => $member->getSharedSpaceName(),
+            'userId' => $member->getUserId(),
+            'name' => $member->getName(),
+            'email' => $member->getEmail(),
+            'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+            'isActive' => $member->isActive(),
+            'isAdmin' => $member->isAdmin(),
         ];
     }
 
     public function getMembers(string $sharedSpaceId): array
     {
         $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
-        $ids = array_map(function (SharedSpaceMember $member) {
-            return $member->getUserId();
-        }, $members);
 
-        $profiles = $this->userRepository->getProfiles($ids);
-
-        return array_map(function ($profile) use ($members) {
-            $member = array_find($members, function (SharedSpaceMember $member) use ($profile) {
-                return $member->getUserId() === $profile->getId();
-            });
-
+        return array_map(function ($member) {
             return [
-                'id' => $profile->getId(),
-                'name' => $profile->getName(),
-                'email' => $profile->getEmail(),
-                'lastLoginAt' => $profile->getLastLoginAt(),
-                'isActive' => $member->getIsActive(),
-                'isAdmin' => $member->getIsAdmin(),
+                'sharedSpaceName' => $member->getSharedSpaceName(),
+                'userId' => $member->getUserId(),
+                'name' => $member->getName(),
+                'email' => $member->getEmail(),
+                'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+                'isActive' => $member->isActive(),
+                'isAdmin' => $member->isAdmin(),
             ];
-        }, $profiles);
+        }, $members);
     }
 
     public function isAdmin(string $sharedSpaceId, string $userId): bool
@@ -221,6 +208,9 @@ class SharedSpaceService
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         try {
@@ -242,6 +232,9 @@ class SharedSpaceService
         ]);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function deleteMember(string $sharedSpaceId, string $userId, string $userToDeleteId): void
     {
         $this->sharedSpaceRepository->beginTransaction();
@@ -375,5 +368,48 @@ class SharedSpaceService
         ]);
 
         return $invite->sharedSpaceId;
+    }
+
+    public function import(string $sharedSpaceId, string $userId, #[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
+    {
+        $userToImport = $this->authenticationService->withPassword($email, $password, false);
+        if (is_string($userToImport)) {
+            return $userToImport;
+        }
+
+        if ($userToImport['sharedSpaceId'] !== null) {
+            throw new UserAlreadyInSharedSpaceException();
+        }
+
+        $this->sharedSpaceRepository->beginTransaction();
+        try {
+            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userToImport['userId'], $sharedSpaceId);
+
+            $this->logger->info('Reassigned LPA ownership', [
+                'user_id' => $userToImport['userId'],
+                'shared_space_id' => $sharedSpaceId,
+                'count' => $lpasMoved,
+            ]);
+
+            if (!$this->userRepository->delete($userToImport['userId'])) {
+                throw new \RuntimeException('User not deleted');
+            }
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            throw $e;
+        }
+
+        $this->logger->info('User imported to shared space', [
+            'event' => 'shared_space.import',
+            'shared_space_id' => $sharedSpaceId,
+            'user_id' => $userId,
+            'imported_user_id' => $userToImport['userId'],
+            'lpas_moved' => $lpasMoved,
+        ]);
+
+        return null;
     }
 }

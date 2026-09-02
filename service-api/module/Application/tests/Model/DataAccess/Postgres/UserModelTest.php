@@ -45,7 +45,6 @@ class UserModelTest extends MockeryTestCase
             'password_hash' => 'Password123',
             'created' => $date,
             'updated' => $date,
-            'deleted' => $date,
             'last_login' => $date,
             'activated' => $date,
             'last_failed_login' => $date,
@@ -62,7 +61,6 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals('Password123', $user->password());
         $this->assertEquals($date, $user->createdAt());
         $this->assertEquals($date, $user->updatedAt());
-        $this->assertEquals($date, $user->deleteAt());
         $this->assertEquals($date, $user->lastLoginAt());
         $this->assertEquals($date, $user->activatedAt());
         $this->assertEquals($date, $user->lastFailedLoginAttemptAt());
@@ -70,6 +68,7 @@ class UserModelTest extends MockeryTestCase
         $this->assertEquals('activation-token', $user->activationToken());
         $this->assertEquals('urn:fdc:gov.uk:2022:sub-123', $user->oneLoginSub());
         $this->assertEquals('onelogin@example.com', $user->oneLoginEmail());
+        $this->assertEquals('onelogin@example.com', $user->contactEmail());
         $this->assertEquals('auth-token', $user->authToken()->id());
         $this->assertEquals(null, $user->numberOfLpas());
     }
@@ -86,5 +85,30 @@ class UserModelTest extends MockeryTestCase
         $user = new User(['id' => '1', 'identity' => 'unit@test.com']);
 
         $this->assertNull($user->oneLoginEmail());
+    }
+
+    public function testContactEmailFallsBackToIdentityWhenNoOneLoginEmail()
+    {
+        $user = new User(['id' => '1', 'identity' => 'unit@test.com']);
+
+        $this->assertEquals('unit@test.com', $user->contactEmail());
+    }
+
+    public function testContactEmailFallsBackToIdentityWhenOneLoginEmailIsEmpty()
+    {
+        $user = new User([
+            'id' => '1',
+            'identity' => 'unit@test.com',
+            'one_login_email' => '',
+        ]);
+
+        $this->assertEquals('unit@test.com', $user->contactEmail());
+    }
+
+    public function testContactEmailIsNullWhenNothingIsSet()
+    {
+        $user = new User(['id' => '1']);
+
+        $this->assertNull($user->contactEmail());
     }
 }

@@ -4,13 +4,35 @@
 {% block mainTitle %}{% endblock mainTitle %}
 
 {% block content %}
-<div class="govuk-grid-row govuk-!-margin-top-9">
-  <div class="govuk-grid-column-two-thirds">
-    <div class="govuk-panel govuk-panel--confirmation">
-      <h1 class="govuk-panel__title">
-        {{ pageTitle }}
-      </h1>
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner__header">
+        <h1 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            {{ pageTitle }}
+        </h1>
+      </div>
+      <div class="govuk-notification-banner__content">
+        <h2 class="govuk-notification-banner__heading">
+            {{ sharedSpaceName }} has been successfully created
+        </h2>
+      </div>
     </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <h2 class="govuk-heading-xl">What happens now?</h2>
+
+    <p class="govuk-body">You can continue to your shared dashboard.</p>
+    <p class="govuk-body">Being part of a shared space means:</p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>you and other shared space users have access to all the LPAs that you’ve each created</li>
+      <li>you can make an LPA that other users in the shared space can access/edit</li>
+      <li>you can invite others users to the shared dashboard and give them admin or non admin access</li>
+    </ul>
 
     <a href="{{ url('shared-space.dashboard') }}" class="govuk-button">Continue</a>
   </div>

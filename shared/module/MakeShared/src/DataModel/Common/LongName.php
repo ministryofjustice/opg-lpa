@@ -82,6 +82,11 @@ class LongName extends AbstractData
         return $name;
     }
 
+    public function getFullName(): string
+    {
+        return $this->__toString();
+    }
+
     /**
      * @return string
      */

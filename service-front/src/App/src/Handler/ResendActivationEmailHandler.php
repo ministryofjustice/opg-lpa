@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -26,7 +27,7 @@ class ResendActivationEmailHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         // Prevent authenticated users from accessing this page
-        $identity = $request->getAttribute('identity');
+        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
         if ($identity !== null) {
             return new RedirectResponse('/user/dashboard');
         }

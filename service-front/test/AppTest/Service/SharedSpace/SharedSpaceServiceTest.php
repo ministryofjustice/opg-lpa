@@ -8,6 +8,7 @@ use App\Service\ApiClient\Client;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\SharedSpace\SharedSpaceService;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -109,11 +110,29 @@ final class SharedSpaceServiceTest extends TestCase
         $this->client->expects($this->once())
             ->method('httpGet')
             ->with('/v2/shared-space/members/user-1')
-            ->willReturn(['member' => ['id' => 'user-1', 'isAdmin' => true]]);
+            ->willReturn(['member' =>
+                [
+                    'userId' => 'member-1',
+                    'isAdmin' => true,
+                    'isActive' => true,
+                    'sharedSpaceName' => 'a-space',
+                    'sharedSpaceId' => 'space-1',
+                    'createdAt' => '2024-01-01T00:00:00Z'
+                ]
+            ]);
 
         $result = $this->service->getMember('user-1');
 
-        $this->assertSame(['id' => 'user-1', 'isAdmin' => true], $result);
+        $this->assertEquals(
+            new SharedSpaceMember()
+            ->setUserId('member-1')
+            ->setIsAdmin(true)
+            ->setIsActive(true)
+            ->setSharedSpaceName('a-space')
+            ->setSharedSpaceId('space-1')
+            ->setCreatedAt(new \DateTime('2024-01-01T00:00:00Z')),
+            $result
+        );
     }
 
     public function testGetMemberReturnsNullWhenResponseMissingMemberKey(): void
@@ -141,7 +160,7 @@ final class SharedSpaceServiceTest extends TestCase
             ->with('/v2/shared-space/members/user-1', ['isAdmin' => true, 'isActive' => true])
             ->willReturn(['success' => true]);
 
-        $result = $this->service->updateMember('user-1', true, true);
+        $result = $this->service->updateMember(new SharedSpaceMember(['userId' => 'user-1']), true, true);
 
         $this->assertTrue($result);
     }
@@ -150,7 +169,7 @@ final class SharedSpaceServiceTest extends TestCase
     {
         $this->client->method('httpPatch')->willThrowException(new \RuntimeException('api-error'));
 
-        $result = $this->service->updateMember('user-1', true, true);
+        $result = $this->service->updateMember(new SharedSpaceMember(['userId' => 'user-1']), true, true);
 
         $this->assertFalse($result);
     }
@@ -160,11 +179,17 @@ final class SharedSpaceServiceTest extends TestCase
         $this->client->expects($this->once())
             ->method('httpGet')
             ->with('/v2/shared-space/members-and-invites')
-            ->willReturn(['a' => 'b']);
+            ->willReturn([
+                'members' => [['userId' => 'member-1'], ['userId' => 'member-2']],
+                'invites' => [['id' => 'invite-1']]
+            ]);
 
         $result = $this->service->getMembersAndInvites();
 
-        $this->assertEquals(['a' => 'b'], $result);
+        $this->assertEquals([
+            'members' => [new SharedSpaceMember(['userId' => 'member-1']), new SharedSpaceMember(['userId' => 'member-2'])],
+            'invites' => [['id' => 'invite-1']]
+        ], $result);
     }
 
     public function testDeleteMember(): void
@@ -226,5 +251,34 @@ final class SharedSpaceServiceTest extends TestCase
         $result = $this->service->join('My Space', '1234');
 
         $this->assertEquals('my space', $result);
+    }
+
+    public function testImport(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/import', [
+                'email' => 'a',
+                'password' => 'b',
+            ]);
+
+        $result = $this->service->import('a', 'b');
+
+        $this->assertNull($result);
+    }
+
+    public function testImportWhenProblem(): void
+    {
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/import', [
+                'email' => 'a',
+                'password' => 'b',
+            ])
+            ->willReturn(['problem' => 'there-was-an-issue']);
+
+        $result = $this->service->import('a', 'b');
+
+        $this->assertEquals('there-was-an-issue', $result);
     }
 }

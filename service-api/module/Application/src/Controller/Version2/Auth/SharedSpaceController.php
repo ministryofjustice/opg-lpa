@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
@@ -19,7 +18,6 @@ use DateInterval;
 use DateTimeImmutable;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 use MakeShared\DataModel\Lpa\Lpa;
 use Throwable;
 use Traversable;
@@ -31,27 +29,6 @@ class SharedSpaceController extends AbstractRestfulController
         private readonly SharedSpaceService $sharedSpaceService,
         private readonly ApplicationsService $applicationsService,
     ) {
-    }
-
-    /**
-     * AbstractRestfulController doesn't know how to turn a bare ApiProblem
-     * value returned from an action into a Response with the correct HTTP
-     * status code - without this, ApiProblem responses (e.g. 400/401/403/500)
-     * are sent to clients as a 200 with a malformed body. See
-     * AbstractAuthController::onDispatch() for the equivalent used by
-     * controllers that extend it.
-     *
-     * @return mixed|ApiProblemResponse
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        $return = parent::onDispatch($e);
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
     }
 
     /**
@@ -356,6 +333,30 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new NoContent();
+    }
+
+    public function importAction(): NoContent|Json|ApiProblem
+    {
+        $token = $this->checkTokenForSharedSpace();
+        if ($token instanceof ApiProblem) {
+            return $token;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $data = $this->processBodyContent($this->getRequest());
+
+        try {
+            $problem = $this->sharedSpaceService->import($token['sharedSpaceId'], $token['userId'], $data['email'], $data['password']);
+        } catch (UserAlreadyInSharedSpaceException $e) {
+            $problem = 'user-already-in-space';
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return $problem ? new Json(['problem' => $problem]) : new NoContent();
     }
 
     private function checkToken(): array|ApiProblem

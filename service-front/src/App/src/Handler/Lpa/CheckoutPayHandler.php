@@ -123,7 +123,7 @@ class CheckoutPayHandler implements RequestHandlerInterface
                 ? 'Property and financial affairs'
                 : 'Health and welfare'
         );
-        $description .= ' LPA for ' . (string) $lpa->getDocument()->getDonor()->getName();
+        $description .= ' LPA for ' . $lpa->getDocument()->getDonor()->getName()->getFullName();
 
         // Build the callback URL using the request URI
         $requestUri = $request->getUri();

@@ -10,6 +10,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use DateTime;
 use PDOException;
 use Application\Model\DataAccess\Postgres\ApplicationData;
+use Application\Model\DataAccess\Postgres\SharedSpaceData;
 use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Postgres\DbWrapper;
@@ -32,6 +33,8 @@ use ApplicationTest\Helpers;
 
 class UserDataTest extends MockeryTestCase
 {
+    private const string RESET_TOKEN = 'tobeornottobe';
+
     // create a PDO Result mock to test queries which use DbWrapper->select()
     // $isQueryResult: bool
     // $count: int
@@ -176,14 +179,14 @@ class UserDataTest extends MockeryTestCase
             ->andReturn($sqlMock);
 
         $sqlMock->shouldReceive('from')
-            ->with(['a' => ApplicationData::APPLICATIONS_TABLE])
+            ->with(['applications' => ApplicationData::APPLICATIONS_TABLE])
             ->andReturn($subselectMock);
 
         $sqlMock->shouldReceive('select')
             ->andReturn($sqlMock);
 
         $sqlMock->shouldReceive('from')
-            ->with(['u' => UserData::USERS_TABLE])
+            ->with(['users' => UserData::USERS_TABLE])
             ->andReturn($selectMock);
 
         $subselectMock->shouldReceive('columns')
@@ -202,9 +205,31 @@ class UserDataTest extends MockeryTestCase
 
         $selectMock->shouldReceive('join')
             ->with(
-                ['a' => $subselectMock],
-                'u.id = a.user',
+                ['applications' => $subselectMock],
+                'users.id = applications.user',
                 ['numberOfLpas'],
+                'FULL'
+            )
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive',
+                ],
+                'FULL'
+            )
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
                 'FULL'
             )
             ->andReturn($selectMock);
@@ -212,8 +237,26 @@ class UserDataTest extends MockeryTestCase
         // key test: is the ILIKE statement case insensitive?
         $selectMock->shouldReceive('where')
             ->with(Mockery::on(function ($expression) use ($query) {
-                return $expression->getExpression() == "u.identity ILIKE %{$query}%";
+                return $expression->getExpression() == "users.identity ILIKE %{$query}%";
             }))
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('columns')
+            ->with([
+                'id',
+                'identity',
+                'active',
+                'created',
+                'updated',
+                'deleted',
+                'activated',
+                'last_login',
+                'last_failed_login',
+                'failed_login_attempts',
+                'inactivity_flags',
+                'one_login_sub',
+                'one_login_email',
+            ])
             ->andReturn($selectMock);
 
         $selectMock->shouldReceive('order')
@@ -766,15 +809,58 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals(null, $userData->getByAuthToken($token));
     }
 
+    #[DataProvider('unusableResetTokens')]
+    public function testGetByResetTokenReturnsNullForUnusableToken(mixed $storedToken): void
+    {
+        $rowData = ['id' => '111111', 'password_reset_token' => $storedToken];
+
+        $resultMock = $this->makeSelectResult(true, 1, $rowData);
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertNull($userData->getByResetToken(self::RESET_TOKEN));
+    }
+
+    /** @return array<string, array{mixed}> */
+    public static function unusableResetTokens(): array
+    {
+        $token = self::RESET_TOKEN;
+
+        return [
+            'expired an hour ago' => [json_encode([
+                'token' => $token,
+                'expiresAt' => (new DateTime('-1 hour'))->format(DbWrapper::TIME_FORMAT),
+            ])],
+            'expired a day ago' => [json_encode([
+                'token' => $token,
+                'expiresAt' => (new DateTime('-1 day'))->format(DbWrapper::TIME_FORMAT),
+            ])],
+            'no expiry recorded' => [json_encode(['token' => $token])],
+            'expiry is not a string' => [json_encode(['token' => $token, 'expiresAt' => 1234567890])],
+            'expiry is unparseable' => [json_encode(['token' => $token, 'expiresAt' => 'yesterday-ish'])],
+            'column is not json' => ['not json at all'],
+            'column is json but not an object' => ['"just a string"'],
+            'column is null' => [null],
+            'column is already decoded' => [['token' => $token]],
+        ];
+    }
+
     public function testGetByResetToken(): void
     {
         $id = '111111';
-        $token = 'tobeornottobe';
+        $token = self::RESET_TOKEN;
         $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
-        $expected = new UserModel(['id' => $id]);
+        $tokenJson = json_encode([
+            'token' => $token,
+            'expiresAt' => (new DateTime('+1 day'))->format(DbWrapper::TIME_FORMAT),
+        ]);
+        $rowData = ['id' => $id, 'password_reset_token' => $tokenJson];
+        $expected = new UserModel($rowData);
 
         // mocks
-        $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
+        $resultMock = $this->makeSelectResult(true, 1, $rowData);
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
@@ -899,6 +985,12 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
+            foreach (['identity', 'one_login_sub', 'one_login_email'] as $identifyingField) {
+                if (!array_key_exists($identifyingField, $set)) {
+                    return false;
+                }
+            }
+
             $ok = true;
 
             foreach ($set as $key => $value) {
@@ -1430,50 +1522,6 @@ class UserDataTest extends MockeryTestCase
         $this->assertSame('stored@example.com', $userProfile->getEmail()->getAddress());
     }
 
-    public function testGetProfiles(): void
-    {
-        $id = 'barrrraaaaa';
-
-        $user = [
-            'id' => $id,
-            'created' => new DateTime(),
-            'updated' => new DateTime(),
-            'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
-            'last_login' => new DateTime(),
-        ];
-
-        // mocks
-        $result = Mockery::mock(Result::class);
-        $result->shouldReceive('rewind');
-        $result->shouldReceive('valid')->andReturnValues([true, false]);
-        $result->shouldReceive('current')->andReturn($user);
-        $result->shouldReceive('key')->andReturn(0);
-        $result->shouldReceive('next');
-
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($result);
-
-        // test
-        $userData = new UserData($dbWrapperMock);
-        $userProfiles = $userData->getProfiles([$id]);
-
-        $this->assertCount(1, $userProfiles);
-
-        $userProfile = $userProfiles[0];
-        $name = $userProfile->getName();
-
-        // assertions
-        $this->assertInstanceOf(ProfileUserModel::class, $userProfile);
-        $this->assertEquals($id, $userProfile->getId());
-        $this->assertEquals($user['created'], $userProfile->getCreatedAt());
-        $this->assertEquals($user['updated'], $userProfile->getUpdatedAt());
-        $this->assertEquals($user['last_login'], $userProfile->getLastLoginAt());
-        $this->assertEquals('Prof', $name->getTitle());
-        $this->assertEquals('Barr', $name->getFirst());
-        $this->assertEquals('Rrrraaaaa', $name->getLast());
-    }
-
     /**
      * @doesNotPerformAssertions
      */
@@ -1488,7 +1536,12 @@ class UserDataTest extends MockeryTestCase
             'email' => ['address' => 'vansant@nowhere'],
         ]);
 
-        $expectedProfileJson = json_encode($profileUserModel->toArray());
+        // Mirror the production saveProfile() logic to build the expected
+        // JSON payload, so this test doesn't need updating every time a new
+        // field is added to the User data model.
+        $expectedUser = $profileUserModel->toArray();
+        unset($expectedUser['id'], $expectedUser['createdAt'], $expectedUser['updatedAt']);
+        $expectedProfileJson = json_encode($expectedUser);
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -1496,7 +1549,7 @@ class UserDataTest extends MockeryTestCase
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
         $updateMock->shouldReceive('where')->with(['id' => $id]);
         $updateMock->shouldReceive('set')->with(
-            ['profile' => '{"name":null,"address":null,"dob":null,"email":{"address":"vansant@nowhere"},"lastLoginAt":null,"numberOfLpas":null}']
+            ['profile' => $expectedProfileJson]
         );
 
         // test
@@ -1533,6 +1586,37 @@ class UserDataTest extends MockeryTestCase
         $userData = new UserData($dbWrapperMock);
 
         $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
+    }
+
+    public function testSetOneLoginEmail(): void
+    {
+        $id = 'vansant';
+        $oneLoginEmail = 'new.address@example.com';
+
+        // mocks
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $captured = null;
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(
+            function ($set) use (&$captured) {
+                $captured = $set;
+
+                return true;
+            }
+        ));
+
+        $userData = new UserData($dbWrapperMock);
+
+        $userData->setOneLoginEmail($id, $oneLoginEmail);
+
+        $this->assertIsArray($captured);
+        $this->assertSame($oneLoginEmail, $captured['one_login_email']);
+        $this->assertTrue(Helpers::isGmDateString($captured['updated']));
+
+        $this->assertSame(['one_login_email', 'updated'], array_keys($captured));
     }
 
     public function testCreateWritesActivatedTimestampWhenProvided(): void

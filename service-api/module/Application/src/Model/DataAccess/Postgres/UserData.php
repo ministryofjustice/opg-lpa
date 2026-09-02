@@ -14,8 +14,6 @@ use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\IsNotNull;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use MakeShared\DataModel\User\User as ProfileUserModel;
-use Application\Model\DataAccess\Postgres\AbstractBase;
-use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
@@ -146,25 +144,58 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         $sql = $this->dbWrapper->createSql();
 
         // count applications by user
-        $subselect = $sql->select()->from(['a' => ApplicationData::APPLICATIONS_TABLE])
+        $subselect = $sql->select()->from(['applications' => ApplicationData::APPLICATIONS_TABLE])
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
         // case-insensitive match on user email
         $queryQuoted = $this->dbWrapper->quoteValue(sprintf('%%%s%%', $query));
-        $like = new Expression('u.identity ILIKE ' . $queryQuoted);
+        $like = new Expression('users.identity ILIKE ' . $queryQuoted);
 
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
         // invalid SQL; but this potentially locks the code to Postgres
-        $select = $sql->select()->from(['u' => self::USERS_TABLE])
+        $select = $sql
+            ->select()
+            ->from(['users' => self::USERS_TABLE])
             ->join(
-                ['a' => $subselect],
-                'u.id = a.user',
+                ['applications' => $subselect],
+                'users.id = applications.user',
                 ['numberOfLpas'],
                 'FULL'
             )
+            ->join(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive'
+                ],
+                'FULL'
+            )
+            ->join(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
+                'FULL'
+            )
             ->where($like)
+            ->columns([
+                'id',
+                'identity',
+                'active',
+                'created',
+                'updated',
+                'deleted',
+                'activated',
+                'last_login',
+                'last_failed_login',
+                'failed_login_attempts',
+                'inactivity_flags',
+                'one_login_sub',
+                'one_login_email',
+            ])
             ->order('identity ASC')
             ->offset($offset)
             ->limit($limit);
@@ -218,7 +249,37 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             return null;
         }
 
+        if (!$this->passwordResetTokenIsLive($user['password_reset_token'] ?? null)) {
+            return null;
+        }
+
         return new UserModel($user);
+    }
+
+    /**
+     * True only if the stored reset token carries an expiry which is still in the
+     * future.
+     */
+    private function passwordResetTokenIsLive(mixed $tokenJson): bool
+    {
+        if (!is_string($tokenJson)) {
+            return false;
+        }
+
+        $tokenDetails = json_decode($tokenJson, true);
+        $expiresAt = is_array($tokenDetails) ? ($tokenDetails['expiresAt'] ?? null) : null;
+
+        if (!is_string($expiresAt)) {
+            return false;
+        }
+
+        try {
+            $expires = new DateTime($expiresAt);
+        } catch (Exception) {
+            return false;
+        }
+
+        return $expires > new DateTime();
     }
 
     /**
@@ -349,6 +410,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 'deleted' => gmdate(DbWrapper::TIME_FORMAT),
                 'active' => null,
                 'identity' => null,
+                'one_login_sub' => null,
+                'one_login_email' => null,
                 'password_hash' => null,
                 'activation_token' => null,
                 'failed_login_attempts' => null,
@@ -708,32 +771,6 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * @inheritDoc
-     */
-    public function getProfiles(array $ids): array
-    {
-        $profiles = [];
-        $result = $this->dbWrapper->select(self::USERS_TABLE, ['id' => $ids]);
-
-        foreach ($result as $user) {
-            if (!is_array($user) || !isset($user['profile'])) {
-                continue;
-            }
-
-            $profile = array_merge(json_decode($user['profile'], true), [
-                'id' => $user['id'],
-                'createdAt' => $user['created'],
-                'updatedAt' => $user['updated'],
-                'lastLoginAt' => $user['last_login'],
-            ]);
-
-            $profiles[] = new ProfileUserModel($profile);
-        }
-
-        return $profiles;
-    }
-
-    /**
      * Updates a user's profile. If it doesn't already exist, it's created.
      *
      * @param ProfileUserModel $data
@@ -767,6 +804,23 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 'one_login_sub' => $oneLoginSub,
                 'one_login_email' => $oneLoginEmail,
                 'password_hash' => null,
+                'updated' => gmdate(DbWrapper::TIME_FORMAT),
+            ]
+        );
+    }
+
+    /**
+     * Refreshes the One Login email held for an already-linked account.
+     *
+     * @param string $userId
+     * @param string $oneLoginEmail Email supplied by One Login (contact address).
+     */
+    public function setOneLoginEmail(string $userId, string $oneLoginEmail): void
+    {
+        $this->updateRow(
+            ['id' => $userId],
+            [
+                'one_login_email' => $oneLoginEmail,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]
         );

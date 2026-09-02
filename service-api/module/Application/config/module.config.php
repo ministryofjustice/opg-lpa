@@ -14,6 +14,7 @@ use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
 
@@ -262,6 +263,23 @@ return [
                                     ],
                                 ],
                             ],
+                            'import' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route'    => '/import',
+                                ],
+                                'child_routes'  => [
+                                    'post' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'import',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 
@@ -298,6 +316,52 @@ return [
                         ],
                     ],
 
+                    'admin' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/admin',
+                            'defaults' => [
+                                'controller' => 'AdminController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search-users',
+                                    'defaults' => [
+                                        'action' => 'searchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'match-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-users',
+                                    'defaults' => [
+                                        'action' => 'matchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-lpas' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/lpas',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
+                        ],
+                    ],
+
                     'users' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -308,25 +372,6 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-
-                            'search-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/search',
-                                    'defaults' => [
-                                        'action' => 'search',
-                                    ],
-                                ],
-                            ],
-                            'match-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/match',
-                                    'defaults' => [
-                                        'action' => 'match',
-                                    ],
-                                ],
-                            ],
                             'email-change' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -649,6 +694,10 @@ return [
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
             'OneLoginPsr16Cache' => static function (): Psr16Cache {
+                if (ApcuAdapter::isSupported()) {
+                    return new Psr16Cache(new ApcuAdapter('onelogin'));
+                }
+
                 return new Psr16Cache(new ArrayAdapter());
             },
 

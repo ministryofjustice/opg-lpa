@@ -267,7 +267,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $searchField = null;
 
         if ($lpa->getDocument()->getDonor() != null) {
-            $searchField = (string)$lpa->getDocument()->getDonor()->getName();
+            $searchField = $lpa->getDocument()->getDonor()->getName()->getFullName();
         }
 
         $lastUpdated = $lpa->getUpdatedAt()->format(DbWrapper::TIME_FORMAT);

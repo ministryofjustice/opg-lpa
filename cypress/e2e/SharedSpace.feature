@@ -12,8 +12,9 @@ Feature: Shared Space
     When I click element marked "Create shared space"
     Then I should be on "/shared-space/make"
     When I type "Example Organisation" into "space-name"
-    When I click element marked "Create shared space"
+    When I click element marked "Save"
     Then I should be on "/shared-space/created"
+    And I see a success notification with content "Example Organisation has been successfully created"
     When I click element marked "Continue"
     Then I should be on "/shared-space/dashboard"
     And there are "five" 'LPA' elements on the page
@@ -79,7 +80,8 @@ Feature: Shared Space
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin"
-    And I log in as the newly created fixture user
+
+    When I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
@@ -89,10 +91,12 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "suspended"
+
     When I try to log in as the member added to the shared space
-    Then I should not be logged in
-    And I see a suspended account error
-    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    And I see a notification with title "Access suspended"
+
+    When I try to log in as "fixtureUser"
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
@@ -141,3 +145,49 @@ Feature: Shared Space
     When I try to log in as the member added to the shared space
     Then I should be on "/login"
     Then I should not be logged in
+
+  Scenario: Can import LPAs from an existing user
+    Given I create a new user stored as "userToImport" with 5 LPAs
+    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click link "Import LPAs from existing account"
+    And I enter the login details of "userToImport"
+    And I click button "Import"
+    And I see a success notification with content "Import success"
+    When I click link "Shared LPAs"
+    And there are "ten" 'LPA' elements on the page
+    When I try to log in as "userToImport"
+    Then I should be on "/login"
+    Then I should not be logged in
+
+  Scenario: Cannot import LPAs from a user who is in a shared space
+    Given I create a new user stored as "userToImport" with 5 LPAs that belongs to a shared space called "Another Space"
+    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click link "Import LPAs from existing account"
+    And I enter the login details of "userToImport"
+    And I click button "Import"
+    Then I should be on "/shared-space/import-failed"
+    And I click link "Continue"
+    Then I should be on "/shared-space"
+
+  Scenario: Can ask for password reset when importing
+    Given I create a new user stored as "userToImport" with 5 LPAs
+    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click link "Import LPAs from existing account"
+    When I click link "Forgotten your password?"
+    Then I should be on "/shared-space/forgot-password"
+    Then I enter the email of "userToImport"
+    Then I submit the form
+    Then I should be on "/shared-space/forgot-password"
+    Then I see "Thank you" in the page text

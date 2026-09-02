@@ -18,5 +18,6 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->route('/feedback', App\Handler\FeedbackHandler::class, ['GET', 'POST'], 'feedback');
     $app->route('/user-search', App\Handler\UserSearchHandler::class, ['GET', 'POST'], 'user.search');
     $app->route('/user-find', App\Handler\UserFindHandler::class, ['GET', 'POST'], 'user.find');
-    $app->get('/user/{id}/lpas', App\Handler\UserLpasHandler::class, 'user.lpas');
+    $app->get('/user/{userId}/lpas', App\Handler\LpasHandler::class, 'user.lpas');
+    $app->get('/shared-space/{sharedSpaceId}/lpas', App\Handler\LpasHandler::class, 'shared-space.lpas');
 };

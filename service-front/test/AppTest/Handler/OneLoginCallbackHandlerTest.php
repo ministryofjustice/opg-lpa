@@ -346,13 +346,13 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     // ─── Unlinked path ────────────────────────────────────────────────────
 
-    public function testUnlinkedAccountRegeneratesAndSetsPendingLinkAndRedirects(): void
+    public function testUnlinkedAccountClearsSessionSetsPendingLinkAndRedirects(): void
     {
         $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);
         $this->session->method('unset');
 
         $this->session->expects($this->once())->method('regenerate');
-        $this->session->expects($this->never())->method('clear');
+        $this->session->expects($this->once())->method('clear');
 
         $this->session
             ->expects($this->once())
@@ -371,5 +371,58 @@ class OneLoginCallbackHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame('/link-or-create-account', $response->getHeaderLine('Location'));
+    }
+
+    public function testUnlinkedAccountCarriesPreAuthUrlAcrossTheClear(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+
+        $written = [];
+        $this->session
+            ->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
+
+        $this->handler->handle(
+            $this->buildRequest(
+                'code=authcode&state=valid-state-abc',
+                [
+                    'onelogin_auth'         => self::VALID_SESSION,
+                    'pre_auth_request_url'  => '/lpa/12345/type',
+                ],
+            )
+        );
+
+        $this->assertSame('/lpa/12345/type', $written['pre_auth_request_url'] ?? null);
+        $this->assertArrayHasKey('onelogin_pending_link', $written);
+    }
+
+    public function testUnlinkedAccountWithNoPreAuthUrlDoesNotWriteAnEmptyOne(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+
+        $written = [];
+        $this->session
+            ->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
+
+        $this->handler->handle(
+            $this->buildRequest(
+                'code=authcode&state=valid-state-abc',
+                ['onelogin_auth' => self::VALID_SESSION],
+            )
+        );
+
+        $this->assertArrayNotHasKey('pre_auth_request_url', $written);
+        $this->assertArrayHasKey('onelogin_pending_link', $written);
     }
 }

@@ -73,7 +73,7 @@ After({ tags: '@CleanupUserFixtures' }, () => {
 });
 
 
-Given(/^I create a new user with (\d+) LPAs?(?: that belongs to a shared space called "([^"]*)")?$/, (lpaCountString, sharedSpaceName) => {
+Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belongs to a shared space called "([^"]*)")?$/, (storedAs, lpaCountString, sharedSpaceName) => {
   const lpaCount = parseInt(lpaCountString, 10);
 
   createUserWithLpas(lpaCount, 'property-and-financial').then(
@@ -83,13 +83,13 @@ Given(/^I create a new user with (\d+) LPAs?(?: that belongs to a shared space c
       if (sharedSpaceName) {
         createSharedSpace(sharedSpaceName, email).then(
           ({ sharedSpaceId }) => {
-            cy.wrap({ email, password, lpaIds, sharedSpaceId }).as('fixtureUser');
+            cy.wrap({ email, password, lpaIds, sharedSpaceId }).as(storedAs ?? 'fixtureUser');
 
             cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
           },
         );
       } else {
-        cy.wrap({ email, password, lpaIds }).as('fixtureUser');
+        cy.wrap({ email, password, lpaIds }).as(storedAs ?? 'fixtureUser');
       }
     },
   );
@@ -116,6 +116,13 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
 
 When(`I log in as the newly created fixture user`, () => {
   cy.get('@fixtureUser').then(({ email, password }) => {
+    login(email, password)
+  });
+});
+
+When(/I try to log in as "([^"]+)"/, (storedAs) => {
+  cy.contains('Sign Out').click();
+  cy.get(`@${storedAs}`).then(({ email, password }) => {
     login(email, password)
   });
 });
@@ -198,4 +205,18 @@ When(`I type the access code into field labelled {string}`, (label) => {
 
 Then('I cannot see any invites', () => {
   cy.contains('table', 'Invited members').should('not.exist');
+});
+
+When(/I enter the login details of "([^"]+)"/, (storedAs) => {
+  cy.get(`@${storedAs}`).then(({ email, password }) => {
+    cy.get('#email').type(email);
+    cy.get('#password').type(password);
+  });
+});
+
+When(/I enter the email of "([^"]+)"/, (storedAs) => {
+  cy.get(`@${storedAs}`).then(({ email }) => {
+    cy.get('#email').type(email);
+    cy.get('#email_confirm').type(email);
+  });
 });

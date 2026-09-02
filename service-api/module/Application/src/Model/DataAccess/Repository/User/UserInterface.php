@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Application\Model\DataAccess\Repository\User;
 
 use DateTime;
@@ -8,8 +10,6 @@ interface UserInterface
 {
     /**
      * Returns an array representation of the user's basic info.
-     *
-     * @return array
      */
     public function toArray(): array;
 
@@ -17,100 +17,81 @@ interface UserInterface
 
     /**
      * Returns the user's id.
-     *
-     * @return string
      */
     public function id(): ?string;
 
     /**
      * Returns the user's username (email address).
-     *
-     * @return string
      */
     public function username(): ?string;
 
     /**
      * Has the user's account been activated.
-     *
-     * @return bool
      */
     public function isActive(): bool;
 
     /**
      * The user's hashed password
-     *
-     * @return string
      */
     public function password(): ?string;
 
     /**
      * The date the user's account was created.
-     *
-     * @return DateTime
      */
     public function createdAt(): ?DateTime;
 
     /**
      * The date the user's account was last updated.
-     *
-     * @return DateTime
      */
     public function updatedAt(): ?DateTime;
 
     /**
      * The date the user's account was last successfully logged into.
-     *
-     * @return DateTime
      */
     public function lastLoginAt(): ?DateTime;
 
     /**
      * The date the user's account was activated.
-     *
-     * @return DateTime
      */
     public function activatedAt(): ?DateTime;
 
     /**
      * The date the user's account was last unsuccessfully tied to be logged in to.
-     *
-     * @return DateTime
      */
     public function lastFailedLoginAttemptAt(): ?DateTime;
 
     /**
      * The number of consecutive login attempts the user's account has received.
-     *
-     * @return int
      */
     public function failedLoginAttempts(): int;
 
     /**
      * The user's activation token.
-     *
-     * @return string
      */
     public function activationToken(): ?string;
 
     /**
      * The GOV.UK One Login subject identifier this account is linked to, if any.
-     *
-     * @return string|null
      */
     public function oneLoginSub(): ?string;
 
     /**
      * The email address supplied by GOV.UK One Login for this account.
      * Held separately from the login email (`identity`).
-     *
-     * @return string|null
      */
     public function oneLoginEmail(): ?string;
 
     /**
-     * Returns the user's current authentication token (if present).
+     * The address the service contacts this user on.
+     * For a One Login account that is the address One Login supplied.
      *
-     * @return TokenInterface|null
+     * @return string|null
+     */
+    public function contactEmail(): ?string;
+
+
+    /**
+     * Returns the user's current authentication token (if present).
      */
     public function authToken(): ?TokenInterface;
 
@@ -130,8 +111,30 @@ interface UserInterface
     /**
      * Number of LPA applications associated with this user. Returns null if
      * not set.
-     *
-     * @return int|null
      */
-    public function numberOfLpas();
+    public function numberOfLpas(): ?int;
+
+    /**
+     * Name of the shared space this user is associated with. Returns null if
+     * not a shared space member.
+     */
+    public function sharedSpaceName(): ?string;
+
+    /**
+     * Id of the shared space this user is associated with. Returns null if
+     * not a shared space member.
+     */
+    public function sharedSpaceId(): ?string;
+
+    /**
+     * Whether the user is an admin of the shared space this user is associated with. Returns null if
+     * not a shared space member.
+     */
+    public function isSharedSpaceAdmin(): ?bool;
+
+    /**
+     * Whether the user is active in the shared space this user is associated with. Returns null if
+     * not a shared space member.
+     */
+    public function isActiveInSharedSpace(): ?bool;
 }

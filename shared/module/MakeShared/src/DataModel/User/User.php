@@ -23,6 +23,10 @@ class User extends AbstractData
     protected ?EmailAddress $email = null;
     protected ?DateTime $lastLoginAt = null;
     protected ?int $numberOfLpas = null;
+    protected ?string $sharedSpaceName = null;
+    protected ?string $sharedSpaceId = null;
+    protected ?bool $isSharedSpaceAdmin = null;
+    protected ?bool $isActiveInSharedSpace = null;
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
@@ -72,6 +76,20 @@ class User extends AbstractData
 
         $metadata->addPropertyConstraints('numberOfLpas', [
             new ValidatorConstraints\Type('integer'),
+        ]);
+
+        $metadata->addPropertyConstraints('sharedSpaceName', [
+            new ValidatorConstraints\Type('string'),
+        ]);
+
+        $metadata->addPropertyConstraints('sharedSpaceId', [
+            new ValidatorConstraints\Type('string'),
+        ]);
+        $metadata->addPropertyConstraints('isSharedSpaceAdmin', [
+            new ValidatorConstraints\Type('bool'),
+        ]);
+        $metadata->addPropertyConstraints('isActiveInSharedSpace', [
+            new ValidatorConstraints\Type('bool'),
         ]);
     }
 
@@ -198,5 +216,49 @@ class User extends AbstractData
     {
         $this->numberOfLpas = $numberOfLpas;
         return $this;
+    }
+
+    public function setSharedSpaceName(?string $sharedSpaceName): User
+    {
+        $this->sharedSpaceName = $sharedSpaceName;
+        return $this;
+    }
+
+    public function getSharedSpaceName(): ?string
+    {
+        return $this->sharedSpaceName;
+    }
+
+    public function setSharedSpaceId(?string $sharedSpaceId): User
+    {
+        $this->sharedSpaceId = $sharedSpaceId;
+        return $this;
+    }
+
+    public function getSharedSpaceId(): ?string
+    {
+        return $this->sharedSpaceId;
+    }
+
+    public function setIsSharedSpaceAdmin(?bool $isSharedSpaceAdmin): User
+    {
+        $this->isSharedSpaceAdmin = $isSharedSpaceAdmin;
+        return $this;
+    }
+
+    public function getIsSharedSpaceAdmin(): ?bool
+    {
+        return $this->isSharedSpaceAdmin;
+    }
+
+    public function setIsActiveInSharedSpace(?bool $isActiveInSharedSpace): User
+    {
+        $this->isActiveInSharedSpace = $isActiveInSharedSpace;
+        return $this;
+    }
+
+    public function getIsActiveInSharedSpace(): ?bool
+    {
+        return $this->isActiveInSharedSpace;
     }
 }

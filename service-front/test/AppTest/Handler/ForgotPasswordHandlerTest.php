@@ -6,12 +6,14 @@ namespace AppTest\Handler;
 
 use App\Handler\ForgotPasswordHandler;
 use App\Form\User\ConfirmEmail;
+use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
+use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -46,7 +48,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testAuthenticatedUserIsRedirectedToDashboard(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
-            ->withAttribute('identity', new \stdClass());
+            ->withAttribute(RequestAttribute::IDENTITY, new \stdClass());
 
         $response = $this->handler->handle($request);
 
@@ -54,10 +56,36 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
     }
 
+    public function testAuthenticatedSharedSpaceUserIsShownForm(): void
+    {
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedRouteName')->willReturn('shared-space.forgot-password');
+
+        $this->form->expects($this->once())
+            ->method('setAttribute')
+            ->with('action', '/shared-space/forgot-password');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/index.twig', $this->callback(
+                fn($data) => isset($data['form']) && $data['error'] === null
+            ))
+            ->willReturn('<html>form</html>');
+
+        $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withAttribute(RequestAttribute::IDENTITY, new \stdClass());
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
     public function testGetRequestDisplaysForm(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'GET'))
-            ->withAttribute('identity', null);
+            ->withAttribute(RequestAttribute::IDENTITY, null);
 
         $this->form->expects($this->once())
             ->method('setAttribute')
@@ -79,7 +107,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testValidPostSendsResetEmailAndDisplaysConfirmation(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -88,7 +116,39 @@ class ForgotPasswordHandlerTest extends TestCase
         $this->userService
             ->expects($this->once())
             ->method('requestPasswordResetEmail')
-            ->with('test@example.com')
+            ->with('test@example.com', false)
+            ->willReturn(true);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/email-sent.twig', $this->callback(
+                fn($data) => $data['email'] === 'test@example.com' && $data['accountNotActivated'] === false
+            ))
+            ->willReturn('<html>email sent</html>');
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testValidPostWhenInSharedSpaceSendsResetEmailAndDisplaysConfirmation(): void
+    {
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedRouteName')->willReturn('shared-space.forgot-password');
+
+        $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
+            ->withAttribute(RequestAttribute::IDENTITY, null)
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn(['email' => 'test@example.com']);
+
+        $this->userService
+            ->expects($this->once())
+            ->method('requestPasswordResetEmail')
+            ->with('test@example.com', true)
             ->willReturn(true);
 
         $this->renderer
@@ -107,7 +167,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testAccountNotActivatedFlagIsPassedToTemplate(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -131,7 +191,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testInvalidFormRedisplaysForm(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => '']);
 
         $this->form->method('isValid')->willReturn(false);
@@ -152,7 +212,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testPostNonExistentEmailStillShowsEmailSentPage(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'nonexistent@example.com', 'email_confirm' => 'nonexistent@example.com']);
 
         $this->form->method('isValid')->willReturn(true);
@@ -182,7 +242,7 @@ class ForgotPasswordHandlerTest extends TestCase
     public function testPostWithEmptyBodyHandledSafely(): void
     {
         $request = (new ServerRequest([], [], '/forgot-password', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(null);
 
         $this->form->expects($this->once())

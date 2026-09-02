@@ -365,10 +365,13 @@ class LegacyCompatExtension extends AbstractExtension
      */
     public function formHidden(ElementInterface $element): string
     {
-        $name  = htmlspecialchars((string) $element->getAttribute('name'), ENT_QUOTES);
-        $value = htmlspecialchars((string) $element->getValue(), ENT_QUOTES);
+        $attrs = $element->getAttributes();
 
-        return sprintf('<input type="hidden" name="%s" value="%s">', $name, $value);
+        $attrs['type']  = 'hidden';
+        $attrs['name']  = $element->getAttribute('name') ?? $element->getName();
+        $attrs['value'] = (string) $element->getValue();
+
+        return sprintf('<input %s>', $this->buildAttributeString($attrs));
     }
 
     /**
