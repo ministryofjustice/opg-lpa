@@ -22,8 +22,6 @@ use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
-use Psr\SimpleCache\CacheInterface;
 
 class LogoutTokenVerifierTest extends MockeryTestCase
 {
@@ -34,7 +32,6 @@ class LogoutTokenVerifierTest extends MockeryTestCase
 
     private JWK $signingKey;
     private JWK $publicKey;
-    private MockInterface|CacheInterface $cache;
 
     public function setUp(): void
     {
@@ -205,25 +202,6 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $verifier->verify($this->token(['exp' => time() - 3600]));
     }
 
-    public function testDoesNotRefetchJwksWhileCooldownIsActive(): void
-    {
-        $verifier = $this->verifierWithJwks([], reloadReturns: [$this->publicKey->all()], reloadOnCooldown: true);
-
-        $this->expectRejection('invalid_token');
-        $verifier->verify($this->token());
-    }
-
-    public function testSetsCooldownWhenItRefetchesJwks(): void
-    {
-        $verifier = $this->verifierWithJwks([], reloadReturns: [$this->publicKey->all()]);
-
-        $this->cache->shouldReceive('set')
-            ->once()
-            ->with('onelogin_jwks_reload_cooldown', true, 60);
-
-        $verifier->verify($this->token());
-    }
-
     public function testRejectsValidSignatureUnderAnAlgorithmWeDoNotExpect(): void
     {
         $rsaKey = JWKFactory::createRSAKey(2048, ['alg' => 'RS256', 'kid' => 'rsa-key']);
@@ -258,7 +236,6 @@ class LogoutTokenVerifierTest extends MockeryTestCase
     private function verifierWithJwks(
         array $keys,
         ?array $reloadReturns = null,
-        bool $reloadOnCooldown = false,
         string $clientId = self::CLIENT_ID,
     ): LogoutTokenVerifier {
         $jwksProvider = Mockery::mock(JwksProviderInterface::class);
@@ -288,11 +265,7 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $clientManager = Mockery::mock(AuthorisationClientManager::class);
         $clientManager->shouldReceive('get')->andReturn($client);
 
-        $this->cache = Mockery::mock(CacheInterface::class);
-        $this->cache->shouldReceive('has')->andReturn($reloadOnCooldown)->byDefault();
-        $this->cache->shouldReceive('set')->byDefault();
-
-        return new LogoutTokenVerifier($clientManager, $this->cache);
+        return new LogoutTokenVerifier($clientManager);
     }
 
     private function claims(array $overrides = []): array

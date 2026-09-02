@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Application\Model\Service\OneLogin;
 
 use Facile\JoseVerifier\Builder\IdTokenVerifierBuilder;
-use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 use Throwable;
 
@@ -25,7 +24,6 @@ class LogoutTokenVerifier
 
     public function __construct(
         private readonly AuthorisationClientManager $clientManager,
-        private readonly CacheInterface $cache,
     ) {
     }
 
@@ -52,7 +50,7 @@ class LogoutTokenVerifier
                 'id_token_signed_response_alg' => self::EXPECTED_ALG,
             ],
         )
-            ->withJwksProvider(new ThrottledJwksProvider($client->getIssuer()->getJwksProvider(), $this->cache))
+            ->withJwksProvider($client->getIssuer()->getJwksProvider())
             ->withClockTolerance(self::CLOCK_TOLERANCE_SECONDS)
             ->build();
 

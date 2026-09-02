@@ -729,8 +729,7 @@ return [
                 ServiceLocatorInterface $container
             ): OneLoginService\LogoutTokenVerifier {
                 return new OneLoginService\LogoutTokenVerifier(
-                    $container->get(OneLoginService\AuthorisationClientManager::class),
-                    $container->get('OneLoginPsr16Cache'),
+                    $container->get(OneLoginService\AuthorisationClientManager::class)
                 );
             },
 

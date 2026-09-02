@@ -49,7 +49,15 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
             return $this->response(502);
         }
 
-        return $this->response($accepted ? 200 : 400);
+        if (!$accepted) {
+            $this->logger->warning('auth.onelogin.backchannel_logout_rejected', [
+                'reason' => 'not_accepted',
+            ]);
+
+            return $this->response(400);
+        }
+
+        return $this->response(200);
     }
 
     private function response(int $status): ResponseInterface

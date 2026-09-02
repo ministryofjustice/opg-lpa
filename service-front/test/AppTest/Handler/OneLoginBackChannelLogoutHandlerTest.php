@@ -50,10 +50,24 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
             ->method('backChannelLogout')
             ->willReturn(false);
 
+        $this->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'not_accepted']);
+
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
         $this->assertSame(400, $response->getStatusCode());
         $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
+    }
+
+    public function testDoesNotLogARejectionWhenTheTokenIsAccepted(): void
+    {
+        $this->oneLoginService->method('backChannelLogout')->willReturn(true);
+
+        $this->logger->expects($this->never())->method('info');
+
+        $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
     }
 
     public function testReturns400WhenLogoutTokenIsMissing(): void
