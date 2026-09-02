@@ -90,6 +90,8 @@ data "aws_iam_policy_document" "execution_role" {
       data.aws_secretsmanager_secret.elasticache_auth_token.arn,
       data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.arn,
       data.aws_secretsmanager_secret.mock_onelogin_client_id.arn,
+      data.aws_secretsmanager_secret.onelogin_client_id.arn,
+      data.aws_secretsmanager_secret.onelogin_private_key.arn,
     ]
   }
 

@@ -289,7 +289,9 @@ locals {
         { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_AUTH_LOG_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.name}" },
-        { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" }
+        { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" },
+        { name = "ONELOGIN_CLIENT_ID", valueFrom = local.onelogin_client_id_secret_arn },
+        { name = "ONELOGIN_PRIVATE_KEY", valueFrom = data.aws_secretsmanager_secret.onelogin_private_key.arn }
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
@@ -318,6 +320,8 @@ locals {
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ONELOGIN_DISCOVERY_URL", value = local.onelogin_discovery_url },
+        { name = "ONELOGIN_KEY_ID", value = "${var.account_name}-onelogin" },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) }
       ]
     }

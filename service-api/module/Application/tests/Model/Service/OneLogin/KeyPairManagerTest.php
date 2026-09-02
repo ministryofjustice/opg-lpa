@@ -26,6 +26,26 @@ class KeyPairManagerTest extends TestCase
             . "-----END {$label}-----\n";
     }
 
+    public static function rsaPrivateKey(): string
+    {
+        static $pem = null;
+
+        if ($pem === null) {
+            $resource = openssl_pkey_new([
+                'private_key_type' => OPENSSL_KEYTYPE_RSA,
+                'private_key_bits' => 2048,
+            ]);
+
+            if ($resource === false) {
+                self::fail('Unable to generate an RSA test key: ' . openssl_error_string());
+            }
+
+            openssl_pkey_export($resource, $pem);
+        }
+
+        return $pem;
+    }
+
     public function testJwkHasExpectedAlgorithmAndUse(): void
     {
         $manager = new KeyPairManager(self::testPrivateKey(), 'test-kid-1');
@@ -68,6 +88,28 @@ class KeyPairManagerTest extends TestCase
         $this->assertSame($fromPem['d'], $fromBase64['d']);
         $this->assertSame($fromPem['x'], $fromBase64['x']);
         $this->assertSame($fromPem['y'], $fromBase64['y']);
+    }
+
+    public function testRsaKeyUsesRs256(): void
+    {
+        $manager = new KeyPairManager(self::rsaPrivateKey(), 'test-kid-rsa');
+
+        $serialised = $manager->jwk()->jsonSerialize();
+
+        $this->assertSame('RSA', $serialised['kty']);
+        $this->assertSame('RS256', $serialised['alg']);
+        $this->assertSame('sig', $serialised['use']);
+        $this->assertSame('test-kid-rsa', $serialised['kid']);
+    }
+
+    public function testRsaKeyAcceptsBase64EncodedPem(): void
+    {
+        $manager = new KeyPairManager(base64_encode(self::rsaPrivateKey()), 'test-kid-rsa-b64');
+
+        $serialised = $manager->jwk()->jsonSerialize();
+
+        $this->assertSame('RSA', $serialised['kty']);
+        $this->assertSame('RS256', $serialised['alg']);
     }
 
     public function testEmptyPrivateKeyThrows(): void

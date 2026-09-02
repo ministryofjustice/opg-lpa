@@ -19,6 +19,7 @@ variable "environment" {
     })
     feature_flags = object({
       onelogin_enabled         = bool
+      onelogin_use_mock        = bool
       shared_spaces_enabled    = bool
       cypress_fixtures_enabled = bool
     })

@@ -276,6 +276,7 @@ locals {
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ONELOGIN_REDIRECT_BASE_URL", value = "https://${local.front_fqdn}" },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
         { name = "CYPRESS_FIXTURES_ENABLED", value = var.environment_name != "production" && var.environment.feature_flags.cypress_fixtures_enabled ? tostring("true") : tostring("false") }
       ]

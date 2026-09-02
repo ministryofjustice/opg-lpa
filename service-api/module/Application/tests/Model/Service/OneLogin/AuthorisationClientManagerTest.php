@@ -6,14 +6,14 @@ namespace ApplicationTest\Model\Service\OneLogin;
 
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\KeyPairManager;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\SimpleCache\CacheInterface;
 
-class AuthorisationClientManagerTest extends MockeryTestCase
+class AuthorisationClientManagerTest extends TestCase
 {
+    private const DISCOVERY_URL = 'https://oidc.example.com/.well-known/openid-configuration';
+
     private const KEY_LABEL = 'EC PRIVATE ' . 'KEY';
 
     private const TEST_KEY_BODY =
@@ -35,29 +35,63 @@ class AuthorisationClientManagerTest extends MockeryTestCase
         $this->assertSame(3600, AuthorisationClientManager::CACHE_TTL);
     }
 
-    public function testClientMetadataHasPrivateKeyJwt(): void
+    public function testClientAuthenticatesWithPrivateKeyJwt(): void
     {
-        $manager = $this->makeManager();
+        $metadata = $this->makeManager()->get()->getMetadata();
 
-        $this->assertInstanceOf(AuthorisationClientManager::class, $manager);
+        $this->assertSame('test-client-id', $metadata->getClientId());
+        $this->assertSame('private_key_jwt', $metadata->getTokenEndpointAuthMethod());
+    }
+
+    public function testIdTokenSigningAlgorithmIsPinnedToEs256(): void
+    {
+        $metadata = $this->makeManager()->get()->getMetadata();
+
+        $this->assertSame('ES256', $metadata->getIdTokenSignedResponseAlg());
+    }
+
+    public function testClientSignsWithTheConfiguredKey(): void
+    {
+        $jwks = $this->makeManager()->get()->getJwksProvider()->getJwks();
+
+        $this->assertCount(1, $jwks['keys']);
+        $this->assertSame('test-kid', $jwks['keys'][0]['kid']);
+        $this->assertSame('sig', $jwks['keys'][0]['use']);
+    }
+
+    public function testIssuerIsTakenFromTheDiscoveryDocument(): void
+    {
+        $issuer = $this->makeManager()->get()->getIssuer()->getMetadata();
+
+        $this->assertSame('https://oidc.example.com/', $issuer->getIssuer());
+        $this->assertSame('https://oidc.example.com/token', $issuer->getTokenEndpoint());
     }
 
     private function makeManager(): AuthorisationClientManager
     {
-        $keyPairManager = new KeyPairManager(self::testPrivateKey(), 'test-kid');
-
-        /** @var MockInterface|ClientInterface $httpClient */
-        $httpClient = Mockery::mock(ClientInterface::class);
-
-        /** @var MockInterface|CacheInterface $cache */
-        $cache = Mockery::mock(CacheInterface::class);
-
         return new AuthorisationClientManager(
             'test-client-id',
-            'https://oidc.example.com/.well-known/openid-configuration',
-            $keyPairManager,
-            $httpClient,
-            $cache,
+            self::DISCOVERY_URL,
+            new KeyPairManager(self::testPrivateKey(), 'test-kid'),
+            $this->createMock(ClientInterface::class),
+            $this->cacheReturningDiscoveryDocument(),
         );
+    }
+
+    private function cacheReturningDiscoveryDocument(): CacheInterface
+    {
+        $document = json_encode([
+            'issuer'                 => 'https://oidc.example.com/',
+            'authorization_endpoint' => 'https://oidc.example.com/authorize',
+            'token_endpoint'         => 'https://oidc.example.com/token',
+            'userinfo_endpoint'      => 'https://oidc.example.com/userinfo',
+            'jwks_uri'               => 'https://oidc.example.com/.well-known/jwks.json',
+        ], JSON_THROW_ON_ERROR);
+
+        $cache = $this->createMock(CacheInterface::class);
+        $cache->method('get')->willReturn($document);
+        $cache->method('set')->willReturn(true);
+
+        return $cache;
     }
 }

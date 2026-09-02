@@ -10,7 +10,10 @@ use RuntimeException;
 
 class KeyPairManager
 {
-    private const ALGORITHM = 'ES256';
+    private const ALGORITHMS = [
+        'RSA' => 'RS256',
+        'EC'  => 'ES256',
+    ];
 
     public function __construct(
         #[\SensitiveParameter] private readonly string $privateKey,
@@ -28,10 +31,10 @@ class KeyPairManager
     public function jwk(): JWK
     {
         try {
-            return JWKFactory::createFromKey(
+            $jwk = JWKFactory::createFromKey(
                 $this->resolvePem($this->privateKey),
                 null,
-                ['alg' => self::ALGORITHM, 'use' => 'sig', 'kid' => $this->keyId],
+                ['use' => 'sig', 'kid' => $this->keyId],
             );
         } catch (\Throwable $e) {
             throw new RuntimeException(
@@ -40,6 +43,18 @@ class KeyPairManager
                 $e,
             );
         }
+
+        $keyType = $jwk->has('kty') ? $jwk->get('kty') : null;
+
+        if (!is_string($keyType) || !isset(self::ALGORITHMS[$keyType])) {
+            throw new RuntimeException(sprintf(
+                'Unsupported OneLogin private key type "%s"; expected one of: %s',
+                is_string($keyType) ? $keyType : 'unknown',
+                implode(', ', array_keys(self::ALGORITHMS)),
+            ));
+        }
+
+        return new JWK($jwk->all() + ['alg' => self::ALGORITHMS[$keyType]]);
     }
 
     private function resolvePem(string $key): string
