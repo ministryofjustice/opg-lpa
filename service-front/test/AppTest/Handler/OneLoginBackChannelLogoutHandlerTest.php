@@ -52,7 +52,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
         $this->logger
             ->expects($this->once())
-            ->method('info')
+            ->method('warning')
             ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'not_accepted']);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
