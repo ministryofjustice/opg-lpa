@@ -1588,6 +1588,34 @@ class UserDataTest extends MockeryTestCase
         $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
     }
 
+    public function testClearAuthToken(): void
+    {
+        $id = 'vansant';
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+
+        $captured = null;
+
+        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+        $updateMock->shouldReceive('where')->with(['id' => $id]);
+        $updateMock->shouldReceive('set')->with(Mockery::on(
+            function ($set) use (&$captured) {
+                $captured = $set;
+
+                return true;
+            }
+        ));
+
+        $userData = new UserData($dbWrapperMock);
+
+        $userData->clearAuthToken($id);
+
+        $this->assertIsArray($captured);
+        $this->assertNull($captured['auth_token']);
+        $this->assertTrue(Helpers::isGmDateString($captured['updated']));
+        $this->assertSame(['auth_token', 'updated'], array_keys($captured));
+    }
+
     public function testSetOneLoginEmail(): void
     {
         $id = 'vansant';

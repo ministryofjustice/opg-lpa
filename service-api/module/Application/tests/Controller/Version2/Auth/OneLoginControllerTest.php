@@ -198,6 +198,53 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals($serviceResult, $result->getVariables());
     }
 
+    public function testBackChannelLogoutActionReturnsServiceResult(): void
+    {
+        $body = ['logoutToken' => 'a.logout.token'];
+
+        $this->service->shouldReceive('handleBackChannelLogout')
+            ->with('a.logout.token')
+            ->andReturn(['accepted' => true])
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->backChannelLogoutAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertSame(['accepted' => true], $result->getVariables());
+    }
+
+    public function testBackChannelLogoutActionReturnsRejectionAsOkResponse(): void
+    {
+        $this->service->shouldReceive('handleBackChannelLogout')
+            ->andReturn(['accepted' => false, 'reason' => 'invalid_signature'])
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, ['logoutToken' => 'forged']);
+
+        $result = $controller->backChannelLogoutAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertFalse($result->getVariables()['accepted']);
+    }
+
+    public function testBackChannelLogoutActionRejectsMissingToken(): void
+    {
+        $this->service->shouldNotReceive('handleBackChannelLogout');
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, []);
+
+        $result = $controller->backChannelLogoutAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertFalse($result->getVariables()['accepted']);
+        $this->assertSame('missing_logout_token', $result->getVariables()['reason']);
+    }
+
     public function testCreateActionReturnsJsonModelWithServiceResult(): void
     {
         $body = [

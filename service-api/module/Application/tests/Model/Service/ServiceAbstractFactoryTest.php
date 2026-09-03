@@ -8,12 +8,18 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use Alphagov\Notifications\Client;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
+use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\ServiceAbstractFactory;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\OneLogin\AuthorisationClientManager;
+use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
+use Application\Model\Service\OneLogin\FacileAuthorizationServiceAdapter;
+use Application\Model\Service\OneLogin\LogoutTokenVerifier;
+use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Application\Model\Service\Password\Service as PasswordService;
 use Application\Model\Service\Pdfs\Service as PdfsService;
 use Application\Model\Service\Seed\Service as SeedService;
@@ -26,6 +32,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use GuzzleHttp\Client as GuzzleHttpClient;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 
 class ServiceAbstractFactoryTest extends MockeryTestCase
 {
@@ -59,6 +66,19 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'NotifyClient' => Mockery::mock(Client::class),
                     'config' => [],
                     UsersService::class =>  Mockery::mock(UsersService::class),
+                    'Logger' => Mockery::mock(LoggerInterface::class),
+                ]
+            ],
+            'OneLoginService' => [OneLoginService::class,
+                [
+                    UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
+                    LogRepositoryInterface::class => Mockery::mock(LogRepositoryInterface::class),
+                    AuthorisationClientManager::class => Mockery::mock(AuthorisationClientManager::class),
+                    FacileAuthorizationServiceAdapter::class => Mockery::mock(AuthorizationServiceInterface::class),
+                    AuthenticationService::class => Mockery::mock(AuthenticationService::class),
+                    SharedSpaceRepositoryInterface::class => Mockery::mock(SharedSpaceRepositoryInterface::class),
+                    LogoutTokenVerifier::class => Mockery::mock(LogoutTokenVerifier::class),
+                    'OneLoginPsr16Cache' => Mockery::mock(CacheInterface::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],

@@ -13,6 +13,7 @@ use DateTime;
 use Facile\OpenIDClient\Session\AuthSession;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\OneLogin\LinkReason;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 class Service extends AbstractService
@@ -25,6 +26,13 @@ class Service extends AbstractService
     private ?AuthorizationServiceInterface $authorizationService = null;
     private ?AuthenticationService $authenticationService = null;
     private ?SharedSpaceRepositoryInterface $sharedSpaceRepository = null;
+    private ?LogoutTokenVerifier $logoutTokenVerifier = null;
+    private ?CacheInterface $cache = null;
+
+    /**
+     * Must not accept the same jti twice within three minutes.
+     */
+    private const int LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS = 180;
     /** @var callable(positive-int): string */
     private $randomBytes;
 
@@ -66,6 +74,22 @@ class Service extends AbstractService
     public function setSharedSpaceRepository(SharedSpaceRepositoryInterface $sharedSpaceRepository): void
     {
         $this->sharedSpaceRepository = $sharedSpaceRepository;
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function setLogoutTokenVerifier(LogoutTokenVerifier $verifier): void
+    {
+        $this->logoutTokenVerifier = $verifier;
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function setCache(CacheInterface $cache): void
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -399,6 +423,84 @@ class Service extends AbstractService
     private function normaliseEmail(#[\SensitiveParameter] string $email): string
     {
         return strtolower(trim($email));
+    }
+
+    /**
+     * @return array{accepted: bool, reason?: string}
+     */
+    public function handleBackChannelLogout(#[\SensitiveParameter] string $logoutToken): array
+    {
+        if ($this->logoutTokenVerifier === null) {
+            throw new RuntimeException('LogoutTokenVerifier must be set');
+        }
+
+        if ($this->cache === null) {
+            throw new RuntimeException('Cache must be set');
+        }
+
+        try {
+            ['sub' => $sub, 'jti' => $jti] = $this->logoutTokenVerifier->verify($logoutToken);
+        } catch (LogoutTokenException $e) {
+            return $this->rejectLogout($e->getMessage());
+        }
+
+        if ($this->hasSeenLogoutToken($jti)) {
+            return $this->rejectLogout('replayed_jti');
+        }
+
+        $user = $this->getUserRepository()->getByOneLoginSub($sub);
+        $userId = $user instanceof UserInterface ? $user->id() : null;
+
+        if ($userId !== null) {
+            $this->getUserRepository()->clearAuthToken($userId);
+        }
+
+        $this->rememberLogoutToken($jti);
+
+        if ($userId === null) {
+            $this->getLogger()->info('auth.onelogin.backchannel_logout_no_user', []);
+
+            return ['accepted' => true];
+        }
+
+        $this->getLogger()->info('auth.onelogin.backchannel_logout_success', [
+            'user_id' => $userId,
+        ]);
+
+        return ['accepted' => true];
+    }
+
+    /**
+     * @return array{accepted: false, reason: string}
+     */
+    private function rejectLogout(string $reason): array
+    {
+        $this->getLogger()->info('auth.onelogin.backchannel_logout_rejected', [
+            'reason' => $reason,
+        ]);
+
+        return ['accepted' => false, 'reason' => $reason];
+    }
+
+    private function hasSeenLogoutToken(string $jti): bool
+    {
+        assert($this->cache !== null);
+        return $this->cache->has($this->logoutTokenCacheKey($jti));
+    }
+
+    private function rememberLogoutToken(string $jti): void
+    {
+        assert($this->cache !== null);
+        $this->cache->set(
+            $this->logoutTokenCacheKey($jti),
+            true,
+            self::LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS,
+        );
+    }
+
+    private function logoutTokenCacheKey(string $jti): string
+    {
+        return 'logout_jti_' . hash('sha256', $jti);
     }
 
     /**
