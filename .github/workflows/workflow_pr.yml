@@ -147,7 +147,7 @@ jobs:
       terraform_workspace: development
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
-      workspace_manager_aws_iam_role: opg-lpa-ci
+      workspace_manager_aws_iam_role: opg-lpa-ci-boundary
       terraform_apply: false
       terraform_directory: ./terraform/region
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
@@ -173,7 +173,7 @@ jobs:
       terraform_workspace: ${{ needs.workflow_variables.outputs.workspace_name }}
       is_ephemeral: true
       workspace_manager_aws_account_id: "050256574573"
-      workspace_manager_aws_iam_role: opg-lpa-ci
+      workspace_manager_aws_iam_role: opg-lpa-ci-boundary
       terraform_apply: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"

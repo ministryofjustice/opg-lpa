@@ -11,7 +11,7 @@ module "aws_backup_cross_account_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
@@ -46,7 +46,7 @@ module "aws_backup_source_account_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     aws_iam_role.aurora_backup_role.arn,
@@ -79,7 +79,7 @@ module "aurora_database_encryption_key" {
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
     "arn:aws:iam::${data.aws_caller_identity.backup.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -125,7 +125,7 @@ module "multi_region_db_snapshot_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -141,14 +141,14 @@ module "multi_region_db_snapshot_encryption_key" {
   encryption_role_patterns = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
   ]
   decryption_role_patterns = [
     aws_iam_role.aurora_backup_role.arn,
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/backup.amazonaws.com/AWSServiceRoleForBackup",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
   ]
@@ -167,7 +167,7 @@ module "secrets_manager_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -181,14 +181,14 @@ module "secrets_manager_encryption_key" {
 
   encryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     aws_iam_role.ip_blocker.arn
   ]
   decryption_role_patterns = [
     "proxy-assume-role-",
     "execution-role-ecs-cluster",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/ci",
     aws_iam_role.ip_blocker.arn
   ]
@@ -207,7 +207,7 @@ module "application_log_group_encryption_key" {
   additional_policy_documents = data.aws_iam_policy_document.application_log_group_kms_policy.json
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -247,7 +247,7 @@ module "dynamodb_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -261,7 +261,7 @@ module "dynamodb_encryption_key" {
 
   encryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_role_patterns = [
     "-api-task-role",
@@ -286,7 +286,7 @@ module "elasticache_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -301,12 +301,12 @@ module "elasticache_encryption_key" {
   encryption_role_patterns = [
     "-front-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_role_patterns = [
     "-front-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
@@ -328,7 +328,7 @@ module "sns_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -342,13 +342,13 @@ module "sns_encryption_key" {
 
   encryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
   ]
   decryption_role_patterns = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/events.amazonaws.com/AWSServiceRoleForCloudWatchEvents",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
   ]
@@ -367,7 +367,7 @@ module "pdf_sqs_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -383,13 +383,13 @@ module "pdf_sqs_encryption_key" {
     "-api-task-role",
     "-pdf-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_role_patterns = [
     "-api-task-role",
     "-pdf-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
@@ -406,7 +406,7 @@ module "pdf_cache_s3_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -422,13 +422,13 @@ module "pdf_cache_s3_encryption_key" {
     "-api-task-role",
     "-pdf-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_role_patterns = [
     "-api-task-role",
     "-pdf-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
@@ -445,7 +445,7 @@ module "redacted_logs_s3_encryption_key" {
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_roles = [
     "*",
@@ -462,14 +462,14 @@ module "redacted_logs_s3_encryption_key" {
     "-admin-task-role",
     "-front-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   decryption_role_patterns = [
     "-api-task-role",
     "-admin-task-role",
     "-front-task-role",
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
-    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci",
+    "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/opg-lpa-ci-boundary",
   ]
   caller_accounts = [
     data.aws_caller_identity.current.account_id,
