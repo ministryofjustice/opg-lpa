@@ -127,8 +127,7 @@ When(/I try to log in as "([^"]+)"/, (storedAs) => {
   });
 });
 
-When(`I (try to) log in as the member added to the shared space`, () => {
-  cy.contains('Sign Out').click();
+When(`I (try to )log in as the member added to the shared space`, () => {
   cy.get('@addedMember').then(({ email, password }) => {
     login(email, password)
   });
@@ -219,4 +218,14 @@ When(/I enter the email of "([^"]+)"/, (storedAs) => {
     cy.get('#email').type(email);
     cy.get('#email_confirm').type(email);
   });
+});
+
+Then('I log out', () => {
+  cy.contains('Sign Out').click();
+})
+
+Then('I cannot see any links to manage members', () => {
+  cy.contains('a', 'Fixture user').should('not.exist');
+  cy.contains('a', 'Invite member').should('not.exist');
+  cy.contains('a', 'Import LPAs from existing account').should('not.exist');
 });
