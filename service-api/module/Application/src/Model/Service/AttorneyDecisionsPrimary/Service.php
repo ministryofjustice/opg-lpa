@@ -19,7 +19,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, int $ifMatch, $data)
+    public function update(string $lpaId, ?int $ifMatch, $data)
     {
         $primaryAttorneyDecisions = new PrimaryAttorneyDecisions($data);
 

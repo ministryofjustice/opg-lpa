@@ -17,7 +17,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, int $ifMatchVersion, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, $data)
     {
         $type = (isset($data['type']) ? $data['type'] : null);
 
