@@ -35,7 +35,7 @@
                 {% endif %}
             </div>
         {% else %}
-            <ul class="govuk-error-summary__list">
+            <ul class="govuk-list govuk-error-summary__list">
                 {% for e in form_linked_errors(form) %}
                     <li>
                         <a class="govuk-link" href="#{{ e.field|e('html_attr') }}">{{ e.message|e }}</a>
@@ -64,6 +64,13 @@
     <label class="govuk-label" for="{{ element.getAttribute('id') }}">
         {{ element.getOption('label') }}
     </label>
+
+    {% if element.getOption('hint') %}
+      <div id="{{ element.getAttribute('id') }}-hint" class="govuk-hint">
+        {{ element.getOption('hint')|raw }}
+      </div>
+    {% endif %}
+
     {{ formElementErrorsV2(element) }}
     {{ formElement(element) }}
 </div>

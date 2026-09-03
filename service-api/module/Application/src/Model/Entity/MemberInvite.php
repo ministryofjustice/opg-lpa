@@ -35,4 +35,9 @@ readonly class MemberInvite
     ): MemberInvite {
         return new MemberInvite(null, $userId, $sharedSpaceId, $firstNames, $lastName, $email, $isAdmin, $code, $created, $expires);
     }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
 }
