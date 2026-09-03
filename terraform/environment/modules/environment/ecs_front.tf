@@ -245,8 +245,7 @@ locals {
         { name = "OPG_LPA_FRONT_GOV_PAY_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" },
-        { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn },
-        { name = "CLIENT_ID", valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn }
+        { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn }
 
       ],
       environment = [
@@ -276,6 +275,7 @@ locals {
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ONELOGIN_REDIRECT_BASE_URL", value = "https://${local.front_fqdn}" },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
         { name = "CYPRESS_FIXTURES_ENABLED", value = var.environment_name != "production" && var.environment.feature_flags.cypress_fixtures_enabled ? tostring("true") : tostring("false") }
       ]

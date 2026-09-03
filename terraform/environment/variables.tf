@@ -45,8 +45,10 @@ variable "environments" {
         admin_cognito_user_pool_domain_name               = string
         admin_cognito_client_supported_identity_providers = list(string)
       })
+      onelogin_client_id = string
       feature_flags = object({
         onelogin_enabled         = bool
+        onelogin_use_mock        = bool
         shared_spaces_enabled    = bool
         cypress_fixtures_enabled = bool
       })

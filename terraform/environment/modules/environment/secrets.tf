@@ -87,3 +87,7 @@ data "aws_secretsmanager_secret" "elasticache_auth_token" {
 data "aws_secretsmanager_secret" "mock_onelogin_client_id" {
   name = "${var.account_name}/mock-onelogin-client-id"
 }
+
+data "aws_secretsmanager_secret" "onelogin_private_key" {
+  name = "${var.account_name}/onelogin-private-key"
+}

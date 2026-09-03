@@ -10,7 +10,7 @@ data "aws_ecr_image" "mock_onelogin" {
 }
 
 module "mock_onelogin" {
-  count        = data.aws_default_tags.current.tags.environment-name != "production" && var.environment.feature_flags.onelogin_enabled ? 1 : 0
+  count        = data.aws_default_tags.current.tags.environment-name != "production" && var.environment.feature_flags.onelogin_enabled && var.environment.feature_flags.onelogin_use_mock ? 1 : 0
   source       = "./modules/mock_onelogin"
   account_name = var.account_name
   ecs_cluster  = aws_ecs_cluster.online-lpa.id

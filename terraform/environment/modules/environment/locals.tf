@@ -13,6 +13,7 @@ locals {
   admin_alb_session_cookie_name = "AWSELBAuthSessionCookie"
   pager_duty_ops_service_name   = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                   = var.environment.regions[data.aws_region.current.region].region
+  onelogin_discovery_url        = var.environment.feature_flags.onelogin_use_mock ? "http://mock-onelogin.${aws_service_discovery_private_dns_namespace.internal.name}:8080/.well-known/openid-configuration" : "https://oidc.integration.account.gov.uk/.well-known/openid-configuration"
   shared_component_tag = {
     component = "shared"
   }
