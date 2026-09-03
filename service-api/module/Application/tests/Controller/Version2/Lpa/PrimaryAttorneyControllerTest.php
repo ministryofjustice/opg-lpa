@@ -33,7 +33,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data']])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->create(['some' => 'data']);
@@ -47,7 +47,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data']])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->create(['some' => 'data']);
@@ -66,7 +66,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data']])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn('unexpected type')->once();
 
         $response = $controller->create(['some' => 'data']);
@@ -95,7 +95,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data'], 10])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'], 10)
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -109,7 +109,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data'], 10])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'], 10)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -128,7 +128,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, ['some' => 'data'], 10])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'], 10)
             ->andReturn('unexpected type')->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -157,7 +157,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, 10])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, 10)
             ->andReturn(true)->once();
 
         $response = $controller->delete(10);
@@ -170,7 +170,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, 10])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, 10)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->delete(10);
@@ -189,7 +189,7 @@ class PrimaryAttorneyControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId, self::IF_MATCH_VALUE, 10])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, 10)
             ->andReturn(false)->once();
 
         $response = $controller->delete(10);

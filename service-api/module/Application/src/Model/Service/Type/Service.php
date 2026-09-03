@@ -17,11 +17,12 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, ?int $ifMatchVersion, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, ?string $userId, $data)
     {
         $type = (isset($data['type']) ? $data['type'] : null);
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setUpdatedBy($userId);
         $lpa->getDocument()->setType($type);
 
         $validation = $lpa->getDocument()->validate();

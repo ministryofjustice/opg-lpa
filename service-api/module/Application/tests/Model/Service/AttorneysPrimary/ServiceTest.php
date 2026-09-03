@@ -39,7 +39,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();
         $attorneyArray['type'] = 'Invalid';
-        $this->service->create(strval(strval($lpa->getId())), 5, $attorneyArray);
+        $this->service->create(strval(strval($lpa->getId())), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorneyArray);
     }
 
     public function testCreateValidationFailed()
@@ -51,7 +51,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $attorney = new Human();
-        $validationError = $this->service->create(strval(strval($lpa->getId())), 5, $attorney->toArray());
+        $validationError = $this->service->create(strval(strval($lpa->getId())), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorney->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -79,7 +79,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $attorney = FixturesData::getAttorneyTrust();
-        $entity = $this->service->create(strval($lpa->getId()), 5, $attorney->toArray());
+        $entity = $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorney->toArray());
 
         $this->assertEquals(new DataModelEntity($attorney), $entity);
     }
@@ -92,7 +92,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->update(strval($lpa->getId()), 5, null, -1);
+        $apiProblem = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -120,7 +120,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $attorney = new Human();
         $attorneyArray = $attorney->toArray();
         $attorneyArray['type'] = 'Invalid';
-        $this->service->update(strval($lpa->getId()), 5, $attorneyArray, $lpa->getDocument()->getPrimaryAttorneys()[2]->id);
+        $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorneyArray, $lpa->getDocument()->getPrimaryAttorneys()[2]->id);
     }
 
     public function testUpdateValidationFailed()
@@ -132,7 +132,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $attorney = new Human();
-        $validationError = $this->service->update(strval($lpa->getId()), 6, $attorney->toArray(), $lpa->getDocument()->getPrimaryAttorneys()[1]->id);
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorney->toArray(), $lpa->getDocument()->getPrimaryAttorneys()[1]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -161,7 +161,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $attorney = FixturesData::getAttorneyTrust();
         $id = $lpa->getDocument()->getPrimaryAttorneys()[0]->id;
-        $entity = $this->service->update(strval($lpa->getId()), 5, $attorney->toArray(), $id);
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $attorney->toArray(), $id);
 
         //Id will have been set to passed in id
         $attorney->setId($id);
@@ -177,7 +177,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->delete(strval($lpa->getId()), 5, -1);
+        $apiProblem = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -200,7 +200,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $id = $lpa->getDocument()->getPrimaryAttorneys()[1]->id;
-        $result = $this->service->delete(strval($lpa->getId()), 5, $id);
+        $result = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $id);
 
         $this->assertTrue($result);
     }

@@ -1142,4 +1142,11 @@ class Lpa extends AbstractData
     {
         return $this->updatedBy;
     }
+
+    public function setUpdatedBy(?string $userId): static
+    {
+        $this->updatedBy = $userId;
+
+        return $this;
+    }
 }
