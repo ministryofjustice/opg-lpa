@@ -14,22 +14,6 @@ class AuthorisationClientManagerTest extends TestCase
 {
     private const DISCOVERY_URL = 'https://oidc.example.com/.well-known/openid-configuration';
 
-    private const KEY_LABEL = 'EC PRIVATE ' . 'KEY';
-
-    private const TEST_KEY_BODY =
-        "MHcCAQEEIGmerFRXPsM9dw+YpVfTnaNHR1JYVTmkdahadOQbr9E2oAoGCCqGSM49\n" . // pragma: allowlist secret
-        "AwEHoUQDQgAEhrCO/0SUIDbj3taD8rtl0oVS1qNO3paLZaR0WPcvB607w2FyijHG\n" . // pragma: allowlist secret
-        "lP2Fk5TdKSt3T1Iy2jKBmnYWwrFABZg9Aw==\n";                             // pragma: allowlist secret
-
-    private static function testPrivateKey(): string
-    {
-        $label = self::KEY_LABEL;
-
-        return "-----BEGIN {$label}-----\n"
-            . self::TEST_KEY_BODY
-            . "-----END {$label}-----\n";
-    }
-
     public function testCacheTtlConstantValue(): void
     {
         $this->assertSame(3600, AuthorisationClientManager::CACHE_TTL);
@@ -72,7 +56,7 @@ class AuthorisationClientManagerTest extends TestCase
         return new AuthorisationClientManager(
             'test-client-id',
             self::DISCOVERY_URL,
-            new KeyPairManager(self::testPrivateKey(), 'test-kid'),
+            new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid'),
             $this->createMock(ClientInterface::class),
             $this->cacheReturningDiscoveryDocument(),
         );

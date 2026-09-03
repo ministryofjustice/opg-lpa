@@ -17,7 +17,7 @@ class KeyPairManagerTest extends TestCase
         "AwEHoUQDQgAEhrCO/0SUIDbj3taD8rtl0oVS1qNO3paLZaR0WPcvB607w2FyijHG\n" . // pragma: allowlist secret
         "lP2Fk5TdKSt3T1Iy2jKBmnYWwrFABZg9Aw==\n";                             // pragma: allowlist secret
 
-    private static function testPrivateKey(): string
+    private static function ecPrivateKey(): string
     {
         $label = self::KEY_LABEL;
 
@@ -48,68 +48,48 @@ class KeyPairManagerTest extends TestCase
 
     public function testJwkHasExpectedAlgorithmAndUse(): void
     {
-        $manager = new KeyPairManager(self::testPrivateKey(), 'test-kid-1');
-        $jwk     = $manager->jwk();
+        $manager = new KeyPairManager(self::rsaPrivateKey(), 'test-kid-1');
 
-        $serialised = $jwk->jsonSerialize();
+        $serialised = $manager->jwk()->jsonSerialize();
 
-        $this->assertSame('ES256', $serialised['alg']);
+        $this->assertSame('RSA', $serialised['kty']);
+        $this->assertSame('RS256', $serialised['alg']);
         $this->assertSame('sig', $serialised['use']);
         $this->assertSame('test-kid-1', $serialised['kid']);
     }
 
-    public function testJwkIsEcKeyType(): void
-    {
-        $manager = new KeyPairManager(self::testPrivateKey(), 'test-kid-2');
-        $jwk     = $manager->jwk();
-
-        $this->assertSame('EC', $jwk->jsonSerialize()['kty']);
-    }
-
     public function testJwkAcceptsBase64EncodedPem(): void
     {
-        $base64Key = base64_encode(self::testPrivateKey());
+        $manager = new KeyPairManager(base64_encode(self::rsaPrivateKey()), 'test-kid-b64');
 
-        $manager = new KeyPairManager($base64Key, 'test-kid-b64');
-        $jwk     = $manager->jwk();
+        $serialised = $manager->jwk()->jsonSerialize();
 
-        $serialised = $jwk->jsonSerialize();
-
-        $this->assertSame('EC', $serialised['kty']);
-        $this->assertSame('ES256', $serialised['alg']);
+        $this->assertSame('RSA', $serialised['kty']);
+        $this->assertSame('RS256', $serialised['alg']);
         $this->assertSame('test-kid-b64', $serialised['kid']);
     }
 
     public function testRawPemAndBase64PemProduceSameKey(): void
     {
-        $fromPem    = (new KeyPairManager(self::testPrivateKey(), 'k'))->jwk()->jsonSerialize();
-        $fromBase64 = (new KeyPairManager(base64_encode(self::testPrivateKey()), 'k'))->jwk()->jsonSerialize();
+        $fromPem    = (new KeyPairManager(self::rsaPrivateKey(), 'k'))->jwk()->jsonSerialize();
+        $fromBase64 = (new KeyPairManager(base64_encode(self::rsaPrivateKey()), 'k'))->jwk()->jsonSerialize();
 
+        $this->assertSame($fromPem['n'], $fromBase64['n']);
         $this->assertSame($fromPem['d'], $fromBase64['d']);
-        $this->assertSame($fromPem['x'], $fromBase64['x']);
-        $this->assertSame($fromPem['y'], $fromBase64['y']);
     }
 
-    public function testRsaKeyUsesRs256(): void
+    /**
+     * An EC key would sign happily, and the local mock would accept it, but GOV.UK One
+     * Login does not support ES256 for the client assertion -- so it has to fail here.
+     */
+    public function testEcKeyIsRejected(): void
     {
-        $manager = new KeyPairManager(self::rsaPrivateKey(), 'test-kid-rsa');
+        $manager = new KeyPairManager(self::ecPrivateKey(), 'test-kid-ec');
 
-        $serialised = $manager->jwk()->jsonSerialize();
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('OneLogin private key must be RSA, got "EC"');
 
-        $this->assertSame('RSA', $serialised['kty']);
-        $this->assertSame('RS256', $serialised['alg']);
-        $this->assertSame('sig', $serialised['use']);
-        $this->assertSame('test-kid-rsa', $serialised['kid']);
-    }
-
-    public function testRsaKeyAcceptsBase64EncodedPem(): void
-    {
-        $manager = new KeyPairManager(base64_encode(self::rsaPrivateKey()), 'test-kid-rsa-b64');
-
-        $serialised = $manager->jwk()->jsonSerialize();
-
-        $this->assertSame('RSA', $serialised['kty']);
-        $this->assertSame('RS256', $serialised['alg']);
+        $manager->jwk();
     }
 
     public function testEmptyPrivateKeyThrows(): void
@@ -125,7 +105,7 @@ class KeyPairManagerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('key ID');
 
-        new KeyPairManager(self::testPrivateKey(), '');
+        new KeyPairManager(self::rsaPrivateKey(), '');
     }
 
     public function testMalformedKeyThrows(): void

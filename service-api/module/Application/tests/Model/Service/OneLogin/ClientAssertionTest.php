@@ -13,7 +13,6 @@ use Facile\OpenIDClient\Issuer\IssuerInterface;
 use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadata;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\Core\JWK;
-use Jose\Component\Signature\Algorithm\ES256;
 use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
@@ -55,25 +54,6 @@ class ClientAssertionTest extends TestCase
         $this->assertNotEmpty($claims['jti']);
         $this->assertGreaterThan(time(), $claims['exp']);
         $this->assertLessThanOrEqual(time(), $claims['iat']);
-    }
-
-    public function testEcKeyStillProducesAVerifiableEs256Assertion(): void
-    {
-        $ecResource = openssl_pkey_new([
-            'private_key_type' => OPENSSL_KEYTYPE_EC,
-            'curve_name'       => 'prime256v1',
-        ]);
-
-        $this->assertNotFalse($ecResource, 'Unable to generate an EC test key');
-
-        openssl_pkey_export($ecResource, $ecPem);
-
-        $jwk = (new KeyPairManager($ecPem, 'test-kid-ec'))->jwk();
-
-        $assertion = $this->createAssertion($jwk);
-
-        $this->assertSame('ES256', $this->protectedHeaderOf($assertion)['alg']);
-        $this->assertTrue($this->verify($assertion, $jwk->toPublic(), new ES256()));
     }
 
     private function createAssertion(JWK $jwk): string

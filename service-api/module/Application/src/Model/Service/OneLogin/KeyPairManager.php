@@ -10,10 +10,14 @@ use RuntimeException;
 
 class KeyPairManager
 {
-    private const ALGORITHMS = [
-        'RSA' => 'RS256',
-        'EC'  => 'ES256',
-    ];
+    /**
+     * The algorithm we sign the `private_key_jwt` client assertion with.
+     * The local mock does not verify the assertion at all,
+     * so anything else would pass locally.
+     */
+    private const KEY_TYPE = 'RSA';
+
+    private const ALGORITHM = 'RS256';
 
     public function __construct(
         #[\SensitiveParameter] private readonly string $privateKey,
@@ -46,15 +50,15 @@ class KeyPairManager
 
         $keyType = $jwk->has('kty') ? $jwk->get('kty') : null;
 
-        if (!is_string($keyType) || !isset(self::ALGORITHMS[$keyType])) {
+        if ($keyType !== self::KEY_TYPE) {
             throw new RuntimeException(sprintf(
-                'Unsupported OneLogin private key type "%s"; expected one of: %s',
+                'OneLogin private key must be %s, got "%s"',
+                self::KEY_TYPE,
                 is_string($keyType) ? $keyType : 'unknown',
-                implode(', ', array_keys(self::ALGORITHMS)),
             ));
         }
 
-        return new JWK($jwk->all() + ['alg' => self::ALGORITHMS[$keyType]]);
+        return new JWK($jwk->all() + ['alg' => self::ALGORITHM]);
     }
 
     private function resolvePem(string $key): string

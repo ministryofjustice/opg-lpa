@@ -16,7 +16,12 @@ class AuthorisationClientManager
 {
     public const CACHE_TTL = 3600;
 
-    public const ID_TOKEN_SIGNING_ALGORITHM = 'ES256';
+    /**
+     * The algorithm GOV.UK One Login signs its ID tokens with - their key.
+     * One Login signs inbound ID tokens with their EC key. This value must
+     * match the "ID token signing algorithm" registered against our client.
+     */
+    public const string ID_TOKEN_SIGNING_ALGORITHM = 'ES256';
 
     public function __construct(
         private readonly string $clientId,
