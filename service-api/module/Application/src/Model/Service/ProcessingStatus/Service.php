@@ -135,7 +135,7 @@ class Service extends AbstractService
                 $results[$id] = $response;
             },
             'rejected' => function ($reason, $id) {
-                $this->getLogger()->debug('Failed to get status for LPA application', [
+                $this->getLogger()->warning('Failed to get status for LPA application', [
                     'id' => $id ,
                     'reason' => $reason
                 ]);
