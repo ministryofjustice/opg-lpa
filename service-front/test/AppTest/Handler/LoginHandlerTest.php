@@ -308,6 +308,40 @@ class LoginHandlerTest extends TestCase
         $this->assertEquals('/some/stored/url', $response->getHeaderLine('Location'));
     }
 
+    public function testSuccessfulLoginIgnoresAnOffSitePreAuthUrl(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+        $this->session->method('get')->with('pre_auth_request_url')->willReturn('//evil.example/');
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn([
+            'email' => 'test@example.com',
+            'password' => 'password123', // pragma: allowlist secret
+        ]);
+
+        $identity = $this->createMock(UserIdentity::class);
+        $identity->method('id')->willReturn('user-123');
+        $identity->method('token')->willReturn('test-token');
+        $identity->method('tokenExpiresAt')->willReturn(new DateTime());
+        $identity->method('lastLogin')->willReturn(new DateTime());
+        $identity->method('getSharedSpaceId')->willReturn(null);
+
+        $this->authenticationService->method('setEmail')->willReturnSelf();
+        $this->authenticationService->method('setPassword')->willReturnSelf();
+        $this->authenticationService->method('authenticate')
+            ->willReturn(new Result(Result::SUCCESS, $identity, []));
+
+        $this->session->method('regenerate')->willReturn($this->session);
+
+        $response = $this->handler->handle($this->createRequestWithSession('POST', [
+            'email' => 'test@example.com',
+            'password' => 'password123', // pragma: allowlist secret
+        ]));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
     public function testSuccessfulLoginWithInactivityFlagsStoresFlashWarning(): void
     {
         $this->session->method('has')->with('identity')->willReturn(false);
