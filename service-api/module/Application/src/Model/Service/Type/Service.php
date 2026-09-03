@@ -22,6 +22,7 @@ class Service extends AbstractService
         $type = (isset($data['type']) ? $data['type'] : null);
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
         $lpa->getDocument()->setType($type);
 
@@ -33,7 +34,7 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting type');
 
-        $this->updateLpa($lpa, $ifMatchVersion);
+        $this->updateLpa($lpa);
 
         return new Entity($type);
     }

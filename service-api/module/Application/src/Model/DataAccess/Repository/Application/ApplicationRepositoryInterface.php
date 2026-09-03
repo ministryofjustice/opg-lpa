@@ -74,7 +74,7 @@ interface ApplicationRepositoryInterface
     /**
      * Update the LPA
      */
-    public function update(Lpa $lpa, ?int $ifMatchVersion = null): void;
+    public function update(Lpa $lpa): void;
 
     /**
      * @param int $lpaId

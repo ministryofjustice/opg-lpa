@@ -30,12 +30,13 @@ class Service extends AbstractService
         }
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
         $lpa->getDocument()->setPrimaryAttorneyDecisions($primaryAttorneyDecisions);
 
         $this->assertLpaValid($lpa, 'after setting primary attorney decisions');
 
-        $this->updateLpa($lpa, $ifMatchVersion);
+        $this->updateLpa($lpa);
 
         return new DataModelEntity($primaryAttorneyDecisions);
     }

@@ -1138,6 +1138,18 @@ class Lpa extends AbstractData
         return $this->version;
     }
 
+    // TODO: The parameter being ?int, and the method only conditionally setting
+    // the value of $this->version, is temporary. Once every Controller handles
+    // the If-Match header correctly it can be removed.
+    public function setVersion(?int $version): static
+    {
+        if ($version !== null) {
+            $this->version = $version;
+        }
+
+        return $this;
+    }
+
     public function getUpdatedBy(): ?string
     {
         return $this->updatedBy;

@@ -264,26 +264,33 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      *
      * @param Lpa $lpa
      */
-    public function update(Lpa $lpa, ?int $ifMatchVersion = null): void
+    public function update(Lpa $lpa): void
     {
         $this->dbWrapper->beginTransaction();
 
         try {
             // Check to ensure the LPA isn't locked.
             $inDbLpa = $this->getForUpdateById($lpa->getId());
+            $inDbLpa = new Lpa($inDbLpa);
 
-            $updateTimestamp = true;
+            $noDataChanged = $lpa->equalsIgnoreMetadata($inDbLpa);
 
-            if (!is_null($inDbLpa)) {
-                $inDbLpa = new Lpa($inDbLpa);
+            if (!$noDataChanged && $inDbLpa->isLocked()) {
+                throw new LockedException('LPA has already been locked.');
+            }
 
-                $noDataChanged = $lpa->equalsIgnoreMetadata($inDbLpa);
+            $updateTimestamp = !$noDataChanged;
 
-                if (!$noDataChanged && $inDbLpa->isLocked()) {
-                    throw new LockedException('LPA has already been locked.');
+            if ($lpa->getVersion() !== $inDbLpa->getVersion()) {
+                $userResult = $this->dbWrapper->select(UserData::USERS_TABLE, ['id' => $lpa->getUpdatedBy()], ['limit' => 1]);
+                if ($userResult->isQueryResult() && $userResult->count() === 1) {
+                    $user = $userResult->current();
+                    $profile = json_decode($user['profile'], true);
+
+                    throw new ConflictException($profile['name']['first'] . ' ' . $profile['name']['last']);
                 }
 
-                $updateTimestamp = !$noDataChanged;
+                throw new ConflictException('Unknown user ' . $lpa->getUpdatedBy());
             }
 
             //------------------------------------------
@@ -333,16 +340,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             $sql = $this->dbWrapper->createSql();
             $update = $sql->update(self::APPLICATIONS_TABLE);
 
-            $update->where($ifMatchVersion === null
-                           ? [
-                               'id'        => $lpa->getId(),
-                               'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
-                           ]
-                           : [
-                               'id'        => $lpa->getId(),
-                               'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
-                               'version'   => $ifMatchVersion,
-                           ]);
+            $update->where([
+                'id'        => $lpa->getId(),
+                'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
+                'version'   => $lpa->getVersion(),
+            ]);
 
             $data = $this->mapLpaToPostgres($lpa);
             unset($data['id']); // Un-needed
@@ -354,18 +356,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
             $statement = $sql->prepareStatementForSqlObject($update);
             $result = $statement->execute();
-
-            if ($ifMatchVersion !== null && $lpa->getVersion() !== $ifMatchVersion) {
-                $userResult = $this->dbWrapper->select(UserData::USERS_TABLE, ['id' => $lpa->getUpdatedBy()], ['limit' => 1]);
-                if ($userResult->isQueryResult() && $userResult->count() === 1) {
-                    $user = $userResult->current();
-                    $profile = json_decode($user['profile'], true);
-
-                    throw new ConflictException($profile['name']['first'] . ' ' . $profile['name']['last']);
-                }
-
-                throw new ConflictException('XYZ Unknown User ' . $lpa->getUpdatedBy());
-            }
 
             if ($result->getAffectedRows() !== 1) {
                 throw new \RuntimeException('Update failed');

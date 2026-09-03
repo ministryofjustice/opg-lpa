@@ -36,6 +36,7 @@ class Service extends AbstractService
         }
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
 
         //  If the client has not passed an id, set it to max(current ids) + 1 - The array is seeded with 0, meaning if this is the first attorney the id will be 1.
@@ -57,7 +58,7 @@ class Service extends AbstractService
 
         $lpa->getDocument()->primaryAttorneys[] = $attorney;
 
-        $this->updateLpa($lpa, $ifMatchVersion);
+        $this->updateLpa($lpa);
 
         return new DataModelEntity($attorney);
     }
@@ -71,6 +72,7 @@ class Service extends AbstractService
     public function update(string $lpaId, ?int $ifMatchVersion, ?string $userId, $data, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPrimaryAttorneys() as $key => $attorney) {
@@ -97,7 +99,7 @@ class Service extends AbstractService
 
                 $lpa->getDocument()->primaryAttorneys[$key] = $attorney;
 
-                $this->updateLpa($lpa, $ifMatchVersion);
+                $this->updateLpa($lpa);
 
                 return new DataModelEntity($attorney);
             }
@@ -114,6 +116,7 @@ class Service extends AbstractService
     public function delete(string $lpaId, ?int $ifMatchVersion, ?string $userId, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPrimaryAttorneys() as $key => $attorney) {
@@ -123,7 +126,7 @@ class Service extends AbstractService
                 // Reset the index sequence. This ensure the value remains an array, not an object, in JSON.
                 $lpa->getDocument()->setPrimaryAttorneys(array_values($lpa->getDocument()->primaryAttorneys));
 
-                $this->updateLpa($lpa, $ifMatchVersion);
+                $this->updateLpa($lpa);
 
                 return true;
             }
