@@ -9,6 +9,8 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
+use Application\Model\Service\OneLogin\LogoutTokenException;
+use Application\Model\Service\OneLogin\LogoutTokenVerifier;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service;
 use DateTime;
@@ -19,6 +21,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
@@ -32,6 +35,8 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ClientInterface $oidcClient;
     private MockInterface|LoggerInterface $logger;
+    private MockInterface|LogoutTokenVerifier $logoutTokenVerifier;
+    private MockInterface|CacheInterface $cache;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
 
@@ -55,8 +60,14 @@ class ServiceTest extends MockeryTestCase
 
         $this->logger = Mockery::spy(LoggerInterface::class);
 
+        $this->logoutTokenVerifier = Mockery::mock(LogoutTokenVerifier::class);
+
+        $this->cache = Mockery::mock(CacheInterface::class);
+
         $this->service = new Service();
         $this->service->setLogger($this->logger);
+        $this->service->setLogoutTokenVerifier($this->logoutTokenVerifier);
+        $this->service->setCache($this->cache);
         $this->service->setAuthorisationClientManager($this->clientManager);
         $this->service->setAuthorizationService($this->authorizationService);
         $this->service->setAuthenticationService($this->authenticationService);
@@ -688,6 +699,108 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame($expires->format('c'), $result['tokenExpiresAt']);
         $this->assertNull($result['sharedSpaceId']);
         $this->assertNotEmpty($result['lastLogin']);
+    }
+
+    public function testBackChannelLogoutClearsAuthTokenForTheMatchingUser(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->with('a.logout.token')
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->expectJtiRecorded('jti-1');
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('id')->andReturn('user-1');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')
+            ->once()->with('urn:fdc:gov.uk:2022:sub-abc')->andReturn($user);
+
+        $this->userRepository->shouldReceive('clearAuthToken')->once()->with('user-1');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertSame(['accepted' => true], $result);
+    }
+
+    public function testBackChannelLogoutRejectsInvalidTokenAndEndsNoSession(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andThrow(new LogoutTokenException('invalid_signature'));
+
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+        $this->cache->shouldNotReceive('set');
+
+        $result = $this->service->handleBackChannelLogout('forged.logout.token');
+
+        $this->assertFalse($result['accepted']);
+        $this->assertSame('invalid_signature', $result['reason']);
+    }
+
+    public function testBackChannelLogoutRejectsReplayedJti(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->cache->shouldReceive('has')->once()->andReturn(true);
+        $this->cache->shouldNotReceive('set');
+
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertFalse($result['accepted']);
+        $this->assertSame('replayed_jti', $result['reason']);
+    }
+
+    public function testBackChannelLogoutAcceptsValidTokenForUnknownSubject(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:stranger', 'jti' => 'jti-2']);
+
+        $this->expectJtiRecorded('jti-2');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn(null);
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertSame(['accepted' => true], $result);
+    }
+
+    public function testBackChannelLogoutDoesNotRecordJtiWhenTheLogoutFails(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->cache->shouldReceive('has')->once()->andReturn(false);
+        $this->cache->shouldNotReceive('set');
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('id')->andReturn('user-1');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('clearAuthToken')
+            ->once()
+            ->andThrow(new RuntimeException('database is on fire'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->handleBackChannelLogout('a.logout.token');
+    }
+
+    private function expectJtiRecorded(string $jti): void
+    {
+        $expectedKey = 'logout_jti_' . hash('sha256', $jti);
+
+        $this->cache->shouldReceive('has')->once()->with($expectedKey)->andReturn(false);
+        $this->cache->shouldReceive('set')->once()->with($expectedKey, true, 180);
     }
 
     private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface

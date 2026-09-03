@@ -88,6 +88,7 @@ use App\Handler\Lpa\WhenReplacementAttorneyStepInHandler;
 use App\Handler\Lpa\WhoAreYouHandler;
 use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
+use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
@@ -192,6 +193,11 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
             ->setOptions(['unauthenticated_route' => true]);
+        $app->post(
+            '/auth/onelogin/backchannel-logout',
+            OneLoginBackChannelLogoutHandler::class,
+            'auth.onelogin.backchannel-logout',
+        )->setOptions(['unauthenticated_route' => true]);
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
