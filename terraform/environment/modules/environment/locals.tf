@@ -14,7 +14,6 @@ locals {
   pager_duty_ops_service_name   = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                   = var.environment.regions[data.aws_region.current.region].region
   onelogin_discovery_url        = var.environment.feature_flags.onelogin_use_mock ? "http://mock-onelogin.${aws_service_discovery_private_dns_namespace.internal.name}:8080/.well-known/openid-configuration" : "https://oidc.integration.account.gov.uk/.well-known/openid-configuration"
-  onelogin_client_id_secret_arn = var.environment.feature_flags.onelogin_use_mock ? data.aws_secretsmanager_secret.mock_onelogin_client_id.arn : data.aws_secretsmanager_secret.onelogin_client_id.arn
   shared_component_tag = {
     component = "shared"
   }
