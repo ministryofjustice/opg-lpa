@@ -294,6 +294,6 @@ return [
     ],
     'logging'           => [
         'serviceName' => 'opg-lpa/front',
-        'minLevel'    => Level::fromName('DEBUG'),
+        'minLevel'    => Level::Info,
     ],
 ];
