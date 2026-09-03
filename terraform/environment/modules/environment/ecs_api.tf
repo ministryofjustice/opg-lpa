@@ -290,7 +290,7 @@ locals {
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_AUTH_LOG_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.name}" },
         { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" },
-        { name = "ONELOGIN_PRIVATE_KEY", valueFrom = data.aws_secretsmanager_secret.onelogin_private_key.arn }
+        { name = "ONELOGIN_PRIVATE_KEY", valueFrom = "${data.aws_secretsmanager_secret.onelogin_private_key.arn}:onelogin_private_key::" }
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
