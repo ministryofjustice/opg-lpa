@@ -20,7 +20,7 @@ Feature: Shared Space
     And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    And I see "Manage your Shared Space" in the title
+    And I see "Manage Shared Space" in the title
     And I can see myself
 
   Scenario: Can manage admin permissions of other members
@@ -91,6 +91,7 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "suspended"
+    And I log out
 
     When I try to log in as the member added to the shared space
     Then I should be on "/shared-space/dashboard"
@@ -142,6 +143,7 @@ Feature: Shared Space
     When I click link "Shared LPAs"
     Then I should be on "/shared-space/dashboard"
     And there are "two" "LPA" elements on the page
+    And I log out
     When I try to log in as the member added to the shared space
     Then I should be on "/login"
     Then I should not be logged in
@@ -191,3 +193,13 @@ Feature: Shared Space
     Then I submit the form
     Then I should be on "/shared-space/forgot-password"
     Then I see "Thank you" in the page text
+
+  Scenario: Non-admin members cannot manage shared space
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the member added to the shared space
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    And I see "View Shared Space" in the page text
+    And I cannot see any links to manage members

@@ -158,6 +158,7 @@ class SharedSpaceController extends AbstractRestfulController
         $response = [
             'members' => $this->sharedSpaceService->getMembers($result['sharedSpaceId']),
             'invites' => $this->sharedSpaceService->getInvites($result['sharedSpaceId']),
+            'name' => $this->sharedSpaceService->getName($result['sharedSpaceId']),
         ];
 
         return new Json($response);
