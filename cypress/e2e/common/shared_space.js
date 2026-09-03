@@ -202,6 +202,16 @@ When(`I type the access code into field labelled {string}`, (label) => {
   })
 });
 
+When(`I type the email of the added member into field labelled {string}`, (label) => {
+  cy.get('@addedMember').then(({ email }) => {
+    cy.contains('label', label)
+      .invoke('attr', 'for')
+      .then((id) => cy.get('#' + id))
+      .clear({ force: true })
+      .type(email);
+  })
+});
+
 Then('I cannot see any invites', () => {
   cy.contains('table', 'Invited members').should('not.exist');
 });

@@ -293,6 +293,14 @@ class SharedSpaceService
      */
     public function invite(MemberInvite $memberInvite): array
     {
+        if ($this->sharedSpaceRepository->hasInvite($memberInvite->sharedSpaceId, $memberInvite->email)) {
+            throw new InviteAlreadyExistsException();
+        }
+
+        if ($this->sharedSpaceRepository->hasMemberWithEmail($memberInvite->sharedSpaceId, $memberInvite->email)) {
+            throw new UserAlreadyInSharedSpaceException();
+        }
+
         $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($memberInvite->sharedSpaceId);
         $id = $this->sharedSpaceRepository->createInvite($memberInvite);
 
