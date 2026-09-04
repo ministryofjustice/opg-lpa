@@ -62,6 +62,23 @@ Feature: Admin
     Then I see "seeded_test_user2@digital.justice.gov.uk" in the page text
     And the user account status is "Activated"
 
+  Scenario: View LPAs of a user
+    When I create a new user with 5 LPAs
+    And I search for the newly created fixture user
+    Then I can see the user has "5" LPAs
+    When I click the LPA link
+    Then I should be on admin page matching "/user/.+/lpas.+"
+    And there are "5" '.govuk-summary-card' elements on the page
+
+  Scenario: View LPAs of a shared space
+    When I create a new user with 2 LPAs that belongs to a shared space called "Example Organisation"
+    And I search for the newly created fixture user
+    Then I can see the user has "2" LPAs
+    And I see "Example Organisation" in the page text
+    When I click the LPA link
+    Then I should be on admin page matching "/shared-space/.+/lpas.+"
+    And there are "2" '.govuk-summary-card' elements on the page
+
   Scenario: Show error when searching by A Reference with no match
     When I search for user "A000000000001" by "A Reference"
     Then I see "No user found for A Reference" in the page text
