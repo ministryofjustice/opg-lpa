@@ -33,7 +33,7 @@ class ApplicationController extends AbstractLpaController
 
         $result = $this->getService()->fetch(
             $id,
-            $this->authenticationService->getIdentity()->getId()
+            $this->params()->fromRoute('userId')
         );
 
         if ($result instanceof ApiProblem) {
@@ -79,7 +79,7 @@ class ApplicationController extends AbstractLpaController
 
         //  Get the collection of applications with the query data
         $result = $this->getService()->fetchAll(
-            $this->authenticationService->getIdentity()->getId(),
+            $this->params()->fromRoute('userId'),
             $filteredQuery
         );
 
@@ -119,7 +119,7 @@ class ApplicationController extends AbstractLpaController
 
         $result = $this->getService()->create(
             $data,
-            $this->authenticationService->getIdentity()->getId()
+            $this->params()->fromRoute('userId')
         );
 
         if ($result instanceof ApiProblem) {
@@ -152,7 +152,7 @@ class ApplicationController extends AbstractLpaController
         $result = $this->getService()->patch(
             $data,
             $id,
-            $this->authenticationService->getIdentity()->getId()
+            $this->params()->fromRoute('userId')
         );
 
         if ($result instanceof ApiProblem) {
@@ -175,7 +175,7 @@ class ApplicationController extends AbstractLpaController
 
         $result = $this->getService()->delete(
             $id,
-            $this->authenticationService->getIdentity()->getId()
+            $this->params()->fromRoute('userId')
         );
 
         if ($result instanceof ApiProblem) {
