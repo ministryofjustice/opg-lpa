@@ -11,6 +11,7 @@ use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Authentication\Service;
+use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
@@ -449,6 +450,14 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             expires: new DateTime('-1 minute'),
         );
 
+        $this->sharedSpaceRepository->shouldReceive('getInvites')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn([]);
+
+        $this->sharedSpaceRepository->shouldReceive('getMembers')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn([]);
+
         $this->sharedSpaceRepository->shouldReceive('getSharedSpace')
             ->with($memberInvite->sharedSpaceId)
             ->andReturn('my space');
@@ -464,6 +473,58 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             'sharedSpaceName' => 'my space',
             'inviteCode' => $memberInvite->code,
         ], $result);
+    }
+
+    public function testInviteWhenInviteExists()
+    {
+        $memberInvite = new MemberInvite(
+            id: 1,
+            userId: 'my user',
+            sharedSpaceId: 'my space',
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'c',
+            isAdmin: false,
+            code: '12341234',
+            created: new DateTime(),
+            expires: new DateTime('-1 minute'),
+        );
+
+        $this->sharedSpaceRepository->shouldReceive('getInvites')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn([$memberInvite]);
+
+        $this->expectException(InviteAlreadyExistsException::class);
+
+        $this->service->invite($memberInvite);
+    }
+
+    public function testInviteWhenEmailAlreadyInSharedSpace()
+    {
+        $memberInvite = new MemberInvite(
+            id: 1,
+            userId: 'my user',
+            sharedSpaceId: 'my space',
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'c',
+            isAdmin: false,
+            code: '12341234',
+            created: new DateTime(),
+            expires: new DateTime('-1 minute'),
+        );
+
+        $this->sharedSpaceRepository->shouldReceive('getInvites')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn([]);
+
+        $this->sharedSpaceRepository->shouldReceive('getMembers')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn([new SharedSpaceMember(['email' => $memberInvite->email])]);
+
+        $this->expectException(UserAlreadyInSharedSpaceException::class);
+
+        $this->service->invite($memberInvite);
     }
 
     #[DoesNotPerformAssertions]

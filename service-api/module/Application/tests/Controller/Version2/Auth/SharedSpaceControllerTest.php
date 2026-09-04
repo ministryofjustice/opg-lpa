@@ -11,6 +11,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
@@ -30,6 +31,7 @@ use MakeSharedTest\DataModel\FixturesData;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 
 class SharedSpaceControllerTest extends MockeryTestCase
@@ -400,8 +402,8 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $this->sharedSpaceService->shouldReceive('invite')
             ->with(Mockery::on(function (MemberInvite $invite) use ($userId, $sharedSpaceId): bool {
-                $createdDiff = $invite->created->getTimestamp() - (new DateTime())->getTimestamp();
-                $expiresDiff = $invite->expires->getTimestamp() - (new DateTime('+7 days'))->getTimestamp();
+                $createdDiff = $invite->created->getTimestamp() - new DateTime()->getTimestamp();
+                $expiresDiff = $invite->expires->getTimestamp() - new DateTime('+7 days')->getTimestamp();
 
                 return $invite->userId === $userId
                     && $invite->sharedSpaceId === $sharedSpaceId
@@ -430,6 +432,47 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $body = json_decode($result->getContent(), true);
         $this->assertEquals(['a' => 'b'], $body);
+    }
+
+    public static function existingResourceProvider(): array
+    {
+        return [
+            [new UserAlreadyInSharedSpaceException(), StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space'],
+            [new InviteAlreadyExistsException(), StatusCodeInterface::STATUS_CONFLICT, 'invite-already-exists'],
+            [new RuntimeException('something wrong'), StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request: something wrong'],
+        ];
+    }
+
+    #[DataProvider('existingResourceProvider')]
+    public function testInviteActionWhenUserAlreadyInSharedSpace(RuntimeException $exception, int $expectedStatus, string $expectedDetail)
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('invite')
+            ->with(Mockery::any())
+            ->andThrow($exception);
+
+        $this->makeRequest([
+            'userId' => $userId,
+            'sharedSpaceId' => $sharedSpaceId,
+        ], [
+            'firstNames' => '1',
+            'lastName' => '2',
+            'email' => '3',
+            'isAdmin' => true,
+        ]);
+        $result = $this->controller->inviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $exception = $result->toArray();
+        $this->assertEquals($expectedStatus, $exception['status']);
+        $this->assertEquals($expectedDetail, $exception['detail']);
     }
 
     public function testInviteActionWhenNotInSharedSpace()
