@@ -135,7 +135,7 @@ jobs:
       cli_commands: ${{ matrix.cli_commands || '' }}
       enable_snyk_scanning: true
       image_display_name: ${{ matrix.image_name }}
-      snyk_policy_path: ${{ matrix.snyk_policy_path || '' }}
+      snyk_policy_path: ${{ format('{0}/{1}', github.workspace, matrix.snyk_policy_path) }}
       snyk_container_options: "--severity-threshold=high"
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
