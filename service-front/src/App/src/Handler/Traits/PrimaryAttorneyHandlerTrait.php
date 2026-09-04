@@ -155,50 +155,56 @@ trait PrimaryAttorneyHandlerTrait
         return false;
     }
 
-    private function updateCorrespondentData(Lpa $lpa, AbstractAttorney $actor, bool $isDelete = false): void
+    private function updateCorrespondentData(Lpa $lpa, AbstractAttorney $actor, bool $isDelete = false, int $ifMatchVersion = 0): int
     {
         $correspondent = $lpa->document->correspondent;
 
         if (!$correspondent instanceof Correspondence) {
-            return;
+            return $ifMatchVersion;
         }
 
         $isAttorney = ($correspondent->who === Correspondence::WHO_ATTORNEY);
 
         if (!$isAttorney) {
-            return;
+            return $ifMatchVersion;
         }
 
         if ($isDelete) {
-            if (!$this->lpaApplicationService->deleteCorrespondent($lpa)) {
+            if (!$this->lpaApplicationService->deleteCorrespondent($lpa, $ifMatchVersion)) {
                 throw new \RuntimeException(
                     'API client failed to delete correspondent for id: ' . $lpa->id
                 );
             }
-        } else {
-            $isTrust = ($actor instanceof TrustCorporation);
-            $nameToCompare = $isTrust ? $correspondent->name : $correspondent->company;
 
-            if ($actor->name != $nameToCompare || $actor->address != $correspondent->address) {
-                $correspondentData = $correspondent->toArray();
-                unset($correspondentData['name']);
-                $correspondent = new Correspondence($correspondentData);
-
-                if ($isTrust) {
-                    $correspondent->company = $actor->name;
-                } else {
-                    $correspondent->name = new \MakeShared\DataModel\Common\LongName($actor->name->flatten());
-                }
-
-                $correspondent->address = $actor->address;
-
-                if (!$this->lpaApplicationService->setCorrespondent($lpa, $correspondent)) {
-                    throw new \RuntimeException(
-                        'API client failed to update correspondent for id: ' . $lpa->id
-                    );
-                }
-            }
+            return $ifMatchVersion + 1;
         }
+
+        $isTrust = ($actor instanceof TrustCorporation);
+        $nameToCompare = $isTrust ? $correspondent->name : $correspondent->company;
+
+        if ($actor->name != $nameToCompare || $actor->address != $correspondent->address) {
+            $correspondentData = $correspondent->toArray();
+            unset($correspondentData['name']);
+            $correspondent = new Correspondence($correspondentData);
+
+            if ($isTrust) {
+                $correspondent->company = $actor->name;
+            } else {
+                $correspondent->name = new \MakeShared\DataModel\Common\LongName($actor->name->flatten());
+            }
+
+            $correspondent->address = $actor->address;
+
+            if (!$this->lpaApplicationService->setCorrespondent($lpa, $correspondent, $ifMatchVersion)) {
+                throw new \RuntimeException(
+                    'API client failed to update correspondent for id: ' . $lpa->id
+                );
+            }
+
+            return $ifMatchVersion + 1;
+        }
+
+        return $ifMatchVersion;
     }
 
     private function isXmlHttpRequest(ServerRequestInterface $request): bool

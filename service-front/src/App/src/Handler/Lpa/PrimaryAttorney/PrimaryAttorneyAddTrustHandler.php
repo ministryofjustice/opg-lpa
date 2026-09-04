@@ -11,6 +11,7 @@ use App\Model\FormFlowChecker;
 use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\ApiClient\Exception\ConflictException;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -86,6 +87,7 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
             }
         }
 
+        $conflictError = null;
         if ($isPost) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -94,34 +96,40 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
 
             $form->setData($postData);
 
+            $ifMatchVersion = (int)$postData['version'];
             if ($form->isValid()) {
-                $addOk = $this->lpaApplicationService->addPrimaryAttorney(
-                    $lpa,
-                    new TrustCorporation($form->getModelDataFromValidatedForm())
-                );
-
-                if (!$addOk) {
-                    throw new RuntimeException(
-                        'API client failed to add a trust corporation attorney for id: ' . $lpa->id
+                try {
+                    $addOk = $this->lpaApplicationService->addPrimaryAttorney(
+                        $lpa,
+                        new TrustCorporation($form->getModelDataFromValidatedForm()),
+                        $ifMatchVersion,
                     );
+
+                    if (!$addOk) {
+                        throw new RuntimeException(
+                            'API client failed to add a trust corporation attorney for id: ' . $lpa->id
+                        );
+                    }
+
+                    $ifMatchVersion = $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
+                    $ifMatchVersion = $this->applicantService->cleanUp($lpa, $ifMatchVersion);
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $this->replacementAttorneyCleanup->cleanUp($lpa);
-                $this->applicantService->cleanUp($lpa);
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         }
 
@@ -133,6 +141,8 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
                 'lpa/primary-attorney',
                 ['lpa-id' => $lpa->id]
             ),
+            'lpaVersion' => $lpa->getVersion(),
+            'conflictError' => $conflictError,
         ];
 
         if (isset($queryParams['callingUrl'])) {

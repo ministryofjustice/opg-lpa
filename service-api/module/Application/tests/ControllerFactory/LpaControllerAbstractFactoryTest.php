@@ -11,6 +11,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\Authentication\AuthenticationService;
+use Psr\Log\LoggerInterface;
 
 class LpaControllerAbstractFactoryTest extends MockeryTestCase
 {
@@ -50,6 +51,8 @@ class LpaControllerAbstractFactoryTest extends MockeryTestCase
             ->andReturn(Mockery::mock(AuthenticationService::class))->once();
         $this->container->shouldReceive('get')->with(ApplicationsService::class)
             ->andReturn(Mockery::mock(ApplicationsService::class))->once();
+        $this->container->shouldReceive('get')->with(LoggerInterface::class)
+            ->andReturn(Mockery::mock(LoggerInterface::class))->once();
 
         $controller = $this->factory->__invoke($this->container, ApplicationController::class);
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\ApiClient;
 
 use App\Service\ApiClient\Exception\ApiException;
+use App\Service\ApiClient\Exception\ConflictException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use MakeShared\Telemetry\Tracer;
@@ -87,14 +88,15 @@ class Client
      * @throws ApiException on non-200/201/204 response, or malformed JSON response
      * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
      */
-    public function httpPut(string $path, array $payload = []): array|null|string
+    public function httpPut(string $path, array $payload = [], array $additionalHeaders = []): array|null|string
     {
-        $request  = new Request('PUT', new Uri($this->apiBaseUri . $path), $this->buildHeaders(), json_encode($payload));
+        $request  = new Request('PUT', new Uri($this->apiBaseUri . $path), $this->buildHeaders($additionalHeaders), json_encode($payload));
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
             200, 201 => $this->handleResponse($response),
             204      => null,
+            412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
         };
     }
@@ -103,13 +105,14 @@ class Client
      * @throws ApiException on non-200/201 response, or malformed JSON response
      * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
      */
-    public function httpPatch(string $path, array $payload = []): array|null|string
+    public function httpPatch(string $path, array $payload = [], array $additionalHeaders = []): array|null|string
     {
-        $request  = new Request('PATCH', new Uri($this->apiBaseUri . $path), $this->buildHeaders(), json_encode($payload));
+        $request  = new Request('PATCH', new Uri($this->apiBaseUri . $path), $this->buildHeaders($additionalHeaders), json_encode($payload));
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
             200, 201 => $this->handleResponse($response),
+            412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
         };
     }
@@ -118,9 +121,9 @@ class Client
      * @throws ApiException on non-204 response
      * @throws \Psr\Http\Client\ClientExceptionInterface on transport-level failure
      */
-    public function httpDelete(string $path): null
+    public function httpDelete(string $path, array $additionalHeaders = []): null
     {
-        $request  = new Request('DELETE', new Uri($this->apiBaseUri . $path), $this->buildHeaders());
+        $request  = new Request('DELETE', new Uri($this->apiBaseUri . $path), $this->buildHeaders($additionalHeaders));
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
@@ -186,5 +189,10 @@ class Client
         ]);
 
         throw $exception;
+    }
+
+    private function handlePreconditionFailedResponse(ResponseInterface $response): never
+    {
+        throw new ConflictException($response);
     }
 }

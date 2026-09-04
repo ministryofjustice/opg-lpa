@@ -2,11 +2,14 @@
 
 namespace Application\Controller\Version2\Lpa;
 
+use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
 use Laminas\Authentication\AuthenticationService;
+use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractRestfulController;
+use Psr\Log\LoggerInterface;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {
@@ -28,14 +31,20 @@ abstract class AbstractLpaController extends AbstractRestfulController
      */
     protected $service;
 
+    private bool $enforceConflictEnabled;
+
     /**
      * @param AuthenticationService $authenticationService
      * @param AbstractService $service
      */
-    public function __construct(AuthenticationService $authenticationService, AbstractService $service)
-    {
+    public function __construct(
+        AuthenticationService $authenticationService,
+        AbstractService $service,
+        private readonly ?LoggerInterface $abstractLogger = null,
+    ) {
         $this->authenticationService = $authenticationService;
         $this->service = $service;
+        $this->enforceConflictEnabled = getenv('ENFORCE_CONFLICT_ENABLED') === 'true';
     }
 
     /**
@@ -66,5 +75,51 @@ abstract class AbstractLpaController extends AbstractRestfulController
         ) {
             throw new UnauthorizedException('You do not have permission to access this service');
         }
+    }
+
+    protected function ifMatch(): ?int
+    {
+        /** @var Request $request */
+        $request = $this->getRequest();
+        $header = $request->getHeader('If-Match');
+
+        if (!$header) {
+            if ($this->enforceConflictEnabled) {
+                throw new ApiProblemException('If-Match header required', 400);
+            } else {
+                $this->abstractLogger?->warning('If-Match header required', [
+                    'uri' => $request->getUriString(),
+                    'method' => $request->getMethod(),
+                ]);
+
+                return null;
+            }
+        }
+
+        $version = (int) $header->getFieldValue();
+        if ($version === 0) {
+            if ($this->enforceConflictEnabled) {
+                throw new ApiProblemException('If-Match header value required', 400);
+            } else {
+                $this->abstractLogger?->warning('If-Match header value required', [
+                    'uri' => $request->getUriString(),
+                    'method' => $request->getMethod(),
+                ]);
+
+                return null;
+            }
+        }
+
+        return $version;
+    }
+
+    protected function userId(): ?string
+    {
+        $result = $this->authenticationService->getIdentity();
+        if ($result === null) {
+            return null;
+        }
+
+        return $result->id();
     }
 }

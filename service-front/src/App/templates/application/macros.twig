@@ -1,7 +1,7 @@
 {# Form Validation - Error Summary #}
-{% macro formErrorSummary(error, form, message = "There is a problem") %}
+{% macro formErrorSummary(error, form, conflictError = null, message = "There is a problem") %}
 
-    {% if (error is not empty or form.getMessages|length > 0) %}
+    {% if (error is not empty or form.getMessages|length > 0 or conflictError) %}
     <div class="govuk-error-summary" role="alert" aria-labelledby="error-heading" tabindex="-1" data-cy="error-summary" data-module="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="error-heading" data-cy="error-heading">{{ message }}</h2>
 
@@ -33,6 +33,12 @@
                         Unexpected error: {{ error }}
                     </p>
                 {% endif %}
+            </div>
+        {% elseif conflictError %}
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body">
+                {{ conflictError.getLastUpdatedBy }} has made changes to the LPA, your changes were not saved, please try again.
+              </p>
             </div>
         {% else %}
             <ul class="govuk-error-summary__list">

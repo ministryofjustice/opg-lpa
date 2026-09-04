@@ -67,6 +67,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
     ): Lpa {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
 
         $decisions = new PrimaryAttorneyDecisions();
@@ -129,6 +130,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => '5',
             ])
         );
 
@@ -148,6 +150,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => '5',
             ])
         );
     }
@@ -164,6 +167,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS,
+                'version' => '5',
             ])
         );
     }
@@ -195,6 +199,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => '5',
             ], $lpa)
         );
 
@@ -233,6 +238,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                'version' => '5',
             ], $lpa)
         );
 
@@ -269,6 +275,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_DEPENDS,
                 'howDetails' => 'Some details about decisions',
+                'version' => '5',
             ], $lpa)
         );
 
@@ -305,6 +312,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => '5',
             ], $lpa)
         );
 
@@ -332,6 +340,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                'version' => '5',
             ], $lpa)
         );
     }
@@ -345,7 +354,7 @@ class HowPrimaryAttorneysMakeDecisionHandlerTest extends TestCase
     ): void {
         $lpa = $this->createLpa($existingHow, $existingHowDetails);
 
-        $formData = ['how' => $postHow];
+        $formData = ['how' => $postHow, 'version' => '5'];
         if ($postHowDetails !== null) {
             $formData['howDetails'] = $postHowDetails;
         }

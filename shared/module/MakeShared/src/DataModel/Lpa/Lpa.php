@@ -131,6 +131,17 @@ class Lpa extends AbstractData
     protected $document;
 
     /**
+     * User who last updated the Lpa. Set for all LPAs, but only of value for
+     * those in a Shared space.
+     */
+    protected ?string $updatedBy = null;
+
+    /**
+     * Version of the application used to prevent concurrent updates, incremented on each write.
+     */
+    protected int $version;
+
+    /**
      * @var array Metadata relating to the LPA. Clients can use this value however they wish.
      */
     protected array $metadata = [];
@@ -1120,5 +1131,34 @@ class Lpa extends AbstractData
         }
 
         return false;
+    }
+
+    public function getVersion(): int
+    {
+        return $this->version;
+    }
+
+    // TODO: The parameter being ?int, and the method only conditionally setting
+    // the value of $this->version, is temporary. Once every Controller handles
+    // the If-Match header correctly it can be removed.
+    public function setVersion(?int $version): static
+    {
+        if ($version !== null) {
+            $this->version = $version;
+        }
+
+        return $this;
+    }
+
+    public function getUpdatedBy(): ?string
+    {
+        return $this->updatedBy;
+    }
+
+    public function setUpdatedBy(?string $userId): static
+    {
+        $this->updatedBy = $userId;
+
+        return $this;
     }
 }

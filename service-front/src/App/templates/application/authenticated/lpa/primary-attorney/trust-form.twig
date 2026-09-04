@@ -120,6 +120,7 @@
 {# begin form #}
 {{ form().openTag( form )|raw }}
 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+<input type="hidden" name="version" value="{{ lpaVersion }}">
 
     <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">Company's details</h2>
     <fieldset>

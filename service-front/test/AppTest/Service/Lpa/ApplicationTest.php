@@ -185,6 +185,7 @@ final class ApplicationTest extends MockeryTestCase
                 'rejectedDate' => null,
                 'refreshId' => null,
                 'isReusable' => true,
+                'updatedBy' => null,
             ]),
             new ArrayObject([
                 'id' => 5531003157,
@@ -196,6 +197,7 @@ final class ApplicationTest extends MockeryTestCase
                 'rejectedDate' => null,
                 'refreshId' => null,
                 'isReusable' => true,
+                'updatedBy' => null,
             ]),
         ], 'trackingEnabled' => true], $result);
     }
@@ -330,11 +332,11 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => [1, 2]]])
+            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => [1, 2]], ['If-Match' => 11]])
             ->once()
             ->andReturn(['whoIsRegistering' => [1, 2]]);
 
-        $result = $this->service->setWhoIsRegistering($lpa, [1, 2]);
+        $result = $this->service->setWhoIsRegistering($lpa, [1, 2], 11);
 
         $this->assertTrue($result);
         $this->assertEquals([1, 2], $lpa->document->whoIsRegistering);
@@ -345,11 +347,11 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => null]])
+            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => null], ['If-Match' => 10]])
             ->once()
             ->andReturn([]); // API omits the key when value is null
 
-        $result = $this->service->setWhoIsRegistering($lpa, null);
+        $result = $this->service->setWhoIsRegistering($lpa, null, 10);
 
         $this->assertTrue($result);
         $this->assertNull($lpa->document->whoIsRegistering);
@@ -493,11 +495,11 @@ final class ApplicationTest extends MockeryTestCase
         ]);
 
         $this->apiClient->shouldReceive('httpPost')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys', $primaryAttorney->toArray()])
+            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys', $primaryAttorney->toArray(), ['If-Match' => 9]])
             ->once()
             ->andReturn($primaryAttorney->toArray());
 
-        $result = $this->service->addPrimaryAttorney($lpa, $primaryAttorney);
+        $result = $this->service->addPrimaryAttorney($lpa, $primaryAttorney, 9);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(Human::class, $lpa->document->primaryAttorneys[array_key_last($lpa->document->primaryAttorneys)]);
@@ -612,10 +614,10 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = FixturesData::getPfLpa();
 
         $this->apiClient->shouldReceive('httpDelete')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1'])
+            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1', ['If-Match' => 8]])
             ->once();
 
-        $result = $this->service->deletePrimaryAttorney($lpa, 1);
+        $result = $this->service->deletePrimaryAttorney($lpa, 1, 8);
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->primaryAttorneys);
@@ -658,11 +660,11 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/type', ['type' => 'health-and-welfare']])
+            ->withArgs(['/v2/user/4321/applications/123/type', ['type' => 'health-and-welfare'], ['If-Match' => 7]])
             ->once()
             ->andReturn(['type' => 'health-and-welfare']);
 
-        $result = $this->service->setType($lpa, 'health-and-welfare');
+        $result = $this->service->setType($lpa, 'health-and-welfare', 7);
 
         $this->assertTrue($result);
         $this->assertSame('health-and-welfare', $lpa->document->type);
@@ -674,11 +676,11 @@ final class ApplicationTest extends MockeryTestCase
         $donor = new Donor(FixturesData::getPfLpa()->document->donor->toArray());
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/donor', $donor->toArray()])
+            ->withArgs(['/v2/user/4321/applications/123/donor', $donor->toArray(), ['If-Match' => 6]])
             ->once()
             ->andReturn($donor->toArray());
 
-        $result = $this->service->setDonor($lpa, $donor);
+        $result = $this->service->setDonor($lpa, $donor, 6);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(Donor::class, $lpa->document->donor);
@@ -740,11 +742,15 @@ final class ApplicationTest extends MockeryTestCase
         $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => ['donor']]])
+            ->withArgs([
+                '/v2/user/4321/applications/123/who-is-registering',
+                ['whoIsRegistering' => ['donor']],
+                ['If-Match' => 5],
+            ])
             ->once()
             ->andThrow(new ApiException($mockResponse));
 
-        $this->assertFalse($this->service->setWhoIsRegistering($lpa, ['donor']));
+        $this->assertFalse($this->service->setWhoIsRegistering($lpa, ['donor'], 5));
         $this->assertNull($lpa->document->whoIsRegistering);
     }
 

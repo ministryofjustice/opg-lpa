@@ -12,6 +12,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 
 class LpaControllerAbstractFactory implements AbstractFactoryInterface
 {
@@ -81,7 +82,7 @@ class LpaControllerAbstractFactory implements AbstractFactoryInterface
          * @var class-string<LpaControllers\AbstractLpaController> $requestedName
          * @psalm-suppress UnsafeInstantiation
          */
-        $controller = new $requestedName($authenticationService, $service);
+        $controller = new $requestedName($authenticationService, $service, $container->get(LoggerInterface::class));
         $traitsUsed = class_uses($controller);
 
         if (in_array(LoggerTrait::class, $traitsUsed)) {

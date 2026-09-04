@@ -8,6 +8,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
+use App\Service\ApiClient\Exception\ConflictException;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -51,6 +52,7 @@ class TypeHandler implements RequestHandlerInterface
         $form = $this->formElementManager->get('App\Form\Lpa\TypeForm');
 
         $isChangeAllowed = true;
+        $conflictError = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
@@ -64,23 +66,28 @@ class TypeHandler implements RequestHandlerInterface
                 $formData = $form->getData();
                 $lpaType = is_array($formData) ? ($formData['type'] ?? '') : '';
 
-                if ($lpaType !== $lpa->document->type) {
-                    if (!$this->lpaApplicationService->setType($lpa, $lpaType)) {
-                        throw new RuntimeException(
-                            'API client failed to set LPA type for id: ' . $lpa->id
-                        );
+                $ifMatchVersion = (int)$data['version'];
+                try {
+                    if ($lpaType !== $lpa->document->type) {
+                        if (!$this->lpaApplicationService->setType($lpa, $lpaType, $ifMatchVersion)) {
+                            throw new RuntimeException(
+                                'API client failed to set LPA type for id: ' . $lpa->id
+                            );
+                        }
                     }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } elseif ($lpa->document instanceof Document) {
             $form->bind($lpa->document->flatten());
@@ -112,6 +119,8 @@ class TypeHandler implements RequestHandlerInterface
                     'cloneUrl'        => $cloneUrl,
                     'nextUrl'         => $nextUrl,
                     'isChangeAllowed' => $isChangeAllowed,
+                    'lpaVersion'      => $lpa->getVersion(),
+                    'conflictError'   => $conflictError,
                 ]
             )
         );

@@ -554,7 +554,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $sharedSpaceId = 'shared-space-1';
 
-        $this->setFetchAllExpectations([$this->ownerPredicateStub('', $sharedSpaceId)], $lpas);
+        $this->setFetchAllExpectations([$this->ownerPredicateStub('', $sharedSpaceId)], $lpas, 'fetchForSharedSpace');
 
         $service = $this->createService();
 
@@ -778,7 +778,7 @@ final class ServiceTest extends AbstractServiceTestCase
      * @param [] $filter
      * @param Lpa[] $lpas
      */
-    private function setFetchAllExpectations($filter, array $lpas)
+    private function setFetchAllExpectations($filter, array $lpas, string $methodName = 'fetch')
     {
         $lpasCount = count($lpas);
 
@@ -791,7 +791,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 return $lpa->toArray();
             }, $lpas);
 
-            $this->applicationRepository->shouldReceive('fetch')
+            $this->applicationRepository->shouldReceive($methodName)
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new ArrayIterator($lpasArray));
         }
