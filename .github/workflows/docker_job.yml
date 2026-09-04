@@ -124,16 +124,18 @@ jobs:
             artifact_name: shared-test
             build_targets: '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]'
             scan_id: shared_test
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@ba82f2a74da55705c5e829e681ac5cc19f8e8694 # PR 167
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@9104131c4be0247d8da392d17724dc8adbe54f1e # PR 167
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
       artifact_name: ${{ matrix.artifact_name || '' }}
-      build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"},{"actions_runner":"ubuntu-24.04-arm","platform":"linux/arm64/v8","tag":"ARM64"}]' }}
+      build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
       build_target: ${{ matrix.build_target || '' }}
       build_options: ${{ matrix.build_options }}
       cli_commands: ${{ matrix.cli_commands || '' }}
       enable_snyk_scanning: true
+      snyk_policy_path: ${{ matrix.snyk_policy_path || '' }}
+      snyk_container_options: "--severity-threshold=high"
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
       oidc_role_to_assume_push: ${{ inputs.oidc_docker_role }}
