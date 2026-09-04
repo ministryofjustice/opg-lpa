@@ -124,7 +124,7 @@ jobs:
             artifact_name: shared-test
             build_targets: '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]'
             scan_id: shared_test
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@07d14074522cb423c2879b92ac5ca9b17ce69a88 # PR 167
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@2b51843a433ca1f0f61349a60fddff16a6ef3241 # PR 167
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
