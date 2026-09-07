@@ -58,6 +58,35 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     And I see a success notification with content "Invite sent"
 
+  Scenario: Can not invite a member to a shared space when already invited or already a member
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is an "admin"
+    And I log in as the newly created fixture user
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click element marked "Invite member"
+    Then I should be on "/shared-space/invite"
+    When I type "Member" into field labelled "First names"
+    And I type "One" into field labelled "Last name"
+    And I type the email of the added member into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space/invite"
+    And I see "This email address is already part of the shared space" in the page text
+    When I type "John" into field labelled "First names"
+    And I type "Smith" into field labelled "Last name"
+    And I type "john.smith@example.com" into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space"
+    And I see a success notification with content "Invite sent"
+    When I click element marked "Invite member"
+    Then I should be on "/shared-space/invite"
+    When I type "John" into field labelled "First names"
+    And I type "Smith" into field labelled "Last name"
+    And I type "john.smith@example.com" into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space/invite"
+    And I see "This email address has already been invited to the shared space" in the page text
+
   Scenario: Can revoke a members invite
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user

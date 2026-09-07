@@ -10,6 +10,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
@@ -192,8 +193,12 @@ class SharedSpaceController extends AbstractRestfulController
                 $created,
                 $created->add(DateInterval::createFromDateString('7 days')),
             ));
+        } catch (UserAlreadyInSharedSpaceException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space');
+        } catch (InviteAlreadyExistsException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_CONFLICT, 'invite-already-exists');
         } catch (Throwable $e) {
-            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request: ' . $e->getMessage());
         }
 
         return new Json($response);
