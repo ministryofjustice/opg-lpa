@@ -151,6 +151,19 @@ variable "admin_cognito" {
   sensitive = true
 }
 
+variable "front_cognito" {
+  description = "Settings for the AWS Cognito to use for the admin interface."
+  type = object({
+    enabled                     = bool
+    id                          = string
+    user_pool_id                = string
+    user_pool_domain_name       = string
+    user_pool_client_secret     = string
+    user_pool_id_token_validity = string
+  })
+  sensitive = true
+}
+
 variable "tags" {
   type = object({
     business-unit          = string

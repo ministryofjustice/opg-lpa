@@ -12,6 +12,14 @@ module "eu-west-1" {
     user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.client_secret
     user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id_token_validity
   }
+  front_cognito = {
+    enabled                     = local.environment_name == "ur" ? true : false
+    id                          = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.id
+    user_pool_id                = local.front_cognito_user_pool_id
+    user_pool_domain_name       = local.front_cognito_user_pool_domain_name
+    user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.client_secret
+    user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.id_token_validity
+  }
   ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
     api               = aws_iam_role.api_task_role
@@ -44,6 +52,14 @@ module "eu-west-2" {
     user_pool_domain_name       = local.admin_cognito_user_pool_domain_name
     user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.client_secret
     user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_admin.id_token_validity
+  }
+  front_cognito = {
+    enabled                     = local.environment_name == "ur" ? true : false
+    id                          = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.id
+    user_pool_id                = local.front_cognito_user_pool_id
+    user_pool_domain_name       = local.front_cognito_user_pool_domain_name
+    user_pool_client_secret     = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.client_secret
+    user_pool_id_token_validity = aws_cognito_user_pool_client.make_a_lasting_power_of_attorney_front.id_token_validity
   }
   ecs_execution_role = aws_iam_role.execution_role
   ecs_iam_task_roles = {
