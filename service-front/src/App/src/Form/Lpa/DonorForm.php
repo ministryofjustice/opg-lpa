@@ -60,6 +60,7 @@ class DonorForm extends AbstractActorForm
         $this->setName('form-donor');
         $this->setAttribute('data-cy', 'form-donor');
         $this->actorModel = new Donor();
+
         parent::init();
     }
 

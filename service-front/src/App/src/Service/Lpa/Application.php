@@ -125,12 +125,16 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function updateApplication(int|string $lpaId, array $data): Lpa|false
+    public function updateApplication(int|string $lpaId, array $data, ?int $ifMatchVersion = null): Lpa|false
     {
         $target = sprintf('/v2/user/%s/applications/%d', $this->getUserId(), $lpaId);
 
         try {
-            return new Lpa($this->apiClient->httpPatch($target, $data));
+            if ($ifMatchVersion === null) {
+                return new Lpa($this->apiClient->httpPatch($target, $data));
+            } else {
+                return new Lpa($this->apiClient->httpPatch($target, $data, ['If-Match' => $ifMatchVersion]));
+            }
         } catch (ApiException $ex) {
             $this->logger->error('Failed to update application', [
                 'lpaId'            => $lpaId,
@@ -266,15 +270,16 @@ class Application implements ApiClientAwareInterface
             }
 
             $result['applications'][$applicationIdx] = new ArrayObject([
-                'id'          => $lpa->getId(),
-                'version'     => 2,
-                'donor'       => $donorName,
-                'isReusable'  => $isReusable,
-                'type'        => $lpaType,
-                'updatedAt'   => $lpa->getUpdatedAt(),
-                'progress'    => $progress,
+                'id'           => $lpa->getId(),
+                'version'      => 2,
+                'donor'        => $donorName,
+                'isReusable'   => $isReusable,
+                'type'         => $lpaType,
+                'updatedAt'    => $lpa->getUpdatedAt(),
+                'progress'     => $progress,
                 'rejectedDate' => $rejectedDate,
-                'refreshId'   => $refreshTracking ? $lpa->getId() : null,
+                'refreshId'    => $refreshTracking ? $lpa->getId() : null,
+                'updatedBy'    => $lpa->getUpdatedBy(),
             ]);
         }
 
@@ -337,12 +342,12 @@ class Application implements ApiClientAwareInterface
     // Attorneys
     // -------------------------------------------------------------------------
 
-    public function addPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney): bool
+    public function addPrimaryAttorney(Lpa $lpa, AbstractAttorney $primaryAttorney, int $ifMatchVersion): bool
     {
         $target = sprintf('/v2/user/%s/applications/%s/primary-attorneys', $this->getUserId(), $lpa->id);
 
         try {
-            $result = $this->apiClient->httpPost($target, $primaryAttorney->toArray());
+            $result = $this->apiClient->httpPost($target, $primaryAttorney->toArray(), ['If-Match' => $ifMatchVersion]);
 
             if (is_array($result)) {
                 $lpa->document->primaryAttorneys[] = $primaryAttorney instanceof Human
@@ -450,11 +455,11 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function deletePrimaryAttorney(Lpa $lpa, int|string $primaryAttorneyId): bool
+    public function deletePrimaryAttorney(Lpa $lpa, int|string $primaryAttorneyId, int $ifMatchVersion): bool
     {
         $target = sprintf('/v2/user/%s/applications/%s/primary-attorneys/%s', $this->getUserId(), $lpa->id, $primaryAttorneyId);
 
-        if ($this->executeDelete($target)) {
+        if ($this->executeDelete($target, $ifMatchVersion)) {
             foreach ($lpa->document->primaryAttorneys as $idx => $attorney) {
                 if ($attorney->id == $primaryAttorneyId) {
                     unset($lpa->document->primaryAttorneys[$idx]);
@@ -503,11 +508,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setType(Lpa $lpa, string $lpaType): bool
+    public function setType(Lpa $lpa, string $lpaType, int $ifMatchVersion): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/type', $this->getUserId(), $lpa->id),
-            ['type' => $lpaType]
+            ['type' => $lpaType],
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -518,11 +524,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setDonor(Lpa $lpa, Donor $donor): bool
+    public function setDonor(Lpa $lpa, Donor $donor, int $ifMatchVersion): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/donor', $this->getUserId(), $lpa->id),
-            $donor->toArray()
+            $donor->toArray(),
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -533,11 +540,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setPrimaryAttorneyDecisions(Lpa $lpa, PrimaryAttorneyDecisions $primaryAttorneyDecisions): bool
+    public function setPrimaryAttorneyDecisions(Lpa $lpa, PrimaryAttorneyDecisions $primaryAttorneyDecisions, ?int $ifMatchVersion = null): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/primary-attorney-decisions', $this->getUserId(), $lpa->id),
-            $primaryAttorneyDecisions->toArray()
+            $primaryAttorneyDecisions->toArray(),
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -548,11 +556,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setReplacementAttorneyDecisions(Lpa $lpa, ReplacementAttorneyDecisions $replacementAttorneyDecisions): bool
+    public function setReplacementAttorneyDecisions(Lpa $lpa, ReplacementAttorneyDecisions $replacementAttorneyDecisions, ?int $ifMatchVersion = null): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/replacement-attorney-decisions', $this->getUserId(), $lpa->id),
-            $replacementAttorneyDecisions->toArray()
+            $replacementAttorneyDecisions->toArray(),
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -646,11 +655,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setWhoIsRegistering(Lpa $lpa, array|string|null $whoIsRegistering): bool
+    public function setWhoIsRegistering(Lpa $lpa, array|string|null $whoIsRegistering, ?int $ifMatchVersion = null): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/who-is-registering', $this->getUserId(), $lpa->id),
-            ['whoIsRegistering' => $whoIsRegistering]
+            ['whoIsRegistering' => $whoIsRegistering],
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -661,11 +671,12 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function setCorrespondent(Lpa $lpa, Correspondence $correspondent): bool
+    public function setCorrespondent(Lpa $lpa, Correspondence $correspondent, ?int $ifMatchVersion = null): bool
     {
         $result = $this->executePut(
             sprintf('/v2/user/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id),
-            $correspondent->toArray()
+            $correspondent->toArray(),
+            $ifMatchVersion,
         );
 
         if (is_array($result)) {
@@ -748,9 +759,14 @@ class Application implements ApiClientAwareInterface
         return false;
     }
 
-    public function deleteCorrespondent(Lpa $lpa): bool
+    public function deleteCorrespondent(Lpa $lpa, ?int $ifMatchVersion = null): bool
     {
-        if ($this->executeDelete(sprintf('/v2/user/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id))) {
+        if (
+            $this->executeDelete(
+                sprintf('/v2/user/%s/applications/%s/correspondent', $this->getUserId(), $lpa->id),
+                $ifMatchVersion,
+            )
+        ) {
             $lpa->document->correspondent = null;
             return true;
         }
@@ -856,20 +872,28 @@ class Application implements ApiClientAwareInterface
     // Private helpers
     // -------------------------------------------------------------------------
 
-    private function executePut(string $target, array $jsonBody): mixed
+    private function executePut(string $target, array $jsonBody, ?int $ifMatchVersion = null): mixed
     {
         try {
-            return $this->apiClient->httpPut($target, $jsonBody);
+            if ($ifMatchVersion === null) {
+                return $this->apiClient->httpPut($target, $jsonBody);
+            } else {
+                return $this->apiClient->httpPut($target, $jsonBody, ['If-Match' => $ifMatchVersion]);
+            }
         } catch (ApiException) {
         }
 
         return false;
     }
 
-    private function executeDelete(string $target): bool
+    private function executeDelete(string $target, ?int $ifMatchVersion = null): bool
     {
         try {
-            $this->apiClient->httpDelete($target);
+            if ($ifMatchVersion === null) {
+                $this->apiClient->httpDelete($target);
+            } else {
+                $this->apiClient->httpDelete($target, ['If-Match' => $ifMatchVersion]);
+            }
             return true;
         } catch (ApiException) {
         }

@@ -197,7 +197,10 @@ class TypeHandlerTest extends TestCase
             ->with('lpa/donor', ['lpa-id' => $this->lpa->id], [])
             ->willReturn('/lpa/' . $this->lpa->id . '/donor');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['type' => $existingType]));
+        $response = $this->handler->handle($this->createRequest('POST', [
+            'type' => $existingType,
+            'version' => '7',
+        ]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -224,7 +227,10 @@ class TypeHandlerTest extends TestCase
             ->method('generate')
             ->willReturn('/lpa/' . $this->lpa->id . '/donor');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['type' => Document::LPA_TYPE_PF]));
+        $response = $this->handler->handle($this->createRequest('POST', [
+            'type' => Document::LPA_TYPE_PF,
+            'version' => '6',
+        ]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(302, $response->getStatusCode());
@@ -240,6 +246,9 @@ class TypeHandlerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('API client failed to set LPA type for id: ' . $this->lpa->id);
 
-        $this->handler->handle($this->createRequest('POST', ['type' => Document::LPA_TYPE_PF]));
+        $this->handler->handle($this->createRequest('POST', [
+            'type' => Document::LPA_TYPE_PF,
+            'version' => '5',
+        ]));
     }
 }

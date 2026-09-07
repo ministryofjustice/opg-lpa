@@ -12,14 +12,15 @@ class ReplacementAttorneyCleanup
 {
     private Application $lpaApplicationService;
 
-    public function cleanUp(Lpa $lpa): void
+    public function cleanUp(Lpa $lpa, int $ifMatchVersion = 0): int
     {
         if ($this->whenDecisionsInvalid($lpa)) {
             $lpa->getDocument()->getReplacementAttorneyDecisions()->setWhen(null);
             $lpa->getDocument()->getReplacementAttorneyDecisions()->setWhenDetails(null);
 
             $this->lpaApplicationService
-                ->setReplacementAttorneyDecisions($lpa, $lpa->getDocument()->getReplacementAttorneyDecisions());
+                ->setReplacementAttorneyDecisions($lpa, $lpa->getDocument()->getReplacementAttorneyDecisions(), $ifMatchVersion);
+            $ifMatchVersion++;
         }
 
         if ($this->howDecisionsInvalid($lpa)) {
@@ -27,8 +28,11 @@ class ReplacementAttorneyCleanup
             $lpa->getDocument()->getReplacementAttorneyDecisions()->setHowDetails(null);
 
             $this->lpaApplicationService
-                ->setReplacementAttorneyDecisions($lpa, $lpa->getDocument()->getReplacementAttorneyDecisions());
+                ->setReplacementAttorneyDecisions($lpa, $lpa->getDocument()->getReplacementAttorneyDecisions(), $ifMatchVersion);
+            $ifMatchVersion++;
         }
+
+        return $ifMatchVersion;
     }
 
     private function whenDecisionsInvalid(Lpa $lpa): bool

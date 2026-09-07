@@ -33,7 +33,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($this->params()->fromRoute('lpaId'), $data);
+        $result = $this->getService()->create($this->params()->fromRoute('lpaId'), $this->ifMatch(), $this->userId(), $data);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -54,7 +54,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $data, $id);
+        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $this->ifMatch(), $this->userId(), $data, $id);
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -74,7 +74,7 @@ class PrimaryAttorneyController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($this->params()->fromRoute('lpaId'), $id);
+        $result = $this->getService()->delete($this->params()->fromRoute('lpaId'), $this->ifMatch(), $this->userId(), $id);
 
         if ($result instanceof ApiProblem) {
             return $result;

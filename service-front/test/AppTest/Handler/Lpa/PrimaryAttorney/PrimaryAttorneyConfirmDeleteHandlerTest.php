@@ -44,6 +44,7 @@ class PrimaryAttorneyConfirmDeleteHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 4;
         $lpa->document = new Document();
         $lpa->document->primaryAttorneys = [0 => $attorney];
         $lpa->document->replacementAttorneys = [];

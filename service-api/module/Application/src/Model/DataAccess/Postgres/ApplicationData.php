@@ -2,21 +2,24 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
-use DateTime;
-use PDOException;
-use Traversable;
-use MakeShared\DataModel\Lpa\Lpa;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\IsNull;
-use Laminas\Db\Sql\Predicate\IsNotNull;
-use Laminas\Db\Sql\Predicate\In as InPredicate;
-use Laminas\Db\Sql\Predicate\PredicateSet;
-use Laminas\Db\Sql\Predicate\PredicateInterface;
+use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\DataAccess\Repository\Application\LockedException;
-use Application\Library\MillisecondDateTime;
+use DateTime;
+use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Predicate\In as InPredicate;
+use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\IsNull;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\PredicateInterface;
+use Laminas\Db\Sql\Predicate\PredicateSet;
+use Laminas\Db\Sql\Select;
+use MakeShared\DataModel\Lpa\Lpa;
+use PDOException;
+use Throwable;
+use Traversable;
 
 class ApplicationData extends AbstractBase implements ApplicationRepository\ApplicationRepositoryInterface
 {
@@ -26,7 +29,8 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      * The columns in the Postgres database
      */
     public const TABLE_COLUMNS = ['id', 'user', 'sharedSpaceId', 'updatedAt', 'startedAt', 'createdAt', 'completedAt',
-        'lockedAt', 'locked', 'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document', 'payment', 'metadata'];
+                                  'lockedAt', 'locked', 'whoAreYouAnswered', 'seed', 'repeatCaseNumber', 'document',
+                                  'payment', 'metadata', 'updatedBy', 'version'];
 
     /**
      * Maps LPA object fields to Postgres' fields.
@@ -55,13 +59,19 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     private function mapPostgresToLpaCompatible(array $data): array
     {
+        $updatedBy = null;
+        if (isset($data['profile'])) {
+            $name = json_decode($data['profile'], true)['name'];
+            $updatedBy = $name['first'] . ' ' . $name['last'];
+        }
+
         return array_merge($data, [
             'document' => is_null($data['document']) ? null : json_decode($data['document'], true),
             'payment' => is_null($data['payment']) ? null : json_decode($data['payment'], true),
             'metadata' => is_null($data['metadata']) ? null : json_decode($data['metadata'], true),
+            'updatedBy' => $updatedBy,
         ]);
     }
-
 
     /**
      * @param array $criteria
@@ -71,6 +81,24 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     public function fetch(array $criteria, array $options = []): Traversable
     {
         $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, $options);
+
+        foreach ($result as $resultRecord) {
+            yield $this->mapPostgresToLpaCompatible($resultRecord);
+        }
+    }
+
+    /**
+     * @param array $criteria
+     * @param array $options
+     * @return Traversable
+     */
+    public function fetchForSharedSpace(array $criteria, array $options = []): Traversable
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $this->dbWrapper->buildSelect($sql, self::APPLICATIONS_TABLE, $criteria, $options);
+        $select->join(['users' => UserData::USERS_TABLE], 'updatedBy = users.id', ['profile'], Select::JOIN_LEFT);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
 
         foreach ($result as $resultRecord) {
             yield $this->mapPostgresToLpaCompatible($resultRecord);
@@ -88,6 +116,24 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         }
 
         $result = $this->dbWrapper->select(self::APPLICATIONS_TABLE, $criteria, ['limit' => 1]);
+
+        if (!$result->isQueryResult() || $result->count() != 1) {
+            return null;
+        }
+
+        return $this->mapPostgresToLpaCompatible($result->current());
+    }
+
+    private function getForUpdateById(int $id): ?array
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql->select(self::APPLICATIONS_TABLE)
+            ->where(['id' => $id])
+            ->limit(1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+        $statement->setSql($statement->getSql() . ' FOR UPDATE');
+        $result = $statement->execute();
 
         if (!$result->isQueryResult() || $result->count() != 1) {
             return null;
@@ -187,6 +233,8 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
         $insert = $sql->insert(self::APPLICATIONS_TABLE);
 
         $data = $this->mapLpaToPostgres($lpa);
+        $data['version'] = 1;
+
         $insert->columns(array_keys($data));
         $insert->values($data);
 
@@ -218,12 +266,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function update(Lpa $lpa): void
     {
-        // Check to ensure the LPA isn't locked.
-        $inDbLpa = $this->getById($lpa->getId());
+        $this->dbWrapper->beginTransaction();
 
-        $updateTimestamp = true;
-
-        if (!is_null($inDbLpa)) {
+        try {
+            // Check to ensure the LPA isn't locked.
+            $inDbLpa = $this->getForUpdateById($lpa->getId());
             $inDbLpa = new Lpa($inDbLpa);
 
             $noDataChanged = $lpa->equalsIgnoreMetadata($inDbLpa);
@@ -233,69 +280,92 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             }
 
             $updateTimestamp = !$noDataChanged;
-        }
 
-        //------------------------------------------
+            if ($lpa->getVersion() !== $inDbLpa->getVersion()) {
+                $userResult = $this->dbWrapper->select(UserData::USERS_TABLE, ['id' => $lpa->getUpdatedBy()], ['limit' => 1]);
+                if ($userResult->isQueryResult() && $userResult->count() === 1) {
+                    $user = $userResult->current();
+                    $profile = json_decode($user['profile'], true);
 
-        //  If instrument created, record the date.
-        if ($lpa->isStateCreated()) {
-            if (!($lpa->getCreatedAt() instanceof DateTime)) {
-                $lpa->setCreatedAt(new MillisecondDateTime());
+                    throw new ConflictException($profile['name']['first'] . ' ' . $profile['name']['last']);
+                }
+
+                throw new ConflictException('Unknown user ' . $lpa->getUpdatedBy());
             }
-        } else {
-            // The opg-lpa-datamodels code base doesn't specifically allow
-            // a null for the createdAt date in the method declaration,
-            // but this doesn't seem to cause us any problems, so just
-            // ignore the psalm error about it.
-            /**
-             * @psalm-suppress NullArgument
-             */
-            $lpa->setCreatedAt(null);
-        }
 
-        // If completed, record the date.
-        if ($lpa->isStateCompleted()) {
-            // If we don't already have a complete date and the LPA is locked...
-            if (!($lpa->getCompletedAt() instanceof DateTime) && $lpa->isLocked()) {
-                $lpa->setCompletedAt(new MillisecondDateTime());
+            //------------------------------------------
+
+            //  If instrument created, record the date.
+            if ($lpa->isStateCreated()) {
+                if (!($lpa->getCreatedAt() instanceof DateTime)) {
+                    $lpa->setCreatedAt(new MillisecondDateTime());
+                }
+            } else {
+                // The opg-lpa-datamodels code base doesn't specifically allow
+                // a null for the createdAt date in the method declaration,
+                // but this doesn't seem to cause us any problems, so just
+                // ignore the psalm error about it.
+                /**
+                 * @psalm-suppress NullArgument
+                 */
+                $lpa->setCreatedAt(null);
             }
-        } else {
-            $lpa->setCompletedAt(null);
+
+            // If completed, record the date.
+            if ($lpa->isStateCompleted()) {
+                // If we don't already have a complete date and the LPA is locked...
+                if (!($lpa->getCompletedAt() instanceof DateTime) && $lpa->isLocked()) {
+                    $lpa->setCompletedAt(new MillisecondDateTime());
+                }
+            } else {
+                $lpa->setCompletedAt(null);
+            }
+
+            // If there's a donor, populate the free text search field
+            $searchField = null;
+
+            if ($lpa->getDocument()->getDonor() != null) {
+                $searchField = $lpa->getDocument()->getDonor()->getName()->getFullName();
+            }
+
+            $lastUpdated = $lpa->getUpdatedAt()->format(DbWrapper::TIME_FORMAT);
+
+            if ($updateTimestamp === true) {
+                // Record the time we updated the document.
+                $lpa->setUpdatedAt(new MillisecondDateTime());
+            }
+
+            //------------------------------------------
+
+            $sql = $this->dbWrapper->createSql();
+            $update = $sql->update(self::APPLICATIONS_TABLE);
+
+            $update->where([
+                'id'        => $lpa->getId(),
+                'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
+                'version'   => $lpa->getVersion(),
+            ]);
+
+            $data = $this->mapLpaToPostgres($lpa);
+            unset($data['id']); // Un-needed
+
+            $data['search'] = $searchField ?: null;
+            $data['version'] = $inDbLpa->getVersion() + 1;
+
+            $update->set($data);
+
+            $statement = $sql->prepareStatementForSqlObject($update);
+            $result = $statement->execute();
+
+            if ($result->getAffectedRows() !== 1) {
+                throw new \RuntimeException('Update failed');
+            }
+
+            $this->dbWrapper->commit();
+        } catch (Throwable $e) {
+            $this->dbWrapper->rollback();
+            throw $e;
         }
-
-        // If there's a donor, populate the free text search field
-        $searchField = null;
-
-        if ($lpa->getDocument()->getDonor() != null) {
-            $searchField = $lpa->getDocument()->getDonor()->getName()->getFullName();
-        }
-
-        $lastUpdated = $lpa->getUpdatedAt()->format(DbWrapper::TIME_FORMAT);
-
-        if ($updateTimestamp === true) {
-            // Record the time we updated the document.
-            $lpa->setUpdatedAt(new MillisecondDateTime());
-        }
-
-        //------------------------------------------
-
-        $sql = $this->dbWrapper->createSql();
-        $update = $sql->update(self::APPLICATIONS_TABLE);
-
-        $update->where([
-            'id'        => $lpa->getId(),
-            'updatedAt' => $lastUpdated,    // Sense check to ensure we're not working with stale data
-        ]);
-
-        $data = $this->mapLpaToPostgres($lpa);
-        unset($data['id']); // Un-needed
-
-        $data['search'] = $searchField ?: null;
-
-        $update->set($data);
-
-        $statement = $sql->prepareStatementForSqlObject($update);
-        $statement->execute();
     }
 
     /**

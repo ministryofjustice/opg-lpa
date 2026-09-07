@@ -6,6 +6,10 @@
   position: relative;
   padding: 4px 5px 0 5px;
   margin: 10px 0px 55px 0px;
+
+  &.opg-status--less-margin {
+    margin-bottom: 10px;
+  }
 }
 
 
