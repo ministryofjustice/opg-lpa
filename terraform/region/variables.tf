@@ -1,11 +1,5 @@
 variable "default_role" {
   description = "default aws IAM role to use. defaults to the CI Role"
-  default     = "opg-lpa-ci"
-  type        = string
-}
-
-variable "boundaried_default_role" {
-  description = "default aws IAM role to use. defaults to the CI Role"
   default     = "opg-lpa-ci-boundary"
   type        = string
 }

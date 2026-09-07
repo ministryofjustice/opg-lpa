@@ -5,21 +5,9 @@ variable "pagerduty_token" {
 }
 
 variable "default_role" {
-  default     = "opg-lpa-ci"
-  type        = string
-  description = "The default role to use to create resources"
-}
-
-variable "boundaried_default_role" {
   default     = "opg-lpa-ci-boundary"
   type        = string
   description = "The default role to use to create resources"
-}
-
-variable "management_role" {
-  default     = "opg-lpa-ci"
-  type        = string
-  description = "The default role to use to create resources in the management account"
 }
 
 variable "environments" {
