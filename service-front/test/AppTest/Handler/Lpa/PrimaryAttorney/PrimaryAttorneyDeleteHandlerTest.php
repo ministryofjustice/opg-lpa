@@ -93,6 +93,7 @@ class PrimaryAttorneyDeleteHandlerTest extends TestCase
 
         return (new ServerRequest())
             ->withMethod('GET')
+            ->withQueryParams(['version' => '5'])
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/delete')

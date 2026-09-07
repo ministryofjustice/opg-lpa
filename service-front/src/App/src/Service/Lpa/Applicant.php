@@ -14,7 +14,7 @@ class Applicant
     /**
      * @psalm-param 222|444 $attorneyId
      */
-    public function removeAttorney(Lpa $lpa, int $attorneyId): void
+    public function removeAttorney(Lpa $lpa, int $attorneyId, int $ifMatchVersion): int
     {
         $whoIsRegistering = $lpa->document->whoIsRegistering;
 
@@ -27,14 +27,17 @@ class Applicant
                         $whoIsRegistering = null;
                     }
 
-                    $this->lpaApplicationService->setWhoIsRegistering($lpa, $whoIsRegistering);
+                    $this->lpaApplicationService->setWhoIsRegistering($lpa, $whoIsRegistering, $ifMatchVersion);
+                    $ifMatchVersion++;
                     break;
                 }
             }
         }
+
+        return $ifMatchVersion;
     }
 
-    public function cleanUp(Lpa $lpa): void
+    public function cleanUp(Lpa $lpa, int $ifMatchVersion = 0): int
     {
         $applicants = $lpa->document->whoIsRegistering;
 
@@ -51,9 +54,12 @@ class Applicant
             }
 
             if ($applicants !== $newApplicants) {
-                $this->lpaApplicationService->setWhoIsRegistering($lpa, $newApplicants);
+                $this->lpaApplicationService->setWhoIsRegistering($lpa, $newApplicants, $ifMatchVersion);
+                $ifMatchVersion++;
             }
         }
+
+        return $ifMatchVersion;
     }
 
     public function setLpaApplicationService(Application $lpaApplicationService): void

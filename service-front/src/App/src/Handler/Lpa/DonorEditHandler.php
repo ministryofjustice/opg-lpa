@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -55,6 +56,8 @@ class DonorEditHandler implements RequestHandlerInterface
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/edit', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));
 
+        $conflictError = null;
+
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -68,27 +71,32 @@ class DonorEditHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setDonor($lpa, $donor)) {
-                    throw new RuntimeException(
-                        'API client failed to update LPA donor for id: ' . $lpa->id
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setDonor($lpa, $donor, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to update LPA donor for id: ' . $lpa->id
+                        );
+                    }
+
+                    $this->updateCorrespondentData($lpa, $donor);
+
+                    if ($this->isXmlHttpRequest($request)) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $this->updateCorrespondentData($lpa, $donor);
-
-                if ($this->isXmlHttpRequest($request)) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $donor = $lpa->document->donor->flatten();
@@ -108,6 +116,7 @@ class DonorEditHandler implements RequestHandlerInterface
         $templateParams = [
             'form' => $form,
             'cancelUrl' => $cancelUrl,
+            'conflictError' => $conflictError,
         ];
 
         if ($this->isXmlHttpRequest($request)) {

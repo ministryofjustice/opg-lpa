@@ -14,49 +14,86 @@ s = requests.Session()
 
 
 def putToAPI(lpaId, jsonData, pathSuffix=""):
-    token, userId = authenticate()
+    headers, userId = authenticate()
+
+    lpa = s.get(
+        "{apiRoot}/v2/user/{userId}/applications/{lpaId}".format(
+            apiRoot=apiRoot, userId=userId, lpaId=lpaId
+        ),
+        headers=headers,
+    )
+    headers["If-Match"] = str(lpa.json()["version"])
+
     pathTemplate = "{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}"
     fullPath = pathTemplate.format(
         apiRoot=apiRoot, userId=userId, lpaId=lpaId, pathSuffix=pathSuffix
     )
-    print("Putting ", file=sys.stderr)
+    print("PUT {path}".format(path=fullPath), file=sys.stderr)
     print(jsonData, file=sys.stderr)
-    r = s.put(fullPath, headers=token, json=jsonData)
+    r = s.put(fullPath, headers=headers, json=jsonData)
     print(r, file=sys.stderr)
     print(r.json(), file=sys.stderr)
 
 
 def postToAPI(lpaId, jsonData, pathSuffix=""):
-    token, userId = authenticate()
+    headers, userId = authenticate()
+
+    lpa = s.get(
+        "{apiRoot}/v2/user/{userId}/applications/{lpaId}".format(
+            apiRoot=apiRoot, userId=userId, lpaId=lpaId
+        ),
+        headers=headers,
+    )
+    headers["If-Match"] = str(lpa.json()["version"])
+
     pathTemplate = "{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}"
     fullPath = pathTemplate.format(
         apiRoot=apiRoot, userId=userId, lpaId=lpaId, pathSuffix=pathSuffix
     )
-    print("Posting ", file=sys.stderr)
+    print("POST {path}".format(path=fullPath), file=sys.stderr)
     print(jsonData, file=sys.stderr)
-    r = s.post(fullPath, headers=token, json=jsonData)
+    r = s.post(fullPath, headers=headers, json=jsonData)
     print(r, file=sys.stderr)
     print(r.json(), file=sys.stderr)
 
 
 def patchViaAPI(lpaId, jsonData):
-    token, userId = authenticate()
+    headers, userId = authenticate()
+
+    lpa = s.get(
+        "{apiRoot}/v2/user/{userId}/applications/{lpaId}".format(
+            apiRoot=apiRoot, userId=userId, lpaId=lpaId
+        ),
+        headers=headers,
+    )
+    headers["If-Match"] = str(lpa.json()["version"])
+
     pathTemplate = "{apiRoot}/v2/user/{userId}/applications/{lpaId}"
     fullPath = pathTemplate.format(apiRoot=apiRoot, userId=userId, lpaId=lpaId)
-    print("Patching ", file=sys.stderr)
+    print("PATCH {path}".format(path=fullPath), file=sys.stderr)
     print(jsonData, file=sys.stderr)
-    r = s.patch(fullPath, headers=token, json=jsonData)
+    r = s.patch(fullPath, headers=headers, json=jsonData)
     print(r, file=sys.stderr)
     print(r.json(), file=sys.stderr)
 
 
 def deleteViaAPI(lpaId, jsonData, pathSuffix=""):
-    token, userId = authenticate()
+    headers, userId = authenticate()
+
+    lpa = s.get(
+        "{apiRoot}/v2/user/{userId}/applications/{lpaId}".format(
+            apiRoot=apiRoot, userId=userId, lpaId=lpaId
+        ),
+        headers=headers,
+    )
+    headers["If-Match"] = str(lpa.json()["version"])
+
     pathTemplate = "{apiRoot}/v2/user/{userId}/applications/{lpaId}/{pathSuffix}"
     fullPath = pathTemplate.format(
         apiRoot=apiRoot, userId=userId, lpaId=lpaId, pathSuffix=pathSuffix
     )
-    r = s.delete(fullPath, headers=token)
+    print("DELETE {path}".format(path=fullPath), file=sys.stderr)
+    r = s.delete(fullPath, headers=headers)
     print(r, file=sys.stderr)
 
 
@@ -520,14 +557,11 @@ def setPaymentCardStartedButNotRecorded(lpaId, gatewayReference="mockpaystranded
     setPayment(lpaId, amount=92, gatewayReference=gatewayReference)
 
 
-def setInstruction(lpaId, instruction="Some instructions"):
-    instructionJson = {"instruction": instruction}
-    putToAPI(lpaId, instructionJson, "instruction")
-
-
-def setPreference(lpaId, preference="Some preferences"):
-    preferenceJson = {"preference": preference}
-    putToAPI(lpaId, preferenceJson, "preference")
+def setInstructionPreference(
+    lpaId, instruction="Some instructions", preference="Some preferences"
+):
+    instructionPreferenceJson = {"instruction": instruction, "preference": preference}
+    putToAPI(lpaId, instructionPreferenceJson, "instruction-preference")
 
 
 def setWhoIsRegistering(lpaId, who="donor"):

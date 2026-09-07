@@ -11,6 +11,7 @@ use App\Model\FormFlowChecker;
 use App\Service\Lpa\Applicant as ApplicantService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\ReplacementAttorneyCleanup;
+use App\Service\ApiClient\Exception\ConflictException;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
@@ -54,49 +55,55 @@ class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
 
         $attorney = $lpa->document->primaryAttorneys[$attorneyIdx];
 
-        // If this attorney is set as the correspondent then delete those details too
-        if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
-            $this->updateCorrespondentData($lpa, $attorney, true);
-        }
-
-        // If the deletion of the attorney means there are no longer multiple
-        // attorneys then reset the how decisions
-        if (count($lpa->document->primaryAttorneys) <= 2) {
-            $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
-
-            if (
-                $primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions &&
-                $primaryAttorneyDecisions->how !== null
-            ) {
-                $primaryAttorneyDecisions->how = null;
-                $primaryAttorneyDecisions->howDetails = null;
-                $this->lpaApplicationService->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions);
+        $ifMatchVersion = (int)$request->getQueryParams()['version'];
+        try {
+            // If this attorney is set as the correspondent then delete those details too
+            if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
+                $ifMatchVersion = $this->updateCorrespondentData($lpa, $attorney, true, $ifMatchVersion);
             }
-        }
 
-        // If the attorney being removed was set as registering the LPA then remove from there too
-        // IMPORTANT - This step is required BEFORE the attorney is removed to ensure
-        // that the datamodel validation on the API side does not fail
-        $this->applicantService->removeAttorney($lpa, $attorney->id);
+            // If the deletion of the attorney means there are no longer multiple
+            // attorneys then reset the how decisions
+            if (count($lpa->document->primaryAttorneys) <= 2) {
+                $primaryAttorneyDecisions = $lpa->document->primaryAttorneyDecisions;
 
-        // Delete the attorney
-        if (!$this->lpaApplicationService->deletePrimaryAttorney($lpa, $attorney->id)) {
-            throw new RuntimeException(
-                'API client failed to delete a primary attorney ' .
-                $attorneyIdx . ' for id: ' . $lpa->id
+                if (
+                    $primaryAttorneyDecisions instanceof PrimaryAttorneyDecisions &&
+                        $primaryAttorneyDecisions->how !== null
+                ) {
+                    $primaryAttorneyDecisions->how = null;
+                    $primaryAttorneyDecisions->howDetails = null;
+                    $this->lpaApplicationService->setPrimaryAttorneyDecisions($lpa, $primaryAttorneyDecisions, $ifMatchVersion);
+                    $ifMatchVersion++;
+                }
+            }
+
+            // If the attorney being removed was set as registering the LPA then remove from there too
+            // IMPORTANT - This step is required BEFORE the attorney is removed to ensure
+            // that the datamodel validation on the API side does not fail
+            $ifMatchVersion = $this->applicantService->removeAttorney($lpa, $attorney->id, $ifMatchVersion);
+
+            // Delete the attorney
+            if (!$this->lpaApplicationService->deletePrimaryAttorney($lpa, $attorney->id, $ifMatchVersion)) {
+                throw new RuntimeException(
+                    'API client failed to delete a primary attorney ' .
+                        $attorneyIdx . ' for id: ' . $lpa->id
+                );
+            }
+
+            $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
+
+            $route = 'lpa/primary-attorney';
+
+            return new RedirectResponse(
+                $this->urlHelper->generate(
+                    $route,
+                    ['lpa-id' => $lpa->id],
+                    $flowChecker->getRouteOptions($route)
+                )
             );
+        } catch (ConflictException $e) {
+            throw new \RuntimeException('TODO: show something to the user???');
         }
-
-        $this->replacementAttorneyCleanup->cleanUp($lpa);
-
-        $route = 'lpa/primary-attorney';
-
-        return new RedirectResponse(
-            $this->urlHelper->generate(
-                $route,
-                ['lpa-id' => $lpa->id],
-                $flowChecker->getRouteOptions($route)
-            )
-        );
     }
 }

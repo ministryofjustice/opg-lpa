@@ -21,7 +21,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function create(string $lpaId, $data)
+    public function create(string $lpaId, ?int $ifMatchVersion, ?string $userId, $data)
     {
         switch ($data['type']) {
             case 'trust':
@@ -36,6 +36,8 @@ class Service extends AbstractService
         }
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         //  If the client has not passed an id, set it to max(current ids) + 1 - The array is seeded with 0, meaning if this is the first attorney the id will be 1.
         if (is_null($attorney->id)) {
@@ -67,9 +69,11 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data, $id)
+    public function update(string $lpaId, ?int $ifMatchVersion, ?string $userId, $data, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPrimaryAttorneys() as $key => $attorney) {
             if ($attorney->id == (int) $id) {
@@ -109,9 +113,11 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|bool
      */
-    public function delete(string $lpaId, $id)
+    public function delete(string $lpaId, ?int $ifMatchVersion, ?string $userId, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPrimaryAttorneys() as $key => $attorney) {
             if ($attorney->id == (int) $id) {

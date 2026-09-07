@@ -9,6 +9,7 @@ use Laminas\Db\Metadata\Object\TableObject;
 use Laminas\Db\Metadata\Source\Factory as DbMetadataFactory;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Db\Sql\ExpressionInterface;
+use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use MakeShared\Telemetry\TelemetryEventManager;
 
@@ -130,7 +131,23 @@ class DbWrapper
     public function select(string $tableName, array $criteria = [], array $options = []): ResultInterface
     {
         $sql = $this->createSql();
+        $select = $this->buildSelect($sql, $tableName, $criteria, $options);
 
+        TelemetryEventManager::triggerStart(
+            'sql.select.' . $tableName,
+            ['annotations' => ['table' => $tableName]]
+        );
+
+        /** @throws LaminasDbAdapterRuntimeException */
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        TelemetryEventManager::triggerStop();
+
+        return $result;
+    }
+
+    public function buildSelect(Sql $sql, string $tableName, array $criteria = [], array $options = []): Select
+    {
         $select = $sql->select($tableName);
 
         if (isset($criteria['search'])) {
@@ -162,16 +179,6 @@ class DbWrapper
             $select->columns($options['columns']);
         }
 
-        TelemetryEventManager::triggerStart(
-            'sql.select.' . $tableName,
-            ['annotations' => ['table' => $tableName]]
-        );
-
-        /** @throws LaminasDbAdapterRuntimeException */
-        $result = $sql->prepareStatementForSqlObject($select)->execute();
-
-        TelemetryEventManager::triggerStop();
-
-        return $result;
+        return $select;
     }
 }
