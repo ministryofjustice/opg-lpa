@@ -120,7 +120,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count             = var.environment_name == "production" ? 1 : 0
+  count             = var.environment.public_access_enabled ? 1 : 0
   type              = "ingress"
   from_port         = 443
   to_port           = 443
