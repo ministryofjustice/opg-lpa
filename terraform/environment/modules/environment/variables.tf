@@ -14,6 +14,7 @@ variable "environment" {
     log_retention_in_days                  = number
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
+    public_access_enabled                  = bool
     cognito = object({
       admin_cognito_auth_enabled = bool
     })
@@ -142,6 +143,19 @@ variable "rds_proxy_iam_role" {
 variable "admin_cognito" {
   description = "Settings for the AWS Cognito to use for the admin interface."
   type = object({
+    id                          = string
+    user_pool_id                = string
+    user_pool_domain_name       = string
+    user_pool_client_secret     = string
+    user_pool_id_token_validity = string
+  })
+  sensitive = true
+}
+
+variable "front_cognito" {
+  description = "Settings for the AWS Cognito to use for the admin interface."
+  type = object({
+    enabled                     = bool
     id                          = string
     user_pool_id                = string
     user_pool_domain_name       = string

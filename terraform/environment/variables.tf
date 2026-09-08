@@ -27,11 +27,13 @@ variable "environments" {
       log_retention_in_days                  = number
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
+      public_access_enabled                  = bool
       cognito = object({
         admin_cognito_auth_enabled                        = bool
         admin_cognito_user_pool_name                      = string
         admin_cognito_user_pool_domain_name               = string
         admin_cognito_client_supported_identity_providers = list(string)
+        front_cognito_auth_enabled                        = bool
       })
       onelogin_client_id = string
       feature_flags = object({
