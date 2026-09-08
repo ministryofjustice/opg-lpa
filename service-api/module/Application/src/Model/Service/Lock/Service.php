@@ -17,9 +17,11 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ApiProblem|Entity
      */
-    public function create(string $lpaId)
+    public function create(string $lpaId, ?int $ifMatchVersion, string $userId)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         if ($lpa->isLocked()) {
             return new ApiProblem(403, 'LPA already locked');

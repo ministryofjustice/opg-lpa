@@ -25,6 +25,7 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class PrimaryAttorneyDeleteHandlerTest extends TestCase
@@ -47,6 +48,7 @@ class PrimaryAttorneyDeleteHandlerTest extends TestCase
             $this->urlHelper,
             $this->applicantService,
             $this->replacementAttorneyCleanup,
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -64,6 +66,7 @@ class PrimaryAttorneyDeleteHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->type = Document::LPA_TYPE_PF;
         $lpa->document->primaryAttorneys = [];
@@ -93,7 +96,6 @@ class PrimaryAttorneyDeleteHandlerTest extends TestCase
 
         return (new ServerRequest())
             ->withMethod('GET')
-            ->withQueryParams(['version' => '5'])
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/primary-attorney/delete')

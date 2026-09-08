@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\CheckoutHelper;
 use Fig\Http\Message\RequestMethodInterface;
@@ -18,6 +19,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class CheckoutIndexHandler implements RequestHandlerInterface
 {
@@ -29,6 +31,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         private readonly UrlHelper $urlHelper,
         private readonly CardPayments $cardPayments,
         private readonly CheckoutHelper $checkoutHelper,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -37,8 +40,17 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        if ($this->cardPayments->recoverCompletedPayment($lpa)) {
-            return $this->checkoutHelper->finishCheckout($lpa, $request);
+        try {
+            // Using getVerison here as it isn't really a user initiated action,
+            // and a getting a conflict would be meaningless.
+            $ifMatchVersion = $lpa->getVersion();
+
+            [$ifMatchVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, $ifMatchVersion);
+            if ($ok) {
+                return $this->checkoutHelper->finishCheckout($lpa, $request, $ifMatchVersion);
+            }
+        } catch (ConflictException $e) {
+            $this->logger->info('Conflict raised when trying to check uncompleted payment', ['exception' => $e]);
         }
 
         $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;

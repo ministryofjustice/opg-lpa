@@ -32,7 +32,7 @@ class ServiceTest extends AbstractServiceTestCase
             'preference' => 'This is a test preference',
         ];
 
-        [$instruction, $preference] = $this->service->update(strval($lpa->getId()), $data);
+        [$instruction, $preference] = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $data);
 
         $this->assertEquals($data['instruction'], $instruction->toArray()['instruction']);
         $this->assertEquals($data['preference'], $preference->toArray()['preference']);

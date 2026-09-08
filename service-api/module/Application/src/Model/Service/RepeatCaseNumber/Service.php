@@ -17,7 +17,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
     {
         $repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
 
@@ -26,6 +26,8 @@ class Service extends AbstractService
         }
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
         $lpa->setRepeatCaseNumber($repeatCaseNumber);
 
         $validation = $lpa->validateForApi();
@@ -43,9 +45,11 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ValidationApiProblem|bool
      */
-    public function delete(string $lpaId)
+    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         $lpa->repeatCaseNumber = null;
 

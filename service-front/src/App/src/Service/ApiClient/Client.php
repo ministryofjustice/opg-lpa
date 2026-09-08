@@ -80,6 +80,7 @@ class Client
         return match ($response->getStatusCode()) {
             200, 201 => $this->handleResponse($response),
             204      => null,
+            412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
         };
     }

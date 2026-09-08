@@ -43,7 +43,7 @@ class IndexHandler implements RequestHandlerInterface
         $analyticsReturnCount = (isset($lpa->metadata['analyticsReturnCount']) ? $lpa->metadata['analyticsReturnCount'] : 0);
         $analyticsReturnCount++;
 
-        $this->metadata->setAnalyticsReturnCount($lpa, $analyticsReturnCount);
+        $this->metadata->setAnalyticsReturnCount($lpa, $analyticsReturnCount, $lpa->getVersion());
 
         /** @var FormFlowChecker $flowChecker */
         $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);

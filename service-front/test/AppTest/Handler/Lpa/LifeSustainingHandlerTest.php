@@ -24,6 +24,8 @@ use RuntimeException;
 
 class LifeSustainingHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -134,7 +136,7 @@ class LifeSustainingHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['canSustainLife' => '1'])
+            $this->createRequest('POST', ['canSustainLife' => '1', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -154,7 +156,7 @@ class LifeSustainingHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['canSustainLife' => '1'], $lpa)
+            $this->createRequest('POST', ['canSustainLife' => '1', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -176,7 +178,7 @@ class LifeSustainingHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['canSustainLife' => '1'], $lpa)
+            $this->createRequest('POST', ['canSustainLife' => '1', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -197,7 +199,7 @@ class LifeSustainingHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/primary-attorney');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['canSustainLife' => '1'], $lpa)
+            $this->createRequest('POST', ['canSustainLife' => '1', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -218,7 +220,7 @@ class LifeSustainingHandlerTest extends TestCase
         $this->expectExceptionMessage('API client failed to set life sustaining for id: 91333263035');
 
         $this->handler->handle(
-            $this->createRequest('POST', ['canSustainLife' => '1'], $lpa)
+            $this->createRequest('POST', ['canSustainLife' => '1', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
     }
 }

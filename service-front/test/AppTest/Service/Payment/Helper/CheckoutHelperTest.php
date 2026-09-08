@@ -25,6 +25,8 @@ use RuntimeException;
 
 class CheckoutHelperTest extends TestCase
 {
+    private const int IF_MATCH_VERSION = 5;
+
     private LpaApplicationService&MockObject $lpaApplicationService;
     private Communication&MockObject $communicationService;
     private UrlHelper&MockObject $urlHelper;
@@ -83,14 +85,14 @@ class CheckoutHelperTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $request = $this->createRequest($lpa, 'lpa/checkout');
 
-        $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa);
+        $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION);
         $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/complete');
 
-        $response = $this->helper->finishCheckout($lpa, $request);
+        $response = $this->helper->finishCheckout($lpa, $request, self::IF_MATCH_VERSION);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame('/lpa/91333263035/complete', $response->getHeaderLine('location'));
@@ -109,11 +111,12 @@ class CheckoutHelperTest extends TestCase
                 $lpa,
                 $this->callback(function (Payment $payment): bool {
                     return $payment->getGatewayReference() === null;
-                })
+                }),
+                self::IF_MATCH_VERSION,
             )
             ->willReturn(true);
 
-        $this->helper->verifyLpaPaymentAmount($lpa);
+        $this->helper->verifyLpaPaymentAmount($lpa, self::IF_MATCH_VERSION);
     }
 
     public function testVerifyLpaPaymentAmountThrowsWhenPersistFailsAfterAmountChange(): void
@@ -131,7 +134,7 @@ class CheckoutHelperTest extends TestCase
             . ' in App\Service\Payment\Helper\CheckoutHelper'
         );
 
-        $this->helper->verifyLpaPaymentAmount($lpa);
+        $this->helper->verifyLpaPaymentAmount($lpa, self::IF_MATCH_VERSION);
     }
 
     public function testConstructPaymentTransactionIdPadsShortIdWithLeadingZeros(): void

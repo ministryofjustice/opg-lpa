@@ -68,42 +68,48 @@ trait CertificateProviderHandlerTrait
     /**
      * Update or delete correspondent data when the certificate provider is also the correspondent.
      */
-    private function updateCorrespondentData(Lpa $lpa, CertificateProvider $actor, bool $isDelete = false): void
+    private function updateCorrespondentData(Lpa $lpa, CertificateProvider $actor, bool $isDelete, int $ifMatchVersion): int
     {
         $correspondent = $lpa->document->correspondent;
 
         if (!$correspondent instanceof Correspondence) {
-            return;
+            return $ifMatchVersion;
         }
 
         if ($correspondent->who !== Correspondence::WHO_CERTIFICATE_PROVIDER) {
-            return;
+            return $ifMatchVersion;
         }
 
         if ($isDelete) {
-            if (!$this->lpaApplicationService->deleteCorrespondent($lpa)) {
+            if (!$this->lpaApplicationService->deleteCorrespondent($lpa, $ifMatchVersion)) {
                 throw new RuntimeException(
                     'API client failed to delete correspondent for id: ' . $lpa->id
                 );
             }
-        } else {
-            if ($actor->name != $correspondent->name || $actor->address != $correspondent->address) {
-                $correspondentData = $correspondent->toArray();
-                unset($correspondentData['name']);
-                $updatedCorrespondent = new Correspondence($correspondentData);
 
-                if ($actor->name !== null) {
-                    $updatedCorrespondent->name = new LongName($actor->name->flatten());
-                }
-
-                $updatedCorrespondent->address = $actor->address;
-
-                if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent)) {
-                    throw new RuntimeException(
-                        'API client failed to update correspondent for id: ' . $lpa->id
-                    );
-                }
-            }
+            return $ifMatchVersion + 1;
         }
+
+        if ($actor->name != $correspondent->name || $actor->address != $correspondent->address) {
+            $correspondentData = $correspondent->toArray();
+            unset($correspondentData['name']);
+            $updatedCorrespondent = new Correspondence($correspondentData);
+
+            if ($actor->name !== null) {
+                $updatedCorrespondent->name = new LongName($actor->name->flatten());
+            }
+
+            $updatedCorrespondent->address = $actor->address;
+
+            if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent, $ifMatchVersion)) {
+                throw new RuntimeException(
+                    'API client failed to update correspondent for id: ' . $lpa->id
+                );
+            }
+
+            return $ifMatchVersion + 1;
+        }
+
+        return $ifMatchVersion;
     }
 }

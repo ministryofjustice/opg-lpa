@@ -105,7 +105,7 @@ class SeedControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
+        $this->service->shouldReceive('update')->with($this->lpaId, ['some' => 'data'], self::IF_MATCH_VALUE, $this->userId)
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -119,7 +119,7 @@ class SeedControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
+        $this->service->shouldReceive('update')->with($this->lpaId, ['some' => 'data'], self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -138,7 +138,7 @@ class SeedControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data'], $this->userId])
+        $this->service->shouldReceive('update')->with($this->lpaId, ['some' => 'data'], self::IF_MATCH_VALUE, $this->userId)
             ->andReturn('unexpected type')->once();
 
         $response = $controller->update(10, ['some' => 'data']);

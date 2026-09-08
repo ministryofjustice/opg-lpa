@@ -105,11 +105,13 @@ class Service extends AbstractService
      *
      * @psalm-param array{metadata: array} $data
      */
-    public function patch(array $data, string $id, string $userId)
+    public function patch(array $data, string $id, ?int $ifMatchVersion, string $userId)
     {
 
         /** @var Lpa $lpa */
         $lpa = $this->fetch($id, $userId)->getData();
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         $data = $this->filterIncomingData($data);
 

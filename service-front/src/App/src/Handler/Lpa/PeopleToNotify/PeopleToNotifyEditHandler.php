@@ -7,9 +7,9 @@ namespace App\Handler\Lpa\PeopleToNotify;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PeopleToNotifyHandlerTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -17,6 +17,7 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -69,6 +70,7 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
         );
         $form->setActorData('person to notify', $this->getActorsList($lpa, $personIdx));
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -78,33 +80,39 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
             $form->setData($postData);
 
             if ($form->isValid()) {
-                $notifiedPerson->populate($form->getModelDataFromValidatedForm());
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    $notifiedPerson->populate($form->getModelDataFromValidatedForm());
 
-                $setOk = $this->lpaApplicationService->setNotifiedPerson(
-                    $lpa,
-                    $notifiedPerson,
-                    $notifiedPerson->id
-                );
-
-                if (!$setOk) {
-                    throw new RuntimeException(
-                        'API client failed to update notified person ' . $personIdx . ' for id: ' . $lpa->id
+                    $setOk = $this->lpaApplicationService->setNotifiedPerson(
+                        $lpa,
+                        $notifiedPerson,
+                        $notifiedPerson->id,
+                        $ifMatchVersion,
                     );
+
+                    if (!$setOk) {
+                        throw new RuntimeException(
+                            'API client failed to update notified person ' . $personIdx . ' for id: ' . $lpa->id
+                        );
+                    }
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $form->bind($notifiedPerson->flatten());
@@ -116,6 +124,7 @@ class PeopleToNotifyEditHandler implements RequestHandlerInterface
                 'lpa/people-to-notify',
                 ['lpa-id' => $lpa->id]
             ),
+            'conflictError' => $conflictError,
         ];
 
         if ($isPopup) {

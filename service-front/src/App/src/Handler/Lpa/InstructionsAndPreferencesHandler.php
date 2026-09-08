@@ -8,6 +8,7 @@ use App\Form\Lpa\InstructionsAndPreferencesForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
 use Fig\Http\Message\RequestMethodInterface;
@@ -50,6 +51,7 @@ class InstructionsAndPreferencesHandler implements RequestHandlerInterface
             ['lpa' => $lpa]
         );
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -66,42 +68,48 @@ class InstructionsAndPreferencesHandler implements RequestHandlerInterface
 
                 // persist data if it has changed
 
-                if (
-                    (is_null($lpa->getDocument()->getInstruction()) || $data['instruction'] != $lpa->getDocument()->getInstruction())
-                    || (is_null($lpa->getDocument()->getPreference()) || $data['preference'] != $lpa->getDocument()->getPreference())
-                ) {
-                    $setOk = $this->lpaApplicationService->setInstructionsPreferences(
-                        $lpa,
-                        $data['instruction'],
-                        $data['preference']
-                    );
-
-                    if (!$setOk) {
-                        throw new RuntimeException(
-                            'API client failed to set LPA instructions and preferences for id: ' . $lpaId
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (
+                        (is_null($lpa->getDocument()->getInstruction()) || $data['instruction'] != $lpa->getDocument()->getInstruction())
+                            || (is_null($lpa->getDocument()->getPreference()) || $data['preference'] != $lpa->getDocument()->getPreference())
+                    ) {
+                        $setOk = $this->lpaApplicationService->setInstructionsPreferences(
+                            $lpa,
+                            $data['instruction'],
+                            $data['preference'],
+                            $ifMatchVersion,
                         );
+
+                        if (!$setOk) {
+                            throw new RuntimeException(
+                                'API client failed to set LPA instructions and preferences for id: ' . $lpaId
+                            );
+                        }
                     }
+
+                    $metadata = $lpa->getMetadata();
+
+                    if (
+                        count($metadata) === 0
+                            || !isset($metadata['instruction-confirmed'])
+                            || $metadata['instruction-confirmed'] !== true
+                    ) {
+                        $this->metadata->setInstructionConfirmed($lpa, $ifMatchVersion + 1);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->getId()],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $metadata = $lpa->getMetadata();
-
-                if (
-                    count($metadata) === 0
-                    || !isset($metadata['instruction-confirmed'])
-                    || $metadata['instruction-confirmed'] !== true
-                ) {
-                    $this->metadata->setInstructionConfirmed($lpa);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->getId()],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $form->bind($lpa->getDocument()->flatten());
@@ -113,6 +121,7 @@ class InstructionsAndPreferencesHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form' => $form,
+                    'conflictError' => $conflictError,
                 ]
             )
         );

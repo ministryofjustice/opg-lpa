@@ -20,9 +20,11 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function create(string $lpaId, $data)
+    public function create(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         $person = new NotifiedPerson($data);
 
@@ -56,9 +58,11 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data, $id)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPeopleToNotify() as $key => $person) {
             if ($person->id == (int) $id) {
@@ -88,9 +92,11 @@ class Service extends AbstractService
      * @param $id
      * @return ApiProblem|bool
      */
-    public function delete(string $lpaId, $id)
+    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId, $id)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         foreach ($lpa->getDocument()->getPeopleToNotify() as $key => $person) {
             if ($person->id == (int) $id) {

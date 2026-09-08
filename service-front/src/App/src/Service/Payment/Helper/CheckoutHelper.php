@@ -63,9 +63,9 @@ class CheckoutHelper
         );
     }
 
-    public function finishCheckout(Lpa $lpa, ServerRequestInterface $request): ResponseInterface
+    public function finishCheckout(Lpa $lpa, ServerRequestInterface $request, int $ifMatchVersion): ResponseInterface
     {
-        $this->lpaApplicationService->lockLpa($lpa);
+        $this->lpaApplicationService->lockLpa($lpa, $ifMatchVersion);
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         return new RedirectResponse(
@@ -77,7 +77,7 @@ class CheckoutHelper
      * Confirms that the payment amount currently associated with the LPA is correct.
      * If the amount has changed, saves the new value and nulls any gateway reference.
      */
-    public function verifyLpaPaymentAmount(Lpa $lpa): void
+    public function verifyLpaPaymentAmount(Lpa $lpa, int $ifMatchVersion): int
     {
         $lpaPayment = $lpa->getPayment();
 
@@ -95,12 +95,16 @@ class CheckoutHelper
 
                 $lpaPayment->setGatewayReference(null);
 
-                if (!$this->lpaApplicationService->setPayment($lpa, $lpaPayment)) {
+                if (!$this->lpaApplicationService->setPayment($lpa, $lpaPayment, $ifMatchVersion)) {
                     throw new RuntimeException(
                         'API client failed to set payment details for id: ' . $lpa->getId() . ' in ' . static::class
                     );
                 }
+
+                return $ifMatchVersion + 1;
             }
         }
+
+        return $ifMatchVersion;
     }
 }

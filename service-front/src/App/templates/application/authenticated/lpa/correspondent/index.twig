@@ -139,8 +139,9 @@
 
     {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+    <input type="hidden" name="version" value="{{ lpa.version }}">
 
-        {{ macros.formErrorSummary(error,form) }}
+        {{ macros.formErrorSummary(error, form, conflictError) }}
 
         <div class="govuk-form-group {{ topLevelError ? 'govuk-form-group--error'}}">
 

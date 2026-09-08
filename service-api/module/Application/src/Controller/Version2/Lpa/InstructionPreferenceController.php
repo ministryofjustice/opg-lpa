@@ -27,7 +27,7 @@ class InstructionPreferenceController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $data);
+        $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $this->ifMatch(), $this->userId(), $data);
 
         if ($result instanceof ApiProblem) {
             return $result;

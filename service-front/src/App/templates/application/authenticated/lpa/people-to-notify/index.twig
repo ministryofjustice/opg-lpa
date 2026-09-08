@@ -45,10 +45,13 @@
 
     {% endif %}
 
+    {{ macros.formErrorSummary(error, form, conflictError) }}
+
     {# begin form #}
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="version" value="{{ lpa.version }}">
 
         {% if (peopleToNotify) %}
             <div class="govuk-!-margin-bottom-3">

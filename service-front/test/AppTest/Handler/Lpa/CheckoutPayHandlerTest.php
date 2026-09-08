@@ -148,7 +148,7 @@ class CheckoutPayHandlerTest extends TestCase
 
         $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout', ['lpa-id' => $lpa->getId()], [])
+            ->with('lpa/checkout', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/checkout');
 
         $response = $this->handler->handle($this->createRequest('POST', $lpa, true, ['some' => 'data']));

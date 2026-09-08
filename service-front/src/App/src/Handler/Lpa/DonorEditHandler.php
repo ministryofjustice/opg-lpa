@@ -79,7 +79,7 @@ class DonorEditHandler implements RequestHandlerInterface
                         );
                     }
 
-                    $this->updateCorrespondentData($lpa, $donor);
+                    $this->updateCorrespondentData($lpa, $donor, $ifMatchVersion + 1);
 
                     if ($this->isXmlHttpRequest($request)) {
                         return new JsonResponse(['success' => true]);
@@ -138,26 +138,25 @@ class DonorEditHandler implements RequestHandlerInterface
      * If a correspondent is set as the donor, update the correspondent's name and address
      * to match the updated donor data.
      */
-    private function updateCorrespondentData(Lpa $lpa, Donor $donor): void
+    private function updateCorrespondentData(Lpa $lpa, Donor $donor, int $ifMatchVersion): void
     {
         $correspondent = $lpa->document->correspondent;
 
         if (
             $correspondent instanceof Correspondence
-            && $correspondent->who === Correspondence::WHO_DONOR
+                && $correspondent->who === Correspondence::WHO_DONOR
+                && ($donor->name != $correspondent->name || $donor->address != $correspondent->address)
         ) {
-            if ($donor->name != $correspondent->name || $donor->address != $correspondent->address) {
                 $correspondentData = $correspondent->toArray();
                 unset($correspondentData['name']);
                 $updatedCorrespondent = new Correspondence($correspondentData);
                 $updatedCorrespondent->name = new LongName($donor->name->flatten());
                 $updatedCorrespondent->address = $donor->address;
 
-                if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent)) {
-                    throw new RuntimeException(
-                        'API client failed to update correspondent for id: ' . $lpa->id
-                    );
-                }
+            if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent, $ifMatchVersion)) {
+                throw new RuntimeException(
+                    'API client failed to update correspondent for id: ' . $lpa->id
+                );
             }
         }
     }

@@ -107,9 +107,9 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
                             );
                         }
 
-                        $this->replacementAttorneyCleanup->cleanUp($lpa);
+                        $ifMatchVersion = $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
 
-                        $this->applicantService->cleanUp($lpa);
+                        $ifMatchVersion = $this->applicantService->cleanUp($lpa, $ifMatchVersion);
                     }
 
                     $nextRoute = $flowChecker->nextRoute($currentRoute);
@@ -135,7 +135,6 @@ class HowPrimaryAttorneysMakeDecisionHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form' => $form,
-                    'lpaVersion' => $lpa->getVersion(),
                     'conflictError' => $conflictError,
                 ]
             )
