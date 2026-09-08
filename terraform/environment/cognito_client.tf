@@ -47,24 +47,24 @@ resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_admin"
 
 # ur environment
 data "aws_cognito_user_pools" "make_a_lasting_power_of_attorney_front" {
-  count    = local.environment_name == "ur" ? 1 : 0
+  count    = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
   provider = aws.identity
   name     = "make-a-lasting-power-of-attorney-ur-front"
 }
 
 data "aws_ssm_parameter" "make_a_lasting_power_of_attorney_front_domain" {
-  count    = local.environment_name == "ur" ? 1 : 0
+  count    = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
   provider = aws.identity
   name     = "make_a_lasting_power_of_attorney_ur_front_domain"
 }
 
 locals {
-  front_cognito_user_pool_id          = local.environment_name == "ur" ? tolist(data.aws_cognito_user_pools.make_a_lasting_power_of_attorney_front[0].ids)[0] : ""
-  front_cognito_user_pool_domain_name = local.environment_name == "ur" ? "https://${data.aws_ssm_parameter.make_a_lasting_power_of_attorney_front_domain[0].value}.auth.eu-west-1.amazoncognito.com" : ""
+  front_cognito_user_pool_id          = local.environment.cognito.front_cognito_auth_enabled ? tolist(data.aws_cognito_user_pools.make_a_lasting_power_of_attorney_front[0].ids)[0] : ""
+  front_cognito_user_pool_domain_name = local.environment.cognito.front_cognito_auth_enabled ? "https://${data.aws_ssm_parameter.make_a_lasting_power_of_attorney_front_domain[0].value}.auth.eu-west-1.amazoncognito.com" : ""
 }
 
 resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_front" {
-  count                                = local.environment_name == "ur" ? 1 : 0
+  count                                = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
   provider                             = aws.identity
   name                                 = "${local.environment_name}-front-auth"
   user_pool_id                         = local.front_cognito_user_pool_id

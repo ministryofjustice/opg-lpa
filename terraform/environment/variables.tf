@@ -32,6 +32,7 @@ variable "environments" {
         admin_cognito_user_pool_name                      = string
         admin_cognito_user_pool_domain_name               = string
         admin_cognito_client_supported_identity_providers = list(string)
+        front_cognito_auth_enabled                        = bool
       })
       onelogin_client_id = string
       feature_flags = object({
