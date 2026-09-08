@@ -48,11 +48,12 @@ locals {
 
   aws_otel_collector = jsonencode(
     {
-      cpu         = 0,
-      essential   = true,
-      image       = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0",
-      mountPoints = [],
-      name        = "aws-otel-collector",
+      cpu                    = 0,
+      essential              = true,
+      image                  = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0",
+      mountPoints            = [],
+      name                   = "aws-otel-collector",
+      readonlyRootFilesystem = true,
       command = [
         "--config=/etc/ecs/ecs-default-config.yaml"
       ],
