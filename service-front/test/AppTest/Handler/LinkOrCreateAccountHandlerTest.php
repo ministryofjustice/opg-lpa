@@ -19,6 +19,7 @@ use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class LinkOrCreateAccountHandlerTest extends TestCase
@@ -62,10 +63,15 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         string $method = 'GET',
         array $postData = [],
         ?array $pendingLink = self::PENDING_LINK,
+        ?string $preAuthUrl = null,
     ): ServerRequest {
         $this->session
             ->method('get')
-            ->willReturnCallback(fn(string $key) => $key === 'onelogin_pending_link' ? $pendingLink : null);
+            ->willReturnCallback(fn(string $key) => match ($key) {
+                'onelogin_pending_link' => $pendingLink,
+                'pre_auth_request_url'  => $preAuthUrl,
+                default                 => null,
+            });
 
         $request = (new ServerRequest())
             ->withMethod($method)
@@ -157,6 +163,37 @@ class LinkOrCreateAccountHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testCreateChoiceReturnsUserToTheirDeepLink(): void
+    {
+        $response = $this->handleCreateChoice('/lpa/12345678/checkout');
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/lpa/12345678/checkout', $response->getHeaderLine('Location'));
+    }
+
+    public function testCreateChoiceIgnoresAnOffSitePreAuthUrl(): void
+    {
+        $response = $this->handleCreateChoice('//evil.example/');
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    private function handleCreateChoice(?string $preAuthUrl): ResponseInterface
+    {
+        $this->oneLoginService->method('createAndLinkAccount')->willReturn([
+            'userId'         => 'uid-new',
+            'token'          => 'tok-new',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ]);
+
+        return $this->handler->handle(
+            $this->createRequest('POST', ['choice' => 'create'], self::PENDING_LINK, $preAuthUrl)
+        );
     }
 
     public function testCreateChoiceApiFailureKeepsUserOnFormWithError(): void

@@ -9,6 +9,7 @@ use App\Handler\Traits\RequestInspectorTrait;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\ActorReuseDetailsService;
+use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -19,6 +20,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ReuseDetailsHandler implements RequestHandlerInterface
@@ -31,6 +33,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -45,7 +48,20 @@ class ReuseDetailsHandler implements RequestHandlerInterface
         $isPopup = $this->isXmlHttpRequest($request);
 
         $queryParams = $request->getQueryParams();
-        $callingUrl = $queryParams['calling-url'] ?? null;
+
+        $suppliedCallingUrl = $queryParams['calling-url'] ?? null;
+        $callingUrl = SafeRedirectPath::filter($suppliedCallingUrl);
+
+        if ($suppliedCallingUrl !== null && $callingUrl === null) {
+            $this->logger->warning('lpa.reuse_details.calling_url_rejected', [
+                'lpa_id' => $lpa->id,
+            ]);
+
+            throw new RuntimeException(
+                'calling-url must be a path on this service when loading the reuse details screen'
+            );
+        }
+
         $includeTrusts = $queryParams['include-trusts'] ?? null;
         $actorName = $queryParams['actor-name'] ?? null;
 
@@ -55,7 +71,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             );
         }
 
-        $forCorrespondent = str_contains((string) $callingUrl, 'correspondent');
+        $forCorrespondent = str_contains($callingUrl, 'correspondent');
 
         if ($forCorrespondent) {
             $actorReuseDetails = $this->actorReuseDetailsService->getCorrespondentReuseDetails($user, $lpa);
@@ -104,7 +120,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             }
         }
 
-        $cancelUrl = substr((string) $callingUrl, 0, (int) strrpos((string) $callingUrl, '/'));
+        $cancelUrl = substr($callingUrl, 0, (int) strrpos($callingUrl, '/'));
 
         $templateParams = [
             'form'      => $form,

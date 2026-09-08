@@ -401,6 +401,58 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->assertArrayHasKey('onelogin_pending_link', $written);
     }
 
+    public function testLinkedAccountIgnoresAnOffSitePreAuthUrl(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::LINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+        $this->session->method('set');
+
+        $this->session
+            ->method('get')
+            ->willReturnCallback(fn(string $key) => match ($key) {
+                'onelogin_auth'        => self::VALID_SESSION,
+                'pre_auth_request_url' => '//evil.example/',
+                default                => null,
+            });
+
+        $response = $this->handler->handle(
+            $this->buildRequest('code=authcode&state=valid-state-abc')
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testUnlinkedAccountDoesNotCarryAnOffSitePreAuthUrl(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+
+        $written = [];
+        $this->session
+            ->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
+
+        $this->handler->handle(
+            $this->buildRequest(
+                'code=authcode&state=valid-state-abc',
+                [
+                    'onelogin_auth'        => self::VALID_SESSION,
+                    'pre_auth_request_url' => '//evil.example/',
+                ],
+            )
+        );
+
+        $this->assertArrayNotHasKey('pre_auth_request_url', $written);
+        $this->assertArrayHasKey('onelogin_pending_link', $written);
+    }
+
     public function testUnlinkedAccountWithNoPreAuthUrlDoesNotWriteAnEmptyOne(): void
     {
         $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);

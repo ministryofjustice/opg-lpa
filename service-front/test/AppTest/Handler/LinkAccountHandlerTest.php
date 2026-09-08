@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AppTest\Handler\Lpa;
+namespace AppTest\Handler;
 
 use App\Form\User\Login;
 use App\Handler\LinkAccountHandler;
@@ -21,6 +21,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 
 class LinkAccountHandlerTest extends TestCase
@@ -61,6 +62,7 @@ class LinkAccountHandlerTest extends TestCase
         string $method = 'GET',
         array $postData = [],
         ?string $pendingSub = self::PENDING_SUB,
+        ?string $preAuthUrl = null,
     ): ServerRequest {
         $pendingLink = $pendingSub === null
             ? null
@@ -68,7 +70,11 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->session
             ->method('get')
-            ->willReturnCallback(fn(string $key) => $key === 'onelogin_pending_link' ? $pendingLink : null);
+            ->willReturnCallback(fn(string $key) => match ($key) {
+                'onelogin_pending_link' => $pendingLink,
+                'pre_auth_request_url'  => $preAuthUrl,
+                default                 => null,
+            });
 
         $request = (new ServerRequest())
             ->withMethod($method)
@@ -152,6 +158,43 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testSuccessfulLinkReturnsUserToTheirDeepLink(): void
+    {
+        $response = $this->handleSuccessfulLink('/lpa/12345678/checkout');
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/lpa/12345678/checkout', $response->getHeaderLine('Location'));
+    }
+
+    public function testSuccessfulLinkIgnoresAnOffSitePreAuthUrl(): void
+    {
+        $response = $this->handleSuccessfulLink('//evil.example/');
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    private function handleSuccessfulLink(?string $preAuthUrl): ResponseInterface
+    {
+        $email = 'my.email@example.com';
+        $word  = 'guessable';
+
+        $this->oneLoginService->method('linkExistingAccount')->willReturn([
+            'linked'   => true,
+            'identity' => [
+                'userId'         => 'uid-1',
+                'token'          => 'tok-abc',
+                'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+                'lastLogin'      => '2025-01-01T00:00:00+00:00',
+                'sharedSpaceId'  => null,
+            ],
+        ]);
+
+        return $this->handler->handle(
+            $this->createRequest('POST', ['email' => $email, 'password' => $word], self::PENDING_SUB, $preAuthUrl)
+        );
     }
 
     public function testAlreadyLinkedRedirectsToCannotLinkPage(): void
