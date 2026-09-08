@@ -20,7 +20,7 @@ use Mockery\MockInterface;
 
 abstract class AbstractControllerTestCase extends MockeryTestCase
 {
-    protected const IF_MATCH_VALUE = 5;
+    protected const int IF_MATCH_VALUE = 5;
 
     /**
      * @var int|null

@@ -62,7 +62,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
     // $lpaId: ID of LPA to update
     // $metaData: existing metadata for the LPA; [] if no metadata exists yet
     // $data: data to use to update the existing metadata
-    private function updateMetadata(string $lpaId, string $userId, $metaData, array $data): void
+    private function updateMetadata(string $lpaId, ?int $ifMatchVersion, string $userId, $metaData, array $data): void
     {
         // Update metadata in DB
         $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];
@@ -78,7 +78,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
 
         if ($this->hasDifference($newMeta, $metaData)) {
             $metaData = array_merge($metaData, $newMeta);
-            $this->getService()->patch(['metadata' => $metaData], $lpaId, $userId);
+            $this->getService()->patch(['metadata' => $metaData], $lpaId, $ifMatchVersion, $userId);
             $this->getLogger()->debug('Updated MetaData for LPA', [
                 'lpaId' => $lpaId,
                 'metaData' => $metaData
@@ -148,10 +148,11 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
         $lpasFromDb = $this->applicationsService->filterByIdsAndUser($explodedIds, $userId);
 
         // Convert db results into a map from ID to metadata
-        $lpaMetas = array_reduce($lpasFromDb, function ($sofar, $lpa) {
-            $sofar['' . $lpa->getId()] = $lpa->getMetaData();
+        ['metas' => $lpaMetas, 'versions' => $lpaVersions] = array_reduce($lpasFromDb, function ($sofar, $lpa) {
+            $sofar['metas']['' . $lpa->getId()] = $lpa->getMetaData();
+            $sofar['versions']['' . $lpa->getId()] = $lpa->getVersion();
             return $sofar;
-        }, []);
+        }, ['metas' => [], 'versions' => []]);
 
         // Adding an array to check ids for which status requests would be sent
         // without any condition set
@@ -164,6 +165,10 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
 
             if (array_key_exists($explodedId, $lpaMetas)) {
                 // We got a record from db: status=status in db
+                /**
+                 * @psalm-suppress EmptyArrayAccess
+                 * @psalm-suppress NoValue
+                 */
                 $dbResults[$explodedId] = [
                     'status' => $this->getValue($lpaMetas[$explodedId], LPA::SIRIUS_PROCESSING_STATUS),
                     'inDb' => true,
@@ -236,7 +241,11 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
                     // in updateMetadata)
                     $metaData = $this->getValue($lpaMetas, $lpaId, []);
                     if ($this->getValue($dbResult, 'inDb')) {
-                        $this->updateMetadata($lpaId, $userId, $metaData, $data);
+                        /**
+                         * @psalm-suppress EmptyArrayAccess
+                         * @psalm-suppress NoValue
+                         */
+                        $this->updateMetadata($lpaId, $lpaVersions[$lpaId], $userId, $metaData, $data);
                     }
 
                     // set found to true here as we got a processing status

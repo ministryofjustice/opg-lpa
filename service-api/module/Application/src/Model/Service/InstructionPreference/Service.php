@@ -17,12 +17,14 @@ class Service extends AbstractService
     /**
      * @return ValidationApiProblem|array<InstructionEntity|PreferenceEntity>
      */
-    public function update(string $lpaId, array $data): ValidationApiProblem|array
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, array $data): ValidationApiProblem|array
     {
         $instruction = ($data['instruction'] ?? null);
         $preference = ($data['preference'] ?? null);
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
         $lpa->getDocument()->setInstruction($instruction);
         $lpa->getDocument()->setPreference($preference);
 

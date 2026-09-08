@@ -18,6 +18,7 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Helper\UrlHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class CertificateProviderDeleteHandlerTest extends TestCase
 {
@@ -33,6 +34,7 @@ class CertificateProviderDeleteHandlerTest extends TestCase
         $this->handler = new CertificateProviderDeleteHandler(
             $this->lpaApplicationService,
             $this->urlHelper,
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -40,6 +42,7 @@ class CertificateProviderDeleteHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->primaryAttorneys = [];
         $lpa->document->replacementAttorneys = [];

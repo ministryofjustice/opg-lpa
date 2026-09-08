@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Handler\Lpa\PeopleToNotify;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
 use Fig\Http\Message\RequestMethodInterface;
@@ -15,6 +15,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,6 +49,7 @@ class PeopleToNotifyHandler implements RequestHandlerInterface
             'lpa' => $lpa,
         ]);
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -57,17 +59,22 @@ class PeopleToNotifyHandler implements RequestHandlerInterface
             $form->setData($postData);
 
             if ($form->isValid()) {
-                $this->metadata->setPeopleToNotifyConfirmed($lpa);
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    $this->metadata->setPeopleToNotifyConfirmed($lpa, $ifMatchVersion);
 
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
 
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
+                }
             }
         }
 
@@ -97,6 +104,7 @@ class PeopleToNotifyHandler implements RequestHandlerInterface
         $templateParams = [
             'form' => $form,
             'peopleToNotify' => $peopleToNotifyParams,
+            'conflictError' => $conflictError,
         ];
 
         if (count($lpa->document->peopleToNotify) < 5) {

@@ -21,6 +21,7 @@ use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class PeopleToNotifyDeleteHandlerTest extends TestCase
 {
@@ -36,6 +37,7 @@ class PeopleToNotifyDeleteHandlerTest extends TestCase
         $this->handler = new PeopleToNotifyDeleteHandler(
             $this->lpaApplicationService,
             $this->urlHelper,
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -43,6 +45,7 @@ class PeopleToNotifyDeleteHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->primaryAttorneys = [];
         $lpa->document->replacementAttorneys = [];

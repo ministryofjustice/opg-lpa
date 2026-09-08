@@ -59,7 +59,6 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
 
         $templateParams = [
             'isPopup' => $isPopup,
-            'lpaVersion' => $lpa->getVersion(),
         ];
 
         /** @var User|null $userDetails */
@@ -158,7 +157,7 @@ class PrimaryAttorneyAddHandler implements RequestHandlerInterface
                             )
                         );
                     } catch (ConflictException $e) {
-                        $templateParams['conflictError'] = ['updatedBy' => $e->getLastUpdatedBy()];
+                        $templateParams['conflictError'] = $e;
                     }
                 }
             }

@@ -95,7 +95,7 @@
 {############################ trust corp form ############################}
 
 {# Error summary #}
-{{ macros.formErrorSummary(error, form) }}
+{{ macros.formErrorSummary(error, form, conflictError) }}
 
 {# Add switch attorney type link #}
 {{ macros.addSwitchAttorneyTypeLink(switchAttorneyTypeRoute, lpa, false) }}
@@ -103,6 +103,7 @@
 {# begin form #}
 {{ form().openTag( form )|raw }}
     <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+    <input type="hidden" name="version" value="{{ lpa.version }}">
 
     <h2 class="govuk-heading-m govuk-!-margin-top-8 popup-exclude">Company's details</h2>
     <fieldset>

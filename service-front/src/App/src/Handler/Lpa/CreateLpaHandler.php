@@ -44,7 +44,7 @@ class CreateLpaHandler implements RequestHandlerInterface
                 return new RedirectResponse('/user/dashboard');
             }
 
-            $result = $this->lpaApplicationService->setSeed($lpa, $seedId);
+            $result = $this->lpaApplicationService->setSeed($lpa, $seedId, $lpa->getVersion());
 
             $this->resetSessionCloneData($session, $seedId);
 

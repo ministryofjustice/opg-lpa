@@ -26,6 +26,8 @@ use RuntimeException;
 
 class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -137,6 +139,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS,
+                'version' => self::IF_MATCH_VALUE,
             ])
         );
 
@@ -166,6 +169,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -200,6 +204,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY_AND_SEVERALLY,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -226,6 +231,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -261,6 +267,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS,
                 'howDetails' => 'Custom decision instructions',
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -289,6 +296,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
     }
@@ -321,7 +329,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         bool $expectsValidationGroup,
     ): void {
         $lpa = $this->createLpa();
-        $postData = ['how' => $how];
+        $postData = ['how' => $how, 'version' => self::IF_MATCH_VALUE];
 
         if ($how === ReplacementAttorneyDecisions::LPA_DECISION_HOW_DEPENDS) {
             $postData['howDetails'] = 'Some details';
@@ -373,6 +381,7 @@ class HowReplacementAttorneysMakeDecisionHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'how' => ReplacementAttorneyDecisions::LPA_DECISION_HOW_JOINTLY,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 

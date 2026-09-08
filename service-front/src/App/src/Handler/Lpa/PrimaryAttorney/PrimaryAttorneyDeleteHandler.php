@@ -21,6 +21,7 @@ use Mezzio\Router\RouteResult;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
@@ -33,6 +34,7 @@ class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
         private readonly UrlHelper $urlHelper,
         private readonly ApplicantService $applicantService,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -55,7 +57,8 @@ class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
 
         $attorney = $lpa->document->primaryAttorneys[$attorneyIdx];
 
-        $ifMatchVersion = (int)$request->getQueryParams()['version'];
+        // TODO(LPAL-2493): Get version from POST body instead
+        $ifMatchVersion = $lpa->getVersion();
         try {
             // If this attorney is set as the correspondent then delete those details too
             if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
@@ -103,7 +106,8 @@ class PrimaryAttorneyDeleteHandler implements RequestHandlerInterface
                 )
             );
         } catch (ConflictException $e) {
-            throw new \RuntimeException('TODO: show something to the user???');
+            $this->logger->info('Conflict deleting primary attorney', ['exception' => $e]);
+            throw $e;
         }
     }
 }

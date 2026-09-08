@@ -119,13 +119,13 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
         ]);
 
         // Payment succeeded at GovPay — record it on the LPA.
-        $recorded = $this->cardPayments->recordSuccessfulPayment($lpa, $paymentResponse);
+        $recorded = $this->cardPayments->recordSuccessfulPayment($lpa, $paymentResponse, $lpa->getVersion());
 
         $this->logger->info('PayResponse: updateApplication result', [
             'lpa_id'   => $lpa->getId(),
             'success' => $recorded,
         ]);
 
-        return $this->checkoutHelper->finishCheckout($lpa, $request);
+        return $this->checkoutHelper->finishCheckout($lpa, $request, $lpa->getVersion() + 1);
     }
 }
