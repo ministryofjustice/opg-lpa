@@ -411,6 +411,37 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
     /**
      * @inheritDoc
      */
+    public function deleteAllForSharedSpace(string $sharedSpaceId): int
+    {
+        $sql = $this->dbWrapper->createSql();
+        $update = $sql->update(self::APPLICATIONS_TABLE);
+
+        $update->where([
+            $this->sharedSpacePredicate($sharedSpaceId),
+        ]);
+
+        $table = $this->dbWrapper->getTable(self::APPLICATIONS_TABLE);
+
+        $data = [];
+
+        foreach ($table->getColumns() as $column) {
+            $data[$column->getName()] = null;
+        }
+
+        unset($data['id']);
+        $data['updatedAt'] = gmdate(DbWrapper::TIME_FORMAT);
+
+        $update->set($data);
+
+        $statement = $sql->prepareStatementForSqlObject($update);
+        $result = $statement->execute();
+
+        return $result->getAffectedRows();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setSharedSpaceOwner(string $userId, string $sharedSpaceId): int
     {
         $sql = $this->dbWrapper->createSql();
