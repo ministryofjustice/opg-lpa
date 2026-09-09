@@ -178,6 +178,13 @@ locals {
         },
       ]
     },
+    healthCheck = {
+      command     = ["CMD-SHELL", "curl -f http://localhost/nginx-health || exit 1"],
+      startPeriod = 30,
+      interval    = 15,
+      timeout     = 10,
+      retries     = 3
+    },
     logConfiguration = {
       logDriver = "awslogs",
       options = {
