@@ -315,7 +315,7 @@ final class UserDetailsTest extends TestCase
     {
         $this->apiClient->expects($this->once())
             ->method('httpDelete')
-            ->with('/v2/user/user-123')
+            ->with('/v2/users/user-123')
             ->willReturn(null);
 
         $this->assertTrue($this->service->delete());

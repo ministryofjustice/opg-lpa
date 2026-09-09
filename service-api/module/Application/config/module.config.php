@@ -224,6 +224,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'count-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/count-members',
+                                    'defaults' => [
+                                        'action' => 'countMembers',
+                                    ],
+                                ],
+                            ],
                             'invite' => [
                                 'type' => 'Segment',
                                 'options' => [
@@ -429,7 +438,15 @@ return [
                                     ],
                                 ],
                             ],
-
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '[/:userId]',
+                                    'constraints' => [
+                                        'userId' => '[a-f0-9]+',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 

@@ -8,6 +8,7 @@ use Exception;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Application\Model\Entity\MemberInvite;
+use Application\Model\Service\SharedSpace\SharedSpaceNotFoundException;
 
 interface SharedSpaceRepositoryInterface
 {
@@ -117,4 +118,28 @@ interface SharedSpaceRepositoryInterface
      * Check if an invite exists for a given shared space and email.
      */
     public function hasInvite(string $sharedSpaceId, string $email): bool;
+
+    /**
+     * Delete a shared space. Callers MUST first delete (or re-home) any
+     * shared_space_members and LPA rows that reference this shared space -
+     * unlike LPAs, shared_space_members' foreign key to shared_space does
+     * NOT cascade on delete (see migration
+     * 20260908180500_shared_space_members_remove_cascade_delete.php), so
+     * this will throw a foreign key violation if any membership rows still
+     * reference it. The applications table's foreign key to shared_space
+     * DOES still cascade on delete, so callers MUST delete (or re-home) any
+     * LPAs owned by the shared space before calling this - see
+     * ApplicationRepositoryInterface::deleteAllForSharedSpace() - otherwise
+     * those LPA rows would be hard-deleted rather than left as anonymised
+     * placeholders.
+     *
+     * @throws Exception
+     * @throws SharedSpaceNotFoundException If no shared space with the given ID exists.
+     */
+    public function deleteSharedSpace(string $sharedSpaceId): void;
+
+    /**
+     * Returns the number of members in a shared space.
+     */
+    public function countMembers(string $sharedSpaceId): int;
 }

@@ -420,4 +420,76 @@ class SharedSpaceService
 
         return null;
     }
+
+    public function countMembers(string $sharedSpaceId): int
+    {
+        return $this->sharedSpaceRepository->countMembers($sharedSpaceId);
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function deleteAccount(string $sharedSpaceId, string $userId): void
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+        $lpasDeleted = 0;
+
+        try {
+            $user = $this->userRepository->getById($userId);
+
+            if ($user === null) {
+                throw new RuntimeException('User not found');
+            }
+
+            $isLastMember = $this->sharedSpaceRepository->countMembers($sharedSpaceId) <= 1;
+
+            // The shared_space_members -> shared_space foreign key does not
+            // cascade on delete, so the membership row must always be
+            // deleted explicitly before the shared space itself.
+            $this->sharedSpaceRepository->deleteMember($sharedSpaceId, $userId);
+
+            if ($isLastMember) {
+                $lpasDeleted = $this->applicationRepository->deleteAllForSharedSpace($sharedSpaceId);
+                $this->sharedSpaceRepository->deleteSharedSpace($sharedSpaceId);
+            }
+
+            if (!$this->userRepository->delete($userId)) {
+                throw new RuntimeException('User not deleted');
+            }
+
+            $this->logRepository->addLog([
+                'identity_hash' => hash('sha512', strtolower(trim($user->username()))),
+                'type'          => 'account-deleted',
+                'reason'        => 'User deleted their account',
+                'loggedAt'      => new MillisecondDateTime(),
+            ]);
+
+            $this->sharedSpaceRepository->commit();
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+
+            $this->logger->error('Unable to delete shared space member account: ' . $e->getMessage(), [
+                'shared_space_id' => $sharedSpaceId,
+                'user_id'         => $userId,
+            ]);
+
+            throw $e;
+        }
+
+        if ($isLastMember) {
+            $this->logger->info('Shared space deleted', [
+                'event'              => 'shared_space.deleted',
+                'shared_space_id'    => $sharedSpaceId,
+                'deleted_by_user_id' => $userId,
+                'lpas_deleted'       => $lpasDeleted,
+            ]);
+        }
+
+        $this->logger->info('Shared space member account deleted', [
+            'event'           => 'shared_space.member_account_deleted',
+            'shared_space_id' => $sharedSpaceId,
+            'user_id'         => $userId,
+            'was_last_member' => $isLastMember,
+        ]);
+    }
 }
