@@ -20,8 +20,10 @@ Feature: Homepage
     Then I am taken to "/cookies"
     And I see "Cookies" in the title
     And I should not find links in the page which open in new tabs without notifying me
-    #When I click back
-    #And I visit link named "a.js-guidance"
+
+  Scenario: Navigate details elements on home page using keyboard (LPAL-253)
+    Given I visit "/home?show-old-homepage"
+    Then I can navigate through "details" elements using the tab key
 
   Scenario: Use skip link on home page
     Given I visit "/home"
@@ -30,17 +32,6 @@ Feature: Homepage
     Then I have "main-title" in the viewport
     And I do not have "banner" in the viewport
     And I do not have "cookie-message" in the viewport
-
-  Scenario: Navigate details elements on home page using keyboard (LPAL-253)
-    Given I visit "/home"
-    Then I can navigate through "details" elements using the tab key
-
-  Scenario: Sufficient contrast on home page elements (LPAL-256)
-    Given I visit "/home"
-    #  When I wait for focus on "guidance-to-making-an-lpa-link"
-    # Then elements on the page should have sufficient contrast
-    # When I wait for focus on "sign-in-button"
-    # Then elements on the page should have sufficient contrast
 
   Scenario: Check Response headers are present and correct
     Given I verify that the homepage response contains all the required headers

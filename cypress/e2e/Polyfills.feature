@@ -1,3 +1,4 @@
+# TODO: We don't need this feature as it was a polyfill for old govuk_elements - LPAL-2492 will remove
 @Polyfills
 Feature: Polyfills
 
@@ -8,6 +9,6 @@ Feature: Polyfills
 
   @focus
   Scenario: Navigate polyfilled details elements on home page using keyboard (LPAL-253)
-    Given I visit "/home"
+    Given I visit "/home?show-old-homepage"
     When my browser doesn't support details elements
     Then I can navigate through "polyfilleddetails" elements using the tab key
