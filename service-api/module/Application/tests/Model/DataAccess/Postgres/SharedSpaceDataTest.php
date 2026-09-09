@@ -11,6 +11,7 @@ use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Entity\MemberInvite;
 use DateTime;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Delete;
@@ -292,6 +293,51 @@ class SharedSpaceDataTest extends MockeryTestCase
         // assertions
         $expected = ($isQueryResult && $count === 1) ? $sharedSpaceId : null;
         $this->assertSame($expected, $actual);
+    }
+
+    public function testCountMembers(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(3);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                SharedSpaceData::SHARED_SPACE_MEMBERS,
+                ['sharedSpaceId' => $sharedSpaceId],
+                ['columns' => ['id']]
+            )
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->countMembers($sharedSpaceId);
+
+        $this->assertSame(3, $actual);
+    }
+
+    public function testCountMembersWhenNotQueryResult(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(false);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                SharedSpaceData::SHARED_SPACE_MEMBERS,
+                ['sharedSpaceId' => $sharedSpaceId],
+                ['columns' => ['id']]
+            )
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->countMembers($sharedSpaceId);
+
+        $this->assertSame(0, $actual);
     }
 
     public function testGetMember(): void

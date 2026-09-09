@@ -140,6 +140,17 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->assertEquals('a name', $result);
     }
 
+    public function testCountMembers()
+    {
+        $this->sharedSpaceRepository->shouldReceive('countMembers')
+            ->with('my-space')
+            ->once()
+            ->andReturn(3);
+
+        $result = $this->service->countMembers('my-space');
+        $this->assertSame(3, $result);
+    }
+
     public function testGetMembers()
     {
         $sharedSpaceId = 'my-space';
@@ -695,5 +706,228 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->expectException(RuntimeException::class);
         $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testDeleteAccount()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(2);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('commit');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(true);
+
+        $this->logRepository->shouldReceive('addLog')
+            ->with(Mockery::on(function ($args): bool {
+                return $args['type'] === 'account-deleted'
+                    && $args['reason'] === 'User deleted their account';
+            }));
+
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testDeleteAccountWhenLastMember()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(1);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteSharedSpace')
+            ->with('xyz');
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('commit');
+
+        $this->applicationRepository
+            ->shouldReceive('deleteAllForSharedSpace')
+            ->with('xyz')
+            ->andReturn(5);
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(true);
+
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Shared space deleted', [
+                'event'              => 'shared_space.deleted',
+                'shared_space_id'    => 'xyz',
+                'deleted_by_user_id' => '1',
+                'lpas_deleted'       => 5,
+            ]);
+
+        $this->logRepository->shouldReceive('addLog')
+            ->with(Mockery::on(function ($args): bool {
+                return $args['type'] === 'account-deleted'
+                    && $args['reason'] === 'User deleted their account';
+            }));
+
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenUserNotFound()
+    {
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn(null);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not found', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('User not found');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenNoMembersFound()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(0);
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: No members found in shared space', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No members found in shared space');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenUserNotDeleted()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(2);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(false);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not deleted', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('User not deleted');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenLastMemberAndUserNotDeleted()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(1);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteSharedSpace')
+            ->with('xyz');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->applicationRepository
+            ->shouldReceive('deleteAllForSharedSpace')
+            ->with('xyz')
+            ->andReturn(5);
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(false);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not deleted', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('User not deleted');
+        $this->service->deleteAccount('xyz', '1');
     }
 }
