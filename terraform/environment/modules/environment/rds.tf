@@ -18,13 +18,12 @@ data "aws_rds_cluster_parameter_group" "postgresql_aurora_params" {
 }
 
 module "api_aurora" {
-  auto_minor_version_upgrade = true
-  source                     = "./modules/aurora"
-  count                      = 1
-  aurora_serverless          = var.environment.database.aurora_serverless
-  account_id                 = data.aws_caller_identity.current.account_id
-  availability_zones         = [for az in data.aws_availability_zones.aws_zones.names : az if az != "eu-west-2d"]
-  # availability_zones              = data.aws_availability_zones.aws_zones.names
+  auto_minor_version_upgrade      = true
+  source                          = "./modules/aurora"
+  count                           = 1
+  aurora_serverless               = var.environment.database.aurora_serverless
+  account_id                      = data.aws_caller_identity.current.account_id
+  availability_zones              = [for az in data.aws_availability_zones.aws_zones.names : az if az != "eu-west-2d"]
   apply_immediately               = !var.environment.database.deletion_protection
   cluster_identifier              = var.environment.database.cluster_identifier
   db_subnet_group_name            = "data"
