@@ -37,8 +37,8 @@ resource "aws_ecs_service" "front" {
   }
 
   timeouts {
-    create = var.environment_name == "production" ? "20m" : "10m"
-    update = var.environment_name == "production" ? "20m" : "6m"
+    create = var.environment_name == "production" ? "20m" : "4m"
+    update = var.environment_name == "production" ? "20m" : "4m"
   }
 
   depends_on = [aws_lb.front]
@@ -178,13 +178,13 @@ locals {
         },
       ]
     },
-    healthCheck = {
-      command     = ["CMD-SHELL", "curl -f http://localhost/nginx-health || exit 1"],
-      startPeriod = 30,
-      interval    = 15,
-      timeout     = 10,
-      retries     = 3
-    },
+    # healthCheck = {
+    #   command     = ["CMD-SHELL", "curl -f http://localhost:8080/nginx-health || exit 1"],
+    #   startPeriod = 30,
+    #   interval    = 15,
+    #   timeout     = 10,
+    #   retries     = 3
+    # },
     logConfiguration = {
       logDriver = "awslogs",
       options = {
