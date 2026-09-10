@@ -84,7 +84,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@5cb16fa3c687e0de7c8df9c083269b80d898ecbe # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@f482e38f9b97f74bb6082ab10ad8d1b13deabe2c # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
@@ -98,7 +98,7 @@ jobs:
       build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
       build_options: ${{ matrix.build_options }}
       cli_commands: ${{ matrix.cli_commands || '' }}
-      image_display_name: ${{ matrix.scan_id }}
+      image_display_name: ${{ matrix.image_name }}
       build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
@@ -171,7 +171,7 @@ jobs:
 
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan:
-    name: "Build, scan and cache ${{ matrix.image_name }}"
+    name: "Docker build and scan ${{ matrix.image_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
