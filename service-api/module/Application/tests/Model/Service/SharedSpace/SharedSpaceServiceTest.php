@@ -140,6 +140,17 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->assertEquals('a name', $result);
     }
 
+    public function testCountMembers()
+    {
+        $this->sharedSpaceRepository->shouldReceive('countMembers')
+            ->with('my-space')
+            ->once()
+            ->andReturn(3);
+
+        $result = $this->service->countMembers('my-space');
+        $this->assertSame(3, $result);
+    }
+
     public function testGetMembers()
     {
         $sharedSpaceId = 'my-space';

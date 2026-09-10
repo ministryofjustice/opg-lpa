@@ -232,3 +232,15 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     And I see "View Shared Space" in the page text
     And I cannot see any links to manage members
+
+  Scenario: Deleting the last member of a shared space deletes the shared space
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    When I click link "Your details"
+    Then I should be on "/user/about-you"
+    When I click link "Delete Account"
+    Then I should be on "/user/delete"
+    And I see "You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space." in the page text
+    When I click link "Yes, continue deleting my account"
+    Then I should be on "/deleted"
