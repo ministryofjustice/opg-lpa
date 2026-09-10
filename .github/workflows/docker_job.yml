@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      build_cache_tag:
+        description: "Tag used to scope the docker build cache to a specific environment"
+        required: false
+        type: string
+        default: ""
     secrets:
       SLACK_BOT_TOKEN:
         required: true
@@ -41,7 +46,7 @@ permissions:
 
 jobs:
   otel_image_snyk_scan:
-    name: "OTEL_Image_Snyk_Scan"
+    name: "OTEL_image_SNYK_scan"
     runs-on: ubuntu-latest
     env:
       otel_image_version: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0
@@ -77,7 +82,7 @@ jobs:
           snyk_test_args: --severity-threshold=high
 
   docker_build_scan_push:
-    name: "Build and scan ${{ matrix.image_name }}"
+    name: "Docker build, scan and push ${{ matrix.image_name }}"
     uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@b39bf86f52a5c78dab8e635048e0016d6869a157 # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
@@ -93,6 +98,7 @@ jobs:
       build_options: ${{ matrix.build_options }}
       cli_commands: ${{ matrix.cli_commands || '' }}
       image_display_name: ${{ matrix.image_name }}
+      build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
       oidc_role_to_assume_push: ${{ inputs.oidc_docker_role }}
@@ -163,8 +169,8 @@ jobs:
             scan_id: aurora_scheduler
 
 # separate job for building and scanning test images - saving cache but not pushing images
-  docker_build_scan_and_build_test_images:
-    name: "Build and scan test images ${{ matrix.image_name }}"
+  docker_build_scan_and_cache_test_images:
+    name: "Build, scan and cache ${{ matrix.image_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -260,7 +266,7 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      - name: Scan image with Snyk
+      - name: Scan test image with Snyk
         id: snyk_scan
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
@@ -271,6 +277,7 @@ jobs:
           snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
           snyk_test_args: --severity-threshold=high
 
+# count runs - if it exceed 20 it will split the upload results to comply with github restrictions on run limit
       - name: Count Snyk SARIF runs
         id: sarif_check
         if: steps.snyk_scan.outcome == 'success' && hashFiles(format('./test-results/{0}_snyk.sarif', matrix.scan_id)) != ''
