@@ -33,6 +33,7 @@ class HomeHandler implements RequestHandlerInterface
                 'dockerTag' => $dockerTag,
                 'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
                 'showOldHomePage' => $showOldHomePage,
+                'pageTitle' => 'Make a lasting power of attorney',
             ]
         );
 

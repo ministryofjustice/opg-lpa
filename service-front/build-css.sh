@@ -11,6 +11,7 @@ echo "======================================"
 echo "→ Compiling Sass files..."
 npx sass \
   --no-source-map \
+  --load-path=. \
   assets/sass/application.scss:public/assets/v2/css/application.css \
   assets/sass/download-message.scss:public/assets/v2/css/download-message.css \
   assets/sass/print.scss:public/assets/v2/css/print.css
@@ -19,14 +20,10 @@ echo "→ Compiling minified Sass files..."
 npx sass \
   --no-source-map \
   --style=compressed \
+  --load-path=. \
   assets/sass/application.scss:public/assets/v2/css/application.min.css \
   assets/sass/download-message.scss:public/assets/v2/css/download-message.min.css \
   assets/sass/print.scss:public/assets/v2/css/print.min.css
-
-echo "Copying vendor CSS files..."
-
-# Copy govuk template CSS
-cp node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.css public/assets/v2/css/
 
 echo "Patching colours in CSS files..."
 
