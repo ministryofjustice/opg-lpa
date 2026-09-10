@@ -22,7 +22,7 @@ Feature: Homepage
     And I should not find links in the page which open in new tabs without notifying me
 
   Scenario: Navigate details elements on home page using keyboard (LPAL-253)
-    Given I visit "/home?show-old-homepage"
+    Given I visit "/home"
     Then I can navigate through "details" elements using the tab key
 
   Scenario: Use skip link on home page

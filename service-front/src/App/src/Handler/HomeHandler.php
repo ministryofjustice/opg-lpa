@@ -24,7 +24,7 @@ class HomeHandler implements RequestHandlerInterface
     {
         $dockerTag = $this->config['version']['tag'] ?? '';
         // TODO remove when GOL is live
-        $showOldHomePage = isset($request->getQueryParams()['show-old-homepage']) && getenv('OPG_LPA_STACK_NAME') !== 'production';
+        $showNewHomePage = isset($request->getQueryParams()['show-new-homepage']) && Feature::OneLogin->isEnabled();
 
         $html = $this->renderer->render(
             'application/general/home/index.twig',
@@ -32,7 +32,8 @@ class HomeHandler implements RequestHandlerInterface
                 'lpaFee' => Calculator::getFullFee(),
                 'dockerTag' => $dockerTag,
                 'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
-                'showOldHomePage' => $showOldHomePage,
+                'showNewHomePage' => $showNewHomePage,
+                'pageTitle' => 'Make a lasting power of attorney',
             ]
         );
 

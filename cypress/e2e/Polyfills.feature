@@ -9,6 +9,6 @@ Feature: Polyfills
 
   @focus
   Scenario: Navigate polyfilled details elements on home page using keyboard (LPAL-253)
-    Given I visit "/home?show-old-homepage"
+    Given I visit "/home"
     When my browser doesn't support details elements
     Then I can navigate through "polyfilleddetails" elements using the tab key
