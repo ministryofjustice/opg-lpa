@@ -7,6 +7,7 @@ RUN apk del freetype nginx-module-image-filter
 RUN apk upgrade --no-cache
 
 RUN chown -R nginx:nginx /etc/nginx/conf.d
+RUN exec 3<>/dev/tcp/localhost/8080/nginx-health
 
 USER nginx
 COPY --chown=nginx:nginx service-api/docker/web/etc /etc
