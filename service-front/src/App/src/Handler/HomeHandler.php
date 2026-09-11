@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Feature;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Mezzio\Template\TemplateRendererInterface;
@@ -22,12 +23,17 @@ class HomeHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $dockerTag = $this->config['version']['tag'] ?? '';
+        // TODO remove when GOL is live
+        $showOldHomePage = isset($request->getQueryParams()['show-old-homepage']) && getenv('OPG_LPA_STACK_NAME') !== 'production';
 
         $html = $this->renderer->render(
             'application/general/home/index.twig',
             [
                 'lpaFee' => Calculator::getFullFee(),
                 'dockerTag' => $dockerTag,
+                'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
+                'showOldHomePage' => $showOldHomePage,
+                'pageTitle' => 'Make a lasting power of attorney',
             ]
         );
 

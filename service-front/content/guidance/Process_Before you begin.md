@@ -11,7 +11,9 @@ The donor should decide:
 * who will be their [certificate provider](/help/#topic-certificate-providers)
 * whether anyone should be [notified about the LPA](/help/#topic-people-to-notify)
 
-Remember that you will need to print the LPA and that everyone named in the LPA, apart from the people to notify, will need to [sign the LPA in the right order](/help/#topic-signing-the-lpa).
+For an LPA to be valid, you’ll need to print the LPA and get everyone named on it — apart from people to notify — to [sign the LPA in the right order](/help/#topic-signing-the-lpa). You’ll then need to send the LPA to us for registration.
+
+It’s free to complete your LPA online, however your LPA cannot be used until it’s registered. Registering an LPA costs £92 unless you get a [reduction or exemption](/help/#topic-fees-reductions-and-exemptions).
 
 ### Information you’ll need to make an LPA
 
@@ -21,11 +23,11 @@ You may find it useful to gather some information before you start.
 
 You’ll need the names, addresses and dates of birth of:
 
-* the donor 
-* all attorneys
+* the donor
+* all attorneys
 * the replacement attorneys, if the donor decides to have any
 
 You’ll also need the names and addresses of:
 
-* the certificate provider
-* the people to notify, if the donor decides to have any
+* the certificate provider
+* the people to notify, if the donor decides to have any
