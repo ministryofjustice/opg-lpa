@@ -84,6 +84,19 @@ class CheckMemberStatusMiddlewareTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $result);
     }
 
+    public function testProcessWhenNoRoute(): void
+    {
+        $identity = new User('1', '', 1, new DateTime(), sharedSpaceId: "1");
+        $routeResult = RouteResult::fromRouteFailure([]);
+
+        $request = new ServerRequest()
+            ->withAttribute(User::class, $identity)
+            ->withAttribute(RouteResult::class, $routeResult);
+
+        $result = $this->middleware->process($request, $this->handler());
+        $this->assertSame($this->emptyResponse, $result);
+    }
+
     #[DataProvider('nonSharedSpaceRouteProvider')]
     public function testProcessWhenNonMatchingRoute(string $routeName): void
     {
