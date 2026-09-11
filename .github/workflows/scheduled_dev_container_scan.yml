@@ -126,9 +126,31 @@ jobs:
 
       - name: Scan ${{ matrix.image_name }}:latest image with SNYK
         id: otel_snyk_scan
-        continue-on-error: false
+        continue-on-error: true
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
           snyk_test_args: --severity-threshold=high
+
+  slack_msg_vulns_found:
+    name: Post-Deployment Slack message
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - public_development_container_pull_and_scan
+    steps:
+      - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
+        if: needs.public_development_container_pull_and_scan.result != 'passed'
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
+          payload: |
+            channel: "C09L117EZ27"
+            icon_emoji: ":satellite-antenna:"
+            text: "Make - Local Development Images - Snyk Findings"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":cross-red: *Test* This is a test job <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
