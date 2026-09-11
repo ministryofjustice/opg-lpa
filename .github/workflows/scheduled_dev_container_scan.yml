@@ -77,18 +77,25 @@ jobs:
         include:
           - image_name: lpa-mock-pay
             dockerfile: mock-pay/docker/Dockerfile
+            context: ./
           - image_name: local-ssl
             dockerfile: local-ssl/docker/Dockerfile
+            context: ./
           - image_name: mock-cognito
-            dockerfile: mock-cognito/docker/Dockerfile
+            dockerfile: docker/Dockerfile
+            context: ./mock-cognito/
           - image_name: service-seeding
             dockerfile: service-seeding/docker/app/Dockerfile
+            context: ./
           - image_name: phpcs
             dockerfile: phpcs/docker/Dockerfile
+            context: ./
           - image_name: shared
             dockerfile: shared/docker/test-runner/Dockerfile
+            context: ./
           - image_name: cypress
             dockerfile: cypress/Dockerfile
+            context: ./
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -113,6 +120,7 @@ jobs:
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
       - name: Pull ${{ matrix.image_name }} image for scanning
+        working-directory: ${{ matrix.context}}
         run: |
           docker buildx build . -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest --load
 
