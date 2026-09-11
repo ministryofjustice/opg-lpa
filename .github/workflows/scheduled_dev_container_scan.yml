@@ -96,9 +96,13 @@ jobs:
         with:
           registries: 311462405659
 
+      - name: Setup Docker Buildx
+        id: docker_buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
       - name: Pull ${{ matrix.image_name }} image for scanning
         run: |
-          docker build -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest
+          docker buildx build . -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest
 
       - name: Scan ${{ matrix.image_name }}:latest image with SNYK
         id: otel_snyk_scan
