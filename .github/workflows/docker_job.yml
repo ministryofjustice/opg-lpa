@@ -69,7 +69,7 @@ jobs:
 
       - name: Pull ${{ matrix.image_name }} image into ECR cache
         run: |
-          docker pull $${{ matrix.image_address }}
+          docker pull ${{ matrix.image_address }}
 
       - name: Scan ${{ matrix.image_name }} image with SNYK
         id: shared_image_snyk_scan
