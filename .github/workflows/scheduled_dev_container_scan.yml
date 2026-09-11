@@ -77,6 +77,18 @@ jobs:
         include:
           - image_name: lpa-mock-pay
             dockerfile: mock-pay/docker/Dockerfile
+          - image_name: local-ssl
+            dockerfile: local-ssl/docker/Dockerfile
+          - image_name: mock-cognito
+            dockerfile: mock-cognito/docker/Dockerfile
+          - image_name: service-seeding
+            dockerfile: service-seeding/docker/app/Dockerfile
+          - image_name: phpcs
+            dockerfile: phpcs/docker/Dockerfile
+          - image_name: shared
+            dockerfile: shared/docker/test-runner/Dockerfile
+          - image_name: cypress
+            dockerfile: cypress/Dockerfile
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
