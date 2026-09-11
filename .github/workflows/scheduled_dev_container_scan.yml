@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   public_development_container_pull_and_scan:
-    name: "Development container scan"
+    name: "Public development container scan"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
