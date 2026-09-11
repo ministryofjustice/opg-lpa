@@ -78,24 +78,27 @@ jobs:
           - image_name: lpa-mock-pay
             dockerfile: mock-pay/docker/Dockerfile
             context: ./
+            snyk_policy_path: mock-pay/docker/.snyk
           - image_name: local-ssl
             dockerfile: local-ssl/docker/Dockerfile
             context: ./
+            snyk_policy_path: local-ssl/docker/.snyk
           - image_name: mock-cognito
             dockerfile: docker/Dockerfile
             context: ./mock-cognito/
-          - image_name: service-seeding
-            dockerfile: service-seeding/docker/app/Dockerfile
-            context: ./
+            snyk_policy_path: mock-cognito/docker/.snyk
           - image_name: phpcs
             dockerfile: phpcs/docker/Dockerfile
             context: ./
+            snyk_policy_path: phpcs/docker/.snyk
           - image_name: shared
             dockerfile: shared/docker/test-runner/Dockerfile
             context: ./
+            snyk_policy_path: shared/docker/test-runner/.snyk
           - image_name: cypress
             dockerfile: cypress/Dockerfile
             context: ./
+            snyk_policy_path: cypress/.snyk
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -131,6 +134,7 @@ jobs:
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
           snyk_test_args: --severity-threshold=high
 
   slack_msg_vulns_found:
@@ -153,7 +157,7 @@ jobs:
               - type: "section"
                 text:
                   type: "mrkdwn"
-                  text: ":cross-red: *SNYK* A weekly Snyk scan of local development containers was completed. It found 1 or more unmanaged findings /nSee <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details. <!here>"
+                  text: ":cross-red: *SNYK* A weekly Snyk scan of local development containers was completed. It found 1 or more unmanaged findings /nSee <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details."
 
       - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
         if: needs.public_development_container_pull_and_scan.result == 'success' # Possible values are success, failure, cancelled, or skipped.
