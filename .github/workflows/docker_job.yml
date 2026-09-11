@@ -11,7 +11,11 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
-      oidc_docker_role:
+      oidc_docker_push_role:
+        description: "OIDC role to assume for ecr permissions"
+        required: true
+        type: string
+      oidc_docker_pull_role:
         description: "OIDC role to assume for ecr permissions"
         required: true
         type: string
@@ -40,11 +44,17 @@ permissions:
   statuses: none
 
 jobs:
-  otel_image_pull_and_scan:
-    name: "OTEL_Image_Pull_and_Scan"
+  shared_image_pull_and_scan:
+    name: "shared_image_pull_scan"
     runs-on: ubuntu-latest
-    env:
-      otel_image_version: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: aws-otel-collector
+            image_address: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0
+          - image_name: mock-onelogin
+            image_address: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/mock-onelogin:latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -53,7 +63,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-to-assume: ${{ inputs.oidc_docker_pull_role }}
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
@@ -63,19 +73,19 @@ jobs:
         with:
           registries: 311462405659
 
-      - name: Pull OTEL image into ECR cache
+      - name: Pull ${{ matrix.image_name }} image into ECR cache
         run: |
-          docker pull $otel_image_version
+          docker pull ${{ matrix.image_address }}
 
-      - name: Scan OTEL image with SNYK
-        id: otel_snyk_scan
+      - name: Scan ${{ matrix.image_name }} image with SNYK
+        id: shared_image_snyk_scan
         continue-on-error: ${{ !inputs.otel_scan_required }}
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
-          SNYK_TEST_IMAGE: ${{ env.otel_image_version }}
+          SNYK_TEST_IMAGE: ${{ matrix.image_address }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
           sarif_filepath: ./test-results
-          sarif_filename: otel_snyk.sarif
+          sarif_filename: ${{ matrix.image_name }}_snyk.sarif
           snyk_test_args: --severity-threshold=high
 
   docker_build_scan_push:
@@ -180,7 +190,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-to-assume: ${{ inputs.oidc_docker_push_role }}
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 

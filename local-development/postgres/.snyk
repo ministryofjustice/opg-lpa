@@ -1,0 +1,125 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-DEBIAN13-ZLIB-19520500:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:11.894Z
+        created: 2026-09-11T16:19:11.901Z
+  SNYK-DEBIAN13-POSTGRESQL17-16748490:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:14.038Z
+        created: 2026-09-11T16:19:14.043Z
+  SNYK-DEBIAN13-OPENSSL-15123186:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:16.525Z
+        created: 2026-09-11T16:19:16.528Z
+  SNYK-DEBIAN13-OPENSSL-15969306:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:18.697Z
+        created: 2026-09-11T16:19:18.710Z
+  SNYK-DEBIAN13-OPENSSL-15969307:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:21.092Z
+        created: 2026-09-11T16:19:21.100Z
+  SNYK-DEBIAN13-OPENSSL-15969309:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:23.317Z
+        created: 2026-09-11T16:19:23.322Z
+  SNYK-DEBIAN13-OPENSSL-15969320:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:25.443Z
+        created: 2026-09-11T16:19:25.448Z
+  SNYK-DEBIAN13-LIBXSLT-10691000:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:27.653Z
+        created: 2026-09-11T16:19:27.657Z
+  SNYK-DEBIAN13-LIBXML2-19669394:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:30.208Z
+        created: 2026-09-11T16:19:30.211Z
+  SNYK-DEBIAN13-LIBCAP2-15960217:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:32.234Z
+        created: 2026-09-11T16:19:32.241Z
+  SNYK-DEBIAN13-GNUTLS28-16344298:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:34.261Z
+        created: 2026-09-11T16:19:34.269Z
+  SNYK-DEBIAN13-GNUTLS28-16344302:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:36.255Z
+        created: 2026-09-11T16:19:36.262Z
+  SNYK-DEBIAN13-GNUTLS28-16344305:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:38.537Z
+        created: 2026-09-11T16:19:38.544Z
+  SNYK-DEBIAN13-GNUTLS28-16344307:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:40.688Z
+        created: 2026-09-11T16:19:40.695Z
+  SNYK-DEBIAN13-GNUTLS28-16344321:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:43.130Z
+        created: 2026-09-11T16:19:43.137Z
+  SNYK-DEBIAN13-GNUTLS28-16344330:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:45.130Z
+        created: 2026-09-11T16:19:45.137Z
+  SNYK-DEBIAN13-GNUTLS28-16344352:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:47.411Z
+        created: 2026-09-11T16:19:47.419Z
+  SNYK-DEBIAN13-GNUPG2-14723299:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:49.727Z
+        created: 2026-09-11T16:19:49.738Z
+  SNYK-DEBIAN13-ATTR-17678182:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:52.280Z
+        created: 2026-09-11T16:19:52.285Z
+  SNYK-DEBIAN13-ACL-17677866:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:54.708Z
+        created: 2026-09-11T16:19:54.713Z
+  SNYK-DEBIAN13-PCRE2-12206155:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:19:58.004Z
+        created: 2026-09-11T16:19:58.009Z
+  SNYK-DEBIAN13-OPENSSL-15969301:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:20:00.134Z
+        created: 2026-09-11T16:20:00.141Z
+  SNYK-DEBIAN13-GNUTLS28-16344314:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:20:02.001Z
+        created: 2026-09-11T16:20:02.008Z
+  SNYK-DEBIAN13-GNUTLS28-16344357:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:20:03.883Z
+        created: 2026-09-11T16:20:03.892Z
+patch: {}
