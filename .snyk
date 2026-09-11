@@ -642,4 +642,54 @@ ignore:
         reason: None Given
         expires: 2026-10-11T15:45:23.919Z
         created: 2026-09-11T15:45:23.940Z
+  SNYK-JS-BRACEEXPANSION-15789759:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:16.752Z
+        created: 2026-09-11T15:48:16.762Z
+  SNYK-JS-BRACEEXPANSION-16755174:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:18.673Z
+        created: 2026-09-11T15:48:18.691Z
+  SNYK-JS-MINIMATCH-15353387:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:20.773Z
+        created: 2026-09-11T15:48:20.781Z
+  SNYK-JS-MINIMATCH-15353389:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:23.234Z
+        created: 2026-09-11T15:48:23.241Z
+  SNYK-JS-PICOMATCH-15765511:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:25.463Z
+        created: 2026-09-11T15:48:25.471Z
+  SNYK-JS-SIGSTORE-17817054:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:27.938Z
+        created: 2026-09-11T15:48:27.951Z
+  SNYK-JS-SIGSTOREVERIFY-17817052:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:30.206Z
+        created: 2026-09-11T15:48:30.219Z
+  SNYK-JS-SIGSTOREVERIFY-17817056:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:32.476Z
+        created: 2026-09-11T15:48:32.485Z
+  SNYK-JS-TAR-15416075:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:34.532Z
+        created: 2026-09-11T15:48:34.542Z
+  SNYK-JS-TAR-15456201:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:48:37.507Z
+        created: 2026-09-11T15:48:37.518Z
 patch: {}
