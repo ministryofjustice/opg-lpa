@@ -41,7 +41,23 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_DOCKER_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGMakeaLPAECRGithubAction
 
+      - name: ECR Login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        with:
+          registries: 311462405659
+
+      - name: Pull OTEL image into ECR cache
+        run: |
+          docker pull $otel_image_version
       - name: Pull ${{ matrix.image_name }} image for scanning
         run: |
           docker pull ${{ matrix.image_name }}
