@@ -26,8 +26,8 @@ permissions:
   statuses: none
 
 jobs:
-  otel_image_pull_and_scan:
-    name: "OTEL_Image_Pull_and_Scan"
+  development_container_pull_and_scan:
+    name: "Development container scan"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
