@@ -7,9 +7,9 @@ namespace App\Handler\Lpa\PeopleToNotify;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PeopleToNotifyHandlerTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
@@ -21,6 +21,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -139,32 +140,37 @@ class PeopleToNotifyAddHandler implements RequestHandlerInterface
                 $form->setData($postData);
 
                 if ($form->isValid()) {
-                    $np = new NotifiedPerson($form->getModelDataFromValidatedForm());
+                    $ifMatchVersion = (int)$postData['version'];
+                    try {
+                        $np = new NotifiedPerson($form->getModelDataFromValidatedForm());
 
-                    if (!$this->lpaApplicationService->addNotifiedPerson($lpa, $np)) {
-                        throw new RuntimeException(
-                            'API client failed to add a notified person for id: ' . $lpa->id
+                        if (!$this->lpaApplicationService->addNotifiedPerson($lpa, $np, $ifMatchVersion)) {
+                            throw new RuntimeException(
+                                'API client failed to add a notified person for id: ' . $lpa->id
+                            );
+                        }
+
+                        // Set people to notify confirmed metadata if not already set
+                        if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
+                            $this->metadata->setPeopleToNotifyConfirmed($lpa, $ifMatchVersion + 1);
+                        }
+
+                        if ($isPopup) {
+                            return new JsonResponse(['success' => true]);
+                        }
+
+                        $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                        return new RedirectResponse(
+                            $this->urlHelper->generate(
+                                $nextRoute,
+                                ['lpa-id' => $lpa->id],
+                                $flowChecker->getRouteOptions($nextRoute)
+                            )
                         );
+                    } catch (ConflictException $e) {
+                        $templateParams['conflictError'] = $e;
                     }
-
-                    // Set people to notify confirmed metadata if not already set
-                    if (!array_key_exists(Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, $lpa->metadata)) {
-                        $this->metadata->setPeopleToNotifyConfirmed($lpa);
-                    }
-
-                    if ($isPopup) {
-                        return new JsonResponse(['success' => true]);
-                    }
-
-                    $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                    return new RedirectResponse(
-                        $this->urlHelper->generate(
-                            $nextRoute,
-                            ['lpa-id' => $lpa->id],
-                            $flowChecker->getRouteOptions($nextRoute)
-                        )
-                    );
                 }
             }
         }

@@ -42,6 +42,7 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->primaryAttorneys = [];
         $lpa->document->replacementAttorneys = [];

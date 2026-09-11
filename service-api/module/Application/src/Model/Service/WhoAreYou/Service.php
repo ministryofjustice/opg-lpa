@@ -21,9 +21,11 @@ class Service extends AbstractService
      * @param $data
      * @return ApiProblem|ValidationApiProblem|Entity
      */
-    public function update(string $lpaId, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         if ($lpa->whoAreYouAnswered === true) {
             return new ApiProblem(403, 'Question already answered');

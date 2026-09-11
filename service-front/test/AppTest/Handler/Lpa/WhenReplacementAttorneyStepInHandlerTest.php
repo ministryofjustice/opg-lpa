@@ -25,6 +25,8 @@ use RuntimeException;
 
 class WhenReplacementAttorneyStepInHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -144,7 +146,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST])
+            $this->createRequest('POST', ['when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST, 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -178,6 +180,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -207,6 +210,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -241,6 +245,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -271,6 +276,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -294,6 +300,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
             ->withParsedBody([
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS,
                 'whenDetails' => 'Unit test instruction',
+                'version' => self::IF_MATCH_VALUE,
             ]);
 
         $this->form
@@ -355,6 +362,7 @@ class WhenReplacementAttorneyStepInHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => ReplacementAttorneyDecisions::LPA_DECISION_WHEN_LAST,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
     }

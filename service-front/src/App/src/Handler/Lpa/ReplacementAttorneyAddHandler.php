@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -105,6 +106,7 @@ class ReplacementAttorneyAddHandler implements RequestHandlerInterface
             $form->setData($actorDetailsToReuse);
         }
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -143,43 +145,50 @@ class ReplacementAttorneyAddHandler implements RequestHandlerInterface
 
             $form->setData($postData);
 
+            $ifMatchVersion = (int)$postData['version'];
             if ($form->isValid()) {
-                $attorney = new Human($form->getModelDataFromValidatedForm());
+                try {
+                    $attorney = new Human($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->addReplacementAttorney($lpa, $attorney)) {
-                    throw new RuntimeException(
-                        'API client failed to add a replacement attorney for id: ' . $lpa->id
+                    if (!$this->lpaApplicationService->addReplacementAttorney($lpa, $attorney, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to add a replacement attorney for id: ' . $lpa->id
+                        );
+                    }
+                    $ifMatchVersion++;
+
+                    if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
+                        $ifMatchVersion = $this->metadata->setReplacementAttorneysConfirmed($lpa, $ifMatchVersion);
+                    }
+
+                    $ifMatchVersion = $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion);
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                if (!array_key_exists(Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, $lpa->metadata)) {
-                    $this->metadata->setReplacementAttorneysConfirmed($lpa);
-                }
-
-                $this->replacementAttorneyCleanup->cleanUp($lpa);
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         }
 
         $cancelUrl = $this->urlHelper->generate('lpa/replacement-attorney', ['lpa-id' => $lpa->id]);
 
         $templateParams = [
-            'form'                       => $form,
-            'cancelUrl'                  => $cancelUrl,
+            'form'                        => $form,
+            'cancelUrl'                   => $cancelUrl,
             'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+            'conflictError'               => $conflictError,
         ];
 
         if ($isPopup) {

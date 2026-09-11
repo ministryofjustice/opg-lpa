@@ -163,10 +163,10 @@ class LegacyCompatExtension extends AbstractExtension
     // Functions
     // -------------------------------------------------------------------------
 
-    public function url(string $routeName, array $params = []): string
+    public function url(string $routeName, array $routeParams = [], array $queryParams = []): string
     {
         try {
-            return $this->urlHelper->generate($routeName, $params);
+            return $this->urlHelper->generate($routeName, $routeParams, $queryParams);
         } catch (\Throwable) {
             // Route not yet registered in Mezzio — fall back to treating the
             // route name as a path so legacy templates don't break.

@@ -18,6 +18,7 @@ use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ReplacementAttorneyDeleteHandlerTest extends TestCase
@@ -45,6 +46,7 @@ class ReplacementAttorneyDeleteHandlerTest extends TestCase
             $this->lpaApplicationService,
             $this->urlHelper,
             $this->replacementAttorneyCleanup,
+            $this->createMock(LoggerInterface::class),
         );
     }
 

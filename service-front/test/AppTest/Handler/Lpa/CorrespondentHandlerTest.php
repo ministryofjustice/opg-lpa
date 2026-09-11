@@ -28,6 +28,8 @@ use RuntimeException;
 
 class CorrespondentHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -186,7 +188,7 @@ class CorrespondentHandlerTest extends TestCase
             ->method('setCorrespondent')
             ->willReturn(true);
 
-        $response = $this->handler->handle($this->createRequest('POST', ['some' => 'data']));
+        $response = $this->handler->handle($this->createRequest('POST', ['some' => 'data', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
@@ -200,7 +202,7 @@ class CorrespondentHandlerTest extends TestCase
             ->method('render')
             ->willReturn('<html></html>');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['some' => 'data']));
+        $response = $this->handler->handle($this->createRequest('POST', ['some' => 'data', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -226,7 +228,7 @@ class CorrespondentHandlerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('API client failed to set correspondent');
 
-        $this->handler->handle($this->createRequest('POST', ['some' => 'data']));
+        $this->handler->handle($this->createRequest('POST', ['some' => 'data', 'version' => self::IF_MATCH_VALUE]));
     }
 
     public function testAllowEditButtonTrueForOtherCorrespondent(): void

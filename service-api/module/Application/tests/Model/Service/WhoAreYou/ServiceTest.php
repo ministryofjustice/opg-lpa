@@ -36,7 +36,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->update(strval($lpa->getId()), null);
+        $apiProblem = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, null);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -60,7 +60,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $whoAreYou = new WhoAreYou();
-        $validationError = $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $whoAreYou->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -94,7 +94,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
+        $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $whoAreYou->toArray());
     }
 
     public function testUpdate()
@@ -112,7 +112,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $whoAreYou = new WhoAreYou();
         $whoAreYou->setWho('donor');
-        $entity = $this->service->update(strval($lpa->getId()), $whoAreYou->toArray());
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $whoAreYou->toArray());
 
         $this->assertEquals(new Entity(true), $entity);
     }

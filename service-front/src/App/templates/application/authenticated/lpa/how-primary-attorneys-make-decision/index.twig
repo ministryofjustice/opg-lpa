@@ -95,9 +95,9 @@
 	{# begin form #}
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-        <input type="hidden" name="version" value="{{ lpaVersion }}">
+        <input type="hidden" name="version" value="{{ lpa.version }}">
 
-		{{ macros.formErrorSummary(error,form) }}
+		{{ macros.formErrorSummary(error,form, conflictError) }}
 
 		<div class="govuk-form-group {{ how.getMessages|length > 0 ? 'govuk-form-group--error'}}">
 			<fieldset class="govuk-fieldset">

@@ -8,6 +8,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Metadata;
+use App\Service\ApiClient\Exception\ConflictException;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -44,6 +45,7 @@ class ReplacementAttorneyIndexHandler implements RequestHandlerInterface
         /** @var \App\Form\Lpa\BlankMainFlowForm $form */
         $form = $this->formElementManager->get('App\Form\Lpa\BlankMainFlowForm', ['lpa' => $lpa]);
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -52,18 +54,23 @@ class ReplacementAttorneyIndexHandler implements RequestHandlerInterface
 
             $form->setData($postData);
 
+            $ifMatchVersion = (int)$postData['version'];
             if ($form->isValid()) {
-                $this->metadata->setReplacementAttorneysConfirmed($lpa);
+                try {
+                    $this->metadata->setReplacementAttorneysConfirmed($lpa, $ifMatchVersion);
 
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
 
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
+                }
             }
         }
 
@@ -97,13 +104,14 @@ class ReplacementAttorneyIndexHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'addRoute'  => $this->urlHelper->generate(
+                    'addRoute'      => $this->urlHelper->generate(
                         'lpa/replacement-attorney/add',
                         ['lpa-id' => $lpa->id]
                     ),
-                    'lpaId'     => $lpa->id,
-                    'attorneys' => $attorneysParams,
-                    'form'      => $form,
+                    'lpaId'         => $lpa->id,
+                    'attorneys'     => $attorneysParams,
+                    'form'          => $form,
+                    'conflictError' => $conflictError,
                 ]
             )
         );
