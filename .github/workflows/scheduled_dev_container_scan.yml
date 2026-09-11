@@ -102,7 +102,7 @@ jobs:
 
       - name: Pull ${{ matrix.image_name }} image for scanning
         run: |
-          docker buildx build . -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest
+          docker buildx build . -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest --load
 
       - name: Scan ${{ matrix.image_name }}:latest image with SNYK
         id: otel_snyk_scan
