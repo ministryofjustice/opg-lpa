@@ -11,7 +11,11 @@ on:
         description: "Tag for docker image"
         required: true
         type: string
-      oidc_docker_role:
+      oidc_docker_push_role:
+        description: "OIDC role to assume for ecr permissions"
+        required: true
+        type: string
+      oidc_docker_pull_role:
         description: "OIDC role to assume for ecr permissions"
         required: true
         type: string
@@ -59,7 +63,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-to-assume: ${{ inputs.oidc_docker_pull_role }}
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
