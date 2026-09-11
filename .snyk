@@ -527,4 +527,119 @@ ignore:
         reason: None Given
         expires: 2026-10-11T15:39:42.995Z
         created: 2026-09-11T15:39:43.001Z
+  SNYK-GOLANG-GOLANGORGXNETHTTP2-16535157:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:43:19.712Z
+        created: 2026-09-11T15:43:19.718Z
+  SNYK-GOLANG-GITHUBCOMGOCHICHIV5MIDDLEWARE-17660786:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:43:21.696Z
+        created: 2026-09-11T15:43:21.702Z
+  SNYK-GOLANG-GITHUBCOMGOCHICHIV5MIDDLEWARE-17660791:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:43:23.624Z
+        created: 2026-09-11T15:43:23.630Z
+  SNYK-GOLANG-GOLANGORGXNETIDNA-17116876:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:43:25.462Z
+        created: 2026-09-11T15:43:25.468Z
+  SNYK-JAVA-IONETTY-18230935:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:40.640Z
+        created: 2026-09-11T15:44:40.649Z
+  SNYK-JAVA-IONETTY-18170211:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:42.761Z
+        created: 2026-09-11T15:44:42.772Z
+  SNYK-JAVA-IONETTY-18956131:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:44.785Z
+        created: 2026-09-11T15:44:44.796Z
+  SNYK-JAVA-IONETTY-18170202:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:47.136Z
+        created: 2026-09-11T15:44:47.146Z
+  SNYK-JAVA-IONETTY-18170213:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:49.343Z
+        created: 2026-09-11T15:44:49.353Z
+  SNYK-JAVA-IONETTY-18233079:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:51.365Z
+        created: 2026-09-11T15:44:51.375Z
+  SNYK-JAVA-IONETTY-18170204:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:54.861Z
+        created: 2026-09-11T15:44:54.868Z
+  SNYK-JAVA-IONETTY-17972461:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:44:59.524Z
+        created: 2026-09-11T15:44:59.532Z
+  SNYK-JAVA-IONETTY-18233126:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:01.693Z
+        created: 2026-09-11T15:45:01.703Z
+  SNYK-JAVA-IONETTY-18170203:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:03.787Z
+        created: 2026-09-11T15:45:03.799Z
+  SNYK-JAVA-IONETTY-18313176:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:05.568Z
+        created: 2026-09-11T15:45:05.578Z
+  SNYK-JAVA-IONETTY-18854608:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:07.611Z
+        created: 2026-09-11T15:45:07.619Z
+  SNYK-JAVA-IONETTY-19233599:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:09.570Z
+        created: 2026-09-11T15:45:09.612Z
+  SNYK-JAVA-IONETTY-19005879:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:11.550Z
+        created: 2026-09-11T15:45:11.561Z
+  SNYK-JAVA-IONETTY-18230931:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:13.835Z
+        created: 2026-09-11T15:45:13.844Z
+  SNYK-JAVA-IONETTY-18233127:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:17.052Z
+        created: 2026-09-11T15:45:17.063Z
+  SNYK-JAVA-IONETTY-18233130:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:19.390Z
+        created: 2026-09-11T15:45:19.402Z
+  SNYK-JAVA-IONETTY-18956130:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:21.740Z
+        created: 2026-09-11T15:45:21.751Z
+  SNYK-JAVA-ORGECLIPSEJETTY-19644207:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:45:23.919Z
+        created: 2026-09-11T15:45:23.940Z
 patch: {}
