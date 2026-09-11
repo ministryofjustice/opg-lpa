@@ -1,4 +1,5 @@
-name: "[Docker] Build and Push Images"
+# Uses the shared github workflow for building, scanning, and pushing single and multi-arch docker images
+name: "[Docker] Build, Scan and Push Images"
 
 defaults:
   run:
@@ -8,11 +9,11 @@ on:
   workflow_call:
     inputs:
       tag:
-        description: "Tag for docker image"
+        description: "Tag for docker images"
         required: true
         type: string
       oidc_docker_role:
-        description: "OIDC role to assume for ecr permissions"
+        description: "OIDC role to assume for ECR permissions"
         required: true
         type: string
       otel_scan_required:
@@ -20,6 +21,11 @@ on:
         required: false
         type: boolean
         default: false
+      build_cache_tag:
+        description: "Tag used to scope the docker build cache to a specific environment"
+        required: false
+        type: string
+        default: ""
     secrets:
       SLACK_BOT_TOKEN:
         required: true
@@ -40,8 +46,8 @@ permissions:
   statuses: none
 
 jobs:
-  otel_image_pull_and_scan:
-    name: "OTEL_Image_Pull_and_Scan"
+  otel_image_snyk_scan:
+    name: "OTEL_image_SNYK_scan"
     runs-on: ubuntu-latest
     env:
       otel_image_version: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0
@@ -49,6 +55,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
@@ -58,17 +65,14 @@ jobs:
           role-session-name: OPGMakeaLPAECRGithubAction
 
       - name: ECR Login
-        id: login_ecr
         uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
         with:
           registries: 311462405659
 
       - name: Pull OTEL image into ECR cache
-        run: |
-          docker pull $otel_image_version
+        run: docker pull "$otel_image_version"
 
-      - name: Scan OTEL image with SNYK
-        id: otel_snyk_scan
+      - name: Scan OTEL image with Snyk
         continue-on-error: ${{ !inputs.otel_scan_required }}
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
@@ -79,97 +83,139 @@ jobs:
           snyk_test_args: --severity-threshold=high
 
   docker_build_scan_push:
-    name: "docker build"
+    name: "Docker build, scan and push ${{ matrix.image_name }}"
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@7119f3962a138f124687a5f4419c0b1e9dcd5c6b # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
+    with:
+      image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
+      image_tag: ${{ matrix.image_tag || inputs.tag }}
+      enable_snyk_scanning: true
+      snyk_policy_path: ${{ matrix.snyk_policy_path }}
+      snyk_container_options: --severity-threshold=high
+      snyk_ecr_registry_id: "311462405659"
+      snyk_image: "shared/snyk:main-cli-1.1303.2-v0.3.0"
+      artifact_name: ${{ matrix.artifact_name || '' }}
+      build_target: ${{ matrix.build_target || '' }}
+      build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
+      build_options: ${{ matrix.build_options }}
+      cli_commands: ${{ matrix.cli_commands || '' }}
+      image_display_name: ${{ matrix.image_name }}
+      build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
+      aws_region: eu-west-1
+      oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
+      oidc_role_to_assume_push: ${{ inputs.oidc_docker_role }}
+      push_images: ${{ !contains(matrix.image_name, '-test') }}
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+    strategy:
+      fail-fast: false
+
+      matrix:
+        include:
+          - image_name: online-lpa/front_app
+            snyk_policy_path: service-front/docker/app/.snyk
+            build_options: "--file ./service-front/docker/app/Dockerfile"
+            dockerfile_path: ./service-front/docker/app/Dockerfile
+            scan_id: front_app
+            build_targets: >-
+              [{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"},{"actions_runner":"ubuntu-24.04-arm","platform":"linux/arm64","tag":"ARM64"}]
+
+          - image_name: online-lpa/front_web
+            snyk_policy_path: service-front/docker/web/.snyk
+            build_options: "--file ./service-front/docker/web/Dockerfile"
+            dockerfile_path: ./service-front/docker/web/Dockerfile
+            cli_commands: "docker compose run --rm npm-front ci --ignore-scripts && docker compose run --rm npm-front run build"
+            scan_id: front_web
+
+          - image_name: online-lpa/api_app
+            snyk_policy_path: service-api/docker/app/.snyk
+            build_options: "--file ./service-api/docker/app/Dockerfile"
+            dockerfile_path: ./service-api/docker/app/Dockerfile
+            scan_id: api_app
+
+          - image_name: online-lpa/api_web
+            snyk_policy_path: service-api/docker/web/.snyk
+            build_options: "--file ./service-api/docker/web/Dockerfile"
+            dockerfile_path: ./service-api/docker/web/Dockerfile
+            scan_id: api_web
+
+          - image_name: online-lpa/admin_app
+            snyk_policy_path: service-admin/docker/app/.snyk
+            build_options: "--file ./service-admin/docker/app/Dockerfile"
+            dockerfile_path: ./service-admin/docker/app/Dockerfile
+            scan_id: admin_app
+
+          - image_name: online-lpa/admin_web
+            snyk_policy_path: service-admin/docker/web/.snyk
+            build_options: "--file ./service-admin/docker/web/Dockerfile"
+            dockerfile_path: ./service-admin/docker/web/Dockerfile
+            scan_id: admin_web
+
+          - image_name: online-lpa/pdf_app
+            snyk_policy_path: service-pdf/docker/app/.snyk
+            build_options: "--file ./service-pdf/docker/app/Dockerfile"
+            dockerfile_path: ./service-pdf/docker/app/Dockerfile
+            scan_id: pdf_app
+
+          - image_name: online-lpa/seeding_app
+            snyk_policy_path: service-seeding/docker/app/.snyk
+            build_options: "--file ./service-seeding/docker/app/Dockerfile"
+            dockerfile_path: ./service-seeding/docker/app/Dockerfile
+            scan_id: seeding_app
+
+          - image_name: lambda-aurora_scheduler
+            snyk_policy_path: aurora-scheduler/docker/.snyk
+            build_options: "--file ./aurora-scheduler/docker/Dockerfile"
+            dockerfile_path: ./aurora-scheduler/docker/Dockerfile
+            image_tag: latest
+            scan_id: aurora_scheduler
+
+# separate job for building and scanning test images - saving cache but not pushing images
+  docker_build_and_scan:
+    name: "Docker build and scan ${{ matrix.image_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - image_name: online-lpa/front_app
-            dockerfile_path: ./service-front/docker/app
-            snyk_policy_path: service-front/docker/app/.snyk
-            scan_id: front_app
-
-          - image_name: online-lpa/front_web
-            dockerfile_path: ./service-front/docker/web
-            snyk_policy_path: service-front/docker/web/.snyk
-            scan_id: front_web
-
-          - image_name: online-lpa/api_app
-            dockerfile_path: ./service-api/docker/app
-            snyk_policy_path: service-api/docker/app/.snyk
-            scan_id: api_app
-
-          - image_name: online-lpa/api_web
-            dockerfile_path: ./service-api/docker/web
-            snyk_policy_path: service-api/docker/web/.snyk
-            scan_id: api_web
-
-          - image_name: online-lpa/admin_app
-            dockerfile_path: ./service-admin/docker/app
-            snyk_policy_path: service-admin/docker/app/.snyk
-            scan_id: admin_app
-
-          - image_name: online-lpa/admin_web
-            dockerfile_path: ./service-admin/docker/web
-            snyk_policy_path: service-admin/docker/web/.snyk
-            scan_id: admin_web
-
-          - image_name: online-lpa/pdf_app
-            dockerfile_path: ./service-pdf/docker/app
-            snyk_policy_path: service-pdf/docker/app/.snyk
-            scan_id: pdf_app
-
-          - image_name: online-lpa/seeding_app
-            dockerfile_path: ./service-seeding/docker/app
-            snyk_policy_path: service-seeding/docker/app/.snyk
-            scan_id: seeding_app
-
-          - image_name: lambda-aurora_scheduler
-            dockerfile_path: ./aurora-scheduler/docker
-            snyk_policy_path: aurora-scheduler/docker/.snyk
-            scan_id: aurora_scheduler
-            override_tag: latest
-
           - image_name: lpa-admin-app-test
-            dockerfile_path: ./service-admin/docker/app
-            dockerfile_target: test-runner
+            dockerfile_path: ./service-admin/docker/app/Dockerfile
+            build_target: test-runner
+            artifact_name: admin-app-test
             snyk_policy_path: service-admin/docker/app/.snyk
             scan_id: admin_app_test
-            archive_name: admin-app-test
-            with_xdebug: true
+            enable_xdebug: 1
 
           - image_name: lpa-api-app-test
-            dockerfile_path: ./service-api/docker/app
-            dockerfile_target: test-runner
+            dockerfile_path: ./service-api/docker/app/Dockerfile
+            build_target: test-runner
+            artifact_name: api-app-test
             snyk_policy_path: service-api/docker/app/.snyk
             scan_id: api_app_test
-            archive_name: api-app-test
-            with_xdebug: true
+            enable_xdebug: 1
 
           - image_name: lpa-front-app-test
-            dockerfile_path: ./service-front/docker/app
-            dockerfile_target: test-runner
+            dockerfile_path: ./service-front/docker/app/Dockerfile
+            build_target: test-runner
+            artifact_name: front-app-test
             snyk_policy_path: service-front/docker/app/.snyk
             scan_id: front_app_test
-            archive_name: front-app-test
-            with_xdebug: true
+            enable_xdebug: 1
 
           - image_name: lpa-pdf-app-test
-            dockerfile_path: ./service-pdf/docker/app
-            dockerfile_target: test-runner
+            dockerfile_path: ./service-pdf/docker/app/Dockerfile
+            build_target: test-runner
+            artifact_name: pdf-app-test
             snyk_policy_path: service-pdf/docker/app/.snyk
             scan_id: pdf_app_test
-            archive_name: pdf-app-test
-            with_xdebug: true
-            with_visual_tests: true
+            enable_xdebug: 1
+            visual_tests: true
 
           - image_name: lpa-shared-test
-            dockerfile_path: ./shared/docker/test-runner
-            dockerfile_target: test-runner
+            dockerfile_path: ./shared/docker/test-runner/Dockerfile
+            build_target: test-runner
+            artifact_name: shared-test
             snyk_policy_path: shared/docker/test-runner/.snyk
             scan_id: shared_test
-            archive_name: shared-test
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -184,24 +230,12 @@ jobs:
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
-      - name: Apply override tag
-        id: set_image_tag
-        env:
-          IMAGE_TAG: ${{ inputs.tag }}
-        run: |
-          if [ ${{ matrix.override_tag }} ]; then
-            IMAGE_TAG=${{ matrix.override_tag }}
-          fi
-          echo "image_tag=${IMAGE_TAG}" >> $GITHUB_OUTPUT
-
-      - name: Install Dependencies
-        if: ${{ (matrix.image_name == 'online-lpa/front_web') }}
-        run: |
-          docker compose run --rm npm-front ci --ignore-scripts
-          docker compose run --rm npm-front run build
+      - name: ECR Login
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        with:
+          registries: 311462405659
 
       - name: Setup Docker Buildx
-        id: docker_buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
 
       - name: Setup Docker Layer Cache
@@ -212,12 +246,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-${{ matrix.image_name }}-
 
-      - name: ECR Login
-        id: login_ecr
-        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
-        with:
-          registries: 311462405659
-
       - name: Build Image
         uses: docker/build-push-action@53b7df96c91f9c12dcc8a07bcb9ccacbed38856a # v7.3.0
         with:
@@ -225,22 +253,21 @@ jobs:
           load: true
           tags: ${{ matrix.image_name }}:latest
           push: false
-          file: ${{ matrix.dockerfile_path }}/Dockerfile
-          target: ${{ matrix.dockerfile_target }}
+          file: ${{ matrix.dockerfile_path }}
+          target: ${{ matrix.build_target }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,mode=max,dest=/tmp/.buildx-cache-new
           build-args: |
             OPG_LPA_COMMON_APP_VERSION=${{ github.sha }}
-            ENABLE_XDEBUG=${{ matrix.with_xdebug && '1' || '0' }}
-            VISUAL_TESTS=${{ matrix.with_visual_tests && 'true' || 'false' }}
+            ENABLE_XDEBUG=${{ matrix.enable_xdebug || '0' }}
+            VISUAL_TESTS=${{ matrix.visual_tests || 'false' }}
 
       - name: Move cache
         run: |
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-      #SNYK SCAN STEPS
-      - name: Run SNYK vulnerability scan for ${{ matrix.scan_id }}
+      - name: Scan test image with Snyk
         id: snyk_scan
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
@@ -251,86 +278,54 @@ jobs:
           snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
           snyk_test_args: --severity-threshold=high
 
-      - name: Format undefined severity values
-        if: always() && hashFiles(format('./test-results/{0}_snyk.sarif', matrix.scan_id)) != ''
+# count runs - if it exceed 20 it will split the upload results to comply with github restrictions on run limit
+      - name: Count Snyk SARIF runs
+        id: sarif_check
+        if: steps.snyk_scan.outcome == 'success' && hashFiles(format('./test-results/{0}_snyk.sarif', matrix.scan_id)) != ''
         run: |
-          sed -i 's/"null"/"0"/g; s/"undefined"/"0"/g' ./test-results/${{ matrix.scan_id }}_snyk.sarif
-
-      - name: Inspect SARIF results
-        if: always()
-        run: |
-          echo "=== SNYK SCAN SUMMARY FOR ${{ matrix.scan_id }} ==="
-          echo "SARIF file: $file"
-          echo "scan outcome: ${SNYK_SCAN_OUTCOME}"
-
-          if [ -f "./test-results/${{ matrix.scan_id }}_snyk.sarif" ]; then
-            echo "SARIF file exists, counting runs"
-            runs=$(jq '.runs | length' ./test-results/${{ matrix.scan_id }}_snyk.sarif)
-            echo "SARIF file has $runs runs"
+          runs=$(jq '.runs | length' "./test-results/${{ matrix.scan_id }}_snyk.sarif")
+          if [ "$runs" -gt 20 ]; then
+            echo "split=true" >> "$GITHUB_OUTPUT"
           else
-            echo "SARIF file does not exist, skipping run count"
+            echo "split=false" >> "$GITHUB_OUTPUT"
           fi
-        env:
-          SNYK_SCAN_OUTCOME: ${{ steps.snyk_scan.outcome }}
 
-      # Split SARIF results if run limit exceeds 20
-      - name: Split SARIF results if run limit exceeds 20
-        if: always()
+      - name: Split Snyk SARIF
+        if: steps.sarif_check.outputs.split == 'true'
         run: |
           file="./test-results/${{ matrix.scan_id }}_snyk.sarif"
           base="./test-results/${{ matrix.scan_id }}_snyk"
-          runs=$(jq '.runs | length' $file)
-          echo "runs=$runs"
+          jq '.runs = .runs[0:20]' "$file" > "${base}_part_01.sarif"
+          jq '.runs = .runs[20:]' "$file" > "${base}_part_02.sarif"
 
-          if [ $runs -gt 20 ]; then
-            echo "SARIF file has $runs runs, splitting into 2 files (20 run limit)"
-            jq '.runs = .runs[0:20]' $file > ${base}_part_01.sarif
-            jq '.runs = .runs[20:]' $file > ${base}_part_02.sarif
-          else
-            echo "SARIF file has $runs runs, keeping as 1 file"
-            mv $file ${base}_part_01.sarif
-          fi
-
-      - name: Upload SARIF results part 1
+      - name: Upload Snyk SARIF
+        if: steps.sarif_check.outputs.split == 'false'
         uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
-        if: always() && hashFiles(format('./test-results/{0}_snyk_part_01.sarif', matrix.scan_id)) != ''
         with:
-          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_01.sarif
+          category: ${{ matrix.scan_id }}
+          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk.sarif
+
+      - name: Upload Snyk SARIF part 1
+        if: steps.sarif_check.outputs.split == 'true'
+        uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
+        with:
           category: ${{ matrix.scan_id }}-1
+          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_01.sarif
 
-      - name: Upload SARIF results part 2
+      - name: Upload Snyk SARIF part 2
+        if: steps.sarif_check.outputs.split == 'true' && hashFiles(format('./test-results/{0}_snyk_part_02.sarif', matrix.scan_id)) != ''
         uses: github/codeql-action/upload-sarif@5595ccaf912efad79be6eef63a5619ff05969be3 # v4.37.6
-        if: always() && hashFiles(format('./test-results/{0}_snyk_part_02.sarif', matrix.scan_id)) != ''
         with:
-          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_02.sarif
           category: ${{ matrix.scan_id }}-2
+          sarif_file: ./test-results/${{ matrix.scan_id }}_snyk_part_02.sarif
 
-      - name: Tag and Push Container
-        if: matrix.archive_name == ''
-        env:
-          ECR_REGISTRY: ${{ steps.login_ecr.outputs.registry }}
-          IMAGE_TAG: ${{ steps.set_image_tag.outputs.image_tag }}
-          IMAGE_NAME: ${{ matrix.image_name }}
-        run: |
-          docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-          if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:main-$IMAGE_TAG
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:$IMAGE_TAG
-            docker tag $IMAGE_NAME:latest $ECR_REGISTRY/$IMAGE_NAME:latest
-          fi
-          docker push --all-tags $ECR_REGISTRY/$IMAGE_NAME
-
-      - name: Cache image
-        if: matrix.archive_name != ''
-        env:
-          IMAGE_NAME: ${{ matrix.image_name }}
+      - name: Save image
         run: |
           mkdir -p /tmp/images
-          docker save -o /tmp/images/image.tar $IMAGE_NAME:latest
+          docker save --output /tmp/images/image.tar "${{ matrix.image_name }}:latest"
 
-      - name: Archive image
-        if: matrix.archive_name != ''
+      - name: Upload image artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: ${{ matrix.archive_name }}
+          name: ${{ matrix.artifact_name }}
           path: /tmp/images/image.tar
