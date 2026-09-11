@@ -46,6 +46,10 @@ class CheckMemberStatusMiddleware implements MiddlewareInterface
     private function inactiveSharedSpaceName(ServerRequestInterface $request): ?string
     {
         $routeName = $request->getAttribute(RouteResult::class)->getMatchedRouteName();
+        if (!$routeName) {
+            return null;
+        }
+
         if ($routeName !== 'shared-space' && !str_starts_with($routeName, 'shared-space.')) {
             return null;
         }
