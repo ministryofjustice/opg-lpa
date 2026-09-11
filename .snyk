@@ -2,4 +2,19 @@
 version: v1.25.1
 # ignores vulnerabilities until expiry date; change duration by modifying expiry date
 ignore:
+  SNYK-ALPINE323-UTILLINUX-19533446:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:22:13.838Z
+        created: 2026-09-11T15:22:13.844Z
+  SNYK-ALPINE323-UTILLINUX-19533448:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:22:29.832Z
+        created: 2026-09-11T15:22:29.840Z
+  SNYK-ALPINE323-UTILLINUX-19533449:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T15:22:41.754Z
+        created: 2026-09-11T15:22:41.759Z
 patch: {}
