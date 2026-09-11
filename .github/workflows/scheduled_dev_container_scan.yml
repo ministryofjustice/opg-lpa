@@ -55,16 +55,13 @@ jobs:
         with:
           registries: 311462405659
 
-      - name: Pull OTEL image into ECR cache
-        run: |
-          docker pull $otel_image_version
       - name: Pull ${{ matrix.image_name }} image for scanning
         run: |
           docker pull ${{ matrix.image_name }}
 
       - name: Scan ${{ matrix.image_name }} image with SNYK
         id: otel_snyk_scan
-        continue-on-error: true
+        continue-on-error: false
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}
