@@ -143,9 +143,10 @@ jobs:
     if: always()
     needs:
       - public_development_container_pull_and_scan
+      - local_development_container_pull_and_scan
     steps:
       - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
-        if: needs.public_development_container_pull_and_scan.result != 'success' # Possible values are success, failure, cancelled, or skipped.
+        if: needs.public_development_container_pull_and_scan.result != 'success' && needs.public_development_container_pull_and_scan.result != 'success' # Possible values are success, failure, cancelled, or skipped.
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN}}
@@ -160,7 +161,7 @@ jobs:
                   text: ":cross-red: *SNYK* A weekly Snyk scan of local development containers was completed. It found 1 or more unmanaged findings /nSee <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details."
 
       - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
-        if: needs.public_development_container_pull_and_scan.result == 'success' # Possible values are success, failure, cancelled, or skipped.
+        if: needs.public_development_container_pull_and_scan.result == 'success' && needs.local_development_container_pull_and_scan.result == 'success' # Possible values are success, failure, cancelled, or skipped.
         with:
           method: chat.postMessage
           token: ${{ secrets.SLACK_BOT_TOKEN}}
