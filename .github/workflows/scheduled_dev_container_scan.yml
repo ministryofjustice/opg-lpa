@@ -67,6 +67,7 @@ jobs:
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ${{ github.workspace }}/.snyk
           snyk_test_args: --severity-threshold=high
   local_development_container_pull_and_scan:
     name: "Local development container scan"
