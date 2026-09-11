@@ -1,0 +1,56 @@
+name: "Development Container Scan with Snyk"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  # schedule:
+  #   # Run Hourly
+  #   - cron: "0 6 * * 1-5"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: none
+  checks: none
+  contents: write
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: write
+  statuses: none
+
+jobs:
+  otel_image_pull_and_scan:
+    name: "OTEL_Image_Pull_and_Scan"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: postgres:14.18
+          - image_name: library/redis:8.8-alpine
+          - image_name: amazon/dynamodb-local
+          - image_name: localstack/localstack:4.14.0
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Pull ${{ matrix.image_name }} image for scanning
+        run: |
+          docker pull ${{ matrix.image_name }}
+
+      - name: Scan ${{ matrix.image_name }} image with SNYK
+        id: otel_snyk_scan
+        continue-on-error: true
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          SNYK_TEST_IMAGE: ${{ matrix.image_name }}
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_test_args: --severity-threshold=high
