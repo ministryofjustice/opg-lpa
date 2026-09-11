@@ -34,10 +34,15 @@ jobs:
       matrix:
         include:
           - image_name: postgres:14.18
+            snyk_policy_path: local-development/postgres/.snyk
           - image_name: library/redis:8.8-alpine
+            snyk_policy_path: local-development/redis/.snyk
           - image_name: amazon/dynamodb-local
+            snyk_policy_path: local-development/dynamodb-local/.snyk
           - image_name: localstack/localstack:4.14.0
+            snyk_policy_path: local-development/localstack/.snyk
           - image_name: node:24.18.0-alpine3.23
+            snyk_policy_path: local-development/node/.snyk
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -67,7 +72,7 @@ jobs:
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
-          snyk_policy_path: ${{ github.workspace }}/.snyk
+          snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
           snyk_test_args: --severity-threshold=high
   local_development_container_pull_and_scan:
     name: "Local development container scan"
@@ -130,7 +135,7 @@ jobs:
 
       - name: Scan ${{ matrix.image_name }}:latest image with SNYK
         id: otel_snyk_scan
-        continue-on-error: true
+        continue-on-error: false
         uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
