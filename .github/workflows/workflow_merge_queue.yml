@@ -88,7 +88,7 @@ jobs:
     needs:
       - set_variables
     with:
-      oidc_docker_push_role: ${{ vars.OIDC_DOCKER_ROLE }}
+      oidc_docker_push_role: ${{ vars.OIDC_DOCKER_PUSH_ROLE }}
       oidc_docker_pull_role: ${{ vars.OIDC_DOCKER_PULL_ROLE }}
       tag: integration-${{ needs.set_variables.outputs.semver_tag }}
     secrets:
