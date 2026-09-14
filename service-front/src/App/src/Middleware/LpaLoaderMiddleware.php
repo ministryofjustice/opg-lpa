@@ -55,7 +55,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface
             return new HtmlResponse('The requested LPA could not be found', 404);
         }
 
-        if ($identity->id() !== $lpa->user) {
+        if ($lpa->getSharedSpaceId() === null ? $identity->id() !== $lpa->user : $identity->getSharedSpaceId() !== $lpa->getSharedSpaceId()) {
             $isGetRequest = strtoupper($request->getMethod()) === 'GET';
             if ($isGetRequest) {
                 $this->logger->info("User attempted to view another user's LPA", [
