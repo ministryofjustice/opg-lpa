@@ -149,6 +149,19 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json(['member' => $member]);
     }
 
+    public function countMembersAction(): Json|ApiProblem
+    {
+        $result = $this->checkTokenForSharedSpace();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        $count = $this->sharedSpaceService->countMembers($result['sharedSpaceId']);
+
+        error_log('Count members: ' . $count);
+        return new Json(['count' => $count]);
+    }
+
     public function membersAndInvitesAction(): Json|ApiProblem
     {
         $result = $this->checkTokenForSharedSpace();

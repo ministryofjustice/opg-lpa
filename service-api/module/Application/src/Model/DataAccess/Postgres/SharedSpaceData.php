@@ -6,6 +6,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
+use Application\Model\Service\SharedSpace\SharedSpaceNotFoundException;
 use Application\Model\Entity\MemberInvite;
 use DateTime;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
@@ -452,6 +453,42 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
 
         return true;
+    }
+
+    public function countMembers(string $sharedSpaceId): int
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
+            'sharedSpaceId' => $sharedSpaceId,
+        ], [
+            'columns' => ['id'],
+        ]);
+
+        if (!$result->isQueryResult()) {
+            return 0;
+        }
+
+        return $result->count();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteSharedSpace(string $sharedSpaceId): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $delete = $sql
+            ->delete(self::SHARED_SPACE)
+            ->where(['id' => $sharedSpaceId]);
+
+        try {
+            $result = $sql->prepareStatementForSqlObject($delete)->execute();
+        } catch (InvalidQueryException $e) {
+            throw $e;
+        }
+
+        if ($result->getAffectedRows() !== 1) {
+            throw new SharedSpaceNotFoundException();
+        }
     }
 
     /**
