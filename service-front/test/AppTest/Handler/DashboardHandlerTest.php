@@ -98,6 +98,17 @@ class DashboardHandlerTest extends TestCase
         $this->assertEquals('/user/dashboard/create', $response->getHeaderLine('Location'));
     }
 
+    public function testRedirectsToSharedSpaceDashboardIfInSpace(): void
+    {
+        $identity = $this->createMock(User::class);
+        $identity->method('getSharedSpaceId')->willReturn('some-id');
+
+        $response = $this->handler->handle($this->createRequest(identity: $identity));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/shared-space/dashboard', $response->getHeaderLine('Location'));
+    }
+
     /**
      * AC: a user with a Make account and no LPAs lands on the Dashboard rather than being
      * redirected to create an LPA. Also covers the brand-new-account scenario, which reaches
