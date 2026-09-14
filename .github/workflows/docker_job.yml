@@ -84,7 +84,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@7119f3962a138f124687a5f4419c0b1e9dcd5c6b # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/test-multi-build-scan-push-workflow.yml@020bc5f0c8705e5a37a074023ecc4bf02f0abcb2 # PR https://github.com/ministryofjustice/opg-github-workflows/pull/167/commits
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
@@ -98,7 +98,6 @@ jobs:
       build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
       build_options: ${{ matrix.build_options }}
       cli_commands: ${{ matrix.cli_commands || '' }}
-      image_display_name: ${{ matrix.image_name }}
       build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
