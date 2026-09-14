@@ -38,14 +38,14 @@ class CertificateProviderConfirmDeleteHandler implements RequestHandlerInterface
         $templateParams = [
             'deleteRoute' => $this->urlHelper->generate(
                 'lpa/certificate-provider/delete',
-                ['lpa-id' => $lpa->id]
+                ['lpa-id' => $lpa->id],
             ),
             'certificateProviderName' => $certificateProvider !== null ? $certificateProvider->name : null,
             'certificateProviderAddress' => $certificateProvider !== null ? $certificateProvider->address : null,
             'isPopup' => $isPopup,
             'cancelUrl' => $this->urlHelper->generate(
                 'lpa/certificate-provider',
-                ['lpa-id' => $lpa->id]
+                ['lpa-id' => $lpa->id],
             ),
         ];
 

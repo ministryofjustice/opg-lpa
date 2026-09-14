@@ -33,7 +33,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -47,7 +47,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -66,7 +66,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('update')->withArgs([$this->lpaId, ['some' => 'data']])
+        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn('unexpected type')->once();
 
         $response = $controller->update(10, ['some' => 'data']);
@@ -96,7 +96,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(true)->once();
 
         $response = $controller->delete(10);
@@ -109,7 +109,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->delete(10);
@@ -128,7 +128,7 @@ class RepeatCaseNumberControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('delete')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(false)->once();
 
         $response = $controller->delete(10);

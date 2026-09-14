@@ -33,7 +33,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->create(strval($lpa->getId()));
+        $apiProblem = $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -61,7 +61,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->create(strval($lpa->getId()));
+        $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
     }
 
     public function testCreate()
@@ -74,13 +74,14 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $entity = $this->service->create(strval($lpa->getId()));
+        $entity = $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
 
         $lockData = $entity->toArray();
 
         //  Create an LPA to compare
         $lpa->setLocked(true);
         $lpa->setLockedAt(new DateTime($lockData['lockedAt']));
+        $lpa->setUpdatedBy(self::USER_ID_VALUE);
 
         $comparisonEntity = new Entity($lpa);
 

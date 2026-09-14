@@ -20,6 +20,7 @@ use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Helper\UrlHelper;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class CheckoutChequeHandlerTest extends TestCase
@@ -42,6 +43,7 @@ class CheckoutChequeHandlerTest extends TestCase
             $this->communicationService,
             $this->urlHelper,
             $this->checkoutHelper,
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -58,6 +60,7 @@ class CheckoutChequeHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->payment = new Payment();
 
@@ -70,7 +73,7 @@ class CheckoutChequeHandlerTest extends TestCase
         $flowChecker->method('backToForm')->willReturn($lpaComplete ? 'lpa/checkout' : 'lpa/other');
         $flowChecker->method('getRouteOptions')->willReturn([]);
 
-        return (new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->id . '/checkout/cheque', 'POST'))
+        return (new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->id . '/checkout/cheque', 'GET'))
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/checkout/cheque');

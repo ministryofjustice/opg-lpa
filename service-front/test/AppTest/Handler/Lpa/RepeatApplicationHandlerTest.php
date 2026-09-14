@@ -27,6 +27,8 @@ use RuntimeException;
 
 class RepeatApplicationHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -188,7 +190,7 @@ class RepeatApplicationHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['isRepeatApplication' => 'is-new'], $lpa)
+            $this->createRequest('POST', ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -197,7 +199,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testNoRepeatSetsValidationGroupToIsRepeatApplicationOnly(): void
     {
         $lpa = $this->createLpa();
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form
             ->expects($this->once())
@@ -216,6 +218,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => '12345',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form
@@ -234,6 +237,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => '12345',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -268,6 +272,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => 12345,
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -298,6 +303,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => '12345',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -316,7 +322,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testNoRepeatDeletesCaseNumberAndRedirects(): void
     {
         $lpa = $this->createLpa(12345);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -345,7 +351,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testNoRepeatWithNoCaseNumberSkipsDeleteApi(): void
     {
         $lpa = $this->createLpa(null);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -372,7 +378,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testNoRepeatDeleteApiFailureThrowsException(): void
     {
         $lpa = $this->createLpa(12345);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -393,6 +399,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => '99999',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -426,6 +433,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $postData = [
             'isRepeatApplication' => 'is-repeat',
             'repeatCaseNumber' => '99999',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -450,7 +458,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testNoRepeatRecalculatesPaymentToFullFee(): void
     {
         $lpa = $this->createLpa(12345);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -480,7 +488,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testValidXmlHttpRequestReturnsJsonResponse(): void
     {
         $lpa = $this->createLpa(null);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE,];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -518,7 +526,7 @@ class RepeatApplicationHandlerTest extends TestCase
     public function testDoesNotBindOnPost(): void
     {
         $lpa = $this->createLpa(12345, true);
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form
             ->expects($this->never())
@@ -540,7 +548,7 @@ class RepeatApplicationHandlerTest extends TestCase
         $lpa = $this->createLpa(12345);
         $lpa->payment = null;
 
-        $postData = ['isRepeatApplication' => 'is-new'];
+        $postData = ['isRepeatApplication' => 'is-new', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);

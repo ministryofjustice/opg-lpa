@@ -121,10 +121,13 @@
 
     {% else %}
 
+        {{ macros.formErrorSummary(error, form, conflictError) }}
+
         {# begin form #}
         {{ form.prepare() ? '' }}
         {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="version" value="{{ lpa.version }}">
 
         <div class="govuk-button-group">
             <a href="{{ url('lpa/certificate-provider/add', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button js-form-popup" data-cy="add-certificate-provider">Add a certificate provider</a>

@@ -7,6 +7,7 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\ReplacementAttorneyCleanup;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -21,6 +22,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
@@ -32,6 +34,7 @@ class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly UrlHelper $urlHelper,
         private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -53,31 +56,39 @@ class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
 
         $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
 
-        if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
-            if (!$this->lpaApplicationService->deleteCorrespondent($lpa)) {
+        // TODO(LPAL-2493): Get version from POST body instead
+        $ifMatchVersion = $lpa->getVersion();
+        try {
+            if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
+                if (!$this->lpaApplicationService->deleteCorrespondent($lpa, $ifMatchVersion)) {
+                    throw new RuntimeException(
+                        'API client failed to delete correspondent for id: ' . $lpa->id
+                    );
+                }
+                $ifMatchVersion++;
+            }
+
+            if (!$this->lpaApplicationService->deleteReplacementAttorney($lpa, $attorney->id, $ifMatchVersion)) {
                 throw new RuntimeException(
-                    'API client failed to delete correspondent for id: ' . $lpa->id
+                    'API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
                 );
             }
-        }
 
-        if (!$this->lpaApplicationService->deleteReplacementAttorney($lpa, $attorney->id)) {
-            throw new RuntimeException(
-                'API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+            $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
+
+            $route = 'lpa/replacement-attorney';
+
+            return new RedirectResponse(
+                $this->urlHelper->generate(
+                    $route,
+                    ['lpa-id' => $lpa->id],
+                    $flowChecker->getRouteOptions($route)
+                )
             );
+        } catch (ConflictException $e) {
+            $this->logger->info('Conflict deleting replacement attorney', ['exception' => $e]);
+            throw $e;
         }
-
-        $this->replacementAttorneyCleanup->cleanUp($lpa);
-
-        $route = 'lpa/replacement-attorney';
-
-        return new RedirectResponse(
-            $this->urlHelper->generate(
-                $route,
-                ['lpa-id' => $lpa->id],
-                $flowChecker->getRouteOptions($route)
-            )
-        );
     }
 
     private function attorneyIsCorrespondent(Lpa $lpa, AbstractAttorney $attorney): bool

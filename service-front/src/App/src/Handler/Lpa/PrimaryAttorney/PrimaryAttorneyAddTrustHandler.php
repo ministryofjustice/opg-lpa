@@ -141,7 +141,6 @@ class PrimaryAttorneyAddTrustHandler implements RequestHandlerInterface
                 'lpa/primary-attorney',
                 ['lpa-id' => $lpa->id]
             ),
-            'lpaVersion' => $lpa->getVersion(),
             'conflictError' => $conflictError,
         ];
 

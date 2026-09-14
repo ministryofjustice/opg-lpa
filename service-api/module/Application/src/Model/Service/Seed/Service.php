@@ -51,7 +51,7 @@ class Service extends AbstractService
      * @param $userId
      * @return ApiProblem|Entity
      */
-    public function update(string $lpaId, $data, string $userId)
+    public function update(string $lpaId, $data, ?int $ifMatchVersion, string $userId)
     {
         if (!isset($data['seed']) || !is_numeric($data['seed'])) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
@@ -73,6 +73,9 @@ class Service extends AbstractService
         if (is_null($lpa)) {
             return new ApiProblem(404, 'LPA not found');
         }
+
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         if ($seedLpa->user != $lpa->user) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');

@@ -113,13 +113,8 @@ abstract class AbstractLpaController extends AbstractRestfulController
         return $version;
     }
 
-    protected function userId(): ?string
+    protected function userId(): string
     {
-        $result = $this->authenticationService->getIdentity();
-        if ($result === null) {
-            return null;
-        }
-
-        return $result->id();
+        return $this->authenticationService->getIdentity()->id();
     }
 }

@@ -33,7 +33,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $person = new NotifiedPerson();
-        $validationError = $this->service->create(strval($lpa->getId()), $person->toArray());
+        $validationError = $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $person->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -61,7 +61,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $person->id = null;
-        $entity = $this->service->create(strval($lpa->getId()), $person->toArray());
+        $entity = $this->service->create(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $person->toArray());
 
         //  We expect an ID value to have been added
         $person->setId(1);
@@ -77,7 +77,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->update(strval($lpa->getId()), null, -1);
+        $apiProblem = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, null, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -100,7 +100,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
         $person = new NotifiedPerson();
-        $validationError = $this->service->update(strval($lpa->getId()), $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $person->toArray(), $lpa->getDocument()->getPeopleToNotify()[0]->id);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -128,7 +128,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $person = new NotifiedPerson(FixturesData::getAttorneyHumanJson());
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $entity = $this->service->update(strval($lpa->getId()), $person->toArray(), $id);
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $person->toArray(), $id);
 
         //Id will have been set to passed in id
         $person->setId($id);
@@ -144,7 +144,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $apiProblem = $this->service->delete(strval($lpa->getId()), -1);
+        $apiProblem = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, -1);
 
         $this->assertTrue($apiProblem instanceof ApiProblem);
         $this->assertEquals(
@@ -167,7 +167,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
-        $result = $this->service->delete(strval($lpa->getId()), $id);
+        $result = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $id);
 
         $this->assertTrue($result);
     }
