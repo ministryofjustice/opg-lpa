@@ -7,14 +7,15 @@ namespace App\Handler\Lpa\CertificateProvider;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
-use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -48,6 +49,7 @@ class CertificateProviderHandler implements RequestHandlerInterface
             'lpa' => $lpa,
         ]);
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -57,17 +59,22 @@ class CertificateProviderHandler implements RequestHandlerInterface
             $form->setData($postData);
 
             if ($form->isValid()) {
-                $this->metadata->setCertificateProviderSkipped($lpa);
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    $this->metadata->setCertificateProviderSkipped($lpa, $ifMatchVersion);
 
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
 
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
+                }
             }
         }
 
@@ -80,6 +87,7 @@ class CertificateProviderHandler implements RequestHandlerInterface
                 [
                     'nextRoute' => $nextRoute,
                     'form' => $form,
+                    'conflictError' => $conflictError,
                 ]
             )
         );

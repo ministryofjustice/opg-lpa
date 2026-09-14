@@ -31,6 +31,8 @@ use Psr\Log\LoggerInterface;
 
 final class ApplicationTest extends MockeryTestCase
 {
+    private const int IF_MATCH_VERSION = 5;
+
     private MockInterface|AuthenticationService $authenticationService;
     private MockInterface|Client $apiClient;
     private Application $service;
@@ -399,11 +401,11 @@ final class ApplicationTest extends MockeryTestCase
         $data = ['status' => 'updated'];
 
         $this->apiClient->shouldReceive('httpPatch')
-            ->withArgs(['/v2/user/4321/applications/1234', $data])
+            ->with('/v2/user/4321/applications/1234', $data, ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn(['id' => 1234, 'document' => ['type' => 'health-and-welfare']]);
 
-        $result = $this->service->updateApplication(1234, $data);
+        $result = $this->service->updateApplication(1234, $data, self::IF_MATCH_VERSION);
 
         $this->assertInstanceOf(Lpa::class, $result);
         $this->assertSame(1234, $result->id);
@@ -417,17 +419,17 @@ final class ApplicationTest extends MockeryTestCase
         $mockResponse->method('getBody')->willReturn(Utils::streamFor('{"validation":{"status":"invalid"}}'));
 
         $this->apiClient->shouldReceive('httpPatch')
-            ->withArgs(['/v2/user/4321/applications/1234', ['status' => 'updated']])
+            ->with('/v2/user/4321/applications/1234', ['status' => 'updated'], ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andThrow(new ApiException($mockResponse));
 
-        $this->assertFalse($this->service->updateApplication(1234, ['status' => 'updated']));
+        $this->assertFalse($this->service->updateApplication(1234, ['status' => 'updated'], self::IF_MATCH_VERSION));
     }
 
     public function testDeleteApplication(): void
     {
         $this->apiClient->shouldReceive('httpDelete')
-            ->withArgs(['/v2/user/4321/applications/1234'])
+            ->with('/v2/user/4321/applications/1234', [])
             ->once();
 
         $this->assertTrue($this->service->deleteApplication(1234));
@@ -440,7 +442,7 @@ final class ApplicationTest extends MockeryTestCase
         $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpDelete')
-            ->withArgs(['/v2/user/4321/applications/1234'])
+            ->with('/v2/user/4321/applications/1234', [])
             ->once()
             ->andThrow(new ApiException($mockResponse));
 
@@ -518,11 +520,11 @@ final class ApplicationTest extends MockeryTestCase
         ]);
 
         $this->apiClient->shouldReceive('httpPost')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys', $replacementAttorney->toArray()])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys', $replacementAttorney->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($replacementAttorney->toArray());
 
-        $result = $this->service->addReplacementAttorney($lpa, $replacementAttorney);
+        $result = $this->service->addReplacementAttorney($lpa, $replacementAttorney, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(
@@ -542,11 +544,11 @@ final class ApplicationTest extends MockeryTestCase
         ]);
 
         $this->apiClient->shouldReceive('httpPost')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/notified-people', $notifiedPerson->toArray()])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/notified-people', $notifiedPerson->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($notifiedPerson->toArray());
 
-        $result = $this->service->addNotifiedPerson($lpa, $notifiedPerson);
+        $result = $this->service->addNotifiedPerson($lpa, $notifiedPerson, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         /** @var array<int, NotifiedPerson> $peopleToNotify */
@@ -567,11 +569,11 @@ final class ApplicationTest extends MockeryTestCase
         ]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1', $primaryAttorney->toArray()])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1', $primaryAttorney->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($primaryAttorney->toArray());
 
-        $result = $this->service->setPrimaryAttorney($lpa, $primaryAttorney, 1);
+        $result = $this->service->setPrimaryAttorney($lpa, $primaryAttorney, 1, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertSame('Updated', $lpa->document->primaryAttorneys[0]->name->first);
@@ -598,11 +600,11 @@ final class ApplicationTest extends MockeryTestCase
         ]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys/7', $replacementAttorney->toArray()])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys/7', $replacementAttorney->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($replacementAttorney->toArray());
 
-        $result = $this->service->setReplacementAttorney($lpa, $replacementAttorney, 7);
+        $result = $this->service->setReplacementAttorney($lpa, $replacementAttorney, 7, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(TrustCorporation::class, $lpa->document->replacementAttorneys[0]);
@@ -614,10 +616,10 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = FixturesData::getPfLpa();
 
         $this->apiClient->shouldReceive('httpDelete')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1', ['If-Match' => 8]])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/primary-attorneys/1', ['If-Match' => self::IF_MATCH_VERSION])
             ->once();
 
-        $result = $this->service->deletePrimaryAttorney($lpa, 1, 8);
+        $result = $this->service->deletePrimaryAttorney($lpa, 1, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->primaryAttorneys);
@@ -629,10 +631,10 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = FixturesData::getPfLpa();
 
         $this->apiClient->shouldReceive('httpDelete')
-            ->withArgs(['/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys/1'])
+            ->with('/v2/user/4321/applications/' . $lpa->id . '/replacement-attorneys/1', ['If-Match' => self::IF_MATCH_VERSION])
             ->once();
 
-        $result = $this->service->deleteReplacementAttorney($lpa, 1);
+        $result = $this->service->deleteReplacementAttorney($lpa, 1, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertCount(2, $lpa->document->replacementAttorneys);
@@ -645,11 +647,11 @@ final class ApplicationTest extends MockeryTestCase
         $whoAreYou = new WhoAreYou(['who' => 'donor']);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/who-are-you', $whoAreYou->toArray()])
+            ->with('/v2/user/4321/applications/123/who-are-you', $whoAreYou->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($whoAreYou->toArray());
 
-        $result = $this->service->setWhoAreYou($lpa, $whoAreYou);
+        $result = $this->service->setWhoAreYou($lpa, $whoAreYou, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertTrue($lpa->whoAreYouAnswered);
@@ -660,11 +662,11 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/type', ['type' => 'health-and-welfare'], ['If-Match' => 7]])
+            ->with('/v2/user/4321/applications/123/type', ['type' => 'health-and-welfare'], ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn(['type' => 'health-and-welfare']);
 
-        $result = $this->service->setType($lpa, 'health-and-welfare', 7);
+        $result = $this->service->setType($lpa, 'health-and-welfare', self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertSame('health-and-welfare', $lpa->document->type);
@@ -676,11 +678,11 @@ final class ApplicationTest extends MockeryTestCase
         $donor = new Donor(FixturesData::getPfLpa()->document->donor->toArray());
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/donor', $donor->toArray(), ['If-Match' => 6]])
+            ->with('/v2/user/4321/applications/123/donor', $donor->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($donor->toArray());
 
-        $result = $this->service->setDonor($lpa, $donor, 6);
+        $result = $this->service->setDonor($lpa, $donor, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(Donor::class, $lpa->document->donor);
@@ -693,45 +695,34 @@ final class ApplicationTest extends MockeryTestCase
         $certificateProvider = new CertificateProvider(FixturesData::getPfLpa()->document->certificateProvider->toArray());
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/certificate-provider', $certificateProvider->toArray()])
+            ->with('/v2/user/4321/applications/123/certificate-provider', $certificateProvider->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($certificateProvider->toArray());
 
-        $result = $this->service->setCertificateProvider($lpa, $certificateProvider);
+        $result = $this->service->setCertificateProvider($lpa, $certificateProvider, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(CertificateProvider::class, $lpa->document->certificateProvider);
         $this->assertSame('Certy', $lpa->document->certificateProvider->name->first);
     }
 
-    public function testSetPreferences(): void
+    public function testSetInstructionsPreferences(): void
     {
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/preference', ['preference' => 'Preference text']])
+            ->with('/v2/user/4321/applications/123/instruction-preference', [
+                'instruction' => 'Instructions text',
+                'preference' => 'Preference text',
+            ], ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
-            ->andReturn(['preference' => 'Preference text']);
+            ->andReturn([['instruction' => 'Instructions text'], ['preference' => 'Preference text']]);
 
-        $result = $this->service->setPreferences($lpa, 'Preference text');
+        $result = $this->service->setInstructionsPreferences($lpa, 'Instructions text', 'Preference text', self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertSame('Preference text', $lpa->document->preference);
-    }
-
-    public function testSetInstructions(): void
-    {
-        $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
-
-        $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/instruction', ['instruction' => 'Instruction text']])
-            ->once()
-            ->andReturn(['instruction' => 'Instruction text']);
-
-        $result = $this->service->setInstructions($lpa, 'Instruction text');
-
-        $this->assertTrue($result);
-        $this->assertSame('Instruction text', $lpa->document->instruction);
+        $this->assertSame('Instructions text', $lpa->document->instruction);
     }
 
     public function testSetWhoIsRegisteringFailure(): void
@@ -742,15 +733,11 @@ final class ApplicationTest extends MockeryTestCase
         $mockResponse->method('getBody')->willReturn(Utils::streamFor('{}'));
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs([
-                '/v2/user/4321/applications/123/who-is-registering',
-                ['whoIsRegistering' => ['donor']],
-                ['If-Match' => 5],
-            ])
+            ->with('/v2/user/4321/applications/123/who-is-registering', ['whoIsRegistering' => ['donor']], ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andThrow(new ApiException($mockResponse));
 
-        $this->assertFalse($this->service->setWhoIsRegistering($lpa, ['donor'], 5));
+        $this->assertFalse($this->service->setWhoIsRegistering($lpa, ['donor'], self::IF_MATCH_VERSION));
         $this->assertNull($lpa->document->whoIsRegistering);
     }
 
@@ -760,11 +747,11 @@ final class ApplicationTest extends MockeryTestCase
         $correspondent = new Correspondence(FixturesData::getPfLpa()->document->correspondent->toArray());
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/correspondent', $correspondent->toArray()])
+            ->with('/v2/user/4321/applications/123/correspondent', $correspondent->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($correspondent->toArray());
 
-        $result = $this->service->setCorrespondent($lpa, $correspondent);
+        $result = $this->service->setCorrespondent($lpa, $correspondent, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(Correspondence::class, $lpa->document->correspondent);
@@ -776,11 +763,11 @@ final class ApplicationTest extends MockeryTestCase
         $lpa = new Lpa(['id' => 123, 'document' => new Document()]);
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/repeat-case-number', ['repeatCaseNumber' => 'A1234567B']])  // pragma: allowlist secret
+            ->with('/v2/user/4321/applications/123/repeat-case-number', ['repeatCaseNumber' => 'A1234567B'], ['If-Match' => self::IF_MATCH_VERSION])  // pragma: allowlist secret
             ->once()
             ->andReturn(['repeatCaseNumber' => 'A1234567B']);  // pragma: allowlist secret
 
-        $result = $this->service->setRepeatCaseNumber($lpa, 'A1234567B');  // pragma: allowlist secret
+        $result = $this->service->setRepeatCaseNumber($lpa, 'A1234567B', self::IF_MATCH_VERSION);  // pragma: allowlist secret
 
         $this->assertTrue($result);
         $this->assertSame('A1234567B', $lpa->repeatCaseNumber);  // pragma: allowlist secret
@@ -792,11 +779,11 @@ final class ApplicationTest extends MockeryTestCase
         $payment = new Payment(FixturesData::getPfLpa()->payment->toArray());
 
         $this->apiClient->shouldReceive('httpPut')
-            ->withArgs(['/v2/user/4321/applications/123/payment', $payment->toArray()])
+            ->with('/v2/user/4321/applications/123/payment', $payment->toArray(), ['If-Match' => self::IF_MATCH_VERSION])
             ->once()
             ->andReturn($payment->toArray());
 
-        $result = $this->service->setPayment($lpa, $payment);
+        $result = $this->service->setPayment($lpa, $payment, self::IF_MATCH_VERSION);
 
         $this->assertTrue($result);
         $this->assertInstanceOf(Payment::class, $lpa->payment);

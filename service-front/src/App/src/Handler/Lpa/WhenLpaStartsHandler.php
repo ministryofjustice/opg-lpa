@@ -115,7 +115,6 @@ class WhenLpaStartsHandler implements RequestHandlerInterface
                 [
                     'form' => $form,
                     'conflictError' => $conflictError,
-                    'lpaVersion' => $lpa->getVersion(),
                 ]
             )
         );

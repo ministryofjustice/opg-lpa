@@ -32,7 +32,7 @@ class CompleteIndexHandler implements RequestHandlerInterface
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
         if ($lpa->locked !== true) {
-            $this->lpaApplicationService->lockLpa($lpa);
+            $this->lpaApplicationService->lockLpa($lpa, $lpa->getVersion());
         }
 
         $html = $this->renderer->render(

@@ -42,6 +42,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
         ],
         'email' => ['address' => 'unit@test.com'],
         'dob' => ['day' => '01', 'month' => '02', 'year' => '1980'],
+        'version' => '5',
     ];
 
     private array $postDataTrust = [
@@ -54,6 +55,7 @@ class ReplacementAttorneyEditHandlerTest extends TestCase
             'postcode' => 'PO5 3DE',
         ],
         'email' => ['address' => 'unit@test.com'],
+        'version' => '5',
     ];
 
     protected function setUp(): void

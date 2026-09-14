@@ -61,6 +61,7 @@ class SeedController extends AbstractLpaController
         $result = $this->getService()->update(
             $this->params()->fromRoute('lpaId'),
             $data,
+            $this->ifMatch(),
             $this->authenticationService->getIdentity()->getId()
         );
 

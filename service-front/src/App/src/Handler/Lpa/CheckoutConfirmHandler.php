@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
 use App\Service\Payment\Helper\CheckoutHelper;
@@ -14,6 +15,7 @@ use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class CheckoutConfirmHandler implements RequestHandlerInterface
@@ -25,6 +27,7 @@ class CheckoutConfirmHandler implements RequestHandlerInterface
         private readonly Communication $communicationService,
         private readonly UrlHelper $urlHelper,
         private readonly CheckoutHelper $checkoutHelper,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -42,6 +45,13 @@ class CheckoutConfirmHandler implements RequestHandlerInterface
             throw new RuntimeException('Invalid option');
         }
 
-        return $this->checkoutHelper->finishCheckout($lpa, $request);
+        // TODO(LPAL-2493): Get version from POST body instead
+        $ifMatchVersion = $lpa->getVersion();
+        try {
+            return $this->checkoutHelper->finishCheckout($lpa, $request, $ifMatchVersion);
+        } catch (ConflictException $e) {
+            $this->logger->info('Conflict confirming check out', ['exception' => $e]);
+            throw $e;
+        }
     }
 }

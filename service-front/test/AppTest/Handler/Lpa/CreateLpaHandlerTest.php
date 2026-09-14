@@ -59,7 +59,7 @@ class CreateLpaHandlerTest extends TestCase
 
     public function testCreatesLpaFromSeedClearsCloneDataAndRedirects(): void
     {
-        $lpa = new Lpa(['id' => 123]);
+        $lpa = new Lpa(['id' => 123, 'version' => 1]);
 
         $this->lpaApplicationService
             ->expects($this->once())
@@ -110,7 +110,7 @@ class CreateLpaHandlerTest extends TestCase
 
     public function testFlashesWarningWhenSetSeedFailsButStillRedirects(): void
     {
-        $lpa = new Lpa(['id' => 456]);
+        $lpa = new Lpa(['id' => 456, 'version' => 1]);
 
         $this->lpaApplicationService->method('createApplication')->willReturn($lpa);
         $this->lpaApplicationService
