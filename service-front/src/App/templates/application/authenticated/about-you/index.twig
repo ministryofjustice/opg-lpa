@@ -133,12 +133,10 @@
     {% if (oneLoginEnabled) %}
       <details class="govuk-details">
         <summary class="govuk-details__summary">
-      <span class="govuk-details__summary-text">
-        How can I change my email address or password?
-      </span>
+          <span class="govuk-details__summary-text">How can I change my email address or password?</span>
         </summary>
         <div class="govuk-details__text">
-          Your email address and password is managed via GOV one login. If you want to make changes to either then go to your GOV one login.
+          Your email address and password is managed via GOV.UK One Login. If you want to make changes to either then go to your GOV.UK One Login.
         </div>
       </details>
     {% endif %}
@@ -154,7 +152,7 @@
 
     </fieldset>
 
-    {% if (oneLoginEnabled) %}
+    {% if (sharedSpacesEnabled) %}
       <div class="govuk-inset-text">
         If you belong to a shared space, your name is shown to other user’s who also belong to the shared space.
       </div>
@@ -219,7 +217,4 @@
     <p class="govuk-body"><a class="govuk-link" href="{{ url('user/delete') }}">Delete Account</a></p>
   </div>
 </div>
-
-
-
 {% endblock content %}

@@ -104,6 +104,7 @@ class AboutYouHandler implements RequestHandlerInterface
                     'isNew'     => $isNew,
                     'cancelUrl' => '/user/dashboard',
                     'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
+                    'sharedSpacesEnabled' => Feature::SharedSpace->isEnabled(),
                 ]
             )
         );
