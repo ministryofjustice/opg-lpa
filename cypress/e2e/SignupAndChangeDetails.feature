@@ -31,8 +31,8 @@ Feature: SignupAndChangeDetails
         And I click "save"
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Mr |
           | name-first| Chris |
           | name-last| Smith |
           | dob-date-day| 1 |
@@ -48,8 +48,8 @@ Feature: SignupAndChangeDetails
         Given I log in as "SignupAndChangeDetailsUser" test user
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Mr |
           | name-first| Hammer |
           | name-last| Vortigax |
           | dob-date-day| 1 |

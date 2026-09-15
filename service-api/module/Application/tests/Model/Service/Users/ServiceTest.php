@@ -372,7 +372,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->shouldNotReceive('saveProfile');
 
         $userUpdate = FixturesData::getUser();
-        $userUpdate->getName()->setTitle('TooLong');
+        $userUpdate->getName()->setTitle('TooLongTooLongTooLongTooLongTooLongTooLong');
         $validationError = $this->service->update($userUpdate->toArray(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
@@ -383,7 +383,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'name.title' => ['value' => 'TooLong', 'messages' => ['must-be-less-than-or-equal:5']],
+                    'name.title' => ['value' => 'TooLongTooLongTooLongTooLongTooLongTooLong', 'messages' => ['must-be-less-than-or-equal:35']],
                 ]
             ],
             $validationError->toArray()

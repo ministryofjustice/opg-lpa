@@ -65,8 +65,8 @@ Feature: ReusedDonorKeepsAllDetails
         When I click "add-attorney"
         Then I can find "form-attorney"
 
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+            | name-title| Mr |
             | name-first | Jeffort |
             | name-last | Splodeicon |
             | dob-date-day| 12 |

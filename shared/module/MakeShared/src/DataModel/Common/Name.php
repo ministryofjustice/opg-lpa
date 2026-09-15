@@ -18,7 +18,7 @@ class Name extends AbstractData
      * Field length constants
      */
     public const TITLE_MIN_LENGTH = 1;
-    public const TITLE_MAX_LENGTH = 5;
+    public const TITLE_MAX_LENGTH = 35;
     public const FIRST_NAME_MAX_LENGTH = 50; //32;
     public const LAST_NAME_MAX_LENGTH = 50;//40;
 
@@ -40,7 +40,6 @@ class Name extends AbstractData
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
         $metadata->addPropertyConstraints('title', [
-            new Assert\NotIdenticalTo(''),  // Not identical to en empty string
             new Assert\Type('string'),
             new Assert\Length(
                 min: self::TITLE_MIN_LENGTH,
