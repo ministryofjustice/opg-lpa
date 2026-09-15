@@ -65,7 +65,7 @@ resource "aws_acm_certificate_validation" "certificate_mock_onelogin" {
 }
 
 resource "aws_acm_certificate" "certificate_mock_onelogin" {
-  domain_name       = "${local.cert_prefix_internal}${local.cert_prefix_development}.onelogin.lpa.opg.service.justice.gov.uk"
+  domain_name       = "${local.cert_prefix_internal}${local.account_name}.onelogin.lpa.opg.service.justice.gov.uk"
   validation_method = "DNS"
   tags              = local.shared_component_tag
 }
