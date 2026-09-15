@@ -25,7 +25,7 @@ if [ "$1" == "-h" ]; then
 fi
 
 in_use_workspaces="$@"
-reserved_workspaces="default production preproduction development demo ithc"
+reserved_workspaces="default production preproduction development demo ur"
 
 protected_workspaces="$in_use_workspaces $reserved_workspaces"
 all_workspaces=$(terraform workspace list|sed 's/*//g')
