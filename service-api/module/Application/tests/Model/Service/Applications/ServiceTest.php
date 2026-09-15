@@ -236,7 +236,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals(
             [
                 'validation' => ['document.type' => [
-                    'value' => 'invalid',
                     'messages' => ['allowed-values:property-and-financial,health-and-welfare']
                 ]],
                 'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',

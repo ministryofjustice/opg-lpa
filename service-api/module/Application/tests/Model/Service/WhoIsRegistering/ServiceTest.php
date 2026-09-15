@@ -45,7 +45,6 @@ final class ServiceTest extends AbstractServiceTestCase
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
                     'type' => [
-                        'value' => 'Invalid',
                         'messages' => ['allowed-values:property-and-financial,health-and-welfare']
                     ],
                 ]
