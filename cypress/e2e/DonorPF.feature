@@ -29,9 +29,9 @@ Feature: Add donor to Property and Finance LPA
         And I click element marked "Find UK address"
         # casper simply checked for 6 options. PAF was updated to remove some of the addresses from the tested postcode so we check for 3. We may ultimately wish to check the values
         Then I can find "address-search-result" with 6 options
-        # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         When I force fill out
+            | name-title | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | otherNames | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -46,15 +46,15 @@ Feature: Add donor to Property and Finance LPA
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
-            | Enter the donor's title |
+            | Title must be 35 characters or less |
             | Enter a first name that's less than 54 characters long |
             | Enter a last name that's less than 62 characters long |
             | Enter other names that are less than 51 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
@@ -74,8 +74,8 @@ Feature: Add donor to Property and Finance LPA
         And I see "Mrs Nancy Garrison" in the page text
         When I click "view-change-donor"
         Then I can find "form-donor"
-        And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
+            | name-title | Mrs |
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |

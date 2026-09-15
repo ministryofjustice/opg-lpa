@@ -17,8 +17,7 @@ class LongName extends AbstractData
     /**
      * Field length constants
      */
-    public const TITLE_MIN_LENGTH = 1;
-    public const TITLE_MAX_LENGTH = 5;
+    public const TITLE_MAX_LENGTH = 35;
     public const FIRST_NAME_MAX_LENGTH = 53;
     public const LAST_NAME_MAX_LENGTH = 61;
 
@@ -43,7 +42,6 @@ class LongName extends AbstractData
             new Assert\NotIdenticalTo(''),  // Not identical to en empty string
             new Assert\Type('string'),
             new Assert\Length(
-                min: self::TITLE_MIN_LENGTH,
                 max: self::TITLE_MAX_LENGTH,
             ),
         ]);

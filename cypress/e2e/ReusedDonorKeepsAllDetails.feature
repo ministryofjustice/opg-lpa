@@ -16,8 +16,8 @@ Feature: ReusedDonorKeepsAllDetails
         Given I log in as "ReusedDonorKeepsAllDetailsUser" test user
 
         # New users have to fill out their details
-        When I select "Dr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Dr |
           | name-first| Dax |
           | name-last| Peromptigal |
           | dob-date-day| 2 |
@@ -38,8 +38,8 @@ Feature: ReusedDonorKeepsAllDetails
         When I click "add-donor"
         Then I can find "form-donor"
 
-        When I select "Dr" on "name-title" with data-inited
         And I force fill out
+            | name-title | Dr |
             | name-first | Herbert |
             | name-last | Gallantrathron |
             | dob-date-day| 22 |
