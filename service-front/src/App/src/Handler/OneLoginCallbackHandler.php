@@ -6,6 +6,8 @@ namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
@@ -21,7 +23,6 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
 {
     private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
     private const string SESSION_KEY_IDENTITY     = 'identity';
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
     private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
@@ -87,7 +88,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return $this->renderError('The sign-in request could not be verified. Please try again.');
             }
 
-            $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+            $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
             try {
                 $result = $this->oneLoginService->callback(
@@ -110,7 +111,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 $session->clear();
                 $session->set(self::SESSION_KEY_IDENTITY, $result['identity']);
 
-                if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+                if ($preAuthUrl !== null) {
                     return new RedirectResponse($preAuthUrl);
                 }
 
@@ -119,8 +120,8 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
 
             $session->clear();
 
-            if (is_string($preAuthUrl) && $preAuthUrl !== '') {
-                $session->set(self::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
+            if ($preAuthUrl !== null) {
+                $session->set(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
             }
 
             $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
