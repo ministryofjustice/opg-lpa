@@ -1,3 +1,4 @@
+# TODO: We don't need this feature as it was a polyfill for old govuk_elements - LPAL-2492 will remove
 @Polyfills
 Feature: Polyfills
 
