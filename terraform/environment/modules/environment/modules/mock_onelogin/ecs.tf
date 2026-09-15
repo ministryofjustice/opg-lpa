@@ -188,16 +188,20 @@ locals {
           max-buffer-size       = "25m"
         }
       },
-      secrets = [
-        {
-          name      = "CLIENT_ID",
-          valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn
-        }
-      ],
+      # secrets = [
+      #   {
+      #     name      = "CLIENT_ID",
+      #     valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn
+      #   }
+      # ],
       environment = [
         {
           name  = "PORT",
           value = tostring(var.container_port)
+        },
+        {
+          name  = "CLIENT_ID",
+          value = var.onelogin_client_id
         },
         {
           name  = "PUBLIC_URL",
