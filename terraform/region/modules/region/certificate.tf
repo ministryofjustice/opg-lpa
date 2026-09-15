@@ -40,6 +40,37 @@ resource "aws_acm_certificate" "certificate_front" {
 }
 
 //------------------------
+// Mock Onelogin Certificates
+
+resource "aws_route53_record" "certificate_validation_mock_onelogin" {
+  provider = aws.management
+  for_each = {
+    for dvo in aws_acm_certificate.certificate_mock_onelogin.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = data.aws_route53_zone.opg_service_justice_gov_uk.zone_id
+}
+
+resource "aws_acm_certificate_validation" "certificate_mock_onelogin" {
+  certificate_arn         = aws_acm_certificate.certificate_mock_onelogin.arn
+  validation_record_fqdns = [for record in aws_route53_record.certificate_validation_mock_onelogin : record.fqdn]
+}
+
+resource "aws_acm_certificate" "certificate_mock_onelogin" {
+  domain_name       = "${local.cert_prefix_internal}${local.cert_prefix_development}.onelogin.lpa.opg.service.justice.gov.uk"
+  validation_method = "DNS"
+  tags              = local.shared_component_tag
+}
+
+//------------------------
 // Admin Certificates
 
 resource "aws_route53_record" "certificate_validation_admin" {
