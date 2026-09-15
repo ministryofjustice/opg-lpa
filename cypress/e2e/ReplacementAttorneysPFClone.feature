@@ -20,7 +20,7 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         Then I can find "form-attorney"
         And I can find "postcode-lookup"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         When I click "form-cancel"
         And I cannot find "form-attorney"
         Then the page matches the "add-replacement-attorney-pf-clone-form" baseline image

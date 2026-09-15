@@ -114,16 +114,6 @@ final class AboutYouTest extends TestCase
         $this->assertNull($result['address']);
     }
 
-    public function testPreferNotToSayTitleIsNullifiedInGetData(): void
-    {
-        $data               = $this->validData();
-        $data['name-title'] = AbstractActorForm::PREFER_NOT_TO_SAY_TITLE;
-        $this->form->setData($data);
-        $this->form->isValid();
-        $result = $this->form->getData();
-        $this->assertNull($result['name-title']);
-    }
-
     public function testMissingNameIsInvalid(): void
     {
         $data               = $this->validData();

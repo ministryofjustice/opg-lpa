@@ -37,7 +37,6 @@ const APPLICATION_JS_FILES = [
   'assets/js/moj/moj.modules/moj.popup.js',
   'assets/js/moj/moj.modules/moj.help-system.js',
   'assets/js/moj/moj.modules/moj.form-popup.js',
-  'assets/js/moj/moj.modules/moj.title-switch.js',
   'assets/js/moj/moj.modules/moj.postcode-lookup.js',
   'assets/js/moj/moj.modules/moj.print-link.js',
   'assets/js/moj/moj.modules/moj.person-form.js',

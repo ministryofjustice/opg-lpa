@@ -17,10 +17,11 @@ Feature: Add People to Notify to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         Then I can find "form-people-to-notify"
         And I can find "form-cancel"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
         When I force fill out
+            | name-title | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | address-address1 | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
@@ -30,13 +31,12 @@ Feature: Add People to Notify to a Property and Finance LPA
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
-            | Enter the title of the person to notify |
+            | Title must be 35 characters or less |
             | Enter a first name that's less than 51 characters long |
             | Enter a last name that's less than 51 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Other" on "name-title"
         And I force fill out
             | name-title | Sir |
             | name-first | Anthony |
