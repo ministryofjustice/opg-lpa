@@ -12,6 +12,9 @@
 $govuk-assets-path: "/assets/v2/";
 @import "../../node_modules/govuk-frontend/dist/govuk/index";
 
+$moj-assets-path: "/assets/v2/";
+@import "../../node_modules/@ministryofjustice/frontend/moj/all";
+
 // Extensions
 @import 'extensions/elements/elements-typography';
 @import 'extensions/elements/forms';
