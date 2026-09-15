@@ -1,0 +1,265 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-AMZN2023-RPMSIGNLIBS-18531071:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:38.837Z
+        created: 2026-09-11T16:13:38.841Z
+  SNYK-AMZN2023-RPMLIBS-18531069:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:40.819Z
+        created: 2026-09-11T16:13:40.838Z
+  SNYK-AMZN2023-RPMBUILDLIBS-18530415:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:42.822Z
+        created: 2026-09-11T16:13:42.828Z
+  SNYK-AMZN2023-RPM-18529057:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:44.810Z
+        created: 2026-09-11T16:13:44.815Z
+  SNYK-AMZN2023-PYTHON3RPM-18530340:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:46.771Z
+        created: 2026-09-11T16:13:46.780Z
+  SNYK-AMZN2023-PYTHON3LIBS-18530280:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:48.718Z
+        created: 2026-09-11T16:13:48.724Z
+  SNYK-AMZN2023-PYTHON3LIBS-18530481:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:50.917Z
+        created: 2026-09-11T16:13:50.929Z
+  SNYK-AMZN2023-PYTHON3LIBS-18531226:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:53.013Z
+        created: 2026-09-11T16:13:53.030Z
+  SNYK-AMZN2023-PYTHON3-18530399:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:55.014Z
+        created: 2026-09-11T16:13:55.018Z
+  SNYK-AMZN2023-PYTHON3-18530412:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:56.987Z
+        created: 2026-09-11T16:13:56.995Z
+  SNYK-AMZN2023-PYTHON3-18530486:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:13:58.979Z
+        created: 2026-09-11T16:13:58.987Z
+  SNYK-AMZN2023-OPENSSLLIBS-19472973:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:00.923Z
+        created: 2026-09-11T16:14:00.926Z
+  SNYK-AMZN2023-OPENSSLFIPSPROVIDERLATEST-19473519:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:02.944Z
+        created: 2026-09-11T16:14:02.949Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18530614:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:04.882Z
+        created: 2026-09-11T16:14:04.897Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18530637:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:06.818Z
+        created: 2026-09-11T16:14:06.822Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531826:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:09.033Z
+        created: 2026-09-11T16:14:09.041Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531831:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:10.883Z
+        created: 2026-09-11T16:14:10.896Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531840:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:12.976Z
+        created: 2026-09-11T16:14:12.984Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531841:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:15.285Z
+        created: 2026-09-11T16:14:15.291Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531919:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:17.264Z
+        created: 2026-09-11T16:14:17.269Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTOHEADLESS-18531946:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:19.408Z
+        created: 2026-09-11T16:14:19.419Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18530578:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:21.919Z
+        created: 2026-09-11T16:14:21.926Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18530589:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:23.875Z
+        created: 2026-09-11T16:14:23.879Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18530603:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:25.731Z
+        created: 2026-09-11T16:14:25.741Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18530609:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:27.828Z
+        created: 2026-09-11T16:14:27.833Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18531340:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:30.190Z
+        created: 2026-09-11T16:14:30.196Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18531766:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:32.625Z
+        created: 2026-09-11T16:14:32.636Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18531934:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:34.867Z
+        created: 2026-09-11T16:14:34.872Z
+  SNYK-AMZN2023-JAVA17AMAZONCORRETTODEVEL-18532526:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:36.761Z
+        created: 2026-09-11T16:14:36.767Z
+  SNYK-AMZN2023-GLIB2-18531862:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:38.646Z
+        created: 2026-09-11T16:14:38.653Z
+  SNYK-AMZN2023-GAWK-18530924:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:40.759Z
+        created: 2026-09-11T16:14:40.765Z
+  SNYK-AMZN2023-GAWK-18530954:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:42.749Z
+        created: 2026-09-11T16:14:42.757Z
+  SNYK-AMZN2023-GAWK-18532585:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:44.574Z
+        created: 2026-09-11T16:14:44.582Z
+  SNYK-JAVA-IONETTY-18230935:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:46.870Z
+        created: 2026-09-11T16:14:46.877Z
+  SNYK-JAVA-IONETTY-18170211:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:49.056Z
+        created: 2026-09-11T16:14:49.067Z
+  SNYK-JAVA-IONETTY-18956131:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:51.245Z
+        created: 2026-09-11T16:14:51.251Z
+  SNYK-JAVA-IONETTY-18170202:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:53.627Z
+        created: 2026-09-11T16:14:53.633Z
+  SNYK-JAVA-IONETTY-18170213:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:55.956Z
+        created: 2026-09-11T16:14:55.965Z
+  SNYK-JAVA-IONETTY-18233079:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:14:57.904Z
+        created: 2026-09-11T16:14:57.910Z
+  SNYK-JAVA-IONETTY-18170204:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:00.027Z
+        created: 2026-09-11T16:15:00.037Z
+  SNYK-JAVA-IONETTY-17972461:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:02.282Z
+        created: 2026-09-11T16:15:02.289Z
+  SNYK-JAVA-IONETTY-18233126:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:04.228Z
+        created: 2026-09-11T16:15:04.237Z
+  SNYK-JAVA-IONETTY-18170203:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:06.515Z
+        created: 2026-09-11T16:15:06.525Z
+  SNYK-JAVA-IONETTY-18313176:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:08.672Z
+        created: 2026-09-11T16:15:08.678Z
+  SNYK-JAVA-IONETTY-18854608:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:11.063Z
+        created: 2026-09-11T16:15:11.068Z
+  SNYK-JAVA-IONETTY-19233599:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:13.112Z
+        created: 2026-09-11T16:15:13.117Z
+  SNYK-JAVA-IONETTY-19005879:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:15.201Z
+        created: 2026-09-11T16:15:15.209Z
+  SNYK-JAVA-IONETTY-18230931:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:17.461Z
+        created: 2026-09-11T16:15:17.472Z
+  SNYK-JAVA-IONETTY-18233127:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:19.606Z
+        created: 2026-09-11T16:15:19.610Z
+  SNYK-JAVA-IONETTY-18233130:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:21.588Z
+        created: 2026-09-11T16:15:21.594Z
+  SNYK-JAVA-IONETTY-18956130:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:23.518Z
+        created: 2026-09-11T16:15:23.523Z
+  SNYK-JAVA-ORGECLIPSEJETTY-19644207:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:15:25.827Z
+        created: 2026-09-11T16:15:25.834Z
+patch: {}

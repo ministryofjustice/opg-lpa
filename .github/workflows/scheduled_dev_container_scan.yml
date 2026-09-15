@@ -1,0 +1,182 @@
+name: "Development Container Scan with Snyk"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  # schedule:
+  #   # Run Hourly
+  #   - cron: "0 6 * * 1"
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: none
+  checks: none
+  contents: read
+  deployments: none
+  id-token: write # zizmor: ignore[excessive-permissions]
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  public_development_container_pull_and_scan:
+    name: "Public development container scan"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: postgres:14.18
+            snyk_policy_path: local-development/postgres/.snyk
+          - image_name: library/redis:8.8-alpine
+            snyk_policy_path: local-development/redis/.snyk
+          - image_name: amazon/dynamodb-local
+            snyk_policy_path: local-development/dynamodb-local/.snyk
+          - image_name: localstack/localstack:4.14.0
+            snyk_policy_path: local-development/localstack/.snyk
+          - image_name: node:24.18.0-alpine3.23
+            snyk_policy_path: local-development/node/.snyk
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_DOCKER_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGMakeaLPAECRGithubAction
+
+      - name: ECR Login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        with:
+          registries: 311462405659
+
+      - name: Pull ${{ matrix.image_name }} image for scanning
+        run: |
+          docker pull ${{ matrix.image_name }}
+
+      - name: Scan ${{ matrix.image_name }} image with SNYK
+        id: otel_snyk_scan
+        continue-on-error: false
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          SNYK_TEST_IMAGE: ${{ matrix.image_name }}
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
+          snyk_test_args: --severity-threshold=high
+  local_development_container_pull_and_scan:
+    name: "Local development container scan"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: lpa-mock-pay
+            dockerfile: mock-pay/docker/Dockerfile
+            context: ./
+            snyk_policy_path: mock-pay/docker/.snyk
+          - image_name: local-ssl
+            dockerfile: local-ssl/docker/Dockerfile
+            context: ./
+            snyk_policy_path: local-ssl/docker/.snyk
+          - image_name: mock-cognito
+            dockerfile: docker/Dockerfile
+            context: ./mock-cognito/
+            snyk_policy_path: mock-cognito/docker/.snyk
+          - image_name: phpcs
+            dockerfile: phpcs/docker/Dockerfile
+            context: ./
+            snyk_policy_path: phpcs/docker/.snyk
+          - image_name: shared
+            dockerfile: shared/docker/test-runner/Dockerfile
+            context: ./
+            snyk_policy_path: shared/docker/test-runner/.snyk
+          - image_name: cypress
+            dockerfile: cypress/Dockerfile
+            context: ./
+            snyk_policy_path: cypress/.snyk
+
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_DOCKER_ROLE }}
+          role-duration-seconds: 3600
+          role-session-name: OPGMakeaLPAECRGithubAction
+
+      - name: ECR Login
+        id: login_ecr
+        uses: aws-actions/amazon-ecr-login@d539f0932e70871a027e9d5a9d8fc38589180a64 # v2.1.6
+        with:
+          registries: 311462405659
+
+      - name: Setup Docker Buildx
+        id: docker_buildx
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
+
+      - name: Pull ${{ matrix.image_name }} image for scanning
+        working-directory: ${{ matrix.context}}
+        run: |
+          docker buildx build . -f ${{ matrix.dockerfile }} -t ${{ matrix.image_name }}:latest --load
+
+      - name: Scan ${{ matrix.image_name }}:latest image with SNYK
+        id: otel_snyk_scan
+        continue-on-error: false
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
+          SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+          snyk_policy_path: ${{ github.workspace }}/${{ matrix.snyk_policy_path }}
+          snyk_test_args: --severity-threshold=high
+
+  slack_msg_vulns_found:
+    name: Post-Deployment Slack message
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - public_development_container_pull_and_scan
+      - local_development_container_pull_and_scan
+    steps:
+      - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
+        if: needs.public_development_container_pull_and_scan.result != 'success' && needs.public_development_container_pull_and_scan.result != 'success' # Possible values are success, failure, cancelled, or skipped.
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
+          payload: |
+            channel: "C09L117EZ27"
+            icon_emoji: ":cross-red:"
+            text: "Make - Local Development Images - Snyk Findings"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":cross-red: *SNYK:* A weekly Snyk scan of local development containers was completed. There are 1 or more unmanaged findings. See <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details."
+
+      - uses: slackapi/slack-github-action@0d95c9a7becc1e6e297d76df9bc735c44f4cbcbc # v3.0.5
+        if: needs.public_development_container_pull_and_scan.result == 'success' && needs.local_development_container_pull_and_scan.result == 'success' # Possible values are success, failure, cancelled, or skipped.
+        with:
+          method: chat.postMessage
+          token: ${{ secrets.SLACK_BOT_TOKEN}}
+          payload: |
+            channel: "C09L117EZ27"
+            icon_emoji: ":green_circle:"
+            text: "Make - Local Development Images - No Snyk Findings"
+            blocks:
+              - type: "section"
+                text:
+                  type: "mrkdwn"
+                  text: ":green_circle: *SNYK:* A weekly Snyk scan of local development containers was completed with no unmanaged findings. See <https://github.com/ministryofjustice/opg-lpa/actions/runs/${{github.run_id}}|workflow> for more details."
