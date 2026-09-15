@@ -1,4 +1,4 @@
-import { Then } from '@badeball/cypress-cucumber-preprocessor';
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
 const findActivationDates = () => {
   return Cypress.$('[data-role=user-activation-date]');
@@ -141,3 +141,23 @@ Then(
     });
   },
 );
+
+Then('I can see the user has {string} LPAs', (lpaCount) => {
+  cy.contains('div', 'Number of LPAs').within(() => {
+      cy.contains(lpaCount).should('exist');
+  });
+});
+
+Then(`I click the LPA link`, () => {
+  cy.get('[data-role="user-lpa-count"]').click()
+});
+
+When('I search for the newly created fixture user', () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.contains("a", "Find Users").click();
+    cy.get('#id-query')
+      .clear({ force: true })
+      .type(email);
+    cy.contains("button", "Find").click();
+  });
+});

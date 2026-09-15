@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -111,6 +112,8 @@ class DonorAddHandler implements RequestHandlerInterface
             $form->setData($actorDetailsToReuse);
         }
 
+        $conflictError = null;
+
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -150,25 +153,30 @@ class DonorAddHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setDonor($lpa, $donor)) {
-                    throw new RuntimeException(
-                        'API client failed to save LPA donor for id: ' . $lpa->id
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setDonor($lpa, $donor, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to save LPA donor for id: ' . $lpa->id
+                        );
+                    }
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         }
 
@@ -178,6 +186,7 @@ class DonorAddHandler implements RequestHandlerInterface
             'form'      => $form,
             'cancelUrl' => $cancelUrl,
             'displayReuseSessionUserLink' => $displayReuseSessionUserLink,
+            'conflictError' => $conflictError,
         ];
 
         if ($isPopup) {

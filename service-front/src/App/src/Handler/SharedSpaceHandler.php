@@ -79,6 +79,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
         /** @var array<int, SharedSpaceMember> $members */
         $members = $result['members'] ?? [];
         $invites = $result['invites'] ?? [];
+        $sharedSpaceName = $result['name'] ?? '';
         $isAdmin = false;
 
         foreach ($members as $member) {
@@ -97,6 +98,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
                     'authError' => $authError,
                     'members' => $members,
                     'invites' => $invites,
+                    'sharedSpaceName' => $sharedSpaceName,
                     'signedInUserIsAdmin' => $isAdmin,
                     'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
                     'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',

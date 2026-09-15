@@ -51,7 +51,7 @@ class PrimaryAttorneyConfirmDeleteHandler implements RequestHandlerInterface
         $templateParams = [
             'deleteRoute' => $this->urlHelper->generate(
                 'lpa/primary-attorney/delete',
-                ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx]
+                ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx],
             ),
             'attorneyName' => $attorney->name,
             'attorneyAddress' => $attorney->address,

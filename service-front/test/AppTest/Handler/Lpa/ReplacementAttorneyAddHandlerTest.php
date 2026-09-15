@@ -48,6 +48,7 @@ class ReplacementAttorneyAddHandlerTest extends TestCase
         ],
         'email' => ['address' => 'unit@test.com'],
         'dob' => ['day' => '01', 'month' => '02', 'year' => '1980'],
+        'version' => '5',
     ];
 
     protected function setUp(): void

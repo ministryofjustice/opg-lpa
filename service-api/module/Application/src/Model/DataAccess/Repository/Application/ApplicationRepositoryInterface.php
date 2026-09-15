@@ -50,6 +50,13 @@ interface ApplicationRepositoryInterface
     public function fetch(array $criteria, array $options = []): Traversable;
 
     /**
+     * @param array $criteria
+     * @param array $options
+     * @return Traversable
+     */
+    public function fetchForSharedSpace(array $criteria, array $options = []): Traversable;
+
+    /**
      * Get LPAs owned by the given user.
      *
      * @param string $userId
@@ -66,8 +73,6 @@ interface ApplicationRepositoryInterface
 
     /**
      * Update the LPA
-     *
-     * @param Lpa $lpa
      */
     public function update(Lpa $lpa): void;
 

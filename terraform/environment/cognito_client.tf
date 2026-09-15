@@ -44,3 +44,54 @@ resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_admin"
   callback_urls = ["https://${module.environment_dns.admin_fqdn}/oauth2/idpresponse"]
   logout_urls   = ["https://${module.environment_dns.front_fqdn}/"]
 }
+
+# ur environment
+data "aws_cognito_user_pools" "make_a_lasting_power_of_attorney_front" {
+  count    = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
+  provider = aws.identity
+  name     = "make-a-lasting-power-of-attorney-ur-front"
+}
+
+data "aws_ssm_parameter" "make_a_lasting_power_of_attorney_front_domain" {
+  count    = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
+  provider = aws.identity
+  name     = "make_a_lasting_power_of_attorney_ur_front_domain"
+}
+
+locals {
+  front_cognito_user_pool_id          = local.environment.cognito.front_cognito_auth_enabled ? tolist(data.aws_cognito_user_pools.make_a_lasting_power_of_attorney_front[0].ids)[0] : ""
+  front_cognito_user_pool_domain_name = local.environment.cognito.front_cognito_auth_enabled ? "https://${data.aws_ssm_parameter.make_a_lasting_power_of_attorney_front_domain[0].value}.auth.eu-west-1.amazoncognito.com" : ""
+}
+
+resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_front" {
+  count                                = local.environment.cognito.front_cognito_auth_enabled ? 1 : 0
+  provider                             = aws.identity
+  name                                 = "${local.environment_name}-front-auth"
+  user_pool_id                         = local.front_cognito_user_pool_id
+  allowed_oauth_flows                  = ["code"]
+  allowed_oauth_scopes                 = ["openid"]
+  supported_identity_providers         = ["COGNITO"]
+  allowed_oauth_flows_user_pool_client = true
+  explicit_auth_flows = [
+    "ALLOW_CUSTOM_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH",
+    "ALLOW_USER_SRP_AUTH",
+  ]
+
+  generate_secret = true
+
+  token_validity_units {
+    access_token  = "minutes"
+    id_token      = "seconds"
+    refresh_token = "days"
+  }
+
+  access_token_validity  = 5
+  id_token_validity      = 3600
+  refresh_token_validity = 1
+  read_attributes        = []
+  write_attributes       = []
+
+  callback_urls = ["https://${module.environment_dns.front_fqdn}/oauth2/idpresponse"]
+  logout_urls   = ["https://${module.environment_dns.front_fqdn}/"]
+}

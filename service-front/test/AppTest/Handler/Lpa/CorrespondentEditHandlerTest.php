@@ -29,6 +29,8 @@ use RuntimeException;
 
 class CorrespondentEditHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -77,6 +79,7 @@ class CorrespondentEditHandlerTest extends TestCase
     ): Lpa {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->whoIsRegistering = $whoIsRegistering;
 
@@ -247,6 +250,7 @@ class CorrespondentEditHandlerTest extends TestCase
             'name-title' => 'Mrs',
             'name-first' => 'Jane',
             'name-last' => 'Smith',
+            'version' => self::IF_MATCH_VALUE,
         ]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -265,7 +269,7 @@ class CorrespondentEditHandlerTest extends TestCase
             ->method('render')
             ->willReturn('<html></html>');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => '']));
+        $response = $this->handler->handle($this->createRequest('POST', ['name-first' => '', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -285,7 +289,7 @@ class CorrespondentEditHandlerTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('API client failed to update correspondent');
 
-        $this->handler->handle($this->createRequest('POST', ['name-first' => 'Jane']));
+        $this->handler->handle($this->createRequest('POST', ['name-first' => 'Jane', 'version' => self::IF_MATCH_VALUE]));
     }
 
     public function testPostPopupReturnsJsonOnSuccess(): void
@@ -313,7 +317,7 @@ class CorrespondentEditHandlerTest extends TestCase
             ->withAttribute(RequestAttribute::USER_DETAILS, $this->createUser())
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/correspondent/edit')
-            ->withParsedBody(['name-first' => 'Jane']);
+            ->withParsedBody(['name-first' => 'Jane', 'version' => self::IF_MATCH_VALUE]);
 
         $response = $this->handler->handle($request);
 

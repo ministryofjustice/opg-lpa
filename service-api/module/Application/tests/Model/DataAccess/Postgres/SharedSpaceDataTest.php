@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use Application\Model\DataAccess\Postgres\UserData;
 use ApplicationTest\Helpers;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Postgres\DbWrapper;
@@ -14,6 +15,8 @@ use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Delete;
 use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
@@ -999,5 +1002,141 @@ class SharedSpaceDataTest extends MockeryTestCase
 
         $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
         $sharedSpaceData->deleteInvite($inviteId);
+    }
+
+    public function testHasMemberWithEmail(): void
+    {
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')
+            ->with(['members' => SharedSpaceData::SHARED_SPACE_MEMBERS])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('join')
+            ->with(['user' => UserData::USERS_TABLE], 'members.userId = user.id', [])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('where')
+            ->with(Mockery::on(function ($criteria) {
+                if (!is_array($criteria) || ($criteria['members.sharedSpaceId'] ?? null) !== 'space-id') {
+                    return false;
+                }
+
+                $predicateSet = $criteria[0] ?? null;
+                if (!$predicateSet instanceof PredicateSet) {
+                    return false;
+                }
+
+                $predicates = $predicateSet->getPredicates();
+
+                return count($predicates) === 2
+                    && $predicates[0][0] === PredicateSet::OP_OR
+                    && $predicates[0][1] instanceof Operator
+                    && $predicates[0][1]->getLeft() === 'user.one_login_email'
+                    && $predicates[0][1]->getRight() === 'a@example.com'
+                    && $predicates[1][0] === PredicateSet::OP_OR
+                    && $predicates[1][1] instanceof Operator
+                    && $predicates[1][1]->getLeft() === 'user.identity'
+                    && $predicates[1][1]->getRight() === 'a@example.com';
+            }))
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')
+            ->with(['id'])
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')
+            ->with(1)
+            ->andReturn($selectMock);
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')
+            ->andReturn(true);
+        $resultMock->shouldReceive('count')
+            ->andReturn(1);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')
+            ->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($selectMock)
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->hasMemberWithEmail('space-id', 'a@example.com');
+        $this->assertTrue($actual);
+    }
+
+    #[DataProvider('noResultsProvider')]
+    public function testHasMemberWithEmailWhenNoResult(bool $isQueryResult, int $count): void
+    {
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('join')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('where')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('columns')
+            ->andReturn($selectMock);
+        $selectMock->shouldReceive('limit')
+            ->andReturn($selectMock);
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')
+            ->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')
+            ->andReturn($count);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')
+            ->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->hasMemberWithEmail('space-id', 'a@example.com');
+        $this->assertFalse($actual);
+    }
+
+    public function testHasInvite(): void
+    {
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(1);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(SharedSpaceData::SHARED_SPACE_INVITES, ['sharedSpaceId' => 'space-id', 'email' => 'a@example.com'], ['columns' => ['id'], 'limit' => 1])
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $hasInvite = $sharedSpaceData->hasInvite('space-id', 'a@example.com');
+        $this->assertTrue($hasInvite);
+    }
+
+    #[DataProvider('noResultsProvider')]
+    public function testHasInviteWhenNoInvite(bool $isQueryResult, int $count): void
+    {
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')->andReturn($count);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $hasInvite = $sharedSpaceData->hasInvite('space-id', 'a@example.com');
+        $this->assertFalse($hasInvite);
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -65,6 +66,7 @@ class FeeReductionHandler implements RequestHandlerInterface
             ]);
         }
 
+        $conflictError = null;
         if ($isPost) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -80,32 +82,36 @@ class FeeReductionHandler implements RequestHandlerInterface
 
                 $lpa->payment = $this->createPaymentFromOption($selectedOption);
 
-                if ($this->paymentHasChanged($existingLpaPayment, $lpa->payment)) {
-                    Calculator::calculate($lpa);
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if ($this->paymentHasChanged($existingLpaPayment, $lpa->payment)) {
+                        Calculator::calculate($lpa);
 
-                    if (!$this->lpaApplicationService->setPayment($lpa, $lpa->payment)) {
-                        throw new RuntimeException(
-                            'API client failed to set payment details for id: '
-                            . $lpa->id . ' in FeeReductionHandler'
-                        );
+                        if (!$this->lpaApplicationService->setPayment($lpa, $lpa->payment, $ifMatchVersion)) {
+                            throw new RuntimeException(
+                                'API client failed to set payment details for id: '
+                                    . $lpa->id . ' in FeeReductionHandler'
+                            );
+                        }
+                        $ifMatchVersion++;
                     }
+
+                    $isPopup = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            'lpa/checkout',
+                            ['lpa-id' => $lpa->id],
+                            ['version' => $ifMatchVersion],
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $isPopup = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         }
 
@@ -119,6 +125,7 @@ class FeeReductionHandler implements RequestHandlerInterface
                 [
                     'form'             => $form,
                     'reductionOptions' => $reductionOptions,
+                    'conflictError'    => $conflictError,
                 ]
             )
         );

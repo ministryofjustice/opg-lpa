@@ -13,6 +13,9 @@ use Psr\Log\LoggerInterface;
 
 abstract class AbstractServiceTestCase extends MockeryTestCase
 {
+    protected const int IF_MATCH_VALUE = 5;
+    protected const string USER_ID_VALUE = 'some-user-id';
+
     protected MockInterface&LoggerInterface $logger;
 
     protected function setUp(): void

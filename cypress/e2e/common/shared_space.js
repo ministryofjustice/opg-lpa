@@ -127,8 +127,7 @@ When(/I try to log in as "([^"]+)"/, (storedAs) => {
   });
 });
 
-When(`I (try to) log in as the member added to the shared space`, () => {
-  cy.contains('Sign Out').click();
+When(`I (try to )log in as the member added to the shared space`, () => {
   cy.get('@addedMember').then(({ email, password }) => {
     login(email, password)
   });
@@ -203,6 +202,16 @@ When(`I type the access code into field labelled {string}`, (label) => {
   })
 });
 
+When(`I type the email of the added member into field labelled {string}`, (label) => {
+  cy.get('@addedMember').then(({ email }) => {
+    cy.contains('label', label)
+      .invoke('attr', 'for')
+      .then((id) => cy.get('#' + id))
+      .clear({ force: true })
+      .type(email);
+  })
+});
+
 Then('I cannot see any invites', () => {
   cy.contains('table', 'Invited members').should('not.exist');
 });
@@ -219,4 +228,14 @@ When(/I enter the email of "([^"]+)"/, (storedAs) => {
     cy.get('#email').type(email);
     cy.get('#email_confirm').type(email);
   });
+});
+
+Then('I log out', () => {
+  cy.contains('Sign Out').click();
+})
+
+Then('I cannot see any links to manage members', () => {
+  cy.contains('a', 'Fixture user').should('not.exist');
+  cy.contains('a', 'Invite member').should('not.exist');
+  cy.contains('a', 'Import LPAs from existing account').should('not.exist');
 });

@@ -56,6 +56,7 @@ class WhenLpaStartsHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 9;
         $lpa->document = new Document();
 
         if ($withDecisions) {
@@ -134,7 +135,7 @@ class WhenLpaStartsHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['when' => ''])
+            $this->createRequest('POST', ['when' => '', 'version' => '6'])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -158,6 +159,7 @@ class WhenLpaStartsHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW,
+                'version' => '5',
             ], $lpa)
         );
 
@@ -184,6 +186,7 @@ class WhenLpaStartsHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
+                'version' => '6',
             ], $lpa)
         );
 
@@ -209,6 +212,7 @@ class WhenLpaStartsHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NOW,
+                'version' => '7',
             ], $lpa)
         );
 
@@ -234,6 +238,7 @@ class WhenLpaStartsHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'when' => PrimaryAttorneyDecisions::LPA_DECISION_WHEN_NO_CAPACITY,
+                'version' => '8',
             ], $lpa)
         );
     }

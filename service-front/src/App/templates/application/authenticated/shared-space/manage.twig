@@ -1,7 +1,12 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Manage your Shared Space' -%}
+{% if signedInUserIsAdmin %}
+    {%- set pageTitle = 'Manage Shared Space' -%}
+{% else %}
+    {% set pageTitle = 'View Shared Space' %}
+{% endif %}
+
 {% block mainTitle %}{% endblock %}
 
 {% set email = form.get('email') %}
@@ -15,6 +20,59 @@
         'cannot-be-empty' : 'Enter the password'
     }
 }) %}
+
+{% macro memberList(members, signedInUser, signedInUserIsAdmin) %}
+  <table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--m">Members</caption>
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Name</th>
+        <th scope="col" class="govuk-table__header"></th>
+        <th scope="col" class="govuk-table__header">Email address</th>
+        <th scope="col" class="govuk-table__header">Status</th>
+        <th scope="col" class="govuk-table__header">Last signed in</th>
+      </tr>
+    </thead>
+
+    <tbody class="govuk-table__body">
+    {% for member in members %}
+      <tr class="govuk-table__row">
+        <td class="govuk-table__cell">
+          {% if member.userId === signedInUser.id %}
+            <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
+              {{ member.name.first }} {{ member.name.last }}
+            </a> (you)
+          {% else %}
+            {% if signedInUserIsAdmin %}
+              <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.userId) }}">
+                {{ member.name.first }} {{ member.name.last }}
+              </a>
+            {% else %}
+              {{ member.name.first }} {{ member.name.last }}
+            {% endif %}
+          {% endif %}
+        </td>
+        <td class="govuk-table__cell">
+          {% if member.isAdmin %}
+            <strong class="govuk-tag govuk-tag--green">Admin</strong>
+          {% endif %}
+        </td>
+        <td class="govuk-table__cell">{{ member.email }}</td>
+        <td class="govuk-table__cell">
+          {% if member.isActive %}
+            Active
+          {% else %}
+            Suspended
+          {% endif %}
+        </td>
+        <td class="govuk-table__cell">{{ member.lastLoginAt.date|date('j F Y \\a\\t g:ia', "Europe/London") }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endmacro %}
+
+{%  import _self as self %}
 
 {% block content %}
   <div class="govuk-grid-row">
@@ -49,7 +107,7 @@
             {% if authError == 'api-error' %}
               <p class="govuk-body">Sorry, the service is unavailable. Please try again later.</p>
             {% elseif authError == 'not-activated' %}
-              <p class="govuk-body">The account has not been activated.
+              <p class="govuk-body">The account has not been activated.</p>
             {% elseif authError == 'locked' %}
               <p class="govuk-body">The account has been locked.</p>
             {% elseif authError == 'authentication-failed' %}
@@ -59,43 +117,43 @@
         </div>
       {% endif %}
 
-      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+      <span class="govuk-caption-xl">{{ pageTitle }}</span>
+      <h1 class="govuk-heading-xl">{{ sharedSpaceName }}</h1>
 
-      <div class="govuk-tabs app-tabs--no-border" data-module="govuk-tabs">
-        <h2 class="govuk-tabs__title">Contents</h2>
+      {% if signedInUserIsAdmin %}
+        <div class="govuk-tabs app-tabs--no-border" data-module="govuk-tabs">
+          <h2 class="govuk-tabs__title">Contents</h2>
 
-        <ul class="govuk-tabs__list" role="tablist">
-          <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
-            <a class="govuk-tabs__tab" href="#members" id="tab_members" role="tab" aria-controls="members" aria-selected="true" tabindex="0">
-              Manage members
-            </a>
-          </li>
+          <ul class="govuk-tabs__list" role="tablist">
+            <li class="govuk-tabs__list-item govuk-tabs__list-item--selected" role="presentation">
+              <a class="govuk-tabs__tab" href="#members" id="tab_members" role="tab" aria-controls="members" aria-selected="true" tabindex="0">
+                Manage members
+              </a>
+            </li>
 
-          <li class="govuk-tabs__list-item" role="presentation">
-            <a class="govuk-tabs__tab" href="#import" id="tab_import" role="tab" aria-controls="import" aria-selected="false" tabindex="-1">
-              Import LPAs from existing account
-            </a>
-          </li>
-        </ul>
+            <li class="govuk-tabs__list-item" role="presentation">
+              <a class="govuk-tabs__tab" href="#import" id="tab_import" role="tab" aria-controls="import" aria-selected="false" tabindex="-1">
+                Import LPAs from existing account
+              </a>
+            </li>
+          </ul>
 
-        <div class="govuk-tabs__panel" id="members" role="tabpanel" aria-labelledby="tab_members">
-          {% if signedInUserIsAdmin %}
+          <div class="govuk-tabs__panel" id="members" role="tabpanel" aria-labelledby="tab_members">
             <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite member</a>
-          {% endif %}
 
-          {% if invites|length > 0 %}
-            <table class="govuk-table">
-              <caption class="govuk-table__caption govuk-table__caption--m">Invited members</caption>
-              <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                  <th scope="col" class="govuk-table__header">Name</th>
-                  <th scope="col" class="govuk-table__header">Email address</th>
-                  <th scope="col" class="govuk-table__header">Status</th>
-                  <th scope="col" class="govuk-table__header"></th>
-                </tr>
-              </thead>
+            {% if invites|length > 0 %}
+              <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--m">Invited members</caption>
+                <thead class="govuk-table__head">
+                  <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">Name</th>
+                    <th scope="col" class="govuk-table__header">Email address</th>
+                    <th scope="col" class="govuk-table__header">Status</th>
+                    <th scope="col" class="govuk-table__header"></th>
+                  </tr>
+                </thead>
 
-              <tbody class="govuk-table__body">
+                <tbody class="govuk-table__body">
                 {% for invite in invites %}
                   <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
@@ -110,93 +168,47 @@
                       {% endif %}
                     </td>
                     <td class="govuk-table__cell">
-                        {% if signedInUserIsAdmin %}
-                          <a class="govuk-link govuk-link--no-visited-state" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
-                        {% endif %}
+                      <a class="govuk-link govuk-link--no-visited-state" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
                     </td>
                   </tr>
                 {% endfor %}
-              </tbody>
-            </table>
-          {% endif %}
+                </tbody>
+              </table>
+            {% endif %}
 
-          <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--m">Members</caption>
-            <thead class="govuk-table__head">
-              <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">Name</th>
-                <th scope="col" class="govuk-table__header"></th>
-                <th scope="col" class="govuk-table__header">Email address</th>
-                <th scope="col" class="govuk-table__header">Status</th>
-                <th scope="col" class="govuk-table__header">Last signed in</th>
-              </tr>
-            </thead>
+            {{ self.memberList(members, signedInUser, signedInUserIsAdmin) }}
 
-            <tbody class="govuk-table__body">
-              {% for member in members %}
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell">
-                    {% if member.userId === signedInUser.id %}
-                      <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
-                        {{ member.name.first }} {{ member.name.last }}
-                      </a> (you)
-                    {% else %}
-                        {% if signedInUserIsAdmin %}
-                          <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.userId) }}">
-                            {{ member.name.first }} {{ member.name.last }}
-                          </a>
-                        {% else %}
-                            {{ member.name.first }} {{ member.name.last }}
-                        {% endif %}
-                    {% endif %}
-                  </td>
-                  <td class="govuk-table__cell">
-                    {% if member.isAdmin %}
-                      <strong class="govuk-tag govuk-tag--green">Admin</strong>
-                    {% endif %}
-                  </td>
-                  <td class="govuk-table__cell">{{ member.email }}</td>
-                  <td class="govuk-table__cell">
-                    {% if member.isActive %}
-                      Active
-                    {% else %}
-                      Suspended
-                    {% endif %}
-                  </td>
-                  <td class="govuk-table__cell">{{ member.lastLoginAt.date|date('j F Y \\a\\t g:ia', "Europe/London") }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-
-        <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="import" role="tabpanel" aria-labelledby="tab_import">
-          <p>You can import LPAs from an existing Make account. The account entered will no longer have any LPAs, and will be deleted.</p>
-
-          {{ form.prepare() ? '' }}
-          {{ form().openTag( form )|raw }}
-          <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-
-          {{ macros.formGroup2(email) }}
-
-          <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
-            <label class="govuk-label" for="{{ password.getAttribute('id') }}">Password</label>
-            {{ formElementErrorsV2(password) }}
-            {{ formElement(password) }}
-            <div>
-              <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password">Show password</a>
-            </div>
           </div>
+          <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="import" role="tabpanel" aria-labelledby="tab_import">
+            <p>You can import LPAs from an existing Make account. The account entered will no longer have any LPAs, and will be deleted.</p>
 
-          <button type="submit" class="govuk-button app-use-standard">Import</button>
+            {{ form.prepare() ? '' }}
+            {{ form().openTag( form )|raw }}
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-          {{ form().closeTag|raw }}
+            {{ macros.formGroup2(email) }}
 
-          <p class="govuk-body">
-            <a class="govuk-link" href="{{ url('shared-space.forgot-password') }}">Forgotten your password?</a>
-          </p>
+            <div class="govuk-form-group {{ password.getMessages|length >0 ? 'govuk-form-group--error'}}">
+              <label class="govuk-label" for="{{ password.getAttribute('id') }}">Password</label>
+              {{ formElementErrorsV2(password) }}
+              {{ formElement(password) }}
+              <div>
+                <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password">Show password</a>
+              </div>
+            </div>
+
+            <button type="submit" class="govuk-button app-use-standard">Import</button>
+
+            {{ form().closeTag|raw }}
+
+            <p class="govuk-body">
+              <a class="govuk-link" href="{{ url('shared-space.forgot-password') }}">Forgotten your password?</a>
+            </p>
+          </div>
         </div>
-      </div>
+      {% else %}
+        {{ self.memberList(members, signedInUser, signedInUserIsAdmin) }}
+      {% endif %}
     </div>
   </div>
 {% endblock content %}

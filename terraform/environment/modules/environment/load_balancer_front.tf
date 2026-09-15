@@ -45,7 +45,25 @@ resource "aws_lb_listener" "front_loadbalancer" {
   ssl_policy        = "ELBSecurityPolicy-TLS13-1-2-2021-06"
 
   certificate_arn = data.aws_acm_certificate.certificate_front.arn
-
+  dynamic "default_action" {
+    for_each = var.front_cognito.enabled ? [1] : []
+    content {
+      type = "authenticate-oidc"
+      authenticate_oidc {
+        authentication_request_extra_params = {}
+        authorization_endpoint              = "${var.front_cognito.user_pool_domain_name}/oauth2/authorize"
+        client_id                           = var.front_cognito.id
+        client_secret                       = var.front_cognito.user_pool_client_secret
+        issuer                              = "https://cognito-idp.eu-west-1.amazonaws.com/${var.front_cognito.user_pool_id}"
+        on_unauthenticated_request          = "authenticate"
+        scope                               = "openid"
+        session_cookie_name                 = "AWSELBAuthSessionCookie"
+        session_timeout                     = var.front_cognito.user_pool_id_token_validity
+        token_endpoint                      = "${var.front_cognito.user_pool_domain_name}/oauth2/token"
+        user_info_endpoint                  = "${var.front_cognito.user_pool_domain_name}/oauth2/userInfo"
+      }
+    }
+  }
   default_action {
     target_group_arn = aws_lb_target_group.front.arn
     type             = "forward"
@@ -102,7 +120,7 @@ resource "aws_security_group_rule" "front_loadbalancer_ingress" {
 #tfsec:ignore:aws-ec2-add-description-to-security-group - Adding description is destructive change needing downtime. to be revisited
 #tfsec:ignore:aws-ec2-no-public-ingress-sgr - public facing inbound rule
 resource "aws_security_group_rule" "front_loadbalancer_ingress_production" {
-  count             = var.environment_name == "production" ? 1 : 0
+  count             = var.environment.public_access_enabled ? 1 : 0
   type              = "ingress"
   from_port         = 443
   to_port           = 443

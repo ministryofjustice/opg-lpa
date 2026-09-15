@@ -49,7 +49,7 @@ class PeopleToNotifyConfirmDeleteHandler implements RequestHandlerInterface
         $templateParams = [
             'deleteRoute' => $this->urlHelper->generate(
                 'lpa/people-to-notify/delete',
-                ['lpa-id' => $lpa->id, 'idx' => $personIdx]
+                ['lpa-id' => $lpa->id, 'idx' => $personIdx],
             ),
             'personName' => $notifiedPerson->name,
             'personAddress' => $notifiedPerson->address,

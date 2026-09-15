@@ -18,6 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use MakeShared\DataModel\User\User;
+use Throwable;
 
 class InviteMemberHandler implements RequestHandlerInterface
 {
@@ -34,6 +35,7 @@ class InviteMemberHandler implements RequestHandlerInterface
     {
         /** @var InviteMemberForm $form */
         $form = $this->formElementManager->get(InviteMemberForm::class);
+        $error = null;
 
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
@@ -50,16 +52,24 @@ class InviteMemberHandler implements RequestHandlerInterface
                 /** @var Checkbox */
                 $permissions = $form->get('permissions');
 
-                $ok = $this->sharedSpaceService->invite(
-                    $userDetails->getEmail()->getAddress(),
-                    $form->get('firstNames')->getValue(),
-                    $form->get('lastName')->getValue(),
-                    $form->get('email')->getValue(),
-                    $permissions->isChecked(),
-                );
+                try {
+                    $ok = $this->sharedSpaceService->invite(
+                        $userDetails->getEmail()->getAddress(),
+                        $form->get('firstNames')->getValue(),
+                        $form->get('lastName')->getValue(),
+                        $form->get('email')->getValue(),
+                        $permissions->isChecked(),
+                    );
 
-                if ($ok) {
-                    return new RedirectResponse('/shared-space?invite=sent');
+                    if ($ok) {
+                        return new RedirectResponse('/shared-space?invite=sent');
+                    }
+                } catch (Throwable $e) {
+                    match ($e->getMessage()) {
+                        'user-already-in-shared-space' => $form->setMessages(['email' => ['This email address is already part of the shared space']]),
+                        'invite-already-exists' => $form->setMessages(['email' => ['This email address has already been invited to the shared space']]),
+                        default => $error = 'An error occurred while sending the invitation. Please try again later.',
+                    };
                 }
             }
         }
@@ -70,6 +80,7 @@ class InviteMemberHandler implements RequestHandlerInterface
                 $this->getTemplateVariables($request),
                 [
                     'form' => $form,
+                    'error' => $error,
                 ],
             ),
         ));

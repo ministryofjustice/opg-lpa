@@ -6,6 +6,7 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -55,6 +56,8 @@ class DonorEditHandler implements RequestHandlerInterface
         $form->setAttribute('action', $this->urlHelper->generate('lpa/donor/edit', ['lpa-id' => $lpa->id]));
         $form->setActorData('donor', $this->actorReuseDetailsService->getActorsList($lpa));
 
+        $conflictError = null;
+
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -68,27 +71,32 @@ class DonorEditHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $donor = new Donor($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setDonor($lpa, $donor)) {
-                    throw new RuntimeException(
-                        'API client failed to update LPA donor for id: ' . $lpa->id
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setDonor($lpa, $donor, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to update LPA donor for id: ' . $lpa->id
+                        );
+                    }
+
+                    $this->updateCorrespondentData($lpa, $donor, $ifMatchVersion + 1);
+
+                    if ($this->isXmlHttpRequest($request)) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $this->updateCorrespondentData($lpa, $donor);
-
-                if ($this->isXmlHttpRequest($request)) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $donor = $lpa->document->donor->flatten();
@@ -108,6 +116,7 @@ class DonorEditHandler implements RequestHandlerInterface
         $templateParams = [
             'form' => $form,
             'cancelUrl' => $cancelUrl,
+            'conflictError' => $conflictError,
         ];
 
         if ($this->isXmlHttpRequest($request)) {
@@ -129,26 +138,25 @@ class DonorEditHandler implements RequestHandlerInterface
      * If a correspondent is set as the donor, update the correspondent's name and address
      * to match the updated donor data.
      */
-    private function updateCorrespondentData(Lpa $lpa, Donor $donor): void
+    private function updateCorrespondentData(Lpa $lpa, Donor $donor, int $ifMatchVersion): void
     {
         $correspondent = $lpa->document->correspondent;
 
         if (
             $correspondent instanceof Correspondence
-            && $correspondent->who === Correspondence::WHO_DONOR
+                && $correspondent->who === Correspondence::WHO_DONOR
+                && ($donor->name != $correspondent->name || $donor->address != $correspondent->address)
         ) {
-            if ($donor->name != $correspondent->name || $donor->address != $correspondent->address) {
                 $correspondentData = $correspondent->toArray();
                 unset($correspondentData['name']);
                 $updatedCorrespondent = new Correspondence($correspondentData);
                 $updatedCorrespondent->name = new LongName($donor->name->flatten());
                 $updatedCorrespondent->address = $donor->address;
 
-                if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent)) {
-                    throw new RuntimeException(
-                        'API client failed to update correspondent for id: ' . $lpa->id
-                    );
-                }
+            if (!$this->lpaApplicationService->setCorrespondent($lpa, $updatedCorrespondent, $ifMatchVersion)) {
+                throw new RuntimeException(
+                    'API client failed to update correspondent for id: ' . $lpa->id
+                );
             }
         }
     }

@@ -1,4 +1,4 @@
-{% macro listLpas(lpas, type, page, trackingEnabled) %}
+{% macro listLpas(lpas, type, page, trackingEnabled, inSharedSpace) %}
 
     {% import _self as macros %}
 
@@ -27,24 +27,54 @@
 
                     <div class="list-item_status">
                         <p class="opg-application-status-text govuk-visually-hidden">Application status for A{{ lpa.id }} - {{status}}</p>
-                        <div data-cy="opg-lozenge-status-{{ status }}" class="opg-status opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
+                        <div data-cy="opg-lozenge-status-{{ status }}" class="opg-status {% if inSharedSpace %}opg-status--less-margin{% endif %} opg-lozenge-status--{{ status }}">{{ lpa.progress }}</div>
                         <br/>
 
                         {{ macros.showStatusDescriptionLinksIfEnabled(trackingEnabled, status, lpa.id) }}
                     </div>
 
-                    <div class="extra-info lpa-type">
+                    {% if inSharedSpace %}
+                      <dl class="govuk-summary-list app-clear-both">
+                        <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                            LPA type
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                            {{- lpa.type == 'property-and-financial' ? 'Property and financial' : ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') -}}
+                          </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                            Last saved
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                            {{ lpa.updatedAt|date('d/m/y \\a\\t G:i') }}
+                          </dd>
+                        </div>
+                        {% if lpa.updatedBy %}
+                          <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                              Saved by
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                              {{ lpa.updatedBy }}
+                            </dd>
+                          </div>
+                        {% endif %}
+                      </dl>
+                    {% else %}
+                      <div class="extra-info lpa-type">
                         <p class="govuk-body">LPA type:</p>
                         <p class="govuk-body main-text">
-                            {{- lpa.type == 'property-and-financial' ? 'Property and financial' : ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') -}}
+                          {{- lpa.type == 'property-and-financial' ? 'Property and financial' : ((lpa.type == 'health-and-welfare') ? 'Health and welfare' : 'Not selected') -}}
                         </p>
-                    </div>
+                      </div>
 
-                    <div class="extra-info">
+                      <div class="extra-info">
                         <p class="govuk-body">Last saved:</p>
                         <p class="govuk-body main-text" data-cy="last-saved">{{ lpa.updatedAt|date('d/m/y') }}</p>
-                    </div>
-
+                      </div>
+                    {% endif %}
                 </div>
 
                 <div class="list-item_cta">

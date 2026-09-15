@@ -181,14 +181,16 @@ final class SharedSpaceServiceTest extends TestCase
             ->with('/v2/shared-space/members-and-invites')
             ->willReturn([
                 'members' => [['userId' => 'member-1'], ['userId' => 'member-2']],
-                'invites' => [['id' => 'invite-1']]
+                'invites' => [['id' => 'invite-1']],
+                'name' => 'Example Shared Space',
             ]);
 
         $result = $this->service->getMembersAndInvites();
 
         $this->assertEquals([
             'members' => [new SharedSpaceMember(['userId' => 'member-1']), new SharedSpaceMember(['userId' => 'member-2'])],
-            'invites' => [['id' => 'invite-1']]
+            'invites' => [['id' => 'invite-1']],
+            'name' => 'Example Shared Space',
         ], $result);
     }
 

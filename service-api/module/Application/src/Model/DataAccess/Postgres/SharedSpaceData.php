@@ -10,6 +10,8 @@ use Application\Model\Entity\MemberInvite;
 use DateTime;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\PredicateSet;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
 class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInterface
@@ -213,6 +215,41 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function hasMemberWithEmail(string $sharedSpaceId, string $email): bool
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql
+            ->select()
+            ->from(['members' => self::SHARED_SPACE_MEMBERS])
+            ->join(
+                ['user' => UserData::USERS_TABLE],
+                'members.userId = user.id',
+                []
+            )
+            ->where([
+                'members.sharedSpaceId' => $sharedSpaceId,
+                new PredicateSet([
+                    new Operator('user.one_login_email', Operator::OPERATOR_EQUAL_TO, $email),
+                    new Operator('user.identity', Operator::OPERATOR_EQUAL_TO, $email),
+                ], PredicateSet::COMBINED_BY_OR),
+            ])
+            ->columns(['id'])
+            ->limit(1);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+
+        try {
+            $result = $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw($e);
+        }
+
+        return ($result->isQueryResult() && $result->count() === 1);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isAdmin(string $sharedSpaceId, string $userId): bool
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
@@ -398,6 +435,23 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         } catch (InvalidQueryException $e) {
             throw $e;
         }
+    }
+
+    public function hasInvite(string $sharedSpaceId, string $email): bool
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_INVITES, [
+            'sharedSpaceId' => $sharedSpaceId,
+            'email'         => $email,
+        ], [
+            'columns' => ['id'],
+            'limit'   => 1,
+        ]);
+
+        if (!$result->isQueryResult() || $result->count() !== 1) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

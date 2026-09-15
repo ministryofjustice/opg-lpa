@@ -8,6 +8,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PrimaryAttorneyHandlerTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -91,44 +92,49 @@ class PrimaryAttorneyEditHandler implements RequestHandlerInterface
 
             $form->setData($postData);
 
+            $ifMatchVersion = (int)$postData['version'];
             if ($form->isValid()) {
-                // Check if this attorney is also the correspondent before updating
-                $isCorrespondent = $this->attorneyIsCorrespondent($lpa, $attorney);
+                try {
+                    // Check if this attorney is also the correspondent before updating
+                    $isCorrespondent = $this->attorneyIsCorrespondent($lpa, $attorney);
 
-                // Update the attorney with new details and transfer across the ID value
-                $attorneyId = $attorney->id;
-                if ($attorney instanceof Human) {
-                    $attorney = new Human($form->getModelDataFromValidatedForm());
-                } else {
-                    $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
-                }
-                $attorney->id = $attorneyId;
+                    // Update the attorney with new details and transfer across the ID value
+                    $attorneyId = $attorney->id;
+                    if ($attorney instanceof Human) {
+                        $attorney = new Human($form->getModelDataFromValidatedForm());
+                    } else {
+                        $attorney = new TrustCorporation($form->getModelDataFromValidatedForm());
+                    }
+                    $attorney->id = $attorneyId;
 
-                // Persist to the API
-                if (!$this->lpaApplicationService->setPrimaryAttorney($lpa, $attorney, $attorney->id)) {
-                    throw new RuntimeException(
-                        'API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+                    // Persist to the API
+                    if (!$this->lpaApplicationService->setPrimaryAttorney($lpa, $attorney, $attorney->id, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to update a primary attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+                        );
+                    }
+
+                    // Attempt to update the LPA correspondent too if appropriate
+                    if ($isCorrespondent) {
+                        $ifMatchVersion = $this->updateCorrespondentData($lpa, $attorney, false, $ifMatchVersion + 1);
+                    }
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $templateParams['conflictError'] = $e;
                 }
-
-                // Attempt to update the LPA correspondent too if appropriate
-                if ($isCorrespondent) {
-                    $this->updateCorrespondentData($lpa, $attorney);
-                }
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $flattenAttorneyData = $attorney->flatten();

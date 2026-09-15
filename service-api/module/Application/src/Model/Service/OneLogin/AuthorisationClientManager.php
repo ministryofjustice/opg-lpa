@@ -16,6 +16,13 @@ class AuthorisationClientManager
 {
     public const CACHE_TTL = 3600;
 
+    /**
+     * The algorithm GOV.UK One Login signs its ID tokens with - their key.
+     * One Login signs inbound ID tokens with their EC key. This value must
+     * match the "ID token signing algorithm" registered against our client.
+     */
+    public const string ID_TOKEN_SIGNING_ALGORITHM = 'ES256';
+
     public function __construct(
         private readonly string $clientId,
         private readonly string $discoveryUrl,
@@ -43,8 +50,9 @@ class AuthorisationClientManager
             ->build($this->discoveryUrl);
 
         $clientMetadata = ClientMetadata::fromArray([
-            'client_id'                  => $this->clientId,
-            'token_endpoint_auth_method' => 'private_key_jwt',
+            'client_id'                    => $this->clientId,
+            'token_endpoint_auth_method'   => 'private_key_jwt',
+            'id_token_signed_response_alg' => self::ID_TOKEN_SIGNING_ALGORITHM,
         ]);
 
         $ourJwks = (new JwksProviderBuilder())

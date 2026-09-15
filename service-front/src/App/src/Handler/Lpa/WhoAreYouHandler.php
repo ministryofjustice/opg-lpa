@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -16,6 +16,7 @@ use Laminas\Form\Element;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -71,6 +72,7 @@ class WhoAreYouHandler implements RequestHandlerInterface
             $this->urlHelper->generate($currentRoute, ['lpa-id' => $lpa->id])
         );
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -82,21 +84,26 @@ class WhoAreYouHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $whoAreYou = new WhoAreYou($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setWhoAreYou($lpa, $whoAreYou)) {
-                    throw new RuntimeException(
-                        'API client failed to set Who Are You for id: ' . $lpa->id
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setWhoAreYou($lpa, $whoAreYou, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to set Who Are You for id: ' . $lpa->id
+                        );
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         }
 
@@ -232,8 +239,9 @@ class WhoAreYouHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form'       => $form,
-                    'whoOptions' => $whoOptions,
+                    'form'          => $form,
+                    'whoOptions'    => $whoOptions,
+                    'conflictError' => $conflictError,
                 ]
             )
         );

@@ -19,6 +19,16 @@
             <p class="govuk-body">If this is the first time you’re making an LPA, you may want to look at our <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-before-you-begin" class="govuk-link js-guidance" data-analytics-click="page:link:help: find out more about how to prepare">Before you begin</a> help page. It explains the decisions the <a href="https://www.lastingpowerofattorney.service.gov.uk/guide#topic-donor" class="govuk-link js-guidance" data-analytics-click="page:link:help: donor">donor</a> has to make about their LPA and the information you’ll need to make an LPA.</p>
         </div>
     </details>
+
+    {% if inSharedSpace %}
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-visually-hidden">Warning</span>
+          Avoid editing an LPA while someone else is working on it to avoid losing any changes
+        </strong>
+      </div>
+    {% endif %}
 {%- endblock -%}
 
 {% block accordionTop %}

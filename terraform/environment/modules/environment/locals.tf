@@ -13,6 +13,7 @@ locals {
   admin_alb_session_cookie_name = "AWSELBAuthSessionCookie"
   pager_duty_ops_service_name   = "Make a Lasting Power of Attorney Ops Monitoring"
   region_name                   = var.environment.regions[data.aws_region.current.region].region
+  onelogin_discovery_url        = var.environment.feature_flags.onelogin_use_mock ? "http://mock-onelogin.${aws_service_discovery_private_dns_namespace.internal.name}:8080/.well-known/openid-configuration" : "https://oidc.integration.account.gov.uk/.well-known/openid-configuration"
   shared_component_tag = {
     component = "shared"
   }
@@ -47,11 +48,12 @@ locals {
 
   aws_otel_collector = jsonencode(
     {
-      cpu         = 0,
-      essential   = true,
-      image       = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0",
-      mountPoints = [],
-      name        = "aws-otel-collector",
+      cpu                    = 0,
+      essential              = true,
+      image                  = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0",
+      mountPoints            = [],
+      name                   = "aws-otel-collector",
+      readonlyRootFilesystem = true,
       command = [
         "--config=/etc/ecs/ecs-default-config.yaml"
       ],

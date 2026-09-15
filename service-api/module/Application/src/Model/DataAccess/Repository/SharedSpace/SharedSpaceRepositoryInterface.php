@@ -80,12 +80,13 @@ interface SharedSpaceRepositoryInterface
     public function getMembers(string $sharedSpaceId): array;
 
     /**
+     * Check if a member with the given email exists in the given shared space.
+     */
+    public function hasMemberWithEmail(string $sharedSpaceId, string $email): bool;
+
+    /**
      * Whether the given user is an admin member of the given shared space.
      * Returns false if the user is not a member of the shared space at all.
-     *
-     * @param string $sharedSpaceId
-     * @param string $userId
-     * @return bool
      */
     public function isAdmin(string $sharedSpaceId, string $userId): bool;
 
@@ -111,4 +112,9 @@ interface SharedSpaceRepositoryInterface
      * @throws InvalidQueryException
      */
     public function deleteInvite(int $inviteId): void;
+
+    /**
+     * Check if an invite exists for a given shared space and email.
+     */
+    public function hasInvite(string $sharedSpaceId, string $email): bool;
 }

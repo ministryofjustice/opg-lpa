@@ -244,7 +244,7 @@ class ApplicationControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('patch')->withArgs([['some' => 'data'], 10, $this->userId])
+        $this->service->shouldReceive('patch')->with(['some' => 'data'], 10, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->patch(10, ['some' => 'data']);
@@ -258,7 +258,7 @@ class ApplicationControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('patch')->withArgs([['some' => 'data'], 10, $this->userId])
+        $this->service->shouldReceive('patch')->with(['some' => 'data'], 10, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->patch(10, ['some' => 'data']);
@@ -277,7 +277,7 @@ class ApplicationControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('patch')->withArgs([['some' => 'data'], 10, $this->userId])
+        $this->service->shouldReceive('patch')->with(['some' => 'data'], 10, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn('unexpected type')->once();
 
         $response = $controller->patch(10, ['some' => 'data']);

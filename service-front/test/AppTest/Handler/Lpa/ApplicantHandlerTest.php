@@ -27,6 +27,8 @@ use RuntimeException;
 
 class ApplicantHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -176,7 +178,7 @@ class ApplicantHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['whoIsRegistering' => 'invalid'])
+            $this->createRequest('POST', ['whoIsRegistering' => 'invalid', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -200,6 +202,7 @@ class ApplicantHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'whoIsRegistering' => Correspondence::WHO_DONOR,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -227,6 +230,7 @@ class ApplicantHandlerTest extends TestCase
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'whoIsRegistering' => Correspondence::WHO_DONOR,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
 
@@ -252,6 +256,7 @@ class ApplicantHandlerTest extends TestCase
         $this->handler->handle(
             $this->createRequest('POST', [
                 'whoIsRegistering' => Correspondence::WHO_DONOR,
+                'version' => self::IF_MATCH_VALUE,
             ], $lpa)
         );
     }
@@ -267,6 +272,7 @@ class ApplicantHandlerTest extends TestCase
         $postData = [
             'whoIsRegistering' => '1',
             'attorneyList' => '1,2,3',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);
@@ -299,6 +305,7 @@ class ApplicantHandlerTest extends TestCase
         $postData = [
             'whoIsRegistering' => '1',
             'attorneyList' => '1,2,3',
+            'version' => self::IF_MATCH_VALUE,
         ];
 
         $this->form->method('isValid')->willReturn(true);

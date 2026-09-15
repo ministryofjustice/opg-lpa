@@ -20,7 +20,7 @@ Feature: Shared Space
     And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    And I see "Manage your Shared Space" in the title
+    And I see "Manage Shared Space" in the title
     And I can see myself
 
   Scenario: Can manage admin permissions of other members
@@ -58,6 +58,35 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     And I see a success notification with content "Invite sent"
 
+  Scenario: Can not invite a member to a shared space when already invited or already a member
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is an "admin"
+    And I log in as the newly created fixture user
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    When I click element marked "Invite member"
+    Then I should be on "/shared-space/invite"
+    When I type "Member" into field labelled "First names"
+    And I type "One" into field labelled "Last name"
+    And I type the email of the added member into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space/invite"
+    And I see "This email address is already part of the shared space" in the page text
+    When I type "John" into field labelled "First names"
+    And I type "Smith" into field labelled "Last name"
+    And I type "john.smith@example.com" into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space"
+    And I see a success notification with content "Invite sent"
+    When I click element marked "Invite member"
+    Then I should be on "/shared-space/invite"
+    When I type "John" into field labelled "First names"
+    And I type "Smith" into field labelled "Last name"
+    And I type "john.smith@example.com" into field labelled "Email"
+    Then I submit the form
+    Then I should be on "/shared-space/invite"
+    And I see "This email address has already been invited to the shared space" in the page text
+
   Scenario: Can revoke a members invite
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
@@ -91,6 +120,7 @@ Feature: Shared Space
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "suspended"
+    And I log out
 
     When I try to log in as the member added to the shared space
     Then I should be on "/shared-space/dashboard"
@@ -142,6 +172,7 @@ Feature: Shared Space
     When I click link "Shared LPAs"
     Then I should be on "/shared-space/dashboard"
     And there are "two" "LPA" elements on the page
+    And I log out
     When I try to log in as the member added to the shared space
     Then I should be on "/login"
     Then I should not be logged in
@@ -191,3 +222,13 @@ Feature: Shared Space
     Then I submit the form
     Then I should be on "/shared-space/forgot-password"
     Then I see "Thank you" in the page text
+
+  Scenario: Non-admin members cannot manage shared space
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the member added to the shared space
+    Then I should be on "/shared-space/dashboard"
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    And I see "View Shared Space" in the page text
+    And I cannot see any links to manage members
