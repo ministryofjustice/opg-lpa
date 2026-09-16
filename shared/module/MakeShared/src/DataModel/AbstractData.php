@@ -174,7 +174,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
     public function validate(array $properties = [], array $groups = [])
     {
         $validator = Validation::createValidatorBuilder()->addMethodMapping('loadValidatorMetadata')
-                                                         ->getValidator();
+            ->getValidator();
 
         // Marge any other require groups in along with Default.
         $groups = array_unique(array_merge($groups, ['Default']));
@@ -204,28 +204,7 @@ abstract class AbstractData implements AccessorInterface, JsonSerializable, Vali
 
             // If this is the first time we've seen an error for this field...
             if (!isset($response[$field])) {
-                $value = $violation->getInvalidValue();
-
-                // If the value is an object...
-                if (is_object($value)) {
-                    if (method_exists($value, '__toString')) {
-                        $value = get_class($this) . ' / ' . (string)$value;
-                    } elseif ($value instanceof DateTime) {
-                        $value = $value->format(DateTime::ISO8601);
-                    } else {
-                        $value = get_class($this);
-                    }
-                } elseif (is_array($value)) {
-                    $value = implode(', ', array_map(function ($v) {
-                        if (is_string($v)) {
-                            return $v;
-                        }
-                        return get_class($v);
-                    }, $value));
-                }
-
                 $response[$field] = [
-                    'value' => $value,
                     'messages' => []
                 ];
             }

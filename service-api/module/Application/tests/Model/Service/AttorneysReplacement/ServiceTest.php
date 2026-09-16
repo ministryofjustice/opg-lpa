@@ -61,9 +61,9 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'address' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'dob' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'name' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'address' => ['messages' => ['cannot-be-blank']],
+                    'dob' => ['messages' => ['cannot-be-blank']],
+                    'name' => ['messages' => ['cannot-be-blank']],
                 ]
             ],
             $validationError->toArray()
@@ -142,9 +142,9 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'address' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'dob' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'name' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'address' => ['messages' => ['cannot-be-blank']],
+                    'dob' => ['messages' => ['cannot-be-blank']],
+                    'name' => ['messages' => ['cannot-be-blank']],
                 ]
             ],
             $validationError->toArray()

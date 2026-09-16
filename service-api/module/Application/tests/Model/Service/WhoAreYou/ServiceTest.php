@@ -70,7 +70,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'who' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'who' => ['messages' => ['cannot-be-blank']],
                 ]
             ],
             $validationError->toArray()

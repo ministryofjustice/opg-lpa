@@ -45,12 +45,11 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'address' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'address' => ['messages' => ['cannot-be-blank']],
                     'name/company' => [
-                        'value' => 'MakeShared\DataModel\Lpa\Document\Correspondence',
                         'messages' => ['cannot-be-null']
                     ],
-                    'who' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'who' => ['messages' => ['cannot-be-blank']],
                 ]
             ],
             $validationError->toArray()
@@ -111,7 +110,6 @@ final class ServiceTest extends AbstractServiceTestCase
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
                     'whoIsRegistering' => [
-                        'value' => '1,2',
                         'messages' => ['allowed-values:']
                     ],
                 ]
