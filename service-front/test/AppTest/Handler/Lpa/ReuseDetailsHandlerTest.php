@@ -19,8 +19,10 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ReuseDetailsHandlerTest extends TestCase
@@ -30,6 +32,7 @@ class ReuseDetailsHandlerTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     private ActorReuseDetailsService&MockObject $actorReuseDetailsService;
     private ReuseDetailsForm&MockObject $form;
+    private LoggerInterface&MockObject $logger;
     private ReuseDetailsHandler $handler;
 
     private array $reuseDetails = [
@@ -44,6 +47,7 @@ class ReuseDetailsHandlerTest extends TestCase
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
         $this->form = $this->createMock(ReuseDetailsForm::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->formElementManager->method('get')->willReturn($this->form);
         $this->urlHelper->method('generate')->willReturn('/lpa/123/reuse-details');
@@ -53,6 +57,7 @@ class ReuseDetailsHandlerTest extends TestCase
             $this->formElementManager,
             $this->urlHelper,
             $this->actorReuseDetailsService,
+            $this->logger,
         );
     }
 
@@ -210,6 +215,37 @@ class ReuseDetailsHandlerTest extends TestCase
         $this->assertStringContainsString('/lpa/123/donor/add', $location);
         $this->assertStringContainsString('reuseDetailsIndex=1', $location);
         $this->assertStringContainsString('callingUrl=', $location);
+    }
+
+    #[DataProvider('offSiteCallingUrlDataProvider')]
+    public function testOffSiteCallingUrlIsRejected(string $callingUrl): void
+    {
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('lpa.reuse_details.calling_url_rejected', $this->anything());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('calling-url must be a path on this service');
+
+        $this->handler->handle($this->createRequest('GET', [
+            'calling-url'    => $callingUrl,
+            'include-trusts' => '0',
+            'actor-name'     => 'Donor',
+        ]));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function offSiteCallingUrlDataProvider(): array
+    {
+        return [
+            'absolute https'      => ['https://evil.example'],
+            'absolute http'       => ['http://evil.example/x'],
+            'protocol relative'   => ['//evil.example'],
+            'javascript scheme'   => ['javascript:alert(1)'],
+            'relative path'       => ['lpa/123/donor/add'],
+        ];
     }
 
     public function testPostWithTrustSelectionAppendsTrustToUrl(): void

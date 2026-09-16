@@ -25,21 +25,25 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
     private AuthenticationService&MockObject $authenticationService;
     private UrlHelper&MockObject $urlHelper;
+    private LoggerInterface&MockObject $logger;
     private AuthenticationMiddleware $middleware;
 
     protected function setUp(): void
     {
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->middleware = new AuthenticationMiddleware(
             $this->authenticationService,
             $this->urlHelper,
+            $this->logger,
         );
     }
 
@@ -189,5 +193,84 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $result);
         $this->assertEquals($expectedUrl, $result->getHeaderLine('Location'));
+    }
+
+    #[DataProvider('hostilePathDataProvider')]
+    public function testStoredPreAuthUrlIsAlwaysSameSite(string $requestPath, ?string $expected): void
+    {
+        $this->authenticationService->expects($this->once())->method('getIdentity')->willReturn(null);
+
+        $stored  = [];
+        $cleared = [];
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('set')->willReturnCallback(
+            function (string $key, mixed $value) use (&$stored): void {
+                $stored[$key] = $value;
+            }
+        );
+        $session->method('unset')->willReturnCallback(
+            function (string $key) use (&$cleared): void {
+                $cleared[] = $key;
+            }
+        );
+        $session->method('get')->willReturn(null);
+
+        $request = new ServerRequest(uri: $requestPath)
+            ->withAttribute(RouteResult::class, RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY))
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
+
+        $this->urlHelper->method('generate')->willReturn('/login/timeout');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $this->middleware->process($request, $handler);
+
+        $key = AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL;
+
+        $this->assertSame($expected, $stored[$key] ?? null);
+
+        if ($expected === null) {
+            $this->assertContains($key, $cleared, 'A rejected path must clear any earlier destination');
+        }
+    }
+
+    /**
+     * @return array<string, array{0: string, 1: ?string}>
+     */
+    public static function hostilePathDataProvider(): array
+    {
+        return [
+            'protocol relative'   => ['//evil.example/', '/'],
+            'backslash authority' => ['/\\evil.example', '/%5Cevil.example'],
+            'absolute url'        => ['https://evil.example/x', '/x'],
+            'crlf injection'      => ["/user/dashboard\r\nX-Injected: 1", '/user/dashboard__X-Injected:%201'],
+            'fragment'            => ['/user/dashboard#x', '/user/dashboard'],
+        ];
+    }
+
+    public function testLegitimateDeepLinkIsStored(): void
+    {
+        $this->authenticationService->expects($this->once())->method('getIdentity')->willReturn(null);
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->expects($this->once())
+            ->method('set')
+            ->with(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, '/lpa/12345678/checkout');
+        $session->method('get')->willReturn(null);
+
+        $this->logger->expects($this->never())->method('warning');
+
+        $request = new ServerRequest(uri: '/lpa/12345678/checkout')
+            ->withAttribute(RouteResult::class, $this->makeRouteResult('lpa/checkout'))
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
+
+        $this->urlHelper->method('generate')->willReturn('/login/timeout');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $this->middleware->process($request, $handler);
     }
 }

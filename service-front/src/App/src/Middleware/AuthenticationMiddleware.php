@@ -6,6 +6,7 @@ namespace App\Middleware;
 
 use App\Middleware\RequestAttribute;
 use App\Authentication\AuthenticationService;
+use App\Service\SafeRedirectPath;
 use App\Model\Service\Authentication\Identity\User;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Helper\UrlHelper;
@@ -16,6 +17,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 /**
  * Checks that the user is authenticated before allowing access to protected
@@ -30,11 +32,12 @@ class AuthenticationMiddleware implements MiddlewareInterface
     private const string REASON_INTERNAL_SYSTEM_ERROR = 'internal-system-error';
 
     // Mezzio session key used by LoginHandler when storing the pre-auth URL.
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
+    public const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
     public function __construct(
         private readonly AuthenticationService $authenticationService,
         private readonly UrlHelper $urlHelper,
+        private readonly LoggerInterface $logger,
     ) {
     }
 
@@ -83,7 +86,19 @@ class AuthenticationMiddleware implements MiddlewareInterface
     {
         if ($session instanceof SessionInterface) {
             if ($allowRedirect) {
-                $session->set(self::SESSION_KEY_PRE_AUTH_URL, $requestPath);
+                $safePath = SafeRedirectPath::filter($requestPath);
+
+                if ($safePath !== null) {
+                    $session->set(self::SESSION_KEY_PRE_AUTH_URL, $safePath);
+                } else {
+                    $session->unset(self::SESSION_KEY_PRE_AUTH_URL);
+
+                    if ($requestPath !== '') {
+                        $this->logger->warning('auth.pre_auth_url_rejected', [
+                            'length' => strlen($requestPath),
+                        ]);
+                    }
+                }
             }
 
             $failureCode = $session->get(IdentityTokenRefreshMiddleware::SESSION_KEY_AUTH_FAILURE_CODE);
