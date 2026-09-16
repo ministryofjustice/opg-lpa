@@ -19,8 +19,8 @@ Feature: AdminUserAccount
     When I visit "/home"
     And I log in as "SignupAndDeleteUser" test user
     And I visit "/user/about-you"
-    And I select "Mr" on "name-title" with data-inited
     And I force fill out
+      | name-title| Mr |
       | name-first| Chris |
       | name-last| Smith |
       | dob-date-day| 1 |

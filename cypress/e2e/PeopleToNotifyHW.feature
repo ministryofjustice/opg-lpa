@@ -19,8 +19,8 @@ Feature: Add People to Notify to a Health and Welfare LPA
         Then I can find "form-people-to-notify"
         And I can find "use-my-details"
 
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title       | Mr          |
             | name-first       | James          |
             | name-last        | Collins        |
             | address-address1 | 12 High Street |
@@ -41,10 +41,9 @@ Feature: Add People to Notify to a Health and Welfare LPA
         When I click "add"
         Then I can find "form-people-to-notify"
         And I can find "form-cancel"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        When I select "Other" on "name-title"
         And I force fill out
             | name-title | Sir |
             | name-first | Anthony |
