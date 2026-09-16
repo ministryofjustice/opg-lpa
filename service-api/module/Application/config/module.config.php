@@ -738,7 +738,9 @@ return [
                     $clientId,
                     $discoveryUrl,
                     $container->get(OneLoginService\KeyPairManager::class),
-                    new GuzzlePsr18(new GuzzleClient()),
+                    new GuzzlePsr18(new GuzzleClient([
+                        'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                    ])),
                     $container->get('OneLoginPsr16Cache'),
                 );
             },
@@ -751,8 +753,14 @@ return [
                 );
             },
 
-            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (): OneLoginService\FacileAuthorizationServiceAdapter {
-                $httpClient = new GuzzlePsr18(new GuzzleClient());
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (
+                ServiceLocatorInterface $container
+            ): OneLoginService\FacileAuthorizationServiceAdapter {
+                $config = $container->get('config');
+
+                $httpClient = new GuzzlePsr18(new GuzzleClient([
+                    'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                ]));
 
                 $authBuilder = new AuthorizationServiceBuilder();
                 $authBuilder->setHttpClient($httpClient);
