@@ -1,5 +1,6 @@
 locals {
   policy_region_prefix = lower(replace(data.aws_region.current.region, "-", ""))
+  cert_prefix_internal = var.account_name == "production" ? "" : "*."
 }
 
 variable "ecs_execution_role" {

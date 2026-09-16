@@ -28,7 +28,7 @@ module "mock_onelogin" {
   alb_deletion_protection_enabled = false
   waf_alb_association_enabled     = true
   container_port                  = 8080
-  public_access_enabled           = false
+  public_access_enabled           = var.environment.public_access_enabled
   redirect_base_url               = "https://${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.front.lpa.opg.service.justice.gov.uk"
   template_sub                    = "1"
   network = {

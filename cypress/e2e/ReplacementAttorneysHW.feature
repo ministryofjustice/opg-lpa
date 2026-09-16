@@ -22,9 +22,9 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         Then I can find "form-attorney"
         And I can find "use-my-details"
         And I can find "postcode-lookup"
-        And I can find "name-title" with 8 options
-        When I select "Ms" on "name-title"
+        And I can find "name-title"
         And I force fill out
+            | name-title | Ms |
             | name-first | Isobel |
             | name-last | Ward |
             | dob-date-day | 01 |
@@ -46,8 +46,8 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         # Test adding same attorney twice
         When I click "add-replacement-attorney"
         # deliberately Mrs instead of Ms this time
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Isobel |
             | name-last | Ward |
             | dob-date-day | 22 |
@@ -61,15 +61,15 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
 
         # Check error message when replacement attorney > 100 years old
         When I force fill out
+            | name-title | Mrs  |
             | dob-date-day | 21  |
             | dob-date-month | 9 |
             | dob-date-year | 1910 |
-        # shift focus to the title drop-down to trigger the client-side age validation
-        And I select "Mrs" on "name-title"
+        And I click element marked "Last name"
         Then I see "By saving this section, you confirm that this replacement attorney is more than 100 years old. If not, please change the date." in the page text
 
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |
@@ -91,8 +91,8 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         Then I do not see "Mr Ewan Adams" in the page text
         # re-add 2cnd replacement attorney
         When I click "add-replacement-attorney"
-        And I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |
@@ -110,8 +110,8 @@ Feature: Add Replacement Attorneys to a Health and Welfare LPA
         # re-view 2nd replacement attorney
         When I click occurrence 1 of "view-change-attorney"
         Then I can find "form-attorney"
-        And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |
