@@ -45,7 +45,6 @@ const APPLICATION_JS_FILES = [
   'assets/js/moj/moj.modules/moj.dashboard.js',
   'assets/js/moj/moj.modules/moj.ui-behaviour.js',
   'assets/js/moj/moj.modules/moj.applicant.js',
-  'assets/js/moj/moj.modules/moj.polyfill.js',
   'assets/js/moj/moj.modules/moj.single-use.js',
   'assets/js/moj/moj.modules/moj.analytics.js',
   'assets/js/moj/moj.modules/moj.cookie-consent.js',
@@ -155,7 +154,6 @@ async function buildIndividualScripts() {
   const scripts = [
     { in: 'assets/js/opg/session-timeout-init.js', out: 'public/assets/v2/js/opg/session-timeout-init.min.js' },
     { in: 'assets/js/opg/dashboard-statuses.js', out: 'public/assets/v2/js/opg/dashboard-statuses.min.js' },
-    { in: 'assets/js/opg/init-polyfill.js', out: 'public/assets/v2/js/opg/init-polyfill.min.js' },
     { in: 'assets/js/opg/govuk-init.js', out: 'public/assets/v2/js/govuk-init.js' },
   ];
 
