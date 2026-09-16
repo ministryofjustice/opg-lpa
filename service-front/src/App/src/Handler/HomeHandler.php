@@ -23,8 +23,6 @@ class HomeHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $dockerTag = $this->config['version']['tag'] ?? '';
-        // TODO remove when GOL is live
-        $showNewHomePage = isset($request->getQueryParams()['show-new-homepage']) && Feature::OneLogin->isEnabled();
 
         $html = $this->renderer->render(
             'application/general/home/index.twig',
@@ -32,7 +30,6 @@ class HomeHandler implements RequestHandlerInterface
                 'lpaFee' => Calculator::getFullFee(),
                 'dockerTag' => $dockerTag,
                 'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
-                'showNewHomePage' => $showNewHomePage,
                 'pageTitle' => 'Make a lasting power of attorney',
             ]
         );
