@@ -42,8 +42,8 @@ Feature: PasswordReset
       Then I am taken to "/user/about-you/new"
 
       # have to fill out personal details to enable changing password back
-      When I select "Mr" on "name-title" with data-inited
       And I force fill out
+        | name-title| Mr |
         | name-first| Chris |
         | name-last| Smith |
         | dob-date-day| 1 |
@@ -55,10 +55,7 @@ Feature: PasswordReset
       And If I am on dashboard I click to create lpa
       Then I am taken to the lpa type page
 
-      When I visit link containing "Your details"
-      And I visit link containing "Change Password"
-      Then I am taken to "/user/change-password"
-
+      Then I visit "/user/change-password"
       When I change password for "PasswordResetUser" back to my old one
       Then I see "Your new password has been saved" in the page text
 

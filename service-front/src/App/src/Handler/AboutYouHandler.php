@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
@@ -102,6 +103,8 @@ class AboutYouHandler implements RequestHandlerInterface
                     'form'      => $form,
                     'isNew'     => $isNew,
                     'cancelUrl' => '/user/dashboard',
+                    'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
+                    'sharedSpacesEnabled' => Feature::SharedSpace->isEnabled(),
                 ]
             )
         );

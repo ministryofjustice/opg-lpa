@@ -50,8 +50,8 @@ Feature: One Login Sign In
     And I submit the form
     And I am signed in with my new Make account
     And I am taken to the your details page for a new user
-    When I select "Mr" on "name-title" with data-inited
     And I force fill out
+      | name-title| Mr |
       | name-first | Brand |
       | name-last | New |
       | dob-date-day | 1 |

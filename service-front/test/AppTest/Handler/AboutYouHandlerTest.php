@@ -124,6 +124,9 @@ class AboutYouHandlerTest extends TestCase
 
     public function testGetRequestRendersForm(): void
     {
+        putenv('ONELOGIN_ENABLED=true');
+        putenv('SHARED_SPACES_ENABLED=true');
+
         $this->form->expects($this->once())
             ->method('setAttribute')
             ->with('action', '/user/about-you');
@@ -136,7 +139,9 @@ class AboutYouHandlerTest extends TestCase
                 $this->callback(fn($params) =>
                     $params['form'] === $this->form
                     && $params['isNew'] === false
-                    && $params['cancelUrl'] === '/user/dashboard')
+                    && $params['cancelUrl'] === '/user/dashboard'
+                    && $params['oneLoginEnabled'] === true
+                    && $params['sharedSpacesEnabled'] === true)
             )
             ->willReturn('<html>about you form</html>');
 
