@@ -2,16 +2,25 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use ApplicationTest\Helpers;
 use Application\Model\DataAccess\Postgres\ApplicationData;
 use Application\Model\DataAccess\Postgres\DbWrapper;
+use Application\Model\DataAccess\Postgres\UserData;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\ResultInterface;
+use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\PredicateSet;
-use ApplicationTest\Helpers;
+use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Update;
+use Laminas\Db\Sql\Sql;
+use MakeShared\DataModel\Lpa\Lpa;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 
 class ApplicationDataTest extends MockeryTestCase
 {
@@ -175,5 +184,177 @@ class ApplicationDataTest extends MockeryTestCase
             ], PredicateSet::COMBINED_BY_AND),
             $predicate
         );
+    }
+
+    #[DoesNotPerformAssertions]
+    public function testUpdate(): void
+    {
+        $updatedAt = new \DateTime();
+        $lpa = new Lpa([
+            'id' => 123,
+            'version' => 4,
+            'document' => [],
+            'updatedAt' => $updatedAt,
+        ]);
+
+        $dbWrapper = Mockery::mock(DbWrapper::class);
+
+        // getForUpdateById(...)
+        $selectStatement = Mockery::mock(StatementInterface::class);
+        $selectSql = Mockery::mock(Sql::class);
+        $select = Mockery::mock(Select::class);
+        $selectResult = Mockery::mock(ResultInterface::class);
+
+        $dbLpaData = [
+            'id' => 123,
+            'updatedBy' => '456',
+            'version' => 4,
+            'document' => null,
+            'payment' => null,
+            'metadata' => null,
+        ];
+
+        $selectSql->shouldReceive('select')->with(ApplicationData::APPLICATIONS_TABLE)->andReturn($select);
+        $selectSql->shouldReceive('prepareStatementForSqlObject')->with($select)->andReturn($selectStatement);
+
+        $select->shouldReceive('where')->with(['id' => 123])->andReturn($select);
+        $select->shouldReceive('limit')->with(1)->andReturn($select);
+
+        $selectStatement->shouldReceive('getSql')->andReturn('blah');
+        $selectStatement->shouldReceive('setSql')->with('blah FOR UPDATE');
+        $selectStatement->shouldReceive('execute')->andReturn($selectResult);
+
+        $selectResult->shouldReceive('isQueryResult')->andReturn(true);
+        $selectResult->shouldReceive('count')->andReturn(1);
+        $selectResult->shouldReceive('current')->andReturn($dbLpaData);
+
+        // update(...)
+        $updateStatement = Mockery::mock(StatementInterface::class);
+        $updateSql = Mockery::mock(Sql::class);
+        $update = Mockery::mock(Update::class);
+        $updateResult = Mockery::mock(ResultInterface::class);
+
+        $updateSql->shouldReceive('update')->with(ApplicationData::APPLICATIONS_TABLE)->andReturn($update);
+        $updateSql->shouldReceive('prepareStatementForSqlObject')->with($update)->andReturn($updateStatement);
+
+        $update->shouldReceive('where')->with([
+            'id' => 123,
+            'updatedAt' => $updatedAt->format(DbWrapper::TIME_FORMAT),
+            'version' => 4,
+        ]);
+        $update->shouldReceive('set');
+
+        $updateStatement->shouldReceive('execute')->andReturn($updateResult);
+
+        $updateResult->shouldReceive('getAffectedRows')->andReturn(1);
+
+        $dbWrapper->shouldReceive('beginTransaction');
+        $dbWrapper->shouldReceive('commit');
+        $dbWrapper->shouldReceive('createSql')->andReturn($selectSql, $updateSql);
+
+        $applicationData = new ApplicationData($dbWrapper, []);
+
+        $applicationData->update($lpa);
+    }
+
+    public function testUpdateConflict(): void
+    {
+        $lpa = new Lpa(['id' => 123, 'version' => 4]);
+
+        $dbWrapper = Mockery::mock(DbWrapper::class);
+
+        // getForUpdateById(...)
+        $lpaStatement = Mockery::mock(StatementInterface::class);
+        $lpaSql = Mockery::mock(Sql::class);
+        $lpaSelect = Mockery::mock(Select::class);
+        $lpaResult = Mockery::mock(ResultInterface::class);
+
+        $dbLpaData = ['id' => 123, 'updatedBy' => '456', 'version' => 5, 'document' => null, 'payment' => null, 'metadata' => null];
+
+        $dbWrapper->shouldReceive('createSql')->andReturn($lpaSql);
+
+        $lpaSql->shouldReceive('select')->with(ApplicationData::APPLICATIONS_TABLE)->andReturn($lpaSelect);
+        $lpaSql->shouldReceive('prepareStatementForSqlObject')->with($lpaSelect)->andReturn($lpaStatement);
+
+        $lpaSelect->shouldReceive('where')->with(['id' => 123])->andReturn($lpaSelect);
+        $lpaSelect->shouldReceive('limit')->with(1)->andReturn($lpaSelect);
+
+        $lpaStatement->shouldReceive('getSql')->andReturn('blah');
+        $lpaStatement->shouldReceive('setSql')->with('blah FOR UPDATE');
+        $lpaStatement->shouldReceive('execute')->andReturn($lpaResult);
+
+        $lpaResult->shouldReceive('isQueryResult')->andReturn(true);
+        $lpaResult->shouldReceive('count')->andReturn(1);
+        $lpaResult->shouldReceive('current')->andReturn($dbLpaData);
+
+        // update(...)
+        $userResult = Mockery::mock(ResultInterface::class);
+
+        $userData = ['profile' => '{"name": {"first": "a", "last": "b"}}'];
+
+        $dbWrapper->shouldReceive('beginTransaction');
+        $dbWrapper->shouldReceive('rollback');
+
+        $dbWrapper->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['id' => 456], ['limit' => 1])
+            ->andReturn($userResult);
+
+        $userResult->shouldReceive('isQueryResult')->andReturn(true);
+        $userResult->shouldReceive('count')->andReturn(1);
+        $userResult->shouldReceive('current')->andReturn($userData);
+
+        $applicationData = new ApplicationData($dbWrapper, []);
+
+        $this->expectExceptionObject(new ConflictException('a b'));
+        $applicationData->update($lpa);
+    }
+
+    public function testUpdateConflictUnknownUser(): void
+    {
+        $lpa = new Lpa(['id' => 123, 'version' => 4]);
+
+        $dbWrapper = Mockery::mock(DbWrapper::class);
+
+        // getForUpdateById(...)
+        $lpaStatement = Mockery::mock(StatementInterface::class);
+        $lpaSql = Mockery::mock(Sql::class);
+        $lpaSelect = Mockery::mock(Select::class);
+        $lpaResult = Mockery::mock(ResultInterface::class);
+
+        $dbLpaData = ['id' => 123, 'updatedBy' => '456', 'version' => 5, 'document' => null, 'payment' => null, 'metadata' => null];
+
+        $dbWrapper->shouldReceive('createSql')->andReturn($lpaSql);
+
+        $lpaSql->shouldReceive('select')->with(ApplicationData::APPLICATIONS_TABLE)->andReturn($lpaSelect);
+        $lpaSql->shouldReceive('prepareStatementForSqlObject')->with($lpaSelect)->andReturn($lpaStatement);
+
+        $lpaSelect->shouldReceive('where')->with(['id' => 123])->andReturn($lpaSelect);
+        $lpaSelect->shouldReceive('limit')->with(1)->andReturn($lpaSelect);
+
+        $lpaStatement->shouldReceive('getSql')->andReturn('blah');
+        $lpaStatement->shouldReceive('setSql')->with('blah FOR UPDATE');
+        $lpaStatement->shouldReceive('execute')->andReturn($lpaResult);
+
+        $lpaResult->shouldReceive('isQueryResult')->andReturn(true);
+        $lpaResult->shouldReceive('count')->andReturn(1);
+        $lpaResult->shouldReceive('current')->andReturn($dbLpaData);
+
+        // update(...)
+        $userResult = Mockery::mock(ResultInterface::class);
+
+        $dbWrapper->shouldReceive('beginTransaction');
+        $dbWrapper->shouldReceive('rollback');
+
+        $dbWrapper->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['id' => 456], ['limit' => 1])
+            ->andReturn($userResult);
+
+        $userResult->shouldReceive('isQueryResult')->andReturn(true);
+        $userResult->shouldReceive('count')->andReturn(0);
+
+        $applicationData = new ApplicationData($dbWrapper, []);
+
+        $this->expectExceptionObject(new ConflictException('Unknown user 456'));
+        $applicationData->update($lpa);
     }
 }
