@@ -3,6 +3,8 @@ resource "aws_dynamodb_table" "lpa-locks" {
   name         = "lpa-locks-${var.environment_name}"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "id"
+  # development account holds ephemeral PR envs, which must remain deletable for workspace cleanup
+  deletion_protection_enabled = var.account_name == "development" ? false : true
 
   attribute {
     name = "id"
