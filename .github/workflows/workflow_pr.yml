@@ -174,6 +174,7 @@ jobs:
       is_ephemeral: true
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci-boundary
+      workspace_manager_protection_duration: "12"
       terraform_apply: true
       terraform_directory: ./terraform/environment
       terraform_variables: "-var container_version=${{ needs.workflow_variables.outputs.short_sha }}"
