@@ -41,6 +41,8 @@ jobs:
             snyk_policy_path: local-development/dynamodb-local/.snyk
           - image_name: localstack/localstack:4.14.0
             snyk_policy_path: local-development/localstack/.snyk
+          - image_name: localstack/localstack:community-archive
+            snyk_policy_path: local-development/localstack/.snyk
           - image_name: node:24.18.0-alpine3.23
             snyk_policy_path: local-development/node/.snyk
     steps:
