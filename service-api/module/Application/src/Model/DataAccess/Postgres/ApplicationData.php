@@ -59,7 +59,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     private function mapPostgresToLpaCompatible(array $data): array
     {
-        $updatedBy = null;
+        $updatedBy = $data['updatedBy'];
         if (isset($data['profile'])) {
             $name = json_decode($data['profile'], true)['name'];
             $updatedBy = $name['first'] . ' ' . $name['last'];
@@ -282,7 +282,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
             $updateTimestamp = !$noDataChanged;
 
             if ($lpa->getVersion() !== $inDbLpa->getVersion()) {
-                $userResult = $this->dbWrapper->select(UserData::USERS_TABLE, ['id' => $lpa->getUpdatedBy()], ['limit' => 1]);
+                $userResult = $this->dbWrapper->select(UserData::USERS_TABLE, ['id' => $inDbLpa->getUpdatedBy()], ['limit' => 1]);
                 if ($userResult->isQueryResult() && $userResult->count() === 1) {
                     $user = $userResult->current();
                     $profile = json_decode($user['profile'], true);
@@ -290,7 +290,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
                     throw new ConflictException($profile['name']['first'] . ' ' . $profile['name']['last']);
                 }
 
-                throw new ConflictException('Unknown user ' . $lpa->getUpdatedBy());
+                throw new ConflictException('Unknown user ' . $inDbLpa->getUpdatedBy());
             }
 
             //------------------------------------------
