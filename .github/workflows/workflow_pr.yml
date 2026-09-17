@@ -148,7 +148,6 @@ jobs:
       is_ephemeral: false
       workspace_manager_aws_account_id: "050256574573"
       workspace_manager_aws_iam_role: opg-lpa-ci-boundary
-      workspace_manager_protection_duration: "12"
       terraform_apply: false
       terraform_directory: ./terraform/region
       oidc_role_to_assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
