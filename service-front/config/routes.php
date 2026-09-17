@@ -277,7 +277,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/add', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyAddHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/add');
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/add-trust', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyAddTrustHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/add-trust');
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyEditHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/edit');
-    $app->get('/lpa/{lpa-id:\d+}/primary-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyConfirmDeleteHandler::class), 'lpa/primary-attorney/confirm-delete');
+    $app->route('/lpa/{lpa-id:\d+}/primary-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/confirm-delete');
     $app->get('/lpa/{lpa-id:\d+}/primary-attorney/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyDeleteHandler::class), 'lpa/primary-attorney/delete');
     $app->route('/lpa/{lpa-id:\d+}/how-primary-attorneys-make-decision', $factory->pipeline(LpaLoaderMiddleware::class, HowPrimaryAttorneysMakeDecisionHandler::class), ['GET', 'POST'], 'lpa/how-primary-attorneys-make-decision');
 
@@ -285,7 +285,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/add', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyAddHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/add');
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/add-trust', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyAddTrustHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/add-trust');
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyEditHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/edit');
-    $app->get('/lpa/{lpa-id:\d+}/replacement-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyConfirmDeleteHandler::class), 'lpa/replacement-attorney/confirm-delete');
+    $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/confirm-delete');
     $app->get('/lpa/{lpa-id:\d+}/replacement-attorney/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyDeleteHandler::class), 'lpa/replacement-attorney/delete');
     $app->route('/lpa/{lpa-id:\d+}/how-replacement-attorneys-make-decision', $factory->pipeline(LpaLoaderMiddleware::class, HowReplacementAttorneysMakeDecisionHandler::class), ['GET', 'POST'], 'lpa/how-replacement-attorneys-make-decision');
     $app->route('/lpa/{lpa-id:\d+}/when-replacement-attorney-step-in', $factory->pipeline(LpaLoaderMiddleware::class, WhenReplacementAttorneyStepInHandler::class), ['GET', 'POST'], 'lpa/when-replacement-attorney-step-in');
@@ -293,13 +293,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderHandler::class), ['GET', 'POST'], 'lpa/certificate-provider');
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider/add', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderAddHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/add');
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider/edit', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderEditHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/edit');
-    $app->get('/lpa/{lpa-id:\d+}/certificate-provider/confirm-delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderConfirmDeleteHandler::class), 'lpa/certificate-provider/confirm-delete');
+    $app->route('/lpa/{lpa-id:\d+}/certificate-provider/confirm-delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/confirm-delete');
     $app->get('/lpa/{lpa-id:\d+}/certificate-provider/delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderDeleteHandler::class), 'lpa/certificate-provider/delete');
 
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyHandler::class), ['GET', 'POST'], 'lpa/people-to-notify');
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify/add', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyAddHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/add');
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyEditHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/edit');
-    $app->get('/lpa/{lpa-id:\d+}/people-to-notify/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyConfirmDeleteHandler::class), 'lpa/people-to-notify/confirm-delete');
+    $app->route('/lpa/{lpa-id:\d+}/people-to-notify/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/confirm-delete');
     $app->get('/lpa/{lpa-id:\d+}/people-to-notify/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyDeleteHandler::class), 'lpa/people-to-notify/delete');
 
     $app->route('/lpa/{lpa-id:\d+}/correspondent', $factory->pipeline(LpaLoaderMiddleware::class, CorrespondentHandler::class), ['GET', 'POST'], 'lpa/correspondent');

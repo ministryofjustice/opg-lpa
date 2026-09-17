@@ -18,6 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Delete this handler after new template has been deployed.
 class PeopleToNotifyDeleteHandler implements RequestHandlerInterface
 {
     public function __construct(
@@ -44,7 +45,6 @@ class PeopleToNotifyDeleteHandler implements RequestHandlerInterface
         $personIdx = (int) $personIdx;
         $personToNotifyId = $lpa->document->peopleToNotify[$personIdx]->id;
 
-        // TODO(LPAL-2493): Get version from POST body instead
         $ifMatchVersion = $lpa->getVersion();
         try {
             if (!$this->lpaApplicationService->deleteNotifiedPerson($lpa, $personToNotifyId, $ifMatchVersion)) {
