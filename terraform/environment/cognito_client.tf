@@ -87,7 +87,7 @@ resource "aws_cognito_user_pool_client" "make_a_lasting_power_of_attorney_front"
   }
 
   access_token_validity  = 5
-  id_token_validity      = 3600
+  id_token_validity      = 5400
   refresh_token_validity = 1
   read_attributes        = []
   write_attributes       = []
