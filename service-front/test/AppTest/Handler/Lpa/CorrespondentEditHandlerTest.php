@@ -7,6 +7,7 @@ namespace AppTest\Handler\Lpa;
 use App\Handler\Lpa\CorrespondentEditHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\CorrespondenceSetService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -25,7 +26,6 @@ use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use RuntimeException;
 
 class CorrespondentEditHandlerTest extends TestCase
 {
@@ -36,6 +36,7 @@ class CorrespondentEditHandlerTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
     private ActorReuseDetailsService&MockObject $actorReuseDetailsService;
+    private CorrespondenceSetService&MockObject $correspondenceSetService;
     private MockObject $form;
     private CorrespondentEditHandler $handler;
 
@@ -46,6 +47,7 @@ class CorrespondentEditHandlerTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
+        $this->correspondenceSetService = $this->createMock(CorrespondenceSetService::class);
         $this->form = $this->createMock(\App\Form\Lpa\CorrespondentForm::class);
 
         $this->formElementManager
@@ -62,6 +64,7 @@ class CorrespondentEditHandlerTest extends TestCase
             $this->lpaApplicationService,
             $this->urlHelper,
             $this->actorReuseDetailsService,
+            $this->correspondenceSetService,
         );
     }
 
@@ -185,33 +188,6 @@ class CorrespondentEditHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testGetReturningFromReuseDetailsWithNonEditableDataProcessesDirectly(): void
-    {
-        $this->actorReuseDetailsService
-            ->method('getCorrespondentReuseDetails')
-            ->willReturn([
-                0 => ['label' => 'John Doe (donor)', 'data' => ['who' => 'donor', 'name-first' => 'John']],
-            ]);
-
-        $this->form->method('isEditable')->willReturn(false);
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('getModelDataFromValidatedForm')->willReturn([
-            'who' => 'donor',
-            'name' => ['title' => 'Mr', 'first' => 'John', 'last' => 'Doe'],
-        ]);
-
-        $this->lpaApplicationService
-            ->expects($this->once())
-            ->method('setCorrespondent')
-            ->willReturn(true);
-
-        $response = $this->handler->handle(
-            $this->createRequest('GET', [], null, ['reuseDetailsIndex' => '0'])
-        );
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-    }
-
     public function testGetReturningFromReuseDetailsWithEditableDataRendersForm(): void
     {
         $this->actorReuseDetailsService
@@ -233,6 +209,8 @@ class CorrespondentEditHandlerTest extends TestCase
 
     public function testPostValidFormSavesAndRedirects(): void
     {
+        $redirect = new RedirectResponse('');
+
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getModelDataFromValidatedForm')->willReturn([
             'who' => 'other',
@@ -240,10 +218,10 @@ class CorrespondentEditHandlerTest extends TestCase
             'address' => ['address1' => '2 Test Road'],
         ]);
 
-        $this->lpaApplicationService
+        $this->correspondenceSetService
             ->expects($this->once())
             ->method('setCorrespondent')
-            ->willReturn(true);
+            ->willReturn($redirect);
 
         $response = $this->handler->handle($this->createRequest('POST', [
             'who' => 'other',
@@ -253,7 +231,7 @@ class CorrespondentEditHandlerTest extends TestCase
             'version' => self::IF_MATCH_VALUE,
         ]));
 
-        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals($redirect, $response);
     }
 
     public function testPostInvalidFormRendersFormAgain(): void
@@ -274,35 +252,19 @@ class CorrespondentEditHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostApiFailureThrowsException(): void
-    {
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('getModelDataFromValidatedForm')->willReturn([
-            'who' => 'other',
-            'name' => ['title' => 'Mrs', 'first' => 'Jane', 'last' => 'Smith'],
-        ]);
-
-        $this->lpaApplicationService
-            ->method('setCorrespondent')
-            ->willReturn(false);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('API client failed to update correspondent');
-
-        $this->handler->handle($this->createRequest('POST', ['name-first' => 'Jane', 'version' => self::IF_MATCH_VALUE]));
-    }
-
     public function testPostPopupReturnsJsonOnSuccess(): void
     {
+        $json = new JsonResponse([]);
+
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getModelDataFromValidatedForm')->willReturn([
             'who' => 'other',
             'name' => ['title' => 'Mrs', 'first' => 'Jane', 'last' => 'Smith'],
         ]);
 
-        $this->lpaApplicationService
+        $this->correspondenceSetService
             ->method('setCorrespondent')
-            ->willReturn(true);
+            ->willReturn($json);
 
         $lpa = $this->createLpa($this->createCorrespondence());
 
@@ -321,6 +283,6 @@ class CorrespondentEditHandlerTest extends TestCase
 
         $response = $this->handler->handle($request);
 
-        $this->assertInstanceOf(JsonResponse::class, $response);
+        $this->assertEquals($json, $response);
     }
 }

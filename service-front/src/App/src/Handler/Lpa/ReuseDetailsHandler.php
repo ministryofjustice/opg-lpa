@@ -4,10 +4,14 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
+use App\Form\Lpa\CorrespondentForm;
+use App\Form\Lpa\ReuseDetailsForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
+use App\Service\CorrespondenceSetService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
@@ -16,6 +20,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,6 +38,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
         private readonly FormElementManager $formElementManager,
         private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
+        private readonly CorrespondenceSetService $correspondenceSetService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -83,8 +89,8 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             );
         }
 
-        /** @var \App\Form\Lpa\ReuseDetailsForm $form */
-        $form = $this->formElementManager->get('App\Form\Lpa\ReuseDetailsForm', [
+        /** @var ReuseDetailsForm $form */
+        $form = $this->formElementManager->get(ReuseDetailsForm::class, [
             'actorReuseDetails' => $actorReuseDetails,
         ]);
 
@@ -95,6 +101,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
         );
         $form->setAttribute('action', $formAction);
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -108,15 +115,41 @@ class ReuseDetailsHandler implements RequestHandlerInterface
                 $data = $form->getData();
                 $reuseDetailsIndex = $data['reuse-details'];
 
-                // If the trust option was selected, adapt the return URL accordingly
-                $returnUrl = $callingUrl . ($reuseDetailsIndex === 't' ? '-trust' : '');
+                // TODO(LPAL-2493): Once template has been deployed, this can be simplified to assume version exists.
+                $ifMatchVersion = isset($postData['version']) ? (int)$postData['version'] : $lpa->getVersion();
+                try {
+                    if ($forCorrespondent) {
+                        if (array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
+                            /** @var CorrespondentForm $form */
+                            $correspondentForm = $this->formElementManager->get(CorrespondentForm::class);
 
-                return new RedirectResponse(
-                    $returnUrl . '?' . http_build_query([
-                        'reuseDetailsIndex' => $reuseDetailsIndex,
-                        'callingUrl'        => $callingUrl,
-                    ])
-                );
+                            $correspondentForm->bind($actorReuseDetails[$reuseDetailsIndex]['data']);
+
+                            // If data is non-editable, process it directly
+                            if (!$correspondentForm->isEditable()) {
+                                $correspondentForm->isValid();
+                                $correspondentData = $correspondentForm->getModelDataFromValidatedForm() ?? [];
+
+                                /** @var FormFlowChecker $flowChecker */
+                                $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
+
+                                return $this->correspondenceSetService->setCorrespondent($lpa, $correspondentData, $flowChecker, $isPopup, $ifMatchVersion);
+                            }
+                        }
+                    }
+
+                    // If the trust option was selected, adapt the return URL accordingly
+                    $returnUrl = $callingUrl . ($reuseDetailsIndex === 't' ? '-trust' : '');
+
+                    return new RedirectResponse(
+                        $returnUrl . '?' . http_build_query([
+                            'reuseDetailsIndex' => $reuseDetailsIndex,
+                            'callingUrl'        => $callingUrl,
+                        ])
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
+                }
             }
         }
 
@@ -126,6 +159,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
             'form'      => $form,
             'cancelUrl' => $cancelUrl,
             'actorName' => $actorName,
+            'conflictError' => $conflictError,
         ];
 
         if ($isPopup) {
