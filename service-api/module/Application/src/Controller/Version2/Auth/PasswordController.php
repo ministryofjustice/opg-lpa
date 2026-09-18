@@ -147,7 +147,6 @@ class PasswordController extends AbstractAuthController
         $token = (isset($result['activation_token']) ? $result['activation_token'] : $result['token']);
 
         $this->getLogger()->info('Password reset token requested', [
-            'token'    => $token,
             'username' => $username
         ]);
 

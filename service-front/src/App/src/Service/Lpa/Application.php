@@ -68,10 +68,13 @@ class Application implements ApiClientAwareInterface
             $result = $this->apiClient->httpGet($target);
             return new Lpa($result);
         } catch (ApiException $ex) {
-            $this->logger->error('Failed to fetch application', [
-                'lpaId'     => $lpaId,
-                'status'    => $ex->getStatusCode(),
-                'exception' => $ex,
+            if ($ex->getStatusCode() !== 404) {
+                throw $ex;
+            }
+
+            $this->logger->info('LPA not found for user', [
+                'lpaId'  => $lpaId,
+                'status' => $ex->getStatusCode(),
             ]);
         }
 
@@ -90,7 +93,7 @@ class Application implements ApiClientAwareInterface
         try {
             $result = $this->apiClient->httpGet($target);
         } catch (ApiException $ex) {
-            $this->logger->error('Failed to fetch LPA statuses', [
+            $this->logger->warning('Failed to fetch LPA statuses', [
                 'ids'       => $ids,
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,

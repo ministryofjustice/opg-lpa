@@ -318,8 +318,7 @@ class UserDetails implements ApiClientAwareInterface
         } catch (ApiException $ex) {
             // 401 means the token has expired or been invalidated — this is a normal
             // part of the session lifecycle and is handled by clearing the identity.
-            // Only log at error for unexpected server-side failures.
-            $logLevel = $ex->getStatusCode() === 401 ? 'info' : 'error';
+            $logLevel = $ex->getStatusCode() === 401 ? 'info' : 'warning';
             $this->logger->{$logLevel}('Failed to get token info', [
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
@@ -472,13 +471,19 @@ class UserDetails implements ApiClientAwareInterface
                 return true;
             }
         } catch (ApiException $ex) {
-            $this->logger->error('Failed to set new password', [
-                'exception' => $ex,
-            ]);
-
             if ($ex->getMessage() === 'Invalid passwordToken') {
+                $this->logger->info('Password reset token rejected', [
+                    'event'  => 'auth.password_reset.token_rejected',
+                    'status' => $ex->getStatusCode(),
+                ]);
+
                 return 'invalid-token';
             }
+
+            $this->logger->warning('Failed to set new password', [
+                'status'    => $ex->getStatusCode(),
+                'exception' => $ex,
+            ]);
 
             return 'api-error';
         }
@@ -572,7 +577,10 @@ class UserDetails implements ApiClientAwareInterface
         return false;
     }
 
-    public function activateAccount(#[\SensitiveParameter] string $token): bool
+    /**
+     * @return true|'already-activated'|false
+     */
+    public function activateAccount(#[\SensitiveParameter] string $token): bool|string
     {
         try {
             $this->apiClient->httpPost('/v2/users', [
@@ -581,7 +589,18 @@ class UserDetails implements ApiClientAwareInterface
 
             return true;
         } catch (ApiException $ex) {
-            $this->logger->error('Failed to activate account', [
+            if ($ex->getMessage() === 'account-already-activated') {
+                $this->logger->info('Account already activated', [
+                    'event' => 'auth.account.already_activated',
+                ]);
+
+                return 'already-activated';
+            }
+
+            $logLevel = $ex->getStatusCode() === 400 ? 'info' : 'warning';
+
+            $this->logger->{$logLevel}('Failed to activate account', [
+                'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);
         }

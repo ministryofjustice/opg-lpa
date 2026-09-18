@@ -134,6 +134,17 @@ final class ApplicationTest extends TestCase
         $this->assertEquals(['4321' => ['found' => false]], $result);
     }
 
+    public function testGetStatusesLogsFailuresAtWarningAndStillDegrades(): void
+    {
+        $this->apiClient->shouldReceive('httpGet')->once()->andThrow($this->apiException(500));
+
+        $this->assertEquals(['4321' => ['found' => false]], $this->service->getStatuses('4321'));
+
+        $this->logger->shouldNotHaveReceived('error');
+        $this->logger->shouldHaveReceived('warning')
+            ->with('Failed to fetch LPA statuses', Mockery::type('array'));
+    }
+
     public function testGetStatusesException(): void
     {
         $mockResponse = $this->createMock(ResponseInterface::class);
