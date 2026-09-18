@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
 use App\Form\User\Login;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\AuthenticationMiddleware;
 use App\Service\SafeRedirectPath;
 use App\View\Twig\FlashMessenger;
@@ -25,6 +26,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LoginHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const SESSION_KEY_IDENTITY = 'identity';
 
     public function __construct(
@@ -125,13 +128,13 @@ class LoginHandler implements RequestHandlerInterface
         return new HtmlResponse(
             $this->renderer->render(
                 'application/general/auth/index.twig',
-                [
+                array_merge($this->getTemplateVariables($request), [
                     'form'                  => $form,
                     'authError'             => $authError,
                     'isTimeout'             => $isTimeout,
                     'isInternalSystemError' => $isInternalSystemError,
                     'oneLoginEnabled'       => $this->oneLoginEnabled,
-                ]
+                ])
             )
         );
     }

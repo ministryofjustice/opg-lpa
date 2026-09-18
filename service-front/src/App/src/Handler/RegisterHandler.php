@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -18,6 +19,8 @@ use Psr\Log\LoggerInterface;
 
 class RegisterHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
@@ -78,10 +81,10 @@ class RegisterHandler implements RequestHandlerInterface
 
                     return new HtmlResponse($this->renderer->render(
                         'application/general/register/email-sent.twig',
-                        [
+                        array_merge($this->getTemplateVariables($request), [
                             'form' => $resendForm,
                             'email' => $email,
-                        ]
+                        ])
                     ));
                 } else {
                     $data['error'] = $result;
@@ -91,7 +94,7 @@ class RegisterHandler implements RequestHandlerInterface
 
         return new HtmlResponse($this->renderer->render(
             'application/general/register/index.twig',
-            $data
+            array_merge($this->getTemplateVariables($request), $data)
         ));
     }
 }
