@@ -200,6 +200,49 @@ final class ClientTest extends TestCase
         $this->invokePrivateMethod($client, 'handleResponse', [$this->makeResponse(200, 'not-json')]);
     }
 
+    public function testHandleResponseLogsDiagnosticsForMalformedJson(): void
+    {
+        $client = $this->createClient();
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Malformed JSON response from server',
+                $this->callback(static function (array $context): bool {
+                    return $context['error_code'] === 'API_CLIENT_MALFORMED_JSON'
+                        && $context['status'] === 200
+                        && $context['bodyLength'] === 8
+                        && $context['jsonError'] !== 'No error'
+                        && $context['bodyPreview'] === 'not-json';
+                })
+            );
+
+        $this->expectException(ApiException::class);
+
+        $this->invokePrivateMethod($client, 'handleResponse', [$this->makeResponse(200, 'not-json')]);
+    }
+
+    public function testHandleResponseBoundsTheLoggedBody(): void
+    {
+        $client = $this->createClient();
+        $body   = '{"donor":{"name":"' . str_repeat('a', 500) . '"';
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Malformed JSON response from server',
+                $this->callback(static function (array $context) use ($body): bool {
+                    // Truncated so applicant data cannot spill, with the true size kept.
+                    return strlen($context['bodyPreview']) === 200
+                        && $context['bodyLength'] === strlen($body);
+                })
+            );
+
+        $this->expectException(ApiException::class);
+
+        $this->invokePrivateMethod($client, 'handleResponse', [$this->makeResponse(200, $body)]);
+    }
+
     public function testHandleErrorResponseLogsWarningAndThrowsApiException(): void
     {
         $client = $this->createClient();

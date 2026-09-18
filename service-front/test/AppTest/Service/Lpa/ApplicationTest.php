@@ -35,7 +35,17 @@ final class ApplicationTest extends MockeryTestCase
 
     private MockInterface|AuthenticationService $authenticationService;
     private MockInterface|Client $apiClient;
+    private MockInterface|LoggerInterface $logger;
     private Application $service;
+
+    private function apiException(int $status): ApiException
+    {
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn($status);
+        $response->method('getBody')->willReturn(Utils::streamFor('{}'));
+
+        return new ApiException($response);
+    }
 
     private function modifiedLPA(int $id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
     {
@@ -61,7 +71,7 @@ final class ApplicationTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $logger = Mockery::spy(LoggerInterface::class);
+        $this->logger = Mockery::spy(LoggerInterface::class);
         $identity = Mockery::mock(\App\Model\Service\Authentication\Identity\User::class);
         $identity->shouldReceive('id')->andReturn('4321');
         $identity->shouldReceive('getSharedSpaceId')->andReturn(null);
@@ -73,7 +83,7 @@ final class ApplicationTest extends MockeryTestCase
 
         $this->service = new Application($this->authenticationService, [
             'processing-status' => ['track-from-date' => '2019-01-01'],
-        ], $logger);
+        ], $this->logger);
         $this->service->setApiClient($this->apiClient);
     }
 
@@ -100,17 +110,31 @@ final class ApplicationTest extends MockeryTestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetApplicationFailure(): void
+    public function testGetApplicationReturnsFalseWhenTheLpaIsNotFound(): void
     {
-        $mockResponse = Mockery::mock(ResponseInterface::class);
-        $mockResponse->shouldReceive('getStatusCode')->andReturn(400);
-        $mockResponse->shouldReceive('getBody')->andReturn(Utils::streamFor('{}'))->once();
+        $this->apiClient->shouldReceive('httpGet')->andThrow($this->apiException(404));
 
-        $this->apiClient->shouldReceive('httpGet')->andThrow(new ApiException($mockResponse));
+        $this->assertFalse($this->service->getApplication(1234));
 
-        $result = $this->service->getApplication(1234);
+        $this->logger->shouldNotHaveReceived('error');
+    }
 
-        $this->assertFalse($result);
+    public function testGetApplicationRethrowsServiceFailures(): void
+    {
+        $this->apiClient->shouldReceive('httpGet')->andThrow($this->apiException(500));
+
+        $this->expectException(ApiException::class);
+
+        $this->service->getApplication(1234);
+    }
+
+    public function testGetApplicationRethrowsAMalformedResponse(): void
+    {
+        $this->apiClient->shouldReceive('httpGet')->andThrow($this->apiException(200));
+
+        $this->expectException(ApiException::class);
+
+        $this->service->getApplication(1234);
     }
 
     public function testGetStatuses(): void
@@ -133,6 +157,17 @@ final class ApplicationTest extends MockeryTestCase
         $result = $this->service->getStatuses('4321');
 
         $this->assertEquals(['4321' => ['found' => false]], $result);
+    }
+
+    public function testGetStatusesLogsFailuresAtWarningAndStillDegrades(): void
+    {
+        $this->apiClient->shouldReceive('httpGet')->once()->andThrow($this->apiException(500));
+
+        $this->assertEquals(['4321' => ['found' => false]], $this->service->getStatuses('4321'));
+
+        $this->logger->shouldNotHaveReceived('error');
+        $this->logger->shouldHaveReceived('warning')
+            ->with('Failed to fetch LPA statuses', Mockery::type('array'));
     }
 
     public function testGetStatusesException(): void

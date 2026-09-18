@@ -57,6 +57,12 @@ interface UserRepositoryInterface
     public function activate(string $token): bool|null;
 
     /**
+     * Whether any account still holds this activation token, so an already-used token can be
+     * told apart from one we have never seen.
+     */
+    public function activationTokenExists(string $token): bool;
+
+    /**
      * Updates a user's password.
      */
     public function setNewPassword(string $userId, string $passwordHash): void;

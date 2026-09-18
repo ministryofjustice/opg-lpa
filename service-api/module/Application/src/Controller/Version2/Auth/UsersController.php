@@ -68,9 +68,7 @@ class UsersController extends AbstractAuthController
             return new ApiProblem(400, $result);
         }
 
-        $this->getLogger()->info('New user account activated', [
-            'activation_token' => $activationToken
-        ]);
+        $this->getLogger()->info('New user account activated');
 
         // Return 204 - No Content
         // Note: The Laminas AbstractRestfulController response member

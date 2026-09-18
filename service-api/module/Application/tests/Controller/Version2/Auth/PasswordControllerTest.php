@@ -354,7 +354,6 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
 
         $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
-                'token'    => $resetToken,
                 'username' => $username
             ]);
 
@@ -386,7 +385,6 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
 
         $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
-                'token'    => $resetToken,
                 'username' => $username
             ]);
 
