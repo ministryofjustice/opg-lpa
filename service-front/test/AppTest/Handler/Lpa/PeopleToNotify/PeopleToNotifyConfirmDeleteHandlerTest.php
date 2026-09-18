@@ -7,7 +7,9 @@ namespace AppTest\Handler\Lpa\PeopleToNotify;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
 use App\Middleware\RequestAttribute;
 use App\Middleware\StubMiddleware;
+use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Common\Address;
 use MakeShared\DataModel\Common\Name;
@@ -23,16 +25,19 @@ use PHPUnit\Framework\TestCase;
 
 class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
 {
+    private LpaApplicationService&MockObject $lpaApplicationService;
     private TemplateRendererInterface&MockObject $renderer;
     private UrlHelper&MockObject $urlHelper;
     private PeopleToNotifyConfirmDeleteHandler $handler;
 
     protected function setUp(): void
     {
+        $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
 
         $this->handler = new PeopleToNotifyConfirmDeleteHandler(
+            $this->lpaApplicationService,
             $this->renderer,
             $this->urlHelper,
         );
@@ -56,7 +61,7 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
         return $lpa;
     }
 
-    private function createRequest(Lpa $lpa, ?string $idx = '0', array $headers = []): ServerRequest
+    private function createRequest(string $method, Lpa $lpa, ?string $idx = '0', array $headers = [], array $postData = []): ServerRequest
     {
         $routeParams = ['lpa-id' => $lpa->id];
         if ($idx !== null) {
@@ -66,12 +71,16 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
         $routeResult = RouteResult::fromRoute($route, $routeParams);
 
         $request = (new ServerRequest())
-            ->withMethod('GET')
+            ->withMethod($method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RouteResult::class, $routeResult);
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
+        }
+
+        if ($method === 'POST') {
+            $request = $request->withParsedBody($postData);
         }
 
         return $request;
@@ -84,7 +93,7 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->expects($this->once())->method('render')->willReturn('<html>confirm</html>');
 
-        $response = $this->handler->handle($this->createRequest($lpa));
+        $response = $this->handler->handle($this->createRequest('GET', $lpa));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertSame(200, $response->getStatusCode());
@@ -94,7 +103,7 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $response = $this->handler->handle($this->createRequest($lpa, '99'));
+        $response = $this->handler->handle($this->createRequest('GET', $lpa, '99'));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertSame(404, $response->getStatusCode());
@@ -104,7 +113,7 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $response = $this->handler->handle($this->createRequest($lpa, null));
+        $response = $this->handler->handle($this->createRequest('GET', $lpa, null));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertSame(404, $response->getStatusCode());
@@ -126,9 +135,36 @@ class PeopleToNotifyConfirmDeleteHandlerTest extends TestCase
             ->willReturn('<html>confirm</html>');
 
         $response = $this->handler->handle(
-            $this->createRequest($lpa, '0', ['X-Requested-With' => 'XMLHttpRequest'])
+            $this->createRequest('GET', $lpa, '0', ['X-Requested-With' => 'XMLHttpRequest'])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testPostDeletesPersonAndRedirects(): void
+    {
+        $lpa = $this->createLpa();
+
+        $this->lpaApplicationService->expects($this->once())
+            ->method('deleteNotifiedPerson')
+            ->with($lpa, 1, 5)
+            ->willReturn(true);
+
+        $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/people-to-notify');
+
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, postData: ['version' => '5']));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    public function testPostDeleteThrowsOnApiFailure(): void
+    {
+        $lpa = $this->createLpa();
+
+        $this->lpaApplicationService->method('deleteNotifiedPerson')->willReturn(false);
+
+        $this->expectException(\RuntimeException::class);
+
+        $this->handler->handle($this->createRequest('POST', $lpa, postData: ['version' => '5']));
     }
 }

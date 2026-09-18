@@ -25,6 +25,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Delete this handler after new template has been deployed.
 class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
@@ -56,7 +57,6 @@ class ReplacementAttorneyDeleteHandler implements RequestHandlerInterface
 
         $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
 
-        // TODO(LPAL-2493): Get version from POST body instead
         $ifMatchVersion = $lpa->getVersion();
         try {
             if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
