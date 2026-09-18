@@ -226,3 +226,33 @@ resource "aws_s3_bucket_public_access_block" "redacted_logs" {
   restrict_public_buckets = true
   ignore_public_acls      = true
 }
+
+resource "aws_s3_bucket_policy" "redacted_logs" {
+  bucket = aws_s3_bucket.redacted_logs.id
+  policy = data.aws_iam_policy_document.redacted_logs.json
+}
+
+data "aws_iam_policy_document" "redacted_logs" {
+  statement {
+    sid    = "AllowSSLRequestsOnly"
+    effect = "Deny"
+
+    resources = [
+      aws_s3_bucket.redacted_logs.arn,
+      "${aws_s3_bucket.redacted_logs.arn}/*",
+    ]
+
+    actions = ["s3:*"]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = ["false"]
+    }
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+  }
+}
