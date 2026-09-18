@@ -27,9 +27,7 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         $this->logger->shouldReceive('info')
-            ->with('New user account activated', [
-                'activation_token' => $activationToken,
-            ]);
+            ->with('New user account activated');
 
         /** @var UsersController $controller */
         $controller = $this->getController(UsersController::class);
