@@ -19,6 +19,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Remove once the new templates have been deployed.
 class CheckoutChequeHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
@@ -43,7 +44,6 @@ class CheckoutChequeHandler implements RequestHandlerInterface
 
         $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CHEQUE);
 
-        // TODO(LPAL-2493): Get version from POST body instead
         $ifMatchVersion = $lpa->getVersion();
         try {
             $ifMatchVersion = $this->checkoutHelper->verifyLpaPaymentAmount($lpa, $ifMatchVersion);

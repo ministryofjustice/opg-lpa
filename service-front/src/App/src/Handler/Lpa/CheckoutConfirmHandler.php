@@ -18,6 +18,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Remove once the new templates have been deployed.
 class CheckoutConfirmHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
@@ -45,7 +46,6 @@ class CheckoutConfirmHandler implements RequestHandlerInterface
             throw new RuntimeException('Invalid option');
         }
 
-        // TODO(LPAL-2493): Get version from POST body instead
         $ifMatchVersion = $lpa->getVersion();
         try {
             return $this->checkoutHelper->finishCheckout($lpa, $request, $ifMatchVersion);

@@ -8,6 +8,9 @@ use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\CardPayments;
+use App\Service\Payment\GovPay\Client as GovPayClient;
+use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -26,6 +29,8 @@ class CheckoutHelper
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly Communication $communicationService,
         private readonly UrlHelper $urlHelper,
+        private readonly GovPayClient $paymentClient,
+        private readonly CardPayments $cardPayments,
         private readonly LoggerInterface $logger
     ) {
     }
@@ -106,5 +111,105 @@ class CheckoutHelper
         }
 
         return $ifMatchVersion;
+    }
+
+    public function confirmAndPayByCheque(Lpa $lpa, ServerRequestInterface $request, int $ifMatchVersion)
+    {
+        $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CHEQUE);
+
+        $ifMatchVersion = $this->verifyLpaPaymentAmount($lpa, $ifMatchVersion);
+
+        if (!$this->lpaApplicationService->setPayment($lpa, $lpa->getPayment(), $ifMatchVersion)) {
+            throw new RuntimeException(
+                'API client failed to set payment details for id: ' . $lpa->getId() . ' in ' . static::class
+            );
+        }
+
+        return $this->finishCheckout($lpa, $request, $ifMatchVersion + 1);
+    }
+
+    public function confirmAndPayByCard(Lpa $lpa, ServerRequestInterface $request, int $ifMatchVersion)
+    {
+        $ifMatchVersion = $this->verifyLpaPaymentAmount($lpa, $ifMatchVersion);
+
+        // Check for any existing payments in play
+        if (!is_null($lpa->getPayment()->getGatewayReference())) {
+            $gatewayReference = $lpa->getPayment()->getGatewayReference();
+            $payment          = $this->paymentClient->getPayment($gatewayReference);
+
+            if (is_null($payment)) {
+                throw new RuntimeException(
+                    'Invalid GovPay payment reference: ' . $gatewayReference
+                );
+            }
+
+            if ($payment->isSuccess()) {
+                // Payment already completed — record it and finish.
+                $this->cardPayments->recordSuccessfulPayment($lpa, $payment, $ifMatchVersion);
+
+                $this->logger->info('user returned to checkout with successful payment and updated LPA', [
+                    'lpa_id'            => $lpa->getId(),
+                    'gateway_reference' => $gatewayReference,
+                    'payment_method'    => $lpa->getPayment()->getMethod(),
+                    'has_email'         => $lpa->getPayment()->getEmail()?->getAddress() !== '',
+                ]);
+
+                return $this->finishCheckout($lpa, $request, $ifMatchVersion + 1);
+            }
+
+            if (!$payment->isFinished()) {
+                return new RedirectResponse((string) $payment->getPaymentPageUrl());
+            }
+        }
+
+        // Create a new payment
+        $ref = self::constructPaymentTransactionId((string) $lpa->getId());
+
+        $description = $lpa->getDocument()->getType() == 'property-and-financial'
+            ? 'Property and financial affairs'
+            : 'Health and welfare';
+        $description .= ' LPA for ' . $lpa->getDocument()->getDonor()->getName()->getFullName();
+
+        // Build the callback URL using the request URI
+        $requestUri = $request->getUri();
+        $baseUrl = $requestUri->getScheme() . '://' . $requestUri->getAuthority();
+        $callback = $baseUrl . $this->urlHelper->generate(
+            'lpa/checkout/pay/response',
+            ['lpa-id' => $lpa->getId()]
+        );
+
+        $payment = $this->paymentClient->createPayment(
+            (int) ($lpa->getPayment()->getAmount() * 100.0), // amount in pence
+            $ref,
+            $description,
+            new Uri($callback)
+        );
+
+        /** @psalm-suppress UndefinedPropertyFetch */
+        $lpa->getPayment()->setGatewayReference($payment->payment_id);
+
+        $this->logger->info('payment created with GOV UK Pay', [
+            'lpa_id'            => $lpa->getId(),
+            'gateway_reference' => $lpa->getPayment()->getGatewayReference(),
+        ]);
+
+        $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()], $ifMatchVersion);
+
+        $this->logger->info('LPA updated with payment information, redirecting to gov.uk pay', [
+            'lpa_id'   => $lpa->getId(),
+            'payment' => $lpa->getPayment()->toJson(),
+        ]);
+
+        return new RedirectResponse((string) $payment->getPaymentPageUrl());
+    }
+
+    public function confirmAndPayNothing(Lpa $lpa, ServerRequestInterface $request, int $ifMatchVersion)
+    {
+        // Sanity check; making sure this method isn't called if there's something to pay.
+        if (intval($lpa->getPayment()->getAmount()) !== 0) {
+            throw new RuntimeException('Invalid option');
+        }
+
+        return $this->finishCheckout($lpa, $request, $ifMatchVersion);
     }
 }

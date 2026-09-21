@@ -30,6 +30,7 @@ use RuntimeException;
  *
  * @psalm-suppress UndefinedPropertyFetch
  */
+// TODO(LPAL-2493): Remove once the new templates have been deployed.
 class CheckoutPayHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
