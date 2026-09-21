@@ -6,16 +6,25 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
+use App\Service\Lpa\Application as LpaApplicationService;
+use App\Service\Lpa\ReplacementAttorneyCleanup;
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
+use MakeShared\DataModel\Lpa\Document\Attorneys\AbstractAttorney;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
+use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class ReplacementAttorneyConfirmDeleteHandler implements RequestHandlerInterface
 {
@@ -23,6 +32,8 @@ class ReplacementAttorneyConfirmDeleteHandler implements RequestHandlerInterface
     use RequestInspectorTrait;
 
     public function __construct(
+        private readonly LpaApplicationService $lpaApplicationService,
+        private readonly ReplacementAttorneyCleanup $replacementAttorneyCleanup,
         private readonly TemplateRendererInterface $renderer,
         private readonly UrlHelper $urlHelper,
     ) {
@@ -32,6 +43,7 @@ class ReplacementAttorneyConfirmDeleteHandler implements RequestHandlerInterface
     {
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
+        $isPopup = $this->isXmlHttpRequest($request);
 
         /** @var RouteResult|null $routeResult */
         $routeResult = $request->getAttribute(RouteResult::class);
@@ -44,23 +56,59 @@ class ReplacementAttorneyConfirmDeleteHandler implements RequestHandlerInterface
         $attorney = $lpa->document->replacementAttorneys[$attorneyIdx];
         $isTrust = ($attorney instanceof TrustCorporation);
 
+        $conflictError = null;
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            $postData = $request->getParsedBody() ?? [];
+            if (!is_array($postData)) {
+                $postData = [];
+            }
+
+            $ifMatchVersion = (int)$postData['version'];
+            try {
+                if ($this->attorneyIsCorrespondent($lpa, $attorney)) {
+                    if (!$this->lpaApplicationService->deleteCorrespondent($lpa, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to delete correspondent for id: ' . $lpa->id
+                        );
+                    }
+                    $ifMatchVersion++;
+                }
+
+                if (!$this->lpaApplicationService->deleteReplacementAttorney($lpa, $attorney->id, $ifMatchVersion)) {
+                    throw new RuntimeException(
+                        'API client failed to delete replacement attorney ' . $attorneyIdx . ' for id: ' . $lpa->id
+                    );
+                }
+
+                $this->replacementAttorneyCleanup->cleanUp($lpa, $ifMatchVersion + 1);
+
+                if ($isPopup) {
+                    return new JsonResponse(['success' => true]);
+                }
+
+                return new RedirectResponse(
+                    $this->urlHelper->generate('lpa/replacement-attorney', ['lpa-id' => $lpa->id])
+                );
+            } catch (ConflictException $e) {
+                $conflictError = $e;
+            }
+        }
+
         $templateParams = [
-            'deleteRoute'    => $this->urlHelper->generate(
-                'lpa/replacement-attorney/delete',
-                ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx],
-            ),
             'attorneyName'    => $attorney->name,
             'attorneyAddress' => $attorney->address,
             'isTrust'         => $isTrust,
+            'isPopup'         => $isPopup,
             'cancelUrl'       => $this->urlHelper->generate(
                 'lpa/replacement-attorney',
                 ['lpa-id' => $lpa->id]
             ),
+            'actionUrl'    => $this->urlHelper->generate(
+                'lpa/replacement-attorney/confirm-delete',
+                ['lpa-id' => $lpa->id, 'idx' => $attorneyIdx],
+            ),
+            'conflictError' => $conflictError,
         ];
-
-        if ($this->isXmlHttpRequest($request)) {
-            $templateParams['isPopup'] = true;
-        }
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/replacement-attorney/confirm-delete.twig',
@@ -68,5 +116,20 @@ class ReplacementAttorneyConfirmDeleteHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
+    }
+
+    private function attorneyIsCorrespondent(Lpa $lpa, AbstractAttorney $attorney): bool
+    {
+        $correspondent = $lpa->document->correspondent;
+
+        if ($correspondent instanceof Correspondence && $correspondent->who === Correspondence::WHO_ATTORNEY) {
+            $nameToCompare = ($attorney instanceof TrustCorporation
+                ? $correspondent->company
+                : $correspondent->name);
+
+            return ($attorney->name == $nameToCompare && $attorney->address == $correspondent->address);
+        }
+
+        return false;
     }
 }

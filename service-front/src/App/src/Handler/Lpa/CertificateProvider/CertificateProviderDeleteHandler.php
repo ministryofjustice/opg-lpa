@@ -17,6 +17,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Delete this handler after new template has been deployed.
 class CertificateProviderDeleteHandler implements RequestHandlerInterface
 {
     use CertificateProviderHandlerTrait;
@@ -35,7 +36,6 @@ class CertificateProviderDeleteHandler implements RequestHandlerInterface
 
         $certificateProvider = $lpa->document->certificateProvider;
 
-        // TODO(LPAL-2493): Get version from POST body instead
         $ifMatchVersion = $lpa->getVersion();
         try {
             // If the certificate provider is also set as the correspondent, delete those details too

@@ -1,0 +1,90 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.25.1
+# ignores vulnerabilities until expiry date; change duration by modifying expiry date
+ignore:
+  SNYK-UPSTREAM-NODE-18507942:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:08.906Z
+        created: 2026-09-11T16:18:08.913Z
+  SNYK-UPSTREAM-NODE-18507943:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:10.817Z
+        created: 2026-09-11T16:18:10.820Z
+  SNYK-UPSTREAM-NODE-18553644:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:12.750Z
+        created: 2026-09-11T16:18:12.753Z
+  SNYK-UPSTREAM-NODE-18553648:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:14.881Z
+        created: 2026-09-11T16:18:14.885Z
+  SNYK-UPSTREAM-NODE-18553653:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:17.027Z
+        created: 2026-09-11T16:18:17.032Z
+  SNYK-UPSTREAM-NODE-18553660:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:18.847Z
+        created: 2026-09-11T16:18:18.853Z
+  SNYK-UPSTREAM-NODE-18507940:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:20.869Z
+        created: 2026-09-11T16:18:20.879Z
+  SNYK-JS-BRACEEXPANSION-17706650:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:22.991Z
+        created: 2026-09-11T16:18:22.994Z
+  SNYK-JS-BRACEEXPANSION-18313044:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:24.877Z
+        created: 2026-09-11T16:18:24.882Z
+  SNYK-JS-BRACEEXPANSION-18512280:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:27.217Z
+        created: 2026-09-11T16:18:27.225Z
+  SNYK-JS-PACOTE-8225084:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:30.435Z
+        created: 2026-09-11T16:18:30.442Z
+  SNYK-JS-TAR-17909068:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:32.706Z
+        created: 2026-09-11T16:18:32.714Z
+  SNYK-JS-TAR-17909152:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:34.952Z
+        created: 2026-09-11T16:18:34.959Z
+  SNYK-JS-UNDICI-17372658:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:37.306Z
+        created: 2026-09-11T16:18:37.312Z
+  SNYK-JS-UNDICI-17372758:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:40.109Z
+        created: 2026-09-11T16:18:40.115Z
+  SNYK-JS-UNDICI-19635210:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:42.254Z
+        created: 2026-09-11T16:18:42.262Z
+  SNYK-JS-UNDICI-19635226:
+    - '*':
+        reason: None Given
+        expires: 2026-10-11T16:18:44.516Z
+        created: 2026-09-11T16:18:44.525Z
+patch: {}
