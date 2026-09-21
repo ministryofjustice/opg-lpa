@@ -94,6 +94,11 @@ class LegacyCompatExtension extends AbstractExtension
                 'current' => $this->persistentSessionDetails->getCurrentRoute(),
                 'previous' => $this->persistentSessionDetails->getPreviousRoute(),
             ]),
+            new TwigFunction('inSharedSpace', function (): bool {
+                $identity = $this->sessionStorage->read();
+
+                return $identity !== null && $identity->inSharedSpace();
+            }),
             // Ported from AppFunctionsExtension — delegates to AccordionService
             new TwigFunction('accordionTop', [$this, 'accordionTop']),
             new TwigFunction('accordionBottom', [$this, 'accordionBottom']),
