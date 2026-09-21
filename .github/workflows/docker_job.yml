@@ -75,7 +75,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-to-assume: ${{ inputs.oidc_docker_pull_role }}
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
@@ -185,8 +185,8 @@ jobs:
             scan_id: aurora_scheduler
 
 # separate job for building and scanning test images - saving cache but not pushing images
-  docker_build_and_scan:
-    name: "Docker build and scan ${{ matrix.image_name }}"
+  docker_build_and_scan_test_images:
+    name: "Docker build and scan test image ${{ matrix.image_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
