@@ -131,8 +131,6 @@ jobs:
             build_options: "--file ./service-front/docker/app/Dockerfile"
             dockerfile_path: ./service-front/docker/app/Dockerfile
             scan_id: front_app
-            build_targets: >-
-              [{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"},{"actions_runner":"ubuntu-24.04-arm","platform":"linux/arm64","tag":"ARM64"}]
 
           - image_name: online-lpa/front_web
             snyk_policy_path: service-front/docker/web/.snyk
@@ -186,7 +184,7 @@ jobs:
 
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan_test_images:
-    name: "Docker build and scan test image/ ${{ matrix.image_name }}"
+    name: "Build and scan test image / ${{ matrix.image_name }}"
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
