@@ -341,7 +341,7 @@ class UserDetails implements ApiClientAwareInterface
         $this->logger->info('Deleting user and all their LPAs');
 
         try {
-            $this->apiClient->httpDelete('/v2/user/' . $this->getUserId());
+            $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
         } catch (ApiException $ex) {
             $this->logger->error('Failed to delete user', [
                 'exception' => $ex,

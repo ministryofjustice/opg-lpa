@@ -143,6 +143,7 @@ dc-up: all-composer-install ecrlogin
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
+	@${MAKE} dc-restart-web
 	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
 	docker compose run --rm npm-front install
 	docker compose run --rm npm-front run watch
@@ -156,6 +157,7 @@ dc-up-debug: all-composer-install ecrlogin
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
+	@${MAKE} dc-restart-web
 
 .PHONY: dc-build
 dc-build:
@@ -230,7 +232,7 @@ reset-api:
 .PHONY: dc-restart-web
 dc-restart-web:
 	@echo "Restarting web containers to refresh nginx DNS..."
-	@docker compose restart front-web api-web admin-web front-ssl admin-ssl
+	@docker compose restart front-web api-web admin-web
 	@echo "Waiting for api-web (http://localhost:7001)..."
 	@for i in $$(seq 1 30); do \
 		if curl -s -o /dev/null --max-time 2 http://localhost:7001/; then \
@@ -239,6 +241,8 @@ dc-restart-web:
 		if [ $$i -eq 30 ]; then echo "  api-web did not become available"; exit 1; fi; \
 		sleep 1; \
 	done
+	@echo "Restarting front-ssl/admin-ssl"
+	@docker compose restart front-ssl admin-ssl
 	@echo "Waiting for front-web (https://localhost:7002)..."
 	@for i in $$(seq 1 30); do \
 		if curl -sk -o /dev/null --max-time 2 https://localhost:7002/; then \
@@ -447,6 +451,7 @@ reset-front-app:
 .PHONY: dc-reseed
 dc-reseed:
 	@docker compose run --rm seeding
+	@${MAKE} dc-restart-web
 
 .PHONY: update-secrets-baseline
 update-secrets-baseline:
