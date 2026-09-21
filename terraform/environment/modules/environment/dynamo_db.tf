@@ -25,9 +25,10 @@ resource "aws_dynamodb_table" "lpa-locks" {
 
 #tfsec:ignore:aws-dynamodb-enable-recovery
 resource "aws_dynamodb_table" "lpa-properties" {
-  name         = "lpa-properties-${var.environment_name}"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "id"
+  name                        = "lpa-properties-${var.environment_name}"
+  billing_mode                = "PAY_PER_REQUEST"
+  hash_key                    = "id"
+  deletion_protection_enabled = local.dynamodb_deletion_protection_enabled
 
   attribute {
     name = "id"
