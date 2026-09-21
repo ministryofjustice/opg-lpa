@@ -316,7 +316,7 @@ class ReuseDetailsHandlerTest extends TestCase
         ];
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', $queryParams, ['reuse-details' => '0'])
+            $this->createRequest('POST', $queryParams, ['reuse-details' => '0', 'version' => '5'])
         );
 
         $this->assertEquals($redirect, $response);

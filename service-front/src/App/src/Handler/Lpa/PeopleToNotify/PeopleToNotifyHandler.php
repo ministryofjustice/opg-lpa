@@ -94,10 +94,6 @@ class PeopleToNotifyHandler implements RequestHandlerInterface
                     'lpa/people-to-notify/confirm-delete',
                     ['lpa-id' => $lpa->id, 'idx' => $idx]
                 ),
-                'deleteRoute' => $this->urlHelper->generate(
-                    'lpa/people-to-notify/delete',
-                    ['lpa-id' => $lpa->id, 'idx' => $idx]
-                ),
             ];
         }
 

@@ -90,10 +90,6 @@ class ReplacementAttorneyIndexHandler implements RequestHandlerInterface
                     'lpa/replacement-attorney/confirm-delete',
                     ['lpa-id' => $lpa->id, 'idx' => $idx]
                 ),
-                'deleteRoute'        => $this->urlHelper->generate(
-                    'lpa/replacement-attorney/delete',
-                    ['lpa-id' => $lpa->id, 'idx' => $idx]
-                ),
             ];
 
             $attorneysParams[] = $params;

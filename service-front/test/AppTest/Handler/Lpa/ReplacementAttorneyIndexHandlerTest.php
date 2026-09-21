@@ -105,8 +105,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
                 $this->callback(function (array $vars) use ($lpa): bool {
                     return count($vars['attorneys']) === count($lpa->document->replacementAttorneys)
                         && isset($vars['attorneys'][0]['editRoute'])
-                        && isset($vars['attorneys'][0]['confirmDeleteRoute'])
-                        && isset($vars['attorneys'][0]['deleteRoute']);
+                        && isset($vars['attorneys'][0]['confirmDeleteRoute']);
                 })
             )
             ->willReturn('html');
