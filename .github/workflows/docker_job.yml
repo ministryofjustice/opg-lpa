@@ -17,6 +17,14 @@ on:
         description: "OIDC role to assume for ECR permissions"
         required: true
         type: string
+      oidc_docker_push_role:
+        description: "OIDC role to assume for pushing images to ECR"
+        required: true
+        type: string
+      oidc_docker_pull_role:
+        description: "OIDC role to assume for pulling images from ECR"
+        required: true
+        type: string
       otel_scan_required:
         description: "Fail workflow when OTEL Snyk scan fails"
         required: false
@@ -108,8 +116,8 @@ jobs:
       image_display_name: ${{ matrix.image_name }}
       build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
       aws_region: eu-west-1
-      oidc_role_to_assume_build: ${{ inputs.oidc_docker_role }}
-      oidc_role_to_assume_push: ${{ inputs.oidc_docker_role }}
+      oidc_role_to_assume_build: ${{ inputs.oidc_docker_pull_role }}
+      oidc_role_to_assume_push: ${{ inputs.oidc_docker_push_role }}
       push_images: ${{ !contains(matrix.image_name, '-test') }}
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
@@ -233,7 +241,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           aws-region: eu-west-1
-          role-to-assume: ${{ inputs.oidc_docker_role }}
+          role-to-assume: ${{ inputs.oidc_docker_pull_role }}
           role-duration-seconds: 3600
           role-session-name: OPGMakeaLPAECRGithubAction
 
