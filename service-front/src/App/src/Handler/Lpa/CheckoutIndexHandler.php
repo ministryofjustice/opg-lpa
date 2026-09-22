@@ -41,7 +41,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
         // Using getVerison on GET here as it isn't really a user initiated action,
-        // and a getting a conflict would be meaningless.
+        // and getting a conflict would be meaningless.
         $ifMatchVersion = $lpa->getVersion();
         $action = null;
 
@@ -51,9 +51,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                 $postData = [];
             }
 
-            // TODO(LPAL-2493): Once new templates are deployed this can be
-            // simplified to `$ifMatchVersion = $postData['version']`;
-            $ifMatchVersion = isset($postData['version']) ? (int)$postData['version'] : $lpa->getVersion();
+            $ifMatchVersion = (int)$postData['version'];
             $action = $postData['action'] ?? '';
         }
 
