@@ -143,9 +143,6 @@ class PasswordController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        //  Determine the token value for the logging message
-        $token = (isset($result['activation_token']) ? $result['activation_token'] : $result['token']);
-
         $this->getLogger()->info('Password reset token requested', [
             'username' => $username
         ]);
