@@ -6,11 +6,13 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\CheckoutHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -66,8 +68,10 @@ class CheckoutIndexHandler implements RequestHandlerInterface
 
         $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
-            if (!$this->checkoutHelper->isLpaComplete($lpa, $request)) {
-                return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
+            if (!$this->isLpaComplete($lpa, $request)) {
+                return new RedirectResponse(
+                    $this->urlHelper->generate('lpa/more-info-required', ['lpa-id' => $lpa->getId()]),
+                );
             }
 
             try {
@@ -106,12 +110,20 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                     'form'           => $form,
                     'lowIncomeFee'   => $lowIncomeFee,
                     'fullFee'        => $fullFee,
-                    'lpaIsCompleted' => $this->checkoutHelper->isLpaComplete($lpa, $request),
+                    'lpaIsCompleted' => $this->isLpaComplete($lpa, $request),
                     'conflictError'  => $conflictError,
                 ]
             )
         );
 
         return new HtmlResponse($html);
+    }
+
+    private function isLpaComplete(Lpa $lpa, ServerRequestInterface $request): bool
+    {
+        /** @var FormFlowChecker $flowChecker */
+        $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
+
+        return $lpa->isStateCreated() && $flowChecker->backToForm() === 'lpa/checkout';
     }
 }
