@@ -161,7 +161,11 @@ services:
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
-      XDEBUG_CONFIG: client_host=host.docker.internal
+      # Note: XDEBUG_CONFIG is deliberately NOT set here - Xdebug treats its mere
+      # presence (any value) as a legacy trigger that always starts a debug
+      # session, which defeats xdebug.start_with_request=trigger and causes
+      # the healthcheck to spam connection-attempt errors. xdebug.client_host
+      # is already baked into the image's ini file, so this isn't needed.
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
@@ -286,8 +290,12 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app
-      XDEBUG_TRIGGER: "true"
-      XDEBUG_CONFIG: client_host=host.docker.internal
+      # Note: neither XDEBUG_TRIGGER (as a persistent env var) nor XDEBUG_CONFIG
+      # should be set here - Xdebug treats the mere presence of either as an
+      # always-on trigger, which defeats xdebug.start_with_request=trigger and
+      # causes the healthcheck to spam connection-attempt errors. Real requests
+      # get XDEBUG_TRIGGER set per-request via the nginx fastcgi_param instead.
+      # xdebug.client_host is already baked into the image's ini file.
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
@@ -395,7 +403,8 @@ services:
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-admin-app
-      XDEBUG_CONFIG: client_host=host.docker.internal
+      # Note: XDEBUG_CONFIG is deliberately NOT set here - see front-app's env
+      # block above for why (legacy always-on trigger via presence check).
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
     healthcheck:
       test: ["CMD", "/usr/local/bin/health-check.sh"]

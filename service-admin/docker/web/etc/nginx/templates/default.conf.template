@@ -103,6 +103,14 @@ server {
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         include fastcgi_params;
 
+        # Xdebug is configured with start_with_request=trigger (not "yes") so
+        # that the container's own healthcheck script (which bypasses nginx,
+        # calling php-fpm directly) doesn't repeatedly try and fail to open a
+        # debug connection every time it runs. Setting the trigger here means
+        # every real request through nginx still auto-triggers Xdebug, same
+        # as before. No-op in environments where Xdebug isn't installed.
+        fastcgi_param XDEBUG_TRIGGER 1;
+
         fastcgi_param SCRIPT_FILENAME /app/public$fastcgi_script_name;
 
         # add tracing to the request
