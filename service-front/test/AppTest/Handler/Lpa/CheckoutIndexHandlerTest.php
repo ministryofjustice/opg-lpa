@@ -130,7 +130,7 @@ class CheckoutIndexHandlerTest extends TestCase
 
         $this->renderer->expects($this->never())->method('render');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => '6']));
         $this->assertSame($redirectResponse, $response);
     }
 
@@ -164,7 +164,7 @@ class CheckoutIndexHandlerTest extends TestCase
             ->with('application/authenticated/lpa/checkout/index.twig', $this->anything())
             ->willReturn('html');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => '6']));
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
@@ -185,7 +185,7 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockForm();
 
-        $request = $this->createRequest('POST', $lpa, ['action' => $action]);
+        $request = $this->createRequest('POST', $lpa, ['action' => $action, 'version' => '6']);
 
         $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
         $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
