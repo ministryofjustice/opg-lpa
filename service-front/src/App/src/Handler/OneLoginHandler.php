@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
@@ -15,6 +16,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class OneLoginHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const SESSION_KEY_IDENTITY = 'identity';
 
     public function __construct(
@@ -33,7 +36,10 @@ class OneLoginHandler implements RequestHandlerInterface
         }
 
         return new HtmlResponse(
-            $this->renderer->render('application/general/auth/onelogin.twig')
+            $this->renderer->render(
+                'application/general/auth/onelogin.twig',
+                $this->getTemplateVariables($request)
+            ),
         );
     }
 }
