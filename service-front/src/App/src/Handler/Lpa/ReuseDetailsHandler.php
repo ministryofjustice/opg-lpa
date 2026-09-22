@@ -115,8 +115,6 @@ class ReuseDetailsHandler implements RequestHandlerInterface
                 $data = $form->getData();
                 $reuseDetailsIndex = $data['reuse-details'];
 
-                // TODO(LPAL-2493): Once template has been deployed, this can be simplified to assume version exists.
-                $ifMatchVersion = isset($postData['version']) ? (int)$postData['version'] : $lpa->getVersion();
                 try {
                     if ($forCorrespondent) {
                         if (array_key_exists($reuseDetailsIndex, $actorReuseDetails)) {
@@ -133,6 +131,7 @@ class ReuseDetailsHandler implements RequestHandlerInterface
                                 /** @var FormFlowChecker $flowChecker */
                                 $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
 
+                                $ifMatchVersion = (int)$postData['version'];
                                 return $this->correspondenceSetService->setCorrespondent($lpa, $correspondentData, $flowChecker, $isPopup, $ifMatchVersion);
                             }
                         }
