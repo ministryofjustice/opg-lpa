@@ -357,13 +357,15 @@ cypress-open: npm-install python-api-venv
 		--project ./ -x stepDefinitions="cypress/e2e/common/*.js"
 
 # Provide name of the spec file (assuming it is in cypress/e2e/) e.g. cypress-run-spec SPEC=Admin.feature
-# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+# Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
+# (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-spec
 cypress-run-spec: _cypress-prepare-dirs
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # This should be used in the form : make cypress-run-tags tags=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
-# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+# Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
+# (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags: _cypress-prepare-dirs
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"

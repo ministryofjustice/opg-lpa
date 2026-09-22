@@ -539,7 +539,7 @@ services:
       context: ./
       dockerfile: cypress/Dockerfile
     # when spun up locally within docker compose, run just the HomePage test, but this is generally overriden from the Makefile
-    command: [ "run", "--spec", "cypress/e2e/HomePage.feature", "--project", "./", "-e", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
+    command: [ "run", "--spec", "cypress/e2e/HomePage.feature", "--project", "./", "-x", "stepDefinitions=\"cypress/e2e/common/*.js\"" ]
     environment:
       SERVICE_API_ROOT: "http://api-web:8080"
       CYPRESS_baseUrl: https://front-ssl
