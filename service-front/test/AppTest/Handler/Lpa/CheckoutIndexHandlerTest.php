@@ -19,17 +19,18 @@ use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class CheckoutIndexHandlerTest extends TestCase
 {
-    private TemplateRendererInterface&MockObject $renderer;
-    private FormElementManager&MockObject $formElementManager;
-    private UrlHelper&MockObject $urlHelper;
-    private CheckoutHelper&MockObject $checkoutHelper;
-    private CardPayments&MockObject $cardPayments;
+    private MockObject&TemplateRendererInterface $renderer;
+    private MockObject&FormElementManager $formElementManager;
+    private MockObject&UrlHelper $urlHelper;
+    private MockObject&CardPayments $cardPayments;
+    private MockObject&CheckoutHelper $checkoutHelper;
     private CheckoutIndexHandler $handler;
 
     protected function setUp(): void
@@ -37,8 +38,8 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
         $this->cardPayments = $this->createMock(CardPayments::class);
+        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
 
         $this->handler = new CheckoutIndexHandler(
             $this->renderer,
@@ -65,14 +66,14 @@ class CheckoutIndexHandlerTest extends TestCase
         return $lpa;
     }
 
-    private function createRequest(string $method, Lpa $lpa): ServerRequest
+    private function createRequest(string $method, Lpa $lpa, array $postData = []): ServerRequest
     {
         $request = new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->getId() . '/checkout', $method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/checkout');
 
         if ($method === 'POST') {
-            $request = $request->withParsedBody([]);
+            $request = $request->withParsedBody($postData);
         }
 
         return $request;
@@ -167,6 +168,33 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    public static function actionProvider(): array
+    {
+        return [
+            ['cheque', 'confirmAndPayByCheque'],
+            ['card', 'confirmAndPayByCard'],
+            ['finish', 'confirmAndPayNothing'],
+        ];
+    }
+
+    #[DataProvider('actionProvider')]
+    public function testPostWithActionDoesCheckOut(string $action, string $method): void
+    {
+        $redirect = new RedirectResponse('');
+
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
+
+        $request = $this->createRequest('POST', $lpa, ['action' => $action]);
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->checkoutHelper->method($method)->with($lpa, $request, 5)->willReturn($redirect);
+
+        $response = $this->handler->handle($request);
+        $this->assertEquals($redirect, $response);
+    }
+
     public function testFormIsConfiguredWithCorrectActionAndClass(): void
     {
         $lpa = $this->createCompleteLpa();
@@ -202,10 +230,7 @@ class CheckoutIndexHandlerTest extends TestCase
 
         $this->handler->handle($this->createRequest('GET', $lpa));
 
-        $this->assertContains(['action', '/lpa/123/checkout/pay'], $formSetAttributes);
         $this->assertContains(['class', 'js-single-use'], $formSetAttributes);
-        $this->assertContains(['value', 'Confirm and pay by card'], $submitSetAttributes);
-        $this->assertContains(['data-cy', 'confirm-and-pay-by-card'], $submitSetAttributes);
     }
 
     public function testNonRepeatApplicationFeesArePassed(): void

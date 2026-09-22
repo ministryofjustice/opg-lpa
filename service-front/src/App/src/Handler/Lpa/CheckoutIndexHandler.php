@@ -40,11 +40,24 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        try {
-            // Using getVerison here as it isn't really a user initiated action,
-            // and a getting a conflict would be meaningless.
-            $ifMatchVersion = $lpa->getVersion();
+        // Using getVerison on GET here as it isn't really a user initiated action,
+        // and a getting a conflict would be meaningless.
+        $ifMatchVersion = $lpa->getVersion();
+        $action = null;
 
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            $postData = $request->getParsedBody() ?? [];
+            if (!is_array($postData)) {
+                $postData = [];
+            }
+
+            // TODO(LPAL-2493): Once new templates are deployed this can be
+            // simplified to `$ifMatchVersion = $postData['version']`;
+            $ifMatchVersion = isset($postData['version']) ? (int)$postData['version'] : $lpa->getVersion();
+            $action = $postData['action'] ?? '';
+        }
+
+        try {
             [$ifMatchVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, $ifMatchVersion);
             if ($ok) {
                 return $this->checkoutHelper->finishCheckout($lpa, $request, $ifMatchVersion);
@@ -53,10 +66,26 @@ class CheckoutIndexHandler implements RequestHandlerInterface
             $this->logger->info('Conflict raised when trying to check uncompleted payment', ['exception' => $e]);
         }
 
-        $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
+        $conflictError = null;
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            if (!$this->checkoutHelper->isLpaComplete($lpa, $request)) {
+                return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
+            }
 
-        if ($isPost && !$this->checkoutHelper->isLpaComplete($lpa, $request)) {
-            return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
+            try {
+                $response = match ($action) {
+                    'cheque' => $this->checkoutHelper->confirmAndPayByCheque($lpa, $request, $ifMatchVersion),
+                    'card'   => $this->checkoutHelper->confirmAndPayByCard($lpa, $request, $ifMatchVersion),
+                    'finish' => $this->checkoutHelper->confirmAndPayNothing($lpa, $request, $ifMatchVersion),
+                    default  => null,
+                };
+
+                if ($response !== null) {
+                    return $response;
+                }
+            } catch (ConflictException $e) {
+                $conflictError = $e;
+            }
         }
 
         $isRepeatApplication = ($lpa->getRepeatCaseNumber() != null);
@@ -69,13 +98,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
             'lpa' => $lpa,
         ]);
 
-        $form->setAttribute(
-            'action',
-            $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
-        );
         $form->setAttribute('class', 'js-single-use');
-        $form->get('submit')->setAttribute('value', 'Confirm and pay by card');
-        $form->get('submit')->setAttribute('data-cy', 'confirm-and-pay-by-card');
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/checkout/index.twig',
@@ -86,6 +109,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                     'lowIncomeFee'   => $lowIncomeFee,
                     'fullFee'        => $fullFee,
                     'lpaIsCompleted' => $this->checkoutHelper->isLpaComplete($lpa, $request),
+                    'conflictError'  => $conflictError,
                 ]
             )
         );

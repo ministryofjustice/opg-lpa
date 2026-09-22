@@ -6,8 +6,11 @@
     margin: govuk-spacing(6) 0;
     padding: govuk-spacing(8);
     background-color: $turquoise-with-contrast;
-    color: $white;
     text-align: center;
+
+    > * {
+        color: $white;
+    }
 
     @include govuk-media-query($until: tablet) {
         padding: 30px;
