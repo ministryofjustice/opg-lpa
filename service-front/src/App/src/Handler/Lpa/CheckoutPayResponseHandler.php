@@ -25,8 +25,6 @@ use RuntimeException;
 
 /**
  * Handles the callback from GOV.UK Pay after a user completes (or abandons) payment.
- *
- * @psalm-suppress UndefinedPropertyFetch
  */
 class CheckoutPayResponseHandler implements RequestHandlerInterface
 {
