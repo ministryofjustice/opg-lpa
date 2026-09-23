@@ -34,7 +34,7 @@ on:
         description: "Tag used to scope the docker build cache to a specific environment"
         required: false
         type: string
-        default: ""
+        default: "build-cache"
     secrets:
       SLACK_BOT_TOKEN:
         required: true
@@ -114,7 +114,7 @@ jobs:
       build_options: ${{ matrix.build_options }}
       cli_commands: ${{ matrix.cli_commands || '' }}
       image_display_name: ${{ matrix.image_name }}
-      build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag }}
+      build_cache_tag: ${{ matrix.build_cache_tag || inputs.build_cache_tag || 'build-cache' }}
       aws_region: eu-west-1
       oidc_role_to_assume_build: ${{ inputs.oidc_docker_pull_role }}
       oidc_role_to_assume_push: ${{ inputs.oidc_docker_push_role }}
