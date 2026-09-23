@@ -108,6 +108,17 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
         return new UserModel($user);
     }
 
+    public function getByOneLoginEmail(string $email): ?UserRepository\UserInterface
+    {
+        $user = $this->getByField(['one_login_email' => $email]);
+
+        if (!is_array($user)) {
+            return null;
+        }
+
+        return new UserModel($user);
+    }
+
     public function getByOneLoginSub(string $sub): ?UserRepository\UserInterface
     {
         $user = $this->getByField(['one_login_sub' => $sub]);

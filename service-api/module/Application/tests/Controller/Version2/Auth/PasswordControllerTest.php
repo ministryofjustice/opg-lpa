@@ -4,6 +4,7 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\PasswordController;
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Model\Service\Password\Service as PasswordService;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Password\Service;
 use Mockery;
@@ -399,6 +400,32 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         $result = $controller->resetAction();
 
         $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testResetActionReturns403ForAOneLoginAccount()
+    {
+        $username = 'linked@name.com';
+
+        $this->service->shouldReceive('generateToken')
+            ->with($username, false)
+            ->andReturn(PasswordService::ACCOUNT_USES_ONE_LOGIN)
+            ->once();
+
+        $this->logger->shouldReceive('info')
+            ->with('Password reset refused for a One Login account', [
+                'event' => 'auth.password_reset.refused_one_login',
+            ]);
+
+        /** @var PasswordController $controller */
+        $controller = $this->getController(PasswordController::class, [
+            'username' => $username,
+            'forSharedSpace' => false,
+        ]);
+
+        $result = $controller->resetAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
     }
 
     public function testResetActionFailedUserNotFound()

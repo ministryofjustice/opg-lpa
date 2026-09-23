@@ -1,4 +1,5 @@
-import { Before, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
+import { openEmailAndVisitLink } from '../../support/reset_link';
 
 let oneLoginEnabled = null;
 
@@ -83,6 +84,8 @@ const ONELOGIN_LINK_ACCOUNTS = {
   link: 'onelogin_link_email',
   retry: 'onelogin_retry_email',
   forgot: 'onelogin_forgot_email',
+  'already linked': 'already_linked_email',
+  'created through One Login': 'onelogin_created_email',
 };
 
 function oneLoginLinkEmail(account) {
@@ -140,3 +143,33 @@ Then(`I am advised my account could not be linked`, () => {
 Then(`I choose to try again`, () => {
   cy.get('[data-cy=cannot-link-try-again]').click();
 });
+
+When(
+  `I ask for a password reset link for the {string} account`,
+  (account) => {
+    const email = oneLoginLinkEmail(account);
+
+    cy.visit('/forgot-password');
+    cy.get('[data-cy=email]').clear().type(email);
+    cy.get('[data-cy=email_confirm]').clear().type(email);
+    cy.get('[data-cy=email-me-the-link]').click();
+  },
+);
+
+When(`I use the password reset link for the {string} account`, (account) => {
+  openEmailAndVisitLink('passwordreset', oneLoginLinkEmail(account));
+});
+
+When(
+  `I attempt to sign in {int} times with an incorrect password as the {string} account`,
+  (attempts, account) => {
+    const email = oneLoginLinkEmail(account);
+
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      cy.visit('/login');
+      cy.get('[data-cy=login-email]').clear().type(email);
+      cy.get('[data-cy=login-password]').clear().type('this-is-the-wrong-password');
+      cy.get('[data-cy=login-submit-button]').click();
+    }
+  },
+);

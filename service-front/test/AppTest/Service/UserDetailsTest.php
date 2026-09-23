@@ -343,6 +343,26 @@ final class UserDetailsTest extends TestCase
         $this->assertTrue($this->service->activateAccount('tok'));
     }
 
+    public function testRequestPasswordResetEmailTellsAOneLoginAccountWhereToSignIn(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException($this->makeApiException(403));
+        $this->urlHelper->expects($this->once())
+            ->method('generate')
+            ->with('application.login', [])
+            ->willReturn('/login');
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with($this->callback(static function (MailParameters $mailParameters): bool {
+                return $mailParameters->getToAddresses() === ['linked@example.com']
+                    && $mailParameters->getTemplateRef() === UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD
+                    && array_keys($mailParameters->getData()) === ['signInUrl']
+                    && str_ends_with($mailParameters->getData()['signInUrl'], '/login');
+            }));
+
+        $this->assertTrue($this->service->requestPasswordResetEmail('linked@example.com'));
+    }
+
     public function testActivateAccountReturnsFalseOnApiException(): void
     {
         $this->apiClient->method('httpPost')

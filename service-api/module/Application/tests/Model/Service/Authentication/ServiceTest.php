@@ -153,8 +153,25 @@ class ServiceTest extends MockeryTestCase
             'failed_login_attempts' => 0,
         ]));
 
-        $this->authUserRepository->shouldReceive('incrementFailedLoginCounter')
-            ->withArgs([1])->once();
+        $this->authUserRepository->shouldNotReceive('incrementFailedLoginCounter');
+
+        $service = new AuthenticationService($this->sharedSpaceRepository);
+        $service->setUserRepository($this->authUserRepository);
+
+        $result = $service->withPassword('linked@onelogin.com', 'any-password', false);
+
+        $this->assertEquals('invalid-user-credentials', $result);
+    }
+
+    public function testWithPasswordNeverLocksAOneLoginAccount()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('linked@onelogin.com', new User([
+            'id' => 1,
+            'active' => true,
+            'failed_login_attempts' => AuthenticationService::MAX_ALLOWED_LOGIN_ATTEMPTS - 1,
+        ]));
+
+        $this->authUserRepository->shouldNotReceive('incrementFailedLoginCounter');
 
         $service = new AuthenticationService($this->sharedSpaceRepository);
         $service->setUserRepository($this->authUserRepository);
