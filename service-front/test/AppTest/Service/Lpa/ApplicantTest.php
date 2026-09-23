@@ -6,25 +6,24 @@ namespace AppTest\Service\Lpa;
 
 use App\Service\Lpa\Applicant;
 use App\Service\Lpa\Application;
-use AppTest\Service\AbstractServiceTest;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Document\Decisions\AbstractDecisions;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Document\Document;
 use MakeShared\DataModel\Lpa\Lpa;
-use Mockery;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-final class ApplicantTest extends AbstractServiceTest
+final class ApplicantTest extends TestCase
 {
-    private Application|MockInterface $applicationService;
+    private MockObject&Application $applicationService;
     private Applicant $service;
 
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->applicationService = Mockery::mock(Application::class);
+        $this->applicationService = $this->createMock(Application::class);
 
         $this->service = new Applicant();
         $this->service->setLpaApplicationService($this->applicationService);
@@ -34,9 +33,9 @@ final class ApplicantTest extends AbstractServiceTest
     {
         $lpa = new Lpa(['document' => new Document(['whoIsRegistering' => [111, 222, 333]])]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')
-            ->withArgs([$lpa, [0 => 111, 2 => 333], 8])
-            ->once();
+        $this->applicationService->expects($this->once())
+            ->method('setWhoIsRegistering')
+            ->with($lpa, [0 => 111, 2 => 333], 8);
 
         $newVersion = $this->service->removeAttorney($lpa, 222, 8);
         $this->assertEquals(9, $newVersion);
@@ -46,7 +45,7 @@ final class ApplicantTest extends AbstractServiceTest
     {
         $lpa = new Lpa(['document' => new Document(['whoIsRegistering' => [111, 222, 333]])]);
 
-        $this->applicationService->shouldNotHaveReceived('setWhoIsRegistering');
+        $this->applicationService->expects($this->never())->method('setWhoIsRegistering');
 
         $newVersion = $this->service->removeAttorney($lpa, 444, 7);
         $this->assertEquals(7, $newVersion);
@@ -62,7 +61,7 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [333], 6])->once();
+        $this->applicationService->expects($this->once())->method('setWhoIsRegistering')->with($lpa, [333], 6);
 
         $newVersion = $this->service->cleanUp($lpa, 6);
         $this->assertEquals(7, $newVersion);
@@ -78,7 +77,7 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [444], 5])->once();
+        $this->applicationService->expects($this->once())->method('setWhoIsRegistering')->with($lpa, [444], 5);
 
         $newVersion = $this->service->cleanUp($lpa, 5);
         $this->assertEquals(6, $newVersion);
@@ -94,7 +93,7 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [], 4])->once();
+        $this->applicationService->expects($this->once())->method('setWhoIsRegistering')->with($lpa, [], 4);
 
         $newVersion = $this->service->cleanUp($lpa, 4);
         $this->assertEquals(5, $newVersion);

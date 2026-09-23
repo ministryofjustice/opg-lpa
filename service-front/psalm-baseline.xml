@@ -272,29 +272,6 @@
       <code><![CDATA[assertNotNull]]></code>
     </RedundantCondition>
   </file>
-  <file src="test/AppTest/Service/Lpa/ApplicationTest.php">
-    <UndefinedInterfaceMethod>
-      <code><![CDATA[once]]></code>
-      <code><![CDATA[once]]></code>
-    </UndefinedInterfaceMethod>
-    <UndefinedMagicMethod>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-      <code><![CDATA[andReturn]]></code>
-    </UndefinedMagicMethod>
-  </file>
-  <file src="test/AppTest/Service/Lpa/CommunicationTest.php">
-    <UndefinedInterfaceMethod>
-      <code><![CDATA[byDefault]]></code>
-    </UndefinedInterfaceMethod>
-    <UndefinedMagicMethod>
-      <code><![CDATA[andReturn]]></code>
-    </UndefinedMagicMethod>
-  </file>
   <file src="test/AppTest/Service/Payment/GovPay/ClientTest.php">
     <RedundantCast>
       <code><![CDATA[(string) $request->getUri()->getQuery()]]></code>
