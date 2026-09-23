@@ -81,6 +81,14 @@ interface SharedSpaceRepositoryInterface
     public function getMembers(string $sharedSpaceId): array;
 
     /**
+     * Returns a page of members of the given shared space, along with the
+     * total number of members (ignoring offset/limit), to support pagination.
+     *
+     * @return array{results: array<int, SharedSpaceMember>, total: int}
+     */
+    public function getMembersPaginated(string $sharedSpaceId, int $offset, int $limit): array;
+
+    /**
      * Check if a member with the given email exists in the given shared space.
      */
     public function hasMemberWithEmail(string $sharedSpaceId, string $email): bool;
@@ -101,6 +109,14 @@ interface SharedSpaceRepositoryInterface
      * @return array<MemberInvite>
      */
     public function getInvites(string $sharedSpaceId): array;
+
+    /**
+     * Returns a page of invites for the given shared space, along with the
+     * total number of invites (ignoring offset/limit), to support pagination.
+     *
+     * @return array{results: array<MemberInvite>, total: int}
+     */
+    public function getInvitesPaginated(string $sharedSpaceId, int $offset, int $limit): array;
 
     /**
      * Create an invite to a new shared space member.
@@ -142,4 +158,15 @@ interface SharedSpaceRepositoryInterface
      * Returns the number of members in a shared space.
      */
     public function countMembers(string $sharedSpaceId): int;
+
+    /**
+     * Returns shared spaces whose names match the given full or partial name,
+     * along with the total number of matching shared spaces (ignoring
+     * offset/limit), to support pagination.
+     *
+     * @param string $fullOrPartialName The full or partial name to match against.
+     * @param array $options Optional parameters for filtering and sorting the results.
+     * @return array{results: array, total: int}
+     */
+    public function matchSharedSpaces(string $fullOrPartialName, array $options = []): array;
 }

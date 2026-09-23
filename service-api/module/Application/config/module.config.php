@@ -350,6 +350,16 @@ return [
                                 ],
                             ],
 
+                            'match-shared-spaces' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-shared-spaces',
+                                    'defaults' => [
+                                        'action' => 'matchSharedSpaces',
+                                    ],
+                                ],
+                            ],
+
                             'match-users' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -369,6 +379,19 @@ return [
                                     ],
                                     'defaults' => [
                                         'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/members',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceMembers',
                                     ],
                                 ],
                             ],

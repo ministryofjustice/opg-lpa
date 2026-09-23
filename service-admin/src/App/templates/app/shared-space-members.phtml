@@ -1,0 +1,164 @@
+<?php $this->layout('layout::default', ['title' => 'Shared space members']) ?>
+
+<?php if (!empty($failureReason)) { ?>
+    <p class="govuk-body"><?= $failureReason; ?></p>
+<?php } else { ?>
+    <h1 class="govuk-heading-l">Members and invites for <?= htmlspecialchars($sharedSpaceName); ?></h1>
+
+    <h2 class="govuk-heading-m">Members (<?= count($members); ?>)</h2>
+
+    <?php if (count($members) === 0) { ?>
+        <p class="govuk-body">No members found</p>
+    <?php } else { ?>
+        <?php foreach ($members as $member) { ?>
+            <?php $fullName = trim(($member['name']['first'] ?? '') . ' ' . ($member['name']['last'] ?? '')); ?>
+            <div class="govuk-summary-card" data-cy="member-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">
+                        <?= htmlspecialchars($fullName !== '' ? $fullName : 'Unknown name'); ?>
+                    </h3>
+                    <?php if (!empty($member['isAdmin'])) { ?>
+                        <span class="app-float-right"><strong class="govuk-tag">Admin</strong></span>
+                    <?php } ?>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="member-email"><?= htmlspecialchars($member['email'] ?? 'Unknown'); ?></span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Admin status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="member-admin-status"><?= !empty($member['isAdmin']) ? 'Admin' : 'Not admin'; ?></span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } ?>
+
+    <?php if ($membersPaginator->getTotal() > $membersPaginator->getPerPage()) { ?>
+        <nav class="govuk-pagination" aria-label="Members pagination">
+            <div class="govuk-pagination__prev">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['invitesPage' => $invitesPaginator->getPage(), 'membersPage' => $membersPaginator->getPreviousPage()]) ?>" rel="prev">
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                    </svg>
+                    <span class="govuk-pagination__link-title">
+            Previous<span class="govuk-visually-hidden"> page</span>
+          </span>
+                </a>
+            </div>
+            <ul class="govuk-pagination__list">
+            <?php foreach($membersPaginator->getPages() as $page) { ?>
+                <li class="govuk-pagination__item <?php if ($page === $membersPaginator->getPage()) { ?>govuk-pagination__item--current<?php } ?>">
+                    <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['invitesPage' => $invitesPaginator->getPage(), 'membersPage' => $page]) ?>" aria-label="Page <?= $page; ?>" <?php if ($page === $membersPaginator->getPage()) { ?>aria-current="page"<?php } ?>>
+                        <?= $page; ?>
+                    </a>
+                </li>
+            <?php } ?>
+            </ul>
+            <div class="govuk-pagination__next">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['invitesPage' => $invitesPaginator->getPage(), 'membersPage' => $membersPaginator->getNextPage()]) ?>" rel="next">
+          <span class="govuk-pagination__link-title">
+            Next<span class="govuk-visually-hidden"> page</span>
+          </span>
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    <?php } ?>
+
+    <h2 class="govuk-heading-m">Invites (<?= count($invites); ?>)</h2>
+
+    <?php if (count($invites) === 0) { ?>
+        <p class="govuk-body">No invites found</p>
+    <?php } else { ?>
+        <?php foreach ($invites as $invite) { ?>
+            <div class="govuk-summary-card" data-cy="invite-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">
+                        <?= htmlspecialchars($invite['fullName'] ?? 'Unknown name'); ?>
+                    </h3>
+                    <span class="app-float-right">
+                        <strong class="govuk-tag <?= !empty($invite['isExpired']) ? 'govuk-tag--grey' : 'govuk-tag--blue'; ?>">
+                            <?= !empty($invite['isExpired']) ? 'Expired' : 'Pending'; ?>
+                        </strong>
+                    </span>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="invite-email"><?= htmlspecialchars($invite['email'] ?? 'Unknown'); ?></span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Date invited
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="invite-created-date"><?= isset($invite['createdAt']) ? $this->dateFormat($invite['createdAt']) : 'Unknown'; ?></span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="invite-status"><?= !empty($invite['isExpired']) ? 'Expired' : 'Pending'; ?></span>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } ?>
+
+    <?php if ($invitesPaginator->getTotal() > $invitesPaginator->getPerPage()) { ?>
+        <nav class="govuk-pagination" aria-label="Invites pagination">
+            <div class="govuk-pagination__prev">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['membersPage' => $membersPaginator->getPage(), 'invitesPage' => $invitesPaginator->getPreviousPage()]) ?>" rel="prev">
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                    </svg>
+                    <span class="govuk-pagination__link-title">
+            Previous<span class="govuk-visually-hidden"> page</span>
+          </span>
+                </a>
+            </div>
+            <ul class="govuk-pagination__list">
+            <?php foreach($invitesPaginator->getPages() as $page) { ?>
+                <li class="govuk-pagination__item <?php if ($page === $invitesPaginator->getPage()) { ?>govuk-pagination__item--current<?php } ?>">
+                    <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['membersPage' => $membersPaginator->getPage(), 'invitesPage' => $page]) ?>" aria-label="Page <?= $page; ?>" <?php if ($page === $invitesPaginator->getPage()) { ?>aria-current="page"<?php } ?>>
+                        <?= $page; ?>
+                    </a>
+                </li>
+            <?php } ?>
+            </ul>
+            <div class="govuk-pagination__next">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $sharedSpaceId], ['membersPage' => $membersPaginator->getPage(), 'invitesPage' => $invitesPaginator->getNextPage()]) ?>" rel="next">
+          <span class="govuk-pagination__link-title">
+            Next<span class="govuk-visually-hidden"> page</span>
+          </span>
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    <?php } ?>
+<?php } ?>

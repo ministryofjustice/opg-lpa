@@ -12,7 +12,7 @@ Then('I find {string} on the admin site', (name) => {
   let user = Cypress.env(name + '-user');
   cy.visit(Cypress.env('adminUrl'));
   cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
-  cy.get('[data-cy=email-address-input]').clear({ force: true }).type(user);
+  cy.get('[data-cy=search-term-input]').clear({ force: true }).type(user);
   cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
 });
 
@@ -21,7 +21,7 @@ Then(
   (searchValue, searchType) => {
     cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
     cy.get('[data-cy=search-type-select]').select(searchType);
-    cy.get('[data-cy=email-address-input]')
+    cy.get('[data-cy=search-term-input]')
       .clear({ force: true })
       .type(searchValue);
     cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
@@ -85,7 +85,7 @@ Then(
 );
 
 Then('the email address input contains {string}', (emailAddress) => {
-  cy.get('[data-cy=email-address-input]').then((elt) => {
+  cy.get('[data-cy=search-term-input]').then((elt) => {
     expect(elt.attr('value')).to.eql(emailAddress);
   });
 });
@@ -154,10 +154,55 @@ Then(`I click the LPA link`, () => {
 
 When('I search for the newly created fixture user', () => {
   cy.get('@fixtureUser').then(({ email }) => {
-    cy.contains("a", "Find Users").click();
-    cy.get('#id-query')
+    cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
+    cy.get('[data-cy=search-type-select]').select('Exact or partial email');
+    cy.get('[data-cy=search-term-input]')
       .clear({ force: true })
       .type(email);
-    cy.contains("button", "Find").click();
+    cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
   });
 });
+
+When('I search for the newly created shared space by name', () => {
+  cy.get('@fixtureUser').then(({ sharedSpaceName }) => {
+    cy.contains("a", "Search").click();
+    cy.get('[data-cy=search-type-select]').select('Exact or partial shared space name');
+    cy.get('[data-cy=search-term-input]')
+      .clear({ force: true })
+      .type(sharedSpaceName);
+    cy.contains("button", "Search").click();
+  });
+});
+
+Then('I can see the shared space in the search results', () => {
+  cy.get('@fixtureUser').then(({ sharedSpaceName, lpaCount }) => {
+    cy.contains('a', sharedSpaceName).should('exist');
+    cy.contains('div', 'Number of LPAs').within(() => {
+      cy.contains('a', lpaCount).should('exist');
+    })
+    cy.contains('div', 'Number of members').within(() => {
+      cy.contains('a', 1).should('exist');
+    })
+  })
+})
+
+Then('I should see details of the newly created shared space member', () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.contains('div', 'Email').within(() => {
+      cy.contains('dd', email).should('exist');
+    })
+  })
+})
+
+Then('I should see details of the newly created shared space invite', () => {
+  cy.contains('div', 'Date invited').should('exist');
+  cy.contains('div', 'Status').within(() => {
+    cy.contains('Pending').should('exist');
+  })
+})
+
+When('I click the link containing the name of the newly created shared space', () => {
+  cy.get('@fixtureUser').then(({ sharedSpaceName }) => {
+    cy.contains('a', sharedSpaceName).should('exist').click()
+  })
+})
