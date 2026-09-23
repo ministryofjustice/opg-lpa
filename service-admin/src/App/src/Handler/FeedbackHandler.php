@@ -6,11 +6,11 @@ namespace App\Handler;
 
 use App\Form\Feedback;
 use App\RequestAttributes;
-use App\Service\Feedback\FeedbackService;
+use App\Service\FeedbackService;
+use DateTime;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\Response\HtmlResponse;
-use DateTime;
 
 /**
  * As this class is instantiated via autowiring and referenced only by class

@@ -11,6 +11,7 @@ use Application\Model\Entity\MemberInvite;
 use DateTime;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
+use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
@@ -216,6 +217,63 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getMembersPaginated(string $sharedSpaceId, int $offset, int $limit): array
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql
+            ->select()
+            ->from(['members' => self::SHARED_SPACE_MEMBERS])
+            ->join(['space' => self::SHARED_SPACE], 'members.sharedSpaceId = space.id', ['name'])
+            ->join(
+                ['user' => UserData::USERS_TABLE],
+                'members.userId = user.id',
+                [
+                    'identity',
+                    'one_login_email',
+                    'profile',
+                    'last_login',
+                    'first_name' => new Expression('"user"."profile" -> \'name\' ->> \'first\''),
+                    'last_name'  => new Expression('"user"."profile" -> \'name\' ->> \'last\''),
+                    'title'      => new Expression('"user"."profile" -> \'name\' ->> \'title\''),
+                ]
+            )
+            ->where(['sharedSpaceId' => $sharedSpaceId])
+            ->columns(['id', 'userId', 'isAdmin', 'isActive', 'created', 'total' => new Expression('COUNT(*) OVER()')])
+            ->order('members.created ASC')
+            ->offset($offset)
+            ->limit($limit);
+
+        $statement = $sql->prepareStatementForSqlObject($select);
+
+        try {
+            $result = $statement->execute();
+        } catch (InvalidQueryException $e) {
+            throw($e);
+        }
+
+        $rows = iterator_to_array($result, false);
+
+        $members = array_map(fn ($row) => new SharedSpaceMember([
+            'sharedSpaceName' => $row['name'],
+            'sharedSpaceId'   => $sharedSpaceId,
+            'userId'          => $row['userId'],
+            'name'            => ['first' => $row['first_name'] ?? '', 'last' => $row['last_name'] ?? '', 'title' => $row['title'] ?? ''],
+            'isAdmin'         => (bool) $row['isAdmin'],
+            'isActive'        => (bool) $row['isActive'],
+            'createdAt'       => $row['created'],
+            'lastLoginAt'     => $row['last_login'],
+            'email'           => $row['one_login_email'] ?? $row['identity'],
+        ]), $rows);
+
+        return [
+            'results' => $members,
+            'total' => empty($rows) ? 0 : (int) reset($rows)['total'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function hasMemberWithEmail(string $sharedSpaceId, string $email): bool
     {
         $sql = $this->dbWrapper->createSql();
@@ -392,6 +450,42 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getInvitesPaginated(string $sharedSpaceId, int $offset, int $limit): array
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql
+            ->select()
+            ->from(self::SHARED_SPACE_INVITES)
+            ->where(['sharedSpaceId' => $sharedSpaceId])
+            ->columns(['id', 'invitedBy', 'sharedSpaceId', 'firstNames', 'lastName', 'email', 'isAdmin', 'code', 'created', 'expires', 'total' => new Expression('COUNT(*) OVER()')])
+            ->order('created ASC')
+            ->offset($offset)
+            ->limit($limit);
+
+        $rows = iterator_to_array($sql->prepareStatementForSqlObject($select)->execute(), false);
+
+        $invites = array_map(fn ($value) => new MemberInvite(
+            id: $value['id'],
+            userId: $value['invitedBy'],
+            sharedSpaceId: $value['sharedSpaceId'],
+            firstNames: $value['firstNames'],
+            lastName: $value['lastName'],
+            email: $value['email'],
+            isAdmin: $value['isAdmin'],
+            code: $value['code'],
+            created: new DateTime($value['created']),
+            expires: new DateTime($value['expires']),
+        ), $rows);
+
+        return [
+            'results' => $invites,
+            'total' => empty($rows) ? 0 : (int) reset($rows)['total'],
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function createInvite(MemberInvite $memberInvite): int
     {
         $sql = $this->dbWrapper->createSql();
@@ -489,6 +583,59 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         if ($result->getAffectedRows() !== 1) {
             throw new SharedSpaceNotFoundException();
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function matchSharedSpaces(string $fullOrPartialName, array $options = []): array
+    {
+        $offset = 0;
+        $limit = 20;
+
+        if (isset($options['offset'])) {
+            $offset = intval($options['offset']);
+        }
+
+        if (isset($options['limit'])) {
+            $limit = intval($options['limit']);
+        }
+
+        $sql = $this->dbWrapper->createSql();
+
+        $select = $sql->select()
+            ->from(['sharedSpace' => self::SHARED_SPACE])
+            ->where([
+                new Like('sharedSpace.name', '%' . $fullOrPartialName . '%')
+            ])
+            ->columns([
+                'sharedSpaceId'   => 'id',
+                'sharedSpaceName' => 'name',
+                'created',
+                'lpaCount' => new Expression(
+                    '(SELECT COUNT(DISTINCT id) FROM ' . ApplicationData::APPLICATIONS_TABLE . ' WHERE "sharedSpaceId" = "sharedSpace"."id")'
+                ),
+                'memberCount' => new Expression(
+                    '(SELECT COUNT(DISTINCT "userId") FROM ' . self::SHARED_SPACE_MEMBERS . ' WHERE "sharedSpaceId" = "sharedSpace"."id")'
+                ),
+                'total' => new Expression('COUNT(*) OVER()'),
+            ])
+            ->order('sharedSpace.name ASC')
+            ->offset($offset)
+            ->limit($limit);
+
+        $rows = iterator_to_array($sql->prepareStatementForSqlObject($select)->execute(), false);
+
+        return [
+            'results' => array_map(fn ($value) => [
+                'sharedSpaceId' => $value['sharedSpaceId'],
+                'sharedSpaceName' => $value['sharedSpaceName'],
+                'created' => new DateTime($value['created']),
+                'lpaCount' => $value['lpaCount'],
+                'memberCount' => $value['memberCount'],
+            ], $rows),
+            'total' => empty($rows) ? 0 : (int) reset($rows)['total'],
+        ];
     }
 
     /**

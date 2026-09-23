@@ -6,13 +6,14 @@ namespace AppTest\Handler;
 
 use App\Handler\LpasHandler;
 use App\RequestAttributes;
-use App\Service\User\UserService;
+use App\Service\Paginator;
+use App\Service\UserService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\User\User;
-use PHPUnit\Framework\TestCase;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
 class LpasHandlerTest extends TestCase
@@ -28,7 +29,7 @@ class LpasHandlerTest extends TestCase
         $this->mockUserService = $this->createMock(UserService::class);
         $this->mockLogger = $this->createMock(LoggerInterface::class);
 
-        $this->handler = new LpasHandler($this->mockUserService);
+        $this->handler = new LpasHandler($this->mockUserService, new Paginator());
         $this->handler->setTemplateRenderer($this->mockTemplateRenderer);
         $this->handler->setLogger($this->mockLogger);
     }
@@ -59,7 +60,7 @@ class LpasHandlerTest extends TestCase
 
         $this->mockUserService->expects($this->once())
             ->method('userLpas')
-            ->with('123')
+            ->with('123', 1, 20)
             ->willReturn(false);
 
         // No audit log fires on failure
@@ -92,14 +93,16 @@ class LpasHandlerTest extends TestCase
 
         $this->mockUserService->expects($this->once())
             ->method('userLpas')
-            ->with('123')
-            ->willReturn($lpas);
+            ->with('123', 1, 20)
+            ->willReturn(['results' => $lpas, 'total' => 2]);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
             'app::view-lpas',
             $this->callback(fn ($args) =>
                 $args['lpasOwner'] === 'user@example.com'
-                && $args['lpas'] === $lpas)
+                && $args['lpas'] === $lpas
+                && $args['paginator']->getNextPage() === null
+                && $args['paginator']->getPreviousPage() === null)
         )->willReturn('response');
 
         $response = $this->handler->handle($request);
@@ -122,18 +125,74 @@ class LpasHandlerTest extends TestCase
 
         $this->mockUserService->expects($this->once())
             ->method('sharedSpaceLpas')
-            ->with('123')
-            ->willReturn($lpas);
+            ->with('123', 1, 20)
+            ->willReturn(['results' => $lpas, 'total' => 2]);
 
         $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
             'app::view-lpas',
             $this->callback(fn ($args) =>
                 $args['lpasOwner'] === 'Shared Space'
-                && $args['lpas'] === $lpas)
+                && $args['lpas'] === $lpas
+                && $args['paginator']->getNextPage() === null
+                && $args['paginator']->getPreviousPage() === null)
         )->willReturn('response');
 
         $response = $this->handler->handle($request);
         $this->assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testPaginatesUserLpasAndSetsNextPage()
+    {
+        $lpas = array_fill(0, 20, ['uId' => 'M-1234-5678-9012']);
+
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withAttribute('userId', '123')
+            ->withQueryParams(['email' => 'user@example.com', 'page' => '1']);
+
+        $this->mockUserService->expects($this->once())
+            ->method('userLpas')
+            ->with('123', 1, 20)
+            ->willReturn(['results' => $lpas, 'total' => 25]);
+
+        $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
+            'app::view-lpas',
+            $this->callback(fn ($args) =>
+                $args['paginator']->getNextPage() === 2
+                && $args['paginator']->getPreviousPage() === null
+                && $args['routeName'] === 'user.lpas'
+                && $args['routeParams'] === ['userId' => '123']
+                && $args['queryParams'] === ['email' => 'user@example.com'])
+        )->willReturn('response');
+
+        $this->handler->handle($request);
+    }
+
+    public function testPaginatesSharedSpaceLpasAndSetsPreviousPage()
+    {
+        $lpas = array_fill(0, 5, ['uId' => 'M-1234-5678-9012']);
+
+        $request = new ServerRequest()
+            ->withMethod(RequestMethodInterface::METHOD_GET)
+            ->withAttribute('sharedSpaceId', '123')
+            ->withQueryParams(['sharedSpaceName' => 'Shared Space', 'page' => '2']);
+
+        $this->mockUserService->expects($this->once())
+            ->method('sharedSpaceLpas')
+            ->with('123', 2, 20)
+            ->willReturn(['results' => $lpas, 'total' => 25]);
+
+        $this->mockTemplateRenderer->expects($this->once())->method('render')->with(
+            'app::view-lpas',
+            $this->callback(fn ($args) =>
+                $args['paginator']->getNextPage() === null
+                && $args['paginator']->getPreviousPage() === 1
+                && $args['routeName'] === 'shared-space.lpas'
+                && $args['routeParams'] === ['sharedSpaceId' => '123']
+                && $args['queryParams'] === ['sharedSpaceName' => 'Shared Space'])
+        )->willReturn('response');
+
+        $this->handler->handle($request);
     }
 
     public function testAuditLogsUserLpasView()
@@ -142,8 +201,8 @@ class LpasHandlerTest extends TestCase
 
         $this->mockUserService->expects($this->once())
             ->method('userLpas')
-            ->with('123')
-            ->willReturn($lpas);
+            ->with('123', 1, 20)
+            ->willReturn(['results' => $lpas, 'total' => 1]);
 
         $this->mockTemplateRenderer->method('render')->willReturn('response');
 
