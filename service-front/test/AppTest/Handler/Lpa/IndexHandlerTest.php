@@ -65,8 +65,7 @@ class IndexHandlerTest extends TestCase
     public function testHandleIncrementsAnalyticsReturnCountAndRedirects(): void
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->seed = null;
-        $lpa->metadata = [];
+        $lpa->setMetadata([]);
 
         $this->metadata->expects($this->once())
             ->method('setAnalyticsReturnCount')
@@ -81,8 +80,7 @@ class IndexHandlerTest extends TestCase
     public function testHandleIncrementsExistingAnalyticsReturnCount(): void
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->seed = null;
-        $lpa->metadata = ['analyticsReturnCount' => 5];
+        $lpa->setMetadata(['analyticsReturnCount' => 5]);
 
         $this->metadata->expects($this->once())
             ->method('setAnalyticsReturnCount')
@@ -96,8 +94,8 @@ class IndexHandlerTest extends TestCase
     public function testHandleResetsSessionCloneDataWhenSeedIdPresent(): void
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->seed = 12345;
-        $lpa->metadata = [];
+        $lpa->setSeed(12345);
+        $lpa->setMetadata([]);
 
         $session = $this->createMock(SessionInterface::class);
         $session->method('get')
@@ -114,8 +112,7 @@ class IndexHandlerTest extends TestCase
     public function testHandleDoesNotResetSessionDataWhenNoSeedId(): void
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->seed = null;
-        $lpa->metadata = [];
+        $lpa->setMetadata([]);
 
         $session = $this->createMock(SessionInterface::class);
         $session->expects($this->never())->method('get');
@@ -129,8 +126,7 @@ class IndexHandlerTest extends TestCase
     public function testHandleRedirectsToDestinationFromFlowChecker(): void
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->seed = null;
-        $lpa->metadata = [];
+        $lpa->setMetadata([]);
 
         $response = $this->handler->handle($this->createRequest($lpa, 'lpa/certificate-provider'));
 

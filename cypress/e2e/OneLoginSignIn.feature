@@ -35,7 +35,7 @@ Feature: One Login Sign In
     And I choose to link an existing Make account
     And I submit the form
     And I should be on "/link-account"
-    And I link the "seeded" Make account
+    And I link the "link" Make account
     And I am taken to the dashboard page
 
   @RequiresMockOneLogin
@@ -50,8 +50,8 @@ Feature: One Login Sign In
     And I submit the form
     And I am signed in with my new Make account
     And I am taken to the your details page for a new user
-    When I select "Mr" on "name-title" with data-inited
     And I force fill out
+      | name-title| Mr |
       | name-first | Brand |
       | name-last | New |
       | dob-date-day | 1 |
@@ -60,6 +60,7 @@ Feature: One Login Sign In
       | address-address1 | 123 Test Street |
       | address-postcode | SW1A 1AA |
     And I click "save"
+    And If I am on dashboard I click to create lpa
     Then I am taken to the lpa type page
 
   @RequiresMockOneLogin
@@ -77,6 +78,7 @@ Feature: One Login Sign In
     And I should be on "/link-account"
     And I am advised my Make account credentials were not recognised
     And I link the "retry" Make account
+    And If I am on dashboard I click to create lpa
     And I am taken to the lpa type page
 
   @RequiresMockOneLogin

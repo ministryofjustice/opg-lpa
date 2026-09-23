@@ -7,6 +7,7 @@ namespace AppTest\Handler;
 use App\Handler\RegisterHandler;
 use App\Form\User\Registration;
 use App\Form\User\ConfirmEmail;
+use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -49,7 +50,7 @@ final class RegisterHandlerTest extends TestCase
             'GET',
             'php://memory',
             ['Referer' => 'https://www.gov.uk/some-page'],
-        ))->withAttribute('identity', null);
+        ))->withAttribute(RequestAttribute::IDENTITY, null);
 
         $response = $this->handler->handle($request);
 
@@ -63,7 +64,7 @@ final class RegisterHandlerTest extends TestCase
         $identity->id = 'user123';
 
         $request = (new ServerRequest([], [], '/signup', 'GET'))
-            ->withAttribute('identity', $identity);
+            ->withAttribute(RequestAttribute::IDENTITY, $identity);
 
         $this->logger
             ->expects($this->once())
@@ -79,7 +80,7 @@ final class RegisterHandlerTest extends TestCase
     public function testDisplaysRegistrationFormOnGetRequest(): void
     {
         $request = (new ServerRequest([], [], '/signup', 'GET'))
-            ->withAttribute('identity', null);
+            ->withAttribute(RequestAttribute::IDENTITY, null);
 
         $form = $this->createMock(Registration::class);
         $form->expects($this->once())
@@ -108,7 +109,7 @@ final class RegisterHandlerTest extends TestCase
     public function testSuccessfulRegistrationDisplaysEmailSentPage(): void
     {
         $request = (new ServerRequest([], [], '/signup', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody([
                 'email'            => 'test@example.com',
                 'email_confirm'    => 'test@example.com',
@@ -162,7 +163,7 @@ final class RegisterHandlerTest extends TestCase
     public function testAlreadyRegisteredEmailAlsoDisplaysEmailSentPage(): void
     {
         $request = (new ServerRequest([], [], '/signup', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'password' => 'SecurePass123!']);
 
         $registrationForm = $this->createMock(Registration::class);
@@ -193,7 +194,7 @@ final class RegisterHandlerTest extends TestCase
     public function testFailedRegistrationDisplaysError(): void
     {
         $request = (new ServerRequest([], [], '/signup', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'password' => 'SecurePass123!']);
 
         $form = $this->createMock(Registration::class);
@@ -220,7 +221,7 @@ final class RegisterHandlerTest extends TestCase
     public function testInvalidFormDataDisplaysFormWithErrors(): void
     {
         $request = (new ServerRequest([], [], '/signup', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'invalid-email', 'password' => 'short']);
 
         $form = $this->createMock(Registration::class);

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace App\Service\SharedSpace;
 
 use App\Service\ApiClient\Client;
+use App\Service\ApiClient\Exception\ApiException;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Exception;
 use Throwable;
@@ -14,6 +17,7 @@ use Throwable;
 class SharedSpaceService
 {
     public const string EMAIL_INVITE_MEMBER = 'email-invite-member';
+    public const string EMAIL_SUSPEND_MEMBER = 'email-suspend-member';
 
     public function __construct(
         private readonly Client $client,
@@ -46,14 +50,29 @@ class SharedSpaceService
         return $result['sharedSpaceId'] ?? null;
     }
 
-    public function getMember(string $memberUserId): ?array
+    public function get(): mixed
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space');
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve shared space failed', [
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        return $result;
+    }
+
+    public function getMember(string $memberUserId): ?SharedSpaceMember
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members/' . $memberUserId);
         } catch (Throwable $e) {
             $this->logger->error('Retrieve shared space member failed', [
+                'member_user_id' => $memberUserId,
                 'exception' => $e,
-                'memberUserId' => $memberUserId,
             ]);
 
             return null;
@@ -63,10 +82,29 @@ class SharedSpaceService
             return null;
         }
 
-        return $result['member'];
+        return new SharedSpaceMember($result['member']);
     }
 
-    public function getMembersAndInvites(): mixed
+    public function getMemberCount(): ?int
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/count-members');
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve shared space member count failed', [
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        if (!is_array($result) || !isset($result['count']) || !is_int($result['count'])) {
+            return null;
+        }
+
+        return $result['count'];
+    }
+
+    public function getMembersAndInvites(): ?array
     {
         try {
             $result = $this->client->httpGet('/v2/shared-space/members-and-invites');
@@ -78,7 +116,18 @@ class SharedSpaceService
             return null;
         }
 
-        return is_array($result) ? $result : null;
+        if (!is_array($result)) {
+            return null;
+        }
+
+        return [
+            'members' => array_map(
+                fn (array $member) => new SharedSpaceMember($member),
+                $result['members'] ?? [],
+            ),
+            'invites' => $result['invites'] ?? [],
+            'name' => $result['name'] ?? '',
+        ];
     }
 
     public function addMember(string $sharedSpaceId, string $userIdToAdd): bool
@@ -101,22 +150,44 @@ class SharedSpaceService
         return true;
     }
 
-    public function updateMember(string $memberUserId, bool $isAdmin, bool $isActive): bool
+    public function updateMember(SharedSpaceMember $member, bool $isAdmin, bool $isActive): bool
     {
         try {
             $this->client->httpPatch(
-                '/v2/shared-space/members/' . $memberUserId,
+                '/v2/shared-space/members/' . $member->getUserId(),
                 ['isAdmin' => $isAdmin, 'isActive' => $isActive],
             );
         } catch (Throwable $e) {
             $this->logger->error('Updating shared space member failed', [
                 'exception' => $e,
-                'memberUserId' => $memberUserId,
-                'isAdmin' => $isAdmin,
-                'isActive' => $isActive,
+                'member_user_id' => $member->getUserId(),
+                'is_admin' => $isAdmin,
+                'is_active' => $isActive,
             ]);
 
             return false;
+        }
+
+        if (!$isActive) {
+            $fullName = $member->getName()->getFirst() . ' ' . $member->getName()->getLast();
+            $params = new MailParameters(
+                $member->getEmail(),
+                self::EMAIL_SUSPEND_MEMBER,
+                [
+                    'suspendedUserFullName' => $fullName,
+                    'sharedSpaceName' => $member->getSharedSpaceName()
+                ],
+            );
+
+            try {
+                $this->mailTransport->send($params);
+            } catch (Exception $e) {
+                $this->logger->error('Failed to send suspension email', [
+                    'member_user_id' => $member->getUserId(),
+                ]);
+
+                return false;
+            }
         }
 
         return true;
@@ -138,6 +209,9 @@ class SharedSpaceService
         return true;
     }
 
+    /**
+     * @throws Throwable|ApiException|ClientExceptionInterface
+     */
     public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
     {
         try {
@@ -151,11 +225,8 @@ class SharedSpaceService
                 ],
             );
         } catch (Throwable $e) {
-            $this->logger->warning('Invite failed', [
-                'exception' => $e,
-            ]);
-
-            return false;
+            $this->logger->error('Creating shared space invite failed:', ['exception' => $e]);
+            throw $e;
         }
 
         $params = new MailParameters(
@@ -174,6 +245,7 @@ class SharedSpaceService
         } catch (Exception $e) {
             $this->logger->error('Failed to send invite email', [
                 'inviteId' => $result['id'],
+                'exception' => $e
             ]);
 
             return false;
@@ -215,5 +287,23 @@ class SharedSpaceService
         }
 
         return $response['sharedSpaceId'];
+    }
+
+    public function import(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
+    {
+        try {
+            $response = $this->client->httpPost(
+                '/v2/shared-space/import',
+                ['email' => $email, 'password' => $password],
+            );
+        } catch (Throwable $e) {
+            $this->logger->warning('Import account to shared space failed', [
+                'exception' => $e,
+            ]);
+
+            return 'failed';
+        }
+
+        return $response['problem'] ?? null;
     }
 }

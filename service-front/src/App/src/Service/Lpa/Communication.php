@@ -22,9 +22,9 @@ class Communication
 {
     use MoneyFormatterTrait;
 
-    public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        = 'email-lpa-registration-with-payment1';
-    public const EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
-    public const EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
+    public const string EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        = 'email-lpa-registration-with-payment1';
+    public const string EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
+    public const string EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
 
     private string $emailTemplateRef;
     private array $data;
@@ -45,39 +45,39 @@ class Communication
 
         if (!$user instanceof User) {
             $this->logger->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
-                'lpaId' => $lpa->id,
+                'lpaId' => $lpa->getId(),
             ]);
             return 'failed-sending-email';
         }
 
-        $userEmailAddress = (string) ($user->email?->address ?? '');
+        $userEmailAddress = ($user->getEmail()?->getAddress() ?? '');
         $to = [$userEmailAddress];
 
         $this->lpaTypeTitleCase = 'Health and welfare';
-        if ($lpa->document->type === Document::LPA_TYPE_PF) {
+        if ($lpa->getDocument()->getType() === Document::LPA_TYPE_PF) {
             $this->lpaTypeTitleCase = 'Property and financial affairs';
         }
 
         $donorName = '';
-        if (isset($lpa->document->donor)) {
-            $donorName = '' . $lpa->document->donor->name;
+        if (!is_null($lpa->getDocument()->getDonor())) {
+            $donorName = $lpa->getDocument()->getDonor()->getName()->getFullName();
         }
 
         $this->data = [
             'donorName' => $donorName,
             'lpaType' => strtolower($this->lpaTypeTitleCase),
-            'lpaId' => $this->formatLpaId($lpa->id),
-            'viewDocsUrl' => $this->url('lpa/view-docs', ['lpa-id' => $lpa->id]),
-            'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->id]),
+            'lpaId' => $this->formatLpaId($lpa->getId()),
+            'viewDocsUrl' => $this->url('lpa/view-docs', ['lpa-id' => $lpa->getId()]),
+            'checkDatesUrl' => $this->url('lpa/date-check', ['lpa-id' => $lpa->getId()]),
         ];
 
         // We use 3 templates, for Cheque payment, Online payment or No payment
-        if (!is_null($lpa->payment->reference)) {
+        if (!is_null($lpa->getPayment()->getReference())) {
             // we have a payment reference, so this is an online payment
             $to = $this->setUpEmailFieldsForOnlinePayment($lpa, $userEmailAddress, $to);
             $this->setUpEmailFieldsForPayments($lpa);
         } else {
-            if ($lpa->payment->method === 'cheque') {
+            if ($lpa->getPayment()->getMethod() === 'cheque') {
                 // we have a cheque payment
                 $this->setUpEmailFieldsForChequePayment($lpa);
                 $this->setUpEmailFieldsForPayments($lpa);
@@ -106,31 +106,31 @@ class Communication
         $this->emailTemplateRef = self::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1;
 
         $amount = '';
-        if (isset($lpa->payment->amount)) {
-            $amount = $this->formatMoney($lpa->payment->amount);
+        if (!is_null($lpa->getPayment()->getAmount())) {
+            $amount = $this->formatMoney($lpa->getPayment()->getAmount());
         }
 
         // Assume datetimes are in Europe/London timezone as all our users are in the UK
         $paymentDate = '';
         $refundDate = '';
-        if (isset($lpa->payment->date)) {
-            $lpa->payment->date->setTimezone(new DateTimeZone('Europe/London'));
-            $paymentDate = $lpa->payment->date->format('j F Y - g:ia');
-            $refundDate = $lpa->payment->date->add(new DateInterval('P42D'))->format('j F Y');
+        if (!is_null($lpa->getPayment()->getDate())) {
+            $lpa->getPayment()->getDate()->setTimezone(new DateTimeZone('Europe/London'));
+            $paymentDate = $lpa->getPayment()->getDate()->format('j F Y - g:ia');
+            $refundDate = $lpa->getPayment()->getDate()->add(new DateInterval('P42D'))->format('j F Y');
         }
 
         $this->data = array_merge($this->data, [
             'lpaTypeTitleCase' => $this->lpaTypeTitleCase,
-            'lpaPaymentReference' => $lpa->payment->reference,
+            'lpaPaymentReference' => $lpa->getPayment()->getReference(),
             'lpaPaymentDate' => $paymentDate,
             'paymentAmount' => $amount,
             'date' => $refundDate,
         ]);
 
         // If we have a separate payment address, send the email to that also
-        if (!empty($lpa->payment->email) && ((string)$lpa->payment->email != strtolower($userEmailAddress))) {
+        if (!empty($lpa->getPayment()->getEmail()?->getAddress()) && ($lpa->getPayment()->getEmail()->getAddress() != strtolower($userEmailAddress))) {
             $to = array_merge($to, [
-                (string) $lpa->payment->email
+                $lpa->getPayment()->getEmail()->getAddress()
             ]);
         }
 
@@ -142,8 +142,8 @@ class Communication
         $this->emailTemplateRef = self::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2;
 
         $amount = '';
-        if (isset($lpa->payment->amount)) {
-            $amount = $this->formatMoney($lpa->payment->amount);
+        if (!is_null($lpa->getPayment()->getAmount())) {
+            $amount = $this->formatMoney($lpa->getPayment()->getAmount());
         }
 
         $this->data = array_merge($this->data, [
@@ -155,7 +155,7 @@ class Communication
     {
         $this->emailTemplateRef = self::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3;
 
-        if (empty($lpa->document->peopleToNotify)) {
+        if (empty($lpa->getDocument()->getPeopleToNotify())) {
             $this->data = array_merge($this->data, [
                 'PTN' => false,
             ]);
@@ -169,8 +169,8 @@ class Communication
     public function setUpEmailFieldsForPayments(Lpa $lpa): void
     {
         // fill out email fields appropriately that apply to cheque and online payments
-        if (empty($lpa->document->peopleToNotify)) {
-            if (is_null($lpa->payment->reducedFeeLowIncome)) {
+        if (empty($lpa->getDocument()->getPeopleToNotify())) {
+            if (is_null($lpa->getPayment()->isReducedFeeLowIncome())) {
                 // we have no reduced fee, and no Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => false,
@@ -188,7 +188,7 @@ class Communication
                 ]);
             }
         } else {
-            if (is_null($lpa->payment->reducedFeeLowIncome)) {
+            if (is_null($lpa->getPayment()->isReducedFeeLowIncome())) {
                 // we do not have reduced fee but we do have Person(s) to Notify
                 $this->data = array_merge($this->data, [
                     'PTNOnly' => true,

@@ -26,8 +26,8 @@ Feature: Signup
 
     Scenario: Valid About Me details
         Given I log in as standard test user
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Mr |
           | name-first| Chris |
           | name-last| Smith |
           | dob-date-day| 1 |
@@ -36,4 +36,5 @@ Feature: Signup
           | address-address1| 12 Highway Close |
           | address-postcode| PL45 9JA |
         And I click "save"
+        And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page

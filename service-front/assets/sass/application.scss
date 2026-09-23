@@ -12,6 +12,9 @@
 $govuk-assets-path: "/assets/v2/";
 @import "../../node_modules/govuk-frontend/dist/govuk/index";
 
+$moj-assets-path: "/assets/v2/";
+@import "../../node_modules/@ministryofjustice/frontend/moj/all";
+
 // Extensions
 @import 'extensions/elements/elements-typography';
 @import 'extensions/elements/forms';
@@ -61,13 +64,6 @@ $govuk-assets-path: "/assets/v2/";
 
 // New OPG styles that can be reused.
 @import 'opg-lpa-dashboard';
-
-
-.govuk-service-navigation {
-  width: 100vw !important;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-}
 
 .app-tabs--no-border .govuk-tabs__panel {
   border-right: none !important;

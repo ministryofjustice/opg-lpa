@@ -1,59 +1,56 @@
 {% extends isPopup ? 'layout/popup.twig' : 'layout/layout.twig' %}
-
-
-{% block content %}
-
 {% import "application/macros.twig" as macros %}
 
-{{ form.setAttributes({
+{% block content %}
+  {{ form.setAttributes({
     class: 'form reuse-details-form',
-}) ? '' }}
+  }) ? '' }}
 
-{# Error messages #}
-{% set form = formErrorTextExchange(form,  {
+  {# Error messages #}
+  {% set form = formErrorTextExchange(form,  {
     'reuse-details': {
         'cannot-be-empty': 'Choose the details you would like to reuse',
     },
-}) %}
+  }) %}
 
-{# Set form fields variables #}
-{% set reuseDetails = form.get('reuse-details') %}
-{% set submit = form.get('submit') %}
+  {# Set form fields variables #}
+  {% set reuseDetails = form.get('reuse-details') %}
+  {% set submit = form.get('submit') %}
 
-{{ submit.setAttributes({
+  {{ submit.setAttributes({
     value: 'Continue',
-    class: 'govuk-button govuk-!-margin-left-0 reuse-details-button',
+    class: 'govuk-button reuse-details-button',
     'data-cy': 'continue',
-}) ? '' }}
+  }) ? '' }}
 
-<header class="popup-header">
+  <header class="popup-header">
     <i class="icon icon-person"></i>
     <h2 class="govuk-heading-s govuk-!-margin-top-4 popup-header-title" id="dialog-title">{{ actorName }} details</h2>
-</header>
+  </header>
 
-{{ form.prepare() ? '' }}
+  {{ form.prepare() ? '' }}
 
-{#Error summary#}
-{{ macros.formErrorSummary(error, form) }}
+  {#Error summary#}
+  {{ macros.formErrorSummary(error, form, conflictError) }}
 
-    {{ form().openTag(form)|raw }}
-        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+  {{ form().openTag(form)|raw }}
+  <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+  <input type="hidden" name="version" value="{{ lpa.version }}">
 
-        <div class="govuk-form-group {{ reuseDetails.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-            <fieldset class="reuse-details-container">
-                <legend class="govuk-heading-m govuk-!-margin-top-8">Which details would you like to reuse?</legend>
-                <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
-                <div class="govuk-radios" data-module="govuk-radios">
-                    {{ formRadio(reuseDetails) }}
-                </div>
+  <div class="govuk-form-group {{ reuseDetails.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">Which details would you like to reuse?</legend>
+      <div class="form-reuse-details">{{ formElementErrorsV2(reuseDetails) }}</div>
+      <div class="govuk-radios" data-module="govuk-radios">
+        {{ formRadio(reuseDetails) }}
+      </div>
+    </fieldset>
+  </div>
 
-            </fieldset>
-        </div>
+  <div class="govuk-button-group app-use-standard">
+    {{ formElement(submit) }}
+    <a data-cy="cancel" href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel">Cancel</a>
+  </div>
 
-        {{ formElement(submit) }}
-
-        <a data-cy="cancel" href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel">Cancel</a>
-
-    {{ form().closeTag|raw }}
-
+  {{ form().closeTag|raw }}
 {% endblock %}

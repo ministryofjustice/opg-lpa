@@ -32,14 +32,14 @@ class DeleteSharedSpaceMemberHandler implements RequestHandlerInterface
 
         $member = $this->sharedSpaceService->getMember($memberId);
         if ($member === null) {
-            return new RedirectResponse('/shared-space/manage');
+            return new RedirectResponse('/shared-space');
         }
 
         $error = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             if ($this->sharedSpaceService->deleteMember($memberId)) {
-                return new RedirectResponse('/shared-space/manage?member=deleted');
+                return new RedirectResponse('/shared-space?member=deleted');
             }
 
             $error = 'Failed to delete member. Please try again.';

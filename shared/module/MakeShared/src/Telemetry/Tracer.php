@@ -155,6 +155,8 @@ class Tracer
             $sampled = isset($traceHeader['Sampled']) && $traceHeader['Sampled'] === '1';
         }
 
+        $attributes['origin'] = 'AWS::ECS::Container';
+
         $this->rootSegment = new Segment(
             $this->serviceName,
             $traceHeader['Root'],

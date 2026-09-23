@@ -37,6 +37,19 @@ class OneLoginSignInHandlerTest extends TestCase
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
     }
 
+    public function testAlreadySignedInUserIsRedirectedWithoutStartingAuthentication(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(true);
+
+        $this->oneLoginService->expects($this->never())->method('start');
+        $this->session->expects($this->never())->method('set');
+
+        $response = $this->handler->handle($this->buildRequest());
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
     public function testHandleRedirectsToServiceUrl(): void
     {
         $authUrl = 'https://auth.example.com/authorize?state=abc&nonce=def';

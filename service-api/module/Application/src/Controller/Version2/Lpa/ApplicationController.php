@@ -31,7 +31,10 @@ class ApplicationController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->fetch($id, $this->routeUserId);
+        $result = $this->getService()->fetch(
+            $id,
+            $this->params()->fromRoute('userId')
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -75,7 +78,10 @@ class ApplicationController extends AbstractLpaController
         unset($filteredQuery['perPage']);
 
         //  Get the collection of applications with the query data
-        $result = $this->getService()->fetchAll($this->routeUserId, $filteredQuery);
+        $result = $this->getService()->fetchAll(
+            $this->params()->fromRoute('userId'),
+            $filteredQuery
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -111,7 +117,10 @@ class ApplicationController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->create($data, $this->routeUserId);
+        $result = $this->getService()->create(
+            $data,
+            $this->params()->fromRoute('userId')
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -140,7 +149,12 @@ class ApplicationController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->patch($data, $id, $this->routeUserId);
+        $result = $this->getService()->patch(
+            $data,
+            $id,
+            $this->ifMatch(),
+            $this->params()->fromRoute('userId'),
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;
@@ -160,7 +174,10 @@ class ApplicationController extends AbstractLpaController
     {
         $this->checkAccess();
 
-        $result = $this->getService()->delete($id, $this->routeUserId);
+        $result = $this->getService()->delete(
+            $id,
+            $this->params()->fromRoute('userId')
+        );
 
         if ($result instanceof ApiProblem) {
             return $result;

@@ -46,14 +46,6 @@
       <code><![CDATA[HomePageHandler]]></code>
     </UndefinedClass>
   </file>
-  <file src="src/App/src/Handler/Lpa/InstructionsHandler.php">
-    <UndefinedInterfaceMethod>
-      <code><![CDATA[bind]]></code>
-      <code><![CDATA[getData]]></code>
-      <code><![CDATA[isValid]]></code>
-      <code><![CDATA[setData]]></code>
-    </UndefinedInterfaceMethod>
-  </file>
   <file src="src/App/src/Handler/Lpa/PeopleToNotify/PeopleToNotifyAddHandler.php">
     <UndefinedInterfaceMethod>
       <code><![CDATA[bind]]></code>

@@ -9,10 +9,10 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Metadata;
-use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -21,6 +21,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -140,33 +141,39 @@ class CertificateProviderAddHandler implements RequestHandlerInterface
                 $form->setData($postData);
 
                 if ($form->isValid()) {
-                    $setOk = $this->lpaApplicationService->setCertificateProvider(
-                        $lpa,
-                        new CertificateProvider($form->getModelDataFromValidatedForm())
-                    );
-
-                    if (!$setOk) {
-                        throw new RuntimeException(
-                            'API client failed to save certificate provider for id: ' . $lpa->id
+                    $ifMatchVersion = (int)$postData['version'];
+                    try {
+                        $setOk = $this->lpaApplicationService->setCertificateProvider(
+                            $lpa,
+                            new CertificateProvider($form->getModelDataFromValidatedForm()),
+                            $ifMatchVersion,
                         );
+
+                        if (!$setOk) {
+                            throw new RuntimeException(
+                                'API client failed to save certificate provider for id: ' . $lpa->id
+                            );
+                        }
+
+                        // Remove the skipped metadata tag if it was set
+                        $this->metadata->removeMetadata($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED, $ifMatchVersion + 1);
+
+                        if ($isPopup) {
+                            return new JsonResponse(['success' => true]);
+                        }
+
+                        $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                        return new RedirectResponse(
+                            $this->urlHelper->generate(
+                                $nextRoute,
+                                ['lpa-id' => $lpa->id],
+                                $flowChecker->getRouteOptions($nextRoute)
+                            )
+                        );
+                    } catch (ConflictException $e) {
+                        $templateParams['conflictError'] = $e;
                     }
-
-                    // Remove the skipped metadata tag if it was set
-                    $this->metadata->removeMetadata($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED);
-
-                    if ($isPopup) {
-                        return new JsonResponse(['success' => true]);
-                    }
-
-                    $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                    return new RedirectResponse(
-                        $this->urlHelper->generate(
-                            $nextRoute,
-                            ['lpa-id' => $lpa->id],
-                            $flowChecker->getRouteOptions($nextRoute)
-                        )
-                    );
                 }
             }
         }

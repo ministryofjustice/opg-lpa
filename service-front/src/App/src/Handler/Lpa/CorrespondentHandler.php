@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -70,6 +71,7 @@ class CorrespondentHandler implements RequestHandlerInterface
                 ? $correspondent->phone->number : null
         );
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -122,19 +124,24 @@ class CorrespondentHandler implements RequestHandlerInterface
                     ]));
                 }
 
-                if (!$this->lpaApplicationService->setCorrespondent($lpa, $correspondent)) {
-                    throw new RuntimeException('API client failed to set correspondent for id: ' . $lpa->id);
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setCorrespondent($lpa, $correspondent, $ifMatchVersion)) {
+                        throw new RuntimeException('API client failed to set correspondent for id: ' . $lpa->id);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $form->bind([
@@ -176,6 +183,7 @@ class CorrespondentHandler implements RequestHandlerInterface
                         ['lpa-id' => $lpa->id]
                     ),
                     'allowEditButton'      => $this->allowCorrespondentToBeEdited($lpa),
+                    'conflictError'        => $conflictError,
                 ]
             )
         );

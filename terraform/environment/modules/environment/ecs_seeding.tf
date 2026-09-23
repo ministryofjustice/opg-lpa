@@ -36,6 +36,9 @@ resource "aws_ecs_task_definition" "seeding" {
   task_role_arn            = var.ecs_iam_task_roles.seeding.arn
   execution_role_arn       = var.ecs_execution_role.arn
   tags                     = local.seeding_component_tag
+  volume {
+    name = "app_tmp"
+  }
 }
 
 data "aws_ecr_repository" "lpa_seeding_app" {
@@ -57,11 +60,18 @@ data "aws_ecr_image" "lpa_seeding_app" {
 locals {
   seeding_app = jsonencode(
     {
-      cpu         = 1,
-      essential   = true,
-      image       = "${data.aws_ecr_repository.lpa_seeding_app.repository_url}@${data.aws_ecr_image.lpa_seeding_app.image_digest}",
-      mountPoints = [],
-      name        = "app",
+      cpu                    = 1,
+      essential              = true,
+      image                  = "${data.aws_ecr_repository.lpa_seeding_app.repository_url}@${data.aws_ecr_image.lpa_seeding_app.image_digest}",
+      readonlyRootFilesystem = true,
+      mountPoints = [
+        {
+          containerPath = "/tmp",
+          sourceVolume  = "app_tmp",
+          readOnly      = false
+        }
+      ],
+      name = "app",
       portMappings = [
         {
           containerPort = 9000,

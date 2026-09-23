@@ -94,6 +94,11 @@ class LegacyCompatExtension extends AbstractExtension
                 'current' => $this->persistentSessionDetails->getCurrentRoute(),
                 'previous' => $this->persistentSessionDetails->getPreviousRoute(),
             ]),
+            new TwigFunction('inSharedSpace', function (): bool {
+                $identity = $this->sessionStorage->read();
+
+                return $identity !== null && $identity->inSharedSpace();
+            }),
             // Ported from AppFunctionsExtension — delegates to AccordionService
             new TwigFunction('accordionTop', [$this, 'accordionTop']),
             new TwigFunction('accordionBottom', [$this, 'accordionBottom']),
@@ -163,10 +168,10 @@ class LegacyCompatExtension extends AbstractExtension
     // Functions
     // -------------------------------------------------------------------------
 
-    public function url(string $routeName, array $params = []): string
+    public function url(string $routeName, array $routeParams = [], array $queryParams = []): string
     {
         try {
-            return $this->urlHelper->generate($routeName, $params);
+            return $this->urlHelper->generate($routeName, $routeParams, $queryParams);
         } catch (\Throwable) {
             // Route not yet registered in Mezzio — fall back to treating the
             // route name as a path so legacy templates don't break.
@@ -365,10 +370,13 @@ class LegacyCompatExtension extends AbstractExtension
      */
     public function formHidden(ElementInterface $element): string
     {
-        $name  = htmlspecialchars((string) $element->getAttribute('name'), ENT_QUOTES);
-        $value = htmlspecialchars((string) $element->getValue(), ENT_QUOTES);
+        $attrs = $element->getAttributes();
 
-        return sprintf('<input type="hidden" name="%s" value="%s">', $name, $value);
+        $attrs['type']  = 'hidden';
+        $attrs['name']  = $element->getAttribute('name') ?? $element->getName();
+        $attrs['value'] = (string) $element->getValue();
+
+        return sprintf('<input %s>', $this->buildAttributeString($attrs));
     }
 
     /**

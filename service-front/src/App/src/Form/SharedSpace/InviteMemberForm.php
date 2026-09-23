@@ -9,6 +9,8 @@ use App\Form\Validator\EmailAddress;
 use Laminas\Form\Element\Email;
 use Laminas\Form\Element\Text;
 use Laminas\Form\Element\Checkbox;
+use Laminas\Validator\NotEmpty;
+use Laminas\Validator\StringLength;
 
 /**
  * @template T
@@ -26,6 +28,7 @@ class InviteMemberForm extends AbstractForm
             'required'   => true,
             'options' => [
                 'label' => 'First names',
+                'hint' => 'Include any middle names'
             ],
             'attributes' => [
                 'id' => 'firstNames',
@@ -36,6 +39,24 @@ class InviteMemberForm extends AbstractForm
         $this->addToInputFilter([
             'name' => 'firstNames',
             'required' => true,
+            'validators' => [
+                [
+                    'name'                   => NotEmpty::class,
+                    'break_chain_on_failure' => true,
+                    'options'                => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'Enter the shared space members first name',
+                        ],
+                    ],
+                ],
+                [
+                    'name'    => StringLength::class,
+                    'options' => [
+                        'max'      => 50,
+                        'messages' => [StringLength::TOO_LONG => 'The shared space members first name must be 50 characters or less'],
+                    ],
+                ],
+            ],
         ]);
 
         $this->add([
@@ -54,6 +75,24 @@ class InviteMemberForm extends AbstractForm
         $this->addToInputFilter([
             'name' => 'lastName',
             'required' => true,
+            'validators' => [
+                [
+                    'name'                   => NotEmpty::class,
+                    'break_chain_on_failure' => true,
+                    'options'                => [
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'Enter the shared space members last name',
+                        ],
+                    ],
+                ],
+                [
+                    'name'    => StringLength::class,
+                    'options' => [
+                        'max'      => 50,
+                        'messages' => [StringLength::TOO_LONG => 'The shared space members last name must be 50 characters or less'],
+                    ],
+                ],
+            ],
         ]);
 
         $this->add([
@@ -61,7 +100,7 @@ class InviteMemberForm extends AbstractForm
             'type'       => Email::class,
             'required'   => true,
             'options' => [
-                'label' => 'Email',
+                'label' => 'Email address',
             ],
             'attributes' => [
                 'id' => 'email',
@@ -73,7 +112,29 @@ class InviteMemberForm extends AbstractForm
             'name' => 'email',
             'required' => true,
             'validators' => [
-                ['name' => EmailAddress::class],
+                [
+                    'name'                   => NotEmpty::class,
+                    'break_chain_on_failure' => true,
+                    'options'                => [
+                        'messages' => [NotEmpty::IS_EMPTY => 'Enter the shared space members email address'],
+                    ],
+                ],
+                [
+                    'name'    => StringLength::class,
+                    'break_chain_on_failure' => true,
+                    'options' => [
+                        'max'      => 254,
+                        'messages' => [StringLength::TOO_LONG => 'The shared space members email must be 254 characters or less'],
+                    ],
+                ],
+                [
+                    'name' => EmailAddress::class,
+                    'options' => [
+                        'messages' => [
+                            EmailAddress::INVALID_EMAIL => 'Enter an email address in the correct format, like name@example.com'
+                        ],
+                    ],
+                ],
             ],
         ]);
 

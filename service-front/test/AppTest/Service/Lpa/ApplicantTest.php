@@ -35,10 +35,11 @@ final class ApplicantTest extends AbstractServiceTest
         $lpa = new Lpa(['document' => new Document(['whoIsRegistering' => [111, 222, 333]])]);
 
         $this->applicationService->shouldReceive('setWhoIsRegistering')
-            ->withArgs([$lpa, [0 => 111, 2 => 333]])
+            ->withArgs([$lpa, [0 => 111, 2 => 333], 8])
             ->once();
 
-        $this->service->removeAttorney($lpa, 222);
+        $newVersion = $this->service->removeAttorney($lpa, 222, 8);
+        $this->assertEquals(9, $newVersion);
     }
 
     public function testRemoveAttorneyNotInList(): void
@@ -47,7 +48,8 @@ final class ApplicantTest extends AbstractServiceTest
 
         $this->applicationService->shouldNotHaveReceived('setWhoIsRegistering');
 
-        $this->service->removeAttorney($lpa, 444);
+        $newVersion = $this->service->removeAttorney($lpa, 444, 7);
+        $this->assertEquals(7, $newVersion);
     }
 
     public function testCleanUpAttorneyInList(): void
@@ -60,9 +62,10 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [333]])->once();
+        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [333], 6])->once();
 
-        $this->service->cleanUp($lpa);
+        $newVersion = $this->service->cleanUp($lpa, 6);
+        $this->assertEquals(7, $newVersion);
     }
 
     public function testCleanUpAttorneyJointDecisions(): void
@@ -75,9 +78,10 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [444]])->once();
+        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [444], 5])->once();
 
-        $this->service->cleanUp($lpa);
+        $newVersion = $this->service->cleanUp($lpa, 5);
+        $this->assertEquals(6, $newVersion);
     }
 
     public function testCleanUpAttorneyNotInList(): void
@@ -90,8 +94,9 @@ final class ApplicantTest extends AbstractServiceTest
             ])
         ]);
 
-        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, []])->once();
+        $this->applicationService->shouldReceive('setWhoIsRegistering')->withArgs([$lpa, [], 4])->once();
 
-        $this->service->cleanUp($lpa);
+        $newVersion = $this->service->cleanUp($lpa, 4);
+        $this->assertEquals(5, $newVersion);
     }
 }

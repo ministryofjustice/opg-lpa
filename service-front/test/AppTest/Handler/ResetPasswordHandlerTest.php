@@ -18,6 +18,7 @@ use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -97,6 +98,40 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    #[DataProvider('mangledTokens')]
+    public function testMangledTokenShowsInvalidTokenPage(string $token): void
+    {
+        $this->session->method('has')->willReturn(false);
+
+        $this->userService->expects($this->never())->method('setNewPassword');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/invalid-reset-token.twig')
+            ->willReturn('<html>invalid</html>');
+
+        $response = $this->handler->handle($this->createRequest(token: $token));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame([], $response->getHeader('Location'));
+    }
+
+    /** @return array<string, array{string}> */
+    public static function mangledTokens(): array
+    {
+        return [
+            'trailing full stop'  => ['aaaaaaaaaaaaaaaaaaaa.'],
+            'trailing bracket'    => ['aaaaaaaaaaaaaaaaaaaa>'],
+            'trailing comma'      => ['aaaaaaaaaaaaaaaaaaaa,'],
+            'wrapped in brackets' => ['<aaaaaaaaaaaaaaaaaaaa>'],
+            'trailing whitespace' => ['aaaaaaaaaaaaaaaaaaaa '],
+            'trailing slash'      => ['aaaaaaaaaaaaaaaaaaaa/'],
+            'extra path segment'  => ['aaaaaaaaaaaaaaaaaaaa/extra'],
+            'crlf injection'      => ["aaaaaaaaaaaaaaaaaaaa\r\nSet-Cookie: evil=1"],
+        ];
+    }
+
     public function testEmptyTokenShowsInvalidTokenPage(): void
     {
         $this->renderer
@@ -120,6 +155,21 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/forgot-password/reset/validtoken', $response->getHeaderLine('Location'));
+    }
+
+    public function testLoggedInUserSessionIsKeptWhenForSharedSpace(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(true);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/forgot-password/reset-password.twig')
+            ->willReturn('<html>hey</html>');
+
+        $response = $this->handler->handle($this->createRequest(token: 'sharedspacevalidtoken'));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testGetRequestDisplaysForm(): void
@@ -189,6 +239,31 @@ class ResetPasswordHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/home', $response->getHeaderLine('Location'));
+    }
+
+    public function testSuccessfulResetRedirectsToDashboardWhenSharedSpaceWithSession(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(true);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn(['password' => 'NewPass123!']); // pragma: allowlist secret
+
+        $this->userService
+            ->expects($this->once())
+            ->method('setNewPassword')
+            ->with('sharedspaceabc123', 'NewPass123!')
+            ->willReturn(true);
+
+        $this->flash
+            ->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['Password successfully reset']);
+
+        $request = $this->createRequest('POST', 'sharedspaceabc123', ['password' => 'NewPass123!', 'password_confirm' => 'NewPass123!']); // pragma: allowlist secret
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/shared-space/dashboard', $response->getHeaderLine('Location'));
     }
 
     public function testInvalidTokenResultShowsInvalidTokenPage(): void

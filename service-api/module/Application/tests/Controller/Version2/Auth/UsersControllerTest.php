@@ -4,17 +4,66 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\UsersController;
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\Http\Response\Json;
+use Application\Library\Http\Response\NoContent;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service;
-use Laminas\View\Model\JsonModel;
+use Laminas\Http\Request as HttpRequest;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
+use ReflectionProperty;
+use RuntimeException;
 
-class UsersControllerTest extends AbstractAuthControllerTestCase
+class UsersControllerTest extends MockeryTestCase
 {
+    private MockInterface|SharedSpaceService $sharedSpaceService;
+    private MockInterface|Service $service;
+    private MockInterface|AuthenticationService $authenticationService;
+    private MockInterface|LoggerInterface $logger;
+
     public function setUp(): void
     {
-        $this->service = Mockery::mock(Service::class);
-
         parent::setUp();
+
+        $this->sharedSpaceService = Mockery::mock(SharedSpaceService::class);
+        $this->service = Mockery::mock(Service::class);
+        $this->authenticationService = Mockery::mock(AuthenticationService::class);
+        $this->logger = Mockery::mock(LoggerInterface::class);
+    }
+
+    private function getController(): UsersController
+    {
+        $controller = new UsersController(
+            $this->sharedSpaceService,
+            $this->service,
+            $this->authenticationService,
+            $this->logger
+        );
+
+        $controller->getResponse();
+
+        return $controller;
+    }
+
+    /**
+     * Injects a request with (or without) a Token header directly into the controller's
+     * protected $request property, since delete() reads it via getRequest() and we're
+     * calling delete() directly rather than going through the full dispatch()/routing cycle.
+     */
+    private function setRequestToken(UsersController $controller, ?string $token): void
+    {
+        $request = new HttpRequest();
+
+        if ($token !== null) {
+            $request->getHeaders()->addHeaderLine('Token', $token);
+        }
+
+        $property = new ReflectionProperty($controller, 'request');
+        $property->setAccessible(true);
+        $property->setValue($controller, $request);
     }
 
     public function testCreateActivateAccount()
@@ -31,15 +80,14 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
                 'activation_token' => $activationToken,
             ]);
 
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $controller = $this->getController();
 
-        /** @var JsonModel $result */
+        /** @var Json $result */
         $result = $controller->create([
             'activationToken' => $activationToken,
         ]);
 
-        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertInstanceOf(Json::class, $result);
     }
 
     public function testCreateActivateAccountFailedCantActivate()
@@ -51,8 +99,7 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Failure reason')
             ->once();
 
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $controller = $this->getController();
 
         /** @var ApiProblem $result */
         $result = $controller->create([
@@ -85,16 +132,15 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
         $this->logger->shouldReceive('info')
             ->with('New user account created', $accountCreateReturnData);
 
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $controller = $this->getController();
 
-        /** @var JsonModel $result */
+        /** @var Json $result */
         $result = $controller->create([
             'username' => $username,
             'password' => $password,
         ]);
 
-        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertInstanceOf(Json::class, $result);
     }
 
     public function testCreateNewAccountFailed()
@@ -107,8 +153,7 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
             ->andReturn('Failure reason')
             ->once();
 
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $controller = $this->getController();
 
         /** @var ApiProblem $result */
         $result = $controller->create([
@@ -126,8 +171,7 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
 
     public function testCreateFailedNoData()
     {
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $controller = $this->getController();
 
         /** @var ApiProblem $result */
         $result = $controller->create([]);
@@ -140,217 +184,197 @@ class UsersControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals('Either activationToken or username & password must be passed', $data['detail']);
     }
 
-    public function testSearchAction()
+    public function testDeleteReturnsUnauthorizedWhenNoTokenHeader()
     {
-        $emailAddress = 'user@name.com';
+        $controller = $this->getController();
+        $this->setRequestToken($controller, null);
 
-        //  Set up the data in the params plugin
-        $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'email' => $emailAddress,
-            ])
-            ->once();
-
-        $userSearchReturnData = [
-            'email' => $emailAddress,
-            'user'  => 'ertyu34565456ytyg',
-        ];
-
-        $this->service->shouldReceive('searchByUsername')
-            ->with($emailAddress)
-            ->andReturn($userSearchReturnData)
-            ->once();
-
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
-
-        /** @var JsonModel $result */
-        $result = $controller->searchAction();
-
-        $this->assertInstanceOf(JsonModel::class, $result);
-        $this->assertEquals($userSearchReturnData, $result->getVariables());
-    }
-
-    public function testSearchActionFailed()
-    {
-        $emailAddress = 'user@name.com';
-
-        //  Set up the data in the params plugin
-        $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'email' => $emailAddress,
-            ])
-            ->once();
-
-        $this->service->shouldReceive('searchByUsername')
-            ->with($emailAddress)
-            ->andReturnFalse()
-            ->once();
-
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $this->authenticationService->shouldNotReceive('withToken');
+        $this->sharedSpaceService->shouldNotReceive('deleteAccount');
+        $this->service->shouldNotReceive('delete');
 
         /** @var ApiProblem $result */
-        $result = $controller->searchAction();
+        $result = $controller->delete('user-1');
 
         $this->assertInstanceOf(ApiProblem::class, $result);
 
         $data = $result->toArray();
-
-        $this->assertEquals(404, $data['status']);
-        $this->assertEquals('No user found with supplied email address', $data['detail']);
+        $this->assertEquals(401, $data['status']);
+        $this->assertEquals('invalid-token', $data['detail']);
     }
 
-    public function testSearchActionByAReference()
+    public function testDeleteReturnsUnauthorizedWhenTokenInvalid()
     {
-        $aReference = 'A-99998888882';
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
 
-        $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'aReference' => $aReference,
-            ])
-            ->once();
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn('invalid-token');
 
-        $userSearchReturnData = [
-            'userId'   => 'abc123def456',
-            'isActive' => true,
-        ];
-
-        $this->service->shouldReceive('searchByAReference')
-            ->with($aReference)
-            ->andReturn($userSearchReturnData)
-            ->once();
-
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
-
-        /** @var JsonModel $result */
-        $result = $controller->searchAction();
-
-        $this->assertInstanceOf(JsonModel::class, $result);
-        $this->assertEquals($userSearchReturnData, $result->getVariables());
-    }
-
-    public function testSearchActionByAReferenceNotFound()
-    {
-        $aReference = 'A-00000000000';
-
-        $this->params->shouldReceive('fromQuery')
-            ->andReturn([
-                'aReference' => $aReference,
-            ])
-            ->once();
-
-        $this->service->shouldReceive('searchByAReference')
-            ->with($aReference)
-            ->andReturnFalse()
-            ->once();
-
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        $this->sharedSpaceService->shouldNotReceive('deleteAccount');
+        $this->service->shouldNotReceive('delete');
 
         /** @var ApiProblem $result */
-        $result = $controller->searchAction();
+        $result = $controller->delete('user-1');
 
         $this->assertInstanceOf(ApiProblem::class, $result);
 
         $data = $result->toArray();
-
-        $this->assertEquals(404, $data['status']);
-        $this->assertEquals('No user found with supplied A Reference', $data['detail']);
+        $this->assertEquals(401, $data['status']);
+        $this->assertEquals('invalid-token', $data['detail']);
     }
 
-    public function testMatchAction()
+    public function testDeleteReturnsUnauthorizedWhenTokenMissingUserId()
     {
-        $query = 'horace';
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
 
-        // Set up the data in the params plugin
-        $this->params->shouldReceive('fromQuery')
-            ->with('query')
-            ->andReturn($query)
-            ->once();
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['expiresAt' => null]);
 
-        $this->params->shouldReceive('fromQuery')
-            ->with('limit', 10)
-            ->andReturn(10)
-            ->once();
+        $this->sharedSpaceService->shouldNotReceive('deleteAccount');
+        $this->service->shouldNotReceive('delete');
 
-        $this->params->shouldReceive('fromQuery')
-            ->with('offset', 0)
-            ->andReturn(0)
-            ->once();
+        /** @var ApiProblem $result */
+        $result = $controller->delete('user-1');
 
-        $userMatchReturnData = [
-            [
-                'email' => 'horace@foo.com',
-                'user'  => 'ertyu34565456ytyg',
-            ],
-            [
-                'email' => 'foo@horace.com',
-                'user' => 'ddasdwrq2524525',
-            ]
-        ];
+        $this->assertInstanceOf(ApiProblem::class, $result);
 
-        $this->service->shouldReceive('matchUsers')
-            ->with($query, ['offset' => 0, 'limit' => 10])
-            ->andReturn($userMatchReturnData)
-            ->once();
-
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
-
-        /** @var JsonModel $result */
-        // NB query parameter comes from query string via the params plugin
-        // (see top of test function)
-        $result = $controller->matchAction();
-
-        $this->assertInstanceOf(JsonModel::class, $result);
-        $this->assertEquals($userMatchReturnData, $result->getVariables());
+        $data = $result->toArray();
+        $this->assertEquals(401, $data['status']);
+        $this->assertEquals('invalid-token', $data['detail']);
     }
 
-    public function testMatchActionEmptyResultset()
+    public function testDeleteDeletesUserWhenNotInSharedSpace()
     {
-        $query = 'phoebe';
-        $offset = 10;
-        $limit = 5;
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
 
-        // Set up the data in the params plugin
-        $this->params->shouldReceive('fromQuery')
-             ->with('query')
-             ->andReturn($query)
-             ->once();
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => null]);
 
-        $this->params->shouldReceive('fromQuery')
-             ->with('limit', 10)
-             ->andReturn($limit)
-             ->once();
+        $this->service->shouldReceive('delete')
+            ->with('user-1')
+            ->once()
+            ->andReturn(true);
 
-        $this->params->shouldReceive('fromQuery')
-             ->with('offset', 0)
-             ->andReturn($offset)
-             ->once();
+        $this->sharedSpaceService->shouldNotReceive('deleteAccount');
 
-        $userMatchReturnData = [];
+        $result = $controller->delete('user-1');
 
-        $expectedOptions = [
-            'offset' => $offset,
-            'limit' => $limit
-        ];
+        $this->assertInstanceOf(NoContent::class, $result);
+    }
 
-        $this->service->shouldReceive('matchUsers')
-            ->with($query, $expectedOptions)
-            ->andReturn($userMatchReturnData)
+    public function testDeleteReturnsApiProblemWhenUserServiceReturnsApiProblem()
+    {
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => null]);
+
+        $apiProblem = new ApiProblem(500, 'Something went wrong');
+
+        $this->service->shouldReceive('delete')
+            ->with('user-1')
+            ->once()
+            ->andReturn($apiProblem);
+
+        $result = $controller->delete('user-1');
+
+        $this->assertSame($apiProblem, $result);
+    }
+
+    public function testDeleteReturnsErrorWhenUserServiceThrows()
+    {
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => null]);
+
+        $exception = new RuntimeException('Database error');
+
+        $this->service->shouldReceive('delete')
+            ->with('user-1')
+            ->once()
+            ->andThrow($exception);
+
+        $this->logger->shouldReceive('error')
+            ->with('Error deleting user', ['exception' => $exception])
             ->once();
 
-        /** @var UsersController $controller */
-        $controller = $this->getController(UsersController::class);
+        /** @var ApiProblem $result */
+        $result = $controller->delete('user-1');
 
-        /** @var JsonModel $result */
-        // NB query parameter comes from query string via the params plugin
-        // (see top of test function)
-        $result = $controller->matchAction();
+        $this->assertInstanceOf(ApiProblem::class, $result);
 
-        $this->assertInstanceOf(JsonModel::class, $result);
-        $this->assertEquals($userMatchReturnData, $result->getVariables());
+        $data = $result->toArray();
+        $this->assertEquals(500, $data['status']);
+        $this->assertEquals('Unable to process request', $data['detail']);
+    }
+
+    public function testDeleteDeletesSharedSpaceAccountWhenInSharedSpace()
+    {
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => 'shared-space-1']);
+
+        $this->sharedSpaceService->shouldReceive('deleteAccount')
+            ->with('shared-space-1', 'user-1')
+            ->once();
+
+        $this->service->shouldNotReceive('delete');
+
+        $result = $controller->delete('user-1');
+
+        $this->assertInstanceOf(NoContent::class, $result);
+    }
+
+    public function testDeleteReturnsErrorWhenSharedSpaceServiceThrows()
+    {
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => 'shared-space-1']);
+
+        $exception = new RuntimeException('Transaction failed');
+
+        $this->sharedSpaceService->shouldReceive('deleteAccount')
+            ->with('shared-space-1', 'user-1')
+            ->once()
+            ->andThrow($exception);
+
+        $this->service->shouldNotReceive('delete');
+
+        $this->logger->shouldReceive('error')
+            ->with('Error deleting user', ['exception' => $exception])
+            ->once();
+
+        /** @var ApiProblem $result */
+        $result = $controller->delete('user-1');
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $data = $result->toArray();
+        $this->assertEquals(500, $data['status']);
+        $this->assertEquals('Unable to process request', $data['detail']);
     }
 }

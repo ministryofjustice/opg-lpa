@@ -24,6 +24,8 @@ use RuntimeException;
 
 class WhoAreYouHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -139,7 +141,7 @@ class WhoAreYouHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['who' => ''])
+            $this->createRequest('POST', ['who' => '', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -160,7 +162,7 @@ class WhoAreYouHandlerTest extends TestCase
             ->willReturn('/lpa/91333263035/repeat-application');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['who' => 'donor'])
+            $this->createRequest('POST', ['who' => 'donor', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -181,7 +183,7 @@ class WhoAreYouHandlerTest extends TestCase
         $this->expectExceptionMessage('API client failed to set Who Are You for id: 91333263035');
 
         $this->handler->handle(
-            $this->createRequest('POST', ['who' => 'donor'])
+            $this->createRequest('POST', ['who' => 'donor', 'version' => self::IF_MATCH_VALUE])
         );
     }
 }

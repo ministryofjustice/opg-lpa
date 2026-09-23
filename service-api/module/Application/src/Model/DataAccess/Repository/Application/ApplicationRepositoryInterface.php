@@ -50,6 +50,13 @@ interface ApplicationRepositoryInterface
     public function fetch(array $criteria, array $options = []): Traversable;
 
     /**
+     * @param array $criteria
+     * @param array $options
+     * @return Traversable
+     */
+    public function fetchForSharedSpace(array $criteria, array $options = []): Traversable;
+
+    /**
      * Get LPAs owned by the given user.
      *
      * @param string $userId
@@ -66,8 +73,6 @@ interface ApplicationRepositoryInterface
 
     /**
      * Update the LPA
-     *
-     * @param Lpa $lpa
      */
     public function update(Lpa $lpa): void;
 
@@ -79,6 +84,18 @@ interface ApplicationRepositoryInterface
      *   belongs to, if any.
      */
     public function deleteById(int $lpaId, string $userId, ?string $sharedSpaceId = null): void;
+
+    /**
+     * Delete (anonymise) every LPA owned by the given shared space. Used
+     * when the last member of a shared space is deleted and the shared
+     * space itself is being torn down, so that its LPAs don't get
+     * hard-deleted by the shared_space table's ON DELETE CASCADE foreign
+     * key when the shared space row is subsequently removed.
+     *
+     * @param string $sharedSpaceId
+     * @return int Number of LPAs deleted
+     */
+    public function deleteAllForSharedSpace(string $sharedSpaceId): int;
 
     /**
      * Move ownership of all of $userId's individually-owned LPAs (i.e. those

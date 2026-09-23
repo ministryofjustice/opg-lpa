@@ -154,9 +154,6 @@ resource "aws_ecs_task_definition" "api" {
   volume {
     name = "app_tmp"
   }
-  volume {
-    name = "web_etc"
-  }
 }
 
 data "aws_ecr_repository" "lpa_api_web" {
@@ -192,17 +189,11 @@ locals {
 
   api_web = jsonencode(
     {
-      cpu       = 1,
-      essential = true,
-      image     = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
-      mountPoints = [
-        {
-          containerPath = "/etc",
-          sourceVolume  = "web_etc"
-          readOnly      = false
-        }
-      ],
-      name = "web",
+      cpu         = 1,
+      essential   = true,
+      image       = "${data.aws_ecr_repository.lpa_api_web.repository_url}@${data.aws_ecr_image.lpa_api_web.image_digest}",
+      mountPoints = [],
+      name        = "web",
       portMappings = [
         {
           containerPort = 8080,
@@ -214,9 +205,30 @@ locals {
         containerName = "app",
         condition     = "HEALTHY"
       }],
-      volumesFrom = [],
-      privileged  = false,
-      user        = "nginx",
+      volumesFrom            = [],
+      privileged             = false,
+      user                   = "nginx",
+      readonlyRootFilesystem = true,
+      linuxParameters = {
+        tmpfs = [
+          {
+            containerPath = "/tmp"
+            size          = 64
+          },
+          {
+            containerPath = "/etc/nginx/conf.d"
+            size          = 10
+            mountOptions  = ["uid=101", "gid=101"]
+          },
+        ]
+      },
+      healthCheck = {
+        command     = ["CMD-SHELL", "curl -f http://localhost:8080/nginx-health || exit 1"],
+        startPeriod = 30,
+        interval    = 15,
+        timeout     = 10,
+        retries     = 3
+      },
       logConfiguration = {
         logDriver = "awslogs",
         options = {
@@ -284,7 +296,8 @@ locals {
         { name = "OPG_LPA_POSTGRES_PASSWORD", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.api_rds_password.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_AUTH_LOG_SALT", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_api_auth_log_salt.name}" },
-        { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" }
+        { name = "OPG_LPA_ADMIN_SERVICE_SECRET", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_admin_service_secret.name}" },
+        { name = "ONELOGIN_PRIVATE_KEY", valueFrom = data.aws_secretsmanager_secret.onelogin_private_key.arn }
       ],
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
@@ -313,6 +326,9 @@ locals {
         { name = "OPG_LPA_TELEMETRY_PORT", value = "2000" },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ONELOGIN_CLIENT_ID", value = var.environment.onelogin_client_id },
+        { name = "ONELOGIN_DISCOVERY_URL", value = local.onelogin_discovery_url },
+        { name = "ONELOGIN_KEY_ID", value = "${var.account_name}-onelogin" },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) }
       ]
     }

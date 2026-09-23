@@ -13,6 +13,10 @@ Then(`I should be on page matching {string}`, (url) => {
   cy.url().should('to.match', new RegExp((Cypress.config().baseUrl + url).replaceAll('/', '\\/')));
 });
 
+Then(`I should be on admin page matching {string}`, (url) => {
+  cy.url().should('to.match', new RegExp((Cypress.env('adminUrl') + url).replaceAll('/', '\\/')));
+});
+
 Then(`I am taken to the login page`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + '/login');
   cy.OPGCheckA11y();
@@ -190,7 +194,7 @@ function comparePageToPath(urlPart, comparator) {
   var pathRegex = '/lpa/\\d+/' + urlPart;
   cy.get('@lpaId').then((lpaId) => {
     var pathWithLpaId = pathRegex.replace('\\d+', lpaId);
-    cy.url().should(comparator, Cypress.config().baseUrl + pathWithLpaId);
+    cy.url().then(x => x.split('?')[0]).should(comparator, Cypress.config().baseUrl + pathWithLpaId);
   });
 }
 

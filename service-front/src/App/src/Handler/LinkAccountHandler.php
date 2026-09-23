@@ -8,6 +8,8 @@ use App\Form\User\Login;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -27,7 +29,6 @@ class LinkAccountHandler implements RequestHandlerInterface
     use CommonTemplateVariablesTrait;
 
     private const string SESSION_KEY_IDENTITY     = 'identity';
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -135,7 +136,7 @@ class LinkAccountHandler implements RequestHandlerInterface
      */
     private function establishSession(SessionInterface $session, array $identity): RedirectResponse
     {
-        $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+        $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
         $session->regenerate();
         $session->clear();
@@ -143,7 +144,7 @@ class LinkAccountHandler implements RequestHandlerInterface
 
         $this->logger->info('auth.onelogin.link_success');
 
-        if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+        if ($preAuthUrl !== null) {
             return new RedirectResponse($preAuthUrl);
         }
 

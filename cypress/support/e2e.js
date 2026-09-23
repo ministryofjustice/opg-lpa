@@ -19,6 +19,7 @@ Cypress.env("second_seeded_email", "seeded_test_user2@digital.justice.gov.uk");
 Cypress.env("already_linked_email", "seeded_test_user_already_linked@digital.justice.gov.uk");
 Cypress.env("onelogin_retry_email", "seeded_test_user_onelogin_retry@digital.justice.gov.uk");
 Cypress.env("onelogin_forgot_email", "seeded_test_user_onelogin_forgot@digital.justice.gov.uk");
+Cypress.env("onelogin_link_email", "seeded_test_user_onelogin_link@digital.justice.gov.uk");
 Cypress.env("seeded_password", "Pass1234");
 
 // Test user seeded into the admin Cognito user pool, used to sign in via the

@@ -1,6 +1,7 @@
 resource "aws_iam_role" "vpc_flow_logs" {
-  name               = "vpc_flow_logs"
-  assume_role_policy = data.aws_iam_policy_document.vpc_flow_logs_role_assume_role_policy.json
+  name                 = "vpc_flow_logs"
+  assume_role_policy   = data.aws_iam_policy_document.vpc_flow_logs_role_assume_role_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
   # tags               = local.shared_component_tag
 }
 

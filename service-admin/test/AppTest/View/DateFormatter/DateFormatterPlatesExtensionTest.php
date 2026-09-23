@@ -8,6 +8,7 @@ use App\View\DateFormatter\DateFormatterPlatesExtension;
 use DateTime;
 use DateTimeZone;
 use League\Plates\Engine;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 final class DateFormatterPlatesExtensionTest extends TestCase
@@ -134,7 +135,7 @@ final class DateFormatterPlatesExtensionTest extends TestCase
 
     // --- Invalid / edge-case inputs ---
 
-    public function invalidValueProvider(): array
+    public static function invalidValueProvider(): array
     {
         return [
             'invalid string' => ['not a date', null, 'not a date'],
@@ -144,7 +145,7 @@ final class DateFormatterPlatesExtensionTest extends TestCase
         ];
     }
 
-    /** @dataProvider invalidValueProvider */
+    #[DataProvider('invalidValueProvider')]
     public function testDateFormatWithInvalidValue(mixed $value, mixed $default, mixed $expected): void
     {
         self::assertSame($expected, $this->extension->dateFormat($value, $default));

@@ -27,21 +27,28 @@
     {% endif %}
 
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+        <span class="govuk-caption-xl">Shared space LPAs</span>
+        <h1 class="govuk-heading-xl">{{ sharedSpaceName }}</h1>
+        <p class="govuk-body-l">On this page you'll find all the LPAs that members of your shared space have made. As well as making a new LPA from scratch, you can:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>
+            <li><span class="govuk-!-font-weight-bold">check the signing dates</span> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
+            </li>
+            <li><span class="govuk-!-font-weight-bold">reuse details from an existing LPA to make a new one</span> - you can do this once you've completed all sections up to and including the person to notify section
+            </li>
+        </ul>
+        <p class="govuk-body">If you already have a registered LPA and want to use it online, go to the <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.</p>
 
-        <div class="govuk-body">
-            <p class="govuk-body-l">On this page you'll find all the LPAs that members of your shared space have made. As well as making a new LPA from scratch, you can:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>
-                <li><span class="govuk-!-font-weight-bold">check the signing dates</span> on an LPA are in the right order before you send it to OPG - if they're not, we cannot register the LPA and you may have to pay another application fee
-                </li>
-                <li><span class="govuk-!-font-weight-bold">reuse details from an existing LPA to make a new one</span> - you can do this once you've completed all sections up to and including the person to notify section
-                </li>
-            </ul>
-            <div class="govuk-details__text">
-                If you already have a registered LPA and want to use it online, go to the <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
-            </div>
-        </div>
+        <details class="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Can two people make changes to an LPA at the same time?
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            If two people try to make changes to an LPA at the same time, the person who saves first will keep their changes, the person who attempts to save second will lose their changes, and instead be able to view the newly saved version of the LPA.
+          </div>
+        </details>
     </div>
     <div class="govuk-grid-column-one-third">
         <div class="panel-cta tablet-and-up">
@@ -121,11 +128,11 @@
 {% if lpaTotalCount > 0 %}
 
 {% if shortList %}
-    {{ macros.listLpas(lpas, null, null, trackingEnabled) }}
-    {{ macros.listLpas(lpas, 'property-and-financial', null, trackingEnabled) }}
-    {{ macros.listLpas(lpas, 'health-and-welfare', null, trackingEnabled) }}
+    {{ macros.listLpas(lpas, null, null, trackingEnabled, true) }}
+    {{ macros.listLpas(lpas, 'property-and-financial', null, trackingEnabled, true) }}
+    {{ macros.listLpas(lpas, 'health-and-welfare', null, trackingEnabled, true) }}
 {% else %}
-    {{ macros.listLpas(lpas, 'all', paginationControlData['page'], trackingEnabled) }}
+    {{ macros.listLpas(lpas, 'all', paginationControlData['page'], trackingEnabled, true) }}
 {% endif %}
     {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
 {% endif %}

@@ -19,8 +19,8 @@ Feature: AdminUserAccount
     When I visit "/home"
     And I log in as "SignupAndDeleteUser" test user
     And I visit "/user/about-you"
-    And I select "Mr" on "name-title" with data-inited
     And I force fill out
+      | name-title| Mr |
       | name-first| Chris |
       | name-last| Smith |
       | dob-date-day| 1 |
@@ -30,7 +30,7 @@ Feature: AdminUserAccount
       | address-postcode| PL45 9JA |
     And I click "save"
     And I visit "/user/delete"
-    And I click element marked "Yes, continue deleting my account"
+    And I click button "Delete account"
     Then I see "We've deleted your account" in the page text
 
     # Check new user deleted on admin site

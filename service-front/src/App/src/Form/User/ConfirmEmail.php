@@ -25,11 +25,30 @@ class ConfirmEmail extends AbstractForm
         $this->add([
             'name' => 'email',
             'type' => 'Email',
+            'attributes' => [
+                'id' => 'email',
+                'type' => 'email',
+                'class' => 'govuk-input',
+                'data-cy' => 'email',
+            ],
+            'options' => [
+                'label' => 'Email address',
+            ],
         ]);
 
         $this->add([
             'name' => 'email_confirm',
             'type' => 'Email',
+            'attributes' => [
+                'id' => 'email_confirm',
+                'type' => 'email',
+                'autocomplete' => 'off',
+                'class' => 'govuk-input',
+                'data-cy' => 'email_confirm',
+            ],
+            'options' => [
+                'label' => 'Confirm your email address',
+            ],
         ]);
 
         $this->setUseInputFilterDefaults(false);

@@ -112,7 +112,7 @@
     .summary-text,
     .address-type-toggle,
     .button,
-    .govuk-button-group,
+    .govuk-button-group:not(.app-use-standard),
     .alert,
     .single-checkbox-group {
         @include govuk-media-query($from: tablet) {

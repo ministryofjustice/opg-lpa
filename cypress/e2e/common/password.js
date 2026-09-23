@@ -1,6 +1,19 @@
-import { When } from '@badeball/cypress-cucumber-preprocessor';
+import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
 
 var newPassword = 'NewPassword' + Cypress.env('userNumber');
+
+When(`I reveal the password I have typed`, () => {
+  cy.get('.js-showHidePassword').should('be.visible').click();
+});
+
+Then(`the password I typed is shown as plain text`, () => {
+  cy.get('[data-cy=password]').should('have.attr', 'type', 'text');
+});
+
+Then(`I am not asked to confirm the password`, () => {
+  cy.get('[data-cy=password_confirm]').should('not.be.visible');
+  cy.get('#js-skipConfirmPassword').should('have.value', '1');
+});
 
 When('I populate email fields with standard test user address', () => {
   cy.get('[data-cy=email]').type(Cypress.env('email'));

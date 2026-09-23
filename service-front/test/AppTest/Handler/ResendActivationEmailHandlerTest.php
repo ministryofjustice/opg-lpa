@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\ResendActivationEmailHandler;
 use App\Form\User\ConfirmEmail;
+use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -41,7 +42,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
         $identity->id = 'user123';
 
         $request = (new ServerRequest([], [], '/signup/resend-email', 'GET'))
-            ->withAttribute('identity', $identity);
+            ->withAttribute(RequestAttribute::IDENTITY, $identity);
 
         $response = $this->handler->handle($request);
 
@@ -52,7 +53,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
     public function testDisplaysResendEmailFormOnGetRequest(): void
     {
         $request = (new ServerRequest([], [], '/signup/resend-email', 'GET'))
-            ->withAttribute('identity', null);
+            ->withAttribute(RequestAttribute::IDENTITY, null);
 
         $form = $this->createMock(ConfirmEmail::class);
         $form->expects($this->once())->method('setAttribute')->with('action', '/signup/resend-email');
@@ -78,7 +79,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
     public function testSuccessfulResendDisplaysEmailSentPage(): void
     {
         $request = (new ServerRequest([], [], '/signup/resend-email', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $confirmForm = $this->createMock(ConfirmEmail::class);
@@ -117,7 +118,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
     public function testFailedResendDisplaysError(): void
     {
         $request = (new ServerRequest([], [], '/signup/resend-email', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'test@example.com', 'email_confirm' => 'test@example.com']);
 
         $form = $this->createMock(ConfirmEmail::class);
@@ -144,7 +145,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
     public function testInvalidFormDataDisplaysFormWithErrors(): void
     {
         $request = (new ServerRequest([], [], '/signup/resend-email', 'POST'))
-            ->withAttribute('identity', null)
+            ->withAttribute(RequestAttribute::IDENTITY, null)
             ->withParsedBody(['email' => 'invalid-email', 'email_confirm' => 'different@example.com']);
 
         $form = $this->createMock(ConfirmEmail::class);

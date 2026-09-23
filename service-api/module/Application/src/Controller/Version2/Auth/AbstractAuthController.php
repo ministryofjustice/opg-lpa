@@ -2,14 +2,10 @@
 
 namespace Application\Controller\Version2\Auth;
 
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemException;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Laminas\Http\Request as HttpRequest;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Log\LoggerAwareInterface;
 
@@ -49,24 +45,6 @@ abstract class AbstractAuthController extends AbstractRestfulController implemen
      * @return AbstractService
      */
     abstract protected function getService();
-
-    /**
-     * Execute the request
-     *
-     * @param MvcEvent $e
-     * @return mixed|ApiProblem|ApiProblemResponse
-     * @throws ApiProblemException
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        $return = parent::onDispatch($e);
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
-    }
 
     /**
      * @param $userId

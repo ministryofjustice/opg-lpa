@@ -2,9 +2,10 @@
 // API IAM ECS task role
 
 resource "aws_iam_role" "api_task_role" {
-  name               = "${local.environment_name}-api-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.api_component_tag
+  name                 = "${local.environment_name}-api-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.api_component_tag
 }
 
 
@@ -13,9 +14,10 @@ resource "aws_iam_role" "api_task_role" {
 //----------------
 
 resource "aws_iam_role" "admin_task_role" {
-  name               = "${local.environment_name}-admin-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.admin_component_tag
+  name                 = "${local.environment_name}-admin-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.admin_component_tag
 }
 
 //----------------
@@ -23,9 +25,10 @@ resource "aws_iam_role" "admin_task_role" {
 //----------------
 
 resource "aws_iam_role" "front_task_role" {
-  name               = "${local.environment_name}-front-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.front_component_tag
+  name                 = "${local.environment_name}-front-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.front_component_tag
 
 }
 
@@ -33,26 +36,29 @@ resource "aws_iam_role" "front_task_role" {
 // PDF ECS task role
 
 resource "aws_iam_role" "pdf_task_role" {
-  name               = "${local.environment_name}-pdf-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.pdf_component_tag
+  name                 = "${local.environment_name}-pdf-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.pdf_component_tag
 }
 
 
 //----------------
 // Seed ECS task role
 resource "aws_iam_role" "seeding_task_role" {
-  name               = "${local.environment_name}-seeding-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.seeding_component_tag
+  name                 = "${local.environment_name}-seeding-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.seeding_component_tag
 }
 
 //----------------
 // Mock ECS task role
 resource "aws_iam_role" "mock_onelogin" {
-  name               = "${local.environment_name}-mock-onelogin-task-role"
-  assume_role_policy = data.aws_iam_policy_document.ecs_assume_policy.json
-  tags               = local.seeding_component_tag
+  name                 = "${local.environment_name}-mock-onelogin-task-role"
+  assume_role_policy   = data.aws_iam_policy_document.ecs_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.seeding_component_tag
 }
 
 //------------------------------------------------
@@ -70,9 +76,10 @@ data "aws_iam_policy_document" "cloudwatch_events_assume_policy" {
 }
 
 resource "aws_iam_role" "cloudwatch_events_ecs_role" {
-  name               = "${local.environment_name}-cloudwatch_events_ecs_cron"
-  assume_role_policy = data.aws_iam_policy_document.cloudwatch_events_assume_policy.json
-  tags               = local.api_component_tag
+  name                 = "${local.environment_name}-cloudwatch_events_ecs_cron"
+  assume_role_policy   = data.aws_iam_policy_document.cloudwatch_events_assume_policy.json
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = local.api_component_tag
 }
 
 data "aws_iam_policy_document" "cloudwatch_events_role_policy" {

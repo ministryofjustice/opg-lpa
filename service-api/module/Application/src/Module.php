@@ -5,15 +5,13 @@ namespace Application;
 use Alphagov\Notifications\Client as NotifyClient;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
-use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemExceptionInterface;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Authentication\AuthenticationListener;
+use Application\Library\Listener\ContentNegotiationListener;
+use Application\Library\Listener\ErrorListener;
 use Application\Model\DataAccess\Postgres;
 use Application\Model\DataAccess\Repository;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Application\Model\Service\Feedback\FeedbackValidator;
-use ArrayIterator;
 use Aws\Credentials\CredentialProvider;
 use Aws\S3\S3Client;
 use Aws\Signature\SignatureV4;
@@ -25,9 +23,6 @@ use Http\Client\HttpClient;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Authentication\Storage\NonPersistent;
 use Laminas\Db\Adapter\Adapter as ZendDbAdapter;
-use Laminas\Http\Header\Accept;
-use Laminas\Http\Request as HttpRequest;
-use Laminas\Http\Response;
 use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -43,27 +38,15 @@ use Psr\Log\LoggerInterface;
  */
 class Module
 {
-    public const VERSION = '3.0.3-dev';
-
     public function onBootstrap(MvcEvent $e): void
     {
         $eventManager = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-
-        $eventManager->attach(MvcEvent::EVENT_FINISH, [$this, 'negotiateContent'], 1000);
-
-        // Setup authentication listener...
         $sm = $e->getApplication()->getServiceManager();
 
-        $auth = $sm->get(AuthenticationListener::class);
-        $eventManager->attach(MvcEvent::EVENT_ROUTE, [$auth, 'authenticate'], 500);
-
-        // Register error handler for dispatch and render errors;
-        // priority is set to 100 here so that the global MvcEventListener
-        // has a chance to log it before it's converted into an API exception
-        $eventManager->attach(MvcEvent::EVENT_DISPATCH_ERROR, [$this, 'handleError'], 100);
-        $eventManager->attach(MvcEvent::EVENT_RENDER_ERROR, [$this, 'handleError'], 100);
+        $sm->get(ModuleRouteListener::class)->attach($eventManager);
+        $sm->get(ContentNegotiationListener::class)->attach($eventManager);
+        $sm->get(AuthenticationListener::class)->attach($eventManager);
+        $sm->get(ErrorListener::class)->attach($eventManager);
     }
 
     /**
@@ -199,99 +182,6 @@ class Module
     public function getConfig(): array
     {
         return include __DIR__ . '/../config/module.config.php';
-    }
-
-    /**
-     * Listen for and catch ApiProblemExceptions. Convert them to a standard ApiProblemResponse.
-     *
-     * @param MvcEvent $e
-     * @return ApiProblemResponse|null
-     */
-    public function handleError(MvcEvent $e)
-    {
-        $response = null;
-
-        // Marshall an ApiProblem and view model based on the exception
-        $exception = $e->getParam('exception');
-
-        if ($exception instanceof ApiProblemExceptionInterface) {
-            $problem = new ApiProblem($exception->getCode(), $exception->getMessage());
-            new ApiProblemResponse($problem);
-
-            $e->stopPropagation();
-            $response = new ApiProblemResponse($problem);
-            $e->setResponse($response);
-        } elseif ($exception) {
-            $logger = $e->getApplication()->getServiceManager()->get('Logger');
-            $logger->error($exception->getMessage(), [
-                'class' => $exception::class,
-                'file' => $exception->getFile(),
-                'line' => $exception->getLine(),
-                'stackTrace' => $exception->getTraceAsString(),
-            ]);
-        }
-
-        return $response;
-    }
-
-    /**
-     * if the client's Accept header doesn't match the content type on
-     * the response, send a `406 Not acceptable` response
-     *
-     * @param MvcEvent $e
-     **/
-    public function negotiateContent(MvcEvent $e): void
-    {
-        $request = $e->getRequest();
-        $response = $e->getResponse();
-
-        // Type guard for HTTP requests/Responses only
-        if (!$request instanceof HttpRequest || !$response instanceof Response) {
-            return;
-        }
-
-        $requestAcceptHeader = $request->getHeader('accept');
-
-        // Check if Accept header exists and is the correct type
-        if (!$requestAcceptHeader instanceof Accept) {
-            return;
-        }
-
-        // typically a response will only have one content-type header,
-        // but just in case something weird happens we'll loop over the values
-        $responseContentTypes = $response->getHeaders()->get('content-type');
-        if ($responseContentTypes === false) {
-            // No content-type header at all usually means the response was
-            // never actually produced by an API action - e.g. the MVC
-            // dispatcher fell through to its built-in "not found"/error
-            // handling (routing failure, missing controller action, etc.)
-            // rather than reaching real controller code. That response
-            // already carries the correct status (e.g. 404), so leave it
-            // alone rather than masking it as a 406, which would hide the
-            // real error from clients and make it much harder to debug.
-            return;
-        } elseif (!is_a($responseContentTypes, ArrayIterator::class)) {
-            $responseContentTypes = new ArrayIterator([$responseContentTypes]);
-        }
-
-        $ok = false;
-        foreach (iterator_to_array($responseContentTypes) as $responseContentType) {
-            $responseContentTypeValue = $responseContentType->getFieldValue();
-
-            if (
-                !empty($responseContentTypeValue) &&
-                $requestAcceptHeader->match($responseContentTypeValue)
-            ) {
-                $ok = true;
-                break;
-            }
-        }
-
-        if (!$ok) {
-            $e->setResponse(new ApiProblemResponse(
-                new ApiProblem(406, 'Response has a content type which is not acceptable to the client')
-            ));
-        }
     }
 
     public static function awsRegion(): string

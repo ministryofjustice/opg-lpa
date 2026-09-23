@@ -23,7 +23,10 @@ class SharedSpaceCreatedHandler implements RequestHandlerInterface
     {
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/shared-space/created.twig',
-            $this->getTemplateVariables($request),
+            array_merge(
+                ['sharedSpaceName' => $request->getQueryParams()['space-name'] ?? ''],
+                $this->getTemplateVariables($request)
+            ),
         ));
     }
 }

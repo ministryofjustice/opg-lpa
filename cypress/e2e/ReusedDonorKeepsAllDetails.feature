@@ -16,8 +16,8 @@ Feature: ReusedDonorKeepsAllDetails
         Given I log in as "ReusedDonorKeepsAllDetailsUser" test user
 
         # New users have to fill out their details
-        When I select "Dr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Dr |
           | name-first| Dax |
           | name-last| Peromptigal |
           | dob-date-day| 2 |
@@ -26,6 +26,7 @@ Feature: ReusedDonorKeepsAllDetails
           | address-address1| 12 VERNAX AVENUE |
           | address-postcode| PC47 9JB |
         And I click "save"
+        And If I am on dashboard I click to create lpa
         Then I am taken to the lpa type page
 
         # Choose PF type
@@ -37,8 +38,8 @@ Feature: ReusedDonorKeepsAllDetails
         When I click "add-donor"
         Then I can find "form-donor"
 
-        When I select "Dr" on "name-title" with data-inited
         And I force fill out
+            | name-title | Dr |
             | name-first | Herbert |
             | name-last | Gallantrathron |
             | dob-date-day| 22 |
@@ -64,8 +65,8 @@ Feature: ReusedDonorKeepsAllDetails
         When I click "add-attorney"
         Then I can find "form-attorney"
 
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+            | name-title| Mr |
             | name-first | Jeffort |
             | name-last | Splodeicon |
             | dob-date-day| 12 |

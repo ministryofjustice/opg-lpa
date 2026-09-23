@@ -37,8 +37,8 @@ resource "aws_ecs_service" "front" {
   }
 
   timeouts {
-    create = var.environment_name == "production" ? "20m" : "10m"
-    update = var.environment_name == "production" ? "20m" : "6m"
+    create = var.environment_name == "production" ? "20m" : "4m"
+    update = var.environment_name == "production" ? "20m" : "4m"
   }
 
   depends_on = [aws_lb.front]
@@ -105,9 +105,6 @@ resource "aws_ecs_task_definition" "front" {
   volume {
     name = "app_tmp"
   }
-  volume {
-    name = "web_etc"
-  }
 }
 
 data "aws_ecr_repository" "lpa_front_web" {
@@ -146,17 +143,11 @@ locals {
 locals {
 
   front_web = jsonencode({
-    cpu       = 1,
-    essential = true,
-    image     = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
-    mountPoints = [
-      {
-        containerPath = "/etc",
-        sourceVolume  = "web_etc"
-        readOnly      = false
-      }
-    ],
-    name = "web",
+    cpu         = 1,
+    essential   = true,
+    image       = "${data.aws_ecr_repository.lpa_front_web.repository_url}@${data.aws_ecr_image.lpa_front_web.image_digest}",
+    mountPoints = [],
+    name        = "web",
     portMappings = [
       {
         containerPort = 8080,
@@ -170,9 +161,30 @@ locals {
         condition     = "START"
       }
     ]
-    volumesFrom = [],
-    privileged  = false,
-    user        = "nginx",
+    volumesFrom            = [],
+    privileged             = false,
+    user                   = "nginx",
+    readonlyRootFilesystem = true,
+    linuxParameters = {
+      tmpfs = [
+        {
+          containerPath = "/tmp"
+          size          = 64
+        },
+        {
+          containerPath = "/etc/nginx/conf.d"
+          size          = 10
+          mountOptions  = ["uid=101", "gid=101"]
+        },
+      ]
+    },
+    healthCheck = {
+      command     = ["CMD-SHELL", "curl -f http://localhost:8080/nginx-health || exit 1"],
+      startPeriod = 30,
+      interval    = 15,
+      timeout     = 10,
+      retries     = 3
+    },
     logConfiguration = {
       logDriver = "awslogs",
       options = {
@@ -240,8 +252,7 @@ locals {
         { name = "OPG_LPA_FRONT_GOV_PAY_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_gov_pay_key.name}" },
         { name = "OPG_LPA_COMMON_ACCOUNT_CLEANUP_NOTIFICATION_RECIPIENTS", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_common_account_cleanup_notification_recipients.name}" },
         { name = "OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY", valueFrom = "/aws/reference/secretsmanager/${data.aws_secretsmanager_secret.opg_lpa_front_os_places_hub_license_key.name}" },
-        { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn },
-        { name = "CLIENT_ID", valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn }
+        { name = "OPG_LPA_COMMON_REDIS_AUTH_TOKEN", valueFrom = data.aws_secretsmanager_secret.elasticache_auth_token.arn }
 
       ],
       environment = [
@@ -271,6 +282,7 @@ locals {
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "ONELOGIN_REDIRECT_BASE_URL", value = "https://${local.front_fqdn}" },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
         { name = "CYPRESS_FIXTURES_ENABLED", value = var.environment_name != "production" && var.environment.feature_flags.cypress_fixtures_enabled ? tostring("true") : tostring("false") }
       ]

@@ -8,6 +8,7 @@ use Application\Model\Service\EntityInterface;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Header\GenericHeader;
 use Laminas\EventManager\EventManager;
+use Laminas\Http\Header\IfMatch;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
@@ -19,6 +20,8 @@ use Mockery\MockInterface;
 
 abstract class AbstractControllerTestCase extends MockeryTestCase
 {
+    protected const int IF_MATCH_VALUE = 5;
+
     /**
      * @var int|null
      */
@@ -61,7 +64,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->userId = 12345;
+        $this->userId = '12345';
         $this->lpaId = 98765;
 
         $response = Mockery::mock(Response::class);
@@ -73,8 +76,8 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $this->eventManager->shouldReceive('triggerEventUntil')->andReturn($response);
 
         $this->identity = Mockery::mock(User::class);
-        $this->identity->shouldReceive('getId')->andReturn(99999);
-        $this->identity->shouldReceive('id')->andReturn(99999);
+        $this->identity->shouldReceive('getId')->andReturn(12345);
+        $this->identity->shouldReceive('id')->andReturn(12345);
         $this->identity->shouldReceive('hasRole')->withArgs(['admin'])->andReturn(true);
         $this->identity->shouldReceive('hasRole')->withArgs(['admin-service'])->andReturn(false);
         $this->identity->shouldReceive('email')->andReturn('identity@email.address');
@@ -83,7 +86,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $authenticationService->shouldReceive('getIdentity')->andReturn($this->identity);
 
         $this->routeMatch = Mockery::mock(RouteMatch::class);
-        $this->routeMatch->shouldReceive('getParam')->withArgs(['userId'])->andReturn($this->userId);
+        $this->routeMatch->shouldReceive('getParam')->withArgs(['userId', null])->andReturn($this->userId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId'])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['lpaId', false])->andReturn($this->lpaId);
         $this->routeMatch->shouldReceive('getParam')->withArgs(['action', false])->andReturn(false);
@@ -128,6 +131,7 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
     protected function callDispatch(AbstractLpaController $abstractController, array $parameters = [])
     {
         $abstractController->setEventManager($this->eventManager);
+        $abstractController->getEvent()->setRouteMatch($this->routeMatch);
 
         $params = new Parameters($parameters);
 
@@ -136,6 +140,9 @@ abstract class AbstractControllerTestCase extends MockeryTestCase
         $request->shouldReceive('getHeader')
             ->with('X-Trace-Id')
             ->andReturn(new GenericHeader('X-Trace-Id', 'trace-id-123'));
+        $request->shouldReceive('getHeader')
+            ->with('If-Match')
+            ->andReturn(new IfMatch(strval(self::IF_MATCH_VALUE)));
 
         $abstractController->dispatch($request);
     }

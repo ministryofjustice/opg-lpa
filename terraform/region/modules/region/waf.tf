@@ -270,7 +270,7 @@ resource "aws_wafv2_web_acl" "main" {
     priority = 60
 
     action {
-      count {}
+      block {}
     }
 
     statement {

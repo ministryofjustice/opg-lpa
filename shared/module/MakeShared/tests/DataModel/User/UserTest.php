@@ -61,7 +61,11 @@ class UserTest extends TestCase
             ->setName($name)
             ->setAddress($address)
             ->setDob($dob)
-            ->setEmail($email);
+            ->setEmail($email)
+            ->setIsActiveInSharedSpace(true)
+            ->setIsSharedSpaceAdmin(true)
+            ->setSharedSpaceName('Shared Space Name')
+            ->setSharedSpaceId('Shared Space ID');
 
         $this->assertEquals(123, $model->getId());
         $this->assertEquals($now, $model->getCreatedAt());
@@ -70,5 +74,9 @@ class UserTest extends TestCase
         $this->assertEquals($address, $model->getAddress());
         $this->assertEquals($dob, $model->getDob());
         $this->assertEquals($email, $model->getEmail());
+        $this->assertTrue($model->getIsActiveInSharedSpace());
+        $this->assertTrue($model->getIsSharedSpaceAdmin());
+        $this->assertEquals('Shared Space Name', $model->getSharedSpaceName());
+        $this->assertEquals('Shared Space ID', $model->getSharedSpaceId());
     }
 }

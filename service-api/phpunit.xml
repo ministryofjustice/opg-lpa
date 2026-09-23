@@ -1,21 +1,24 @@
 <?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="./module/Application/tests/Bootstrap.php"
-         cacheDirectory="/tmp/.phpunit.cache"
          colors="true"
          displayDetailsOnAllIssues="true"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd">
-  <testsuite name="ApplicationTest">
+         cacheDirectory="/tmp/.phpunit.cache">
+
+    <testsuite name="ApplicationTest">
     <directory>./module/Application/tests/</directory>
-  </testsuite>
-  <coverage>
-    <report>
-      <html outputDirectory="./build/coverage"/>
-    </report>
-  </coverage>
-  <source>
-    <include>
-      <directory suffix=".php">./module/Application/src</directory>
-    </include>
-  </source>
+    </testsuite>
+
+    <source>
+        <include>
+            <directory suffix=".php">./module/Application/src</directory>
+        </include>
+    </source>
+
+    <coverage>
+        <report>
+            <html outputDirectory="./build/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

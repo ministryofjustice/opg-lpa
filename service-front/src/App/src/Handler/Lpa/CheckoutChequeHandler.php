@@ -4,32 +4,33 @@ declare(strict_types=1);
 
 namespace App\Handler\Lpa;
 
-use App\Handler\Lpa\Traits\CheckoutTrait;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
+use App\Service\Payment\Helper\CheckoutHelper;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use Mezzio\Helper\UrlHelper;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+// TODO(LPAL-2493): Remove once the new templates have been deployed.
 class CheckoutChequeHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-    use CheckoutTrait;
 
     public function __construct(
-        LpaApplicationService $lpaApplicationService,
-        Communication $communicationService,
-        UrlHelper $urlHelper,
+        private LpaApplicationService $lpaApplicationService,
+        private Communication $communicationService,
+        private UrlHelper $urlHelper,
+        private CheckoutHelper $checkoutHelper,
+        private LoggerInterface $logger,
     ) {
-        $this->lpaApplicationService = $lpaApplicationService;
-        $this->communicationService = $communicationService;
-        $this->urlHelper = $urlHelper;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -37,20 +38,26 @@ class CheckoutChequeHandler implements RequestHandlerInterface
         /** @var Lpa $lpa */
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
-        if (!$this->isLpaComplete($lpa, $request)) {
-            return $this->redirectToMoreInfoRequired($lpa, $request);
+        if (!$this->checkoutHelper->isLpaComplete($lpa, $request)) {
+            return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
         }
 
-        $lpa->payment->method = Payment::PAYMENT_TYPE_CHEQUE;
+        $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CHEQUE);
 
-        $this->verifyLpaPaymentAmount($lpa);
+        $ifMatchVersion = $lpa->getVersion();
+        try {
+            $ifMatchVersion = $this->checkoutHelper->verifyLpaPaymentAmount($lpa, $ifMatchVersion);
 
-        if (!$this->lpaApplicationService->setPayment($lpa, $lpa->payment)) {
-            throw new RuntimeException(
-                'API client failed to set payment details for id: ' . $lpa->id . ' in ' . static::class
-            );
+            if (!$this->lpaApplicationService->setPayment($lpa, $lpa->getPayment(), $ifMatchVersion)) {
+                throw new RuntimeException(
+                    'API client failed to set payment details for id: ' . $lpa->getId() . ' in ' . static::class
+                );
+            }
+
+            return $this->checkoutHelper->finishCheckout($lpa, $request, $ifMatchVersion + 1);
+        } catch (ConflictException $e) {
+            $this->logger->info('Conflict checking out with cheque', ['exception' => $e]);
+            throw $e;
         }
-
-        return $this->finishCheckout($lpa, $request);
     }
 }

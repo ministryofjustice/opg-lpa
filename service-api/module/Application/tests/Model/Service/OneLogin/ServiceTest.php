@@ -9,6 +9,8 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
+use Application\Model\Service\OneLogin\LogoutTokenException;
+use Application\Model\Service\OneLogin\LogoutTokenVerifier;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service;
 use DateTime;
@@ -19,6 +21,8 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
+use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
 {
@@ -30,6 +34,9 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|LogRepositoryInterface $logRepository;
     private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ClientInterface $oidcClient;
+    private MockInterface|LoggerInterface $logger;
+    private MockInterface|LogoutTokenVerifier $logoutTokenVerifier;
+    private MockInterface|CacheInterface $cache;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
 
@@ -51,10 +58,16 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository = Mockery::mock(SharedSpaceRepositoryInterface::class);
 
-        $logger = Mockery::spy(LoggerInterface::class);
+        $this->logger = Mockery::spy(LoggerInterface::class);
+
+        $this->logoutTokenVerifier = Mockery::mock(LogoutTokenVerifier::class);
+
+        $this->cache = Mockery::mock(CacheInterface::class);
 
         $this->service = new Service();
-        $this->service->setLogger($logger);
+        $this->service->setLogger($this->logger);
+        $this->service->setLogoutTokenVerifier($this->logoutTokenVerifier);
+        $this->service->setCache($this->cache);
         $this->service->setAuthorisationClientManager($this->clientManager);
         $this->service->setAuthorizationService($this->authorizationService);
         $this->service->setAuthenticationService($this->authenticationService);
@@ -153,7 +166,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->stubUserInfo($sub, $email);
 
-        $user = $this->makeUser('user-1', 0, new DateTime('2026-01-01 12:00:00'));
+        $user = $this->makeUser('user-1', 0, new DateTime('2026-01-01 12:00:00'), $email);
 
         $this->userRepository->shouldReceive('getByOneLoginSub')
             ->once()
@@ -162,6 +175,8 @@ class ServiceTest extends MockeryTestCase
 
         $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-1');
         $this->userRepository->shouldNotReceive('resetFailedLoginCounter');
+        // Email is unchanged, so it must not be rewritten.
+        $this->userRepository->shouldNotReceive('setOneLoginEmail');
 
         $expires = new DateTime('+4500 seconds');
         $this->authenticationService->shouldReceive('issueAuthToken')
@@ -185,6 +200,227 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
     }
 
+    public function testHandleCallbackRefreshesEmailWhenChangedAtOneLogin(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, 'new.address@example.com');
+
+        $user = $this->makeUser('user-3', 0, new DateTime('2026-01-01'), 'old.address@example.com');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-3');
+
+        $this->userRepository->shouldReceive('setOneLoginEmail')
+            ->once()
+            ->with('user-3', 'new.address@example.com');
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertTrue($result['linked']);
+        $this->assertSame('new.address@example.com', $result['email']);
+    }
+
+    public function testHandleCallbackDoesNotWriteWhenEmailUnchanged(): void
+    {
+        $sub   = 'urn:fdc:gov.uk:2022:sub-abc123';
+        $email = 'steady@example.com';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, $email);
+
+        $user = $this->makeUser('user-4', 0, new DateTime('2026-01-01'), $email);
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-4');
+        $this->userRepository->shouldNotReceive('setOneLoginEmail');
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertTrue($result['linked']);
+    }
+
+    public function testHandleCallbackDoesNotWriteWhenEmailDiffersOnlyByCaseOrWhitespace(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, '  Steady@Example.COM  ');
+
+        $user = $this->makeUser('user-5', 0, new DateTime('2026-01-01'), 'steady@example.com');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-5');
+        $this->userRepository->shouldNotReceive('setOneLoginEmail');
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertTrue($result['linked']);
+    }
+
+    public function testHandleCallbackStoresEmailWhenNoneHeld(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, 'backfilled@example.com');
+
+        $user = $this->makeUser('user-6', 0, new DateTime('2026-01-01'), null);
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-6');
+
+        $this->userRepository->shouldReceive('setOneLoginEmail')
+            ->once()
+            ->with('user-6', 'backfilled@example.com');
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertTrue($result['linked']);
+    }
+
+    public function testHandleCallbackUnlinkedDoesNotRefreshEmail(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-unknown';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, 'stranger@example.com');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->with($sub)->andReturn(null);
+        $this->userRepository->shouldNotReceive('setOneLoginEmail');
+        $this->userRepository->shouldNotReceive('updateLastLoginTime');
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertFalse($result['linked']);
+        $this->assertSame('stranger@example.com', $result['email']);
+    }
+
+    public function testHandleCallbackNormalisesIncomingEmailBeforeStoringIt(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, "  padded@example.com\n");
+
+        $user = $this->makeUser('user-7', 0, new DateTime('2026-01-01'), 'old@example.com');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-7');
+
+        $this->userRepository->shouldReceive('setOneLoginEmail')
+            ->once()
+            ->with('user-7', 'padded@example.com');
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertSame('padded@example.com', $result['email']);
+    }
+
+    public function testHandleCallbackRejectsWhitespaceOnlyEmailClaim(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, '   ');
+
+        $this->expectException(OneLoginAuthenticationException::class);
+
+        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+    }
+
+    public function testHandleCallbackStillSignsUserInWhenEmailRefreshFails(): void
+    {
+        $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
+
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet($sub));
+
+        $this->stubUserInfo($sub, 'new@example.com');
+
+        $user = $this->makeUser('user-8', 0, new DateTime('2026-01-01'), 'old@example.com');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-8');
+
+        $this->userRepository->shouldReceive('setOneLoginEmail')
+            ->once()
+            ->andThrow(new RuntimeException('database is on fire'));
+
+        $this->logger->shouldReceive('warning')
+            ->once()
+            ->withArgs(function (string $message, array $extra) {
+                $this->assertSame('auth.onelogin.email_refresh_failed', $message);
+                $this->assertSame('user-8', $extra['user_id']);
+
+                return true;
+            });
+
+        $this->authenticationService->shouldReceive('issueAuthToken')
+            ->once()
+            ->andReturn(['token' => 'tok', 'expiresIn' => 4500, 'expiresAt' => new DateTime()]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
+
+        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+
+        $this->assertTrue($result['linked']);
+        $this->assertSame('tok', $result['identity']['token']);
+    }
+
     public function testHandleCallbackLinkedResetsFailedCounterWhenNonZero(): void
     {
         $sub = 'urn:fdc:gov.uk:2022:sub-abc123';
@@ -194,10 +430,11 @@ class ServiceTest extends MockeryTestCase
         $this->authorizationService->shouldReceive('callback')->once()->andReturn($tokenSet);
         $this->stubUserInfo($sub, 'reset@example.com');
 
-        $user = $this->makeUser('user-2', 3, new DateTime('2026-01-01'));
+        $user = $this->makeUser('user-2', 3, new DateTime('2026-01-01'), 'reset@example.com');
 
         $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
         $this->userRepository->shouldReceive('updateLastLoginTime')->once()->with('user-2');
+        $this->userRepository->shouldNotReceive('setOneLoginEmail');
 
         $this->authenticationService->shouldReceive('issueAuthToken')
             ->once()
@@ -464,6 +701,108 @@ class ServiceTest extends MockeryTestCase
         $this->assertNotEmpty($result['lastLogin']);
     }
 
+    public function testBackChannelLogoutClearsAuthTokenForTheMatchingUser(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->with('a.logout.token')
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->expectJtiRecorded('jti-1');
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('id')->andReturn('user-1');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')
+            ->once()->with('urn:fdc:gov.uk:2022:sub-abc')->andReturn($user);
+
+        $this->userRepository->shouldReceive('clearAuthToken')->once()->with('user-1');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertSame(['accepted' => true], $result);
+    }
+
+    public function testBackChannelLogoutRejectsInvalidTokenAndEndsNoSession(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andThrow(new LogoutTokenException('invalid_signature'));
+
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+        $this->cache->shouldNotReceive('set');
+
+        $result = $this->service->handleBackChannelLogout('forged.logout.token');
+
+        $this->assertFalse($result['accepted']);
+        $this->assertSame('invalid_signature', $result['reason']);
+    }
+
+    public function testBackChannelLogoutRejectsReplayedJti(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->cache->shouldReceive('has')->once()->andReturn(true);
+        $this->cache->shouldNotReceive('set');
+
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertFalse($result['accepted']);
+        $this->assertSame('replayed_jti', $result['reason']);
+    }
+
+    public function testBackChannelLogoutAcceptsValidTokenForUnknownSubject(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:stranger', 'jti' => 'jti-2']);
+
+        $this->expectJtiRecorded('jti-2');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn(null);
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertSame(['accepted' => true], $result);
+    }
+
+    public function testBackChannelLogoutDoesNotRecordJtiWhenTheLogoutFails(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+
+        $this->cache->shouldReceive('has')->once()->andReturn(false);
+        $this->cache->shouldNotReceive('set');
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('id')->andReturn('user-1');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn($user);
+        $this->userRepository->shouldReceive('clearAuthToken')
+            ->once()
+            ->andThrow(new RuntimeException('database is on fire'));
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->handleBackChannelLogout('a.logout.token');
+    }
+
+    private function expectJtiRecorded(string $jti): void
+    {
+        $expectedKey = 'logout_jti_' . hash('sha256', $jti);
+
+        $this->cache->shouldReceive('has')->once()->with($expectedKey)->andReturn(false);
+        $this->cache->shouldReceive('set')->once()->with($expectedKey, true, 180);
+    }
+
     private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface
     {
         $user = Mockery::mock(UserInterface::class);
@@ -493,12 +832,17 @@ class ServiceTest extends MockeryTestCase
             ->andReturn($userInfo);
     }
 
-    private function makeUser(string $id, int $failedAttempts, DateTime $lastLogin): MockInterface|UserInterface
-    {
+    private function makeUser(
+        string $id,
+        int $failedAttempts,
+        DateTime $lastLogin,
+        ?string $oneLoginEmail = null,
+    ): MockInterface|UserInterface {
         $user = Mockery::mock(UserInterface::class);
         $user->shouldReceive('id')->andReturn($id);
         $user->shouldReceive('failedLoginAttempts')->andReturn($failedAttempts);
         $user->shouldReceive('lastLoginAt')->andReturn($lastLogin);
+        $user->shouldReceive('oneLoginEmail')->andReturn($oneLoginEmail);
 
         return $user;
     }

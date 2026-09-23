@@ -74,6 +74,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 91333263035;
+        $lpa->version = 5;
         $lpa->document = new Document();
         $lpa->document->type = $type;
         $lpa->document->primaryAttorneys = [];
@@ -199,7 +200,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->renderer->method('render')->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name' => 'Test Trust'])
+            $this->createRequest('POST', ['name' => 'Test Trust', 'version' => '5'])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -220,7 +221,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/next-route');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name' => 'Test Trust Corp'])
+            $this->createRequest('POST', ['name' => 'Test Trust Corp', 'version' => '6'])
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -238,7 +239,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name' => 'Test Trust Corp'], null, [], true)
+            $this->createRequest('POST', ['name' => 'Test Trust Corp', 'version' => '7'], null, [], true)
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -258,7 +259,7 @@ class PrimaryAttorneyAddTrustHandlerTest extends TestCase
         $this->expectExceptionMessage('API client failed to add a trust corporation attorney');
 
         $this->handler->handle(
-            $this->createRequest('POST', ['name' => 'Test Trust Corp'])
+            $this->createRequest('POST', ['name' => 'Test Trust Corp', 'version' => '8'])
         );
     }
 

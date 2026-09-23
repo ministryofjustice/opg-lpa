@@ -11,6 +11,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
@@ -172,6 +173,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
     {
         $userId = 'user1';
         $sharedSpaceId = 'shared-space-1';
+        $sharedSpaceName = 'My space';
         $lpa = FixturesData::getHwLpa();
 
         $this->withParams()->shouldReceive('fromQuery')
@@ -184,6 +186,9 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->andReturn($paginator)
             ->once();
 
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->andReturn($sharedSpaceName);
+
         $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
         $result = $this->controller->lpasAction();
 
@@ -193,6 +198,25 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $this->assertEquals(1, $body['total']);
         $this->assertCount(1, $body['applications']);
+        $this->assertEquals($sharedSpaceName, $body['name']);
+    }
+
+    public function testLpasActionWhenSpaceHasNoName()
+    {
+        $userId = 'user1';
+        $sharedSpaceId = 'shared-space-1';
+
+        $this->withParams()->shouldReceive('fromQuery')
+            ->andReturn(['page' => 1, 'perPage' => 50]);
+
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->andReturn(null);
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
+        $result = $this->controller->lpasAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(404, $result->toArray()['status']);
     }
 
     public function testLpasActionDeniedWhenNotInSharedSpace()
@@ -333,13 +357,17 @@ class SharedSpaceControllerTest extends MockeryTestCase
             ->with($sharedSpaceId)
             ->andReturn(['c' => 'd']);
 
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->with($sharedSpaceId)
+            ->andReturn('Example Shared Space');
+
         $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
         $result = $this->controller->membersAndInvitesAction();
 
         $this->assertInstanceOf(Json::class, $result);
 
         $body = json_decode($result->getContent(), true);
-        $this->assertEquals(['members' => ['a' => 'b'], 'invites' => ['c' => 'd']], $body);
+        $this->assertEquals(['members' => ['a' => 'b'], 'invites' => ['c' => 'd'], 'name' => 'Example Shared Space'], $body);
     }
 
     public function testMembersAndInvitesActionWhenNotInSharedSpace()
@@ -373,8 +401,8 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $this->sharedSpaceService->shouldReceive('invite')
             ->with(Mockery::on(function (MemberInvite $invite) use ($userId, $sharedSpaceId): bool {
-                $createdDiff = $invite->created->getTimestamp() - (new DateTime())->getTimestamp();
-                $expiresDiff = $invite->expires->getTimestamp() - (new DateTime('+7 days'))->getTimestamp();
+                $createdDiff = $invite->created->getTimestamp() - new DateTime()->getTimestamp();
+                $expiresDiff = $invite->expires->getTimestamp() - new DateTime('+7 days')->getTimestamp();
 
                 return $invite->userId === $userId
                     && $invite->sharedSpaceId === $sharedSpaceId
@@ -403,6 +431,67 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $body = json_decode($result->getContent(), true);
         $this->assertEquals(['a' => 'b'], $body);
+    }
+
+    public function testInviteActionWhenUserAlreadyInSharedSpace()
+    {
+        $this->assertInviteActionExceptionMapsToApiProblem(
+            new UserAlreadyInSharedSpaceException(),
+            StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY,
+            'user-already-in-shared-space',
+        );
+    }
+
+    public function testInviteActionWhenInviteAlreadyExists()
+    {
+        $this->assertInviteActionExceptionMapsToApiProblem(
+            new InviteAlreadyExistsException(),
+            StatusCodeInterface::STATUS_CONFLICT,
+            'invite-already-exists',
+        );
+    }
+
+    public function testInviteActionWhenUnexpectedException()
+    {
+        $this->assertInviteActionExceptionMapsToApiProblem(
+            new RuntimeException('something wrong'),
+            StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR,
+            'Unable to process request: something wrong',
+        );
+    }
+
+    private function assertInviteActionExceptionMapsToApiProblem(
+        RuntimeException $exception,
+        int $expectedStatus,
+        string $expectedDetail,
+    ): void {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('invite')
+            ->with(Mockery::any())
+            ->andThrow($exception);
+
+        $this->makeRequest([
+            'userId' => $userId,
+            'sharedSpaceId' => $sharedSpaceId,
+        ], [
+            'firstNames' => '1',
+            'lastName' => '2',
+            'email' => '3',
+            'isAdmin' => true,
+        ]);
+        $result = $this->controller->inviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $problem = $result->toArray();
+        $this->assertEquals($expectedStatus, $problem['status']);
+        $this->assertEquals($expectedDetail, $problem['detail']);
     }
 
     public function testInviteActionWhenNotInSharedSpace()
@@ -769,5 +858,78 @@ class SharedSpaceControllerTest extends MockeryTestCase
 
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(404, $result->toArray()['status']);
+    }
+
+    public function testImportAction()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with('2', '1')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->with('2', '1', 'an email', 'pass');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(NoContent::class, $result);
+    }
+
+    public function testImportActionWhenAuthProblem()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->andReturn('this-problem');
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['problem' => 'this-problem'], $body);
+    }
+
+    public function testImportActionWhenUserAlreadyInSpace()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('import')
+            ->andThrow(new UserAlreadyInSharedSpaceException());
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['problem' => 'user-already-in-space'], $body);
+    }
+
+    public function testImportActionWhenIsNotAdmin()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->andReturn(false);
+
+        $this->makeRequest(['userId' => '1', 'sharedSpaceId' => '2'], [
+            'email' => 'an email',
+            'password' => 'pass', # pragma: allowlist secret
+        ]);
+        $result = $this->controller->importAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
     }
 }

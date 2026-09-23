@@ -1,5 +1,5 @@
 import esbuild from 'esbuild';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync, statSync } from 'fs';
 import { createRequire } from 'module';
 import path from 'path';
 
@@ -37,7 +37,6 @@ const APPLICATION_JS_FILES = [
   'assets/js/moj/moj.modules/moj.popup.js',
   'assets/js/moj/moj.modules/moj.help-system.js',
   'assets/js/moj/moj.modules/moj.form-popup.js',
-  'assets/js/moj/moj.modules/moj.title-switch.js',
   'assets/js/moj/moj.modules/moj.postcode-lookup.js',
   'assets/js/moj/moj.modules/moj.print-link.js',
   'assets/js/moj/moj.modules/moj.person-form.js',
@@ -46,7 +45,6 @@ const APPLICATION_JS_FILES = [
   'assets/js/moj/moj.modules/moj.dashboard.js',
   'assets/js/moj/moj.modules/moj.ui-behaviour.js',
   'assets/js/moj/moj.modules/moj.applicant.js',
-  'assets/js/moj/moj.modules/moj.polyfill.js',
   'assets/js/moj/moj.modules/moj.single-use.js',
   'assets/js/moj/moj.modules/moj.analytics.js',
   'assets/js/moj/moj.modules/moj.cookie-consent.js',
@@ -156,7 +154,6 @@ async function buildIndividualScripts() {
   const scripts = [
     { in: 'assets/js/opg/session-timeout-init.js', out: 'public/assets/v2/js/opg/session-timeout-init.min.js' },
     { in: 'assets/js/opg/dashboard-statuses.js', out: 'public/assets/v2/js/opg/dashboard-statuses.min.js' },
-    { in: 'assets/js/opg/init-polyfill.js', out: 'public/assets/v2/js/opg/init-polyfill.min.js' },
     { in: 'assets/js/opg/govuk-init.js', out: 'public/assets/v2/js/govuk-init.js' },
   ];
 
@@ -170,6 +167,24 @@ async function buildIndividualScripts() {
       platform: 'neutral',
     });
     console.log(`✓ Built ${script.out}`);
+  }
+}
+
+// Recursively copy a directory's contents using plain file-by-file copies.
+// Avoids fs.cpSync's native recursive fast-path, which fails with a
+// misleading EACCES on bind-mounted volumes under Docker Desktop for Mac.
+function copyDirRecursive(srcDir, destDir) {
+  mkdirSync(destDir, { recursive: true });
+
+  for (const entry of readdirSync(srcDir)) {
+    const srcPath = `${srcDir}/${entry}`;
+    const destPath = `${destDir}/${entry}`;
+
+    if (statSync(srcPath).isDirectory()) {
+      copyDirRecursive(srcPath, destPath);
+    } else {
+      copyFileSync(srcPath, destPath);
+    }
   }
 }
 
@@ -202,6 +217,11 @@ async function copyGovukFrontendImages() {
     }
   }
 
+  copyDirRecursive(
+    'node_modules/@ministryofjustice/frontend/moj/assets/images',
+    'public/assets/v2/images',
+  );
+
   // The manifest.json is also identical to govuk-frontend's — keep it in sync.
   copyFileSync(
     'node_modules/govuk-frontend/dist/govuk/assets/manifest.json',
@@ -218,6 +238,11 @@ async function copyVendorScripts() {
   copyFileSync(
     'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js',
     'public/assets/v2/js/govuk-frontend.min.js'
+  );
+
+  copyFileSync(
+    'node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js',
+    'public/assets/v2/js/moj-frontend.min.js'
   );
 
   console.log('✓ Vendor scripts copied');

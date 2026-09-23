@@ -23,6 +23,30 @@ class OneLoginServiceTest extends TestCase
 
     // ─── start() ──────────────────────────────────────────────────────────
 
+    public function testBackChannelLogoutPostsTokenAnonymouslyAndReturnsAccepted(): void
+    {
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/backchannel-logout',
+                ['logoutToken' => 'a.logout.token'],
+                [],
+                true,
+            )
+            ->willReturn(['accepted' => true]);
+
+        $this->assertTrue($this->service->backChannelLogout('a.logout.token'));
+    }
+
+    public function testBackChannelLogoutReturnsFalseWhenTokenRejected(): void
+    {
+        $this->apiClient->method('httpPost')
+            ->willReturn(['accepted' => false, 'reason' => 'invalid_signature']);
+
+        $this->assertFalse($this->service->backChannelLogout('forged'));
+    }
+
     public function testStartForwardsCorrectPathQueryAndAnonymousFlag(): void
     {
         $redirectUri    = 'https://localhost:7002/auth/redirect';

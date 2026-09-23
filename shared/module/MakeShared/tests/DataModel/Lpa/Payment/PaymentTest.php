@@ -3,6 +3,7 @@
 namespace MakeSharedTest\DataModel\Lpa\Payment;
 
 use DateTime;
+use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Payment\Payment;
 use MakeSharedTest\DataModel\FixturesData;
 use MakeSharedTest\DataModel\TestHelper;
@@ -16,7 +17,7 @@ class PaymentTest extends TestCase
 
         $this->assertEquals(82, $payment->get('amount'));
         $this->assertEquals(new \DateTime('2017-03-24T16:21:52.804000+0000'), $payment->get('date'));
-        $this->assertEquals('test@payment.com', $payment->get('email')->get('address'));
+        $this->assertEquals('test@payment.com', $payment->get('email'));
     }
 
     public function testValidation()
@@ -29,13 +30,13 @@ class PaymentTest extends TestCase
 
     public function testValidationFailed()
     {
-        $address = new Payment();
-        $address->set('method', 'Invalid');
-        $address->set('amount', -1);
-        $address->set('reference', FixturesData::generateRandomString(33));
-        $address->set('gatewayReference', FixturesData::generateRandomString(65));
+        $payment = new Payment();
+        $payment->set('method', 'Invalid');
+        $payment->set('amount', -1);
+        $payment->set('reference', FixturesData::generateRandomString(33));
+        $payment->set('gatewayReference', FixturesData::generateRandomString(65));
 
-        $validatorResponse = $address->validate();
+        $validatorResponse = $payment->validate();
         $this->assertTrue($validatorResponse->hasErrors());
         $errors = $validatorResponse->getArrayCopy();
         $this->assertEquals(4, count($errors));
@@ -53,7 +54,7 @@ class PaymentTest extends TestCase
         $now = new DateTime();
 
         $model->setMethod(Payment::PAYMENT_TYPE_CARD)
-            ->setEmail('test@test.com')
+            ->setEmail(new EmailAddress(['address' => 'test@test.com']))
             ->setAmount(123)
             ->setReference('REF123')
             ->setGatewayReference('GREF123')
@@ -64,7 +65,7 @@ class PaymentTest extends TestCase
             ->setReducedFeeUniversalCredit(true);
 
         $this->assertEquals(Payment::PAYMENT_TYPE_CARD, $model->getMethod());
-        $this->assertEquals('test@test.com', $model->getEmail());
+        $this->assertEquals(new EmailAddress(['address' => 'test@test.com']), $model->getEmail());
         $this->assertEquals(123, $model->getAmount());
         $this->assertEquals('REF123', $model->getReference());
         $this->assertEquals('GREF123', $model->getGatewayReference());

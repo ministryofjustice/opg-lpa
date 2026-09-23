@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
@@ -19,7 +19,6 @@ use DateInterval;
 use DateTimeImmutable;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Laminas\Mvc\MvcEvent;
 use MakeShared\DataModel\Lpa\Lpa;
 use Throwable;
 use Traversable;
@@ -31,27 +30,6 @@ class SharedSpaceController extends AbstractRestfulController
         private readonly SharedSpaceService $sharedSpaceService,
         private readonly ApplicationsService $applicationsService,
     ) {
-    }
-
-    /**
-     * AbstractRestfulController doesn't know how to turn a bare ApiProblem
-     * value returned from an action into a Response with the correct HTTP
-     * status code - without this, ApiProblem responses (e.g. 400/401/403/500)
-     * are sent to clients as a 200 with a malformed body. See
-     * AbstractAuthController::onDispatch() for the equivalent used by
-     * controllers that extend it.
-     *
-     * @return mixed|ApiProblemResponse
-     */
-    public function onDispatch(MvcEvent $e)
-    {
-        $return = parent::onDispatch($e);
-
-        if ($return instanceof ApiProblem) {
-            return new ApiProblemResponse($return);
-        }
-
-        return $return;
     }
 
     /**
@@ -100,6 +78,11 @@ class SharedSpaceController extends AbstractRestfulController
             return $result;
         }
 
+        $sharedSpaceName = $this->sharedSpaceService->getName($result['sharedSpaceId']);
+        if ($sharedSpaceName === null) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'Shared space not found');
+        }
+
         $query = $this->params()->fromQuery();
         $page = $query['page'] ?? null;
         $perPage = $query['perPage'] ?? null;
@@ -126,6 +109,7 @@ class SharedSpaceController extends AbstractRestfulController
         $items = $paginator->getCurrentItems();
 
         $response = [
+            'name' => $sharedSpaceName,
             'applications' => array_map(
                 fn (Lpa $lpa) => $lpa->toArray(),
                 iterator_to_array($items)
@@ -165,6 +149,18 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json(['member' => $member]);
     }
 
+    public function countMembersAction(): Json|ApiProblem
+    {
+        $result = $this->checkTokenForSharedSpace();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        $count = $this->sharedSpaceService->countMembers($result['sharedSpaceId']);
+
+        return new Json(['count' => $count]);
+    }
+
     public function membersAndInvitesAction(): Json|ApiProblem
     {
         $result = $this->checkTokenForSharedSpace();
@@ -175,6 +171,7 @@ class SharedSpaceController extends AbstractRestfulController
         $response = [
             'members' => $this->sharedSpaceService->getMembers($result['sharedSpaceId']),
             'invites' => $this->sharedSpaceService->getInvites($result['sharedSpaceId']),
+            'name' => $this->sharedSpaceService->getName($result['sharedSpaceId']),
         ];
 
         return new Json($response);
@@ -208,8 +205,12 @@ class SharedSpaceController extends AbstractRestfulController
                 $created,
                 $created->add(DateInterval::createFromDateString('7 days')),
             ));
+        } catch (UserAlreadyInSharedSpaceException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space');
+        } catch (InviteAlreadyExistsException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_CONFLICT, 'invite-already-exists');
         } catch (Throwable $e) {
-            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request: ' . $e->getMessage());
         }
 
         return new Json($response);
@@ -350,6 +351,30 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new NoContent();
+    }
+
+    public function importAction(): NoContent|Json|ApiProblem
+    {
+        $token = $this->checkTokenForSharedSpace();
+        if ($token instanceof ApiProblem) {
+            return $token;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $data = $this->processBodyContent($this->getRequest());
+
+        try {
+            $problem = $this->sharedSpaceService->import($token['sharedSpaceId'], $token['userId'], $data['email'], $data['password']);
+        } catch (UserAlreadyInSharedSpaceException $e) {
+            $problem = 'user-already-in-space';
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return $problem ? new Json(['problem' => $problem]) : new NoContent();
     }
 
     private function checkToken(): array|ApiProblem

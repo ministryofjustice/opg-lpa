@@ -122,6 +122,31 @@ class OneLoginController extends AbstractAuthController
     /**
      * @return JsonModel
      */
+    public function backChannelLogoutAction(): JsonModel
+    {
+        /** @var mixed $body */
+        $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        $logoutToken = is_array($body) ? ($body['logoutToken'] ?? null) : null;
+
+        if (!is_string($logoutToken) || $logoutToken === '') {
+            return new JsonModel(['accepted' => false, 'reason' => 'missing_logout_token']);
+        }
+
+        TelemetryEventManager::triggerStart('OneLoginController.backChannelLogoutAction');
+
+        try {
+            $result = $this->getService()->handleBackChannelLogout($logoutToken);
+        } finally {
+            TelemetryEventManager::triggerStop();
+        }
+
+        return new JsonModel($result);
+    }
+
+    /**
+     * @return JsonModel
+     */
     public function createAction(): JsonModel
     {
         /** @var array{oneLoginSub: string, oneLoginEmail: string} $body */

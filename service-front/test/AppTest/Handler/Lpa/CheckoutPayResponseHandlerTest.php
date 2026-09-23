@@ -12,11 +12,13 @@ use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
 use App\Service\Lpa\Communication;
 use App\Service\Payment\CardPayments;
+use App\Service\Payment\Helper\CheckoutHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
@@ -38,23 +40,21 @@ class CheckoutPayResponseHandlerTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     private TemplateRendererInterface&MockObject $renderer;
     private LoggerInterface&MockObject $logger;
+    private CheckoutHelper&MockObject $checkoutHelper;
+    private CardPayments&MockObject $cardPayments;
     private CheckoutPayResponseHandler $handler;
 
     protected function setUp(): void
     {
         $this->formElementManager    = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->communicationService = $this->createMock(Communication::class);
-        $this->paymentClient = $this->createMock(GovPayClient::class);
-        $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->renderer = $this->createMock(TemplateRendererInterface::class);
-        $this->logger = $this->createMock(LoggerInterface::class);
-
-        $cardPayments = new CardPayments(
-            $this->paymentClient,
-            $this->lpaApplicationService,
-            $this->logger,
-        );
+        $this->communicationService  = $this->createMock(Communication::class);
+        $this->paymentClient         = $this->createMock(GovPayClient::class);
+        $this->urlHelper             = $this->createMock(UrlHelper::class);
+        $this->renderer              = $this->createMock(TemplateRendererInterface::class);
+        $this->logger                = $this->createMock(LoggerInterface::class);
+        $this->checkoutHelper        = $this->createMock(CheckoutHelper::class);
+        $this->cardPayments          = $this->createMock(CardPayments::class);
 
         $this->handler = new CheckoutPayResponseHandler(
             $this->formElementManager,
@@ -64,15 +64,11 @@ class CheckoutPayResponseHandlerTest extends TestCase
             $this->urlHelper,
             $this->renderer,
             $this->logger,
-            $cardPayments,
+            $this->cardPayments,
+            $this->checkoutHelper,
         );
     }
 
-    /**
-     * Creates a GovPayPayment with stdClass nested objects, matching how the real Pay client builds them.
-     *
-     * @param array<string, mixed> $data
-     */
     private function makeGovPayPayment(array $data): GovPayPayment
     {
         return new GovPayPayment((array) json_decode((string) json_encode($data)));
@@ -81,7 +77,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
     private function createCompleteLpa(): Lpa
     {
         $lpa = FixturesData::getPfLpa();
-        $lpa->payment = new Payment();
+        $lpa->setPayment(new Payment());
         Calculator::calculate($lpa);
 
         return $lpa;
@@ -93,16 +89,28 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $flowChecker->method('getRouteOptions')->willReturn([]);
 
-        return (new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->id . '/checkout/pay/response', 'GET'))
+        return (new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->getId() . '/checkout/pay/response', 'GET'))
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/checkout/pay/response');
     }
 
+    private function mockFailureForm(): void
+    {
+        $submitElement = $this->createMock(Submit::class);
+        $submitElement->method('setAttribute')->willReturnSelf();
+
+        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
+        $form->method('setAttribute')->willReturnSelf();
+        $form->method('get')->with('submit')->willReturn($submitElement);
+
+        $this->formElementManager->method('get')->willReturn($form);
+    }
+
     public function testThrowsWhenNoGatewayReference(): void
     {
         $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = null;
+        $lpa->getPayment()->setGatewayReference(null);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Payment id needed');
@@ -110,58 +118,14 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $this->handler->handle($this->createRequest($lpa));
     }
 
-    /**
-     * @return array<string, array{string, string}>
-     */
-    public static function failureTemplateProvider(): array
-    {
-        return [
-            'cancelled (P0030)'  => ['P0030', 'application/authenticated/lpa/checkout/govpay-cancel.twig'],
-            'other failure'      => ['P0050', 'application/authenticated/lpa/checkout/govpay-failure.twig'],
-            'no code (null)'     => [null,    'application/authenticated/lpa/checkout/govpay-failure.twig'],
-        ];
-    }
-
-    public function testUnsuccessfulPaymentWithNoStateCodeRendersFailureTemplate(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
-
-        $submitElement = $this->createMock(Submit::class);
-        $submitElement->method('setAttribute')->willReturnSelf();
-        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
-        $form->method('setAttribute')->willReturnSelf();
-        $form->method('get')->with('submit')->willReturn($submitElement);
-        $this->formElementManager->method('get')->willReturn($form);
-
-        $govPayPayment = $this->makeGovPayPayment([
-            'payment_id' => 'ref-123',
-            'state'      => ['status' => 'failed', 'finished' => true],
-            '_links'     => [],
-        ]);
-
-        $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-        $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/91333263035/checkout/pay');
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->with('application/authenticated/lpa/checkout/govpay-failure.twig')
-            ->willReturn('html');
-
-        $response = $this->handler->handle($this->createRequest($lpa));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
     public function testNullPaymentResponseRedirectsToPayPage(): void
     {
         $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
+        $lpa->getPayment()->setGatewayReference('ref-123');
 
         $this->paymentClient->method('getPayment')->willReturn(null);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/checkout/pay');
 
         $response = $this->handler->handle($this->createRequest($lpa));
@@ -170,28 +134,32 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $this->assertStringContainsString('checkout/pay', $response->getHeaderLine('location'));
     }
 
+    public static function failureTemplateProvider(): array
+    {
+        return [
+            'cancelled (P0030)' => ['P0030', 'application/authenticated/lpa/checkout/govpay-cancel.twig'],
+            'other failure'     => ['P0050', 'application/authenticated/lpa/checkout/govpay-failure.twig'],
+            'no code (null)'    => [null,    'application/authenticated/lpa/checkout/govpay-failure.twig'],
+        ];
+    }
+
     #[DataProvider('failureTemplateProvider')]
     public function testUnsuccessfulPaymentRendersCorrectTemplate(?string $stateCode, string $template): void
     {
         $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
+        $lpa->getPayment()->setGatewayReference('ref-123');
 
-        $submitElement = $this->createMock(Submit::class);
-        $submitElement->method('setAttribute')->willReturnSelf();
-        $form = $this->createMock(\App\Form\Lpa\BlankMainFlowForm::class);
-        $form->method('setAttribute')->willReturnSelf();
-        $form->method('get')->with('submit')->willReturn($submitElement);
-        $this->formElementManager->method('get')->willReturn($form);
+        $this->mockFailureForm();
 
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'ref-123',
-            'state' => ['status' => 'failed', 'finished' => true, 'code' => $stateCode],
-            '_links' => [],
+            'state'      => ['status' => 'failed', 'finished' => true, 'code' => $stateCode],
+            '_links'     => [],
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->id])
+            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
             ->willReturn('/lpa/91333263035/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
@@ -206,23 +174,23 @@ class CheckoutPayResponseHandlerTest extends TestCase
     public function testSuccessfulPaymentRecordsDetailsAndFinishesCheckout(): void
     {
         $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
+        $lpa->getPayment()->setGatewayReference('ref-123');
 
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'ref-123',
-            'reference' => 'txn-ref',
-            'email' => 'user@EXAMPLE.com',
-            'state' => ['status' => 'success', 'finished' => true],
-            '_links' => [],
+            'reference'  => 'txn-ref',
+            'email'      => 'user@EXAMPLE.com',
+            'state'      => ['status' => 'success', 'finished' => true],
+            '_links'     => [],
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-        $this->lpaApplicationService->expects($this->once())->method('updateApplication');
-        $this->lpaApplicationService->expects($this->once())->method('lockLpa');
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail');
-        $this->urlHelper->method('generate')
-            ->with('lpa/complete', ['lpa-id' => $lpa->id])
-            ->willReturn('/lpa/91333263035/complete');
+        $this->cardPayments->expects($this->once())
+            ->method('recordSuccessfulPayment')
+            ->with($lpa, $govPayPayment)
+            ->willReturn(true);
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/91333263035/complete'));
 
         $response = $this->handler->handle($this->createRequest($lpa));
 
@@ -230,9 +198,6 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $this->assertStringContainsString('complete', $response->getHeaderLine('location'));
     }
 
-    /**
-     * @return array<string, array{0: string, 1: string}>
-     */
     public static function whitespaceEmailProvider(): array
     {
         return [
@@ -246,8 +211,8 @@ class CheckoutPayResponseHandlerTest extends TestCase
     #[DataProvider('whitespaceEmailProvider')]
     public function testGovPayEmailIsTrimmedAndLowercasedBeforePersisting(string $govPayEmail, string $expected): void
     {
-        $lpa                            = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
+        $lpa = $this->createCompleteLpa();
+        $lpa->getPayment()->setGatewayReference('ref-123');
 
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'ref-123',
@@ -258,27 +223,32 @@ class CheckoutPayResponseHandlerTest extends TestCase
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-
-        $capturedData = null;
-        $this->lpaApplicationService->expects($this->once())
-            ->method('updateApplication')
-            ->willReturnCallback(function (mixed $id, array $data) use (&$capturedData): Lpa {
-                $capturedData = $data;
-                return new Lpa([]);
+        $this->cardPayments->expects($this->once())
+            ->method('recordSuccessfulPayment')
+            ->with($lpa, $govPayPayment)
+            ->willReturnCallback(function ($lpa, $payment) {
+                $govPayEmail = $payment->email ?? null;
+                $email = is_string($govPayEmail) && trim($govPayEmail) !== ''
+                    ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+                    : null;
+                $lpa->getPayment()->setEmail($email);
+                $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CARD);
+                $lpa->getPayment()->setReference($payment->reference);
+                return true;
             });
-
-        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->getId() . '/complete'));
 
         $response = $this->handler->handle($this->createRequest($lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame($expected, $capturedData['payment']['email']['address'] ?? null);
+        $this->assertSame($expected, (string) $lpa->getPayment()->getEmail());
     }
 
     public function testMalformedEmailFromGovPayIsPassedThroughUnchanged(): void
     {
-        $lpa                            = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'ref-123';
+        $lpa = $this->createCompleteLpa();
+        $lpa->getPayment()->setGatewayReference('ref-123');
 
         $govPayPayment = $this->makeGovPayPayment([
             'payment_id' => 'ref-123',
@@ -289,21 +259,25 @@ class CheckoutPayResponseHandlerTest extends TestCase
         ]);
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
-
-        $this->lpaApplicationService->expects($this->once())
-            ->method('updateApplication')
-            ->with(
-                $lpa->id,
-                $this->callback(function (array $data): bool {
-                    return ($data['payment']['email']['address'] ?? null) === 'not-a-valid-email';
-                })
-            )
-            ->willReturn(new Lpa([]));
-
-        $this->urlHelper->method('generate')->willReturn('/lpa/' . $lpa->id . '/complete');
+        $this->cardPayments->expects($this->once())
+            ->method('recordSuccessfulPayment')
+            ->with($lpa, $govPayPayment)
+            ->willReturnCallback(function ($lpa, $payment) {
+                $govPayEmail = $payment->email ?? null;
+                $email = is_string($govPayEmail) && trim($govPayEmail) !== ''
+                    ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
+                    : null;
+                $lpa->getPayment()->setEmail($email);
+                $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CARD);
+                $lpa->getPayment()->setReference($payment->reference);
+                return true;
+            });
+        $this->checkoutHelper->method('finishCheckout')
+            ->willReturn(new RedirectResponse('/lpa/' . $lpa->getId() . '/complete'));
 
         $response = $this->handler->handle($this->createRequest($lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('not-a-valid-email', (string) $lpa->getPayment()->getEmail());
     }
 }

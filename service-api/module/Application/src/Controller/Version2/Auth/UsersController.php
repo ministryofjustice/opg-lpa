@@ -2,31 +2,36 @@
 
 namespace Application\Controller\Version2\Auth;
 
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\Service\Users\Service;
-use Laminas\View\Model\JsonModel;
-use MakeShared\Logging\LoggerTrait;
+use Application\Library\Http\Response\Json;
+use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
+use Application\Model\Service\Users\Service as UserService;
+use Fig\Http\Message\StatusCodeInterface;
+use Laminas\Mvc\Controller\AbstractRestfulController;
+use Psr\Log\LoggerInterface;
 use Random\RandomException;
 
-class UsersController extends AbstractAuthController
+class UsersController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
     /**
-     * Get the service to use
-     *
-     * @return Service
+     * @var string
      */
-    protected function getService()
-    {
-        return $this->service;
+    protected $identifierName = 'userId';
+
+    public function __construct(
+        public readonly SharedSpaceService $sharedSpaceService,
+        public readonly UserService $userService,
+        public readonly AuthenticationService $authenticationService,
+        public readonly LoggerInterface $logger
+    ) {
     }
 
     /**
-     * @param mixed $data
-     * @return JsonModel|ApiProblem
+     * @throws RandomException
      */
-    public function create($data)
+    public function create($data): ApiProblem|Json
     {
         if (isset($data['activationToken'])) {
             return $this->activateAccount(trim($data['activationToken']));
@@ -38,37 +43,30 @@ class UsersController extends AbstractAuthController
     }
 
     /**
-     * @param $username
-     * @param $password
-     * @return JsonModel|ApiProblem
      * @throws RandomException
      */
-    private function createAccount(string $username, $password)
+    private function createAccount(string $username, $password): ApiProblem|Json
     {
-        $result = $this->getService()->create($username, $password);
+        $result = $this->userService->create($username, $password);
 
         if (is_string($result)) {
             return new ApiProblem(400, $result);
         }
 
-        $this->getLogger()->info('New user account created', $result);
+        $this->logger->info('New user account created', $result);
 
-        return new JsonModel($result);
+        return new Json($result);
     }
 
-    /**
-     * @param $activationToken
-     * @return JsonModel|ApiProblem
-     */
-    private function activateAccount(string $activationToken)
+    private function activateAccount(string $activationToken): ApiProblem|Json
     {
-        $result = $this->getService()->activate($activationToken);
+        $result = $this->userService->activate($activationToken);
 
         if (is_string($result)) {
             return new ApiProblem(400, $result);
         }
 
-        $this->getLogger()->info('New user account activated', [
+        $this->logger->info('New user account activated', [
             'activation_token' => $activationToken
         ]);
 
@@ -85,57 +83,49 @@ class UsersController extends AbstractAuthController
          */
         $this->response->setStatusCode(204);
 
-        return new JsonModel();
+        return new Json([]);
     }
 
     /**
-     * Search action for user details
-     * NOTE: Custom action method has been used here because 'get' can not be used without an ID value in the URL target
-     *
-     * @return JsonModel|ApiProblem
+     * @param mixed $id
+     * @return NoContentResponse|ApiProblem
      */
-    public function searchAction()
+    public function delete($id)
     {
-        $queryParams = $this->params()->fromQuery();
+        /** @psalm-suppress UndefinedInterfaceMethod */
+        $token = $this->getRequest()->getHeader('Token');
 
-        if (isset($queryParams['aReference'])) {
-            $user = $this->getService()->searchByAReference($queryParams['aReference']);
+        if ($token === false) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
 
-            if ($user === false) {
-                return new ApiProblem(404, 'No user found with supplied A Reference');
+        $token = $this->authenticationService->withToken($token->getFieldValue(), false);
+        if (is_string($token) || !isset($token['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_UNAUTHORIZED, 'invalid-token');
+        }
+
+        try {
+            $sharedSpaceId = $token['sharedSpaceId'] ?? null;
+
+            if ($sharedSpaceId !== null) {
+                $this->sharedSpaceService->deleteAccount($sharedSpaceId, $token['userId']);
+                $result = true;
+            } else {
+                $result = $this->userService->delete($token['userId']);
             }
 
-            return new JsonModel($user);
+            if ($result instanceof ApiProblem) {
+                return $result;
+            } elseif ($result === true) {
+                return new NoContentResponse();
+            }
+
+            // If we get here...
+            return new ApiProblem(500, 'Unable to process request');
+        } catch (\Throwable $e) {
+            $this->logger->error('Error deleting user', ['exception' => $e]);
+
+            return new ApiProblem(500, 'Unable to process request');
         }
-
-        $email = $queryParams['email'];
-
-        $user = $this->getService()->searchByUsername($email);
-
-        if ($user === false) {
-            return new ApiProblem(404, 'No user found with supplied email address');
-        }
-
-        return new JsonModel($user);
-    }
-
-    /**
-     * Match action for user details (wildcard/case-insensitive search)
-     *
-     * @return JsonModel
-     */
-    public function matchAction()
-    {
-        $params = $this->params();
-        $query = $params->fromQuery('query');
-
-        $options = [
-            'offset' => $params->fromQuery('offset', 0),
-            'limit' => $params->fromQuery('limit', 10)
-        ];
-
-        $users = $this->service->matchUsers($query, $options);
-
-        return new JsonModel($users);
     }
 }

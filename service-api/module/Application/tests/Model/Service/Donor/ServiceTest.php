@@ -35,7 +35,7 @@ final class ServiceTest extends AbstractServiceTestCase
         //Make sure the donor is invalid
         $donor = new Donor();
 
-        $validationError = $this->service->update(strval($lpa->getId()), $donor->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $donor->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -45,10 +45,10 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'address' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'canSign' => ['value' => null, 'messages' => ['cannot-be-null']],
-                    'dob' => ['value' => null, 'messages' => ['cannot-be-blank']],
-                    'name' => ['value' => null, 'messages' => ['cannot-be-blank']],
+                    'address' => [ 'messages' => ['cannot-be-blank']],
+                    'canSign' => ['messages' => ['cannot-be-null']],
+                    'dob' => ['messages' => ['cannot-be-blank']],
+                    'name' => ['messages' => ['cannot-be-blank']],
                 ]
             ],
             $validationError->toArray()
@@ -69,7 +69,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->update(strval($lpa->getId()), $lpa->getDocument()->getDonor()->toArray());
+        $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $lpa->getDocument()->getDonor()->toArray());
     }
 
     public function testUpdate()
@@ -83,7 +83,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $donor = new Donor($lpa->getDocument()->getDonor()->toArray());
         $donor->getName()->setFirst('Edited');
 
-        $entity = $this->service->update(strval($lpa->getId()), $donor->toArray());
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $donor->toArray());
 
         $this->assertEquals(new DataModelEntity($donor), $entity);
     }

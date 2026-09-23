@@ -17,6 +17,12 @@ Then(`I use password reset email for {string} to visit the link`, (name) => {
   openEmailAndVisitLink('passwordreset', Cypress.env(name + '-user'));
 });
 
+Then(`I use shared space password reset email for {string} to visit the link`, (name) => {
+  cy.get(`@${name}`).then(({ email }) => {
+    openEmailAndVisitLink('sharedspacepasswordreset', email);
+  });
+});
+
 async function openEmailAndVisitLink(type, identifier) {
   const sha1Obj = new jsSHA('SHA-1', 'TEXT', { encoding: 'UTF8' });
   sha1Obj.update(identifier);
@@ -25,6 +31,10 @@ async function openEmailAndVisitLink(type, identifier) {
 
   if (type === 'passwordreset') {
     cy.visit(`/forgot-password/reset/${activationToken}`);
+  }
+
+  if (type === 'sharedspacepasswordreset') {
+    cy.visit(`/forgot-password/reset/sharedspace${activationToken}`);
   }
 
   if (type === 'activation') {

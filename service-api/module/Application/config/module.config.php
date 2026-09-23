@@ -14,6 +14,7 @@ use MakeShared\Handler\PingHandlerElb;
 use MakeShared\Logging\LoggerFactory;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\Cache\Psr16Cache;
 
@@ -223,6 +224,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'count-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/count-members',
+                                    'defaults' => [
+                                        'action' => 'countMembers',
+                                    ],
+                                ],
+                            ],
                             'invite' => [
                                 'type' => 'Segment',
                                 'options' => [
@@ -262,6 +272,23 @@ return [
                                     ],
                                 ],
                             ],
+                            'import' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route'    => '/import',
+                                ],
+                                'child_routes'  => [
+                                    'post' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'import',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 
@@ -287,6 +314,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-backchannel-logout' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/backchannel-logout',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'backChannelLogout',
+                            ],
+                        ],
+                    ],
+
                     'onelogin-create' => [
                         'type'    => 'Segment',
                         'options' => [
@@ -295,6 +333,52 @@ return [
                                 'controller' => 'OneLoginController',
                                 'action'     => 'create',
                             ],
+                        ],
+                    ],
+
+                    'admin' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/admin',
+                            'defaults' => [
+                                'controller' => 'AdminController',
+                            ],
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'search-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/search-users',
+                                    'defaults' => [
+                                        'action' => 'searchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'match-users' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-users',
+                                    'defaults' => [
+                                        'action' => 'matchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-lpas' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/lpas',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
                         ],
                     ],
 
@@ -308,25 +392,6 @@ return [
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-
-                            'search-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/search',
-                                    'defaults' => [
-                                        'action' => 'search',
-                                    ],
-                                ],
-                            ],
-                            'match-users' => [
-                                'type'    => 'Segment',
-                                'options' => [
-                                    'route'    => '/match',
-                                    'defaults' => [
-                                        'action' => 'match',
-                                    ],
-                                ],
-                            ],
                             'email-change' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -373,7 +438,15 @@ return [
                                     ],
                                 ],
                             ],
-
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '[/:userId]',
+                                    'constraints' => [
+                                        'userId' => '[a-f0-9]+',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 
@@ -458,12 +531,12 @@ return [
                                             ],
                                         ],
                                     ],
-                                    'instruction' => [
+                                    'instruction-preference' => [
                                         'type'    => 'Literal',
                                         'options' => [
-                                            'route'       => '/instruction',
+                                            'route'       => '/instruction-preference',
                                             'defaults' => [
-                                                'controller' => 'InstructionController',
+                                                'controller' => 'InstructionPreferenceController',
                                             ],
                                         ],
                                     ],
@@ -506,15 +579,6 @@ return [
                                             ],
                                             'defaults' => [
                                                 'controller' => 'PdfController',
-                                            ],
-                                        ],
-                                    ],
-                                    'preference' => [
-                                        'type'    => 'Literal',
-                                        'options' => [
-                                            'route'       => '/preference',
-                                            'defaults' => [
-                                                'controller' => 'PreferenceController',
                                             ],
                                         ],
                                     ],
@@ -649,6 +713,10 @@ return [
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
             LoggerInterface::class => LoggerFactory::class,
             'OneLoginPsr16Cache' => static function (): Psr16Cache {
+                if (ApcuAdapter::isSupported()) {
+                    return new Psr16Cache(new ApcuAdapter('onelogin'));
+                }
+
                 return new Psr16Cache(new ArrayAdapter());
             },
 
@@ -687,13 +755,29 @@ return [
                     $clientId,
                     $discoveryUrl,
                     $container->get(OneLoginService\KeyPairManager::class),
-                    new GuzzlePsr18(new GuzzleClient()),
+                    new GuzzlePsr18(new GuzzleClient([
+                        'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                    ])),
                     $container->get('OneLoginPsr16Cache'),
                 );
             },
 
-            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (): OneLoginService\FacileAuthorizationServiceAdapter {
-                $httpClient = new GuzzlePsr18(new GuzzleClient());
+            OneLoginService\LogoutTokenVerifier::class => static function (
+                ServiceLocatorInterface $container
+            ): OneLoginService\LogoutTokenVerifier {
+                return new OneLoginService\LogoutTokenVerifier(
+                    $container->get(OneLoginService\AuthorisationClientManager::class)
+                );
+            },
+
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (
+                ServiceLocatorInterface $container
+            ): OneLoginService\FacileAuthorizationServiceAdapter {
+                $config = $container->get('config');
+
+                $httpClient = new GuzzlePsr18(new GuzzleClient([
+                    'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                ]));
 
                 $authBuilder = new AuthorizationServiceBuilder();
                 $authBuilder->setHttpClient($httpClient);

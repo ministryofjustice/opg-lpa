@@ -129,6 +129,24 @@ class OneLoginService
     }
 
     /**
+     * @return bool true if the token was valid and any matching session was ended
+     * @throws RuntimeException
+     */
+    public function backChannelLogout(#[\SensitiveParameter] string $logoutToken): bool
+    {
+        /** @var array{accepted: bool, reason?: string} $result */
+        $result = $this->client->httpPost(
+            '/v2/auth/onelogin/backchannel-logout',
+            [
+                'logoutToken' => $logoutToken,
+            ],
+            anonymous: true,
+        );
+
+        return ($result['accepted'] ?? false) === true;
+    }
+
+    /**
      * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}
      * @throws RuntimeException
      */

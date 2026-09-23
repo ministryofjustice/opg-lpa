@@ -1,9 +1,7 @@
 data "aws_kms_key" "aurora_new_key" {
   key_id = "alias/opg-lpa-${var.account_name}-rds-encryption-key"
 }
-locals {
-  kms_key_id = data.aws_kms_key.aurora_new_key.arn
-}
+
 locals {
   psql_parameter_group_family_list = [
     "postgres13",
@@ -25,7 +23,7 @@ module "api_aurora" {
   count                           = 1
   aurora_serverless               = var.environment.database.aurora_serverless
   account_id                      = data.aws_caller_identity.current.account_id
-  availability_zones              = data.aws_availability_zones.aws_zones.names
+  availability_zones              = [for az in data.aws_availability_zones.aws_zones.names : az if az != "eu-west-2d"]
   apply_immediately               = !var.environment.database.deletion_protection
   cluster_identifier              = var.environment.database.cluster_identifier
   db_subnet_group_name            = "data"
@@ -37,7 +35,7 @@ module "api_aurora" {
   master_password                 = data.aws_secretsmanager_secret_version.api_rds_password.secret_string
   instance_count                  = var.environment.database.aurora_instance_count
   instance_class                  = "db.t3.medium"
-  kms_key_id                      = local.kms_key_id
+  kms_key_id                      = data.aws_kms_key.aurora_new_key.arn
   replication_source_identifier   = ""
   skip_final_snapshot             = !var.environment.database.deletion_protection
   vpc_security_group_ids          = [aws_security_group.rds_api.id]

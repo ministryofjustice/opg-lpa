@@ -91,6 +91,9 @@ RUN composer check-platform-reqs -d /app \
     && rm /app/composer.json \
     && rm /usr/bin/composer
 
+RUN chmod -R a+w /tmp
+RUN mkdir -m a+w build
+
 USER appuser
 
 COPY --chown=root:root service-admin/test /app/test

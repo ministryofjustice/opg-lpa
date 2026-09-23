@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./module/MakeShared/tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd" cacheResultFile="/tmp/.phpunit.result.cache">
-  <coverage processUncoveredFiles="true">
-    <include>
-        <directory suffix=".php">module/MakeShared/src</directory>
-    </include>
-    <report>
-        <html outputDirectory="./build/coverage"/>
-    </report>
-  </coverage>
-  <testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="./module/MakeShared/tests/Bootstrap.php"
+         colors="true"
+         cacheResultFile="/tmp/.phpunit.result.cache">
+
+
     <testsuite name="MakeSharedTest">
         <directory>module/MakeShared/tests</directory>
     </testsuite>
-  </testsuites>
+
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">module/MakeShared/src</directory>
+        </include>
+        <report>
+            <html outputDirectory="./build/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

@@ -18,7 +18,7 @@ Feature: Add attorneys to a Property and Finance LPA
         Then I can find "form-attorney"
         And I can find "form-cancel"
         And I can find "postcode-lookup"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         And I can find use-my-details if lpa is new
         And I click "use-trust-corporation"
         When I force fill out

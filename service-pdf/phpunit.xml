@@ -1,14 +1,20 @@
 <?xml version="1.0"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./tests/Bootstrap.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd" cacheResultFile="/tmp/.phpunit.result.cache">
-  <coverage processUncoveredFiles="true">
-    <include>
-      <directory suffix=".php">./src</directory>
-    </include>
-    <report>
-      <html outputDirectory="./build/coverage"/>
-    </report>
-  </coverage>
-  <testsuite name="ApplicationTest">
-    <directory>./tests/OpgTest</directory>
-  </testsuite>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="./tests/Bootstrap.php"
+         colors="true"
+         cacheResultFile="/tmp/.phpunit.result.cache">
+
+    <testsuite name="ApplicationTest">
+        <directory>./tests/OpgTest</directory>
+    </testsuite>
+
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+        <report>
+            <html outputDirectory="./build/coverage"/>
+        </report>
+    </coverage>
 </phpunit>

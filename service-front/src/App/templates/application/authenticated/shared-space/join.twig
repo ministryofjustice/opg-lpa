@@ -14,11 +14,11 @@
 {% set sharedSpaceAccessCode = form.get('sharedSpaceAccessCode') %}
 
 {% block content %}
-  <div class="govuk-grid-row govuk-!-margin-top-9">
+  <div class="govuk-grid-row">
     {{ macros.formErrorSummary(error, form) }}
 
     {% if joinError %}
-      <div class="govuk-error-summary govuk-!-margin-top-6" role="group" aria-labelledby="error-heading" tabindex="-1">
+      <div class="govuk-error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
         <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading" data-cy="error-heading">There is a problem</h2>
         <div class="govuk-error-summary__body">
           <p class="govuk-body">{{ joinError }}</p>

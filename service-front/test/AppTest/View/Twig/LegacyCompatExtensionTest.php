@@ -620,10 +620,14 @@ final class LegacyCompatExtensionTest extends TestCase
             'div-attributes' => ['class' => 'govuk-radios__item'],
         ]);
         $radio->setLabelAttributes(['class' => 'govuk-label govuk-radios__label']);
+
+        // Laminas\Form\Element\Radio's declared value-options shape does not include 'hint',
+        // even though MultiCheckbox (which Radio extends) supports it formRadio() reads
+        // it directly from the option array.
         /** @psalm-suppress InvalidArgument */
         $radio->setValueOptions([
-            'donor'    => ['label' => 'The donor',     'value' => 'donor'],
-            'attorney' => ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],
+            ['label' => 'The donor', 'value' => 'donor'],
+            ['label' => 'The attorneys', 'value' => '1,2', 'hint' => 'A hint'],
         ]);
 
         $html = $this->extension->formRadio($radio);
@@ -783,6 +787,55 @@ final class LegacyCompatExtensionTest extends TestCase
 
         $this->assertStringContainsString('type="hidden"', $html);
         $this->assertStringContainsString('value="abc123"', $html);
+    }
+
+    public function testFormHiddenRendersElementAttributes(): void
+    {
+        $el = new Element\Hidden('skip_confirm_password');
+        $el->setAttributes(['name' => 'skip_confirm_password', 'id' => 'js-skipConfirmPassword']);
+        $el->setValue('1');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('id="js-skipConfirmPassword"', $html);
+        $this->assertStringContainsString('type="hidden"', $html);
+        $this->assertStringContainsString('name="skip_confirm_password"', $html);
+        $this->assertStringContainsString('value="1"', $html);
+    }
+
+    public function testFormHiddenAlwaysRendersTypeHidden(): void
+    {
+        $el = new Element\Text('company');
+        $el->setAttributes(['name' => 'company', 'id' => 'company-name', 'type' => 'text']);
+        $el->setValue('A Trust Corporation');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('type="hidden"', $html);
+        $this->assertStringNotContainsString('type="text"', $html);
+        $this->assertStringContainsString('value="A Trust Corporation"', $html);
+    }
+
+    public function testFormHiddenFallsBackToElementNameWhenNoNameAttribute(): void
+    {
+        $el = new Element\Hidden('token');
+        $el->setValue('abc123');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringContainsString('name="token"', $html);
+    }
+
+    public function testFormHiddenEscapesAttributeValues(): void
+    {
+        $el = new Element\Hidden('token');
+        $el->setAttributes(['name' => 'token', 'id' => 'tok"><script>alert(1)</script>']);
+        $el->setValue('"><script>alert(2)</script>');
+
+        $html = $this->extension->formHidden($el);
+
+        $this->assertStringNotContainsString('<script>', $html);
+        $this->assertStringContainsString('&lt;script&gt;', $html);
     }
 
     public function testFormElementReturnsEmptyStringForNull(): void

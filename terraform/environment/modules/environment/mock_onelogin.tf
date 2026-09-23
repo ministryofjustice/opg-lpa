@@ -10,7 +10,7 @@ data "aws_ecr_image" "mock_onelogin" {
 }
 
 module "mock_onelogin" {
-  count        = data.aws_default_tags.current.tags.environment-name != "production" && var.environment.feature_flags.onelogin_enabled ? 1 : 0
+  count        = data.aws_default_tags.current.tags.environment-name != "production" && var.environment.feature_flags.onelogin_enabled && var.environment.feature_flags.onelogin_use_mock ? 1 : 0
   source       = "./modules/mock_onelogin"
   account_name = var.account_name
   ecs_cluster  = aws_ecs_cluster.online-lpa.id
@@ -28,8 +28,8 @@ module "mock_onelogin" {
   alb_deletion_protection_enabled = false
   waf_alb_association_enabled     = true
   container_port                  = 8080
-  public_access_enabled           = false
-  redirect_base_url               = "https://${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.front.lpa.opg.service.justice.gov.uk/"
+  public_access_enabled           = var.environment.public_access_enabled
+  redirect_base_url               = "https://${data.aws_default_tags.current.tags.environment-name}.${var.account_name}.front.lpa.opg.service.justice.gov.uk"
   template_sub                    = "1"
   network = {
     vpc_id              = data.aws_vpc.main.id
@@ -40,8 +40,9 @@ module "mock_onelogin" {
     id   = aws_service_discovery_private_dns_namespace.internal.id
     name = aws_service_discovery_private_dns_namespace.internal.name
   }
-  front_app_ecs_service_security_group_id = aws_security_group.front_ecs_service.id
-  tags                                    = var.tags
+  api_app_ecs_service_security_group_id = aws_security_group.api_ecs_service.id
+  onelogin_client_id                    = var.environment.onelogin_client_id
+  tags                                  = var.tags
   providers = {
     aws.region     = aws
     aws.management = aws.management

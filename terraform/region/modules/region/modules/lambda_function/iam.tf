@@ -1,7 +1,12 @@
+data "aws_iam_policy" "default_boundary" {
+  name = "opg-lpa-non-ci-boundary"
+}
+
 resource "aws_iam_role" "lambda_role" {
-  assume_role_policy = data.aws_iam_policy_document.lambda_assume.json
-  name_prefix        = var.lambda_name
-  tags               = var.tags
+  assume_role_policy   = data.aws_iam_policy_document.lambda_assume.json
+  name_prefix          = var.lambda_name
+  permissions_boundary = data.aws_iam_policy.default_boundary.arn
+  tags                 = var.tags
 }
 
 data "aws_iam_policy_document" "lambda_assume" {

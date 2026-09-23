@@ -62,6 +62,8 @@ class Service extends AbstractService
                 'locked'            => false,
                 'whoAreYouAnswered' => false,
                 'document'          => new Document\Document(),
+                'updatedBy'         => $userId,
+                'version'           => 1,
             ]);
 
             $data = $this->filterIncomingData($data);
@@ -103,11 +105,13 @@ class Service extends AbstractService
      *
      * @psalm-param array{metadata: array} $data
      */
-    public function patch(array $data, string $id, string $userId)
+    public function patch(array $data, string $id, ?int $ifMatchVersion, string $userId)
     {
 
         /** @var Lpa $lpa */
         $lpa = $this->fetch($id, $userId)->getData();
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         $data = $this->filterIncomingData($data);
 
@@ -190,7 +194,8 @@ class Service extends AbstractService
     {
         return $this->paginate(
             $this->getApplicationRepository()->ownerPredicate($userId),
-            $params
+            $params,
+            false,
         );
     }
 
@@ -206,16 +211,15 @@ class Service extends AbstractService
     {
         return $this->paginate(
             $this->getApplicationRepository()->sharedSpacePredicate($sharedSpaceId),
-            $params
+            $params,
+            true,
         );
     }
 
     /**
-     * @param PredicateInterface $ownerPredicate
-     * @param array $params
      * @return Paginator<int, Lpa>
      */
-    private function paginate(PredicateInterface $ownerPredicate, $params = [])
+    private function paginate(PredicateInterface $ownerPredicate, array $params, bool $forSharedSpace)
     {
         $filter = [
             $ownerPredicate,
@@ -257,7 +261,7 @@ class Service extends AbstractService
         $apiLpaCollection = $this->getApplicationRepository();
 
         $callback = new PaginatorCallback(
-            function ($offset, $itemCountPerPage) use ($apiLpaCollection, $filter) {
+            function ($offset, $itemCountPerPage) use ($apiLpaCollection, $filter, $forSharedSpace) {
                 // getItems callback
                 $options = [
                     'sort' => [
@@ -267,7 +271,9 @@ class Service extends AbstractService
                     'limit' => $itemCountPerPage
                 ];
 
-                $cursor = $apiLpaCollection->fetch($filter, $options);
+                $cursor = $forSharedSpace
+                    ? $apiLpaCollection->fetchForSharedSpace($filter, $options)
+                    : $apiLpaCollection->fetch($filter, $options);
 
                 // Convert the results to instances of the LPA object..
                 $items = array_map(function ($lpa) {

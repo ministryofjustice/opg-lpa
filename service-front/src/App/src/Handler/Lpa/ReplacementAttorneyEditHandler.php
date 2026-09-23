@@ -7,9 +7,9 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -17,6 +17,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Attorneys\Human;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -82,6 +83,7 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
             )
         );
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -90,28 +92,33 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
 
             $form->setData($postData);
 
+            $ifMatchVersion = (int)$postData['version'];
             if ($form->isValid()) {
-                $attorney->populate($form->getModelDataFromValidatedForm());
+                try {
+                    $attorney->populate($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setReplacementAttorney($lpa, $attorney, $attorney->id)) {
-                    throw new RuntimeException(
-                        'API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpa->id
+                    if (!$this->lpaApplicationService->setReplacementAttorney($lpa, $attorney, $attorney->id, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to update replacement attorney ' . $attorney->id . ' for id: ' . $lpa->id
+                        );
+                    }
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             $flattenAttorneyData = $attorney->flatten();
@@ -131,8 +138,9 @@ class ReplacementAttorneyEditHandler implements RequestHandlerInterface
         $cancelUrl = $this->urlHelper->generate('lpa/replacement-attorney', ['lpa-id' => $lpa->id]);
 
         $templateParams = [
-            'form'      => $form,
-            'cancelUrl' => $cancelUrl,
+            'form'          => $form,
+            'cancelUrl'     => $cancelUrl,
+            'conflictError' => $conflictError,
         ];
 
         if ($isPopup) {

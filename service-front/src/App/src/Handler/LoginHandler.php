@@ -6,6 +6,9 @@ namespace App\Handler;
 
 use App\Authentication\AuthenticationService;
 use App\Form\User\Login;
+use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -23,7 +26,8 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class LoginHandler implements RequestHandlerInterface
 {
-    private const SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
+    use CommonTemplateVariablesTrait;
+
     private const SESSION_KEY_IDENTITY = 'identity';
 
     public function __construct(
@@ -59,8 +63,7 @@ class LoginHandler implements RequestHandlerInterface
             $form->setData($data);
 
             if ($form->isValid()) {
-                // Capture pre-auth URL before clearing session
-                $nextUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+                $nextUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
                 $formData = $form->getData();
                 $email = is_array($formData) ? ($formData['email'] ?? '') : '';
@@ -86,7 +89,7 @@ class LoginHandler implements RequestHandlerInterface
                         'sharedSpaceId'  => $identity->getSharedSpaceId(),
                     ]);
 
-                    if ($nextUrl !== null && is_string($nextUrl)) {
+                    if ($nextUrl !== null) {
                         return new RedirectResponse($nextUrl);
                     }
 
@@ -119,20 +122,19 @@ class LoginHandler implements RequestHandlerInterface
 
         $state = $request->getAttribute('state');
 
-        $isTimeout = ($state === 'timeout');
-        $isInternalSystemError = ($state === 'internal-system-error');
-        $authError = $state === 'member-suspended' ? 'member-suspended' : $authError;
+        $isTimeout = $state === 'timeout';
+        $isInternalSystemError = $state === 'internal-system-error';
 
         return new HtmlResponse(
             $this->renderer->render(
                 'application/general/auth/index.twig',
-                [
+                array_merge($this->getTemplateVariables($request), [
                     'form'                  => $form,
                     'authError'             => $authError,
                     'isTimeout'             => $isTimeout,
                     'isInternalSystemError' => $isInternalSystemError,
                     'oneLoginEnabled'       => $this->oneLoginEnabled,
-                ]
+                ])
             )
         );
     }

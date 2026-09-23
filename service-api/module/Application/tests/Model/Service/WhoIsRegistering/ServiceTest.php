@@ -33,7 +33,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->update(strval($lpa->getId()), []);
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, []);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
 
@@ -45,7 +45,6 @@ final class ServiceTest extends AbstractServiceTestCase
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
                     'type' => [
-                        'value' => 'Invalid',
                         'messages' => ['allowed-values:property-and-financial,health-and-welfare']
                     ],
                 ]
@@ -68,7 +67,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->update(strval($lpa->getId()), []);
+        $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, []);
     }
 
     public function testUpdate()
@@ -79,7 +78,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $entity = $this->service->update(strval($lpa->getId()), ['whoIsRegistering' => [3]]);
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, ['whoIsRegistering' => [3]]);
 
         $this->assertInstanceOf(Entity::class, $entity);
     }

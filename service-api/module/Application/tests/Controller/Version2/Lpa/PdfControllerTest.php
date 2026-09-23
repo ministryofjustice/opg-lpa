@@ -120,6 +120,7 @@ class PdfControllerTest extends AbstractControllerTestCase
         $request->shouldReceive('getHeader')->with('X-Request-ID')->andReturn(false);
 
         $controller->setEventManager($this->eventManager);
+        $controller->getEvent()->setRouteMatch($this->routeMatch);
         $controller->dispatch($request);
         $this->callOnDispatch($controller);
 

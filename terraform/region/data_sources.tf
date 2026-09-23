@@ -9,3 +9,7 @@ data "aws_region" "current" {}
 data "aws_region" "eu_west_2" {
   provider = aws.eu-west-2
 }
+
+data "aws_iam_policy" "default_boundary" {
+  name = "opg-lpa-non-ci-boundary"
+}

@@ -26,6 +26,8 @@ use RuntimeException;
 
 final class ServiceTest extends AbstractServiceTestCase
 {
+    private const int IF_MATCH_VERSION = 5;
+
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
 
     private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
@@ -228,13 +230,12 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $service = $this->createService();
 
-        $validationError = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $validationError = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
             [
                 'validation' => ['document.type' => [
-                    'value' => 'invalid',
                     'messages' => ['allowed-values:property-and-financial,health-and-welfare']
                 ]],
                 'type' => 'https://github.com/ministryofjustice/opg-lpa-datamodels/blob/master/docs/validation.md',
@@ -282,7 +283,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         $this->assertNotNull($patchedEntity);
 
@@ -308,7 +309,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         $this->assertNotNull($patchedEntity);
         //Updated date should have changed as the LPA document hasn't changed
@@ -334,7 +335,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -358,7 +359,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -384,7 +385,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -410,7 +411,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         /** @var Lpa $lpaOut */
         $lpaOut = $patchedEntity->getData();
@@ -441,7 +442,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $service->setLogger($this->logger);
 
         /* @var $patchedEntity DataModelEntity */
-        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), $user->getId());
+        $patchedEntity = $service->patch($lpa->toArray(), strval($lpa->getId()), self::IF_MATCH_VERSION, $user->getId());
 
         $patchedLpa = $patchedEntity->getData();
 
@@ -554,7 +555,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $sharedSpaceId = 'shared-space-1';
 
-        $this->setFetchAllExpectations([$this->ownerPredicateStub('', $sharedSpaceId)], $lpas);
+        $this->setFetchAllExpectations([$this->ownerPredicateStub('', $sharedSpaceId)], $lpas, 'fetchForSharedSpace');
 
         $service = $this->createService();
 
@@ -778,7 +779,7 @@ final class ServiceTest extends AbstractServiceTestCase
      * @param [] $filter
      * @param Lpa[] $lpas
      */
-    private function setFetchAllExpectations($filter, array $lpas)
+    private function setFetchAllExpectations($filter, array $lpas, string $methodName = 'fetch')
     {
         $lpasCount = count($lpas);
 
@@ -791,7 +792,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 return $lpa->toArray();
             }, $lpas);
 
-            $this->applicationRepository->shouldReceive('fetch')
+            $this->applicationRepository->shouldReceive($methodName)
                 ->withArgs([$filter, ['sort' => ['updatedAt' => -1], 'skip' => 0, 'limit' => 10]])
                 ->andReturn(new ArrayIterator($lpasArray));
         }

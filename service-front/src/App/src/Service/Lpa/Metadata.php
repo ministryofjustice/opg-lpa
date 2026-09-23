@@ -6,7 +6,6 @@ namespace App\Service\Lpa;
 
 use MakeShared\DataModel\Lpa\Lpa;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 class Metadata
 {
@@ -16,54 +15,52 @@ class Metadata
     ) {
     }
 
-    public function setReplacementAttorneysConfirmed(Lpa $lpa)
+    public function setReplacementAttorneysConfirmed(Lpa $lpa, int $ifMatchVersion): int
     {
-        return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::REPLACEMENT_ATTORNEYS_CONFIRMED, true, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
-    public function setCertificateProviderSkipped(Lpa $lpa)
+    public function setCertificateProviderSkipped(Lpa $lpa, int $ifMatchVersion): int
     {
-        $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED);
+        if ($this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_WAS_SKIPPED, true, $ifMatchVersion)) {
+            $ifMatchVersion++;
+        }
 
-        return $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED);
+        return $this->setMetadataByKey($lpa, Lpa::CERTIFICATE_PROVIDER_SKIPPED, true, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
-    public function setPeopleToNotifyConfirmed(Lpa $lpa)
+    public function setPeopleToNotifyConfirmed(Lpa $lpa, int $ifMatchVersion): int
     {
-        return $this->setMetadataByKey($lpa, Lpa::PEOPLE_TO_NOTIFY_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::PEOPLE_TO_NOTIFY_CONFIRMED, true, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
-    public function setRepeatApplicationConfirmed(Lpa $lpa)
+    public function setRepeatApplicationConfirmed(Lpa $lpa, int $ifMatchVersion): int
     {
-        return $this->setMetadataByKey($lpa, Lpa::REPEAT_APPLICATION_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::REPEAT_APPLICATION_CONFIRMED, true, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
-    public function setInstructionConfirmed(Lpa $lpa)
+    public function setInstructionConfirmed(Lpa $lpa, int $ifMatchVersion): int
     {
-        return $this->setMetadataByKey($lpa, Lpa::INSTRUCTION_CONFIRMED);
+        return $this->setMetadataByKey($lpa, Lpa::INSTRUCTION_CONFIRMED, true, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
     /**
      * @psalm-param 10 $returnCount
      */
-    public function setAnalyticsReturnCount(Lpa $lpa, int $returnCount)
+    public function setAnalyticsReturnCount(Lpa $lpa, int $returnCount, int $ifMatchVersion): int
     {
-        return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount);
+        return $this->setMetadataByKey($lpa, Lpa::ANALYTICS_RETURN_COUNT, $returnCount, $ifMatchVersion) ? $ifMatchVersion + 1 : $ifMatchVersion;
     }
 
-    public function removeMetadata(Lpa $lpa, string $key): bool
+    public function removeMetadata(Lpa $lpa, string $key, int $ifMatchVersion): bool
     {
-        if (array_key_exists($key, $lpa->metadata)) {
+        $metaData = $lpa->getMetadata();
+        if (array_key_exists($key, $metaData)) {
             //  Remove the value
-            unset($lpa->metadata[$key]);
+            unset($metaData[$key]);
+            $lpa->setMetadata($metaData);
 
-            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
-                $this->logger->warning('API client failed to remove metadata', [
-                    'lpaId' => $lpa->id,
-                    'status' => 500,
-                ]);
-                throw new RuntimeException(sprintf('API client failed to remove metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
-            }
+            $this->setMetaData($lpa->getId(), $lpa->getMetadata(), $ifMatchVersion);
 
             return true;
         }
@@ -74,28 +71,22 @@ class Metadata
     /**
      * Sets the LPA's metadata
      */
-    private function setMetaData(int|string $lpaId, array $metadata): bool
+    private function setMetaData(int|string $lpaId, array $metadata, int $ifMatchVersion): void
     {
         $this->lpaApplicationService->updateApplication($lpaId, [
             'metadata' => $metadata
-        ]);
-
-        return true;
+        ], $ifMatchVersion);
     }
 
-    private function setMetadataByKey(Lpa $lpa, string $key, $value = true): bool
+    private function setMetadataByKey(Lpa $lpa, string $key, mixed $value, int $ifMatchVersion): bool
     {
-        if (!array_key_exists($key, $lpa->metadata) || $lpa->metadata[$key] !== $value) {
+        $metaData = $lpa->getMetadata();
+        if (!array_key_exists($key, $metaData) || $metaData[$key] !== $value) {
             //  Update the value
-            $lpa->metadata[$key] = $value;
+            $metaData[$key] = $value;
+            $lpa->setMetadata($metaData);
 
-            if (!$this->setMetaData($lpa->id, $lpa->metadata)) {
-                $this->logger->warning('API client failed to remove metadata by key', [
-                    'lpaId' => $lpa->id,
-                    'status' => 500,
-                ]);
-                throw new RuntimeException(sprintf('API client failed to set metadata %s for id: %s in %s', $key, $lpa->id, __METHOD__));
-            }
+            $this->setMetaData($lpa->getId(), $lpa->getMetadata(), $ifMatchVersion);
 
             return true;
         }

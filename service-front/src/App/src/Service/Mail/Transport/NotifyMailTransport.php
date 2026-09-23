@@ -30,6 +30,7 @@ class NotifyMailTransport implements MailTransportInterface
         UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT             => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
         UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING           => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
         SharedSpaceService::EMAIL_INVITE_MEMBER                  => '4fa3649b-4606-4856-85f6-6874fce5a001',
+        SharedSpaceService::EMAIL_SUSPEND_MEMBER                 => '0bee6f68-9c18-4c42-a180-1f5916e88bf6',
     ];
 
     private array $templateMap;

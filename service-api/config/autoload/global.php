@@ -167,9 +167,14 @@ return [
     ],
 
     'onelogin' => [
+        'enabled'       => getenv('ONELOGIN_ENABLED') === 'true',
         'client_id'     => getenv('ONELOGIN_CLIENT_ID') ?: null,
         'discovery_url' => getenv('ONELOGIN_DISCOVERY_URL') ?: null,
         'private_key'   => getenv('ONELOGIN_PRIVATE_KEY') ?: null,
         'key_id'        => getenv('ONELOGIN_KEY_ID') ?: null,
+        'user_agent'    => sprintf(
+            'opg-lpa/%s (https://www.lastingpowerofattorney.service.gov.uk)',
+            getenv('OPG_DOCKER_TAG') ?: 'dev',
+        ),
     ],
 ];

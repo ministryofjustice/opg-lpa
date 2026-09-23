@@ -3,11 +3,13 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\Http\Response\Json;
+use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Password\Service;
 use DateTime;
-use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
 use Random\RandomException;
+use SensitiveParameter;
 
 class PasswordController extends AbstractAuthController
 {
@@ -25,10 +27,8 @@ class PasswordController extends AbstractAuthController
 
     /**
      * Change the user password either by providing the existing password or a password token
-     *
-     * @return JsonModel|ApiProblem
      */
-    public function changeAction()
+    public function changeAction(): Json|ApiProblem
     {
         $userId = $this->params()->fromRoute('userId');
 
@@ -61,13 +61,8 @@ class PasswordController extends AbstractAuthController
     /**
      * Change the user password by providing the existing password
      * NOTE: This also re-executes the login so that the calling function has access to a new authentication token
-     *
-     * @param $userId
-     * @param $currentPassword
-     * @param $newPassword
-     * @return JsonModel|ApiProblem
      */
-    private function changeWithPassword($userId, $currentPassword, $newPassword)
+    private function changeWithPassword(#[SensitiveParameter] string $userId, #[SensitiveParameter] string $currentPassword, #[SensitiveParameter] string $newPassword): Json|ApiProblem
     {
         if (!$this->authenticateUserToken($userId)) {
             return new ApiProblem(401, 'invalid-token');
@@ -88,17 +83,13 @@ class PasswordController extends AbstractAuthController
             return ($v instanceof DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        return new JsonModel($result);
+        return new Json($result);
     }
 
     /**
      * Change the user password by providing password token
-     *
-     * @param $passwordToken
-     * @param $newPassword
-     * @return JsonModel|ApiProblem
      */
-    private function changeWithToken($passwordToken, $newPassword)
+    private function changeWithToken(#[SensitiveParameter] string $passwordToken, #[SensitiveParameter] string $newPassword): Json|ApiProblem
     {
         $result = $this->getService()->updatePasswordUsingToken($passwordToken, $newPassword);
 
@@ -116,30 +107,20 @@ class PasswordController extends AbstractAuthController
 
         $this->getLogger()->info('User successfully change their password via a reset');
 
-        //  Return 204 - No Content
-        // Suppress psalm errors caused by bug in laminas-mvc;
-        // see https://github.com/laminas/laminas-mvc/issues/77
-        /**
-         * @psalm-suppress UndefinedInterfaceMethod
-         */
-        $this->response->setStatusCode(204);
-
-        return new JsonModel();
+        return new NoContent();
     }
 
     /**
-     * @return JsonModel|ApiProblem
      * @throws RandomException
      */
-    public function resetAction()
+    public function resetAction(): Json|ApiProblem
     {
-        $username = $this->getBodyContent('username');
+        $data = $this->processBodyContent($this->getRequest());
 
-        if (empty($username)) {
-            return new ApiProblem(400, 'username must be passed');
-        }
+        $username = $data['username'];
+        $forSharedSpace = $data['forSharedSpace'];
 
-        $result = $this->getService()->generateToken($username);
+        $result = $this->getService()->generateToken($username, $forSharedSpace);
 
         if ($result == 'user-not-found') {
             $this->getLogger()->warning('Password reset request for unknown user', [
@@ -162,6 +143,6 @@ class PasswordController extends AbstractAuthController
             'username' => $username
         ]);
 
-        return new JsonModel($result);
+        return new Json($result);
     }
 }
