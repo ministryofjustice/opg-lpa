@@ -45,7 +45,9 @@ class Service extends AbstractService
             return 'invalid-new-password';
         }
 
-        if ($user->oneLoginSub() !== null || $user->password() === null || !password_verify($oldPassword, $user->password())) {
+        $currentPasswordHash = $user->password();
+
+        if ($user->oneLoginSub() !== null || $currentPasswordHash === null || !password_verify($oldPassword, $currentPasswordHash)) {
             return 'invalid-user-credentials';
         }
 
