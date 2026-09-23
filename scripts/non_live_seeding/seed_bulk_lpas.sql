@@ -4,12 +4,12 @@ VALUES (:user_id, true, now(), now(), now())
 ON CONFLICT (id) DO NOTHING;
 
 UPDATE public.users
-SET identity = :user_id || '@example.com',
+SET identity = :user_label || '@example.com',
     password_hash = '$2y$10$C9QCpqBK/9xP7x04nUemhO.OvRc.AWCHOb/N0w8Z2SxOMfSnoNIMO',
     profile = jsonb_build_object(
         'name', jsonb_build_object('title', 'Mr', 'first', 'Test', 'last', 'User'),
         'dob', jsonb_build_object('date', '1980-01-01T00:00:00.000000+0000'),
-        'email', jsonb_build_object('address', :user_id || '@example.com'),
+        'email', jsonb_build_object('address', :user_label || '@example.com'),
         'address', jsonb_build_object(
             'address1', '1 Test Street',
             'address2', 'Test Town',

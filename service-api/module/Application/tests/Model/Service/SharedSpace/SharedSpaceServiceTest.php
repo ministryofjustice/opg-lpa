@@ -226,6 +226,47 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         ], $result);
     }
 
+    public function testGetMembersPaginated()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getMembersPaginated')
+            ->with($sharedSpaceId, 20, 10)
+            ->andReturn([
+                'results' => [
+                    new SharedSpaceMember(
+                        [
+                            'sharedSpaceName' => 'My Space',
+                            'userId' => 'user1',
+                            'isAdmin' => true,
+                            'isActive' => true,
+                            'name' => ['first' => 'me'],
+                            'email' => '1@example.com',
+                            'lastLoginAt' => (new DateTime('2020-01-01'))->format('Y-m-d\TH:i:s.uO'),
+                        ]
+                    ),
+                ],
+                'total' => 25,
+            ]);
+
+        $result = $this->service->getMembersPaginated($sharedSpaceId, 3, 10);
+
+        $this->assertEquals([
+            'results' => [
+                [
+                    'userId' => 'user1',
+                    'name' => new Name(['first' => 'me']),
+                    'email' => '1@example.com',
+                    'lastLoginAt' => (new DateTime('2020-01-01'))->format('Y-m-d\TH:i:s.uO'),
+                    'isActive' => true,
+                    'isAdmin' => true,
+                    'sharedSpaceName' => 'My Space',
+                ],
+            ],
+            'total' => 25,
+        ], $result);
+    }
+
     public function testGetMember()
     {
         $sharedSpaceId = 'my-space';
@@ -430,20 +471,52 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $result = $this->service->getInvites($sharedSpaceId);
 
-        $this->assertEquals([
-            [
-                'fullName' => 'a b',
-                'email' => 'c',
-                'isExpired' => false,
-                'id' => 1,
-            ],
-            [
-                'fullName' => 'd e',
-                'email' => 'f',
-                'isExpired' => true,
-                'id' => 2,
-            ],
-        ], $result);
+        $this->assertCount(2, $result);
+        $this->assertEquals(1, $result[0]['id']);
+        $this->assertEquals('a b', $result[0]['fullName']);
+        $this->assertEquals('c', $result[0]['email']);
+        $this->assertFalse($result[0]['isExpired']);
+        $this->assertArrayHasKey('createdAt', $result[0]);
+
+        $this->assertEquals(2, $result[1]['id']);
+        $this->assertEquals('d e', $result[1]['fullName']);
+        $this->assertEquals('f', $result[1]['email']);
+        $this->assertTrue($result[1]['isExpired']);
+        $this->assertArrayHasKey('createdAt', $result[1]);
+    }
+
+    public function testGetInvitesPaginated()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getInvitesPaginated')
+            ->with($sharedSpaceId, 10, 5)
+            ->andReturn([
+                'results' => [
+                    new MemberInvite(
+                        id: 1,
+                        userId: '',
+                        sharedSpaceId: '',
+                        firstNames: 'a',
+                        lastName: 'b',
+                        email: 'c',
+                        isAdmin: false,
+                        code: '',
+                        created: new DateTime(),
+                        expires: new DateTime('+1 minute'),
+                    ),
+                ],
+                'total' => 12,
+            ]);
+
+        $result = $this->service->getInvitesPaginated($sharedSpaceId, 3, 5);
+
+        $this->assertCount(1, $result['results']);
+        $this->assertEquals(1, $result['results'][0]['id']);
+        $this->assertEquals('a b', $result['results'][0]['fullName']);
+        $this->assertEquals('c', $result['results'][0]['email']);
+        $this->assertFalse($result['results'][0]['isExpired']);
+        $this->assertEquals(12, $result['total']);
     }
 
     public function testInvite()
@@ -929,5 +1002,25 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('User not deleted');
         $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testMatchSharedSpaces()
+    {
+        $query = 'the space';
+        $options = ['offset' => 0, 'limit' => 20];
+        $expected = [
+            'results' => [['sharedSpaceId' => 'ss1', 'sharedSpaceName' => 'The Space']],
+            'total' => 1,
+        ];
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('matchSharedSpaces')
+            ->with($query, $options)
+            ->andReturn($expected)
+            ->once();
+
+        $result = $this->service->matchSharedSpaces($query, $options);
+
+        $this->assertEquals($expected, $result);
     }
 }

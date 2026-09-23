@@ -12,6 +12,7 @@ use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInt
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service;
 use DateTime;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -144,17 +145,35 @@ class SharedSpaceService
     {
         $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
 
-        return array_map(function ($member) {
-            return [
-                'sharedSpaceName' => $member->getSharedSpaceName(),
-                'userId' => $member->getUserId(),
-                'name' => $member->getName(),
-                'email' => $member->getEmail(),
-                'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
-                'isActive' => $member->isActive(),
-                'isAdmin' => $member->isAdmin(),
-            ];
-        }, $members);
+        return array_map($this->mapMember(...), $members);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function getMembersPaginated(string $sharedSpaceId, int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $result = $this->sharedSpaceRepository->getMembersPaginated($sharedSpaceId, $offset, $perPage);
+
+        return [
+            'results' => array_map($this->mapMember(...), $result['results']),
+            'total' => $result['total'],
+        ];
+    }
+
+    private function mapMember(SharedSpaceMember $member): array
+    {
+        return [
+            'sharedSpaceName' => $member->getSharedSpaceName(),
+            'userId' => $member->getUserId(),
+            'name' => $member->getName(),
+            'email' => $member->getEmail(),
+            'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+            'isActive' => $member->isActive(),
+            'isAdmin' => $member->isAdmin(),
+        ];
     }
 
     public function isAdmin(string $sharedSpaceId, string $userId): bool
@@ -278,14 +297,33 @@ class SharedSpaceService
     {
         $invites = $this->sharedSpaceRepository->getInvites($sharedSpaceId);
 
-        return array_map(function (MemberInvite $invite) {
-            return [
-                'id' => $invite->id,
-                'fullName' => $invite->firstNames . ' ' . $invite->lastName,
-                'email' => $invite->email,
-                'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
-            ];
-        }, $invites);
+        return array_map($this->mapInvite(...), $invites);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function getInvitesPaginated(string $sharedSpaceId, int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $result = $this->sharedSpaceRepository->getInvitesPaginated($sharedSpaceId, $offset, $perPage);
+
+        return [
+            'results' => array_map($this->mapInvite(...), $result['results']),
+            'total' => $result['total'],
+        ];
+    }
+
+    private function mapInvite(MemberInvite $invite): array
+    {
+        return [
+            'id' => $invite->id,
+            'fullName' => $invite->firstNames . ' ' . $invite->lastName,
+            'email' => $invite->email,
+            'createdAt' => $invite->created->format('Y-m-d\TH:i:s.uO'),
+            'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
+        ];
     }
 
     /**
@@ -497,5 +535,13 @@ class SharedSpaceService
             'user_id'         => $userId,
             'was_last_member' => $isLastMember,
         ]);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function matchSharedSpaces(string $query, array $options = []): array
+    {
+        return $this->sharedSpaceRepository->matchSharedSpaces($query, $options);
     }
 }

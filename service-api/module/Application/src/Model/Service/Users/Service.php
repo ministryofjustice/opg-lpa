@@ -15,7 +15,6 @@ use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\PasswordValidatorTrait;
 use Application\Model\Service\TokenGenerationTrait;
-use ArrayObject;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Random\RandomException;
@@ -313,20 +312,19 @@ class Service extends AbstractService
     /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
-     * @return iterable Array of arrays; each subarray derived from a UserModel instance
+     * @return array{results: array, total: int} 'results' is an array of arrays,
+     * each derived from a UserModel instance; 'total' is the number of matching
+     * users, ignoring offset/limit, to support pagination.
      * @psalm-suppress PossiblyUnusedMethod
      */
-    public function matchUsers(string $query, array $options = []): iterable
+    public function matchUsers(string $query, array $options = []): array
     {
-        $users = new ArrayObject();
+        $matches = $this->getUserRepository()->matchUsers($query, $options);
 
-        $results = $this->getUserRepository()->matchUsers($query, $options);
-
-        foreach ($results as $user) {
-            $users->append($user->toArray());
-        }
-
-        return $users;
+        return [
+            'results' => array_map(fn ($user) => $user->toArray(), $matches['results']),
+            'total' => $matches['total'],
+        ];
     }
 
     /**

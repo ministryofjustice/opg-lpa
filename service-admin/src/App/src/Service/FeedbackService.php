@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service\Feedback;
+namespace App\Service;
 
 use App\Service\ApiClient\ApiException;
 use App\Service\ApiClient\Client as ApiClient;

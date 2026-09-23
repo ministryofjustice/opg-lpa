@@ -6,8 +6,8 @@ namespace AppTest\Service\Feedback;
 
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\ApiClient\Exception\ApiException;
-use App\Service\Feedback\FeedbackService;
 use App\Service\Feedback\FeedbackValidationException;
+use App\Service\Feedback\FeedbackService;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use PHPUnit\Framework\MockObject\MockObject;

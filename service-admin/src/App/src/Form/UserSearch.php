@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Form;
 
 use App\Validator;
 use App\Filter\StandardInputFilterChain;
+use Laminas\Form\Element\Hidden;
 use Laminas\Form\Element\Select;
 use Laminas\Form\Element\Text;
 use Laminas\InputFilter\Input;
@@ -12,13 +15,13 @@ use Laminas\InputFilter\Input;
  * @template T
  * @template-extends AbstractForm<T>
  */
-
 class UserSearch extends AbstractForm
 {
     public const array SEARCH_TYPE_OPTIONS = [
-        'email'      => 'Email',
-        'userId'     => 'User ID',
-        'aReference' => 'A Reference',
+        'email'           => 'Exact or partial email',
+        'sharedSpaceName' => 'Exact or partial shared space name',
+        'userId'          => 'Exact user ID',
+        'aReference'      => 'Exact a-reference',
     ];
 
     /**
@@ -30,6 +33,8 @@ class UserSearch extends AbstractForm
     {
         parent::__construct(self::class, $options);
 
+        $inputFilter = $this->getInputFilter();
+
         // Search type select
         $select = new Select('searchType');
         $select->setValueOptions(self::SEARCH_TYPE_OPTIONS);
@@ -38,10 +43,10 @@ class UserSearch extends AbstractForm
         $selectInput->setRequired(true);
 
         $this->add($select);
-        $this->getInputFilter()->add($selectInput);
+        $inputFilter->add($selectInput);
 
-        //  Search value field
-        $field = new Text('email');
+        // Search term field
+        $field = new Text('searchTerm');
         $input = new Input($field->getName());
 
         $input->getFilterChain()
@@ -53,7 +58,20 @@ class UserSearch extends AbstractForm
         $input->setRequired(true);
 
         $this->add($field);
-        $this->getInputFilter()->add($input);
+        $inputFilter->add($input);
+
+        // page field
+        $page = new Hidden('page');
+        $pageInput = new Input($page->getName());
+
+        $pageInput->getFilterChain()
+            ->attach(StandardInputFilterChain::create());
+
+        $pageInput->getValidatorChain()
+            ->attach(new Validator\Digits(), true);
+
+        $this->add($page);
+        $inputFilter->add($pageInput);
 
         // Csrf field
         $this->addCsrfElement();

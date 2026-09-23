@@ -35,7 +35,7 @@ class Client
         $url = new Uri($this->apiBaseUri . $path);
 
         foreach ($query as $name => $value) {
-            $url = Uri::withQueryValue($url, $name, urlencode((string) $value));
+            $url = Uri::withQueryValue($url, $name, (string) $value);
         }
 
         $request = new Request('GET', $url, $this->buildHeaders());

@@ -1,0 +1,310 @@
+<?php $this->layout('layout::default', ['title' => 'User Details']);
+
+$this->addErrorMap([
+        'email' => [
+                'required' => [
+                        'summary'   => 'Enter a search value',
+                        'field'     => 'Enter a search value',
+                ],
+                'invalid' => [
+                        'summary'   => 'Enter a valid search value',
+                        'field'     => 'Enter a valid search value',
+                ],
+        ],
+]);
+?>
+
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+<form method="get" action="<?= $this->url('search') ?>">
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+
+    <div class="govuk-form-group">
+        <fieldset class="govuk-fieldset" role="group">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+                <h1 class="govuk-fieldset__heading">
+                    Search users and shared spaces
+                </h1>
+            </legend>
+
+            <?php $this->insert('snippet::input-select', [
+                'formLabel'   => 'Search by',
+                'formElement' => $form->get('searchType'),
+                'attrs'       => ['data-cy' => 'search-type-select'],
+            ]) ?>
+
+            <?php $this->insert('snippet::input-text', [
+                'formLabel'   => 'Search value',
+                'formElement' => $form->get('searchTerm'),
+                'formType'    => 'text',
+                'attrs'       => ['data-cy' => 'search-term-input'],
+            ]) ?>
+
+            <?php $this->insert('snippet::input-hidden', [
+                    'formElement' => $form->get('page')
+            ]) ?>
+        </fieldset>
+    </div>
+
+    <button type="submit" class="govuk-button" data-module="govuk-button" data-cy="submit-button">
+        Search
+    </button>
+</form>
+
+<?php if (!is_null($results)) { ?>
+    <h2 class="govuk-heading-m"><?= count($results) ?> search <?php if (count($results) === 1) { ?>result<?php } else { ?>results<?php } ?></h2>
+
+    <?php if (count($results) === 0) { ?>
+        <p class="govuk-body">No results found</p>
+    <?php } else if ($searchType === 'sharedSpaceName') { ?>
+        <?php foreach ($results as $result) { ?>
+            <div class="govuk-summary-card" data-cy="user-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">
+                        <?php if (array_key_exists('sharedSpaceName', $result) && !empty($result['sharedSpaceId'])) { ?>
+                            <a data-role="shared-space-name" class="govuk-link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $result['sharedSpaceId']]) ?>">
+                                <?= htmlspecialchars($result['sharedSpaceName']); ?>
+                            </a>
+                        <?php } elseif (array_key_exists('sharedSpaceName', $result)) { ?>
+                            <?= htmlspecialchars($result['sharedSpaceName']); ?>
+                        <?php } ?>
+                    </h3>
+                    <span class="app-float-right"><strong class="govuk-tag">Shared Space</strong></span>
+                </div>
+
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <?php if (isset($result['sharedSpaceId'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Shares space ID
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="shared-space-id"><?= htmlspecialchars($result['sharedSpaceId']); ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['lpaCount'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of LPAs
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                            <span>
+                                <?php if (intval($result['lpaCount']) > 0) { ?>
+                                    <a data-role="shared-space-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['sharedSpaceId' => $result['sharedSpaceId']], ['sharedSpaceName' => $result['sharedSpaceName']]) ?>">
+                                        <?= intval($result['lpaCount']); ?>
+                                    </a>
+                                <?php } else { ?>
+                                    0
+                                <?php } ?>
+                            </span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['memberCount'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of members
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                            <span>
+                                <?php if (intval($result['memberCount']) > 0) { ?>
+                                    <a data-role="shared-space-member-count" class="govuk-link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $result['sharedSpaceId']], ['sharedSpaceName' => $result['sharedSpaceName']]) ?>">
+                                        <?= intval($result['memberCount']); ?>
+                                    </a>
+                                <?php } else { ?>
+                                    0
+                                <?php } ?>
+                            </span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+                    </dl>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } else { ?>
+        <?php foreach ($results as $result) { ?>
+            <div class="govuk-summary-card" data-cy="user-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h3 class="govuk-summary-card__title">
+                        <?php if (array_key_exists('username', $result)) { ?>
+                            <?= htmlspecialchars($result['username']); ?>
+                        <?php } elseif (array_key_exists('isDeleted', $result) && $result['isDeleted']) { ?>
+                            Deleted user
+                        <?php } ?>
+                    </h3>
+                    <?php if (!empty($result['sharedSpaceId']) && $result['sharedSpaceId'] !== '') { ?>
+                        <span class="app-float-right"><strong class="govuk-tag">Shared Space</strong></span>
+                    <?php } ?>
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Account status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                        <span data-role="user-account-status">
+                            <?php if (array_key_exists('isActive', $result)) { ?>
+                                <?= ($result['isActive'] ? 'Activated' : 'Not activated'); ?>
+                            <?php } elseif (array_key_exists('isDeleted', $result) && $result['isDeleted']) { ?>
+                                Deleted
+                            <?php } ?>
+                        </span>
+                            </dd>
+                        </div>
+
+                        <?php if (isset($result['userId'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    User ID
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="user-id"><?= htmlspecialchars($result['userId']); ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['activatedAt'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Date activated
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="user-activation-date"><?= $this->dateFormat($result['activatedAt']) ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['lastLoginAt'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Last login time
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span><?= $this->dateFormat($result['lastLoginAt'], 'Never logged in') ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['failedLoginAttempts'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of failed login attempts
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span><?= intval($result['failedLoginAttempts']); ?></span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['isDeleted']) && $result['isDeleted']) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Deleted on
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span data-role="deletion-date"><?= $this->dateFormat($result['deletedAt'], 'Unknown') ?></span>
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Due to
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                <span data-role="deletion-reason">
+                                    <?php if ($result['reason'] == 'expired') { ?>
+                                        Account expired
+                                    <?php } elseif ($result['reason'] == 'unactivated') { ?>
+                                        User did not activate account
+                                    <?php } elseif ($result['reason'] == 'user-initiated') { ?>
+                                        User manually deleted their account
+                                    <?php } ?>
+                                </span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (isset($result['numberOfLpas'])) { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Number of LPAs
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span>
+                                    <?php if (intval($result['numberOfLpas']) > 0) { ?>
+                                        <?php if ($result['sharedSpaceId'] !== null) { ?>
+                                            <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['sharedSpaceId' => $result['sharedSpaceId']], ['sharedSpaceName' => $result['sharedSpaceName']]) ?>">
+                                                <?= intval($result['numberOfLpas']); ?>
+                                            </a>
+                                        <?php } else { ?>
+                                            <a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('user.lpas', ['userId' => $result['userId']], ['email' => $result['username']]) ?>">
+                                                <?= intval($result['numberOfLpas']); ?>
+                                            </a>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        0
+                                    <?php } ?>
+                                    </span>
+                                </dd>
+                            </div>
+                        <?php } ?>
+
+                        <?php if (!empty($result['sharedSpaceId']) && $result['sharedSpaceId'] !== '') { ?>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Shared space name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <a data-role="shared-space-name" class="govuk-link" href="<?= $this->url('shared-space.members', ['sharedSpaceId' => $result['sharedSpaceId']]) ?>">
+                                        <?= htmlspecialchars($result['sharedSpaceName']); ?>
+                                    </a>
+                                </dd>
+                            </div>
+                        <?php } ?>
+                    </dl>
+                </div>
+            </div>
+        <?php } ?>
+    <?php } ?>
+
+    <?php if ($paginator->getTotal() > $paginator->getPerPage()) { ?>
+        <nav class="govuk-pagination" aria-label="Pagination">
+            <div class="govuk-pagination__prev">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('search', [], array_merge($queryParams, ['page' => $paginator->getPreviousPage()])) ?>" rel="prev">
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--prev" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m6.5938-0.0078125-6.7266 6.7266 6.7441 6.4062 1.377-1.449-4.1856-3.9768h12.896v-2h-12.984l4.2931-4.293-1.414-1.414z"></path>
+                    </svg>
+                    <span class="govuk-pagination__link-title">
+            Previous<span class="govuk-visually-hidden"> page</span>
+          </span>
+                </a>
+            </div>
+            <ul class="govuk-pagination__list">
+            <?php foreach($paginator->getPages() as $page) { ?>
+                <li class="govuk-pagination__item <?php if ($page === $paginator->getPage()) { ?>govuk-pagination__item--current<?php } ?>">
+                    <a class="govuk-link govuk-pagination__link" href="<?= $this->url('search', [], array_merge($queryParams, ['page' => $page])) ?>" aria-label="Page <?= $page; ?>" <?php if ($page === $paginator->getPage()) { ?>aria-current="page"<?php } ?>>
+                        <?= $page; ?>
+                    </a>
+                </li>
+            <?php } ?>
+            </ul>
+            <div class="govuk-pagination__next">
+                <a class="govuk-link govuk-pagination__link" href="<?= $this->url('search', [], array_merge($queryParams, ['page' => $paginator->getNextPage()])) ?>" rel="next">
+          <span class="govuk-pagination__link-title">
+            Next<span class="govuk-visually-hidden"> page</span>
+          </span>
+                    <svg class="govuk-pagination__icon govuk-pagination__icon--next" xmlns="http://www.w3.org/2000/svg" height="13" width="15" aria-hidden="true" focusable="false" viewBox="0 0 15 13">
+                        <path d="m8.107-0.0078125-1.4136 1.414 4.2926 4.293h-12.986v2h12.896l-4.1855 3.9766 1.377 1.4492 6.7441-6.4062-6.7246-6.7266z"></path>
+                    </svg>
+                </a>
+            </div>
+        </nav>
+    <?php } ?>
+<?php } else { ?>
+    <p class="govuk-body">No results found</p>
+<?php } ?>
