@@ -122,6 +122,14 @@ class PasswordController extends AbstractAuthController
 
         $result = $this->getService()->generateToken($username, $forSharedSpace);
 
+        if ($result === Service::ACCOUNT_USES_ONE_LOGIN) {
+            $this->getLogger()->info('Password reset refused for a One Login account', [
+                'event' => 'auth.password_reset.refused_one_login',
+            ]);
+
+            return new ApiProblem(403, 'Account uses GOV.UK One Login');
+        }
+
         if ($result == 'user-not-found') {
             $this->getLogger()->warning('Password reset request for unknown user', [
                 'username' => $username

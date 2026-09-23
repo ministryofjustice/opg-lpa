@@ -128,6 +128,34 @@ class UserDataTest extends MockeryTestCase
         }
     }
 
+    public function testGetByOneLoginEmailReturnsTheAccount(): void
+    {
+        $email = 'created@onelogin.com';
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['one_login_email' => $email], ['limit' => 1])
+            ->andReturn($this->makeSelectResult(true, 1, []));
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertInstanceOf(UserInterface::class, $userData->getByOneLoginEmail($email));
+    }
+
+    public function testGetByOneLoginEmailReturnsNullWhenNoAccountHoldsIt(): void
+    {
+        $email = 'nobody@onelogin.com';
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(UserData::USERS_TABLE, ['one_login_email' => $email], ['limit' => 1])
+            ->andReturn($this->makeSelectResult(true, 0, []));
+
+        $userData = new UserData($dbWrapperMock);
+
+        $this->assertNull($userData->getByOneLoginEmail($email));
+    }
+
     public function testGetByUsernameDatabaseUnavailable(): void
     {
         $username = 'BShelley';
