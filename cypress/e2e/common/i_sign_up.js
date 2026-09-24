@@ -39,5 +39,9 @@ function signUp(user, password) {
   cy.get('[data-cy=signup-password]').clear().type(password);
   cy.get('[data-cy=signup-password-confirm]').clear().type(password);
   cy.get('[data-cy=signup-terms]').check();
+
+  // Wait for the POST to complete before returning.
+  cy.intercept('POST', '**/signup').as('signupRequest');
   cy.get('[data-cy=signup-submit-button]').click();
+  cy.wait('@signupRequest');
 }

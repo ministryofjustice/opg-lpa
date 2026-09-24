@@ -39,11 +39,11 @@ Then(`I click element marked {string}`, (text) => {
 });
 
 Then(`I click link {string}`, (text) => {
-  cy.contains("a", text).click();
+  cy.contains('a', text).click();
 });
 
 Then(`I click button {string}`, (text) => {
-  cy.contains("button", text).click();
+  cy.contains('button', text).click();
 });
 
 Then(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
@@ -55,12 +55,17 @@ Then(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
 
 // this step exists because newly signed-up user goes straight to type page whereas existing user may get taken to dashboard
 Then(`If I am on dashboard I click to create lpa`, () => {
-  cy.url().then((urlStr) => {
-    if (urlStr.includes('dashboard')) {
-      cy.get('[data-cy=createnewlpa]').click();
-      cy.OPGCheckA11y();
-    }
-  });
+  // Despite the "If", the click is not optional: every caller goes on to the LPA type
+  // page. The original conditional read cy.url() as a single snapshot with no retry, so
+  // when the previous step's navigation was still in flight it sampled the old URL and
+  // skipped the click silently, failing later on an unrelated assertion. Waiting for the
+  // dashboard is what the callers actually mean.
+  cy.url().should('include', '/user/dashboard');
+  cy.get('[data-cy=createnewlpa]').click();
+  // Let the navigation finish before auditing: axe runs against the window captured by
+  // cy.window(), so auditing mid-navigation audits a document that is being replaced.
+  cy.url().should('include', '/lpa/type');
+  cy.OPGCheckA11y();
 });
 
 Then('I click continue on the dashboard for the test fixture lpa', () => {

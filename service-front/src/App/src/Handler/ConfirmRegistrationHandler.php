@@ -41,12 +41,14 @@ class ConfirmRegistrationHandler implements RequestHandlerInterface
                 $data
             ));
         }
-
+        // Clear any existing session.
+        // Activation does not sign the user in, so there is no privilege elevation to protect against,
+        // and regenerating destroys the old session while the browser keeps its cookie leaving the next request
+        // pointing at a session that no longer exists. Sign-in regenerates, which is where it matters.
         // Clear any existing session
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
         if ($session instanceof SessionInterface) {
             $session->clear();
-            $session->regenerate();
         }
 
         // Activate the account
