@@ -24,3 +24,26 @@ Feature: HTML and JS prevent common exploits
     Scenario: Cookies page
         When I visit "/home"
         Then I visit link containing "Cookies"
+
+    Scenario Outline: A public form that creates or acts on a session rejects a missing CSRF token
+      When I post to "<path>" without a CSRF token
+      Then the request is rejected as a CSRF failure
+
+      Examples:
+        | path                    |
+        | /login                  |
+        | /link-account           |
+        | /link-or-create-account |
+        | /signup                 |
+        | /signup/resend-email    |
+        | /forgot-password        |
+        | /send-feedback          |
+
+    Scenario: Signing in with the wrong CSRF token is rejected
+      When I post to "/login" with an invalid CSRF token
+      Then the request is rejected as a CSRF failure
+
+    Scenario: The sign-in page issues a usable token
+      Given I visit "/login"
+      Then the page carries a CSRF token
+      And signing in with that token is not rejected as a CSRF failure

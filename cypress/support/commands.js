@@ -25,7 +25,10 @@ Cypress.Commands.add("visitWithChecks", (url, options) => {
     options = options || {};
     cy.visit(url, options);
     cy.document().then(doc => {
-        expect(doc.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
+      expect(
+        doc.documentElement.innerHTML,
+        "CSRF token mismatch problem detected",
+      ).not.to.contain("Invalid CSRF token");
 
         // check that the page title matches the content of the h1 element on
         // the page
