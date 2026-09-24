@@ -10,18 +10,17 @@ use DateTime;
 use Exception;
 use MakeShared\DataModel\Lpa\Document\Decisions\ReplacementAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-final class ReplacementAttorneyCleanupTest extends MockeryTestCase
+final class ReplacementAttorneyCleanupTest extends TestCase
 {
-    private LpaApplicationService|MockInterface $lpaApplicationService;
+    private MockObject&LpaApplicationService $lpaApplicationService;
     private ReplacementAttorneyCleanup $service;
 
     public function setUp(): void
     {
-        $this->lpaApplicationService = Mockery::mock(LpaApplicationService::class);
+        $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
 
         $this->service = new ReplacementAttorneyCleanup();
         $this->service->setLpaApplicationService($this->lpaApplicationService);
@@ -35,15 +34,15 @@ final class ReplacementAttorneyCleanupTest extends MockeryTestCase
         $lpa = new Lpa(['document' => ['replacementAttorneyDecisions' => ['when' => new DateTime('2018-01-01')]]]);
 
         $this->lpaApplicationService
-            ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([
-                $this->equalTo(new Lpa([
+            ->expects($this->once())
+            ->method('setReplacementAttorneyDecisions')
+            ->with(
+                new Lpa([
                     'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
-                ])),
-                $this->equalTo(new ReplacementAttorneyDecisions()),
-                $this->equalTo(5),
-            ])
-            ->once();
+                ]),
+                new ReplacementAttorneyDecisions(),
+                5,
+            );
 
         $newVersion = $this->service->cleanUp($lpa, 5);
         $this->assertEquals(6, $newVersion);
@@ -54,15 +53,15 @@ final class ReplacementAttorneyCleanupTest extends MockeryTestCase
         $lpa = new Lpa(['document' => ['replacementAttorneyDecisions' => ['how' => 'Test how']]]);
 
         $this->lpaApplicationService
-            ->shouldReceive('setReplacementAttorneyDecisions')
-            ->withArgs([
-                $this->equalTo(new Lpa([
+            ->expects($this->once())
+            ->method('setReplacementAttorneyDecisions')
+            ->with(
+                new Lpa([
                     'document' => ['replacementAttorneyDecisions' => new ReplacementAttorneyDecisions()],
-                ])),
-                $this->equalTo(new ReplacementAttorneyDecisions()),
-                $this->equalTo(6),
-            ])
-            ->once();
+                ]),
+                new ReplacementAttorneyDecisions(),
+                6,
+            );
 
         $newVersion = $this->service->cleanUp($lpa, 6);
         $this->assertEquals(7, $newVersion);
