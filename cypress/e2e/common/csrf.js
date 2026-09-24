@@ -33,12 +33,12 @@ Then(`the request is rejected as a CSRF failure`, () => {
       expect(response.status).to.eq(302);
       expect(response.headers.location).to.contain(path);
     });
+  });
+});
 
-    cy.request({
-      url: path,
-      followRedirect: true,
-      failOnStatusCode: false,
-    }).then((page) => {
+Then(`the CSRF error is shown`, () => {
+  cy.get('@csrfPath').then((path) => {
+    cy.request({ url: path, failOnStatusCode: false }).then((page) => {
       expect(page.body).to.contain('Invalid CSRF token');
     });
   });

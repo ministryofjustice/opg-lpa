@@ -50,6 +50,7 @@ Feature: HTML and JS prevent common exploits
   Scenario: Signing in with the wrong CSRF token is rejected
     When I post to "/login" with an invalid CSRF token
     Then the request is rejected as a CSRF failure
+    And the CSRF error is shown
 
   Scenario: The sign-in page issues a usable token
     Given I visit "/login"
