@@ -11,8 +11,10 @@ RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 
-RUN apk add --no-cache postgresql-libs icu fcgi \
+RUN apk update \
+    && apk add --no-cache postgresql-libs icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS postgresql-dev icu-dev linux-headers \
+    && apk del expat \
     && docker-php-ext-install pgsql pdo_pgsql \
     && docker-php-ext-install opcache \
     && docker-php-ext-install intl \
@@ -21,8 +23,6 @@ RUN apk add --no-cache postgresql-libs icu fcgi \
     && rm /usr/bin/install-php-extensions
 
 COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
-
-RUN apk update && apk add --upgrade expat
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
