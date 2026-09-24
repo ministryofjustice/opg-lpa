@@ -14,10 +14,10 @@ return [
         'authenticated-user' => [
             'feedback',
             'home',
-            'user.find',
             'user.lpas',
             'shared-space.lpas',
-            'user.search',
+            'shared-space.members',
+            'search',
             'sign.out',
             'system.message',
         ],

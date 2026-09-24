@@ -19,7 +19,6 @@ use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeSharedTest\DataModel\FixturesData;
-use ArrayObject;
 use DateTime;
 
 final class ServiceTest extends AbstractServiceTestCase
@@ -455,17 +454,17 @@ final class ServiceTest extends AbstractServiceTestCase
         $email = FixturesData::getUser()->getEmail()->getAddress();
         $collectionUser1 = new CollectionUser(['identity' => $email]);
         $collectionUser2 = new CollectionUser(['identity' => $email]);
-        $users = (new ArrayObject([$collectionUser1, $collectionUser2]))->getIterator();
 
         $this->authUserRepository
             ->shouldReceive('matchUsers')
             ->with($query, [])
-            ->andReturn($users)
+            ->andReturn(['results' => [$collectionUser1, $collectionUser2], 'total' => 2])
             ->once();
 
-        $results = $this->service->matchUsers($query);
+        $result = $this->service->matchUsers($query);
 
-        $this->assertEquals(count($results), 2);
+        $this->assertEquals(2, count($result['results']));
+        $this->assertEquals(2, $result['total']);
     }
 
     public function testSearchByUsernameNotUserOrDeleted()

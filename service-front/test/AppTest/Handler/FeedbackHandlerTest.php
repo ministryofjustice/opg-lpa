@@ -6,8 +6,8 @@ namespace AppTest\Handler;
 
 use App\Handler\FeedbackHandler;
 use App\Service\Date\DateService;
-use App\Service\Feedback\FeedbackService;
 use App\Service\Feedback\FeedbackValidationException;
+use App\Service\Feedback\FeedbackService;
 use DateTime;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;

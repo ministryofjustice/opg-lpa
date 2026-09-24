@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Service\Date\DateService;
-use App\Service\Feedback\FeedbackService;
 use App\Service\Feedback\FeedbackValidationException;
+use App\Service\Feedback\FeedbackService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;

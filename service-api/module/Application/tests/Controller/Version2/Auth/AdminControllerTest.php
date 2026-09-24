@@ -7,6 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service as ApplicationsService;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
@@ -32,6 +33,11 @@ class AdminControllerTest extends MockeryTestCase
     private $applicationsService;
 
     /**
+     * @var MockInterface|SharedSpaceService
+     */
+    private $sharedSpaceService;
+
+    /**
      * @var MockInterface|PluginManager
      */
     private $pluginManager;
@@ -55,6 +61,7 @@ class AdminControllerTest extends MockeryTestCase
     {
         $this->usersService = Mockery::mock(UsersService::class);
         $this->applicationsService = Mockery::mock(ApplicationsService::class);
+        $this->sharedSpaceService = Mockery::mock(SharedSpaceService::class);
 
         //  Mock the params plugin
         $this->params = Mockery::mock(Params::class);
@@ -102,7 +109,8 @@ class AdminControllerTest extends MockeryTestCase
     {
         $controller = new AdminController(
             $this->usersService,
-            $this->applicationsService
+            $this->applicationsService,
+            $this->sharedSpaceService
         );
 
         $controller->setPluginManager($this->pluginManager);
@@ -233,7 +241,7 @@ class AdminControllerTest extends MockeryTestCase
             ->once();
 
         $this->params->shouldReceive('fromQuery')
-            ->with('limit', 10)
+            ->with('limit', 20)
             ->andReturn(10)
             ->once();
 
@@ -255,7 +263,7 @@ class AdminControllerTest extends MockeryTestCase
 
         $this->usersService->shouldReceive('matchUsers')
             ->with($query, ['offset' => 0, 'limit' => 10])
-            ->andReturn($userMatchReturnData)
+            ->andReturn(['results' => $userMatchReturnData, 'total' => 2])
             ->once();
 
         $controller = $this->getController();
@@ -266,6 +274,10 @@ class AdminControllerTest extends MockeryTestCase
         $result = $controller->matchUsersAction();
 
         $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals(
+            ['results' => $userMatchReturnData, 'total' => 2],
+            json_decode($result->getContent(), true)
+        );
     }
 
     public function testMatchUsersActionEmptyResultset()
@@ -281,7 +293,7 @@ class AdminControllerTest extends MockeryTestCase
             ->once();
 
         $this->params->shouldReceive('fromQuery')
-            ->with('limit', 10)
+            ->with('limit', 20)
             ->andReturn($limit)
             ->once();
 
@@ -299,7 +311,7 @@ class AdminControllerTest extends MockeryTestCase
 
         $this->usersService->shouldReceive('matchUsers')
             ->with($query, $expectedOptions)
-            ->andReturn($userMatchReturnData)
+            ->andReturn(['results' => $userMatchReturnData, 'total' => 0])
             ->once();
 
         $controller = $this->getController();
@@ -310,5 +322,131 @@ class AdminControllerTest extends MockeryTestCase
         $result = $controller->matchUsersAction();
 
         $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals(
+            ['results' => [], 'total' => 0],
+            json_decode($result->getContent(), true)
+        );
+    }
+
+    public function testMatchSharedSpacesAction()
+    {
+        $fullOrPartialName = 'The Space';
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('fullOrPartialName')
+            ->andReturn($fullOrPartialName)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('limit', 20)
+            ->andReturn(20)
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('offset', 0)
+            ->andReturn(0)
+            ->once();
+
+        $sharedSpaceMatchReturnData = [
+            [
+                'sharedSpaceId'   => 'ss1',
+                'sharedSpaceName' => 'The Space',
+            ],
+        ];
+
+        $this->sharedSpaceService->shouldReceive('matchSharedSpaces')
+            ->with($fullOrPartialName, ['offset' => 0, 'limit' => 20])
+            ->andReturn(['results' => $sharedSpaceMatchReturnData, 'total' => 1])
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var Json $result */
+        $result = $controller->matchSharedSpacesAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals(
+            ['results' => $sharedSpaceMatchReturnData, 'total' => 1],
+            json_decode($result->getContent(), true)
+        );
+    }
+
+    public function testSharedSpaceMembersAction()
+    {
+        $sharedSpaceId = 'ss1';
+
+        $this->params->shouldReceive('fromRoute')
+            ->with('sharedSpaceId')
+            ->andReturn($sharedSpaceId)
+            ->once();
+
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->with($sharedSpaceId)
+            ->andReturn('The Space')
+            ->once();
+
+        $this->params->shouldReceive('fromQuery')
+            ->withNoArgs()
+            ->andReturn(['membersPage' => '2', 'invitesPage' => '3'])
+            ->once();
+
+        $members = [
+            ['userId' => 'u1', 'name' => 'Alice', 'email' => 'alice@example.com', 'isAdmin' => true],
+            ['userId' => 'u2', 'name' => 'Bob', 'email' => 'bob@example.com', 'isAdmin' => false],
+        ];
+
+        $invites = [
+            ['id' => 1, 'fullName' => 'Carol', 'email' => 'carol@example.com', 'createdAt' => '2024-01-01T00:00:00.000000+0000', 'isExpired' => false],
+        ];
+
+        $this->sharedSpaceService->shouldReceive('getMembersPaginated')
+            ->with($sharedSpaceId, 2, 20)
+            ->andReturn(['results' => $members, 'total' => 22])
+            ->once();
+
+        $this->sharedSpaceService->shouldReceive('getInvitesPaginated')
+            ->with($sharedSpaceId, 3, 20)
+            ->andReturn(['results' => $invites, 'total' => 41])
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var Json $result */
+        $result = $controller->sharedSpaceMembersAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals(
+            [
+                'sharedSpaceName' => 'The Space',
+                'members' => $members,
+                'membersTotal' => 22,
+                'invites' => $invites,
+                'invitesTotal' => 41,
+            ],
+            json_decode($result->getContent(), true)
+        );
+    }
+
+    public function testSharedSpaceMembersActionNotFound()
+    {
+        $sharedSpaceId = 'unknown';
+
+        $this->params->shouldReceive('fromRoute')
+            ->with('sharedSpaceId')
+            ->andReturn($sharedSpaceId)
+            ->once();
+
+        $this->sharedSpaceService->shouldReceive('getName')
+            ->with($sharedSpaceId)
+            ->andReturn(null)
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var ApiProblemResponse $result */
+        $result = $controller->sharedSpaceMembersAction();
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
     }
 }

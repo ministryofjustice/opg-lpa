@@ -15,6 +15,7 @@ use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Delete;
+use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Insert;
 use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\PredicateSet;
@@ -1184,5 +1185,76 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
         $hasInvite = $sharedSpaceData->hasInvite('space-id', 'a@example.com');
         $this->assertFalse($hasInvite);
+    }
+
+    public function testMatchSharedSpaces(): void
+    {
+        $fullOrPartialName = 'The Space';
+        $offset = 10;
+        $limit = 20;
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $selectMock = Mockery::mock(Select::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+
+        $selectMock->shouldReceive('from')
+            ->with(['sharedSpace' => SharedSpaceData::SHARED_SPACE])
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('where')
+            ->with(Mockery::on(function ($predicates) use ($fullOrPartialName) {
+                return count($predicates) === 1;
+            }))
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('columns')
+            ->with(Mockery::on(function ($columns) {
+                $countExpression = $columns['total'];
+
+                return $columns['sharedSpaceId'] === 'id' &&
+                    is_a($countExpression, Expression::class) &&
+                    $countExpression->getExpression() === 'COUNT(*) OVER()';
+            }))
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('order')
+            ->with('sharedSpace.name ASC')
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('offset')
+            ->with($offset)
+            ->andReturn($selectMock);
+
+        $selectMock->shouldReceive('limit')
+            ->with($limit)
+            ->andReturn($selectMock);
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($selectMock)
+            ->andReturn($statementMock);
+
+        $statementMock->shouldReceive('execute')
+            ->andReturn(Helpers::makePdoResultMock([
+                [
+                    'sharedSpaceId' => 'ss1',
+                    'sharedSpaceName' => 'The Space One',
+                    'created' => '2020-01-01T00:00:00+00:00',
+                    'lpaCount' => 2,
+                    'memberCount' => 4,
+                    'total' => 3,
+                ],
+            ]));
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->matchSharedSpaces($fullOrPartialName, ['offset' => $offset, 'limit' => $limit]);
+
+        $this->assertEquals(1, count($actual['results']));
+        $this->assertEquals('ss1', $actual['results'][0]['sharedSpaceId']);
+        $this->assertEquals(3, $actual['total']);
     }
 }

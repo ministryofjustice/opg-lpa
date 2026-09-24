@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Feedback;
 
 use App\Service\ApiClient\Client as ApiClient;
+use App\Service\Feedback\FeedbackService;
 use App\Service\Mail\Transport\MailTransportInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
