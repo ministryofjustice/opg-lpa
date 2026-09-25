@@ -43,5 +43,5 @@ function signUp(user, password) {
   // Wait for the POST to complete before returning.
   cy.intercept('POST', '**/signup').as('signupRequest');
   cy.get('[data-cy=signup-submit-button]').click();
-  cy.wait('@signupRequest');
+  cy.wait('@signupRequest').its('response.statusCode').should('eq', 200);
 }
