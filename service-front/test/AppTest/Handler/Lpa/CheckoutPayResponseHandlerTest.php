@@ -125,13 +125,13 @@ class CheckoutPayResponseHandlerTest extends TestCase
 
         $this->paymentClient->method('getPayment')->willReturn(null);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
-            ->willReturn('/lpa/91333263035/checkout/pay');
+            ->with('lpa/checkout', ['lpa-id' => $lpa->getId()])
+            ->willReturn('/lpa/91333263035/checkout');
 
         $response = $this->handler->handle($this->createRequest($lpa));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertStringContainsString('checkout/pay', $response->getHeaderLine('location'));
+        $this->assertStringContainsString('checkout', $response->getHeaderLine('location'));
     }
 
     public static function failureTemplateProvider(): array
@@ -159,8 +159,8 @@ class CheckoutPayResponseHandlerTest extends TestCase
 
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
         $this->urlHelper->method('generate')
-            ->with('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
-            ->willReturn('/lpa/91333263035/checkout/pay');
+            ->with('lpa/checkout', ['lpa-id' => $lpa->getId()])
+            ->willReturn('/lpa/91333263035/checkout');
         $this->renderer->expects($this->once())
             ->method('render')
             ->with($template)

@@ -6,25 +6,23 @@
 
     <h2 class="govuk-heading-m govuk-!-margin-top-8 flush--top">Amount due: &pound;{{ lpa.payment.amount | money_format }}</h2>
 
-    <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body">You appear to have cancelled online payment. You could try paying online again or pay by cheque.</p>
 
-        <p class="govuk-body">You appear to have cancelled online payment. You could try paying online again or <a class="govuk-link" href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}">pay by cheque</a>.</p>
+        {# begin form #}
+        {{ form.prepare() ? '' }}
+        {{ form().openTag( form )|raw }}
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+        <input type="hidden" name="version" value="{{ lpa.version }}">
 
-    </div></div>
+        <div class="govuk-button-group">
+          <button type="submit" class="govuk-button" name="action" value="card">Retry online payment</button>
+          <button class="govuk-button govuk-button--secondary" name="action" value="cheque">Pay by cheque</button>
+        </div>
 
-    <div class="govuk-grid-row"><div class="govuk-grid-column-two-thirds">
-        <p class="govuk-body divorced">
-            {# begin form #}
-            {{ form.prepare() ? '' }}
-            {{ form().openTag( form )|raw }}
-            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-
-            <div class="govuk-form-group">
-                {{ formElement(form.get('submit')) }}
-            </div>
-
-            {{ form().closeTag|raw }}
-        </p>
-    </div></div>
+        {{ form().closeTag|raw }}
+      </div>
+    </div>
 
 {% endblock %}
