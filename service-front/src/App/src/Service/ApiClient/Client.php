@@ -182,9 +182,7 @@ class Client
             return $decoded;
         }
 
-        // A response we cannot decode is a fault, and it is logged here rather than
-        // left to the caller because it can only arrive on a 2xx
-        $this->logger->error('Malformed JSON response from server', [
+        $this->logger->warning('Malformed JSON response from server', [
             'error_code'  => 'API_CLIENT_MALFORMED_JSON',
             'status'      => $response->getStatusCode(),
             'path'        => $request?->getUri()->getPath(),

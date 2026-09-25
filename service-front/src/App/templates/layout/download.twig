@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
-  {% if refreshUrl %}    <meta http-equiv="refresh" content="2;url={{ refreshUrl }}">
-  {% endif %}
+  <meta http-equiv="refresh" content="2">
   <title>Generating your document | GOV.UK</title>
 
   <link href="{{ '/assets/v2/css/download-message.css' | asset_path({ 'minify':true }) }}" media="all" rel="stylesheet" type="text/css" />
@@ -11,12 +10,7 @@
 <body>
 
 <div class="download-message">
-  {% if refreshUrl %}
-    <h2>Please wait while we generate your document. It will appear here in a few seconds.</h2>
-  {% else %}
-    <h2>Your document is taking longer than usual to generate.</h2>
-    <p>It may still be in progress. <a href="{{ retryUrl }}">Check again</a>.</p>
-  {% endif %}
+  <h2>Please wait while we generate your document. It will appear here in a few seconds.</h2>
 </div>
 </body>
 </html>

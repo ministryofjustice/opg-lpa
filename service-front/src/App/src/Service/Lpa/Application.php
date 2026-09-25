@@ -310,7 +310,9 @@ class Application implements ApiClientAwareInterface
                 sprintf('/v2/user/%s/applications/%s/pdfs/%s', $this->getUserId(), $lpaId, $pdfType),
             );
         } catch (ApiException $ex) {
-            $this->logger->error('Failed to fetch PDF details', [
+            $logLevel = $ex->getStatusCode() === 404 ? 'info' : 'warning';
+
+            $this->logger->{$logLevel}('Failed to fetch PDF details', [
                 'status'    => $ex->getStatusCode(),
                 'exception' => $ex,
             ]);

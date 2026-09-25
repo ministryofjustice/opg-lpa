@@ -200,12 +200,12 @@ final class ClientTest extends TestCase
         $this->invokePrivateMethod($client, 'handleResponse', [$this->makeResponse(200, 'not-json')]);
     }
 
-    public function testHandleResponseLogsDiagnosticsForMalformedJson(): void
+    public function testHandleResponseLogsDiagnosticsAtWarningForMalformedJson(): void
     {
         $client = $this->createClient();
 
         $this->logger->expects($this->once())
-            ->method('error')
+            ->method('warning')
             ->with(
                 'Malformed JSON response from server',
                 $this->callback(static function (array $context): bool {
@@ -228,7 +228,7 @@ final class ClientTest extends TestCase
         $body   = '{"donor":{"name":"' . str_repeat('a', 500) . '"';
 
         $this->logger->expects($this->once())
-            ->method('error')
+            ->method('warning')
             ->with(
                 'Malformed JSON response from server',
                 $this->callback(static function (array $context) use ($body): bool {
