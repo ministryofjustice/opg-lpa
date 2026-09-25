@@ -51,8 +51,7 @@
       "description": [
         "laminas-servicemanager network blockages (major)",
         "None of these packages can be (major) upgraded until everything supports laminas-servicemanager v4",
-        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions",
-        "symfony/console is blocked because robmorgan/phinx doesn't support symfony/console v7 until 0.15.5"
+        "Some of them do already support servicemanager v4, but Composer doesn't support multiple dependency versions"
       ],
       "matchUpdateTypes": [
         "major"
@@ -66,24 +65,7 @@
         "laminas/laminas-cache-storage-adapter-memory",
         "laminas/laminas-filter",
         "laminas/laminas-paginator",
-        "laminas/laminas-view",
-        "symfony/console"
-      ],
-      "enabled": false
-    },
-    {
-      "description": [
-        "laminas-servicemanager network blockages (minor)",
-        "robmorgan/phinx has a nested dependency on psr/simple-cache:^2.0, which in turn requires laminas-cache v4 so is blocked by the v4 servicemanager blockage above"
-      ],
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "matchDatasources": [
-        "packagist"
-      ],
-      "matchDepNames": [
-        "robmorgan/phinx"
+        "laminas/laminas-view"
       ],
       "enabled": false
     },

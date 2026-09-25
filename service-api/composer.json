@@ -21,7 +21,7 @@
         "laminas/laminas-paginator": "^2.8",
         "php-http/guzzle7-adapter": "^1.0.0",
         "alphagov/notifications-php-client": "^7.0.0",
-        "robmorgan/phinx": "^0.14.0",
+        "robmorgan/phinx": "^0.16.2",
         "symfony/console": "^6.1",
         "laminas/laminas-cli": "^1.5",
         "symfony/validator": "^8.0",
