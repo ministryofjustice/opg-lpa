@@ -54,9 +54,10 @@ const checkNumberOfElements = (
 
   // select elements matching the specifier and count them
   if (contextSelector === 'document') {
-    cy.document().then((doc) => {
-      expect(doc.querySelectorAll(tag).length).to.equal(numberExpected);
-    });
+    // cy.get().should() rather than a cy.document() snapshot: the latter counts once,
+    // immediately, so a page still rendering after a click reports zero and fails without
+    // retrying. An explicit length assertion also stops cy.get() failing on zero matches.
+    cy.get(tag).should('have.length', numberExpected);
   } else {
     let ctx = Cypress.$(contextSelector);
     expect(ctx[0].querySelectorAll(tag).length).to.equal(numberExpected);
