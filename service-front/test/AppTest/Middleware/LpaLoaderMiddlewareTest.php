@@ -8,6 +8,7 @@ use App\Middleware\LpaLoaderMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
+use App\Service\ApiClient\Exception\ApiException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -18,9 +19,11 @@ use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -30,6 +33,7 @@ class LpaLoaderMiddlewareTest extends TestCase
     private LpaApplicationService&MockObject $lpaApplicationService;
     private UrlHelper&MockObject $urlHelper;
     private LoggerInterface&MockObject $logger;
+    private TemplateRendererInterface&MockObject $renderer;
     private LpaLoaderMiddleware $middleware;
 
     protected function setUp(): void
@@ -37,11 +41,13 @@ class LpaLoaderMiddlewareTest extends TestCase
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->renderer = $this->createMock(TemplateRendererInterface::class);
 
         $this->middleware = new LpaLoaderMiddleware(
             $this->lpaApplicationService,
             $this->urlHelper,
             $this->logger,
+            $this->renderer,
         );
     }
 
@@ -127,6 +133,11 @@ class LpaLoaderMiddlewareTest extends TestCase
 
         $this->lpaApplicationService->method('getApplication')->with(123)->willReturn(false);
 
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with('error/404.twig', $this->anything())
+            ->willReturn('<html>Not found</html>');
+
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->never())->method('handle');
 
@@ -145,10 +156,41 @@ class LpaLoaderMiddlewareTest extends TestCase
 
         $this->lpaApplicationService->method('getApplication')->willReturn($this->createLpa(123, 'user-123'));
 
+        $this->renderer->method('render')->willReturn('<html>Not found</html>');
+
         $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
 
         $this->assertInstanceOf(HtmlResponse::class, $result);
         $this->assertEquals(404, $result->getStatusCode());
+    }
+
+    public function testServiceFailuresAreNotReportedAsAMissingLpa(): void
+    {
+        $routeResult = $this->makeRouteResult('lpa/form-type', ['lpa-id' => '123']);
+        $request = (new ServerRequest())
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withAttribute(RequestAttribute::IDENTITY, $this->createUserIdentity('user-123'));
+
+        $this->lpaApplicationService->method('getApplication')
+            ->willThrowException($this->makeApiException(500));
+
+        $this->renderer->expects($this->never())->method('render');
+
+        $this->expectException(ApiException::class);
+
+        $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+    }
+
+    private function makeApiException(int $status): ApiException
+    {
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('__toString')->willReturn('{}');
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn($status);
+        $response->method('getBody')->willReturn($stream);
+
+        return new ApiException($response);
     }
 
     public function testSetsRequestAttributesWhenRouteIsAccessible(): void
