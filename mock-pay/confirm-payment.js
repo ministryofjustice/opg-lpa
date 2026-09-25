@@ -10,7 +10,7 @@ var paymentsStore = stores.open('payments');
 var returnUrl = paymentsStore.load('return_url_' + paymentId) || '';
 
 respond()
-    .withStatusCode(303)
-    .withHeader('Location', returnUrl)
-    .withEmpty()
-    .skipDefaultBehaviour();
+  .withStatusCode(303)
+  .withHeader('Location', returnUrl)
+  .withEmpty()
+  .skipDefaultBehaviour();
