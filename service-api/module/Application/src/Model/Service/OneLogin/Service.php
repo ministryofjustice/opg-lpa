@@ -143,12 +143,45 @@ class Service extends AbstractService
     }
 
     /**
+     * Build the URL that signs the user out of GOV.UK One Login.
+     *
+     * One Login only honours post_logout_redirect_uri when id_token_hint is present, and the
+     * URI must match one registered against our client.
+     *
+     * @throws RuntimeException
+     */
+    public function createLogoutRequest(#[\SensitiveParameter] string $idToken, string $postLogoutRedirectUri): string
+    {
+        if ($this->clientManager === null) {
+            throw new RuntimeException('AuthorisationClientManager must be set');
+        }
+
+        /** @var mixed $endSessionEndpoint */
+        $endSessionEndpoint = $this->clientManager->get()->getIssuer()->getMetadata()->get('end_session_endpoint');
+
+        if (!is_string($endSessionEndpoint) || $endSessionEndpoint === '') {
+            throw new RuntimeException('One Login discovery document has no end_session_endpoint');
+        }
+
+        return $endSessionEndpoint . '?' . http_build_query(
+            [
+                'id_token_hint'            => $idToken,
+                'post_logout_redirect_uri' => $postLogoutRedirectUri,
+            ],
+            '',
+            '&',
+            PHP_QUERY_RFC3986,
+        );
+    }
+
+    /**
      * Exchange the authorisation code and validate the ID token.
      *
      * @return array{
      *     linked: bool,
      *     sub: string,
      *     email: string,
+     *     idToken: string,
      *     identity: null|array{
      *         userId: string,
      *         token: string,
@@ -205,7 +238,9 @@ class Service extends AbstractService
             );
         }
 
-        if ($tokenSet->getIdToken() === null) {
+        $idToken = $tokenSet->getIdToken();
+
+        if ($idToken === null) {
             throw new OneLoginAuthenticationException('missing_id_token');
         }
 
@@ -241,6 +276,7 @@ class Service extends AbstractService
                 'linked'   => false,
                 'sub'      => $sub,
                 'email'    => $email,
+                'idToken'  => $idToken,
                 'identity' => null,
             ];
         }
@@ -265,6 +301,7 @@ class Service extends AbstractService
             'linked'   => true,
             'sub'      => $sub,
             'email'    => $email,
+            'idToken'  => $idToken,
             'identity' => [
                 'userId'         => $userId,
                 'token'          => $tokenDetails['token'],

@@ -25,8 +25,9 @@ use Psr\Log\LoggerInterface;
 class LinkOrCreateAccountHandlerTest extends TestCase
 {
     private const array PENDING_LINK = [
-        'sub'   => 'urn:fdc:gov.uk:2022:newuser',
-        'email' => 'newuser@example.com',
+        'sub'     => 'urn:fdc:gov.uk:2022:newuser',
+        'email'   => 'newuser@example.com',
+        'idToken' => 'pending.id.token',
     ];
 
     private TemplateRendererInterface&MockObject $renderer;
@@ -136,7 +137,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->assertEquals('/link-account', $response->getHeaderLine('Location'));
     }
 
-    public function testCreateChoiceCreatesAccountEstablishesSessionAndRedirectsToDashboard(): void
+    public function testCreateChoiceCreatesAccountEstablishesSessionWithIdTokenAndRedirectsToDashboard(): void
     {
         $identity = [
             'userId'         => 'uid-new',
@@ -153,13 +154,17 @@ class LinkOrCreateAccountHandlerTest extends TestCase
 
         $this->session->expects($this->once())->method('regenerate');
         $this->session->expects($this->once())->method('clear');
-        $this->session->expects($this->once())
-            ->method('set')
-            ->with('identity', $identity);
+        $written = [];
+        $this->session->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['choice' => 'create'])
         );
+
+        $this->assertSame(['identity' => $identity, 'onelogin_id_token' => self::PENDING_LINK['idToken']], $written);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));

@@ -27,6 +27,7 @@ use Psr\Log\LoggerInterface;
 class LinkAccountHandlerTest extends TestCase
 {
     private const string PENDING_SUB = 'urn:fdc:gov.uk:2022:newuser';
+    private const string PENDING_ID_TOKEN = 'pending.id.token';
 
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
@@ -66,7 +67,7 @@ class LinkAccountHandlerTest extends TestCase
     ): ServerRequest {
         $pendingLink = $pendingSub === null
             ? null
-            : ['sub' => $pendingSub, 'email' => 'newuser@example.com'];
+            : ['sub' => $pendingSub, 'email' => 'newuser@example.com', 'idToken' => self::PENDING_ID_TOKEN];
 
         $this->session
             ->method('get')
@@ -128,7 +129,7 @@ class LinkAccountHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testSuccessfulLinkEstablishesSessionAndRedirectsToDashboard(): void
+    public function testSuccessfulLinkEstablishesSessionWithIdTokenAndRedirectsToDashboard(): void
     {
         $email = 'my.email@example.com';
         $word  = 'guessable';
@@ -148,13 +149,17 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->session->expects($this->once())->method('regenerate');
         $this->session->expects($this->once())->method('clear');
-        $this->session->expects($this->once())
-            ->method('set')
-            ->with('identity', $identity);
+        $written = [];
+        $this->session->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
 
         $response = $this->handler->handle(
             $this->createRequest('POST', ['email' => $email, 'password' => $word])
         );
+
+        $this->assertSame(['identity' => $identity, 'onelogin_id_token' => self::PENDING_ID_TOKEN], $written);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));

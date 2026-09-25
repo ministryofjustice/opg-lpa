@@ -80,6 +80,22 @@ Then(`I am signed in with my new Make account`, () => {
   cy.get('[data-cy=sign-out]').should('be.visible');
 });
 
+Then(`I sign out and am signed out of One Login`, () => {
+  cy.intercept('GET', 'http://localhost:4549/logout*').as('oneLoginLogout');
+
+  cy.get('[data-cy=sign-out]').click();
+
+  cy.wait('@oneLoginLogout')
+    .its('request.url')
+    .should((url) => {
+      const params = new URL(url).searchParams;
+      expect(params.get('id_token_hint')).to.not.be.empty;
+      expect(params.get('post_logout_redirect_uri')).to.eq(
+        Cypress.config().postLogoutUrl,
+      );
+    });
+});
+
 const ONELOGIN_LINK_ACCOUNTS = {
   link: 'onelogin_link_email',
   retry: 'onelogin_retry_email',

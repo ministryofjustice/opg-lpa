@@ -14,6 +14,8 @@ use PHPUnit\Framework\TestCase;
 class OneLoginSessionManagerTest extends TestCase
 {
     private const string SESSION_KEY = 'onelogin_pending_link';
+    private const string ID_TOKEN_KEY = 'onelogin_id_token';
+    private const string ID_TOKEN = 'header.payload.sig';
 
     private SessionInterface&MockObject $session;
     private OneLoginSessionManager $manager;
@@ -24,17 +26,23 @@ class OneLoginSessionManagerTest extends TestCase
         $this->manager = new OneLoginSessionManager();
     }
 
-    public function testSetPendingLinkStoresSubAndEmailUnderTheOwnedKey(): void
+    public function testSetPendingLinkStoresSubEmailAndIdTokenUnderTheOwnedKey(): void
     {
         $this->session
             ->expects($this->once())
             ->method('set')
             ->with(self::SESSION_KEY, [
-                'sub'   => 'urn:fdc:gov.uk:2022:newuser',
-                'email' => 'newuser@example.com',
+                'sub'     => 'urn:fdc:gov.uk:2022:newuser',
+                'email'   => 'newuser@example.com',
+                'idToken' => self::ID_TOKEN,
             ]);
 
-        $this->manager->setPendingLink($this->session, 'urn:fdc:gov.uk:2022:newuser', 'newuser@example.com');
+        $this->manager->setPendingLink(
+            $this->session,
+            'urn:fdc:gov.uk:2022:newuser',
+            'newuser@example.com',
+            self::ID_TOKEN,
+        );
     }
 
     public function testGetPendingLinkReturnsDtoFromStoredData(): void
@@ -42,20 +50,25 @@ class OneLoginSessionManagerTest extends TestCase
         $this->session
             ->method('get')
             ->with(self::SESSION_KEY)
-            ->willReturn(['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com']);
+            ->willReturn([
+                'sub'     => 'urn:fdc:gov.uk:2022:newuser',
+                'email'   => 'newuser@example.com',
+                'idToken' => self::ID_TOKEN,
+            ]);
 
         $pendingLink = $this->manager->getPendingLink($this->session);
 
         $this->assertInstanceOf(PendingLink::class, $pendingLink);
         $this->assertSame('urn:fdc:gov.uk:2022:newuser', $pendingLink->sub);
         $this->assertSame('newuser@example.com', $pendingLink->email);
+        $this->assertSame(self::ID_TOKEN, $pendingLink->idToken);
     }
 
     public function testGetPendingLinkDefaultsEmailToEmptyStringWhenMissing(): void
     {
         $this->session
             ->method('get')
-            ->willReturn(['sub' => 'urn:fdc:gov.uk:2022:newuser']);
+            ->willReturn(['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => self::ID_TOKEN]);
 
         $pendingLink = $this->manager->getPendingLink($this->session);
 
@@ -69,11 +82,13 @@ class OneLoginSessionManagerTest extends TestCase
     public static function invalidPendingLinkProvider(): array
     {
         return [
-            'nothing stored' => [null],
-            'not an array'   => ['a string'],
-            'missing sub'    => [['email' => 'newuser@example.com']],
-            'empty sub'      => [['sub' => '', 'email' => 'newuser@example.com']],
-            'non-string sub' => [['sub' => 123, 'email' => 'newuser@example.com']],
+            'nothing stored'  => [null],
+            'not an array'    => ['a string'],
+            'missing sub'     => [['email' => 'newuser@example.com']],
+            'empty sub'       => [['sub' => '', 'email' => 'newuser@example.com']],
+            'non-string sub'  => [['sub' => 123, 'email' => 'newuser@example.com']],
+            'missing idToken' => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com']],
+            'empty idToken'   => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => '']],
         ];
     }
 
@@ -96,5 +111,45 @@ class OneLoginSessionManagerTest extends TestCase
             ->with(self::SESSION_KEY);
 
         $this->manager->clearPendingLink($this->session);
+    }
+
+    public function testSetIdTokenStoresItUnderItsOwnKey(): void
+    {
+        $this->session
+            ->expects($this->once())
+            ->method('set')
+            ->with(self::ID_TOKEN_KEY, self::ID_TOKEN);
+
+        $this->manager->setIdToken($this->session, self::ID_TOKEN);
+    }
+
+    public function testGetIdTokenReturnsStoredToken(): void
+    {
+        $this->session->method('get')->with(self::ID_TOKEN_KEY)->willReturn(self::ID_TOKEN);
+
+        $this->assertSame(self::ID_TOKEN, $this->manager->getIdToken($this->session));
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidIdTokenProvider(): array
+    {
+        return [
+            'nothing stored' => [null],
+            'empty string'   => [''],
+            'not a string'   => [['header.payload.sig']],
+        ];
+    }
+
+    /**
+     * @param mixed $stored
+     */
+    #[DataProvider('invalidIdTokenProvider')]
+    public function testGetIdTokenReturnsNullForInvalidData($stored): void
+    {
+        $this->session->method('get')->willReturn($stored);
+
+        $this->assertNull($this->manager->getIdToken($this->session));
     }
 }

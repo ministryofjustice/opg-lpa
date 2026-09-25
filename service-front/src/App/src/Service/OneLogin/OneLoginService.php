@@ -47,7 +47,7 @@ class OneLoginService
     /**
      * Exchanges the authorisation code for an LPA identity or a pending-link payload.
      *
-     * @return array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
+     * @return array{linked: false, sub: string, email: string, idToken: string}|array{linked: true, sub: string, email: string, idToken: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}
      * @throws RuntimeException
      */
     public function callback(
@@ -76,9 +76,11 @@ class OneLoginService
             || !is_string($result['sub'])
             || empty($result['email'])
             || !is_string($result['email'])
+            || empty($result['idToken'])
+            || !is_string($result['idToken'])
         ) {
             throw new RuntimeException(
-                'Invalid response from API: linked, sub and email are required'
+                'Invalid response from API: linked, sub, email and idToken are required'
             );
         }
 
@@ -97,8 +99,33 @@ class OneLoginService
             }
         }
 
-        /** @var array{linked: false, sub: string, email: string}|array{linked: true, sub: string, email: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}} $result */
+        /** @var array{linked: false, sub: string, email: string, idToken: string}|array{linked: true, sub: string, email: string, idToken: string, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}} $result */
         return $result;
+    }
+
+    /**
+     * Returns the One Login URL that ends the user's One Login session and then sends them to
+     * $postLogoutRedirectUri.
+     *
+     * @throws RuntimeException
+     */
+    public function logoutUrl(#[\SensitiveParameter] string $idToken, string $postLogoutRedirectUri): string
+    {
+        /** @var array<string, mixed>|null $result */
+        $result = $this->client->httpPost(
+            '/v2/auth/onelogin/logout',
+            [
+                'idToken'               => $idToken,
+                'postLogoutRedirectUri' => $postLogoutRedirectUri,
+            ],
+            anonymous: true,
+        );
+
+        if (!is_array($result) || empty($result['url']) || !is_string($result['url'])) {
+            throw new RuntimeException('Invalid response from API: url must be a non-empty string');
+        }
+
+        return $result['url'];
     }
 
     /**

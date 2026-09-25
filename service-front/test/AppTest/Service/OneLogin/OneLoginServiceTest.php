@@ -6,6 +6,7 @@ namespace AppTest\Service\OneLogin;
 
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\OneLogin\OneLoginService;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -122,6 +123,7 @@ class OneLoginServiceTest extends TestCase
             'linked'   => true,
             'sub'      => 'urn:fdc:gov.uk:2022:abc',
             'email'    => 'user@example.com',
+            'idToken'  => 'header.payload.sig',
             'identity' => [
                 'userId'         => 'uid-1',
                 'token'          => 'tok-abc',
@@ -157,15 +159,17 @@ class OneLoginServiceTest extends TestCase
         $this->assertTrue($result['linked']);
         $this->assertSame('urn:fdc:gov.uk:2022:abc', $result['sub']);
         $this->assertSame('user@example.com', $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertSame($linkedResponse['identity'], $result['identity'] ?? null);
     }
 
     public function testCallbackReturnsUnlinkedShape(): void
     {
         $unlinkedResponse = [
-            'linked' => false,
-            'sub'    => 'urn:fdc:gov.uk:2022:new',
-            'email'  => 'new@example.com',
+            'linked'  => false,
+            'sub'     => 'urn:fdc:gov.uk:2022:new',
+            'email'   => 'new@example.com',
+            'idToken' => 'header.payload.sig',
         ];
 
         $this->apiClient->method('httpPost')->willReturn($unlinkedResponse);
@@ -175,12 +179,13 @@ class OneLoginServiceTest extends TestCase
         $this->assertFalse($result['linked']);
         $this->assertSame('urn:fdc:gov.uk:2022:new', $result['sub']);
         $this->assertSame('new@example.com', $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertArrayNotHasKey('identity', $result);
     }
 
     public function testCallbackThrowsWhenLinkedIsMissing(): void
     {
-        $this->apiClient->method('httpPost')->willReturn(['sub' => 'x', 'email' => 'x@x.com']);
+        $this->apiClient->method('httpPost')->willReturn(['sub' => 'x', 'email' => 'x@x.com', 'idToken' => 'h.p.s']);
 
         $this->expectException(RuntimeException::class);
 
@@ -189,7 +194,7 @@ class OneLoginServiceTest extends TestCase
 
     public function testCallbackThrowsWhenSubIsMissing(): void
     {
-        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'email' => 'x@x.com']);
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'email' => 'x@x.com', 'idToken' => 'h.p.s']);
 
         $this->expectException(RuntimeException::class);
 
@@ -198,7 +203,7 @@ class OneLoginServiceTest extends TestCase
 
     public function testCallbackThrowsWhenEmailIsMissing(): void
     {
-        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'sub' => 'x']);
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'sub' => 'x', 'idToken' => 'h.p.s']);
 
         $this->expectException(RuntimeException::class);
 
@@ -208,13 +213,24 @@ class OneLoginServiceTest extends TestCase
     public function testCallbackThrowsWhenLinkedButIdentityMissing(): void
     {
         $this->apiClient->method('httpPost')->willReturn([
-            'linked' => true,
-            'sub'    => 'urn:x',
-            'email'  => 'x@x.com',
+            'linked'  => true,
+            'sub'     => 'urn:x',
+            'email'   => 'x@x.com',
+            'idToken' => 'h.p.s',
         ]);
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('identity fields missing');
+
+        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenIdTokenIsMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'sub' => 'x', 'email' => 'x@x.com']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('idToken');
 
         $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
     }
@@ -316,5 +332,52 @@ class OneLoginServiceTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->service->createAndLinkAccount('urn:x', 'someone@example.com');
+    }
+
+    // ─── logoutUrl() ──────────────────────────────────────────────────────
+
+    public function testLogoutUrlPostsIdTokenAnonymouslyAndReturnsUrl(): void
+    {
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpPost')
+            ->with(
+                '/v2/auth/onelogin/logout',
+                ['idToken' => 'header.payload.sig', 'postLogoutRedirectUri' => 'https://example.com/done'],
+                [],
+                true,
+            )
+            ->willReturn(['url' => 'https://oidc.example.com/logout?id_token_hint=header.payload.sig']);
+
+        $this->assertSame(
+            'https://oidc.example.com/logout?id_token_hint=header.payload.sig',
+            $this->service->logoutUrl('header.payload.sig', 'https://example.com/done'),
+        );
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidLogoutResponseProvider(): array
+    {
+        return [
+            'null response'  => [null],
+            'missing url'    => [[]],
+            'empty url'      => [['url' => '']],
+            'non-string url' => [['url' => ['https://oidc.example.com/logout']]],
+        ];
+    }
+
+    /**
+     * @param mixed $response
+     */
+    #[DataProvider('invalidLogoutResponseProvider')]
+    public function testLogoutUrlThrowsForInvalidResponse($response): void
+    {
+        $this->apiClient->method('httpPost')->willReturn($response);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->logoutUrl('header.payload.sig', 'https://example.com/done');
     }
 }

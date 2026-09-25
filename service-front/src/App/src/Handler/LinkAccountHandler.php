@@ -83,7 +83,7 @@ class LinkAccountHandler implements RequestHandlerInterface
                 }
 
                 if ($result['linked'] === true) {
-                    return $this->establishSession($session, $result['identity']);
+                    return $this->establishSession($session, $result['identity'], $pendingLink->idToken);
                 }
 
                 $reason = $result['reason'];
@@ -134,13 +134,17 @@ class LinkAccountHandler implements RequestHandlerInterface
     /**
      * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
      */
-    private function establishSession(SessionInterface $session, array $identity): RedirectResponse
-    {
+    private function establishSession(
+        SessionInterface $session,
+        array $identity,
+        #[\SensitiveParameter] string $idToken,
+    ): RedirectResponse {
         $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
         $session->regenerate();
         $session->clear();
         $session->set(self::SESSION_KEY_IDENTITY, $identity);
+        $this->sessionManager->setIdToken($session, $idToken);
 
         $this->logger->info('auth.onelogin.link_success');
 

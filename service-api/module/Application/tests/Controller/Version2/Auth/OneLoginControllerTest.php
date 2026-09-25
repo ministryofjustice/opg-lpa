@@ -198,6 +198,60 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals($serviceResult, $result->getVariables());
     }
 
+    /**
+     * @return array<string, array{array<string, mixed>, string}>
+     */
+    public static function invalidLogoutBodyProvider(): array
+    {
+        $valid = ['idToken' => 'header.payload.sig', 'postLogoutRedirectUri' => 'https://example.com/done'];
+
+        return [
+            'missing idToken'               => [['postLogoutRedirectUri' => $valid['postLogoutRedirectUri']], 'idToken'],
+            'empty idToken'                 => [['idToken' => ''] + $valid, 'idToken'],
+            'missing postLogoutRedirectUri' => [['idToken' => $valid['idToken']], 'postLogoutRedirectUri'],
+            'empty postLogoutRedirectUri'   => [['postLogoutRedirectUri' => ''] + $valid, 'postLogoutRedirectUri'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidLogoutBodyProvider
+     * @param array<string, mixed> $body
+     */
+    public function testLogoutActionReturnsBadRequestForInvalidBody(array $body, string $expectedField): void
+    {
+        $this->service->shouldNotReceive('createLogoutRequest');
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->logoutAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertSame(400, $result->status);
+        $this->assertStringContainsString($expectedField, $result->detail);
+    }
+
+    public function testLogoutActionReturnsLogoutUrl(): void
+    {
+        $body = ['idToken' => 'header.payload.sig', 'postLogoutRedirectUri' => 'https://example.com/done'];
+
+        $this->service->shouldReceive('createLogoutRequest')
+            ->with('header.payload.sig', 'https://example.com/done')
+            ->andReturn('https://oidc.example.com/logout?id_token_hint=header.payload.sig')
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->logoutAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertSame(
+            ['url' => 'https://oidc.example.com/logout?id_token_hint=header.payload.sig'],
+            $result->getVariables(),
+        );
+    }
+
     public function testBackChannelLogoutActionReturnsServiceResult(): void
     {
         $body = ['logoutToken' => 'a.logout.token'];

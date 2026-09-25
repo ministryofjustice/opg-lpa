@@ -120,6 +120,41 @@ class OneLoginController extends AbstractAuthController
     }
 
     /**
+     * Build the URL that signs the user out of GOV.UK One Login.
+     *
+     * @return JsonModel|ApiProblem
+     */
+    public function logoutAction(): JsonModel|ApiProblem
+    {
+        /** @var mixed $body */
+        $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        if (!is_array($body)) {
+            return new ApiProblem(400, 'A JSON request body must be provided');
+        }
+
+        $idToken               = $body['idToken'] ?? null;
+        $postLogoutRedirectUri = $body['postLogoutRedirectUri'] ?? null;
+
+        if (!is_string($idToken) || $idToken === '') {
+            return new ApiProblem(400, 'idToken must be provided');
+        }
+        if (!is_string($postLogoutRedirectUri) || $postLogoutRedirectUri === '') {
+            return new ApiProblem(400, 'postLogoutRedirectUri must be provided');
+        }
+
+        TelemetryEventManager::triggerStart('OneLoginController.logoutAction');
+
+        try {
+            $url = $this->getService()->createLogoutRequest($idToken, $postLogoutRedirectUri);
+        } finally {
+            TelemetryEventManager::triggerStop();
+        }
+
+        return new JsonModel(['url' => $url]);
+    }
+
+    /**
      * @return JsonModel
      */
     public function backChannelLogoutAction(): JsonModel

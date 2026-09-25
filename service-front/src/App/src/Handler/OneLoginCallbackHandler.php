@@ -110,6 +110,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 // Account already linked: establish full authenticated session.
                 $session->clear();
                 $session->set(self::SESSION_KEY_IDENTITY, $result['identity']);
+                $this->sessionManager->setIdToken($session, $result['idToken']);
 
                 if ($preAuthUrl !== null) {
                     return new RedirectResponse($preAuthUrl);
@@ -124,7 +125,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 $session->set(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
             }
 
-            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
+            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email'], $result['idToken']);
 
             return new RedirectResponse('/link-or-create-account');
         } finally {

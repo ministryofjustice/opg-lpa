@@ -9,6 +9,7 @@ readonly class PendingLink
     public function __construct(
         public string $sub,
         public string $email,
+        public string $idToken,
     ) {
     }
 }

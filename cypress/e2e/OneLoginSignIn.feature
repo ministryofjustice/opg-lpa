@@ -114,6 +114,20 @@ Feature: One Login Sign In
     And I choose to try again
     And I should be on "/link-or-create-account"
 
+  @RequiresMockOneLogin
+  Scenario: Signing out of Make also signs the user out of One Login
+    Then I click "onelogin-signin-button"
+    And I am taken to "/login-onelogin"
+    And I click "onelogin-signin-button"
+    And I am on the mock One Login page
+    And I continue through mock One Login
+    And I should be on "/link-or-create-account"
+    And I choose to create a new Make account
+    And I submit the form
+    And I am signed in with my new Make account
+    And I sign out and am signed out of One Login
+    And I am taken to the post logout url
+
   Scenario: Reaching the link-account page directly without a One Login session returns to sign in
     Then I visit "/link-account" without being logged in
 
