@@ -79,6 +79,7 @@ locals {
       command     = ["/bin/sh", "-c", "/usr/local/bin/db-migrations.sh"]
       volumesFrom = [],
       privileged  = false,
+      user        = "appuser",
       logConfiguration = {
         logDriver = "awslogs",
         options = {
