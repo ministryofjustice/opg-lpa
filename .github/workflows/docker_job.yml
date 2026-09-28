@@ -182,6 +182,42 @@ jobs:
             image_tag: latest
             scan_id: aurora_scheduler
 
+  snyk_monitor_pushed_images:
+    name: "Snyk monitor ${{ matrix.image_name }}"
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: docker_build_scan_push
+    uses: ./.github/workflows/snyk_container_monitor_job.yml
+    with:
+      image_name: ${{ matrix.image_name }}
+      image_tag: ${{ matrix.image_tag || inputs.tag }}
+      snyk_policy_path: ${{ matrix.snyk_policy_path }}
+      oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image_name: online-lpa/front_app
+            snyk_policy_path: service-front/docker/app/.snyk
+          - image_name: online-lpa/front_web
+            snyk_policy_path: service-front/docker/web/.snyk
+          - image_name: online-lpa/api_app
+            snyk_policy_path: service-api/docker/app/.snyk
+          - image_name: online-lpa/api_web
+            snyk_policy_path: service-api/docker/web/.snyk
+          - image_name: online-lpa/admin_app
+            snyk_policy_path: service-admin/docker/app/.snyk
+          - image_name: online-lpa/admin_web
+            snyk_policy_path: service-admin/docker/web/.snyk
+          - image_name: online-lpa/pdf_app
+            snyk_policy_path: service-pdf/docker/app/.snyk
+          - image_name: online-lpa/seeding_app
+            snyk_policy_path: service-seeding/docker/app/.snyk
+          - image_name: lambda-aurora_scheduler
+            snyk_policy_path: aurora-scheduler/docker/.snyk
+            image_tag: latest
+
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan_test_images:
     name: "Build and scan test image / ${{ matrix.image_name }}"
