@@ -35,6 +35,11 @@ on:
         required: false
         type: string
         default: "build-cache"
+      enable_snyk_monitor:
+        description: "Monitor pushed images in Snyk (currently production images only)"
+        required: false
+        type: boolean
+        default: false
     secrets:
       SLACK_BOT_TOKEN:
         required: true
@@ -99,11 +104,13 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@4edbf1117bc2334cd4c1b959e1cbc1c0445c26f5 # v3.19.17
+    # TODO: pin to a release tag once ministryofjustice/opg-github-workflows#170 is merged
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@e4e0d388d668260b4aa9bdbb42a73c8e98604ed6 # LPAL-2494 (PR #170)
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
       enable_snyk_scanning: true
+      enable_snyk_monitor: ${{ inputs.enable_snyk_monitor }}
       snyk_policy_path: ${{ matrix.snyk_policy_path }}
       snyk_container_options: --severity-threshold=high
       snyk_ecr_registry_id: "311462405659"
@@ -181,42 +188,6 @@ jobs:
             dockerfile_path: ./aurora-scheduler/docker/Dockerfile
             image_tag: latest
             scan_id: aurora_scheduler
-
-  snyk_monitor_pushed_images:
-    name: "Snyk monitor ${{ matrix.image_name }}"
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: docker_build_scan_push
-    uses: ./.github/workflows/snyk_container_monitor_job.yml
-    with:
-      image_name: ${{ matrix.image_name }}
-      image_tag: ${{ matrix.image_tag || inputs.tag }}
-      snyk_policy_path: ${{ matrix.snyk_policy_path }}
-      oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
-    secrets:
-      SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image_name: online-lpa/front_app
-            snyk_policy_path: service-front/docker/app/.snyk
-          - image_name: online-lpa/front_web
-            snyk_policy_path: service-front/docker/web/.snyk
-          - image_name: online-lpa/api_app
-            snyk_policy_path: service-api/docker/app/.snyk
-          - image_name: online-lpa/api_web
-            snyk_policy_path: service-api/docker/web/.snyk
-          - image_name: online-lpa/admin_app
-            snyk_policy_path: service-admin/docker/app/.snyk
-          - image_name: online-lpa/admin_web
-            snyk_policy_path: service-admin/docker/web/.snyk
-          - image_name: online-lpa/pdf_app
-            snyk_policy_path: service-pdf/docker/app/.snyk
-          - image_name: online-lpa/seeding_app
-            snyk_policy_path: service-seeding/docker/app/.snyk
-          - image_name: lambda-aurora_scheduler
-            snyk_policy_path: aurora-scheduler/docker/.snyk
-            image_tag: latest
 
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan_test_images:
