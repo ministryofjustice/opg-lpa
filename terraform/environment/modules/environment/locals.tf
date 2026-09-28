@@ -54,6 +54,7 @@ locals {
       mountPoints            = [],
       name                   = "aws-otel-collector",
       readonlyRootFilesystem = true,
+      user                   = "aoc",
       command = [
         "--config=/etc/ecs/ecs-default-config.yaml"
       ],
