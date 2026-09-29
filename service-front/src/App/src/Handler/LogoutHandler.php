@@ -4,26 +4,21 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\OneLoginSignOut;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
-use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 class LogoutHandler implements RequestHandlerInterface
 {
     public function __construct(
         private readonly array $config,
-        private readonly bool $oneLoginEnabled,
-        private readonly OneLoginService $oneLoginService,
         private readonly OneLoginSessionManager $oneLoginSessionManager,
-        private readonly LoggerInterface $logger,
+        private readonly OneLoginSignOut $oneLoginSignOut,
     ) {
     }
 
@@ -40,17 +35,13 @@ class LogoutHandler implements RequestHandlerInterface
             $session->regenerate();
         }
 
-        $logoutUrl = $this->config['redirects']['logout'] ?? '/';
+        $logoutUrl = $this->config['redirects']['logout'] ?? null;
 
-        if ($this->oneLoginEnabled && $idToken !== null) {
-            // Also end the user's GOV.UK One Login session; One Login then sends them on to $logoutUrl.
-            try {
-                return new RedirectResponse($this->oneLoginService->logoutUrl($idToken, $logoutUrl));
-            } catch (RuntimeException | ClientExceptionInterface $e) {
-                $this->logger->warning('auth.onelogin.logout_url_failed', ['message' => $e->getMessage()]);
-            }
+        if ($logoutUrl === null) {
+            return new RedirectResponse('/');
         }
 
-        return new RedirectResponse($logoutUrl);
+        // Also end the user's GOV.UK One Login session; One Login then sends them on to $logoutUrl.
+        return new RedirectResponse($this->oneLoginSignOut->url($idToken, $logoutUrl) ?? $logoutUrl);
     }
 }

@@ -113,14 +113,42 @@ class OneLoginSessionManagerTest extends TestCase
         $this->manager->clearPendingLink($this->session);
     }
 
-    public function testSetIdTokenStoresItUnderItsOwnKey(): void
+    public function testStartSessionRegeneratesClearsAndStoresIdentityWithIdToken(): void
     {
-        $this->session
-            ->expects($this->once())
-            ->method('set')
-            ->with(self::ID_TOKEN_KEY, self::ID_TOKEN);
+        $identity = [
+            'userId'         => 'uid-1',
+            'token'          => 'tok-abc',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
 
-        $this->manager->setIdToken($this->session, self::ID_TOKEN);
+        $calls = [];
+        $this->session->method('regenerate')->willReturnCallback(function () use (&$calls): SessionInterface {
+            $calls[] = 'regenerate';
+
+            return $this->session;
+        });
+        $this->session->method('clear')->willReturnCallback(function () use (&$calls): void {
+            $calls[] = 'clear';
+        });
+        $this->session->method('set')->willReturnCallback(function (string $key, mixed $value) use (&$calls): void {
+            $calls[] = [$key => $value];
+        });
+
+        $this->manager->startSession($this->session, $identity, self::ID_TOKEN);
+
+        $this->assertSame(
+            ['regenerate', 'clear', ['identity' => $identity], [self::ID_TOKEN_KEY => self::ID_TOKEN]],
+            $calls,
+        );
+    }
+
+    public function testForgetIdTokenRemovesIt(): void
+    {
+        $this->session->expects($this->once())->method('unset')->with(self::ID_TOKEN_KEY);
+
+        $this->manager->forgetIdToken($this->session);
     }
 
     public function testGetIdTokenReturnsStoredToken(): void

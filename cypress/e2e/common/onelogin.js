@@ -42,12 +42,12 @@ Then(`I am returned to the appropriate page shown after a password reset`, () =>
 });
 
 
-Then(`I am on the mock One Login page`, () => {
+function checkOnMockOneLoginPage() {
   cy.url().should('include', 'localhost:4549');
   cy.contains('Continue').should('be.visible');
-});
+}
 
-Then(`I continue through mock One Login`, () => {
+function continueThroughMockOneLogin() {
   cy.origin('http://localhost:4549', () => {
     cy.contains('Continue').click();
   });
@@ -57,6 +57,34 @@ Then(`I continue through mock One Login`, () => {
       Cypress.env('a11yCheckedPages', new Set());
     }
   });
+}
+
+function chooseToCreateNewMakeAccount() {
+  cy.get('input[name="choice"][value="create"]').check();
+}
+
+function checkSignedIn() {
+  cy.get('[data-cy=sign-out]').should('be.visible');
+}
+
+Then(`I am on the mock One Login page`, checkOnMockOneLoginPage);
+
+Then(`I continue through mock One Login`, continueThroughMockOneLogin);
+
+When(`I sign in through mock One Login with a new Make account`, () => {
+  cy.get('[data-cy="onelogin-signin-button"]').click();
+  cy.url().should('eq', Cypress.config().baseUrl + '/login-onelogin');
+  cy.OPGCheckA11y();
+  cy.get('[data-cy="onelogin-signin-button"]').click();
+  checkOnMockOneLoginPage();
+  continueThroughMockOneLogin();
+  cy.url().should(
+    'include',
+    Cypress.config().baseUrl + '/link-or-create-account',
+  );
+  chooseToCreateNewMakeAccount();
+  cy.get('main [type="submit"]:visible').should('not.be.disabled').click();
+  checkSignedIn();
 });
 
 Then(
@@ -72,18 +100,17 @@ Then(`I choose to link an existing Make account`, () => {
   cy.get('input[name="choice"][value="link"]').check();
 });
 
-Then(`I choose to create a new Make account`, () => {
-  cy.get('input[name="choice"][value="create"]').check();
-});
+Then(`I choose to create a new Make account`, chooseToCreateNewMakeAccount);
 
-Then(`I am signed in with my new Make account`, () => {
-  cy.get('[data-cy=sign-out]').should('be.visible');
-});
+Then(`I am signed in with my new Make account`, checkSignedIn);
 
-Then(`I sign out and am signed out of One Login`, () => {
-  cy.intercept('GET', 'http://localhost:4549/logout*').as('oneLoginLogout');
+const MOCK_ONELOGIN_LOGOUT = 'http://localhost:4549/logout*';
+const TIMEOUT_PAGE = '/login/timeout';
 
-  cy.get('[data-cy=sign-out]').click();
+function expectOneLoginLogout(navigate, postLogoutRedirectUri) {
+  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+
+  navigate();
 
   cy.wait('@oneLoginLogout')
     .its('request.url')
@@ -91,10 +118,75 @@ Then(`I sign out and am signed out of One Login`, () => {
       const params = new URL(url).searchParams;
       expect(params.get('id_token_hint')).to.not.be.empty;
       expect(params.get('post_logout_redirect_uri')).to.eq(
-        Cypress.config().postLogoutUrl,
+        postLogoutRedirectUri,
       );
     });
+}
+
+Then(`I sign out and am signed out of One Login`, () => {
+  expectOneLoginLogout(
+    () => cy.get('[data-cy=sign-out]').click(),
+    Cypress.config().postLogoutUrl,
+  );
 });
+
+function expectNoOneLoginLogout(navigate, expectedUrl) {
+  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+
+  navigate();
+
+  cy.url().should('eq', expectedUrl);
+  cy.get('@oneLoginLogout.all').should('have.length', 0);
+}
+
+function returnTo(path) {
+  return () => cy.window().then((win) => win.location.assign(path));
+}
+
+Then(
+  `I return to {string} after timing out and am signed out of One Login`,
+  (path) => {
+    expectOneLoginLogout(
+      returnTo(path),
+      Cypress.config().baseUrl + TIMEOUT_PAGE,
+    );
+  },
+);
+
+Then(`I sign out without going through One Login`, () => {
+  expectNoOneLoginLogout(
+    () => cy.get('[data-cy=sign-out]').click(),
+    Cypress.config().postLogoutUrl,
+  );
+});
+
+Then(
+  `I return to {string} after timing out without going through One Login`,
+  (path) => {
+    expectNoOneLoginLogout(
+      returnTo(path),
+      Cypress.config().baseUrl + TIMEOUT_PAGE,
+    );
+  },
+);
+
+// Mimics the page's own jQuery calls (e.g. dashboard status polling) after a timeout: they
+// must get the normal timeout redirect, leaving the ID token for the next page load.
+Then(
+  `a background request to {string} is sent to the timeout page, not One Login`,
+  (path) => {
+    cy.request({
+      url: path,
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      followRedirect: false,
+    }).then((response) => {
+      expect(response.status).to.eq(302);
+      expect(response.redirectedToUrl).to.eq(
+        Cypress.config().baseUrl + TIMEOUT_PAGE,
+      );
+    });
+  },
+);
 
 const ONELOGIN_LINK_ACCOUNTS = {
   link: 'onelogin_link_email',

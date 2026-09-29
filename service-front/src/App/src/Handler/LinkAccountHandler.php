@@ -28,8 +28,6 @@ class LinkAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
-    private const string SESSION_KEY_IDENTITY     = 'identity';
-
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
@@ -141,10 +139,7 @@ class LinkAccountHandler implements RequestHandlerInterface
     ): RedirectResponse {
         $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
-        $session->regenerate();
-        $session->clear();
-        $session->set(self::SESSION_KEY_IDENTITY, $identity);
-        $this->sessionManager->setIdToken($session, $idToken);
+        $this->sessionManager->startSession($session, $identity, $idToken);
 
         $this->logger->info('auth.onelogin.link_success');
 

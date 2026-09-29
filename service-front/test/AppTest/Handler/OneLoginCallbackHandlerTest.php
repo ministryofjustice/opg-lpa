@@ -275,7 +275,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->session
             ->expects($this->exactly(2))
             ->method('set')
-            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+            ->willReturnCallback(function (string $key, mixed $value) use (&$written): void {
                 $written[$key] = $value;
             });
 

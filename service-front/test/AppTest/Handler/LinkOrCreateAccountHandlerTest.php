@@ -156,7 +156,7 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         $this->session->expects($this->once())->method('clear');
         $written = [];
         $this->session->method('set')
-            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+            ->willReturnCallback(function (string $key, mixed $value) use (&$written): void {
                 $written[$key] = $value;
             });
 

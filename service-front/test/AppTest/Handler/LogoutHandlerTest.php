@@ -5,20 +5,14 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\LogoutHandler;
-use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
-use Exception;
+use App\Service\OneLogin\OneLoginSignOut;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Log\LoggerInterface;
-use RuntimeException;
-use Throwable;
 
 class LogoutHandlerTest extends TestCase
 {
@@ -27,25 +21,17 @@ class LogoutHandlerTest extends TestCase
     private const string ONE_LOGIN_LOGOUT_URL = 'https://oidc.example.com/logout?id_token_hint=header.payload.sig';
 
     private SessionInterface&MockObject $session;
-    private OneLoginService&MockObject $oneLoginService;
-    private LoggerInterface&MockObject $logger;
+    private OneLoginSignOut&MockObject $oneLoginSignOut;
 
     protected function setUp(): void
     {
         $this->session         = $this->createMock(SessionInterface::class);
-        $this->oneLoginService = $this->createMock(OneLoginService::class);
-        $this->logger          = $this->createMock(LoggerInterface::class);
+        $this->oneLoginSignOut = $this->createMock(OneLoginSignOut::class);
     }
 
-    private function createHandler(array $config = ['redirects' => ['logout' => self::DONE_URL]], bool $oneLoginEnabled = true): LogoutHandler
+    private function createHandler(array $config = ['redirects' => ['logout' => self::DONE_URL]]): LogoutHandler
     {
-        return new LogoutHandler(
-            $config,
-            $oneLoginEnabled,
-            $this->oneLoginService,
-            new OneLoginSessionManager(),
-            $this->logger,
-        );
+        return new LogoutHandler($config, new OneLoginSessionManager(), $this->oneLoginSignOut);
     }
 
     private function createRequest(?string $idToken = null): ServerRequest
@@ -67,17 +53,25 @@ class LogoutHandlerTest extends TestCase
         $this->createHandler()->handle($this->createRequest());
     }
 
-    public function testRedirectsToConfiguredLogoutUrl(): void
+    public function testPasswordUserIsRedirectedToConfiguredLogoutUrl(): void
     {
+        $this->oneLoginSignOut
+            ->expects($this->once())
+            ->method('url')
+            ->with(null, '/goodbye')
+            ->willReturn(null);
+
         $response = $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest());
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/goodbye', $response->getHeaderLine('Location'));
     }
 
-    public function testRedirectsToRootWhenNoConfiguredUrl(): void
+    public function testRedirectsToRootAndSkipsOneLoginWhenNoConfiguredUrl(): void
     {
-        $response = $this->createHandler([])->handle($this->createRequest());
+        $this->oneLoginSignOut->expects($this->never())->method('url');
+
+        $response = $this->createHandler([])->handle($this->createRequest(self::ID_TOKEN));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/', $response->getHeaderLine('Location'));
@@ -85,7 +79,7 @@ class LogoutHandlerTest extends TestCase
 
     public function testHandlesNullSessionGracefully(): void
     {
-        $this->oneLoginService->expects($this->never())->method('logoutUrl');
+        $this->oneLoginSignOut->method('url')->with(null, self::DONE_URL)->willReturn(null);
 
         $request = (new ServerRequest())
             ->withMethod('GET')
@@ -97,24 +91,6 @@ class LogoutHandlerTest extends TestCase
         $this->assertEquals(self::DONE_URL, $response->getHeaderLine('Location'));
     }
 
-    public function testPasswordUserIsNotSentToOneLogin(): void
-    {
-        $this->oneLoginService->expects($this->never())->method('logoutUrl');
-
-        $response = $this->createHandler()->handle($this->createRequest());
-
-        $this->assertEquals(self::DONE_URL, $response->getHeaderLine('Location'));
-    }
-
-    public function testOneLoginUserIsNotSentToOneLoginWhenFeatureIsOff(): void
-    {
-        $this->oneLoginService->expects($this->never())->method('logoutUrl');
-
-        $response = $this->createHandler(oneLoginEnabled: false)->handle($this->createRequest(self::ID_TOKEN));
-
-        $this->assertEquals(self::DONE_URL, $response->getHeaderLine('Location'));
-    }
-
     public function testOneLoginUserIsSignedOutLocallyThenSentToOneLogin(): void
     {
         $calls = [];
@@ -123,12 +99,12 @@ class LogoutHandlerTest extends TestCase
             $calls[] = 'clear';
         });
 
-        $this->oneLoginService
+        $this->oneLoginSignOut
             ->expects($this->once())
-            ->method('logoutUrl')
+            ->method('url')
             ->with(self::ID_TOKEN, self::DONE_URL)
             ->willReturnCallback(function () use (&$calls): string {
-                $calls[] = 'logoutUrl';
+                $calls[] = 'url';
 
                 return self::ONE_LOGIN_LOGOUT_URL;
             });
@@ -137,38 +113,15 @@ class LogoutHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(self::ONE_LOGIN_LOGOUT_URL, $response->getHeaderLine('Location'));
-        $this->assertSame(['clear', 'logoutUrl'], $calls);
+        $this->assertSame(['clear', 'url'], $calls);
     }
 
-    /**
-     * @return array<string, array{Throwable}>
-     */
-    public static function oneLoginFailureProvider(): array
+    public function testFallsBackToConfiguredLogoutUrlWhenOneLoginUrlIsUnavailable(): void
     {
-        return [
-            'API error'         => [new RuntimeException('API unavailable')],
-            'transport failure' => [new class ('API unavailable') extends Exception implements ClientExceptionInterface {
-            }],
-        ];
-    }
-
-    #[DataProvider('oneLoginFailureProvider')]
-    public function testFallsBackToConfiguredLogoutUrlWhenOneLoginUrlCannotBeBuilt(Throwable $failure): void
-    {
-        $this->session->expects($this->once())->method('clear');
-
-        $this->oneLoginService
-            ->method('logoutUrl')
-            ->willThrowException($failure);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.logout_url_failed', ['message' => 'API unavailable']);
+        $this->oneLoginSignOut->method('url')->willReturn(null);
 
         $response = $this->createHandler()->handle($this->createRequest(self::ID_TOKEN));
 
-        $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals(self::DONE_URL, $response->getHeaderLine('Location'));
     }
 }
