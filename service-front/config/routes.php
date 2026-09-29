@@ -100,7 +100,6 @@ use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
-use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
 use App\Handler\SharedSpaceImportFailedHandler;
@@ -200,7 +199,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
-        $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
