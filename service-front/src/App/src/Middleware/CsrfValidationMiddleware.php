@@ -16,12 +16,18 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class CsrfValidationMiddleware implements MiddlewareInterface
 {
     public const string TOKEN_ATTRIBUTE = 'csrfToken';
 
     private const string CSRF_KEY = '__csrf';
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+    ) {
+    }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -52,6 +58,12 @@ class CsrfValidationMiddleware implements MiddlewareInterface
                 // on the same page (popup opens, reuse-details, etc.) don't invalidate the token
                 // embedded in the parent page's main form.
                 if ($postToken === '' || $postToken !== $sessionToken) {
+                    $this->logger->warning('csrf.validation_failed', [
+                        'reason'              => $this->failureReason($postToken, $sessionToken),
+                        'path'                => $request->getUri()->getPath(),
+                        'session_cookie_sent' => array_key_exists(session_name(), $request->getCookieParams()),
+                    ]);
+
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
                     $flash->flash(FlashMessenger::ERROR, ['Invalid CSRF token. Please try submitting the form again.']);
                     return new RedirectResponse($request->getUri()->getPath());
@@ -73,5 +85,17 @@ class CsrfValidationMiddleware implements MiddlewareInterface
         $request = $request->withAttribute(self::TOKEN_ATTRIBUTE, $token);
 
         return $handler->handle($request);
+    }
+
+    /**
+     * Says which side of the comparison was missing or wrong, without logging either token.
+     */
+    private function failureReason(mixed $postToken, mixed $sessionToken): string
+    {
+        return match (true) {
+            $postToken === ''    => 'no_post_token',
+            $sessionToken === '' => 'no_session_token',
+            default              => 'mismatch',
+        };
     }
 }

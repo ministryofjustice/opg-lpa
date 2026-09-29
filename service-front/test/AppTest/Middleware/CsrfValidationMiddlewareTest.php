@@ -17,17 +17,20 @@ use Mezzio\Session\SessionInterface;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionMiddleware;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 class CsrfValidationMiddlewareTest extends TestCase
 {
     private CsrfGuardInterface&MockObject $guard;
     private SessionInterface&MockObject $session;
     private FlashMessages&MockObject $flashMessage;
+    private LoggerInterface&MockObject $logger;
     private CsrfValidationMiddleware $middleware;
 
     protected function setUp(): void
@@ -35,7 +38,8 @@ class CsrfValidationMiddlewareTest extends TestCase
         $this->guard   = $this->createMock(CsrfGuardInterface::class);
         $this->session = $this->createMock(SessionInterface::class);
         $this->flashMessage = $this->createMock(FlashMessages::class);
-        $this->middleware = new CsrfValidationMiddleware();
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->middleware = new CsrfValidationMiddleware($this->logger);
     }
 
     private function makeRequest(
@@ -315,5 +319,53 @@ class CsrfValidationMiddlewareTest extends TestCase
         $result = $this->middleware->process($request, $handler);
 
         $this->assertInstanceOf(RedirectResponse::class, $result);
+    }
+
+    /**
+     * @return array<string, array{string, ?string, array<string, string>, string, bool}>
+     */
+    public static function failureReasonProvider(): array
+    {
+        return [
+            'form sent no token'      => ['session-token', null, ['lpa3' => 'abc'], 'no_post_token', true],
+            'session has no token'    => ['', 'posted-token', ['lpa3' => 'abc'], 'no_session_token', true],
+            'session cookie not sent' => ['', 'posted-token', [], 'no_session_token', false],
+            'tokens differ'           => ['session-token', 'posted-token', ['lpa3' => 'abc'], 'mismatch', true],
+        ];
+    }
+
+    /**
+     * @param array<string, string> $cookies
+     */
+    #[DataProvider('failureReasonProvider')]
+    public function testFailedValidationLogsWhyWithoutTheTokens(
+        string $sessionToken,
+        ?string $postToken,
+        array $cookies,
+        string $expectedReason,
+        bool $expectedCookieSent,
+    ): void {
+        session_name('lpa3');
+
+        $this->session->method('get')->with('__csrf', '')->willReturn($sessionToken);
+
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with('csrf.validation_failed', [
+                'reason'              => $expectedReason,
+                'path'                => '/signup',
+                'session_cookie_sent' => $expectedCookieSent,
+            ]);
+
+        $request = (new ServerRequest(uri: 'https://example.com/signup'))
+            ->withMethod('POST')
+            ->withCookieParams($cookies)
+            ->withAttribute(CsrfMiddleware::GUARD_ATTRIBUTE, $this->guard)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flashMessage)
+            ->withParsedBody($postToken === null ? [] : ['__csrf' => $postToken]);
+
+        $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
     }
 }

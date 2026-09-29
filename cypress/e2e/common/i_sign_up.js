@@ -40,8 +40,47 @@ function signUp(user, password) {
   cy.get('[data-cy=signup-password-confirm]').clear().type(password);
   cy.get('[data-cy=signup-terms]').check();
 
+  logCsrfState();
+
   // Wait for the POST to complete before returning.
   cy.intercept('POST', '**/signup').as('signupRequest');
   cy.get('[data-cy=signup-submit-button]').click();
-  cy.wait('@signupRequest').its('response.statusCode').should('eq', 200);
+  cy.wait('@signupRequest')
+    .then(logSignupPost)
+    .its('response.statusCode')
+    .should('eq', 200);
+}
+
+// TEMPORARY
+const prefix = (value) => (value ? String(value).slice(0, 8) : 'none');
+
+const lpa3From = (cookieHeader) =>
+  (/(?:^|;\s*)lpa3=([^;]+)/.exec(cookieHeader || '') || [])[1];
+
+function logCsrfState() {
+  cy.getCookie('lpa3').then((cookie) =>
+    cy.task(
+      'log',
+      `[csrf-debug] lpa3 in browser after GET: ${prefix(cookie && cookie.value)}`,
+    ),
+  );
+  cy.get('input[name="__csrf"]')
+    .invoke('val')
+    .then((token) =>
+      cy.task('log', `[csrf-debug] __csrf in form: ${prefix(token)}`),
+    );
+}
+
+function logSignupPost(interception) {
+  const { request, response } = interception;
+  const postedToken = new URLSearchParams(request.body).get('__csrf');
+
+  return cy
+    .task(
+      'log',
+      `[csrf-debug] POST /signup sent lpa3: ${prefix(lpa3From(request.headers.cookie))}, ` +
+        `__csrf: ${prefix(postedToken)}, got ${response.statusCode} ` +
+        `location: ${response.headers.location || 'none'}, set-cookie: ${response.headers['set-cookie'] ? 'yes' : 'no'}`,
+    )
+    .then(() => interception);
 }
