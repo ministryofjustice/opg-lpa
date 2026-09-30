@@ -13,9 +13,10 @@ function postForm(path, body) {
 
 When(`I post to {string} without a CSRF token`, (path) => {
   cy.wrap(path).as('csrfPath');
-  postForm(path, { email: 'someone@example.com', password: 'Pass12345678' }).as(// pragma: allowlist secret
-    'csrfResponse',
-  );
+  postForm(path, {
+    email: 'someone@example.com',
+    password: 'Pass12345678', //pragma: allowlist secret
+  }).as('csrfResponse');
 });
 
 When(`I post to {string} with an invalid CSRF token`, (path) => {

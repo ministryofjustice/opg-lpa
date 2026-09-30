@@ -19,7 +19,9 @@ When(`I log in as seeded user on the current page`, () => {
     expect(title.toLowerCase()).to.include('sign in');
   });
 
-  submitLoginForm(Cypress.env('seeded_email'), Cypress.env('seeded_password'));
+  cy.get('[data-cy=login-email]').clear().type(Cypress.env('seeded_email'));
+  cy.get('[data-cy=login-password]').clear().type(Cypress.env('seeded_password'));
+  cy.get('[data-cy=login-submit-button]').click();
 });
 
 When(`I log in as second seeded user`, () => {
@@ -113,14 +115,7 @@ function logIn(user, password, url) {
     expect(title.toLowerCase()).to.include('sign in');
   });
 
-  submitLoginForm(user, password);
-}
-
-function submitLoginForm(user, password) {
   cy.get('[data-cy=login-email]').clear().type(user);
   cy.get('[data-cy=login-password]').clear().type(password);
-
-  cy.intercept('POST', '**/login').as('loginRequest');
   cy.get('[data-cy=login-submit-button]').click();
-  cy.wait('@loginRequest');
 }

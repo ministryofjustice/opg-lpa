@@ -137,13 +137,13 @@ final class ConfirmRegistrationHandlerTest extends TestCase
         self::assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testSessionIsClearedButNotRegeneratedOnValidToken(): void
+    public function testSessionIsClearedAndRegeneratedOnValidToken(): void
     {
         $token = 'valid-token-123';
 
         $session = $this->createMock(SessionInterface::class);
         $session->expects($this->once())->method('clear');
-        $session->expects($this->never())->method('regenerate');
+        $session->expects($this->once())->method('regenerate');
 
         $request = (new ServerRequest([], [], '/signup/confirm/' . $token, 'GET'))
             ->withAttribute('token', $token)

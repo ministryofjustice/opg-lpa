@@ -23,10 +23,7 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
 
 function checkLoadedPage() {
     cy.document().then(doc => {
-      expect(
-        doc.documentElement.innerHTML,
-        "CSRF token mismatch problem detected",
-      ).not.to.contain("Invalid CSRF token");
+        expect(doc.documentElement.innerHTML).not.to.contain("Invalid CSRF token", "CSRF token mismatch problem detected");
 
         // check that the page title matches the content of the h1 element on
         // the page
@@ -39,35 +36,31 @@ function checkLoadedPage() {
 }
 
 Cypress.Commands.add("visitWithChecks", (url, options) => {
-  options = options || {};
-  cy.visit(url, options);
-  checkLoadedPage();
+    options = options || {};
+    cy.visit(url, options);
+    checkLoadedPage();
 });
 
-// Like visitWithChecks, but when a page is already loaded it navigates from inside that page
-// instead of using cy.visit(). Use it to open a front page with a CSRF-protected form.
-// Why: in CI the @Admin specs run with Cognito as Cypress's top frame (the SSO login is on
-// another site), and there a session cookie set by a cy.visit() response is lost, so the
-// form's POST fails the CSRF check. A navigation from inside the page keeps its cookie.
+// Like visitWithChecks, but when one of our pages is already loaded it navigates from that
+// page instead of using cy.visit(). The @Admin specs sign in through Cognito, a different
+// site, so in CI Cypress runs them with Cognito as the top frame; there a session cookie set
+// by a cy.visit() response is dropped, and a form's POST then fails its CSRF check.
 Cypress.Commands.add("openWithChecks", (path) => {
-  const target = Cypress.config().baseUrl + path;
+    const target = Cypress.config().baseUrl + path;
 
-  cy.url().then((currentUrl) => {
-    const onOurSite = [Cypress.config().baseUrl, Cypress.env("adminUrl")]
-      .some((ourUrl) => ourUrl && currentUrl.startsWith(ourUrl));
+    cy.url().then((currentUrl) => {
+        const onOurSite = [Cypress.config().baseUrl, Cypress.env("adminUrl")]
+            .some((ourUrl) => ourUrl && currentUrl.startsWith(ourUrl));
 
-    if (!onOurSite) {
-      // Nothing loaded yet, or another site (e.g. the gov.uk page after signing out)
-      // whose window Cypress can't reach, so there's no page of ours to navigate from.
-      cy.visit(path);
-      return;
-    }
+        if (onOurSite) {
+            cy.window().then((win) => win.location.assign(target));
+            cy.url().should("eq", target);
+        } else {
+            cy.visit(path);
+        }
+    });
 
-    cy.window().then((win) => win.location.assign(target));
-    cy.url().should("eq", target);
-  });
-
-  checkLoadedPage();
+    checkLoadedPage();
 });
 
 // window: DOM window instance
