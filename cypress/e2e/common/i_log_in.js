@@ -107,7 +107,7 @@ function logIn(user, password, url) {
   if (url === undefined) {
     url = '/login';
   }
-  cy.visitWithChecks(url);
+  cy.openWithChecks(url);
 
   cy.title().then((title) => {
     expect(title.toLowerCase()).to.include('sign in');

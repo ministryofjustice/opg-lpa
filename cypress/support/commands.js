@@ -21,9 +21,7 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     });
 });
 
-Cypress.Commands.add("visitWithChecks", (url, options) => {
-    options = options || {};
-    cy.visit(url, options);
+function checkLoadedPage() {
     cy.document().then(doc => {
       expect(
         doc.documentElement.innerHTML,
@@ -38,6 +36,38 @@ Cypress.Commands.add("visitWithChecks", (url, options) => {
             expect(title.text).to.contain(heading.textContent.trim());
         }
     });
+}
+
+Cypress.Commands.add("visitWithChecks", (url, options) => {
+  options = options || {};
+  cy.visit(url, options);
+  checkLoadedPage();
+});
+
+// Like visitWithChecks, but when a page is already loaded it navigates from inside that page
+// instead of using cy.visit(). Use it to open a front page with a CSRF-protected form.
+// Why: in CI the @Admin specs run with Cognito as Cypress's top frame (the SSO login is on
+// another site), and there a session cookie set by a cy.visit() response is lost, so the
+// form's POST fails the CSRF check. A navigation from inside the page keeps its cookie.
+Cypress.Commands.add("openWithChecks", (path) => {
+  const target = Cypress.config().baseUrl + path;
+
+  cy.url().then((currentUrl) => {
+    const onOurSite = [Cypress.config().baseUrl, Cypress.env("adminUrl")]
+      .some((ourUrl) => ourUrl && currentUrl.startsWith(ourUrl));
+
+    if (!onOurSite) {
+      // Nothing loaded yet, or another site (e.g. the gov.uk page after signing out)
+      // whose window Cypress can't reach, so there's no page of ours to navigate from.
+      cy.visit(path);
+      return;
+    }
+
+    cy.window().then((win) => win.location.assign(target));
+    cy.url().should("eq", target);
+  });
+
+  checkLoadedPage();
 });
 
 // window: DOM window instance
