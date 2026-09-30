@@ -42,9 +42,7 @@ Cypress.Commands.add("visitWithChecks", (url, options) => {
 });
 
 // Like visitWithChecks, but when one of our pages is already loaded it navigates from that
-// page instead of using cy.visit(). The @Admin specs sign in through Cognito, a different
-// site, so in CI Cypress runs them with Cognito as the top frame; there a session cookie set
-// by a cy.visit() response is dropped, and a form's POST then fails its CSRF check.
+// page instead of using cy.visit().
 Cypress.Commands.add("openWithChecks", (path) => {
     const target = Cypress.config().baseUrl + path;
 
