@@ -8,6 +8,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ApiProblemResponse;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Applications\Service;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -17,7 +18,8 @@ class AdminController extends AbstractRestfulController
 {
     public function __construct(
         private UsersService $usersService,
-        private Service $applicationsService
+        private Service $applicationsService,
+        private SharedSpaceService $sharedSpaceService,
     ) {
     }
 
@@ -53,16 +55,40 @@ class AdminController extends AbstractRestfulController
     public function matchUsersAction(): Json
     {
         $params = $this->params();
-        $query = $params->fromQuery('query');
+        $fullOrPartialEmail = $params->fromQuery('fullOrPartialEmail');
 
         $options = [
             'offset' => $params->fromQuery('offset', 0),
-            'limit' => $params->fromQuery('limit', 10)
+            'limit' => $params->fromQuery('limit', 20)
         ];
 
-        $users = $this->usersService->matchUsers($query, $options);
+        $result = $this->usersService->matchUsers($fullOrPartialEmail, $options);
 
-        return new Json((array) $users);
+        return new Json([
+            'results' => $result['results'],
+            'total' => $result['total'],
+        ]);
+    }
+
+    /**
+     * Match action for shared space details (wildcard/case-insensitive search)
+     */
+    public function matchSharedSpacesAction(): Json
+    {
+        $params = $this->params();
+        $fullOrPartialName = $params->fromQuery('fullOrPartialName');
+
+        $options = [
+            'offset' => $params->fromQuery('offset', 0),
+            'limit' => $params->fromQuery('limit', 20)
+        ];
+
+        $result = $this->sharedSpaceService->matchSharedSpaces($fullOrPartialName, $options);
+
+        return new Json([
+            'results' => $result['results'],
+            'total' => $result['total'],
+        ]);
     }
 
     public function sharedSpaceLpasAction(): Json|ApiProblemResponse
@@ -106,5 +132,38 @@ class AdminController extends AbstractRestfulController
         ];
 
         return new Json($response);
+    }
+
+    public function sharedSpaceMembersAction(): Json|ApiProblemResponse
+    {
+        $sharedSpaceId = $this->params()->fromRoute('sharedSpaceId');
+
+        if (empty($sharedSpaceId)) {
+            return new ApiProblemResponse(new ApiProblem(400, 'Missing required parameter: sharedSpaceId'));
+        }
+
+        $sharedSpaceName = $this->sharedSpaceService->getName($sharedSpaceId);
+
+        if ($sharedSpaceName === null) {
+            return new ApiProblemResponse(new ApiProblem(404, 'No shared space found for supplied shared space ID'));
+        }
+
+        $query = $this->params()->fromQuery();
+
+        $membersPage = max(1, intval($query['membersPage'] ?? 1));
+        $membersPerPage = max(1, intval($query['membersPerPage'] ?? 20));
+        $invitesPage = max(1, intval($query['invitesPage'] ?? 1));
+        $invitesPerPage = max(1, intval($query['invitesPerPage'] ?? 20));
+
+        $members = $this->sharedSpaceService->getMembersPaginated($sharedSpaceId, $membersPage, $membersPerPage);
+        $invites = $this->sharedSpaceService->getInvitesPaginated($sharedSpaceId, $invitesPage, $invitesPerPage);
+
+        return new Json([
+            'sharedSpaceName' => $sharedSpaceName,
+            'members' => $members['results'],
+            'membersTotal' => $members['total'],
+            'invites' => $invites['results'],
+            'invitesTotal' => $invites['total'],
+        ]);
     }
 }

@@ -14,12 +14,14 @@ interface UserRepositoryInterface
 
     /**
      * Returns zero or more users whose username (email address) approximately
-     * matches the query (case insensitive, using LIKE).
+     * matches the query (case insensitive, using LIKE), along with the total
+     * number of matching users (ignoring offset/limit), to support pagination.
      *
      * @param $query - string to match users against
      * @param $options - optional query criteria
+     * @return array{results: UserInterface[], total: int}
      */
-    public function matchUsers(string $query, array $options): iterable;
+    public function matchUsers(string $query, array $options): array;
 
     public function getById(string $id): ?UserInterface;
 

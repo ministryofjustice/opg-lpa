@@ -81,9 +81,13 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
       cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
 
       if (sharedSpaceName) {
+        if (sharedSpaceName.toLowerCase() === 'random') {
+          sharedSpaceName = `Shared Space ${Math.random().toString(10).substring(2, 10)}`;
+        }
+
         createSharedSpace(sharedSpaceName, email).then(
           ({ sharedSpaceId }) => {
-            cy.wrap({ email, password, lpaIds, sharedSpaceId }).as(storedAs ?? 'fixtureUser');
+            cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, lpaCount }).as(storedAs ?? 'fixtureUser');
 
             cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
           },
@@ -98,6 +102,10 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
 Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {
   const lpaCount = parseInt(lpaCountString, 10);
 
+  if (sharedSpaceName.toLowerCase() === 'random') {
+    sharedSpaceName = `Shared Space ${Math.random().toString(10).substring(2, 10)}`;
+  }
+
   createUserWithLpas(lpaCount, 'property-and-financial').then(({ email, password, lpaIds }) => {
     cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
     createUserWithLpas(0, 'property-and-financial').then(({ email: spaceEmail }) => {
@@ -107,7 +115,7 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
 
         createInvite(sharedSpaceId, spaceEmail).then(({ accessCode }) => {
-          cy.wrap({ email, password, lpaIds, sharedSpaceId, accessCode }).as('fixtureUser');
+          cy.wrap({ email, password, lpaIds, sharedSpaceId, accessCode, sharedSpaceName, spaceEmail }).as('fixtureUser');
         });
       });
     });
