@@ -27,8 +27,6 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
 
-    private const string SESSION_KEY_IDENTITY     = 'identity';
-
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
@@ -76,7 +74,7 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
                         $pendingLink->email,
                     );
 
-                    return $this->establishSession($session, $identity);
+                    return $this->establishSession($session, $identity, $pendingLink->idToken);
                 } catch (RuntimeException $e) {
                     $this->logger->error('auth.onelogin.create_error', ['message' => $e->getMessage()]);
                     $error = 'api-error';
@@ -99,13 +97,14 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
     /**
      * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
      */
-    private function establishSession(SessionInterface $session, array $identity): RedirectResponse
-    {
+    private function establishSession(
+        SessionInterface $session,
+        array $identity,
+        #[\SensitiveParameter] string $idToken,
+    ): RedirectResponse {
         $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
-        $session->regenerate();
-        $session->clear();
-        $session->set(self::SESSION_KEY_IDENTITY, $identity);
+        $this->sessionManager->startSession($session, $identity, $idToken);
 
         $this->logger->info('auth.onelogin.create_and_link_success');
 
