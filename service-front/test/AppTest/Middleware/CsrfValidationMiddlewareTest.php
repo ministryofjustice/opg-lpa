@@ -14,10 +14,13 @@ use Mezzio\Csrf\CsrfMiddleware;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Flash\FlashMessages;
 use Mezzio\Session\SessionInterface;
+use Mezzio\Router\Route;
+use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
 class CsrfValidationMiddlewareTest extends TestCase
@@ -58,6 +61,69 @@ class CsrfValidationMiddlewareTest extends TestCase
         }
 
         return $request;
+    }
+
+    /**
+     * @param array<string, bool> $options
+     */
+    private function withRoute(ServerRequest $request, array $options): ServerRequest
+    {
+        $route = new Route('/anything', $this->createMock(MiddlewareInterface::class), ['GET', 'POST'], 'a-route');
+        $route->setOptions($options);
+
+        return $request->withAttribute(RouteResult::class, RouteResult::fromRoute($route));
+    }
+
+    public function testUnauthenticatedRouteWithoutOptInSkipsValidationEntirely(): void
+    {
+        $request = $this->withRoute(
+            $this->makeRequest('POST', ['__csrf' => 'a-forged-token']),
+            ['unauthenticated_route' => true],
+        );
+
+        $this->session->method('get')->willReturn('the-real-token');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())
+            ->method('handle')
+            ->with($this->callback(
+                static fn(ServerRequest $r): bool
+                => $r->getAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE) === null
+            ))
+            ->willReturn(new EmptyResponse());
+
+        $this->middleware->process($request, $handler);
+    }
+
+    public function testUnauthenticatedRouteThatOptsInIsValidated(): void
+    {
+        $request = $this->withRoute(
+            $this->makeRequest('POST', ['__csrf' => 'a-forged-token'], true, true),
+            ['unauthenticated_route' => true, 'csrf' => true],
+        );
+
+        $this->session->method('get')->willReturn('the-real-token');
+        $this->flashMessage->expects($this->once())->method('flash');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $this->assertInstanceOf(RedirectResponse::class, $this->middleware->process($request, $handler));
+    }
+
+    public function testRouteWithNoOptionsIsValidated(): void
+    {
+        $request = $this->withRoute(
+            $this->makeRequest('POST', ['__csrf' => 'a-forged-token'], true, true),
+            [],
+        );
+
+        $this->session->method('get')->willReturn('the-real-token');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->never())->method('handle');
+
+        $this->assertInstanceOf(RedirectResponse::class, $this->middleware->process($request, $handler));
     }
 
     private function handlerReturning(ResponseInterface $response): RequestHandlerInterface
