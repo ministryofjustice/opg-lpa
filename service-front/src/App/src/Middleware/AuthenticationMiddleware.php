@@ -102,12 +102,16 @@ class AuthenticationMiddleware implements MiddlewareInterface
     {
         $idToken = $this->oneLoginSessionManager->getIdToken($session);
 
+        // Only a page load can take the user to One Login; a background (XHR) request keeps the
+        // normal redirect and leaves the ID token for the next page load.
         if ($idToken === null || $this->isXmlHttpRequest($request)) {
             return null;
         }
 
         $url = $this->oneLoginSignOut->url($idToken, ($this->redirectUriBuilder)($request->getUri(), $loginUrl));
 
+        // Forget the token only once we're sending the user to One Login, so a failure can be
+        // retried by a later sign-out and the return trip to the timeout page cannot loop.
         if ($url !== null) {
             $this->oneLoginSessionManager->forgetIdToken($session);
         }

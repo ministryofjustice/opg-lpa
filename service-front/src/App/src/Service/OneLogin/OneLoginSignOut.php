@@ -23,8 +23,7 @@ class OneLoginSignOut
     }
 
     /**
-     * Returns the One Login /logout URL for a user who signed in through One Login, or null when
-     * One Login is off.
+     * Returns the One Login /logout URL for a user who signed in through One Login.
      */
     public function url(#[\SensitiveParameter] ?string $idToken, string $postLogoutRedirectUri): ?string
     {
