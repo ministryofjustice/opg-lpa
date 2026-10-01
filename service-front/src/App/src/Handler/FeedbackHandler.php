@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\Date\DateService;
 use App\Service\Feedback\FeedbackService;
 use App\Service\Feedback\FeedbackValidationException;
@@ -22,6 +23,8 @@ use Throwable;
 
 class FeedbackHandler implements RequestHandlerInterface
 {
+    use CommonTemplateVariablesTrait;
+
     private const int MIN_SUBMISSION_TIME_SECONDS = 3;
     private const SESSION_KEY_FORM_GENERATED_TIME = 'feedback_form_generated_time';
     private const SESSION_KEY_FROM_PAGE = 'feedback_from_page';
@@ -59,10 +62,13 @@ class FeedbackHandler implements RequestHandlerInterface
 
                 $html = $this->renderer->render(
                     'application/general/feedback/index.twig',
-                    [
-                        'form'  => $form,
-                        'error' => 'An error occurred while submitting feedback. Please try again.',
-                    ]
+                    array_merge(
+                        $this->getTemplateVariables($request),
+                        [
+                            'form'  => $form,
+                            'error' => 'An error occurred while submitting feedback. Please try again.',
+                        ],
+                    )
                 );
 
                 return new HtmlResponse($html);
@@ -81,10 +87,13 @@ class FeedbackHandler implements RequestHandlerInterface
                 } catch (FeedbackValidationException $ex) {
                     $html = $this->renderer->render(
                         'application/general/feedback/index.twig',
-                        [
-                            'form'  => $form,
-                            'error' => $ex->getMessage(),
-                        ]
+                        array_merge(
+                            $this->getTemplateVariables($request),
+                            [
+                                'form'  => $form,
+                                'error' => $ex->getMessage(),
+                            ],
+                        )
                     );
 
                     return new HtmlResponse($html);
@@ -96,10 +105,13 @@ class FeedbackHandler implements RequestHandlerInterface
 
                     $html = $this->renderer->render(
                         'application/general/feedback/index.twig',
-                        [
-                            'form'  => $form,
-                            'error' => 'An error occurred while submitting feedback',
-                        ]
+                        array_merge(
+                            $this->getTemplateVariables($request),
+                            [
+                                'form'  => $form,
+                                'error' => 'An error occurred while submitting feedback',
+                            ],
+                        )
                     );
 
                     return new HtmlResponse($html);
@@ -140,9 +152,12 @@ class FeedbackHandler implements RequestHandlerInterface
 
         $html = $this->renderer->render(
             'application/general/feedback/index.twig',
-            [
-                'form' => $form,
-            ]
+            array_merge(
+                $this->getTemplateVariables($request),
+                [
+                    'form' => $form,
+                ],
+            )
         );
 
         return new HtmlResponse($html);

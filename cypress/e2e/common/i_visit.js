@@ -5,6 +5,12 @@ Given(`I visit {string}`, (url) => {
   cy.visitWithChecks(url);
 });
 
+// For a page with a CSRF-protected form: navigates from the current page rather than
+// cy.visit(), so the form's token and its session cookie stay in step (see openWithChecks).
+Given(`I open {string}`, (url) => {
+  cy.openWithChecks(url);
+});
+
 Given(`I visit {string} without being logged in`, (url) => {
   cy.visit(url, { failOnStatusCode: false });
   cy.url().should('include', '/login');

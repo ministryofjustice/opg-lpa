@@ -20,6 +20,7 @@ use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use App\Middleware\CsrfValidationMiddleware;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -71,6 +72,27 @@ class LoginHandlerTest extends TestCase
         }
 
         return $request;
+    }
+
+    public function testLoginFormReceivesACsrfToken(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(false);
+
+        $request = $this->createRequestWithSession()
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'a-real-token');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/general/auth/index.twig',
+                $this->callback(
+                    static fn(array $vars): bool => ($vars['csrfToken'] ?? null) === 'a-real-token'
+                ),
+            )
+            ->willReturn('html');
+
+        $this->handler->handle($request);
     }
 
     public function testGetRequestDisplaysLoginForm(): void
