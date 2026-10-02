@@ -43,7 +43,7 @@ class CannotLinkAccountHandlerTest extends TestCase
     {
         $pendingLink = $pendingSub === null
             ? null
-            : ['sub' => $pendingSub, 'email' => 'newuser@example.com'];
+            : ['sub' => $pendingSub, 'email' => 'newuser@example.com', 'idToken' => 'pending.id.token'];
 
         $this->session
             ->method('get')

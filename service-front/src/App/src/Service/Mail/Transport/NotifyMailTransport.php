@@ -28,6 +28,7 @@ class NotifyMailTransport implements MailTransportInterface
         UserDetails::EMAIL_PASSWORD_CHANGED                      => '856f6b93-a248-42ae-9580-5d0ff24b595e',
         UserDetails::EMAIL_PASSWORD_RESET                        => 'a4f2c358-0484-431f-8148-6d1280d79f44',
         UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT             => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
+        UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD               => '9c554245-94af-4695-bda6-b7259e39b4a4',
         UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING           => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
         SharedSpaceService::EMAIL_INVITE_MEMBER                  => '4fa3649b-4606-4856-85f6-6874fce5a001',
         SharedSpaceService::EMAIL_SUSPEND_MEMBER                 => '0bee6f68-9c18-4c42-a180-1f5916e88bf6',

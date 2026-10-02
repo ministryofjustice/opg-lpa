@@ -58,6 +58,32 @@ final class NotifyMailTransportTest extends TestCase
         );
     }
 
+    public function testShippedMapResolvesEveryTemplateConstant(): void
+    {
+        $templateRefs = [
+            UserDetails::EMAIL_PASSWORD_RESET,
+            UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT,
+            UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD,
+        ];
+
+        $notifyIds = [];
+        $this->client->method('sendEmail')->willReturnCallback(
+            function (string $to, string $templateId) use (&$notifyIds): array {
+                $notifyIds[] = $templateId;
+                return [];
+            }
+        );
+
+        $transport = $this->createTransport();
+
+        foreach ($templateRefs as $templateRef) {
+            $transport->send(new MailParameters('someone@example.com', $templateRef, []));
+        }
+
+        $this->assertCount(count($templateRefs), $notifyIds);
+        $this->assertCount(count($templateRefs), array_unique($notifyIds));
+    }
+
     public function testSendThrowsWhenTemplateReferenceIsUnknown(): void
     {
         $transport = $this->createTransport();

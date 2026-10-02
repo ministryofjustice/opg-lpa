@@ -100,7 +100,6 @@ use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
-use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
 use App\Handler\SharedSpaceImportFailedHandler;
@@ -153,17 +152,17 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     $app->route('/login[/{state:(?:timeout|internal-system-error)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route('/signup', RegisterHandler::class, ['GET', 'POST'], 'register')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/signup/confirm/{token:[a-zA-Z0-9]+}', ConfirmRegistrationHandler::class, 'register/confirm')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route('/signup/resend-email', ResendActivationEmailHandler::class, ['GET', 'POST'], 'register/resend-email')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route(
         '/forgot-password/reset[/{token:[^\r\n]*}]',
         ResetPasswordHandler::class,
@@ -172,7 +171,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     )
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
 
@@ -184,9 +183,9 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
             ->setOptions(['unauthenticated_route' => true]);
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
-            ->setOptions(['unauthenticated_route' => true]);
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
-            ->setOptions(['unauthenticated_route' => true]);
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
             ->setOptions(['unauthenticated_route' => true]);
         $app->post(
@@ -200,7 +199,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
-        $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',

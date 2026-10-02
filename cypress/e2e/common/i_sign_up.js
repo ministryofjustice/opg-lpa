@@ -32,7 +32,8 @@ Given(
 );
 
 function signUp(user, password) {
-  cy.visit('/signup').title().should('include', 'Create an account');
+  cy.openWithChecks('/signup');
+  cy.title().should('include', 'Create an account');
   cy.OPGCheckA11y();
   cy.get('[data-cy=signup-email]').clear().type(user);
   cy.get('[data-cy=signup-email-confirm]').clear().type(user);

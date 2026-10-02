@@ -90,7 +90,16 @@ class Service extends AbstractService
         // rejected for them — and we must not pass a null hash to password_verify.
         $passwordHash = $user->password();
 
-        if ($passwordHash === null || !password_verify($password, $passwordHash)) {
+        if ($user->oneLoginSub() !== null || $passwordHash === null) {
+            $this->log('info', 'Password sign-in attempt against a One Login account', [
+                'event' => 'auth.sign_in.one_login_account',
+                'user_id' => $user->id(),
+            ]);
+
+            return 'invalid-user-credentials';
+        }
+
+        if (!password_verify($password, $passwordHash)) {
             $this->getUserRepository()->incrementFailedLoginCounter($user->id());
 
             if (($user->failedLoginAttempts() + 1) >= self::MAX_ALLOWED_LOGIN_ATTEMPTS) {

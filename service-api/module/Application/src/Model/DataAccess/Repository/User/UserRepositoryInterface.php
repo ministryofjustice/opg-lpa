@@ -121,6 +121,11 @@ interface UserRepositoryInterface
     public function countDeletedAccounts(): int;
 
     /**
+     * Returns an account holding this GOV.UK One Login email address.
+     */
+    public function getByOneLoginEmail(string $email): ?UserInterface;
+
+    /**
      * Returns a single user by their GOV.UK One Login subject identifier.
      */
     public function getByOneLoginSub(string $sub): ?UserInterface;

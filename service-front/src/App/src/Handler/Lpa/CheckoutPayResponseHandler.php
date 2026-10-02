@@ -25,8 +25,6 @@ use RuntimeException;
 
 /**
  * Handles the callback from GOV.UK Pay after a user completes (or abandons) payment.
- *
- * @psalm-suppress UndefinedPropertyFetch
  */
 class CheckoutPayResponseHandler implements RequestHandlerInterface
 {
@@ -74,7 +72,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
             ]);
 
             return new RedirectResponse(
-                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
+                $this->urlHelper->generate('lpa/checkout', ['lpa-id' => $lpa->getId()])
             );
         }
 
@@ -92,10 +90,9 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
 
             $form->setAttribute(
                 'action',
-                $this->urlHelper->generate('lpa/checkout/pay', ['lpa-id' => $lpa->getId()])
+                $this->urlHelper->generate('lpa/checkout', ['lpa-id' => $lpa->getId()])
             );
             $form->setAttribute('class', 'js-single-use');
-            $form->get('submit')->setAttribute('value', 'Retry online payment');
 
             $template = ($paymentResponse->state->code ?? null) === 'P0030'
                 ? 'application/authenticated/lpa/checkout/govpay-cancel.twig'

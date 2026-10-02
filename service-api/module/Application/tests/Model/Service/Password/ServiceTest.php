@@ -107,9 +107,99 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals([], $result);
     }
 
+    public function testGenerateTokenRefusesAnAccountLinkedToOneLogin()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('linked@test.com', new User([
+            'id' => 1,
+            'active' => true,
+            'identity' => 'linked@test.com',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:abc',
+            'one_login_email' => 'linked@test.com',
+        ]));
+
+        $this->authUserRepository->shouldNotReceive('addPasswordResetToken');
+
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->assertEquals(
+            PasswordService::ACCOUNT_USES_ONE_LOGIN,
+            $service->generateToken('linked@test.com', false),
+        );
+    }
+    public function testGenerateTokenFindsAnAccountCreatedThroughOneLoginByItsOneLoginEmail()
+    {
+        $this->setUserDataSourceGetByUsernameExpectation('created@test.com', null);
+
+        $this->authUserRepository->shouldReceive('getByOneLoginEmail')
+            ->withArgs(['created@test.com'])
+            ->andReturn(new User([
+                'id' => 1,
+                'active' => true,
+                'identity' => 'onelogin:urn:fdc:gov.uk:2022:abc',
+                'one_login_sub' => 'urn:fdc:gov.uk:2022:abc',
+                'one_login_email' => 'created@test.com',
+            ]));
+
+        $this->authUserRepository->shouldNotReceive('addPasswordResetToken');
+
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->assertEquals(
+            PasswordService::ACCOUNT_USES_ONE_LOGIN,
+            $service->generateToken('created@test.com', false),
+        );
+    }
+
+    public function testUpdatePasswordUsingTokenRefusesAOneLoginAccount()
+    {
+        $this->authUserRepository->shouldReceive('getByResetToken')
+            ->withArgs(['reset-token'])
+            ->andReturn(new User([
+                'id' => 1,
+                'one_login_sub' => 'urn:fdc:gov.uk:2022:abc',
+            ]));
+
+        $this->authUserRepository->shouldNotReceive('updatePasswordUsingToken');
+
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->assertEquals(
+            'invalid-token',
+            $service->updatePasswordUsingToken('reset-token', 'NewPassword123'),
+        );
+    }
+
+    public function testChangePasswordRefusesAOneLoginAccount()
+    {
+        $this->setUserDataSourceGetByIdExpectation(1, new User([
+            'id' => 1,
+            'identity' => 'linked@test.com',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:abc',
+        ]));
+
+        $this->authUserRepository->shouldNotReceive('setNewPassword');
+
+        $service = new PasswordService();
+        $service->setUserRepository($this->authUserRepository);
+        $service->setAuthenticationService($this->authenticationService);
+
+        $this->assertEquals(
+            'invalid-user-credentials',
+            $service->changePassword(1, 'anything', 'NewPassword123'),
+        );
+    }
+
     public function testGenerateTokenUserNotFound()
     {
         $this->setUserDataSourceGetByUsernameExpectation('unit@test.com', null);
+        $this->authUserRepository->shouldReceive('getByOneLoginEmail')
+            ->withArgs(['unit@test.com'])->andReturn(null);
 
         $service = new PasswordService();
         $service->setUserRepository($this->authUserRepository);

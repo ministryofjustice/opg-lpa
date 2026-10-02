@@ -1,6 +1,6 @@
 version = 1
 revision = 3
-requires-python = "==3.14.6"
+requires-python = "==3.14.7"
 
 [[package]]
 name = "beautifulsoup4"
@@ -35,30 +35,30 @@ wheels = [
 
 [[package]]
 name = "boto3"
-version = "1.43.62"
+version = "1.43.96"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "botocore" },
     { name = "jmespath" },
     { name = "s3transfer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/c7/f7732c5e1abf7270a6bbbce47338d25ea66a30df658cffd1d17bb5f735fb/boto3-1.43.62.tar.gz", hash = "sha256:0bf920e0739346e81c7310b685a3f783bf1fcc62ce7d5c7016508fa25c0d261f", size = 112668, upload-time = "2026-07-31T19:35:17.257Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/16/b6/41173fa75983750c794e9b64017a3203407725a0e8c9c7f6de39686dc97b/boto3-1.43.96.tar.gz", hash = "sha256:30fb2b5467ef5175ed48f43c06c435eec5da841594a5d7653c4da679df0740fc", size = 112691, upload-time = "2026-09-16T19:57:09.113Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/f0/5e1a392c817e395b140c18c12a00c0c65c69f8d63da26ad4387aebf2172b/boto3-1.43.62-py3-none-any.whl", hash = "sha256:0bb298e7ffd72b91615df44bf71c417df80a29d844971e5d665b8bd743a4bb35", size = 140025, upload-time = "2026-07-31T19:35:15.347Z" },
+    { url = "https://files.pythonhosted.org/packages/01/21/7629ebb023a4857102e57231be4332bf1c8b5c1dcb9103223184b0c91b77/boto3-1.43.96-py3-none-any.whl", hash = "sha256:73f0386fcc412ce5ad3ae4245e2a405e69e889988dd77e91b82e3b66404f3fee", size = 140031, upload-time = "2026-09-16T19:57:07.825Z" },
 ]
 
 [[package]]
 name = "botocore"
-version = "1.43.67"
+version = "1.43.101"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "jmespath" },
     { name = "python-dateutil" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/53/1c/3a75deae60e36bd0ee5c27d040384756b2ea1c90bd7c8c9658335a18b4f5/botocore-1.43.67.tar.gz", hash = "sha256:6fe5cfa0c8676ba809efe505b618ec00f30d1af2d014bf316a7aa4ee86accb20", size = 15889514, upload-time = "2026-08-07T19:30:15.638Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/12/e90cc51bd65ecdcd0eedcd522d3c9f102b1d2c601f39f1f1c256695d63a3/botocore-1.43.101.tar.gz", hash = "sha256:3bc67fb55046e1e05ce5f2bd0171f37bef1cf54161786ef04ff338614d98169e", size = 16202504, upload-time = "2026-09-23T19:23:24.49Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/be/38af8e96f3d200c9d34eab8e9f69a4468388ed6030ea04ff012974e5af5a/botocore-1.43.67-py3-none-any.whl", hash = "sha256:48ab8e9fac26fbc2a700d57010251003e6a5f731cf74d8540fb796bc8f3fc0ef", size = 15575924, upload-time = "2026-08-07T19:30:12.116Z" },
+    { url = "https://files.pythonhosted.org/packages/dd/0d/6679253333d6ba74b8ad7077560687096629255ef526e106bb3accceffcc/botocore-1.43.101-py3-none-any.whl", hash = "sha256:f380237ffecc3f887265cd09c4d7e9c8e8dd9ba6162af83b1fc9e5d24622e461", size = 15897867, upload-time = "2026-09-23T19:23:21.643Z" },
 ]
 
 [[package]]
@@ -194,14 +194,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "40.36.0"
+version = "40.39.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/98/d2/026af1e002bbc6df534d1f8262b18ec79a974f928e9290bfbfdfe7c7b2af/faker-40.36.0.tar.gz", hash = "sha256:754048c76c03afa7de83eee8f4bcee3cf668cbb7d995f54a4e9678db7f110308", size = 2025903, upload-time = "2026-07-24T21:11:33.088Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6d/62/fea935af7a312f073c99d470b05a7c96650ee8d9562ce82e8cb7ee4c1247/faker-40.39.0.tar.gz", hash = "sha256:52799ad96fcf92aab2fc96a9e03869bbf1a634300f7cd91c38dbfd51f639f6fa", size = 2029463, upload-time = "2026-09-14T16:50:17.939Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/50/9a/b947ed175ce9a0dcb070ccf3607f0ce8720cfb5ed1a36166a150b2acd5af/faker-40.36.0-py3-none-any.whl", hash = "sha256:82b9497d9cfe017048075bcf969298a74b1b6e39f5e4dad1211085d1133f7b62", size = 2062829, upload-time = "2026-07-24T21:11:31.37Z" },
+    { url = "https://files.pythonhosted.org/packages/45/c8/901282279841ebb59216433be01aac825fb905e1a597de3b7b5ab8b0c43e/faker-40.39.0-py3-none-any.whl", hash = "sha256:c4c7ec2cddfaf602c5a8a2c960614946aa8c161250bd9d49a8846cd24d1ef028", size = 2066232, upload-time = "2026-09-14T16:50:16.061Z" },
 ]
 
 [[package]]
@@ -391,7 +391,7 @@ wheels = [
 
 [[package]]
 name = "locust"
-version = "2.46.3"
+version = "2.46.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "configargparse" },
@@ -410,9 +410,9 @@ dependencies = [
     { name = "requests" },
     { name = "werkzeug" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bc/f7/dfdbc33ad48daaeb3046688df0a461749db730282cc6b3558b7495ac36d6/locust-2.46.3.tar.gz", hash = "sha256:b1d313db9df0a4036d4d905b1dc8585d020a7299239a1bb2e2885b71389253c0", size = 1478452, upload-time = "2026-08-01T10:21:10.4Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/bd/b5/e7a5db1723dfa60a5278e5936d3c06ef28cda03d948b3134c1a2ae622693/locust-2.46.5.tar.gz", hash = "sha256:f47cbde638f4a1d8c2d2693867fbc1bd8331dfebfca8c31e042e61199ab59ffa", size = 1478667, upload-time = "2026-09-07T06:53:49.656Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/59/2e/44a77d6c439d4482b86b422b1703f608593009e8e74a05715fcfd4cd03ac/locust-2.46.3-py3-none-any.whl", hash = "sha256:a51e03cc27280eb2770f5aefacc3eb4c290eafe0feb19c64fa3c99e31fa21265", size = 1498002, upload-time = "2026-08-01T10:21:08.744Z" },
+    { url = "https://files.pythonhosted.org/packages/84/0d/c700b20cb150ade3a0d6e1f0175443638a069eaef122916ad57a094c6889/locust-2.46.5-py3-none-any.whl", hash = "sha256:5abc3c6a0bb4164bc161937a3badf5cddf24483a1bc57f609293023ec2310d04", size = 1498236, upload-time = "2026-09-07T06:53:48.051Z" },
 ]
 
 [[package]]
@@ -429,9 +429,9 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "beautifulsoup4", specifier = "==4.15.0" },
-    { name = "boto3", specifier = "==1.43.62" },
-    { name = "faker", specifier = "==40.36.0" },
-    { name = "locust", specifier = "==2.46.3" },
+    { name = "boto3", specifier = "==1.43.96" },
+    { name = "faker", specifier = "==40.39.0" },
+    { name = "locust", specifier = "==2.46.5" },
 ]
 
 [[package]]

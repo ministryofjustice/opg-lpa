@@ -31,6 +31,9 @@ use App\Service\Lpa\ReplacementAttorneyCleanupFactory;
 use App\Service\LpaApplicationServiceFactory;
 use App\Service\Mail\Transport\MailTransportFactory;
 use App\Service\Mail\Transport\MailTransportInterface as AppMailTransportInterface;
+use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Payment\GovPay\Client as GovPayClient;
@@ -165,6 +168,13 @@ return [
             ),
             Handler\LogoutHandler::class                => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
+                $c->get(OneLoginSessionManager::class),
+                $c->get(OneLoginSignOut::class),
+            ),
+            OneLoginSignOut::class                      => static fn(ContainerInterface $c) => new OneLoginSignOut(
+                Feature::OneLogin->isEnabled(),
+                $c->get(OneLoginService::class),
+                $c->get(LoggerInterface::class),
             ),
             Handler\LoginHandler::class                 => static fn(ContainerInterface $c) => new Handler\LoginHandler(
                 $c->get(TemplateRendererInterface::class),

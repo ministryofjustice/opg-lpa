@@ -22,7 +22,6 @@ use RuntimeException;
 class OneLoginCallbackHandler implements RequestHandlerInterface
 {
     private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
-    private const string SESSION_KEY_IDENTITY     = 'identity';
     private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
@@ -103,13 +102,9 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return $this->renderError('There was a problem completing your sign-in. Please try again.');
             }
 
-            // Regenerate to prevent session fixation before writing any identity data.
-            $session->regenerate();
-
             if ($result['linked']) {
                 // Account already linked: establish full authenticated session.
-                $session->clear();
-                $session->set(self::SESSION_KEY_IDENTITY, $result['identity']);
+                $this->sessionManager->startSession($session, $result['identity'], $result['idToken']);
 
                 if ($preAuthUrl !== null) {
                     return new RedirectResponse($preAuthUrl);
@@ -118,13 +113,15 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return new RedirectResponse('/user/dashboard');
             }
 
+            // Regenerate to prevent session fixation before writing the pending link.
+            $session->regenerate();
             $session->clear();
 
             if ($preAuthUrl !== null) {
                 $session->set(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
             }
 
-            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
+            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email'], $result['idToken']);
 
             return new RedirectResponse('/link-or-create-account');
         } finally {

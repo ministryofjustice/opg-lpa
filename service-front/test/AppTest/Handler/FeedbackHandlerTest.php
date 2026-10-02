@@ -15,6 +15,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
 use Mezzio\Session\SessionInterface;
+use App\Middleware\CsrfValidationMiddleware;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -74,7 +75,8 @@ class FeedbackHandlerTest extends TestCase
     ): ServerRequest {
         $request = (new ServerRequest())
             ->withMethod($method)
-            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session)
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'a-real-token');
 
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
@@ -105,7 +107,10 @@ class FeedbackHandlerTest extends TestCase
             ->method('render')
             ->with(
                 'application/general/feedback/index.twig',
-                $this->callback(fn(array $params): bool => $params['form'] === $this->form)
+                $this->callback(
+                    fn(array $params): bool => $params['form'] === $this->form
+                        && $params['csrfToken'] === 'a-real-token'
+                )
             )
             ->willReturn('<html>feedback form</html>');
 

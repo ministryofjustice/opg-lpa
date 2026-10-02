@@ -41,6 +41,7 @@
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
     <fieldset>
         <legend class="govuk-visually-hidden">Sign in</legend>

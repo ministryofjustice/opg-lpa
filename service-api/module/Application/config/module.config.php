@@ -314,6 +314,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-logout' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/logout',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'logout',
+                            ],
+                        ],
+                    ],
+
                     'onelogin-backchannel-logout' => [
                         'type'    => 'Segment',
                         'options' => [

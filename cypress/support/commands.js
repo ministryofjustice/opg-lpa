@@ -21,11 +21,9 @@ Cypress.Commands.add("runPythonApiCommand", (pythonCommand) => {
     });
 });
 
-Cypress.Commands.add("visitWithChecks", (url, options) => {
-    options = options || {};
-    cy.visit(url, options);
+function checkLoadedPage() {
     cy.document().then(doc => {
-        expect(doc.documentElement.innerHTML).not.to.contain("Oops", "CSRF token mismatch problem detected");
+        expect(doc.documentElement.innerHTML).not.to.contain("Invalid CSRF token", "CSRF token mismatch problem detected");
 
         // check that the page title matches the content of the h1 element on
         // the page
@@ -35,6 +33,32 @@ Cypress.Commands.add("visitWithChecks", (url, options) => {
             expect(title.text).to.contain(heading.textContent.trim());
         }
     });
+}
+
+Cypress.Commands.add("visitWithChecks", (url, options) => {
+    options = options || {};
+    cy.visit(url, options);
+    checkLoadedPage();
+});
+
+// Like visitWithChecks, but when one of our pages is already loaded it navigates from that
+// page instead of using cy.visit().
+Cypress.Commands.add("openWithChecks", (path) => {
+    const target = Cypress.config().baseUrl + path;
+
+    cy.url().then((currentUrl) => {
+        const onOurSite = [Cypress.config().baseUrl, Cypress.env("adminUrl")]
+            .some((ourUrl) => ourUrl && currentUrl.startsWith(ourUrl));
+
+        if (onOurSite) {
+            cy.window().then((win) => win.location.assign(target));
+            cy.url().should("eq", target);
+        } else {
+            cy.visit(path);
+        }
+    });
+
+    checkLoadedPage();
 });
 
 // window: DOM window instance

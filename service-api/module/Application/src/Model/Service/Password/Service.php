@@ -19,6 +19,8 @@ class Service extends AbstractService
 
     public const TOKEN_TTL = 86400; // 24 hours
 
+    public const string ACCOUNT_USES_ONE_LOGIN = 'account-uses-one-login';
+
     /**
      * @var AuthenticationService
      */
@@ -43,8 +45,9 @@ class Service extends AbstractService
             return 'invalid-new-password';
         }
 
-        // Ensure the old password is valid
-        if (!password_verify($oldPassword, $user->password())) {
+        $currentPasswordHash = $user->password();
+
+        if ($user->oneLoginSub() !== null || $currentPasswordHash === null || !password_verify($oldPassword, $currentPasswordHash)) {
             return 'invalid-user-credentials';
         }
 
@@ -64,8 +67,19 @@ class Service extends AbstractService
     {
         $user = $this->getUserRepository()->getByUsername($username);
 
+        $foundByOneLoginEmail = false;
+
+        if (!$user instanceof User) {
+            $user = $this->getUserRepository()->getByOneLoginEmail($username);
+            $foundByOneLoginEmail = $user instanceof User;
+        }
+
         if (!$user instanceof User) {
             return 'user-not-found';
+        }
+
+        if ($foundByOneLoginEmail || $user->oneLoginSub() !== null) {
+            return self::ACCOUNT_USES_ONE_LOGIN;
         }
 
         //  If the account has not been activated yet...
@@ -106,6 +120,10 @@ class Service extends AbstractService
         $user = $this->getUserRepository()->getByResetToken($token);
 
         if (!$user instanceof User) {
+            return 'invalid-token';
+        }
+
+        if ($user->oneLoginSub() !== null) {
             return 'invalid-token';
         }
 

@@ -9,10 +9,11 @@ ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
-RUN apk update && apk add --upgrade expat
 
-RUN apk add --no-cache icu fcgi \
+RUN apk update \
+    && apk add --no-cache icu fcgi \
     && apk add --update --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \
+    && apk del expat \
     && docker-php-ext-install intl \
     && install-php-extensions gmp \
     && rm /usr/bin/install-php-extensions
@@ -53,7 +54,7 @@ RUN set -e; if [ "$ENABLE_XDEBUG" = "1" ] ; then \
       echo "xdebug.mode = develop,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.discover_client_host = true" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.client_host = host.docker.internal" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
-      echo "xdebug.start_with_request = yes" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
+      echo "xdebug.start_with_request = trigger" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.log = /tmp/xdebug.log" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       echo "xdebug.idekey = PHPSTORM" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini ; \
       touch /tmp/xdebug.log ; \

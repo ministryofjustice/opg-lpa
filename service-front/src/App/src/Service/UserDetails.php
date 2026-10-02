@@ -35,6 +35,7 @@ class UserDetails implements ApiClientAwareInterface
     public const EMAIL_PASSWORD_CHANGED                      = 'email-password-changed';
     public const EMAIL_PASSWORD_RESET                        = 'email-password-reset';
     public const EMAIL_PASSWORD_RESET_NO_ACCOUNT             = 'email-password-reset-no-account';
+    public const EMAIL_ACCOUNT_HAS_NO_PASSWORD               = 'email-account-has-no-password';
     public const EMAIL_ACCOUNT_DUPLICATION_WARNING           = 'email-account-duplication-warning';
 
     private UrlHelper $urlHelper;
@@ -373,53 +374,27 @@ class UserDetails implements ApiClientAwareInterface
                 }
 
                 if (isset($result['token'])) {
-                    $forgotPasswordUrl = $this->url(
-                        'forgot-password/callback',
-                        ['token' => $result['token']],
-                    );
-
-                    $mailParameters = new MailParameters(
-                        $email,
-                        self::EMAIL_PASSWORD_RESET,
-                        ['forgotPasswordUrl' => $forgotPasswordUrl]
-                    );
-
-                    try {
-                        $this->mailTransport->send($mailParameters);
-                    } catch (Exception $ex) {
-                        $this->logger->warning('Failed to send password reset email', [
-                            'exception' => $ex,
-                        ]);
-
-                        return 'failed-sending-email';
-                    }
-
-                    return true;
+                    return $this->sendResetJourneyEmail($email, self::EMAIL_PASSWORD_RESET, [
+                        'forgotPasswordUrl' => $this->url(
+                            'forgot-password/callback',
+                            ['token' => $result['token']],
+                        ),
+                    ]);
                 }
             }
 
             return 'unknown-error';
         } catch (ApiException $ex) {
+            if ($ex->getCode() === 403) {
+                return $this->sendResetJourneyEmail($email, self::EMAIL_ACCOUNT_HAS_NO_PASSWORD, [
+                    'signInUrl' => $this->url('application.login', []),
+                ]);
+            }
+
             if ($ex->getCode() == 404) {
-                $signUpUrl = $this->url('register', []);
-
-                $mailParameters = new MailParameters(
-                    $email,
-                    self::EMAIL_PASSWORD_RESET_NO_ACCOUNT,
-                    ['signUpUrl' => $signUpUrl]
-                );
-
-                try {
-                    $this->mailTransport->send($mailParameters);
-                } catch (Exception $ex) {
-                    $this->logger->error('Failed to send password reset email - no account', [
-                        'exception' => $ex,
-                    ]);
-
-                    return 'failed-sending-email';
-                }
-
-                return true;
+                return $this->sendResetJourneyEmail($email, self::EMAIL_PASSWORD_RESET_NO_ACCOUNT, [
+                    'signUpUrl' => $this->url('register', []),
+                ]);
             }
 
             $this->logger->error('Failed to request password reset email via API', [
@@ -428,6 +403,29 @@ class UserDetails implements ApiClientAwareInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param array<string, string> $data
+     * @return true|'failed-sending-email'
+     */
+    private function sendResetJourneyEmail(
+        #[\SensitiveParameter] string $email,
+        string $templateRef,
+        array $data,
+    ): bool|string {
+        try {
+            $this->mailTransport->send(new MailParameters($email, $templateRef, $data));
+        } catch (Exception $ex) {
+            $this->logger->error('Failed to send password reset journey email', [
+                'templateRef' => $templateRef,
+                'exception'   => $ex,
+            ]);
+
+            return 'failed-sending-email';
+        }
+
+        return true;
     }
 
     private function sendAccountActivateEmail(
