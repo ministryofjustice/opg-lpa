@@ -5,13 +5,18 @@ declare(strict_types=1);
 namespace App\Service\OneLogin;
 
 use App\Service\ApiClient\Client as ApiClient;
+use Laminas\Diactoros\Uri;
 use MakeShared\OneLogin\UserType;
 use RuntimeException;
 
 class OneLoginService
 {
+    /**
+     * @param array<string, string> $mockAuthorizationUrls Callback URI to mock authorization endpoint.
+     */
     public function __construct(
         private readonly ApiClient $client,
+        private readonly array $mockAuthorizationUrls = [],
     ) {
     }
 
@@ -42,7 +47,18 @@ class OneLoginService
             );
         }
 
-        return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $result['url']];
+        $url = $result['url'];
+        if ($this->mockAuthorizationUrls !== []) {
+            if (!isset($this->mockAuthorizationUrls[$redirectUri])) {
+                throw new RuntimeException('No mock One Login authorization endpoint configured for callback URI');
+            }
+
+            $authorizationUri = new Uri($url);
+            $mockUri = new Uri($this->mockAuthorizationUrls[$redirectUri]);
+            $url = (string) $mockUri->withQuery($authorizationUri->getQuery());
+        }
+
+        return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $url];
     }
 
     /**

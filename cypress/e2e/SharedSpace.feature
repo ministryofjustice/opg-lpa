@@ -9,14 +9,12 @@ Feature: Shared Space
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     And I see "Shared space" in the title
-    When I click element marked "Create shared space"
+    When I click element marked "Create a shared space"
     Then I should be on "/shared-space/make"
     When I type "Example Organisation" into "space-name"
     When I click element marked "Save"
-    Then I should be on "/shared-space/created"
-    And I see a success notification with content "Example Organisation has been successfully created"
-    When I click element marked "Continue"
-    Then I should be on "/shared-space/dashboard"
+    Then I should be on "/shared-space/dashboard?created=success"
+    And I see a success notification with content "Example Organisation has been created"
     And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
@@ -139,12 +137,13 @@ Feature: Shared Space
 
   Scenario: Can join a shared space
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
-    When I log in as the newly created fixture user
+    When I log in through Onelogin as the newly created fixture user
+    And I create a new Make account
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
     And I should be on "/shared-space"
     And I see "Shared space" in the title
-    And I click link "Join shared space"
+    And I click link "Join a shared space using a code"
     And I should be on "/shared-space/join"
     And I type "Example Organisation" into field labelled "Shared space name"
     And I type the access code into field labelled "Your shared space access code"
