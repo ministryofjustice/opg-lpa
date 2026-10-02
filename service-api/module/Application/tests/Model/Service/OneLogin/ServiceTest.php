@@ -15,6 +15,8 @@ use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service;
 use DateTime;
 use Facile\OpenIDClient\Client\ClientInterface;
+use Facile\OpenIDClient\Issuer\IssuerInterface;
+use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadataInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
 use MakeShared\OneLogin\LinkReason;
 use Mockery;
@@ -116,6 +118,30 @@ class ServiceTest extends MockeryTestCase
         $this->assertNotSame($first['nonce'], $second['nonce']);
     }
 
+    public function testCreateLogoutRequestBuildsEndSessionUrl(): void
+    {
+        $this->stubEndSessionEndpoint('https://oidc.example.com/logout');
+
+        $url = $this->service->createLogoutRequest('header.payload.sig', 'https://www.gov.uk/done/lasting-power-of-attorney');
+
+        $this->assertSame(
+            'https://oidc.example.com/logout'
+                . '?id_token_hint=header.payload.sig'
+                . '&post_logout_redirect_uri=https%3A%2F%2Fwww.gov.uk%2Fdone%2Flasting-power-of-attorney',
+            $url,
+        );
+    }
+
+    public function testCreateLogoutRequestThrowsWhenDiscoveryHasNoEndSessionEndpoint(): void
+    {
+        $this->stubEndSessionEndpoint(null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('end_session_endpoint');
+
+        $this->service->createLogoutRequest('header.payload.sig', 'https://www.gov.uk/done/lasting-power-of-attorney');
+    }
+
     public function testMissingClientManagerThrows(): void
     {
         $service = new Service();
@@ -194,6 +220,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertTrue($result['linked']);
         $this->assertSame($sub, $result['sub']);
         $this->assertSame($email, $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertSame('user-1', $result['identity']['userId']);
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
@@ -470,6 +497,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertFalse($result['linked']);
         $this->assertSame($sub, $result['sub']);
         $this->assertSame($email, $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertNull($result['identity']);
     }
 
@@ -809,6 +837,17 @@ class ServiceTest extends MockeryTestCase
         $user->shouldReceive('oneLoginSub')->andReturn($oneLoginSub);
 
         return $user;
+    }
+
+    private function stubEndSessionEndpoint(?string $endpoint): void
+    {
+        $metadata = Mockery::mock(IssuerMetadataInterface::class);
+        $metadata->shouldReceive('get')->with('end_session_endpoint')->andReturn($endpoint);
+
+        $issuer = Mockery::mock(IssuerInterface::class);
+        $issuer->shouldReceive('getMetadata')->andReturn($metadata);
+
+        $this->oidcClient->shouldReceive('getIssuer')->andReturn($issuer);
     }
 
     private function makeTokenSet(string $sub): MockInterface|TokenSetInterface

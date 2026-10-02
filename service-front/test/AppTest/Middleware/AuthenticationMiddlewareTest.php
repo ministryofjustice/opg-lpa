@@ -9,6 +9,9 @@ use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Authentication\AuthenticationService;
 use App\Model\Service\Authentication\Identity\User;
+use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\OneLoginSignOut;
+use App\Service\OneLogin\RedirectUriBuilder;
 use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -32,18 +35,26 @@ class AuthenticationMiddlewareTest extends TestCase
     private AuthenticationService&MockObject $authenticationService;
     private UrlHelper&MockObject $urlHelper;
     private LoggerInterface&MockObject $logger;
+    private OneLoginSignOut&MockObject $oneLoginSignOut;
     private AuthenticationMiddleware $middleware;
+
+    private const string ID_TOKEN = 'header.payload.sig';
+    private const string ONE_LOGIN_LOGOUT_URL = 'https://oidc.example.com/logout?id_token_hint=header.payload.sig';
 
     protected function setUp(): void
     {
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->oneLoginSignOut = $this->createMock(OneLoginSignOut::class);
 
         $this->middleware = new AuthenticationMiddleware(
             $this->authenticationService,
             $this->urlHelper,
             $this->logger,
+            new OneLoginSessionManager(),
+            $this->oneLoginSignOut,
+            new RedirectUriBuilder('https://front.example.com'),
         );
     }
 
@@ -171,9 +182,9 @@ class AuthenticationMiddlewareTest extends TestCase
             $session->expects($this->never())->method('set');
         }
 
-        $session->method('get')
-            ->with(IdentityTokenRefreshMiddleware::SESSION_KEY_AUTH_FAILURE_CODE)
-            ->willReturn($authFailureCode);
+        $session->method('get')->willReturnCallback(
+            fn(string $key) => $key === IdentityTokenRefreshMiddleware::SESSION_KEY_AUTH_FAILURE_CODE ? $authFailureCode : null
+        );
 
         $routeResult = $this->makeRouteResult($routeName);
         $request = new ServerRequest(uri: $requestPath)
@@ -272,5 +283,103 @@ class AuthenticationMiddlewareTest extends TestCase
         $handler->expects($this->never())->method('handle');
 
         $this->middleware->process($request, $handler);
+    }
+
+    /**
+     * @param array<string, mixed> $stored
+     * @param list<string> $unset receives every key the middleware unsets
+     */
+    private function unauthenticatedRequest(array $stored, array &$unset, bool $isXhr = false): ServerRequest
+    {
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')->willReturnCallback(fn(string $key) => $stored[$key] ?? null);
+        $session->method('unset')->willReturnCallback(function (string $key) use (&$unset): void {
+            $unset[] = $key;
+        });
+
+        $this->urlHelper->method('generate')->willReturnCallback(
+            fn(string $route, array $params) => '/login/' . $params['state']
+        );
+
+        $request = new ServerRequest(uri: '/lpa/12345678/checkout')
+            ->withAttribute(RouteResult::class, $this->makeRouteResult('lpa/checkout'))
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
+
+        return $isXhr ? $request->withHeader('X-Requested-With', 'XMLHttpRequest') : $request;
+    }
+
+    public function testTimedOutOneLoginUserIsSentToOneLoginLogoutAndBackToTheTimeoutPage(): void
+    {
+        $unset   = [];
+        $request = $this->unauthenticatedRequest(['onelogin_id_token' => self::ID_TOKEN], $unset);
+
+        $this->oneLoginSignOut
+            ->expects($this->once())
+            ->method('url')
+            ->with(self::ID_TOKEN, 'https://front.example.com/login/timeout')
+            ->willReturn(self::ONE_LOGIN_LOGOUT_URL);
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertInstanceOf(RedirectResponse::class, $result);
+        $this->assertEquals(self::ONE_LOGIN_LOGOUT_URL, $result->getHeaderLine('Location'));
+        $this->assertSame(['onelogin_id_token'], $unset, 'Only the ID token is removed, so the deep link survives');
+    }
+
+    public function testTimedOutUserKeepsTheIdTokenWhenOneLoginUrlIsUnavailable(): void
+    {
+        $unset   = [];
+        $request = $this->unauthenticatedRequest(['onelogin_id_token' => self::ID_TOKEN], $unset);
+
+        $this->oneLoginSignOut->method('url')->willReturn(null);
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/login/timeout', $result->getHeaderLine('Location'));
+        $this->assertSame([], $unset, 'The ID token is kept so a later sign-out can still end the One Login session');
+    }
+
+    public function testTimedOutBackgroundRequestLeavesTheIdTokenForTheNextPageLoad(): void
+    {
+        $unset   = [];
+        $request = $this->unauthenticatedRequest(['onelogin_id_token' => self::ID_TOKEN], $unset, isXhr: true);
+
+        $this->oneLoginSignOut->expects($this->never())->method('url');
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/login/timeout', $result->getHeaderLine('Location'));
+        $this->assertSame([], $unset);
+    }
+
+    public function testTimedOutPasswordUserGoesStraightToTheTimeoutPage(): void
+    {
+        $unset   = [];
+        $request = $this->unauthenticatedRequest([], $unset);
+
+        $this->oneLoginSignOut->expects($this->never())->method('url');
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/login/timeout', $result->getHeaderLine('Location'));
+        $this->assertSame([], $unset);
+    }
+
+    public function testInternalSystemErrorDoesNotGoThroughOneLogin(): void
+    {
+        $unset   = [];
+        $request = $this->unauthenticatedRequest([
+            'onelogin_id_token'                                           => self::ID_TOKEN,
+            IdentityTokenRefreshMiddleware::SESSION_KEY_AUTH_FAILURE_CODE => 503,
+        ], $unset);
+
+        $this->oneLoginSignOut->expects($this->never())->method('url');
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/login/internal-system-error', $result->getHeaderLine('Location'));
+        $this->assertSame([], $unset);
     }
 }
