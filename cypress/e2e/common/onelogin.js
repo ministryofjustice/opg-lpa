@@ -16,6 +16,10 @@ function detectOneLoginEnabled() {
   });
 }
 
+function oneLoginMockUrl() {
+  return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
+}
+
 Before({ tags: '@RequiresOneLogin' }, function () {
   detectOneLoginEnabled().then((enabled) => {
     if (!enabled) {
@@ -26,9 +30,8 @@ Before({ tags: '@RequiresOneLogin' }, function () {
 });
 
 Before({ tags: '@RequiresMockOneLogin' }, function () {
-  const baseUrl = Cypress.config('baseUrl') || '';
-  if (!baseUrl.includes('localhost')) {
-    cy.log('Mock One Login only exists locally, skipping');
+  if (!Cypress.env('oneLoginMockUrl') && !Cypress.config('baseUrl').includes('localhost')) {
+    cy.log('Mock One Login is not available in this environment, skipping');
     this.skip();
   }
 });
@@ -43,12 +46,12 @@ Then(`I am returned to the appropriate page shown after a password reset`, () =>
 
 
 Then(`I am on the mock One Login page`, () => {
-  cy.url().should('include', 'localhost:4549');
+  cy.url().should('include', new URL(oneLoginMockUrl()).host);
   cy.contains('Continue').should('be.visible');
 });
 
 Then(`I continue through mock One Login`, () => {
-  cy.origin('http://localhost:4549', () => {
+  cy.origin(oneLoginMockUrl(), () => {
     cy.contains('Continue').click();
   });
 
@@ -59,11 +62,24 @@ Then(`I continue through mock One Login`, () => {
   });
 });
 
+When(/I log in through Onelogin as the newly created fixture user/, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.visit('/login-onelogin')
+    cy.contains('a', 'Continue to GOV.UK One Login').click()
+
+    cy.origin(oneLoginMockUrl(), { args: { email } }, ({ email }) => {
+      cy.get('input[name="subject"][value="email"]').check();
+      cy.get('#f-email').clear().type(email)
+      cy.contains('Continue').click();
+    });
+  });
+});
+
 When(/I log in through Onelogin as a random user/, () => {
   cy.visit('/login-onelogin')
   cy.contains('a', 'Continue to GOV.UK One Login').click()
 
-  cy.origin('http://localhost:4549', () => {
+  cy.origin(oneLoginMockUrl(), () => {
     cy.contains('Continue').click();
   });
 });

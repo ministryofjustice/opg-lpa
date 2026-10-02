@@ -1,0 +1,13 @@
+services:
+  mock-onelogin:
+    environment:
+      PUBLIC_URL: "http://mock-onelogin:8080"
+      REDIRECT_URL: "https://front-ssl/auth/redirect"
+
+  front-app:
+    environment:
+      ONELOGIN_REDIRECT_BASE_URL: "https://front-ssl"
+
+  cypress:
+    environment:
+      CYPRESS_oneLoginMockUrl: "http://mock-onelogin:8080"

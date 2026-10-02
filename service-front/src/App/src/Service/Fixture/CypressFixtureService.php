@@ -128,7 +128,7 @@ class CypressFixtureService
         }
     }
 
-    public function createInvite(string $sharedSpaceId, string $userEmail): mixed
+    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail): mixed
     {
         try {
             $userId = $this->authenticate($userEmail);
@@ -140,7 +140,7 @@ class CypressFixtureService
                     'userId' => $userId,
                     'firstNames' => 'John',
                     'lastName' => 'Smith',
-                    'email' => 'john.smith@example.com',
+                    'email' => $inviteEmail,
                     'isAdmin' => false,
                 ],
             );
@@ -148,6 +148,7 @@ class CypressFixtureService
             $this->logger->error('Cypress fixtures: failed to add member to shared space', [
                 'sharedSpaceId' => $sharedSpaceId,
                 'userEmail'     => $userEmail,
+                'inviteEmail'   => $inviteEmail,
                 'statusCode'    => $ex->getStatusCode(),
                 'title'         => $ex->getTitle(),
                 'body'          => $ex->getBody(),

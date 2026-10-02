@@ -45,12 +45,12 @@ function addMemberToSharedSpace(sharedSpaceId, userToAddId, userAddingEmail, isA
     .then((response) => response.body);
 }
 
-function createInvite(sharedSpaceId, userEmail) {
+function createInvite(sharedSpaceId, userEmail, inviteEmail) {
   return cy
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space-invite',
-      body: { sharedSpaceId, userEmail },
+      body: { sharedSpaceId, userEmail, inviteEmail },
     })
     .then((response) => response.body);
 }
@@ -118,7 +118,7 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
       createSharedSpace(sharedSpaceName, spaceEmail).then(({ sharedSpaceId }) => {
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
 
-        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode }) => {
+        createInvite(sharedSpaceId, spaceEmail, email).then(({ accessCode }) => {
           cy.wrap({ email, password, lpaIds, sharedSpaceId, accessCode }).as('fixtureUser');
         });
       });
