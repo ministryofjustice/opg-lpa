@@ -59,6 +59,15 @@ Then(`I continue through mock One Login`, () => {
   });
 });
 
+When(/I log in through Onelogin as a random user/, () => {
+  cy.visit('/login-onelogin')
+  cy.contains('a', 'Continue to GOV.UK One Login').click()
+
+  cy.origin('http://localhost:4549', () => {
+    cy.contains('Continue').click();
+  });
+});
+
 Then(
   `the One Login callback shows the problem page for {string}`,
   (queryString) => {
