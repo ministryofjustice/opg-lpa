@@ -121,7 +121,7 @@ When(`I log in as the newly created fixture user`, () => {
 });
 
 When(/I try to log in as "([^"]+)"/, (storedAs) => {
-  cy.contains('Sign Out').click();
+  cy.get('[data-cy=sign-out]').click();
   cy.get(`@${storedAs}`).then(({ email, password }) => {
     login(email, password)
   });
@@ -231,7 +231,7 @@ When(/I enter the email of "([^"]+)"/, (storedAs) => {
 });
 
 Then('I log out', () => {
-  cy.contains('Sign Out').click();
+  cy.get('[data-cy=sign-out]').click();
 })
 
 Then('I cannot see any links to manage members', () => {

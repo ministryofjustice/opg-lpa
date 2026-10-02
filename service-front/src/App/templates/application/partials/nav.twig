@@ -51,11 +51,14 @@
               </a>
             </li>
 
-            <li class="govuk-service-navigation__item">
-              <a class="govuk-service-navigation__link" href="{{ url('application.logout') }}" data-cy="sign-out">
-                Sign Out
-              </a>
-            </li>
+            {# The GOV.UK One Login header carries the sign-out link when it is shown. #}
+            {% if not nav.showOneLoginHeader %}
+              <li class="govuk-service-navigation__item">
+                <a class="govuk-service-navigation__link" href="{{ url('application.logout') }}" data-cy="sign-out">
+                  Sign Out
+                </a>
+              </li>
+            {% endif %}
           </ul>
         </nav>
       {% endif %}

@@ -22,7 +22,7 @@ Feature: PasswordReset
       And I use password reset email for "PasswordResetUser" to visit the link
 
       # use a valid new password
-      Then I do not see "Sign Out" in the page text
+      Then I cannot find "sign-out"
       When I choose a new password
       Then I am returned to the appropriate page shown after a password reset
       And I see "Password successfully reset" in the page text
@@ -167,4 +167,4 @@ Feature: PasswordReset
     Then I see "Thank you" in the page text
     Then I use shared space password reset email for "userToImport" to visit the link
     Then I should be on "/forgot-password/reset/"
-    Then I see "Sign Out" in the page text
+    Then I can find "sign-out"
