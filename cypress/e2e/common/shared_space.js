@@ -55,6 +55,18 @@ function createInvite(sharedSpaceId, userEmail) {
     .then((response) => response.body);
 }
 
+function login(email, password) {
+  cy.visitWithChecks('/login');
+
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
+
+  cy.get('[data-cy=login-email]').clear().type(email);
+  cy.get('[data-cy=login-password]').clear().type(password);
+  cy.get('[data-cy=login-submit-button]').click();
+}
+
 Before({ tags: '@CleanupUserFixtures' }, () => {
   cy.wrap(null).as('fixtureUser');
 });
@@ -136,23 +148,28 @@ When(/I try to log in as "([^"]+)"/, (storedAs) => {
   });
 });
 
+When(`I create a new Make account`, () => {
+  cy.get('input[name="choice"][value="create"]').check();
+  cy.get('main [type="submit"]:visible').click();
+  cy.get('input[name="name-first"]').clear().type('a');
+  cy.get('input[name="name-last"]').clear().type('b');
+  cy.get('input[name="dob-date[day]"]').clear().type('1');
+  cy.get('input[name="dob-date[month]"]').clear().type('1');
+  cy.get('input[name="dob-date[year]"]').clear().type('2000');
+
+  cy.contains('a', 'Enter address manually').click();
+  cy.get('input[name="address-address1"]').clear().type('123 Test Street');
+  cy.get('input[name="address-postcode"]').clear().type('SW1A 1AA');
+
+  cy.contains('button', 'Save and continue').click();
+});
+
+
 When(`I (try to )log in as the member added to the shared space`, () => {
   cy.get('@addedMember').then(({ email, password }) => {
     login(email, password)
   });
 });
-
-function login(email, password) {
-  cy.visitWithChecks('/login');
-
-  cy.title().then((title) => {
-    expect(title.toLowerCase()).to.include('sign in');
-  });
-
-  cy.get('[data-cy=login-email]').clear().type(email);
-  cy.get('[data-cy=login-password]').clear().type(password);
-  cy.get('[data-cy=login-submit-button]').click();
-}
 
 Then(`I should not be logged in`, () => {
   cy.url().should('include', Cypress.config().baseUrl + '/login');

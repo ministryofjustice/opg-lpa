@@ -187,4 +187,41 @@ class JoinSharedSpaceHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
+
+    public function testPostWhenInviteEmailMismatch(): void
+    {
+        $sharedSpaceName = 'My Space';
+        $accessCode = '1234';
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('__toString')->willReturn(json_encode([
+            'detail' => 'invite-email-mismatch'
+        ]));
+
+        $errorResponse = $this->createMock(ResponseInterface::class);
+        $errorResponse->method('getBody')->willReturn($stream);
+
+        $this->sharedSpaceService->method('join')
+            ->with($sharedSpaceName, $accessCode)
+            ->willThrowException(new ApiException($errorResponse));
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/shared-space/join.twig',
+                $this->callback(fn(array $vars) => isset($vars['form'])
+                                && $vars['csrfToken'] === 'test-token'
+                                && $vars['joinError'] === 'This email address does not match the email address the invite was sent to'),
+            )
+            ->willReturn('<html>form</html>');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', [
+                'sharedSpaceName' => $sharedSpaceName,
+                'sharedSpaceAccessCode' => $accessCode,
+            ])
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
 }

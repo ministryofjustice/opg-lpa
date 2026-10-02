@@ -12,6 +12,7 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
+use Application\Model\Service\SharedSpace\InviteEmailMismatchException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
@@ -809,6 +810,19 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(400, $result->toArray()['status']);
         $this->assertEquals('invite-not-found', $result->toArray()['detail']);
+    }
+
+    public function testJoinActionWhenInviteEmailMismatch()
+    {
+        $this->sharedSpaceService->shouldReceive('join')
+            ->andThrow(new InviteEmailMismatchException());
+
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $result = $this->controller->joinAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(400, $result->toArray()['status']);
+        $this->assertEquals('invite-email-mismatch', $result->toArray()['detail']);
     }
 
     public function testDeleteMemberAction()
