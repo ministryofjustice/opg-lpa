@@ -15,6 +15,9 @@ $govuk-assets-path: "/assets/v2/";
 $moj-assets-path: "/assets/v2/";
 @import "../../node_modules/@ministryofjustice/frontend/moj/all";
 
+// GOV.UK One Login service header
+@import 'one-login/service-header';
+
 // Extensions
 @import 'extensions/elements/elements-typography';
 @import 'extensions/elements/forms';
