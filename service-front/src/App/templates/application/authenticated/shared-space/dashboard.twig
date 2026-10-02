@@ -2,14 +2,14 @@
 
 {% import "application/authenticated/dashboard/macros.twig" as macros %}
 
-{%- set overridePageTitle = 'Your Shared Space LPAs' -%}
+{%- set overridePageTitle = 'Shared LPAs' -%}
 
 {% block content %}
 
 {% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
 <div class="govuk-grid-row">
-    {% if joinedSuccess %}
+    {% if joinedSuccess or createdSuccess %}
         <div class="govuk-grid-column-full">
             <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__header">
@@ -17,18 +17,24 @@
                         Success
                     </h2>
                 </div>
-                <div class="govuk-notification-banner__content">
+                {% if joinedSuccess %}
+                  <div class="govuk-notification-banner__content">
                     <h3 class="govuk-notification-banner__heading">
                       Shared Space joined
                     </h3>
-                </div>
+                  </div>
+                {% elseif createdSuccess %}
+                  <div class="govuk-notification-banner__content">
+                    <strong>{{ sharedSpaceName }}</strong> has been created
+                  </div>
+                {% endif %}
             </div>
         </div>
     {% endif %}
 
     <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-xl">Shared space LPAs</span>
-        <h1 class="govuk-heading-xl">{{ sharedSpaceName }}</h1>
+        <span class="govuk-caption-xl">{{ sharedSpaceName }}</span>
+        <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
         <p class="govuk-body-l">On this page you'll find all the LPAs that members of your shared space have made. As well as making a new LPA from scratch, you can:</p>
         <ul class="govuk-list govuk-list--bullet">
             <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>

@@ -31,7 +31,7 @@ Feature: OneLoginPasswordReset
     When I use activation email for "OneLoginResetControlUser" to visit the link
     Then I see "Account activated" in the title
 
-    When I visit "/forgot-password"
+    When I open "/forgot-password"
     And I populate email fields with "OneLoginResetControlUser" user address
     Then I see "We've emailed a link" in the page text
 
