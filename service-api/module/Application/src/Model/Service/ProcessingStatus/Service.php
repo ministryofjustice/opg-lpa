@@ -2,7 +2,6 @@
 
 namespace Application\Model\Service\ProcessingStatus;
 
-use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\Service\AbstractService;
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
@@ -95,7 +94,6 @@ class Service extends AbstractService
      *
      * @return mixed
      *
-     * @throws ApiProblemException
      * @throws HttpException
      *
      * @psalm-param non-empty-list<string> $ids
@@ -149,6 +147,8 @@ class Service extends AbstractService
         $promise->wait();
 
         // Handle all request response now
+        $failedStatuses = [];
+
         foreach ($results as $lpaId => $result) {
             $statusCode = $result->getStatusCode();
 
@@ -180,20 +180,23 @@ class Service extends AbstractService
 
                 case 500:
                 case 503:
-                    $this->getLogger()->error('Bad Response from Sirius Gateway', [
-                        'status' => $statusCode,
-                        'exception' => (string)$result->getBody(),
-                    ]);
-
-                    throw new ApiProblemException('Bad response from Sirius gateway: ' . $statusCode);
-
                 default:
-                    $this->getLogger()->error('Unexpected Response from Sirius Gateway', [
-                        'status' => $statusCode,
-                        'exception' => (string)$result->getBody(),
-                    ]);
+                    $failedStatuses[] = $statusCode;
+
+                    $siriusResponseArray[$lpaId] = [
+                        'deleted'   => false,
+                        'response'  => null
+                    ];
                     break;
             }
+        }
+
+        if (count($failedStatuses) > 0) {
+            $this->getLogger()->error('Bad response from Sirius Gateway', [
+                'failedCount'  => count($failedStatuses),
+                'requestCount' => count($results),
+                'statuses'     => array_count_values($failedStatuses),
+            ]);
         }
 
         return $siriusResponseArray;
