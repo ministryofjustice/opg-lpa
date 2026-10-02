@@ -45,12 +45,12 @@ function addMemberToSharedSpace(sharedSpaceId, userToAddId, userAddingEmail, isA
     .then((response) => response.body);
 }
 
-function createInvite(sharedSpaceId, userEmail) {
+function createInvite(sharedSpaceId, userEmail, inviteEmail) {
   return cy
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space-invite',
-      body: { sharedSpaceId, userEmail },
+      body: { sharedSpaceId, userEmail, inviteEmail },
     })
     .then((response) => response.body);
 }

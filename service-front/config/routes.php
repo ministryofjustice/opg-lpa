@@ -243,8 +243,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/user/dashboard/new-terms', TermsChangedHandler::class, ['GET', 'POST'], 'user/dashboard/terms-changed');
     $app->get('/user/dashboard/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'user/dashboard/statuses');
 
-    $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive');
-    $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry');
+    $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive')
+        ->setOptions(['allowIncompleteUser' => true]);
+    $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry')
+        ->setOptions(['allowIncompleteUser' => true]);
 
     $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
     $app->get('/user/dashboard/confirm-delete-lpa/{lpa-id:\d+}', ConfirmDeleteLpaHandler::class, 'user/dashboard/confirm-delete-lpa');

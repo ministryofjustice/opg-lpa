@@ -17,6 +17,10 @@ function detectOneLoginEnabled() {
   });
 }
 
+function oneLoginMockUrl() {
+  return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
+}
+
 Before({ tags: '@RequiresOneLogin' }, function () {
   detectOneLoginEnabled().then((enabled) => {
     if (!enabled) {
@@ -27,9 +31,8 @@ Before({ tags: '@RequiresOneLogin' }, function () {
 });
 
 Before({ tags: '@RequiresMockOneLogin' }, function () {
-  const baseUrl = Cypress.config('baseUrl') || '';
-  if (!baseUrl.includes('localhost')) {
-    cy.log('Mock One Login only exists locally, skipping');
+  if (!Cypress.env('oneLoginMockUrl') && !Cypress.config('baseUrl').includes('localhost')) {
+    cy.log('Mock One Login is not available in this environment, skipping');
     this.skip();
   }
 });
@@ -44,7 +47,7 @@ Then(`I am returned to the appropriate page shown after a password reset`, () =>
 
 
 function checkOnMockOneLoginPage() {
-  cy.url().should('include', 'localhost:4549');
+  cy.url().should('include', new URL(oneLoginMockUrl()).host);
   cy.contains('Continue').should('be.visible');
 }
 
@@ -109,11 +112,24 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   checkSignedIn();
 });
 
-When(/I log in through Onelogin as a random user/, () => {
-  cy.visit('/login-onelogin')
-  cy.contains('a', 'Continue to GOV.UK One Login').click()
+When(/I log in through Onelogin as the newly created fixture user/, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.visit('/home')
+    cy.contains('Continue').click();
 
-  cy.origin('http://localhost:4549', () => {
+    cy.origin(oneLoginMockUrl(), { args: { email } }, ({ email }) => {
+      cy.get('input[name="subject"][value="email"]').check();
+      cy.get('#f-email').clear().type(email)
+      cy.contains('Continue').click();
+    });
+  });
+});
+
+When(/I log in through Onelogin as a random user/, () => {
+  cy.visit('/home')
+  cy.contains('Continue').click();
+
+  cy.origin(oneLoginMockUrl(), () => {
     cy.contains('Continue').click();
   });
 });
@@ -135,11 +151,14 @@ Then(`I choose to create a new Make account`, chooseToCreateNewMakeAccount);
 
 Then(`I am signed in with my new Make account`, checkSignedIn);
 
-const MOCK_ONELOGIN_LOGOUT = 'http://localhost:4549/logout*';
 const TIMEOUT_PAGE = '/login/timeout';
 
+function mockOneLoginLogoutPattern() {
+  return oneLoginMockUrl() + '/logout*';
+}
+
 function expectOneLoginLogout(navigate, postLogoutRedirectUri) {
-  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+  cy.intercept('GET', mockOneLoginLogoutPattern()).as('oneLoginLogout');
 
   navigate();
 
@@ -162,7 +181,7 @@ Then(`I sign out and am signed out of One Login`, () => {
 });
 
 function expectNoOneLoginLogout(navigate, expectedUrl) {
-  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+  cy.intercept('GET', mockOneLoginLogoutPattern()).as('oneLoginLogout');
 
   navigate();
 

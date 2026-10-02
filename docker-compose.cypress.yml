@@ -1,0 +1,4 @@
+services:
+  cypress:
+    environment:
+      CYPRESS_oneLoginMockUrl: "http://mock-onelogin:8080"

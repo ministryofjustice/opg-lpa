@@ -185,6 +185,10 @@ return [
             RedirectUriBuilder::class                   => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,
             ),
+            OneLoginService::class => static fn(ContainerInterface $c) => new OneLoginService(
+                $c->get(ApiClient::class),
+                $c->get('config')['onelogin']['mock_authorization_urls'],
+            ),
             StatusHandler::class                        => static fn(ContainerInterface $c) => new StatusHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get(LpaApplicationService::class),
@@ -251,6 +255,11 @@ return [
     ],
     'onelogin'          => [
         'redirect_base_url' => getenv('ONELOGIN_REDIRECT_BASE_URL') ?: null,
+        'mock_authorization_urls' => json_decode(
+            getenv('ONELOGIN_MOCK_AUTHORIZATION_URLS') ?: '{}',
+            true,
+            flags: JSON_THROW_ON_ERROR,
+        ),
     ],
     'alphagov'          => [
         'pay' => [

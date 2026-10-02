@@ -144,3 +144,7 @@ output "front_sg_id" {
 output "admin_sg_id" {
   value = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_sg_id : module.eu-west-2[0].admin_load_balancer_sg_id
 }
+
+output "mock_onelogin_url" {
+  value = !local.dr_enabled ? module.eu-west-1.mock_onelogin_url : module.eu-west-2[0].mock_onelogin_url
+}

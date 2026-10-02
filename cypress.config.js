@@ -166,7 +166,6 @@ module.exports = defineConfig({
   pageLoadTimeout: 30000,
   chromeWebSecurity: false,
   trashAssetsBeforeRuns: false,
-  injectDocumentDomain: true,
   e2e: {
     specPattern: "cypress/e2e/**/*.feature",
     supportFile: "cypress/support/e2e.js",
