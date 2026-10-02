@@ -12,6 +12,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Authentication\Service;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
+use Application\Model\Service\SharedSpace\InviteEmailMismatchException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
@@ -606,6 +607,10 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             created: new DateTime(),
         );
 
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('oneLoginEmail')
+            ->andReturn($invite->email);
+
         $this->sharedSpaceRepository->shouldReceive('beginTransaction');
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
             ->with($userId)
@@ -613,6 +618,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('getInviteByCodeAndSharedSpaceName')
             ->with($accessCode, $sharedSpaceName)
             ->andReturn($invite);
+        $this->userRepository->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($user);
         $this->sharedSpaceRepository->shouldReceive('addMember')
             ->with($invite->sharedSpaceId, $userId, $invite->isAdmin);
         $this->sharedSpaceRepository->shouldReceive('deleteInvite')
@@ -648,6 +656,47 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->expectException(InviteNotFoundException::class);
         $this->service->join('my user', 'My Space', '1234');
+    }
+
+    public function testJoinWhenInviteEmailMismatch()
+    {
+        $userId = 'my user';
+        $sharedSpaceName = 'My Space';
+        $accessCode = '1234';
+
+        $invite = new MemberInvite(
+            id: 1,
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'invited@example.com',
+            expires: new DateTime('+1 minute'),
+            userId: 'me',
+            sharedSpaceId: 'some-space',
+            isAdmin: false,
+            code: '',
+            created: new DateTime(),
+        );
+
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('oneLoginEmail')
+            ->andReturn('different@example.com');
+
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->with($userId)
+            ->andReturn(null);
+        $this->sharedSpaceRepository->shouldReceive('getInviteByCodeAndSharedSpaceName')
+            ->with($accessCode, $sharedSpaceName)
+            ->andReturn($invite);
+        $this->userRepository->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($user);
+        $this->sharedSpaceRepository->shouldReceive('rollback');
+
+        $this->applicationRepository->shouldNotReceive('setSharedSpaceOwner');
+
+        $this->expectException(InviteEmailMismatchException::class);
+        $this->service->join($userId, $sharedSpaceName, $accessCode);
     }
 
     public function testImport()

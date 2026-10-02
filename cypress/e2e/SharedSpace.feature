@@ -154,6 +154,21 @@ Feature: Shared Space
     And I click element marked "Shared space"
     And I cannot see any invites
 
+  Scenario: Cannot join a shared space when invite email does not match one login email
+    Given I have been invited to a shared space called "Example Organisation" with 1 LPA
+    When I log in through Onelogin as a random user
+    And I should be on "/link-or-create-account"
+    And I create a new Make account
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    And I see "Shared space" in the title
+    When I click link "Join a shared space using a code"
+    Then I should be on "/shared-space/join"
+    When I type "Example Organisation" into field labelled "Shared space name"
+    And I type the access code into field labelled "Your shared space access code"
+    And I click element marked "Continue"
+    Then I see "This email address does not match the email address the invite was sent to" in the page text
+
   Scenario: Can delete a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin" with 1 LPA
@@ -233,7 +248,6 @@ Feature: Shared Space
     And I see "View Shared Space" in the page text
     And I cannot see any links to manage members
 
-  @only
   Scenario: Deleting the last member of a shared space deletes the shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
