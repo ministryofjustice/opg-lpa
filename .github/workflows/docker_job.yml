@@ -104,11 +104,12 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@4edbf1117bc2334cd4c1b959e1cbc1c0445c26f5 # v3.19.17
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@e436aeedea6b977c8958323decf81dcea7f06c02 # PR #170
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
       enable_snyk_scanning: true
+      upload_image_manifest: ${{ inputs.enable_snyk_monitor }}
       snyk_policy_path: ${{ matrix.snyk_policy_path }}
       snyk_container_options: --severity-threshold=high
       snyk_ecr_registry_id: "311462405659"
@@ -186,33 +187,6 @@ jobs:
             dockerfile_path: ./aurora-scheduler/docker/Dockerfile
             image_tag: latest
             scan_id: aurora_scheduler
-
-  snyk_monitor_production_images:
-    name: Snyk monitor production images
-    if: ${{ inputs.enable_snyk_monitor }}
-    needs:
-      - docker_build_scan_push
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@34a9f70a708f580974e4d6155dc40074514e2716 # PR #170
-    with:
-      oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
-      ecr_registry_id: "311462405659"
-      snyk_ecr_registry_id: "311462405659"
-      deployment_environment: production
-      images: >-
-        [
-          {"name":"online-lpa/front_app","tag":"${{ inputs.tag }}","policy":"service-front/docker/app/.snyk"},
-          {"name":"online-lpa/front_web","tag":"${{ inputs.tag }}","policy":"service-front/docker/web/.snyk"},
-          {"name":"online-lpa/api_app","tag":"${{ inputs.tag }}","policy":"service-api/docker/app/.snyk"},
-          {"name":"online-lpa/api_web","tag":"${{ inputs.tag }}","policy":"service-api/docker/web/.snyk"},
-          {"name":"online-lpa/admin_app","tag":"${{ inputs.tag }}","policy":"service-admin/docker/app/.snyk"},
-          {"name":"online-lpa/admin_web","tag":"${{ inputs.tag }}","policy":"service-admin/docker/web/.snyk"},
-          {"name":"online-lpa/pdf_app","tag":"${{ inputs.tag }}","policy":"service-pdf/docker/app/.snyk"},
-          {"name":"online-lpa/seeding_app","tag":"${{ inputs.tag }}","policy":"service-seeding/docker/app/.snyk"},
-          {"name":"lambda-aurora_scheduler","tag":"latest","policy":"aurora-scheduler/docker/.snyk"}
-        ]
-    secrets:
-      SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
-
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan_test_images:
     name: "Build and scan test image / ${{ matrix.image_name }}"
@@ -373,3 +347,17 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: /tmp/images/image.tar
+
+  snyk_monitor_production_images:
+    name: Snyk monitor production images
+    if: ${{ inputs.enable_snyk_monitor }}
+    needs:
+      - docker_build_scan_push
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@e436aeedea6b977c8958323decf81dcea7f06c02 # PR #170
+    with:
+      oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
+      ecr_registry_id: "311462405659"
+      snyk_ecr_registry_id: "311462405659"
+      deployment_environment: "development"
+    secrets:
+      SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
