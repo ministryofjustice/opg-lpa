@@ -65,6 +65,10 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
                             $joinError = 'The shared space name and/or access code are incorrect';
                             break;
 
+                        case 'invite-email-mismatch':
+                            $joinError = 'This email address does not match the email address the invite was sent to';
+                            break;
+
                         default:
                             $joinError = 'Something unexpected happened';
                     };

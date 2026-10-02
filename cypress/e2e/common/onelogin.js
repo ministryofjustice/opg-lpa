@@ -110,6 +110,15 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   checkSignedIn();
 });
 
+When(/I log in through Onelogin as a random user/, () => {
+  cy.visit('/login-onelogin')
+  cy.contains('a', 'Continue to GOV.UK One Login').click()
+
+  cy.origin('http://localhost:4549', () => {
+    cy.contains('Continue').click();
+  });
+});
+
 When(`I sign in through mock One Login to keep my existing Make account`, () => {
   cy.get('[data-cy="onelogin-signin-button"]').click();
   checkOnMockOneLoginPage();
