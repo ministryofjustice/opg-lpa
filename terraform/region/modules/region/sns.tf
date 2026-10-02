@@ -28,6 +28,23 @@ resource "aws_db_event_subscription" "rds_events_db_instance" {
   sns_topic = aws_sns_topic.rds_events.arn
 
   source_type = "db-instance"
+
+  event_categories = local.account_name == "production" ? [
+    "availability",
+    "backup",
+    "maintenance",
+    "configuration change",
+    "creation",
+    "deletion",
+    "failover",
+    "failure",
+    "low storage",
+    "notification",
+    "read replica",
+    "recovery",
+    "restoration",
+    "security",
+  ] : null
 }
 
 resource "aws_db_event_subscription" "rds_events_db_sg" {
