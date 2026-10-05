@@ -40,6 +40,11 @@ on:
         required: false
         type: boolean
         default: false
+      snyk_monitor_ecr_registry_id:
+        description: "AWS account ID for the ECR registry monitored by Snyk"
+        required: false
+        type: string
+        default: "311462405659"
     secrets:
       SLACK_BOT_TOKEN:
         required: true
@@ -356,8 +361,8 @@ jobs:
     uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@e436aeedea6b977c8958323decf81dcea7f06c02 # PR #170
     with:
       oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
-      ecr_registry_id: "311462405659"
-      snyk_ecr_registry_id: "311462405659"
+      ecr_registry_id: ${{ inputs.snyk_monitor_ecr_registry_id }}
+      snyk_ecr_registry_id: ${{ inputs.snyk_monitor_ecr_registry_id }}
       deployment_environment: "development"
     secrets:
       SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
