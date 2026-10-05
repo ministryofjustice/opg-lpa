@@ -109,12 +109,11 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@e436aeedea6b977c8958323decf81dcea7f06c02 # PR #170
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@a8d4ce4260eb797dd82e43e800f06f2bf7ba0329 # PR #170
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
       enable_snyk_scanning: true
-      upload_image_manifest: ${{ inputs.enable_snyk_monitor }}
       snyk_policy_path: ${{ matrix.snyk_policy_path }}
       snyk_container_options: --severity-threshold=high
       snyk_ecr_registry_id: "311462405659"
@@ -353,12 +352,49 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: /tmp/images/image.tar
 
+# Upload Snyk image manifest for production images - only if Snyk monitoring is enabled
+  upload_snyk_image_manifest:
+    name: Upload Snyk image manifest
+    if: ${{ inputs.enable_snyk_monitor }}
+    needs:
+      - docker_build_scan_push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Create image manifest from build matrix
+        env:
+          IMAGE_TAG: ${{ inputs.tag }}
+        run: |
+          ruby -ryaml -rjson <<'RUBY' > "${RUNNER_TEMP}/images.json"
+          images = YAML.load_file('.github/workflows/docker_job.yml')
+            .fetch('jobs').fetch('docker_build_scan_push')
+            .fetch('strategy').fetch('matrix').fetch('include')
+          manifest = images.reject { |image| image.fetch('image_name').include?('-test') }.map do |image|
+            {
+              name: image.fetch('image_name'),
+              tag: image['image_tag'] || ENV.fetch('IMAGE_TAG'),
+              policy: image['snyk_policy_path']
+            }.compact
+          end
+          puts JSON.generate(manifest)
+          RUBY
+
+      - name: Upload image manifest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: image-manifest-${{ github.run_id }}-production
+          path: ${{ runner.temp }}/images.json
+          if-no-files-found: error
+
   snyk_monitor_production_images:
     name: Snyk monitor production images
     if: ${{ inputs.enable_snyk_monitor }}
     needs:
-      - docker_build_scan_push
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@78d5d1c050ac23d70dfccee925cf5c58ffeee1a1 # PR #170
+      - upload_snyk_image_manifest
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@a8d4ce4260eb797dd82e43e800f06f2bf7ba0329 # PR #170
     with:
       oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
       ecr_registry_id: ${{ inputs.snyk_monitor_ecr_registry_id }}
