@@ -114,6 +114,36 @@ Feature: One Login Sign In
     And I choose to try again
     And I should be on "/link-or-create-account"
 
+  @RequiresMockOneLogin
+  Scenario: Signing out of Make also signs the user out of One Login
+    Given I sign in through mock One Login with a new Make account
+    When I sign out and am signed out of One Login
+    Then I am taken to the post logout url
+
+  @RequiresMockOneLogin
+  Scenario: Timing out of Make also signs the user out of One Login, even after a background request
+    Given I ignore application exceptions
+    And I sign in through mock One Login with a new Make account
+    When I hack the session to have 0 seconds remaining
+    And I wait for 3 seconds
+    And a background request to "/user/dashboard/statuses/1" is sent to the timeout page, not One Login
+    And I return to "/user/about-you" after timing out and am signed out of One Login
+    Then I see "We’ve signed you out" in the page text
+
+  @RequiresMockOneLogin
+  Scenario: A password user who signs out is not sent to One Login
+    Given I log in as appropriate test user
+    Then I sign out without going through One Login
+
+  @RequiresMockOneLogin
+  Scenario: A password user who times out is not sent to One Login
+    Given I ignore application exceptions
+    And I log in as appropriate test user
+    When I hack the session to have 0 seconds remaining
+    And I wait for 3 seconds
+    And I return to "/user/about-you" after timing out without going through One Login
+    Then I see "We’ve signed you out" in the page text
+
   Scenario: Reaching the link-account page directly without a One Login session returns to sign in
     Then I visit "/link-account" without being logged in
 
