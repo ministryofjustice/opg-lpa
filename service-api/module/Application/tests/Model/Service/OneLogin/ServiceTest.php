@@ -524,6 +524,55 @@ class ServiceTest extends MockeryTestCase
         $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
     }
 
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function rejectedVotProvider(): array
+    {
+        return [
+            'vot missing'                   => [null, 'missing_vot_claim'],
+            'low authentication'            => ['Cl', 'invalid_vot_claim'],
+            'identity level included'       => ['Cl.Cm.P2', 'invalid_vot_claim'],
+            'vot as an array, not a string' => [['Cl.Cm'], 'invalid_vot_claim'],
+            'empty vot'                     => ['', 'invalid_vot_claim'],
+        ];
+    }
+
+    /**
+     * @dataProvider rejectedVotProvider
+     */
+    public function testHandleCallbackRejectsAnIdTokenWithoutTheRequestedVot(mixed $vot, string $expectedReason): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => $vot]));
+
+        $this->authorizationService->shouldNotReceive('getUserInfo');
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->authenticationService->shouldNotReceive('issueAuthToken');
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+            $this->fail('Expected the ID token to be rejected');
+        } catch (OneLoginAuthenticationException $e) {
+            $this->assertSame($expectedReason, $e->reason());
+        }
+    }
+
+    public function testHandleCallbackLogsTheVotItRejects(): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => 'Cl.Cm.P2']));
+
+        $this->expectException(OneLoginAuthenticationException::class);
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        } finally {
+            $this->logger->shouldHaveReceived('warning')->with('auth.onelogin.unexpected_vot', ['vot' => 'Cl.Cm.P2'])->once();
+        }
+    }
+
     public function testHandleCallbackMissingSubThrows(): void
     {
         $tokenSet = Mockery::mock(TokenSetInterface::class);
@@ -850,11 +899,19 @@ class ServiceTest extends MockeryTestCase
         $this->oidcClient->shouldReceive('getIssuer')->andReturn($issuer);
     }
 
-    private function makeTokenSet(string $sub): MockInterface|TokenSetInterface
+    /**
+     * @param array<string, mixed> $claims overrides the ID token's default claims; a null value removes the claim
+     */
+    private function makeTokenSet(string $sub, array $claims = []): MockInterface|TokenSetInterface
     {
+        $claims = array_filter(
+            [...['sub' => $sub, 'vot' => 'Cl.Cm'], ...$claims],
+            static fn (mixed $value): bool => $value !== null,
+        );
+
         $tokenSet = Mockery::mock(TokenSetInterface::class);
         $tokenSet->shouldReceive('getIdToken')->andReturn('header.payload.sig');
-        $tokenSet->shouldReceive('claims')->andReturn(['sub' => $sub]);
+        $tokenSet->shouldReceive('claims')->andReturn($claims);
 
         return $tokenSet;
     }
