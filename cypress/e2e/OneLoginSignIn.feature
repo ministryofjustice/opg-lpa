@@ -11,15 +11,17 @@ Feature: One Login Sign In
   Scenario: The login page offers GOV.UK One Login
     Then I can find "onelogin-signin-button" and it is visible
 
-  Scenario: Continuing with One Login leads to the One Login start page
+  Scenario: Starting sign in redirects to the One Login authorize endpoint
+    Then starting One Login sign in redirects to the authorize endpoint
+
+  @RequiresMockOneLogin
+  Scenario: Continuing from the login page goes straight to One Login
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I can find "onelogin-signin-button" and it is visible
+    And I am on the mock One Login page
+
   @RequiresMockOneLogin
   Scenario: Signing in through One Login reaches the link-or-create-account page
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
@@ -27,8 +29,6 @@ Feature: One Login Sign In
   @RequiresMockOneLogin
   Scenario: An unlinked user links their existing Make account and reaches the dashboard
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
@@ -41,8 +41,6 @@ Feature: One Login Sign In
   @RequiresMockOneLogin
   Scenario: An unlinked user chooses to create a new Make account
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
@@ -66,8 +64,6 @@ Feature: One Login Sign In
   @RequiresMockOneLogin
   Scenario: An unlinked user entering incorrect credentials is advised and can retry
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
@@ -84,8 +80,6 @@ Feature: One Login Sign In
   @RequiresMockOneLogin
   Scenario: An unlinked user who has forgotten their password can go to reset it from the link page
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"
@@ -100,8 +94,6 @@ Feature: One Login Sign In
   @RequiresMockOneLogin
   Scenario: Being told a Make account cannot be linked returns the user to the link-or-create question
     Then I click "onelogin-signin-button"
-    And I am taken to "/login-onelogin"
-    And I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
     And I should be on "/link-or-create-account"

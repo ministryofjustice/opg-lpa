@@ -67,14 +67,31 @@ function checkSignedIn() {
   cy.get('[data-cy=sign-out]').should('be.visible');
 }
 
+// Runs in every environment with One Login enabled, so dev and preprod check the start of sign in
+// without needing the mock. One Login expects a GET redirect to its /authorize endpoint.
+Then(`starting One Login sign in redirects to the authorize endpoint`, () => {
+  cy.request({ url: '/auth/onelogin', followRedirect: false }).then(
+    (response) => {
+      expect(response.status).to.eq(302);
+
+      const authorizeUrl = new URL(response.redirectedToUrl);
+      const params = authorizeUrl.searchParams;
+      expect(authorizeUrl.pathname).to.match(/\/authorize$/);
+      expect(params.get('response_type')).to.eq('code');
+      expect(params.get('scope')).to.include('openid');
+      expect(params.get('client_id')).to.not.be.empty;
+      expect(params.get('state')).to.not.be.empty;
+      expect(params.get('nonce')).to.not.be.empty;
+      expect(params.get('redirect_uri')).to.match(/\/auth\/redirect$/);
+    },
+  );
+});
+
 Then(`I am on the mock One Login page`, checkOnMockOneLoginPage);
 
 Then(`I continue through mock One Login`, continueThroughMockOneLogin);
 
 When(`I sign in through mock One Login with a new Make account`, () => {
-  cy.get('[data-cy="onelogin-signin-button"]').click();
-  cy.url().should('eq', Cypress.config().baseUrl + '/login-onelogin');
-  cy.OPGCheckA11y();
   cy.get('[data-cy="onelogin-signin-button"]').click();
   checkOnMockOneLoginPage();
   continueThroughMockOneLogin();
