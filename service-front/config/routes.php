@@ -213,7 +213,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
-        $app->route('/shared-space/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'shared-space.forgot-password');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {

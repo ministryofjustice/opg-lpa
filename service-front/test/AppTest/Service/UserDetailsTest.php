@@ -564,7 +564,7 @@ final class UserDetailsTest extends TestCase
         try {
             $this->apiClient->expects($this->once())
                 ->method('httpPost')
-                ->with('/v2/users/password-reset', ['username' => 'person@example.com', 'forSharedSpace' => false])
+                ->with('/v2/users/password-reset', ['username' => 'person@example.com'])
                 ->willReturn(['activation_token' => 'activate-token']);
 
             $this->urlHelper->expects($this->once())
@@ -738,7 +738,7 @@ final class UserDetailsTest extends TestCase
         try {
             $this->apiClient->expects($this->once())
                 ->method('httpPost')
-                ->with('/v2/users/password-reset', ['username' => 'person@example.com', 'forSharedSpace' => false])
+                ->with('/v2/users/password-reset', ['username' => 'person@example.com'])
                 ->willReturn(['activation_token' => 'activate-token']);
 
             $this->urlHelper->expects($this->once())
