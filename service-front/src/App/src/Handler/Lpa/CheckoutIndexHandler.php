@@ -6,11 +6,13 @@ namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\CheckoutHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -41,7 +43,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
         $lpa = $request->getAttribute(RequestAttribute::LPA);
 
         // Using getVerison on GET here as it isn't really a user initiated action,
-        // and a getting a conflict would be meaningless.
+        // and getting a conflict would be meaningless.
         $ifMatchVersion = $lpa->getVersion();
         $action = null;
 
@@ -51,9 +53,7 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                 $postData = [];
             }
 
-            // TODO(LPAL-2493): Once new templates are deployed this can be
-            // simplified to `$ifMatchVersion = $postData['version']`;
-            $ifMatchVersion = isset($postData['version']) ? (int)$postData['version'] : $lpa->getVersion();
+            $ifMatchVersion = (int)$postData['version'];
             $action = $postData['action'] ?? '';
         }
 
@@ -68,8 +68,10 @@ class CheckoutIndexHandler implements RequestHandlerInterface
 
         $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
-            if (!$this->checkoutHelper->isLpaComplete($lpa, $request)) {
-                return $this->checkoutHelper->redirectToMoreInfoRequired($lpa, $request);
+            if (!$this->isLpaComplete($lpa, $request)) {
+                return new RedirectResponse(
+                    $this->urlHelper->generate('lpa/more-info-required', ['lpa-id' => $lpa->getId()]),
+                );
             }
 
             try {
@@ -108,12 +110,20 @@ class CheckoutIndexHandler implements RequestHandlerInterface
                     'form'           => $form,
                     'lowIncomeFee'   => $lowIncomeFee,
                     'fullFee'        => $fullFee,
-                    'lpaIsCompleted' => $this->checkoutHelper->isLpaComplete($lpa, $request),
+                    'lpaIsCompleted' => $this->isLpaComplete($lpa, $request),
                     'conflictError'  => $conflictError,
                 ]
             )
         );
 
         return new HtmlResponse($html);
+    }
+
+    private function isLpaComplete(Lpa $lpa, ServerRequestInterface $request): bool
+    {
+        /** @var FormFlowChecker $flowChecker */
+        $flowChecker = $request->getAttribute(RequestAttribute::FLOW_CHECKER);
+
+        return $lpa->isStateCreated() && $flowChecker->backToForm() === 'lpa/checkout';
     }
 }
