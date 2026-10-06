@@ -27,13 +27,13 @@ class UserServiceTest extends TestCase
     public static function userSearchProvider(): array
     {
         return [
-            'Lay' => ['A', 'a@example.org', 10, null],
-            'Shared space' => ['B', 'a@example.org', 5, null],
+            'Lay' => ['A', 'a@example.org', 10],
+            'Shared space' => ['B', 'a@example.org', 5],
         ];
     }
 
     #[DataProvider('userSearchProvider')]
-    public function testSearchForUserByEmail(string $id, string $email, int $numLpas, ?string $sharedSpaceId): void
+    public function testSearchForUserByEmail(string $id, string $email, int $numLpas): void
     {
         $client = $this->prophesize(ApiClient::class);
 
@@ -41,7 +41,7 @@ class UserServiceTest extends TestCase
         $query = ['email' => $email];
         $client->httpGet('/v2/admin/search-users', $query)->willReturn([
             'userId' => $id,
-            'isActive' => true
+            'isActive' => true,
         ]);
 
         // lpa lookup
@@ -56,6 +56,66 @@ class UserServiceTest extends TestCase
         $this->assertEquals($id, $actual['userId']);
         $this->assertEquals(true, $actual['isActive']);
         $this->assertEquals($numLpas, $actual['numberOfLpas']);
+    }
+
+    public function testSearchById()
+    {
+        $id = 'abc123def456';
+        $email = 'a@example.org';
+        $numLpas = 7;
+
+        $client = $this->prophesize(ApiClient::class);
+
+        // lookup by userId
+        $client->httpGet('/v2/admin/search-users', ['userId' => $id])->willReturn([
+            'userId' => $id,
+            'username' => $email,
+            'isActive' => true,
+        ]);
+
+        // search() is then called with the resolved username/email
+        $client->httpGet('/v2/admin/search-users', ['email' => $email])->willReturn([
+            'userId' => $id,
+            'isActive' => true,
+        ]);
+
+        // lpa lookup
+        $client->httpGet(sprintf('/v2/user/%s/applications', $id), ['page' => 1, 'perPage' => 1])->willReturn([
+            'total' => $numLpas,
+        ]);
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+        $actual = $userService->searchById($id);
+
+        $this->assertIsArray($actual);
+        $this->assertEquals($id, $actual['userId']);
+        $this->assertEquals($numLpas, $actual['numberOfLpas']);
+    }
+
+    public function testSearchByIdNotFound()
+    {
+        $id = 'does-not-exist';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpGet('/v2/admin/search-users', ['userId' => $id])->willReturn(null);
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertFalse($userService->searchById($id));
+    }
+
+    public function testSearchByIdReturnsFalseOnException()
+    {
+        $id = 'abc123def456';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpGet('/v2/admin/search-users', ['userId' => $id])->willThrow(new \RuntimeException('boom'));
+
+        $this->logger->error('boom')->shouldBeCalled();
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertFalse($userService->searchById($id));
     }
 
     public function testMatchUsers()
@@ -316,12 +376,27 @@ class UserServiceTest extends TestCase
     {
         $aReference = 'A-99998888882';
         $userId = 'abc123def456';
+        $email = 'a@example.org';
+        $numLpas = 4;
 
         $client = $this->prophesize(ApiClient::class);
 
+        // lookup by aReference
         $client->httpGet('/v2/admin/search-users', ['aReference' => $aReference])->willReturn([
             'userId' => $userId,
+            'username' => $email,
             'isActive' => true,
+        ]);
+
+        // search() is then called with the resolved username/email
+        $client->httpGet('/v2/admin/search-users', ['email' => $email])->willReturn([
+            'userId' => $userId,
+            'isActive' => true,
+        ]);
+
+        // lpa lookup
+        $client->httpGet(sprintf('/v2/user/%s/applications', $userId), ['page' => 1, 'perPage' => 1])->willReturn([
+            'total' => $numLpas,
         ]);
 
         $userService = new UserService($client->reveal(), $this->logger->reveal());
@@ -329,6 +404,7 @@ class UserServiceTest extends TestCase
 
         $this->assertIsArray($actual);
         $this->assertEquals($userId, $actual['userId']);
+        $this->assertEquals($numLpas, $actual['numberOfLpas']);
     }
 
     public function testSearchByAReferenceNotFound()
@@ -344,5 +420,20 @@ class UserServiceTest extends TestCase
         $actual = $userService->searchByAReference($aReference);
 
         $this->assertFalse($actual);
+    }
+
+    public function testSearchByAReferenceReturnsFalseOnException()
+    {
+        $aReference = 'A-99998888882';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpGet('/v2/admin/search-users', ['aReference' => $aReference])
+            ->willThrow(new \RuntimeException('boom'));
+
+        $this->logger->error('boom')->shouldBeCalled();
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertFalse($userService->searchByAReference($aReference));
     }
 }

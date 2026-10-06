@@ -77,7 +77,7 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
   const lpaCount = parseInt(lpaCountString, 10);
 
   createUserWithLpas(lpaCount, 'property-and-financial').then(
-    ({ email, password, lpaIds }) => {
+    ({ email, password, lpaIds, userFullName }) => {
       cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
 
       if (sharedSpaceName) {
@@ -87,13 +87,13 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
 
         createSharedSpace(sharedSpaceName, email).then(
           ({ sharedSpaceId }) => {
-            cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, lpaCount }).as(storedAs ?? 'fixtureUser');
+            cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, lpaCount, userFullName }).as(storedAs ?? 'fixtureUser');
 
             cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
           },
         );
       } else {
-        cy.wrap({ email, password, lpaIds }).as(storedAs ?? 'fixtureUser');
+        cy.wrap({ email, password, lpaIds, userFullName }).as(storedAs ?? 'fixtureUser');
       }
     },
   );
@@ -106,16 +106,17 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
     sharedSpaceName = `Shared Space ${Math.random().toString(10).substring(2, 10)}`;
   }
 
-  createUserWithLpas(lpaCount, 'property-and-financial').then(({ email, password, lpaIds }) => {
+  createUserWithLpas(lpaCount, 'property-and-financial').then(({ email, password, lpaIds, userFullName }) => {
     cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
     createUserWithLpas(0, 'property-and-financial').then(({ email: spaceEmail }) => {
       cy.task('log', `Created space fixture user ${spaceEmail}`);
 
       createSharedSpace(sharedSpaceName, spaceEmail).then(({ sharedSpaceId }) => {
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
+        cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, spaceEmail, userFullName }).as('fixtureUser');
 
-        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode }) => {
-          cy.wrap({ email, password, lpaIds, sharedSpaceId, accessCode, sharedSpaceName, spaceEmail }).as('fixtureUser');
+        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode, fullName, inviteEmail }) => {
+          cy.wrap({ accessCode, fullName, inviteEmail }).as('invitedUser');
         });
       });
     });

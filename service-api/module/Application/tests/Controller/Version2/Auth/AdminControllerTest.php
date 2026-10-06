@@ -230,6 +230,60 @@ class AdminControllerTest extends MockeryTestCase
         $this->assertEquals('No user found with supplied A Reference', json_decode($result->getContent(), true)['detail']);
     }
 
+    public function testSearchUsersActionByUserId()
+    {
+        $userId = 'abc123def456';
+
+        $this->params->shouldReceive('fromQuery')
+            ->andReturn([
+                'userId' => $userId,
+            ])
+            ->once();
+
+        $userSearchReturnData = [
+            'userId'   => $userId,
+            'username' => 'user@name.com',
+            'isActive' => true,
+        ];
+
+        $this->usersService->shouldReceive('searchById')
+            ->with($userId)
+            ->andReturn($userSearchReturnData)
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var Json $result */
+        $result = $controller->searchUsersAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+    }
+
+    public function testSearchUsersActionByUserIdNotFound()
+    {
+        $userId = 'does-not-exist';
+
+        $this->params->shouldReceive('fromQuery')
+            ->andReturn([
+                'userId' => $userId,
+            ])
+            ->once();
+
+        $this->usersService->shouldReceive('searchById')
+            ->with($userId)
+            ->andReturnFalse()
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var ApiProblem $result */
+        $result = $controller->searchUsersAction();
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
+        $this->assertEquals('No user found with supplied user ID', json_decode($result->getContent(), true)['detail']);
+    }
+
     public function testMatchUsersAction()
     {
         $query = 'horace';

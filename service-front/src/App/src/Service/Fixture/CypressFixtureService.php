@@ -32,7 +32,7 @@ class CypressFixtureService
     }
 
     /**
-     * @return array{email: string, password: string, userId: string, lpaIds: array<int, string>}
+     * @return array{email: string, password: string, userId: string, lpaIds: array<int, string>, userFullName: string}
      */
     public function createUserWithLpas(int $lpaCount, string $lpaType, string $name = ''): array
     {
@@ -41,7 +41,7 @@ class CypressFixtureService
 
         $this->authenticate($email);
 
-        $this->setAboutYouDetails($userId, $email, $name);
+        $fullName = $this->setAboutYouDetails($userId, $email, $name);
 
         $lpaIds = [];
         for ($i = 0; $i < $lpaCount; $i++) {
@@ -58,6 +58,7 @@ class CypressFixtureService
             'password' => self::FIXTURE_PASSWORD,
             'userId'   => $userId,
             'lpaIds'   => $lpaIds,
+            'userFullName' => $fullName
         ];
     }
 
@@ -132,15 +133,18 @@ class CypressFixtureService
     {
         try {
             $userId = $this->authenticate($userEmail);
+            $firstName = 'John';
+            $lastname = 'Smith';
+            $inviteEmail = 'john.smith@example.com';
 
             $response = $this->apiClient->httpPost(
                 '/v2/shared-space/invite',
                 [
                     'sharedSpaceId' => $sharedSpaceId,
                     'userId' => $userId,
-                    'firstNames' => 'John',
-                    'lastName' => 'Smith',
-                    'email' => 'john.smith@example.com',
+                    'firstNames' => $firstName,
+                    'lastName' => $lastname,
+                    'email' => $inviteEmail,
                     'isAdmin' => false,
                 ],
             );
@@ -157,7 +161,11 @@ class CypressFixtureService
             throw $ex;
         }
 
-        return ['accessCode' => $response['inviteCode']];
+        return [
+            'accessCode' => $response['inviteCode'],
+            'fullName' => $firstName . ' ' . $lastname,
+            'inviteEmail' => $inviteEmail
+        ];
     }
 
     private function createAndActivateUser(string $email): string
@@ -215,7 +223,7 @@ class CypressFixtureService
         return $credentials['userId'];
     }
 
-    private function setAboutYouDetails(string $userId, string $email, string $name = ''): void
+    private function setAboutYouDetails(string $userId, string $email, string $name = ''): string
     {
         $now = (new DateTime())->format('c');
 
@@ -235,6 +243,8 @@ class CypressFixtureService
             'dob'       => ['date' => '1988-10-22T00:00:00.000000+0000'],
             'email'     => ['address' => $email],
         ]);
+
+        return $first . ' ' . $last;
     }
 
     /**

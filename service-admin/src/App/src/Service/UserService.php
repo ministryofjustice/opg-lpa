@@ -101,30 +101,37 @@ class UserService
     public function searchById(string $id): array|false
     {
         try {
-            $userData = $this->client->httpGet('/v2/user/' . $id);
+            $userData = $this->client->httpGet('/v2/admin/search-users', [
+                'userId' => $id,
+            ]);
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
             return false;
         }
 
-        if (!is_array($userData) || !isset($userData['email']['address'])) {
+        if (!is_array($userData) || !isset($userData['username'])) {
             return false;
         }
 
-        return $this->search($userData['email']['address']);
+        return $this->search($userData['username']);
     }
 
     public function searchByAReference(string $aReference): array|false
     {
-        $userData = $this->client->httpGet('/v2/admin/search-users', [
-            'aReference' => $aReference,
-        ]);
-
-        if (is_array($userData)) {
-            return $this->convertDates($userData);
+        try {
+            $userData = $this->client->httpGet('/v2/admin/search-users', [
+                'aReference' => $aReference,
+            ]);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
+            return false;
         }
 
-        return false;
+        if (!is_array($userData) || !isset($userData['username'])) {
+            return false;
+        }
+
+        return $this->search($userData['username']);
     }
 
     /**

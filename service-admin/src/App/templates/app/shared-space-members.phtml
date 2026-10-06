@@ -5,6 +5,8 @@
 <?php } else { ?>
     <h1 class="govuk-heading-l">Members and invites for <?= htmlspecialchars($sharedSpaceName); ?></h1>
 
+    <p class="govuk-body"><a data-role="user-lpa-count" class="govuk-link" href="<?= $this->url('shared-space.lpas', ['sharedSpaceId' => $sharedSpaceId], ['sharedSpaceName' => $sharedSpaceName]) ?>">View LPAs for this shared space.</a></p>
+
     <h2 class="govuk-heading-m">Members (<?= count($members); ?>)</h2>
 
     <?php if (count($members) === 0) { ?>
@@ -33,10 +35,26 @@
                         </div>
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Admin status
+                                Admin privileges
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                <span data-role="member-admin-status"><?= !empty($member['isAdmin']) ? 'Admin' : 'Not admin'; ?></span>
+                                <span data-role="member-admin-status"><?= !empty($member['isAdmin']) ? 'Admin' : 'Member'; ?></span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span data-role="member-admin-status"><?= !empty($member['isActive']) ? 'Active' : 'Suspended'; ?></span>
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Last login time
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                <span><?= $this->dateFormat($member['lastLoginAt'], 'Never logged in') ?></span>
                             </dd>
                         </div>
                     </dl>

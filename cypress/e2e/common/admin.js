@@ -12,7 +12,7 @@ Then('I find {string} on the admin site', (name) => {
   let user = Cypress.env(name + '-user');
   cy.visit(Cypress.env('adminUrl'));
   cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
-  cy.get('[data-cy=search-term-input]').clear({ force: true }).type(user);
+  cy.get('[data-cy=search-term-input]').should('be.visible').and('be.enabled').clear().type(user);
   cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
 });
 
@@ -21,9 +21,7 @@ Then(
   (searchValue, searchType) => {
     cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
     cy.get('[data-cy=search-type-select]').select(searchType);
-    cy.get('[data-cy=search-term-input]')
-      .clear({ force: true })
-      .type(searchValue);
+    cy.get('[data-cy=search-term-input]').should('be.visible').and('be.enabled').clear().type(searchValue);
     cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
   },
 );
@@ -157,7 +155,9 @@ When('I search for the newly created fixture user', () => {
     cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
     cy.get('[data-cy=search-type-select]').select('Exact or partial email');
     cy.get('[data-cy=search-term-input]')
-      .clear({ force: true })
+      .should('be.visible')
+      .and('be.enabled')
+      .clear()
       .type(email);
     cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
   });
@@ -168,7 +168,9 @@ When('I search for the newly created shared space by name', () => {
     cy.contains("a", "Search").click();
     cy.get('[data-cy=search-type-select]').select('Exact or partial shared space name');
     cy.get('[data-cy=search-term-input]')
-      .clear({ force: true })
+      .should('be.visible')
+      .and('be.enabled')
+      .clear()
       .type(sharedSpaceName);
     cy.contains("button", "Search").click();
   });
@@ -187,17 +189,42 @@ Then('I can see the shared space in the search results', () => {
 })
 
 Then('I should see details of the newly created shared space member', () => {
-  cy.get('@fixtureUser').then(({ email }) => {
-    cy.contains('div', 'Email').within(() => {
-      cy.contains('dd', email).should('exist');
-    })
+  cy.get('@fixtureUser').then(({ email, userFullName }) => {
+    cy.contains('div.govuk-summary-card', userFullName).should('exist');
+
+    cy.contains('div.govuk-summary-card', userFullName).within(() => {
+      cy.contains('div', 'Email').within(() => {
+        cy.contains('dd', email).should('exist');
+      })
+
+      cy.contains('div', 'Admin privileges').within(() => {
+        cy.contains('dd', 'Admin').should('exist');
+      })
+
+      cy.contains('div', 'Status').within(() => {
+        cy.contains('dd', 'Active').should('exist');
+      })
+
+      cy.contains('div', 'Last login time').should('exist');
+    });
   })
 })
 
 Then('I should see details of the newly created shared space invite', () => {
-  cy.contains('div', 'Date invited').should('exist');
-  cy.contains('div', 'Status').within(() => {
-    cy.contains('Pending').should('exist');
+  cy.get('@invitedUser').then(({ fullName, inviteEmail }) => {
+    cy.contains('div.govuk-summary-card', fullName).should('exist');
+
+    cy.contains('div.govuk-summary-card', fullName).within(() => {
+      cy.contains('div', 'Email').within(() => {
+        cy.contains('dd', inviteEmail).should('exist');
+      })
+
+      cy.contains('div', 'Date invited').should('exist');
+
+      cy.contains('div', 'Status').within(() => {
+        cy.contains('Pending').should('exist');
+      })
+    });
   })
 })
 

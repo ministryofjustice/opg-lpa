@@ -287,6 +287,23 @@ class Service extends AbstractService
     }
 
     /**
+     * Search for a user by their exact userId.
+     *
+     * @param string $id
+     * @return array|bool
+     */
+    public function searchById(string $id): bool|array
+    {
+        $user = $this->getUserRepository()->getById($id);
+
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->toArray();
+    }
+
+    /**
      * @param string $username
      * @return array|bool
      */

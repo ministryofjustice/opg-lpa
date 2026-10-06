@@ -122,6 +122,8 @@ class SearchHandler extends AbstractHandler
                     $this->paginator->setTotal($result['total']);
                 } else {
                     $results = [$result];
+                    $this->paginator->setPage(1);
+                    $this->paginator->setTotal(count($results));
                 }
 
                 $this->auditLog(

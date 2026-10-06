@@ -109,7 +109,10 @@ class SearchHandlerTest extends TestCase
             'app::search',
             $this->callback(fn ($args) =>
                 $args['form'] instanceof Search
-                && $args['results'] === [$user])
+                && $args['results'] === [$user]
+                && $args['paginator']->getTotal() === 1
+                && $args['paginator']->getOffsetLower() === 1
+                && $args['paginator']->getOffsetUpper() === 1)
         )->willReturn('response');
 
         $this->handler->handle($this->makeRequest([
@@ -134,7 +137,10 @@ class SearchHandlerTest extends TestCase
             'app::search',
             $this->callback(fn ($args) =>
                 $args['form'] instanceof Search
-                && $args['results'] === [$user])
+                && $args['results'] === [$user]
+                && $args['paginator']->getTotal() === 1
+                && $args['paginator']->getOffsetLower() === 1
+                && $args['paginator']->getOffsetUpper() === 1)
         )->willReturn('response');
 
         $this->handler->handle($this->makeRequest([

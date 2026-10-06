@@ -526,6 +526,36 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals($expected, $this->service->searchByUsername($username));
     }
 
+    public function testSearchById()
+    {
+        $userId = 'abc123def456abc123def456abc12345';
+
+        $userRecord = new UserModel(['id' => $userId]);
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($userRecord)
+            ->once();
+
+        $expected = $userRecord->toArray();
+
+        $this->assertEquals($expected, $this->service->searchById($userId));
+    }
+
+    public function testSearchByIdNotFound()
+    {
+        $userId = 'does-not-exist';
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn(null)
+            ->once();
+
+        $this->assertFalse($this->service->searchById($userId));
+    }
+
     public function testSearchByUsername()
     {
         // user is in main table

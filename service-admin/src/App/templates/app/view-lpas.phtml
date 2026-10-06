@@ -7,6 +7,8 @@
 
     <?php if ($paginator->getOffsetLower() === $paginator->getOffsetUpper()) { ?>
         <p class="govuk-body"><?= $paginator->getOffsetLower(); ?> of <?= $paginator->getTotal(); ?> LPAs</p>
+    <?php } elseif (count($lpas) === 0) { ?>
+        <p class="govuk-body">No LPAs found</p>
     <?php } else { ?>
         <p class="govuk-body"><?= $paginator->getOffsetLower(); ?> to <?= $paginator->getOffsetUpper(); ?> of <?= $paginator->getTotal(); ?> LPAs</p>
     <?php } ?>

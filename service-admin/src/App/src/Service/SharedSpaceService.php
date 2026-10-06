@@ -64,6 +64,16 @@ class SharedSpaceService
                 'invitesPerPage' => $invitesPerPage,
             ]);
 
+            if ($response === []) {
+                return [
+                    'sharedSpaceName' => '',
+                    'members' => [],
+                    'membersTotal' => 0,
+                    'invites' => [],
+                    'invitesTotal' => 0,
+                ];
+            }
+
             if (
                 is_array($response)
                 && isset($response['sharedSpaceName'])

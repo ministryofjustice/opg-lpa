@@ -31,19 +31,21 @@ class AdminController extends AbstractRestfulController
     {
         $queryParams = $this->params()->fromQuery();
 
-        if (isset($queryParams['aReference'])) {
-            $user = $this->usersService->searchByAReference($queryParams['aReference']);
-            if ($user === false) {
-                return new ApiProblemResponse(new ApiProblem(404, 'No user found with supplied A Reference'));
-            }
-
-            return new Json($user);
-        }
-
-        $user = $this->usersService->searchByUsername($queryParams['email']);
+        $user = match (true) {
+            isset($queryParams['email']) => $this->usersService->searchByUsername($queryParams['email']),
+            isset($queryParams['aReference']) => $this->usersService->searchByAReference($queryParams['aReference']),
+            isset($queryParams['userId']) => $this->usersService->searchById($queryParams['userId']),
+            default => false,
+        };
 
         if ($user === false) {
-            return new ApiProblemResponse(new ApiProblem(404, 'No user found with supplied email address'));
+            $message = match (true) {
+                isset($queryParams['aReference']) => 'No user found with supplied A Reference',
+                isset($queryParams['userId']) => 'No user found with supplied user ID',
+                default => 'No user found with supplied email address',
+            };
+
+            return new ApiProblemResponse(new ApiProblem(404, $message));
         }
 
         return new Json($user);
