@@ -64,6 +64,9 @@
 </div>
 
 <header class="govuk-template__header">
+  {% if showOneLoginHeader() %}
+  {% include 'layout/partials/one-login-header.twig' %}
+  {% else %}
   <div class="govuk-header" data-module="govuk-header" data-cy="banner">
     <div class="govuk-header__container govuk-width-container">
       <div class="govuk-header__logo">
@@ -95,6 +98,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {{ renderNavigation(currentRouteName|default('')) }}
 </header>
 
@@ -258,7 +262,7 @@
     </div>
 </footer>
 
-<script type="module" src='/assets/v2/js/govuk-init.js'></script>
+<script type="module" src="{{ '/assets/v2/js/govuk-init.js' | asset_path }}"></script>
 <script src="{{ '/assets/v2/js/application.js' | asset_path({ 'minify':true }) }}"></script>
 {% include 'layout/partials/timeout.twig' %}
 

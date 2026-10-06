@@ -155,6 +155,7 @@ async function buildIndividualScripts() {
     { in: 'assets/js/opg/session-timeout-init.js', out: 'public/assets/v2/js/opg/session-timeout-init.min.js' },
     { in: 'assets/js/opg/dashboard-statuses.js', out: 'public/assets/v2/js/opg/dashboard-statuses.min.js' },
     { in: 'assets/js/opg/govuk-init.js', out: 'public/assets/v2/js/govuk-init.js' },
+    { in: 'assets/js/one-login/service-header.js', out: 'public/assets/v2/js/one-login-service-header.js' },
   ];
 
   for (const script of scripts) {

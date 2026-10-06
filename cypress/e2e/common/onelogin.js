@@ -281,3 +281,13 @@ When(
     }
   },
 );
+
+Then(`the {string} link goes to {string}`, (dataCy, href) => {
+  cy.get(`[data-cy=${dataCy}]`).should('have.attr', 'href', href);
+});
+
+// The GOV.UK One Login header carries the sign-out link, so the service navigation must not.
+Then(`the service navigation has no sign-out link`, () => {
+  cy.get('[data-cy=service-nav-list]').should('exist');
+  cy.get('[data-cy=service-nav-list] [data-cy=sign-out]').should('not.exist');
+});

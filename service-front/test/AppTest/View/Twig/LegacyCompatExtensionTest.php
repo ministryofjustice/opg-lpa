@@ -7,12 +7,14 @@ namespace AppTest\View\Twig;
 use App\Form\Error\FormLinkedErrors;
 use App\Model\FlashMessagesHolder;
 use App\Model\FormFlowChecker;
+use App\Model\Service\Authentication\Identity\User;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\LegacyCompatExtension;
+use DateTime;
 use Laminas\Form\Element;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\Element\MultiCheckbox;
@@ -21,8 +23,10 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Helper\UrlHelper;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Twig\Environment;
 
 final class LegacyCompatExtensionTest extends TestCase
 {
@@ -34,9 +38,12 @@ final class LegacyCompatExtensionTest extends TestCase
     private UserDetailsHolder&MockObject $userDetailsHolder;
     private FlashMessagesHolder&MockObject $flashMessagesHolder;
     private SystemMessage&MockObject $systemMessage;
+    private string|false $oneLoginEnabled;
 
     protected function setUp(): void
     {
+        $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+
         $this->urlHelper           = $this->createMock(UrlHelper::class);
         $this->sessionStorage      = $this->createMock(MezzioSessionStorage::class);
         $this->formLinkedErrors    = $this->createMock(FormLinkedErrors::class);
@@ -56,6 +63,11 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->flashMessagesHolder,
             $this->systemMessage,
         );
+    }
+
+    protected function tearDown(): void
+    {
+        putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
     }
 
     // -------------------------------------------------------------------------
@@ -81,10 +93,58 @@ final class LegacyCompatExtensionTest extends TestCase
             ['url', 'formElement', 'formCheckbox', 'formRadio', 'formElementErrorsV2',
                   'formErrorTextExchange', 'form_linked_errors', 'serverUrl',
                   'final_check_accessible', 'applicant_names', 'routeName',
-                  'accordionTop', 'accordionBottom', 'flashMessenger', 'renderNavigation'] as $fn
+                  'accordionTop', 'accordionBottom', 'flashMessenger', 'renderNavigation',
+                  'showOneLoginHeader'] as $fn
         ) {
             $this->assertContains($fn, $names, "Missing function: $fn");
         }
+    }
+
+    /**
+     * @return array<string, array{bool, bool, bool}>
+     */
+    public static function oneLoginHeaderProvider(): array
+    {
+        return [
+            'One Login on, signed in'   => [true, true, true],
+            'One Login on, signed out'  => [true, false, false],
+            'One Login off, signed in'  => [false, true, false],
+            'One Login off, signed out' => [false, false, false],
+        ];
+    }
+
+    #[DataProvider('oneLoginHeaderProvider')]
+    public function testShowOneLoginHeaderOnlyForSignedInUsersWhenOneLoginIsEnabled(
+        bool $oneLoginEnabled,
+        bool $signedIn,
+        bool $expected,
+    ): void {
+        putenv('ONELOGIN_ENABLED=' . ($oneLoginEnabled ? 'true' : 'false'));
+        $this->sessionStorage->method('read')->willReturn($signedIn ? $this->signedInUser() : null);
+
+        $this->assertSame($expected, $this->extension->showOneLoginHeader());
+    }
+
+    public function testRenderNavigationTellsTheNavWhenTheOneLoginHeaderIsShown(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->sessionStorage->method('read')->willReturn($this->signedInUser());
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/partials/nav.twig',
+                $this->callback(fn (array $vars): bool => $vars['nav']->showOneLoginHeader === true),
+            )
+            ->willReturn('');
+
+        $this->extension->renderNavigation($twig);
+    }
+
+    private function signedInUser(): User
+    {
+        return new User('user-1', 'token', 10000, new DateTime('2026-01-01'));
     }
 
     // -------------------------------------------------------------------------

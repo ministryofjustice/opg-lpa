@@ -152,3 +152,15 @@ Feature: One Login Sign In
 
   Scenario: The One Login callback fails gracefully for an incomplete request
     Then the One Login callback shows the problem page for ""
+
+  Scenario: Signed-out pages show the GOV.UK header, not the One Login header
+    Then I can find "banner"
+    And I cannot find "one-login-header"
+
+  Scenario: Signed-in users get the One Login header, which carries the sign-out link
+    Given I log in as appropriate test user
+    Then I can find "one-login-header" and it is visible
+    And I cannot find "banner"
+    And the "one-login-account-link" link goes to "https://home.account.gov.uk"
+    And the "sign-out" link goes to "/logout"
+    And the service navigation has no sign-out link
