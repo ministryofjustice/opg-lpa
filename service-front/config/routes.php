@@ -86,7 +86,6 @@ use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
-use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerJson;
@@ -176,8 +175,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
-        $app->get('/login-onelogin', OneLoginHandler::class, 'application.login-onelogin')
-            ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
