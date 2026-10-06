@@ -394,7 +394,7 @@ jobs:
     if: ${{ inputs.enable_snyk_monitor }}
     needs:
       - upload_snyk_image_manifest
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@a8d4ce4260eb797dd82e43e800f06f2bf7ba0329 # PR #170
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/snyk-container-monitor.yml@71d52554dc050a57b6ffec9617fa16a80981a4e0 # PR #170
     with:
       oidc_role_to_assume: ${{ inputs.oidc_docker_pull_role }}
       ecr_registry_id: ${{ inputs.snyk_monitor_ecr_registry_id }}
