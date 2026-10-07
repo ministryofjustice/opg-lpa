@@ -6,6 +6,10 @@
 
 {%- set pageTitle = 'Change your sign-in email address' -%}
 
+{% block backLink %}
+  <a href="{{ url('user/about-you') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block content %}
 
 {% import "application/macros.twig" as macros %}
