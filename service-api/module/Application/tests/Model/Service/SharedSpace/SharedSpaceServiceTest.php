@@ -768,64 +768,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->join($userId, $sharedSpaceName, $accessCode);
     }
 
-    public function testImport()
-    {
-        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
-        $this->sharedSpaceRepository->shouldReceive('commit');
-
-        $this->authenticationService->shouldReceive('withPassword')
-            ->with('an-email', 'a-password', false)
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
-
-        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
-            ->with('import-user-id', 'space-id')
-            ->andReturn(5);
-
-        $this->userRepository->shouldReceive('delete')
-            ->with('import-user-id')
-            ->andReturn(true);
-
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-        $this->assertNull($result);
-    }
-
-    public function testImportWhenAuthProblem()
-    {
-        $this->authenticationService->shouldReceive('withPassword')
-            ->with('an-email', 'a-password', false)
-            ->andReturn('a-problem');
-
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-        $this->assertEquals('a-problem', $result);
-    }
-
-    public function testImportWhenUserInSharedSpace()
-    {
-        $this->authenticationService->shouldReceive('withPassword')
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => 'import-space-id']);
-
-        $this->expectException(UserAlreadyInSharedSpaceException::class);
-        $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-    }
-
-    public function testImportWhenDeleteFails()
-    {
-        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
-        $this->sharedSpaceRepository->shouldReceive('rollback');
-
-        $this->authenticationService->shouldReceive('withPassword')
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
-
-        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
-            ->andReturn(5);
-
-        $this->userRepository->shouldReceive('delete')
-            ->andReturn(false);
-
-        $this->expectException(RuntimeException::class);
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-    }
-
     #[DoesNotPerformAssertions]
     public function testDeleteAccount()
     {

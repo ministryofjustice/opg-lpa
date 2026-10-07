@@ -34,7 +34,7 @@ class CypressFixtureService
     /**
      * @return array{email: string, password: string, userId: string, lpaIds: array<int, string>, userFullName: string}
      */
-    public function createUserWithLpas(int $lpaCount, string $lpaType, string $name = '',): array
+    public function createUserWithLpas(int $lpaCount, string $lpaType, string $name = ''): array
     {
         $email    = $this->generateUniqueEmail();
         $userId = $this->createAndActivateUser($email);

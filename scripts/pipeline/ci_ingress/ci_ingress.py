@@ -34,9 +34,6 @@ class IngressManager:
                 "mock_onelogin_load_balancer_security_group_id"
             )
             if mock_onelogin_sg_id:
-                # Not every environment deploys a mock One Login service (e.g. it's
-                # disabled in preprod/production), so only add this ingress rule
-                # when the environment under test actually has one.
                 self.security_groups.append(mock_onelogin_sg_id)
 
     def get_ip_addresses(self):
