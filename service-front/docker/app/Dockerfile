@@ -7,6 +7,8 @@ ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN apk add --no-cache icu fcgi \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \

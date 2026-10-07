@@ -10,6 +10,8 @@ RUN adduser -D -g '' appuser && \
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \
