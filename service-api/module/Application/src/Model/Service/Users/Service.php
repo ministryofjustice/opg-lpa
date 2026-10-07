@@ -98,6 +98,10 @@ class Service extends AbstractService
         $result = $this->getUserRepository()->activate($token);
 
         if (is_null($result) || $result === false) {
+            if ($this->getUserRepository()->activationTokenExists($token)) {
+                return 'account-already-activated';
+            }
+
             return 'account-not-found';
         }
 
