@@ -153,6 +153,7 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
   alarm_name          = "${var.environment_name}-lpa-healthcheck-alarm"
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   treat_missing_data  = "Breaching"
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 1
