@@ -16,6 +16,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -43,17 +44,29 @@ class DeleteAccountHandlerTest extends TestCase
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
     }
 
-    public function testGetRendersDeleteAccountPageWithCommonTemplateVariables(): void
+    public static function featureEnabledProvider(): array
     {
-        $this->sharedSpaceService->expects($this->once())
-            ->method('getMemberCount')
-            ->willReturn(5);
+        return [
+            'shared spaces enabled' => [true, 5],
+            'shared spaces disabled' => [false, null],
+        ];
+    }
+
+    #[DataProvider('featureEnabledProvider')]
+    public function testGetRendersDeleteAccountPageWithCommonTemplateVariables(bool $sharedSpacesEnabled, ?int $memberCount): void
+    {
+        if ($sharedSpacesEnabled) {
+            $this->sharedSpaceService->expects($this->once())
+                ->method('getMemberCount')
+                ->willReturn($memberCount);
+        }
 
         $handler = new DeleteAccountHandler(
             $this->renderer,
             $this->authenticationService,
             $this->sharedSpaceService,
             $this->userService,
+            $sharedSpacesEnabled
         );
 
         $this->renderer
@@ -67,7 +80,7 @@ class DeleteAccountHandlerTest extends TestCase
                     'lpa' => null,
                     'currentRouteName' => null,
                     'csrfToken' => 'test-token',
-                    'memberCount' => 5
+                    'memberCount' => $memberCount
                 ]
             )
             ->willReturn('<html>delete account</html>');

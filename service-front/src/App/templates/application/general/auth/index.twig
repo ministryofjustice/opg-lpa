@@ -78,7 +78,7 @@
         <p class="govuk-body">
             If you have a GOV.UK One Login that is linked to your LPA account, you can sign in with it.
         </p>
-        <a href="/login-onelogin" role="button" class="govuk-button govuk-button--secondary" data-cy="onelogin-signin-button">
+        <a href="{{ url('auth.onelogin') }}" role="button" class="govuk-button govuk-button--secondary" data-cy="onelogin-signin-button">
             Continue with GOV.UK One Login
         </a>
     {% endif %}

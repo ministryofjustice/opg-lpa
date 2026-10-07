@@ -34,10 +34,7 @@ use App\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
-use App\Handler\Lpa\CheckoutChequeHandler;
-use App\Handler\Lpa\CheckoutConfirmHandler;
 use App\Handler\Lpa\CheckoutIndexHandler;
-use App\Handler\Lpa\CheckoutPayHandler;
 use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Handler\Lpa\CompleteIndexHandler;
 use App\Handler\Lpa\CompleteViewDocsHandler;
@@ -86,7 +83,6 @@ use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
-use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerJson;
@@ -175,8 +171,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
-        $app->get('/login-onelogin', OneLoginHandler::class, 'application.login-onelogin')
-            ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
@@ -299,10 +293,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/applicant', $factory->pipeline(LpaLoaderMiddleware::class, ApplicantHandler::class), ['GET', 'POST'], 'lpa/applicant');
 
     $app->route('/lpa/{lpa-id:\d+}/checkout', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutIndexHandler::class), ['GET', 'POST'], 'lpa/checkout');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/cheque', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutChequeHandler::class), ['GET', 'POST'], 'lpa/checkout/cheque');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/pay', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayHandler::class), ['GET', 'POST'], 'lpa/checkout/pay');
     $app->route('/lpa/{lpa-id:\d+}/checkout/pay/response', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayResponseHandler::class), ['GET', 'POST'], 'lpa/checkout/pay/response');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/confirm', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutConfirmHandler::class), ['GET', 'POST'], 'lpa/checkout/confirm');
 
     $app->route('/lpa/{lpa-id:\d+}/date-check', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check');
     $app->route('/lpa/{lpa-id:\d+}/date-check/complete', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check/complete');
