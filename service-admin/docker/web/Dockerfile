@@ -18,6 +18,8 @@ RUN apk del freetype nginx-module-image-filter
 
 # Upgrade vulnerable packages
 RUN apk upgrade --no-cache
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN chown -R nginx:nginx /etc/nginx/conf.d
 
