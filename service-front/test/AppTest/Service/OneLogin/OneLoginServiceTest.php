@@ -399,6 +399,54 @@ class OneLoginServiceTest extends TestCase
         );
     }
 
+    public function testLogoutUrlRewritesHostToMatchMockEndpointPerCallback(): void
+    {
+        $endpoints = [
+            'https://localhost:7002/auth/redirect' => 'http://localhost:4549/authorize',
+            'https://front-ssl/auth/redirect' => 'http://mock-onelogin:8080/authorize',
+        ];
+        $this->service = new OneLoginService($this->apiClient, $endpoints);
+        $this->apiClient->method('httpPost')->willReturn([
+            'url' => 'http://real-onelogin.example/logout?id_token_hint=h.p.s&post_logout_redirect_uri=x',
+        ]);
+
+        $this->assertSame(
+            'http://localhost:4549/logout?id_token_hint=h.p.s&post_logout_redirect_uri=x',
+            $this->service->logoutUrl('h.p.s', 'https://example.com/done', 'https://localhost:7002/auth/redirect'),
+        );
+        $this->assertSame(
+            'http://mock-onelogin:8080/logout?id_token_hint=h.p.s&post_logout_redirect_uri=x',
+            $this->service->logoutUrl('h.p.s', 'https://example.com/done', 'https://front-ssl/auth/redirect'),
+        );
+    }
+
+    public function testLogoutUrlRejectsUnconfiguredCallbackWhenMockEndpointsAreEnabled(): void
+    {
+        $this->service = new OneLoginService($this->apiClient, [
+            'https://localhost:7002/auth/redirect' => 'http://localhost:4549/authorize',
+        ]);
+        $this->apiClient->method('httpPost')->willReturn([
+            'url' => 'http://real-onelogin.example/logout',
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No mock One Login authorization endpoint configured for callback URI');
+        $this->service->logoutUrl('h.p.s', 'https://example.com/done', 'https://unconfigured.example/auth/redirect');
+    }
+
+    public function testLogoutUrlRejectsMissingMockRedirectUriWhenMockEndpointsAreEnabled(): void
+    {
+        $this->service = new OneLoginService($this->apiClient, [
+            'https://localhost:7002/auth/redirect' => 'http://localhost:4549/authorize',
+        ]);
+        $this->apiClient->method('httpPost')->willReturn([
+            'url' => 'http://real-onelogin.example/logout',
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->service->logoutUrl('h.p.s', 'https://example.com/done');
+    }
+
     /**
      * @return array<string, array{mixed}>
      */

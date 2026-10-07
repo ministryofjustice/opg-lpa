@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
+use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
@@ -19,6 +20,7 @@ class LogoutHandler implements RequestHandlerInterface
         private readonly array $config,
         private readonly OneLoginSessionManager $oneLoginSessionManager,
         private readonly OneLoginSignOut $oneLoginSignOut,
+        private readonly RedirectUriBuilder $redirectUriBuilder,
     ) {
     }
 
@@ -43,6 +45,8 @@ class LogoutHandler implements RequestHandlerInterface
         }
 
         // Also end the user's GOV.UK One Login session; One Login then sends them on to $logoutUrl.
-        return new RedirectResponse($this->oneLoginSignOut->url($idToken, $logoutUrl) ?? $logoutUrl);
+        $mockRedirectUri = ($this->redirectUriBuilder)($request->getUri());
+
+        return new RedirectResponse($this->oneLoginSignOut->url($idToken, $logoutUrl, $mockRedirectUri) ?? $logoutUrl);
     }
 }
