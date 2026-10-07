@@ -449,14 +449,21 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     public function activate(string $token): bool
     {
         return $this->updateRow(
-            ['activation_token' => $token],
+            [
+                'activation_token' => $token,
+                new IsNull('activated'),
+            ],
             [
                 'active' => true,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
                 'activated' => gmdate(DbWrapper::TIME_FORMAT),
-                'activation_token' => null,
             ]
         );
+    }
+
+    public function activationTokenExists(string $token): bool
+    {
+        return $this->countRows(['activation_token' => $token]) > 0;
     }
 
     /**
