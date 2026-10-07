@@ -146,7 +146,22 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals($serviceResult, $result->getVariables());
     }
 
-    public function testCallbackActionReturnsUnauthorizedWhenAuthenticationFails(): void
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function authenticationFailureReasonProvider(): array
+    {
+        return [
+            'token exchange failed' => ['token_exchange_failed'],
+            'vot missing'           => ['missing_vot_claim'],
+            'vot not Cl.Cm'         => ['invalid_vot_claim'],
+        ];
+    }
+
+    /**
+     * @dataProvider authenticationFailureReasonProvider
+     */
+    public function testCallbackActionReturnsUnauthorizedWhenAuthenticationFails(string $reason): void
     {
         $body = [
             'code'         => 'auth-code-123',
@@ -156,11 +171,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         ];
 
         $this->service->shouldReceive('handleCallback')
-            ->andThrow(new OneLoginAuthenticationException('token_exchange_failed'))
+            ->andThrow(new OneLoginAuthenticationException($reason))
             ->once();
 
         $this->logger->shouldReceive('error')
-            ->with('auth.onelogin.callback_failed', ['reason' => 'token_exchange_failed'])
+            ->with('auth.onelogin.callback_failed', ['reason' => $reason])
             ->once();
 
         /** @var OneLoginController $controller */

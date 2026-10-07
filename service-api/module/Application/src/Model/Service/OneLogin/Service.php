@@ -33,6 +33,15 @@ class Service extends AbstractService
      * Must not accept the same jti twice within three minutes.
      */
     private const int LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS = 180;
+
+    /**
+     * The credential trust level we request: medium authentication, no identity proving.
+     * One Login returns it in the ID token's `vot` claim, which must match.
+     */
+    private const string CREDENTIAL_TRUST_LEVEL = 'Cl.Cm';
+
+    private const string VECTORS_OF_TRUST = '["' . self::CREDENTIAL_TRUST_LEVEL . '"]';
+
     /** @var callable(positive-int): string */
     private $randomBytes;
 
@@ -131,7 +140,7 @@ class Service extends AbstractService
                 'scope'        => 'openid email',
                 'state'        => $state,
                 'nonce'        => $nonce,
-                'vtr'          => '["Cl.Cm"]',
+                'vtr'          => self::VECTORS_OF_TRUST,
             ],
         );
 
@@ -250,6 +259,20 @@ class Service extends AbstractService
 
         if (!is_string($sub) || $sub === '') {
             throw new OneLoginAuthenticationException('missing_sub_claim');
+        }
+
+        // One Login: "The vot claim must contain the credential trust level you asked for
+        // in the request to the /authorize endpoint."
+        $vot = $claims['vot'] ?? null;
+
+        if ($vot === null) {
+            throw new OneLoginAuthenticationException('missing_vot_claim');
+        }
+
+        if ($vot !== self::CREDENTIAL_TRUST_LEVEL) {
+            $this->getLogger()->warning('auth.onelogin.unexpected_vot', ['vot' => $vot]);
+
+            throw new OneLoginAuthenticationException('invalid_vot_claim');
         }
 
         // GOV.UK One Login returns the email from the UserInfo endpoint, not in the
