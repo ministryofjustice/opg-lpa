@@ -40,23 +40,23 @@ front-composer-install:
 # use make front-composer-update PACKAGE=symfony\/validator\:v5.4.43
 .PHONY: front-composer-update
 front-composer-update:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-front update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+	@docker compose run --rm composer-front update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
 
 # Usage: make front-composer-require PACKAGE=vendor\/package
 # For a version constraint: make front-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: front-composer-require
 front-composer-require:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-front require $(PACKAGE)
+	@docker compose run --rm composer-front require $(PACKAGE)
 
 # remove a package, same format for PACKAGE= as above
 .PHONY: front-composer-remove
 front-composer-remove:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-front remove $(PACKAGE) --no-install
+	@docker compose run --rm composer-front remove $(PACKAGE) --no-install
 
 #run composer outdated in front container
 .PHONY: front-composer-outdated
 front-composer-outdated:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-front outdated
+	@docker compose run --rm composer-front outdated
 
 # use make front-composer-why PACKAGE=symfony\/validator
 .PHONY: front-composer-why
@@ -72,7 +72,7 @@ api-composer-install:
 # For a version constraint: make api-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: api-composer-require
 api-composer-require:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-api require $(PACKAGE)
+	@docker compose run --rm composer-api require $(PACKAGE)
 
 # use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
 .PHONY: api-composer-update
@@ -112,7 +112,7 @@ admin-composer-update:
 # For a version constraint: make admin-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: admin-composer-require
 admin-composer-require:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm composer-admin require $(PACKAGE)
+	@docker compose run --rm composer-admin require $(PACKAGE)
 
 # ----- Composer pdf ----- #
 # use make pdf-composer-update PACKAGE=symfony\/validator\:v5.4.43
@@ -145,8 +145,8 @@ dc-up: all-composer-install ecrlogin
 	docker compose up -d --remove-orphans
 	@${MAKE} dc-restart-web
 	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm npm-front install
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm npm-front run watch
+	docker compose run --rm npm-front install
+	docker compose run --rm npm-front run watch
 
 .PHONY: dc-up-debug
 dc-up-debug: all-composer-install ecrlogin
@@ -313,23 +313,23 @@ dc-unit-tests: dc-front-unit-tests dc-admin-unit-tests dc-api-unit-tests dc-pdf-
 
 .PHONY: dc-front-psalm
 dc-front-psalm:
-	@docker compose -f docker-compose.yml run --build --rm --no-deps front-app-test vendor/bin/psalm --no-cache --force-jit
+	@docker compose run --build --rm --no-deps front-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-admin-psalm
 dc-admin-psalm:
-	@docker compose -f docker-compose.yml run --build --rm --no-deps admin-app-test vendor/bin/psalm --no-cache --force-jit
+	@docker compose run --build --rm --no-deps admin-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-api-psalm
 dc-api-psalm:
-	@docker compose -f docker-compose.yml run --build --rm --no-deps api-app-test vendor/bin/psalm --no-cache --force-jit
+	@docker compose run --build --rm --no-deps api-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-pdf-psalm
 dc-pdf-psalm:
-	@docker compose -f docker-compose.yml run --build --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache --force-jit
+	@docker compose run --build --rm --no-deps pdf-app-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-shared-psalm
 dc-shared-psalm:
-	@docker compose -f docker-compose.yml run --build --rm --no-deps shared-test vendor/bin/psalm --no-cache --force-jit
+	@docker compose run --build --rm --no-deps shared-test vendor/bin/psalm --no-cache --force-jit
 
 .PHONY: dc-psalm
 dc-psalm: dc-front-psalm dc-admin-psalm dc-api-psalm dc-pdf-psalm dc-shared-psalm
@@ -364,14 +364,14 @@ cypress-open: npm-install python-api-venv
 # (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-spec
 cypress-run-spec: _cypress-prepare-dirs
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # This should be used in the form : make cypress-run-tags tags=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
 # (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags: _cypress-prepare-dirs
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
 .PHONY: cypress-run-stitched-suites
@@ -380,8 +380,8 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@StitchedHW or @StitchedPF or @StitchedClone"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@StitchedHW or @StitchedPF or @StitchedClone"
 
 # Runs the "remaining" cypress tests - everything not covered by stitched suites or signup.
 # Mirrors the exclusion expression used in CI (workflow_merge_queue.yml cypress_tests_Remaining),
@@ -410,8 +410,8 @@ _cypress-run-baseline-suite: _cypress-prepare-dirs
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${SUITE_TAG}"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${SUITE_TAG}"
 
 # Replicates CI cypress runs locally to ensure visual regression test baseline images use the same user to keep
 # consistent page dimensions and LPA data for each stitched suite.
@@ -424,13 +424,13 @@ cypress-update-all-baselines: _cypress-stitch
 .PHONY: dc-phpcs-fix
 dc-phpcs-fix:
 	docker compose build phpcs
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm --no-deps -q phpcs
+	docker compose run --rm --no-deps -q phpcs
 
 .PHONY: dc-phpcs-check
 dc-phpcs-check:
 	mkdir -p phpcs/output && chmod a+w phpcs/output
 	docker compose build phpcs
-	docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
+	docker compose run --rm --no-deps --entrypoint "./vendor/bin/phpcs --standard=/app/config/phpcs.xml.dist" phpcs --basepath=/app --report=full --report-checkstyle=/app/output/phpcs-report.xml
 
 .PHONY: dc-clear-cache
 dc-clear-cache:
@@ -455,7 +455,7 @@ reset-front-app:
 # and re-populating the test users/applications/feedback/deletion-log tables.
 .PHONY: dc-reseed
 dc-reseed:
-	@docker compose -f docker-compose.yml -f docker-compose.cypress.yml run --rm seeding
+	@docker compose run --rm seeding
 	@${MAKE} dc-restart-web
 
 .PHONY: update-secrets-baseline

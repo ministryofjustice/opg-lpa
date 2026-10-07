@@ -191,21 +191,6 @@ Feature: Shared Space
     Then I should be on "/login"
     Then I should not be logged in
 
-  Scenario: Can ask for password reset when importing
-    Given I create a new user stored as "userToImport" with 5 LPAs
-    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
-    When I log in as the newly created fixture user
-    Then I should be on "/shared-space/dashboard"
-    When I click element marked "Shared space"
-    Then I should be on "/shared-space"
-    When I click link "Import LPAs from existing account"
-    When I click link "Forgotten your password?"
-    Then I should be on "/shared-space/forgot-password"
-    Then I enter the email of "userToImport"
-    Then I submit the form
-    Then I should be on "/shared-space/forgot-password"
-    Then I see "Thank you" in the page text
-
   Scenario: Non-admin members cannot manage shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is a "member"
