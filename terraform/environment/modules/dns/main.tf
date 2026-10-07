@@ -147,9 +147,13 @@ resource "aws_route53_health_check" "public_facing_lastingpowerofattorney" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
+  count = var.environment_name == "production" ? 1 : 0
+
   alarm_description   = "${var.environment_name} LPA health check"
   alarm_name          = "${var.environment_name}-lpa-healthcheck-alarm"
-  actions_enabled     = false
+  actions_enabled     = true
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  treat_missing_data  = "Breaching"
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 1
   evaluation_periods  = 1
