@@ -26,7 +26,10 @@
     "rangeStrategy": "update-lockfile",
     "commitMessagePrefix": "[SECURITY]",
     "branchTopic": "{{{datasource}}}-{{{depName}}}-vulnerability",
-    "prCreation": "immediate"
+    "prCreation": "immediate",
+    "labels": [
+      "Security"
+    ]
   },
   "prConcurrentLimit": 3,
   "schedule": ["* 6 1,15 * *"],
