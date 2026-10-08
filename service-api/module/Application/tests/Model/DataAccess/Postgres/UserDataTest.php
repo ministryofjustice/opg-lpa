@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use Laminas\Db\Sql\Predicate\IsNull;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
@@ -1052,12 +1053,15 @@ class UserDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
-        $updateMock->shouldReceive('where')->with(['activation_token' => $token]);
+        $updateMock->shouldReceive('where')->with(Mockery::on(function ($where) use ($token) {
+            return $where['activation_token'] === $token
+                && $where[0] instanceof IsNull;
+        }));
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return Helpers::isGmDateString($set['activated']) &&
                 Helpers::isGmDateString($set['updated']) &&
                 $set['active'] &&
-                is_null($set['activation_token']);
+                !array_key_exists('activation_token', $set);
         }));
 
         // test

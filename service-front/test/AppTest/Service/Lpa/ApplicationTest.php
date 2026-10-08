@@ -34,6 +34,7 @@ final class ApplicationTest extends TestCase
 
     private MockObject&AuthenticationService $authenticationService;
     private MockObject&Client $apiClient;
+    private MockObject&LoggerInterface $logger;
     private Application $service;
 
     private function modifiedLPA(int $id = 5531003157, $completedAt = null, $processingStatus = null, $rejectedDate = null)
@@ -60,7 +61,7 @@ final class ApplicationTest extends TestCase
 
     public function setUp(): void
     {
-        $logger = $this->createMock(LoggerInterface::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $identity = $this->createMock(\App\Model\Service\Authentication\Identity\User::class);
         $identity->method('id')->willReturn('4321');
         $identity->method('getSharedSpaceId')->willReturn(null);
@@ -72,7 +73,7 @@ final class ApplicationTest extends TestCase
 
         $this->service = new Application($this->authenticationService, [
             'processing-status' => ['track-from-date' => '2019-01-01'],
-        ], $logger);
+        ], $this->logger);
         $this->service->setApiClient($this->apiClient);
     }
 
@@ -99,17 +100,25 @@ final class ApplicationTest extends TestCase
         $this->assertEquals($expectedResult, $result);
     }
 
-    public function testGetApplicationFailure(): void
+    public function testGetApplicationReturnsFalseAndLogsNoErrorWhenNotFound(): void
     {
-        $mockResponse = $this->createMock(ResponseInterface::class);
-        $mockResponse->method('getStatusCode')->willReturn(400);
-        $mockResponse->expects($this->once())->method('getBody')->willReturn(Utils::streamFor('{}'));
+        $this->apiClient->method('httpGet')->willThrowException($this->apiException(404));
 
-        $this->apiClient->method('httpGet')->willThrowException(new ApiException($mockResponse));
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('info')
+            ->with('LPA not found for user', $this->anything());
 
-        $result = $this->service->getApplication(1234);
+        $this->assertFalse($this->service->getApplication(1234));
+    }
 
-        $this->assertFalse($result);
+    public function testGetApplicationRethrowsFailuresThatAreNotANotFound(): void
+    {
+        $this->apiClient->method('httpGet')->willThrowException($this->apiException(500));
+
+        $this->expectException(ApiException::class);
+
+        $this->service->getApplication(1234);
     }
 
     public function testGetStatuses(): void
@@ -132,6 +141,29 @@ final class ApplicationTest extends TestCase
         $result = $this->service->getStatuses('4321');
 
         $this->assertEquals(['4321' => ['found' => false]], $result);
+    }
+
+    public function testGetStatusesLogsFailuresAtWarningAndStillDegrades(): void
+    {
+        $this->apiClient->expects($this->once())
+            ->method('httpGet')
+            ->willThrowException($this->apiException(500));
+
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('Failed to fetch LPA statuses', $this->anything());
+
+        $this->assertEquals(['4321' => ['found' => false]], $this->service->getStatuses('4321'));
+    }
+
+    private function apiException(int $statusCode): ApiException
+    {
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn($statusCode);
+        $response->method('getBody')->willReturn(Utils::streamFor('{}'));
+
+        return new ApiException($response);
     }
 
     public function testGetStatusesException(): void

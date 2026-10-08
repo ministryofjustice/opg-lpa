@@ -151,11 +151,21 @@ final class ServiceTest extends AbstractServiceTestCase
 
     public function testActivateNoAccount()
     {
+        $this->authUserRepository->shouldReceive('activationTokenExists')->andReturn(false);
+
         $this->authUserRepository->shouldReceive('activate')->andReturn(null);
         $this->assertEquals('account-not-found', $this->service->activate('foo'));
 
         $this->authUserRepository->shouldReceive('activate')->andReturn(false);
         $this->assertEquals('account-not-found', $this->service->activate('bar'));
+    }
+
+    public function testActivateReportsAnAlreadyUsedTokenSeparately()
+    {
+        $this->authUserRepository->shouldReceive('activate')->andReturn(false);
+        $this->authUserRepository->shouldReceive('activationTokenExists')->andReturn(true);
+
+        $this->assertEquals('account-already-activated', $this->service->activate('used-token'));
     }
 
     public function testActivateSuccess()
