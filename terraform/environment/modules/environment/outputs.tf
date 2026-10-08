@@ -50,3 +50,7 @@ output "vpc_id" {
 output "app_subnet_ids" {
   value = [for subnet in data.aws_subnet.application : subnet.id]
 }
+
+output "aws_sns_topic_cloudwatch_to_pagerduty_arn" {
+  value = aws_sns_topic.cloudwatch_to_pagerduty.arn
+}
