@@ -26,6 +26,7 @@ class DeleteAccountHandler implements RequestHandlerInterface
         private readonly AuthenticationService $authenticationService,
         private readonly SharedSpaceService $sharedSpaceService,
         private readonly UserService $userService,
+        private readonly bool $sharedSpacesEnabled = false,
     ) {
     }
 
@@ -44,7 +45,7 @@ class DeleteAccountHandler implements RequestHandlerInterface
             return new RedirectResponse('/deleted');
         }
 
-        $memberCount = $this->sharedSpaceService->getMemberCount();
+        $memberCount = $this->sharedSpacesEnabled ? $this->sharedSpaceService->getMemberCount() : null;
 
         $html = $this->renderer->render(
             'application/authenticated/delete/index.twig',

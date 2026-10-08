@@ -181,7 +181,6 @@ return [
                 $c->get(FormElementManager::class),
                 $c->get(AuthenticationService::class),
                 Feature::OneLogin->isEnabled(),
-                $c->get(SharedSpaceService::class)
             ),
             RedirectUriBuilder::class                   => static fn(ContainerInterface $c) => new RedirectUriBuilder(
                 $c->get('config')['onelogin']['redirect_base_url'] ?? null,
@@ -194,6 +193,13 @@ return [
             Handler\PingHandlerJson::class              => static fn(ContainerInterface $c) => new Handler\PingHandlerJson(
                 $c->get('config'),
                 $c->get(StatusService::class),
+            ),
+            Handler\DeleteAccountHandler::class          => static fn(ContainerInterface $c) => new Handler\DeleteAccountHandler(
+                $c->get(TemplateRendererInterface::class),
+                $c->get(AuthenticationService::class),
+                $c->get(SharedSpaceService::class),
+                $c->get(UserDetails::class),
+                Feature::SharedSpace->isEnabled(),
             ),
             LpaApplicationService::class                => LpaApplicationServiceFactory::class,
             GovPayClient::class                         => AlphagovPayClientFactory::class,
