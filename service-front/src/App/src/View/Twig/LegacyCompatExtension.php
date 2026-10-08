@@ -11,6 +11,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
@@ -45,6 +46,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
         private readonly SystemMessage $systemMessage,
+        private readonly OneLoginSessionManager $oneLoginSessionManager,
     ) {
     }
 
@@ -219,13 +221,19 @@ class LegacyCompatExtension extends AbstractExtension
         ]);
     }
 
-    /**
-     * Signed-in users get the GOV.UK One Login service header, which carries the sign-out link,
-     * whenever One Login is enabled.
-     */
     public function showOneLoginHeader(): bool
     {
-        return Feature::OneLogin->isEnabled() && $this->sessionStorage->read() instanceof User;
+        if (!Feature::OneLogin->isEnabled()) {
+            return false;
+        }
+
+        if ($this->sessionStorage->read() instanceof User) {
+            return true;
+        }
+
+        $session = $this->sessionStorage->session();
+
+        return $session !== null && $this->oneLoginSessionManager->getPendingLink($session) !== null;
     }
 
     /**

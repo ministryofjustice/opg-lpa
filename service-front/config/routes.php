@@ -105,6 +105,7 @@ use App\Handler\TermsHandler;
 use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\WhichBestDescribesYouHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -175,6 +176,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
             ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/which-best-describes-you', WhichBestDescribesYouHandler::class, ['GET', 'POST'], 'which-best-describes-you')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')

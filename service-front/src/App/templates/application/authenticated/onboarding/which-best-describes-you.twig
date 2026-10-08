@@ -1,0 +1,50 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Which best describes you?' %}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set form = formErrorTextExchange(form, {
+    'userType': {
+        'isEmpty': 'Select which best describes you',
+    },
+}) %}
+
+{% set userType = form.get('userType') %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    {{ macros.formErrorSummary(null, form) }}
+
+    <div class="govuk-grid-column-two-thirds">
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      {% set hasError = userType.getMessages|length > 0 %}
+
+      <div class="govuk-form-group {{ hasError ? 'govuk-form-group--error'}}">
+        <fieldset class="govuk-fieldset" aria-describedby="userType-description{{ hasError ? ' userType-error' }}">
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+            <h1 class="govuk-fieldset__heading">Which best describes you?</h1>
+          </legend>
+
+          <p class="govuk-body" id="userType-description">
+            We need to know how you make LPAs so we can set up your account.
+          </p>
+
+          {% if hasError %}
+            <div id="userType-error">{{ formElementErrorsV2(userType) }}</div>
+          {% endif %}
+
+          <div class="govuk-radios" data-module="govuk-radios">
+            {{ formRadio(userType) }}
+          </div>
+        </fieldset>
+      </div>
+
+      <button class="govuk-button" type="submit" data-cy="which-best-describes-you-continue">Continue</button>
+      {{ form().closeTag|raw }}
+    </div>
+  </div>
+{% endblock content %}

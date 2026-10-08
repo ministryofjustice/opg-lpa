@@ -1,5 +1,6 @@
 import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { openEmailAndVisitLink } from '../../support/reset_link';
+import { sayIMakeLpasFor } from '../../support/onboarding';
 
 let oneLoginEnabled = null;
 
@@ -95,6 +96,7 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   cy.get('[data-cy="onelogin-signin-button"]').click();
   checkOnMockOneLoginPage();
   continueThroughMockOneLogin();
+  sayIMakeLpasFor('myself, family or friends');
   cy.url().should(
     'include',
     Cypress.config().baseUrl + '/link-or-create-account',

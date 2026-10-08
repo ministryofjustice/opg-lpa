@@ -53,6 +53,10 @@ class LinkAccountHandler implements RequestHandlerInterface
             return new RedirectResponse('/login');
         }
 
+        if ($this->sessionManager->getOnboarding($session)->userType === null) {
+            return new RedirectResponse('/which-best-describes-you');
+        }
+
         /** @var Login $form */
         $form = $this->formElementManager->get(Login::class);
 
