@@ -65,10 +65,11 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
                 'user'                  => [
                     'lastLogin' => $identity->lastLogin(),
                 ],
-                'trackingEnabled' => $lpasSummary['trackingEnabled'],
-                'sharedSpaceName' => $lpasSummary['name'],
-                'joinedSuccess'   => ($request->getQueryParams()['joined'] ?? null) === 'success',
-                'createdSuccess'   => ($request->getQueryParams()['created'] ?? null) === 'success'
+                'trackingEnabled'        => $lpasSummary['trackingEnabled'],
+                'sharedSpaceName'        => $lpasSummary['name'],
+                'joinedSuccess'          => ($request->getQueryParams()['joined'] ?? null) === 'success',
+                'createdSuccess'         => ($request->getQueryParams()['created'] ?? null) === 'success',
+                'linkedAccountSuccess'   => ($request->getQueryParams()['linkedAccount'] ?? null) === 'success',
             ]
         );
 

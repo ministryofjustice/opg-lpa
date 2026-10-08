@@ -9,7 +9,7 @@
 {% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
 <div class="govuk-grid-row">
-    {% if joinedSuccess or createdSuccess %}
+    {% if joinedSuccess or createdSuccess or linkedAccountSuccess %}
         <div class="govuk-grid-column-full">
             <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__header">
@@ -26,6 +26,14 @@
                 {% elseif createdSuccess %}
                   <div class="govuk-notification-banner__content">
                     <strong>{{ sharedSpaceName }}</strong> has been created
+                  </div>
+                {% elseif linkedAccountSuccess %}
+                  <div class="govuk-notification-banner__content">
+                    <h3 class="govuk-notification-banner__heading">
+                      The account information you chose to keep is now available in this account.
+                    </h3>
+
+                    <p class="govuk-body">You can {% if lpaTotalCount == 0 %}now start{% else %}continue{% endif %} making a lasting power of attorney or read about how to use a <a class="govuk-link" href="{{ url('shared-space') }}">shared space</a> with other members of your team.</p>
                   </div>
                 {% endif %}
             </div>
@@ -60,7 +68,7 @@
         <div class="panel-cta tablet-and-up">
             <div class="panel-heading govuk-heading-m">Make another LPA</div>
             <div class="panel-body">
-                <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
+                <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href="{{ url('user/dashboard/create-lpa') }}" role="button">Start now</a></p>
                 <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
             </div>
         </div>
