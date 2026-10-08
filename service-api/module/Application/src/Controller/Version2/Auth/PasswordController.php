@@ -115,12 +115,12 @@ class PasswordController extends AbstractAuthController
      */
     public function resetAction(): Json|ApiProblem
     {
-        $data = $this->processBodyContent($this->getRequest());
+        $username = $this->getBodyContent('username');
+        if (empty($username)) {
+            return new ApiProblem(400, 'username must be passed');
+        }
 
-        $username = $data['username'];
-        $forSharedSpace = $data['forSharedSpace'];
-
-        $result = $this->getService()->generateToken($username, $forSharedSpace);
+        $result = $this->getService()->generateToken($username);
 
         if ($result === Service::ACCOUNT_USES_ONE_LOGIN) {
             $this->getLogger()->info('Password reset refused for a One Login account', [

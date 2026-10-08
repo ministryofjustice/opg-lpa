@@ -355,14 +355,13 @@ class UserDetails implements ApiClientAwareInterface
         return true;
     }
 
-    public function requestPasswordResetEmail(#[\SensitiveParameter] string $email, bool $forSharedSpace = false): bool|string
+    public function requestPasswordResetEmail(#[\SensitiveParameter] string $email): bool|string
     {
         $this->logger->info('User requested password reset email');
 
         try {
             $result = $this->apiClient->httpPost('/v2/users/password-reset', [
                 'username'       => strtolower($email),
-                'forSharedSpace' => $forSharedSpace,
             ]);
 
             if (is_array($result)) {
@@ -562,7 +561,6 @@ class UserDetails implements ApiClientAwareInterface
         try {
             $result = $this->apiClient->httpPost('/v2/users/password-reset', [
                 'username' => strtolower($email),
-                'forSharedSpace' => false,
             ]);
 
             if (isset($result['activation_token'])) {

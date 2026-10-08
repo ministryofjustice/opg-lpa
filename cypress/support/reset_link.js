@@ -13,10 +13,6 @@ export function openEmailAndVisitLink(type, identifier) {
     cy.visit(`/forgot-password/reset/${token}`);
   }
 
-  if (type === 'sharedspacepasswordreset') {
-    cy.visit(`/forgot-password/reset/sharedspace${token}`);
-  }
-
   if (type === 'activation') {
     cy.visit(`/signup/confirm/${token}`);
   }

@@ -272,23 +272,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'import' => [
-                                'type' => 'Segment',
-                                'options' => [
-                                    'route'    => '/import',
-                                ],
-                                'child_routes'  => [
-                                    'post' => [
-                                        'type'    => 'Method',
-                                        'options' => [
-                                            'verb'     => 'post',
-                                            'defaults' => [
-                                                'action' => 'import',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
                         ],
                     ],
 

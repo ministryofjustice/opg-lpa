@@ -11,7 +11,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use Laminas\Form\FormInterface;
-use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -30,16 +29,14 @@ class ForgotPasswordHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $forSharedSpace = $request->getAttribute(RouteResult::class)?->getMatchedRouteName() === 'shared-space.forgot-password';
-
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
-        if (!$forSharedSpace && $identity !== null) {
+        if ($identity !== null) {
             return new RedirectResponse('/user/dashboard');
         }
 
         /** @var FormInterface $form */
         $form = $this->formElementManager->get(\App\Form\User\ConfirmEmail::class);
-        $form->setAttribute('action', ($forSharedSpace ? '/shared-space' : '') . '/forgot-password');
+        $form->setAttribute('action', '/forgot-password');
 
         $error = null;
 
@@ -54,7 +51,7 @@ class ForgotPasswordHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $formData = $form->getData(FormInterface::VALUES_AS_ARRAY);
 
-                $result = $this->userService->requestPasswordResetEmail($formData['email'], $forSharedSpace);
+                $result = $this->userService->requestPasswordResetEmail($formData['email']);
 
                 $viewParams = [
                     'email' => $formData['email'],

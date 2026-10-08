@@ -125,7 +125,7 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->assertEquals(
             PasswordService::ACCOUNT_USES_ONE_LOGIN,
-            $service->generateToken('linked@test.com', false),
+            $service->generateToken('linked@test.com'),
         );
     }
     public function testGenerateTokenFindsAnAccountCreatedThroughOneLoginByItsOneLoginEmail()
@@ -150,7 +150,7 @@ class ServiceTest extends AbstractServiceTestCase
 
         $this->assertEquals(
             PasswordService::ACCOUNT_USES_ONE_LOGIN,
-            $service->generateToken('created@test.com', false),
+            $service->generateToken('created@test.com'),
         );
     }
 
@@ -205,7 +205,7 @@ class ServiceTest extends AbstractServiceTestCase
         $service->setUserRepository($this->authUserRepository);
         $service->setAuthenticationService($this->authenticationService);
 
-        $result = $service->generateToken('unit@test.com', false);
+        $result = $service->generateToken('unit@test.com');
 
         $this->assertEquals('user-not-found', $result);
     }
@@ -221,7 +221,7 @@ class ServiceTest extends AbstractServiceTestCase
         $service->setUserRepository($this->authUserRepository);
         $service->setAuthenticationService($this->authenticationService);
 
-        $result = $service->generateToken('unit@test.com', false);
+        $result = $service->generateToken('unit@test.com');
 
         $this->assertEquals(['activation_token' => 'unit_test_activation_token'], $result);
     }
@@ -257,7 +257,7 @@ class ServiceTest extends AbstractServiceTestCase
         $service->setUserRepository($this->authUserRepository);
         $service->setAuthenticationService($this->authenticationService);
 
-        $result = $service->generateToken('unit@test.com', false);
+        $result = $service->generateToken('unit@test.com');
 
         $this->assertEquals($this->tokenDetails, $result);
     }
@@ -285,37 +285,9 @@ class ServiceTest extends AbstractServiceTestCase
         $service->setAuthenticationService($this->authenticationService);
         $service->setUseHashTokens(true);
 
-        $result = $service->generateToken('unit-hashed@test.com', false);
+        $result = $service->generateToken('unit-hashed@test.com');
 
         $this->assertEquals('22a562741b076687cb4c5efe12d5c18798aa0c46', $result['token']);
-    }
-
-    public function testGenerateTokenForSharedSpaceHashed()
-    {
-        $this->setUserDataSourceGetByUsernameExpectation('unit-hashed@test.com', new User([
-            'id' => 1,
-            'active' => true
-        ]));
-
-        $this->authUserRepository->shouldReceive('addPasswordResetToken')
-            ->withArgs(function ($id, $token) {
-                $expectedExpires = new DateTime('+' . (PasswordService::TOKEN_TTL - 1) . ' seconds');
-
-                $this->assertEquals("1", $id);
-                $this->assertEquals('sharedspace22a562741b076687cb4c5efe12d5c18798aa0c46', $token['token']);
-                $this->assertEquals(PasswordService::TOKEN_TTL, $token['expiresIn']);
-                $this->assertGreaterThan($expectedExpires, $token['expiresAt']);
-                return true;
-            })->once();
-
-        $service = new PasswordService();
-        $service->setUserRepository($this->authUserRepository);
-        $service->setAuthenticationService($this->authenticationService);
-        $service->setUseHashTokens(true);
-
-        $result = $service->generateToken('unit-hashed@test.com', true);
-
-        $this->assertEquals('sharedspace22a562741b076687cb4c5efe12d5c18798aa0c46', $result['token']);
     }
 
     public function testUpdatePasswordUsingTokenInvalidPassword()
