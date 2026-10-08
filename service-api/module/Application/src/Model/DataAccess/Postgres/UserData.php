@@ -132,17 +132,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * Returns zero or more users by case-insensitive and partial
-     * matching
+     * matching, along with the total number of matching users
+     * (ignoring offset/limit), so that callers can paginate without
+     * needing a separate count query.
      *
      * @param $query
      * @param $options - array of optional parameters, including
      * 'offset' (int, default 0) and 'limit' (int, default 10)
-     * @return iterable UserModel instances
+     * @return array{results: UserModel[], total: int}
      */
-    public function matchUsers(string $query, array $options = []): iterable
+    public function matchUsers(string $query, array $options = []): array
     {
         $offset = 0;
-        $limit = 10;
+        $limit = 20;
 
         if (isset($options['offset'])) {
             $offset = intval($options['offset']);
@@ -159,9 +161,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
-        // case-insensitive match on user email
+        // case-insensitive match on user email (either the identity used to log in,
+        // or the email address registered with One Login)
         $queryQuoted = $this->dbWrapper->quoteValue(sprintf('%%%s%%', $query));
-        $like = new Expression('users.identity ILIKE ' . $queryQuoted);
+        $like = new Expression(
+            'users.identity ILIKE ' . $queryQuoted . ' OR users.one_login_email ILIKE ' . $queryQuoted
+        );
 
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
@@ -206,16 +211,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 'inactivity_flags',
                 'one_login_sub',
                 'one_login_email',
+                // Window function: total matching rows, ignoring LIMIT/OFFSET,
+                // avoiding the need for a separate COUNT(*) query.
+                'total' => new SqlExpression('COUNT(*) OVER()'),
             ])
             ->order('identity ASC')
             ->offset($offset)
             ->limit($limit);
 
-        $users = $sql->prepareStatementForSqlObject($select)->execute();
+        $rows = iterator_to_array($sql->prepareStatementForSqlObject($select)->execute(), false);
 
-        foreach ($users as $user) {
-            yield new UserModel($user);
-        }
+        return [
+            'results' => array_map(fn ($row) => new UserModel($row), $rows),
+            'total' => empty($rows) ? 0 : (int) reset($rows)['total'],
+        ];
     }
 
     /**

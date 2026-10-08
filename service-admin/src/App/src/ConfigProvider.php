@@ -71,15 +71,10 @@ class ConfigProvider
                 SessionPersistenceInterface::class => PhpSessionPersistence::class,
             ],
             'aliases' => [
-                //  Allows SystemMessageHandler's StorageInterface dependency to be autowired
-                //  to the concrete Cache service.
                 StorageInterface::class => Service\Cache\Cache::class,
             ],
             'factories' => [
                 //  Handlers
-                //  Note: FeedbackHandler, SystemMessageHandler, UserFindHandler,
-                //  UserLpasHandler and UserSearchHandler are autowired by laminas/laminas-di
-                //  as their constructors only depend on other container-known services.
                 Handler\SignOutHandler::class => Handler\SignOutHandlerFactory::class,
 
                 SessionMiddleware::class => function ($c) {
@@ -95,8 +90,6 @@ class ConfigProvider
                 RequestLoggingMiddleware::class => RequestLoggingMiddlewareFactory::class,
 
                 //  Services
-                //  Note: AuthenticationService, FeedbackService and UserService are autowired
-                //  by laminas/laminas-di as their constructors only depend on the ApiClient service.
                 Service\Cache\Cache::class  => Service\Cache\CacheFactory::class,
                 Service\ApiClient\Client::class => Service\ApiClient\ClientFactory::class,
             ],

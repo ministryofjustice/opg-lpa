@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace App\Service\User;
+namespace App\Service;
 
 use App\Service\ApiClient\Client as ApiClient;
-use MakeShared\DataModel\User\User;
 use DateTime;
 use DateTimeZone;
 use Exception;
+use MakeShared\DataModel\User\User;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
+use SensitiveParameter;
 
 class UserService
 {
@@ -99,42 +101,56 @@ class UserService
     public function searchById(string $id): array|false
     {
         try {
-            $userData = $this->client->httpGet('/v2/user/' . $id);
+            $userData = $this->client->httpGet('/v2/admin/search-users', [
+                'userId' => $id,
+            ]);
         } catch (Exception $e) {
             $this->logger->error($e->getMessage());
             return false;
         }
 
-        if (!is_array($userData) || !isset($userData['email']['address'])) {
+        if (!is_array($userData) || !isset($userData['username'])) {
             return false;
         }
 
-        return $this->search($userData['email']['address']);
+        return $this->search($userData['username']);
     }
 
     public function searchByAReference(string $aReference): array|false
     {
-        $userData = $this->client->httpGet('/v2/admin/search-users', [
-            'aReference' => $aReference,
-        ]);
-
-        if (is_array($userData)) {
-            return $this->convertDates($userData);
+        try {
+            $userData = $this->client->httpGet('/v2/admin/search-users', [
+                'aReference' => $aReference,
+            ]);
+        } catch (Exception $e) {
+            $this->logger->error($e->getMessage());
+            return false;
         }
 
-        return false;
+        if (!is_array($userData) || !isset($userData['username'])) {
+            return false;
+        }
+
+        return $this->search($userData['username']);
     }
 
-    public function userLpas(string $userId): array|false
+    /**
+     * @return array{results: array, total: int}|false
+     * @throws ClientExceptionInterface
+     */
+    public function userLpas(string $userId, int $page = 1, int $perPage = 20): array|false
     {
         try {
             $lpaData = $this->client->httpGet(sprintf('/v2/user/%s/applications', $userId), [
-                'page' => 1,
-                'perPage' => 20,
+                'page' => $page,
+                'perPage' => $perPage,
             ]);
 
             if (is_array($lpaData) && array_key_exists('applications', $lpaData) && is_array($lpaData['applications'])) {
-                return $lpaData['applications'];
+                return [
+                    'results' => $lpaData['applications'],
+                    'total' => $lpaData['total'] ?? 0,
+                ];
             }
 
             return false;
@@ -144,16 +160,23 @@ class UserService
         }
     }
 
-    public function sharedSpaceLpas(string $sharedSpaceId): array|false
+    /**
+     * @return array{results: array, total: int}|false
+     * @throws ClientExceptionInterface
+     */
+    public function sharedSpaceLpas(string $sharedSpaceId, int $page = 1, int $perPage = 20): array|false
     {
         try {
             $lpaData = $this->client->httpGet(sprintf('/v2/admin/shared-space/%s/lpas', $sharedSpaceId), [
-                'page' => 1,
-                'perPage' => 20,
+                'page' => $page,
+                'perPage' => $perPage,
             ]);
 
             if (is_array($lpaData) && array_key_exists('applications', $lpaData) && is_array($lpaData['applications'])) {
-                return $lpaData['applications'];
+                return [
+                    'results' => $lpaData['applications'],
+                    'total' => $lpaData['total'] ?? 0,
+                ];
             }
 
             return false;
@@ -163,14 +186,36 @@ class UserService
         }
     }
 
-    public function match(array $params): array
+    /**
+     * @param string $fullOrPartialEmail
+     * @param int $page
+     * @param int $perPage
+     * @return array{results: array, total: int}|false
+     */
+    public function match(#[SensitiveParameter] string $fullOrPartialEmail, int $page, int $perPage): array|false
     {
-        $users = $this->client->httpGet('/v2/admin/match-users', $params);
+        $offset = ($page - 1) * $perPage;
 
-        if (!is_array($users)) {
-            return [];
+        try {
+            $response = $this->client->httpGet('/v2/admin/match-users', [
+                'fullOrPartialEmail' => $fullOrPartialEmail,
+                'offset' => $offset,
+                'limit' => $perPage,
+            ]);
+
+            if (!is_array($response) || !isset($response['results']) || !is_array($response['results'])) {
+                return false;
+            }
+
+            return [
+                'results' => array_map(fn ($user) => $this->convertDates($user), $response['results']),
+                'total' => intval($response['total'] ?? 0),
+            ];
+        } catch (\Throwable $e) {
+            $this->logger->error('Match users failed', [
+                'exception' => $e,
+            ]);
+            return false;
         }
-
-        return array_map(fn ($user) => $this->convertDates($user), $users);
     }
 }
