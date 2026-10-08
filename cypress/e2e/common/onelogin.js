@@ -50,8 +50,11 @@ function checkOnMockOneLoginPage() {
 
 function continueThroughMockOneLogin() {
   cy.origin('http://localhost:4549', () => {
-    cy.contains('Continue').click();
+    cy.contains('button', 'Continue').click();
+    cy.wrap(null);
   });
+
+  cy.location('origin').should('eq', new URL(Cypress.config('baseUrl')).origin);
 
   cy.then(() => {
     if (!(Cypress.env('a11yCheckedPages') instanceof Set)) {
