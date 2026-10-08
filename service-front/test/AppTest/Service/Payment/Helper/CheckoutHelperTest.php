@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace AppTest\Handler\Lpa\Traits;
+namespace AppTest\Service\Payment\Helper;
 
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -12,7 +12,7 @@ use App\Service\Payment\CardPayments;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
 use App\Service\Payment\Helper\CheckoutHelper;
-use Exception;
+use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeSharedTest\DataModel\FixturesData;
@@ -59,38 +59,6 @@ class CheckoutHelperTest extends TestCase
         );
     }
 
-    public function testIsLpaCompleteReturnsTrueWhenCreatedAndFlowReturnsCheckout(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $request = $this->createRequest($lpa, 'lpa/checkout');
-
-        $this->assertTrue($this->helper->isLpaComplete($lpa, $request));
-    }
-
-    public function testIsLpaCompleteReturnsFalseWhenFlowDoesNotReturnCheckout(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $request = $this->createRequest($lpa, 'lpa/other');
-
-        $this->assertFalse($this->helper->isLpaComplete($lpa, $request));
-    }
-
-    public function testRedirectToMoreInfoRequiredUsesExpectedRouteAndOptions(): void
-    {
-        $lpa = $this->createIncompleteLpa();
-        $request = $this->createRequest($lpa, 'lpa/other', ['foo' => 'bar']);
-
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('lpa/more-info-required', ['lpa-id' => $lpa->getId()], ['foo' => 'bar'])
-            ->willReturn('/lpa/91333263035/more-info-required?foo=bar');
-
-        $response = $this->helper->redirectToMoreInfoRequired($lpa, $request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/lpa/91333263035/more-info-required?foo=bar', $response->getHeaderLine('location'));
-    }
-
     public function testFinishCheckoutLocksSendsEmailAndRedirectsToComplete(): void
     {
         $lpa = $this->createCompleteLpa();
@@ -109,63 +77,6 @@ class CheckoutHelperTest extends TestCase
         $this->assertSame('/lpa/91333263035/complete', $response->getHeaderLine('location'));
     }
 
-    public function testVerifyLpaPaymentAmountWhenAmountChangesResetsGatewayReferenceAndPersists(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $lpa->getPayment()->setGatewayReference('original-gateway-ref');
-        $lpa->getPayment()->setAmount(99999.0);
-
-        $this->logger->expects($this->once())->method('info');
-        $this->lpaApplicationService->expects($this->once())
-            ->method('setPayment')
-            ->with(
-                $lpa,
-                $this->callback(function (Payment $payment): bool {
-                    return $payment->getGatewayReference() === null;
-                }),
-                self::IF_MATCH_VERSION,
-            )
-            ->willReturn(true);
-
-        $this->helper->verifyLpaPaymentAmount($lpa, self::IF_MATCH_VERSION);
-    }
-
-    public function testVerifyLpaPaymentAmountThrowsWhenPersistFailsAfterAmountChange(): void
-    {
-        $lpa = $this->createCompleteLpa();
-        $lpa->getPayment()->setAmount(99999.0);
-
-        $this->logger->expects($this->once())->method('info');
-        $this->lpaApplicationService->method('setPayment')->willReturn(false);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage(
-            'API client failed to set payment details for id: '
-            . $lpa->getId()
-            . ' in App\Service\Payment\Helper\CheckoutHelper'
-        );
-
-        $this->helper->verifyLpaPaymentAmount($lpa, self::IF_MATCH_VERSION);
-    }
-
-    public function testConstructPaymentTransactionIdPadsShortIdWithLeadingZeros(): void
-    {
-        $this->assertSame('00000012345', $this->helper::constructPaymentTransactionId('12345'));
-    }
-
-    public function testConstructPaymentTransactionIdReturnsExactLengthIdUnchanged(): void
-    {
-        $this->assertSame('12345678901', $this->helper::constructPaymentTransactionId('12345678901'));
-    }
-
-    public function testPadLpaIdThrowsExceptionWhenIdIsTooLong(): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('LPA ID is too long');
-
-        $this->helper::constructPaymentTransactionId('123456789012');
-    }
-
     public function testConfirmAndPayByChequeThrowsWhenSetPaymentFails(): void
     {
         $lpa = $this->createCompleteLpa();
@@ -181,14 +92,35 @@ class CheckoutHelperTest extends TestCase
         $this->helper->confirmAndPayByCheque($lpa, $this->createRequest($lpa, ''), self::IF_MATCH_VERSION);
     }
 
-    public function testConfirmAndPayByChequeThrowsWhenSetPaymentFailsAfterAmountChange(): void
+    public function testConfirmAndPayByChequeAmountChangeResetsGatewayReference(): void
     {
         $lpa = $this->createCompleteLpa();
-        $lpa->payment->gatewayReference = 'old-ref';
+        $lpa->getPayment()->setGatewayReference('old-ref');
+        $lpa->getPayment()->setAmount(99999.0);
 
-        $this->lpaApplicationService->method('setPayment')->willReturn(false);
+        $this->logger->expects($this->once())->method('info');
 
-        $this->expectException(RuntimeException::class);
+        $twice = $this->exactly(2);
+        $this->lpaApplicationService->expects($twice)
+            ->method('setPayment')
+            ->willReturnCallback(
+                function (Lpa $_lpa, Payment $_payment, int $_version) use ($twice, $lpa) {
+                    /** @psalm-suppress InternalMethod */
+                    switch ($twice->numberOfInvocations()) {
+                        case 1:
+                            $this->assertEquals($lpa, $_lpa);
+                            $this->assertNull($_payment->getGatewayReference());
+                            $this->assertEquals(self::IF_MATCH_VERSION, $_version);
+                            return true;
+
+                        case 2:
+                            $this->assertEquals($lpa, $_lpa);
+                            $this->assertNull($_payment->getGatewayReference());
+                            $this->assertEquals(self::IF_MATCH_VERSION + 1, $_version);
+                            return true;
+                    }
+                }
+            );
 
         $this->helper->confirmAndPayByCheque($lpa, $this->createRequest($lpa), self::IF_MATCH_VERSION);
     }
@@ -222,7 +154,15 @@ class CheckoutHelperTest extends TestCase
             '_links' => ['next_url' => ['href' => 'https://pay.gov.uk/pay']],
         ]);
 
-        $this->paymentClient->expects($this->once())->method('createPayment')->willReturn($govPayPayment);
+        $this->paymentClient->expects($this->once())
+            ->method('createPayment')
+            ->with(
+                9200,
+                '91333263035',
+                'Property and financial affairs LPA for Hon Ayden Armstrong',
+                new Uri('https://example.com/lpa/91333263035/checkout/pay/response'),
+            )
+            ->willReturn($govPayPayment);
         $this->lpaApplicationService->expects($this->once())->method('updateApplication');
         $this->urlHelper->method('generate')
             ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->getId()])
@@ -232,6 +172,47 @@ class CheckoutHelperTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('pay.gov.uk', $response->getHeaderLine('location'));
+    }
+
+    public function testConfirmAndPayByCardPadsIdWhenTooShort(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $lpa->setId(1);
+
+        $govPayPayment = $this->makeGovPayPayment([
+            'payment_id' => 'new-id',
+            'state' => ['status' => 'created', 'finished' => false],
+            '_links' => ['next_url' => ['href' => 'https://pay.gov.uk/pay']],
+        ]);
+
+        $this->paymentClient->expects($this->once())
+            ->method('createPayment')
+            ->with(
+                9200,
+                '00000000001',
+                'Property and financial affairs LPA for Hon Ayden Armstrong',
+                new Uri('https://example.com/lpa/91333263035/checkout/pay/response'),
+            )
+            ->willReturn($govPayPayment);
+        $this->lpaApplicationService->expects($this->once())->method('updateApplication');
+        $this->urlHelper->method('generate')
+            ->with('lpa/checkout/pay/response', ['lpa-id' => $lpa->getId()])
+            ->willReturn('/lpa/91333263035/checkout/pay/response');
+
+        $response = $this->helper->confirmAndPayByCard($lpa, $this->createRequest($lpa), self::IF_MATCH_VERSION);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('pay.gov.uk', $response->getHeaderLine('location'));
+    }
+
+    public function testConfirmAndPayByCardThrowsExceptionWhenLpaIdTooLong(): void
+    {
+        $lpa = $this->createCompleteLpa();
+        $lpa->setId(123451234512);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('LPA ID is too long');
+        $this->helper->confirmAndPayByCard($lpa, $this->createRequest($lpa), self::IF_MATCH_VERSION);
     }
 
     public function testConfirmAndPayByCardExistingGatewayReferenceNullThrowsException(): void

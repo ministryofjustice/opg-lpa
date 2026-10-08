@@ -2,13 +2,16 @@ FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a
 
 FROM pdftk/pdftk:3.3.3@sha256:01c1bc85f760226bc5d0dc2567c7f4ec6444f070212be610fe803cd5ce160872 AS pdftk
 
-FROM php:8.4.25-fpm-alpine3.24@sha256:49734670eccf414af884c2a0c2e558401e228615f8028f1c9fca30a0d4fb1bc2 AS base
+FROM php:8.4-fpm-alpine3.23@sha256:b2a757dc9d3c05a6a97c05cacd26b981b6225e65cc78da6ccb2ea0a8b4b6196b AS base
+
 
 RUN adduser -D -g '' appuser && \
   chown -R appuser:appuser /tmp
 
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \

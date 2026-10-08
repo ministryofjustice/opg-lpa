@@ -1,5 +1,8 @@
 FROM node:24.11.1-alpine3.23@sha256:682368d8253e0c3364b803956085c456a612d738bd635926d73fa24db3ce53d7 AS asset-env
 
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
+
 WORKDIR /app
 
 COPY --link service-admin/package.json package-lock.json ./
@@ -18,6 +21,8 @@ RUN apk del freetype nginx-module-image-filter
 
 # Upgrade vulnerable packages
 RUN apk upgrade --no-cache
+# TODO Remove this once alpine upgrade available as it patches a vulnerability
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN chown -R nginx:nginx /etc/nginx/conf.d
 

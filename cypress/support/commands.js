@@ -51,7 +51,13 @@ Cypress.Commands.add("openWithChecks", (path) => {
             .some((ourUrl) => ourUrl && currentUrl.startsWith(ourUrl));
 
         if (onOurSite) {
-            cy.window().then((win) => win.location.assign(target));
+            // Mark the current page so we can wait for a new one to replace it. Waiting on the URL
+            // alone passes straight away when the target is the page already loaded.
+            cy.window().then((win) => {
+                win.openWithChecksPreviousPage = true;
+                win.location.assign(target);
+            });
+            cy.window().should((win) => expect(win.openWithChecksPreviousPage).to.be.undefined);
             cy.url().should("eq", target);
         } else {
             cy.visit(path);

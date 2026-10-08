@@ -68,6 +68,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('url', [$this, 'url']),
             new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
+            new TwigFunction('showOneLoginHeader', [$this, 'showOneLoginHeader']),
             new TwigFunction('systemMessage', fn () => $this->systemMessage->fetchSanitised() ?? '', ['is_safe' => ['html']]),
             // FormRendererStub provides openTag(form) and closeTag — covers all (currently ported) template usage
             new TwigFunction('form', fn () => new FormRendererStub(), ['is_safe' => ['html']]),
@@ -213,8 +214,18 @@ class LegacyCompatExtension extends AbstractExtension
                 'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
                 'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
                 'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
+                'showOneLoginHeader' => $this->showOneLoginHeader(),
             ],
         ]);
+    }
+
+    /**
+     * Signed-in users get the GOV.UK One Login service header, which carries the sign-out link,
+     * whenever One Login is enabled.
+     */
+    public function showOneLoginHeader(): bool
+    {
+        return Feature::OneLogin->isEnabled() && $this->sessionStorage->read() instanceof User;
     }
 
     /**
