@@ -7,9 +7,9 @@ namespace AppTest\Handler;
 use App\Handler\ConfirmRegistrationHandler;
 use App\Service\UserDetails as UserService;
 use Fig\Http\Message\StatusCodeInterface;
-use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
+use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -44,14 +44,48 @@ final class ConfirmRegistrationHandlerTest extends TestCase
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
     }
 
-    public function testHeadRequestsReturn200(): void
+
+    public function testForwardedHeadRequestsDoNotActivateTheAccount(): void
     {
-        $request = new ServerRequest([], [], '/signup/confirm/1234', 'HEAD');
+        $request = $this->createRequest('valid-activation-token-123')
+            ->withMethod('GET')
+            ->withAttribute(ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE, 'HEAD');
+
+        $this->userService->expects($this->never())->method('activateAccount');
+        $this->renderer->expects($this->never())->method('render');
+
         $response = $this->handler->handle($request);
 
-        self::assertInstanceOf(Response::class, $response);
         self::assertEquals(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
         self::assertEmpty($response->getBody()->getContents());
+    }
+
+    public function testOrdinaryGetRequestsStillActivateTheAccount(): void
+    {
+        $token = 'valid-activation-token-123';
+
+        $this->userService->expects($this->once())->method('activateAccount')->with($token)
+            ->willReturn(true);
+        $this->renderer->method('render')->willReturn('<html>Account Activated</html>');
+
+        $this->handler->handle($this->createRequest($token));
+    }
+
+    public function testAlreadyActivatedAccountIsReportedAsItsOwnOutcome(): void
+    {
+        $token = 'already-used-token';
+
+        $this->userService->method('activateAccount')->with($token)->willReturn('already-activated');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/register/confirm.twig', $this->callback(
+                fn($data) => ($data['error'] ?? null) === 'already-activated'
+            ))
+            ->willReturn('<html>Already active</html>');
+
+        self::assertInstanceOf(HtmlResponse::class, $this->handler->handle($this->createRequest($token)));
     }
 
     public function testMissingTokenDisplaysError(): void

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Middleware;
 
+use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
@@ -13,6 +14,7 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -21,10 +23,13 @@ use Psr\Log\LoggerInterface;
 
 class LpaLoaderMiddleware implements MiddlewareInterface
 {
+    use CommonTemplateVariablesTrait;
+
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly UrlHelper $urlHelper,
         private readonly LoggerInterface $logger,
+        private readonly TemplateRendererInterface $renderer,
     ) {
     }
 
@@ -52,7 +57,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface
         $lpa = $this->lpaApplicationService->getApplication((int) $lpaId);
 
         if ($lpa === false) {
-            return new HtmlResponse('The requested LPA could not be found', 404);
+            return $this->notFound($request);
         }
 
         if ($lpa->getSharedSpaceId() === null ? $identity->id() !== $lpa->user : $identity->getSharedSpaceId() !== $lpa->getSharedSpaceId()) {
@@ -67,7 +72,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface
                 ]);
             }
 
-            return new HtmlResponse('The requested LPA could not be found', 404);
+            return $this->notFound($request);
         }
 
         $flowChecker  = new FormFlowChecker($lpa);
@@ -106,5 +111,13 @@ class LpaLoaderMiddleware implements MiddlewareInterface
             ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker);
 
         return $handler->handle($request);
+    }
+
+    private function notFound(ServerRequestInterface $request): HtmlResponse
+    {
+        return new HtmlResponse(
+            $this->renderer->render('error/404.twig', $this->getTemplateVariables($request)),
+            404,
+        );
     }
 }

@@ -76,9 +76,7 @@ class UsersControllerTest extends MockeryTestCase
             ->once();
 
         $this->logger->shouldReceive('info')
-            ->with('New user account activated', [
-                'activation_token' => $activationToken,
-            ]);
+            ->with('New user account activated');
 
         $controller = $this->getController();
 
