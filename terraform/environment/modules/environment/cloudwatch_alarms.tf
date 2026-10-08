@@ -1,5 +1,5 @@
 locals {
-  enable_all_alarms = contains(["preproduction", "production"], var.environment_name)
+  enable_all_alarms = contains(["demo", "preproduction", "production"], var.environment_name)
 
   # For non-preprod/prod environments, set this to one alarm resource name to test it.
   # Example: test_alarm = "front_4xx_anomaly"
