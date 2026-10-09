@@ -158,6 +158,7 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
   period              = 60
   statistic           = "Minimum"
   threshold           = 1
+  treat_missing_data  = "notBreaching"
   dimensions = {
     HealthCheckId = aws_route53_health_check.public_facing_lastingpowerofattorney.id
   }
