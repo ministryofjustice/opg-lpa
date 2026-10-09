@@ -7,7 +7,7 @@ set -e  # Exit immediately if a command exits with a non-zero status.
 
 # Environment variables used by the cgi-fcgi command
 export SCRIPT_FILENAME=/app/public/index.php
-export REQUEST_URI=/ping/elb
+export REQUEST_URI=/health-check
 export REQUEST_METHOD=GET
 
 if cgi-fcgi -bind -connect 127.0.0.1:9000; then
