@@ -75,6 +75,7 @@ class DashboardHandler implements RequestHandlerInterface
                     'lastLogin' => $identity->lastLogin(),
                 ],
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
+                'linkedAccountSuccess'   => ($request->getQueryParams()['linkedAccount'] ?? null) === 'success',
             ]
         );
 

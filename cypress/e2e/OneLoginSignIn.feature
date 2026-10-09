@@ -38,6 +38,7 @@ Feature: One Login Sign In
     And I should be on "/link-account"
     And I link the "link" Make account
     And I am taken to the dashboard page
+    And I see a success notification with content "You can continue making a lasting power of attorney"
 
   @RequiresMockOneLogin
   Scenario: An unlinked user chooses to create a new Make account

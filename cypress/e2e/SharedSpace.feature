@@ -202,7 +202,6 @@ Feature: Shared Space
     And I see "View Shared Space" in the page text
     And I cannot see any links to manage members
 
-  @only
   Scenario: Deleting the last member of a shared space deletes the shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
