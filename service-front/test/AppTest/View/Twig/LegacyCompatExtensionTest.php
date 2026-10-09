@@ -11,6 +11,7 @@ use App\Model\Service\Authentication\Identity\User;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\LegacyCompatExtension;
@@ -23,6 +24,7 @@ use Laminas\Form\Fieldset;
 use Laminas\Form\Form;
 use MakeShared\DataModel\Lpa\Lpa;
 use Mezzio\Helper\UrlHelper;
+use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -62,6 +64,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
+            new OneLoginSessionManager(),
         );
     }
 
@@ -101,28 +104,47 @@ final class LegacyCompatExtensionTest extends TestCase
     }
 
     /**
-     * @return array<string, array{bool, bool, bool}>
+     * @return array<string, array{bool, bool, bool, bool}>
      */
     public static function oneLoginHeaderProvider(): array
     {
         return [
-            'One Login on, signed in'   => [true, true, true],
-            'One Login on, signed out'  => [true, false, false],
-            'One Login off, signed in'  => [false, true, false],
-            'One Login off, signed out' => [false, false, false],
+            'One Login on, signed in'                   => [true, true, false, true],
+            'One Login on, onboarding with a pending link' => [true, false, true, true],
+            'One Login on, signed out'                  => [true, false, false, false],
+            'One Login off, signed in'                  => [false, true, false, false],
+            'One Login off, onboarding with a pending link' => [false, false, true, false],
         ];
     }
 
     #[DataProvider('oneLoginHeaderProvider')]
-    public function testShowOneLoginHeaderOnlyForSignedInUsersWhenOneLoginIsEnabled(
+    public function testShowOneLoginHeaderForUsersSignedInToOneLogin(
         bool $oneLoginEnabled,
         bool $signedIn,
+        bool $pendingLink,
         bool $expected,
     ): void {
         putenv('ONELOGIN_ENABLED=' . ($oneLoginEnabled ? 'true' : 'false'));
         $this->sessionStorage->method('read')->willReturn($signedIn ? $this->signedInUser() : null);
 
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')->willReturnCallback(
+            fn (string $key) => $pendingLink && $key === 'onelogin_pending_link'
+                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'h.p.s']
+                : null,
+        );
+        $this->sessionStorage->method('session')->willReturn($session);
+
         $this->assertSame($expected, $this->extension->showOneLoginHeader());
+    }
+
+    public function testShowOneLoginHeaderIsFalseWithNoSession(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->sessionStorage->method('read')->willReturn(null);
+        $this->sessionStorage->method('session')->willReturn(null);
+
+        $this->assertFalse($this->extension->showOneLoginHeader());
     }
 
     public function testRenderNavigationTellsTheNavWhenTheOneLoginHeaderIsShown(): void
@@ -168,6 +190,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
+            new OneLoginSessionManager(),
         );
 
         $this->assertSame('/assets/abc123/app.js', $ext->assetPath('/assets/app.js'));
@@ -1141,6 +1164,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
+            new OneLoginSessionManager(),
         );
 
         $functions = $ext->getFunctions();

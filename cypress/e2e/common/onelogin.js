@@ -1,5 +1,6 @@
 import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { openEmailAndVisitLink } from '../../support/reset_link';
+import { sayIMakeLpasFor } from '../../support/onboarding';
 
 let oneLoginEnabled = null;
 
@@ -49,8 +50,11 @@ function checkOnMockOneLoginPage() {
 
 function continueThroughMockOneLogin() {
   cy.origin('http://localhost:4549', () => {
-    cy.contains('Continue').click();
+    cy.contains('button', 'Continue').click();
+    cy.wrap(null);
   });
+
+  cy.location('origin').should('eq', new URL(Cypress.config('baseUrl')).origin);
 
   cy.then(() => {
     if (!(Cypress.env('a11yCheckedPages') instanceof Set)) {
@@ -95,6 +99,7 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   cy.get('[data-cy="onelogin-signin-button"]').click();
   checkOnMockOneLoginPage();
   continueThroughMockOneLogin();
+  sayIMakeLpasFor('myself, family or friends');
   cy.url().should(
     'include',
     Cypress.config().baseUrl + '/link-or-create-account',

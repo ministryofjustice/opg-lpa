@@ -123,7 +123,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
 
             $this->sessionManager->setPendingLink($session, $result['sub'], $result['email'], $result['idToken']);
 
-            return new RedirectResponse('/link-or-create-account');
+            return new RedirectResponse('/which-best-describes-you');
         } finally {
             if ($session->has(self::SESSION_KEY_ONELOGIN)) {
                 $session->unset(self::SESSION_KEY_ONELOGIN);

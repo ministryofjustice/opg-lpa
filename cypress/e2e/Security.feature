@@ -43,9 +43,10 @@ Feature: HTML and JS prevent common exploits
     Then the request is rejected as a CSRF failure
 
     Examples:
-      | path                    |
-      | /link-account           |
-      | /link-or-create-account |
+      | path                      |
+      | /link-account             |
+      | /link-or-create-account   |
+      | /which-best-describes-you |
 
   Scenario: Signing in with the wrong CSRF token is rejected
     When I post to "/login" with an invalid CSRF token
