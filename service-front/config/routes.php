@@ -20,6 +20,9 @@ use App\Handler\FeedbackHandler;
 use App\Handler\FeedbackThanksHandler;
 use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
+use App\Handler\HealthCheckHandler;
+use App\Handler\HealthCheckDependenciesHandler;
+use App\Handler\HealthCheckServiceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\InviteMemberHandler;
@@ -112,6 +115,12 @@ use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+    $app->get('/health-check', HealthCheckHandler::class, 'health-check')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/service', HealthCheckServiceHandler::class, 'health-check.service')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/dependencies', HealthCheckDependenciesHandler::class, 'health-check.dependencies')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping', PingHandler::class, 'ping')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/json', PingHandlerJson::class, 'ping/json')
