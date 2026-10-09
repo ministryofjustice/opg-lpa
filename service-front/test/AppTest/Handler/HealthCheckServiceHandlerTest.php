@@ -24,17 +24,17 @@ class HealthCheckServiceHandlerTest extends TestCase
     {
         $this->statusService->expects($this->once())
             ->method('checkApi')
-            ->willReturn(['api-good']);
+            ->willReturn(['ok' => true]);
         $this->statusService->expects($this->once())
             ->method('checkSession')
-            ->willReturn(['session-good']);
+            ->willReturn(['ok' => true]);
         $this->statusService->expects($this->once())
             ->method('checkDynamo')
-            ->willReturn(['dynamo-good']);
+            ->willReturn(['ok' => true]);
 
         $response = (new HealthCheckServiceHandler($this->statusService))->handle(new ServerRequest());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertSame('{"api":["api-good"],"sessionSaveHandler":["session-good"],"dynamo":["dynamo-good"]}', (string) $response->getBody());
+        $this->assertSame('{"api":{"ok":true},"sessionSaveHandler":{"ok":true},"dynamo":{"ok":true},"ok":true}', (string) $response->getBody());
     }
 }

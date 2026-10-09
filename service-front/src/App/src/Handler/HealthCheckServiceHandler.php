@@ -19,10 +19,18 @@ class HealthCheckServiceHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new JsonResponse([
+        $response = [
             'api' => $this->statusService->checkApi(),
             'sessionSaveHandler' => $this->statusService->checkSession(),
             'dynamo' => $this->statusService->checkDynamo(),
-        ]);
+        ];
+
+        $response['ok'] = (
+            $response['api']['ok']
+                && $response['sessionSaveHandler']['ok']
+                && $response['dynamo']['ok']
+        );
+
+        return new JsonResponse($response);
     }
 }
