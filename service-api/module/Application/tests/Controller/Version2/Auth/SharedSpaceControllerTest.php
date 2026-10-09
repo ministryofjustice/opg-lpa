@@ -12,7 +12,6 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
-use Application\Model\Service\SharedSpace\InviteEmailMismatchException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
@@ -772,13 +771,15 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $userId = 'my-user';
         $sharedSpaceName = 'My space';
         $accessCode = '1234';
+        $email = 'user@example.com';
 
         $this->sharedSpaceService->shouldReceive('join')
-            ->with($userId, $sharedSpaceName, $accessCode);
+            ->with($userId, $sharedSpaceName, $accessCode, $email);
 
         $this->makeRequest(['userId' => $userId], [
             'sharedSpaceName' => $sharedSpaceName,
             'accessCode' => $accessCode,
+            'email' => $email,
         ]);
         $result = $this->controller->joinAction();
 
@@ -790,7 +791,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->sharedSpaceService->shouldReceive('join')
             ->andThrow(new UserAlreadyInSharedSpaceException('my space'));
 
-        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3', 'email' => '4']);
         $result = $this->controller->joinAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
@@ -804,25 +805,12 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->sharedSpaceService->shouldReceive('join')
             ->andThrow(new InviteNotFoundException());
 
-        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3', 'email' => '4']);
         $result = $this->controller->joinAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
         $this->assertEquals(400, $result->toArray()['status']);
         $this->assertEquals('invite-not-found', $result->toArray()['detail']);
-    }
-
-    public function testJoinActionWhenInviteEmailMismatch()
-    {
-        $this->sharedSpaceService->shouldReceive('join')
-            ->andThrow(new InviteEmailMismatchException());
-
-        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
-        $result = $this->controller->joinAction();
-
-        $this->assertInstanceOf(ApiProblem::class, $result);
-        $this->assertEquals(400, $result->toArray()['status']);
-        $this->assertEquals('invite-email-mismatch', $result->toArray()['detail']);
     }
 
     public function testDeleteMemberAction()

@@ -11,7 +11,6 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
-use Application\Model\Service\SharedSpace\InviteEmailMismatchException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
@@ -249,13 +248,11 @@ class SharedSpaceController extends AbstractRestfulController
         $data = $this->processBodyContent($this->getRequest());
 
         try {
-            $sharedSpaceId = $this->sharedSpaceService->join($result['userId'], $data['sharedSpaceName'], $data['accessCode']);
+            $sharedSpaceId = $this->sharedSpaceService->join($result['userId'], $data['sharedSpaceName'], $data['accessCode'], $data['email']);
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'user-already-in-shared-space', null, null, ['sharedSpaceId' => $e->sharedSpaceId]);
         } catch (InviteNotFoundException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'invite-not-found');
-        } catch (InviteEmailMismatchException $e) {
-            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'invite-email-mismatch');
         } catch (Throwable $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
         }

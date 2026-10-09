@@ -153,12 +153,6 @@ Then(
   },
 );
 
-Then(`I choose to link an existing Make account`, () => {
-  cy.get('input[name="choice"][value="link"]').check();
-});
-
-Then(`I choose to create a new Make account`, chooseToCreateNewMakeAccount);
-
 Then(`I am signed in with my new Make account`, checkSignedIn);
 
 const TIMEOUT_PAGE = '/login/timeout';
@@ -262,37 +256,28 @@ function oneLoginLinkEmail(account) {
 }
 
 When(`I create a new Make account`, () => {
-  cy.get('input[name="choice"][value="create"]').check();
-  cy.get('main [type="submit"]:visible').click();
-  cy.get('input[name="name-first"]').clear().type('a');
-  cy.get('input[name="name-last"]').clear().type('b');
-  cy.get('input[name="dob-date[day]"]').clear().type('1');
-  cy.get('input[name="dob-date[month]"]').clear().type('1');
-  cy.get('input[name="dob-date[year]"]').clear().type('2000');
-
-  cy.contains('a', 'Enter address manually').click();
-  cy.get('input[name="address-address1"]').clear().type('123 Test Street');
-  cy.get('input[name="address-postcode"]').clear().type('SW1A 1AA');
-
-  cy.contains('button', 'Save and continue').click();
+  sayWhetherIHaveAnAccount('No, I am new to this service');
+  cy.url().should('eq', Cypress.config().baseUrl + '/your-details');
+  enterMyDetails();
+  enterMyAddressManually();
+  saveMyDetails();
 });
+
+function fillCredentialsAndSubmit(email, password) {
+  cy.get('[data-cy=login-email]').clear().type(email);
+  cy.get('[data-cy=login-password]').clear().type(password);
+  cy.get('[data-cy=link-account-submit]').click();
+}
 
 When(`I link the newly created fixture users Make account`, () => {
   cy.get('@fixtureUser').then(({ email, password }) => {
-    cy.get('input[name="email"]').clear().type(email);
-    cy.get('input[name="password"]').clear().type(password);
-    cy.contains('button', 'Sign in').click();
+    fillCredentialsAndSubmit(email, password);
   });
 });
 
-When(`I attempt to link the newly created fixture users Make account with an incorrect password`, () => {
-  cy.get('input[name="choice"][value="link"]').check();
-  cy.get('main [type="submit"]:visible').click();
-
+When(`I attempt to sign in to my existing Make account with the newly created fixture users incorrect password`, () => {
   cy.get('@fixtureUser').then(({ email }) => {
-    cy.get('input[name="email"]').clear().type(email);
-    cy.get('input[name="password"]').clear().type('this-is-the-wrong-password');
-    cy.contains('button', 'Sign in').click();
+    fillCredentialsAndSubmit(email, 'this-is-the-wrong-password');
   });
 });
 

@@ -135,7 +135,6 @@ class CypressFixtureService
             $userId = $this->authenticate($userEmail);
             $firstName = 'John';
             $lastname = 'Smith';
-            $inviteEmail = 'john.smith@example.com';
 
             $response = $this->apiClient->httpPost(
                 '/v2/shared-space/invite',
