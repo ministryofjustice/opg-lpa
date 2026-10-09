@@ -11,7 +11,6 @@ use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails;
-use MakeShared\Constants;
 use Psr\Log\LoggerInterface;
 
 class NotifyMailTransport implements MailTransportInterface
@@ -77,16 +76,10 @@ class NotifyMailTransport implements MailTransportInterface
         }
     }
 
-    /**
-     * @return ((null|string)[]|bool|string)[]
-     *
-     * @psalm-return array{ok: bool, status: 'fail'|'pass', details: array{smokeTestEmailAddress: null|string, exception?: 'Unable to send email to smoke test address'}}
-     */
     public function healthcheck(): array
     {
         $result = [
             'ok'      => true,
-            'status'  => Constants::STATUS_PASS,
             'details' => [
                 'smokeTestEmailAddress' => $this->smokeTestEmailAddress,
             ],
@@ -114,9 +107,8 @@ class NotifyMailTransport implements MailTransportInterface
                 'exception' => $ex,
             ]);
 
-            $result['ok']                        = false;
-            $result['status']                    = Constants::STATUS_FAIL;
-            $result['details']['exception']      = 'Unable to send email to smoke test address';
+            $result['ok']                   = false;
+            $result['details']['exception'] = 'Unable to send email to smoke test address';
         }
 
         return $result;
