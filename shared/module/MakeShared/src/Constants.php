@@ -20,7 +20,7 @@ class Constants
     public const string TELEMETRY_STOP_SEGMENT = 'telemetry-stop-segment';
 
     /*
-     * Status codes for /ping endpoints
+     * Status codes for health check endpoints
      */
     public const string STATUS_UNKNOWN = 'unknown';
     public const string STATUS_PASS = 'pass';
