@@ -8,6 +8,7 @@ use App\Authentication\AuthenticationService;
 use App\Form\SharedSpace\JoinSharedSpaceForm;
 use App\Handler\JoinSharedSpaceHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -15,6 +16,8 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\Common\EmailAddress;
+use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -97,20 +100,25 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $sharedSpaceId = 'my-space';
         $sharedSpaceName = 'My Space';
         $accessCode = '1234';
+        $email = 'user@example.com';
 
         $this->sharedSpaceService->method('join')
-            ->with($sharedSpaceName, $accessCode)
+            ->with($sharedSpaceName, $accessCode, $email)
             ->willReturn($sharedSpaceId);
 
         $this->authenticationService->method('refreshSharedSpaceId')
             ->with($sharedSpaceId);
 
-        $response = $this->handler->handle(
-            $this->createRequest('POST', [
-                'sharedSpaceName' => $sharedSpaceName,
-                'sharedSpaceAccessCode' => $accessCode,
-            ])
-        );
+        $request = $this->createRequest('POST', [
+            'sharedSpaceName' => $sharedSpaceName,
+            'sharedSpaceAccessCode' => $accessCode,
+        ])
+            ->withAttribute(
+                RequestAttribute::USER_DETAILS,
+                new User(['email' => new EmailAddress(['address' => $email])])
+            );
+
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
@@ -122,6 +130,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $sharedSpaceId = 'my-space';
         $sharedSpaceName = 'My Space';
         $accessCode = '1234';
+        $email = 'a@example.com';
 
         $stream = $this->createMock(StreamInterface::class);
         $stream->method('__toString')->willReturn(json_encode([
@@ -144,6 +153,10 @@ class JoinSharedSpaceHandlerTest extends TestCase
                 'sharedSpaceName' => $sharedSpaceName,
                 'sharedSpaceAccessCode' => $accessCode,
             ])
+                ->withAttribute(
+                    RequestAttribute::USER_DETAILS,
+                    new User(['email' => new EmailAddress(['address' => $email])])
+                )
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -155,6 +168,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
     {
         $sharedSpaceName = 'My Space';
         $accessCode = '1234';
+        $email = 'a@example.com';
 
         $stream = $this->createMock(StreamInterface::class);
         $stream->method('__toString')->willReturn(json_encode([
@@ -165,7 +179,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $errorResponse->method('getBody')->willReturn($stream);
 
         $this->sharedSpaceService->method('join')
-            ->with($sharedSpaceName, $accessCode)
+            ->with($sharedSpaceName, $accessCode, $email)
             ->willThrowException(new ApiException($errorResponse));
 
         $this->renderer->expects($this->once())
@@ -173,8 +187,8 @@ class JoinSharedSpaceHandlerTest extends TestCase
             ->with(
                 'application/authenticated/shared-space/join.twig',
                 $this->callback(fn(array $vars) => isset($vars['form'])
-                                && $vars['csrfToken'] === 'test-token'
-                                && $vars['joinError'] === 'The shared space name and/or access code are incorrect'),
+                    && $vars['csrfToken'] === 'test-token'
+                    && $vars['joinError'] === 'No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address.'),
             )
             ->willReturn('<html>form</html>');
 
@@ -183,43 +197,10 @@ class JoinSharedSpaceHandlerTest extends TestCase
                 'sharedSpaceName' => $sharedSpaceName,
                 'sharedSpaceAccessCode' => $accessCode,
             ])
-        );
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    public function testPostWhenInviteEmailMismatch(): void
-    {
-        $sharedSpaceName = 'My Space';
-        $accessCode = '1234';
-
-        $stream = $this->createMock(StreamInterface::class);
-        $stream->method('__toString')->willReturn(json_encode([
-            'detail' => 'invite-email-mismatch'
-        ]));
-
-        $errorResponse = $this->createMock(ResponseInterface::class);
-        $errorResponse->method('getBody')->willReturn($stream);
-
-        $this->sharedSpaceService->method('join')
-            ->with($sharedSpaceName, $accessCode)
-            ->willThrowException(new ApiException($errorResponse));
-
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->with(
-                'application/authenticated/shared-space/join.twig',
-                $this->callback(fn(array $vars) => isset($vars['form'])
-                                && $vars['csrfToken'] === 'test-token'
-                                && $vars['joinError'] === 'This email address does not match the email address the invite was sent to'),
-            )
-            ->willReturn('<html>form</html>');
-
-        $response = $this->handler->handle(
-            $this->createRequest('POST', [
-                'sharedSpaceName' => $sharedSpaceName,
-                'sharedSpaceAccessCode' => $accessCode,
-            ])
+                ->withAttribute(
+                    RequestAttribute::USER_DETAILS,
+                    new User(['email' => new EmailAddress(['address' => $email])])
+                )
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);

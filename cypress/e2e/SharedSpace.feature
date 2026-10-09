@@ -138,6 +138,7 @@ Feature: Shared Space
   Scenario: Can join a shared space
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
     When I log in through Onelogin as the newly created fixture user
+    And I say I make LPAs for "myself, family or friends"
     And I create a new Make account
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
@@ -156,6 +157,7 @@ Feature: Shared Space
   Scenario: Cannot join a shared space when invite email does not match one login email
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
     When I log in through Onelogin as a random user
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I create a new Make account
     When I click element marked "Shared space"
@@ -166,7 +168,7 @@ Feature: Shared Space
     When I type "Example Organisation" into field labelled "Shared space name"
     And I type the access code into field labelled "Your shared space access code"
     And I click element marked "Continue"
-    Then I see "This email address does not match the email address the invite was sent to" in the page text
+    Then I see "No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address." in the page text
 
   Scenario: Can delete a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

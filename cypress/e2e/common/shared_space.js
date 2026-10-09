@@ -127,8 +127,8 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
         cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, spaceEmail, userFullName }).as('fixtureUser');
 
-        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode, fullName, inviteEmail }) => {
-          cy.wrap({ accessCode, fullName, inviteEmail }).as('invitedUser');
+        createInvite(sharedSpaceId, spaceEmail, email).then(({ accessCode, fullName, inviteEmail }) => {
+          cy.wrap({ accessCode, fullName, inviteEmail, lpaIds }).as('invitedUser');
         });
       });
     });
@@ -202,7 +202,7 @@ Then(`{string} status should be {string}`, (memberName, activeStatus) => {
 });
 
 When(`I type the access code into field labelled {string}`, (label) => {
-  cy.get('@fixtureUser').then(({ accessCode }) => {
+  cy.get('@invitedUser').then(({ accessCode }) => {
     cy.contains('label', label)
       .invoke('attr', 'for')
       .then((id) => cy.get('#' + id))

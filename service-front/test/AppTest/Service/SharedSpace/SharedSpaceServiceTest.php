@@ -247,10 +247,11 @@ final class SharedSpaceServiceTest extends TestCase
             ->with('/v2/shared-space/join', [
                 'sharedSpaceName' => 'My Space',
                 'accessCode' => '1234',
+                'email' => 'a@example.com',
             ])
             ->willReturn(['sharedSpaceId' => 'my space']);
 
-        $result = $this->service->join('My Space', '1234');
+        $result = $this->service->join('My Space', '1234', 'a@example.com');
 
         $this->assertEquals('my space', $result);
     }

@@ -7,12 +7,14 @@ namespace App\Handler;
 use App\Authentication\AuthenticationService;
 use App\Form\SharedSpace\JoinSharedSpaceForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Middleware\RequestAttribute;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
+use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,6 +39,9 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
 
         $joinError = null;
 
+        /** @var User|null $userDetails */
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
+
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $data = $request->getParsedBody() ?? [];
             if (!is_array($data)) {
@@ -50,6 +55,7 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
                     $sharedSpaceId = $this->sharedSpaceService->join(
                         $form->get('sharedSpaceName')->getValue(),
                         $form->get('sharedSpaceAccessCode')->getValue(),
+                        $userDetails?->getEmail()->getAddress()
                     );
 
                     $this->authenticationService->refreshSharedSpaceId($sharedSpaceId);
@@ -62,11 +68,7 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
                             return new RedirectResponse('/shared-space/dashboard');
 
                         case 'invite-not-found':
-                            $joinError = 'The shared space name and/or access code are incorrect';
-                            break;
-
-                        case 'invite-email-mismatch':
-                            $joinError = 'This email address does not match the email address the invite was sent to';
+                            $joinError = 'No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address.';
                             break;
 
                         default:
