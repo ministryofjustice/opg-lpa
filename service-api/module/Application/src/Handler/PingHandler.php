@@ -7,7 +7,6 @@ namespace Application\Handler;
 use Aws\Sqs\SqsClient;
 use Exception;
 use Laminas\Diactoros\Response\JsonResponse;
-use MakeShared\Constants;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -77,7 +76,6 @@ readonly class PingHandler implements RequestHandlerInterface
 
         $result = [
             'ok' => $ok,
-            'status' => $ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL,
             'database' => [
                 'ok' => $dbOk,
             ],
@@ -86,8 +84,6 @@ readonly class PingHandler implements RequestHandlerInterface
                 'details' => $queueDetails,
             ],
         ];
-
-        $this->logger->info('PingController results', $result);
 
         return new JsonResponse($result);
     }

@@ -9,7 +9,6 @@ use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use MakeShared\Constants;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -69,17 +68,14 @@ class HealthCheckDependenciesHandlerTest extends TestCase
 
         $expectedResult = [
             'ok' => true,
-            'status' => Constants::STATUS_PASS,
             'oneLogin' => [
                 'ok' => true,
-                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => 200,
                 ],
             ],
             'opg-data-lpa' => [
                 'ok' => true,
-                'status' => Constants::STATUS_PASS,
                 'details' => [
                     'response_code' => 200,
                 ],
