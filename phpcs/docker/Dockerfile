@@ -1,6 +1,6 @@
-FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a69007242d267 AS composer
+FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
 
-FROM php:8.4-cli-alpine3.23@sha256:18517a48b5dec9be4a2c9b61fc9d7b99b8ca9c6897a378f1cb22fd88a262a2e8
+FROM php:8.4-cli-alpine3.23@sha256:da7a7a945a493ac9c015f327231afd820bbe57fc6ae22f4f520a79fbd635ba39
 
 RUN adduser -D -g '' appuser
 
