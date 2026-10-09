@@ -314,7 +314,6 @@ locals {
         { name = "OPG_LPA_AUTH_TOKEN_TTL", value = tostring(var.environment.auth_token_ttl_secs) },
         { name = "OPG_LPA_COMMON_DYNAMODB_ENDPOINT", value = "" },
         { name = "OPG_LPA_COMMON_CRONLOCK_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-locks.name },
-        { name = "OPG_LPA_COMMON_SESSION_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-sessions.name },
         { name = "OPG_LPA_COMMON_API_DYNAMODB_TABLE", value = aws_dynamodb_table.lpa-properties.name },
         { name = "OPG_PHP_POOL_CHILDREN_MAX", value = "25" },
         { name = "OPG_NGINX_SSL_HSTS_AGE", value = "31536000" },
