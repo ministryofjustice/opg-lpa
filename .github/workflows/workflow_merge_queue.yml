@@ -173,6 +173,7 @@ jobs:
     outputs:
       admin_fqdn: ${{ steps.admin_fqdn.outputs.value }}
       front_fqdn: ${{ steps.front_fqdn.outputs.value }}
+      mock_onelogin_url: ${{ steps.mock_onelogin_url.outputs.value }}
     needs:
       - terraform_environment_preproduction
     steps:
@@ -207,6 +208,11 @@ jobs:
         id: front_fqdn
         run: | # zizmor: ignore[template-injection]
           echo "value=${{ fromJson(steps.set_var.outputs.configJson).front_fqdn }}" >> $GITHUB_OUTPUT
+
+      - name: Extract mock One Login URL from JSON
+        id: mock_onelogin_url
+        run: | # zizmor: ignore[template-injection]
+          echo "value=${{ fromJson(steps.set_var.outputs.configJson).mock_onelogin_url }}" >> $GITHUB_OUTPUT
 
   cypress_tests_Signup_StitchedPF:
     name: Run Cypress tests - Signup,StitchedPF
@@ -258,6 +264,7 @@ jobs:
     with:
       admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      onelogin_mock_url: ${{ needs.preprod_terraform_outputs.outputs.mock_onelogin_url }}
       account_id: "987830934591"
       cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}

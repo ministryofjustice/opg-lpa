@@ -371,7 +371,7 @@ class SharedSpaceService
         ]);
     }
 
-    public function join(string $userId, string $sharedSpaceName, string $accessCode): string
+    public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string
     {
         $this->sharedSpaceRepository->beginTransaction();
 
@@ -381,7 +381,8 @@ class SharedSpaceService
                 throw new UserAlreadyInSharedSpaceException($sharedSpaceId);
             }
 
-            $invite = $this->sharedSpaceRepository->getInviteByCodeAndSharedSpaceName($accessCode, $sharedSpaceName);
+            $invite = $this->sharedSpaceRepository->getInvite($accessCode, $sharedSpaceName, $userEmail);
+
             if ($invite === null) {
                 throw new InviteNotFoundException();
             }

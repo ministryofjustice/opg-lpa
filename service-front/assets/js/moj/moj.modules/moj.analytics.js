@@ -26,11 +26,16 @@
         typeof GOVUK.checkConsentCookieCategory !== 'function' ||
         !GOVUK.checkConsentCookieCategory('analytics', 'usage')
       ) {
-        const domain =
-          this.cookieDomains[document.location.hostname] || '.justice.gov.uk';
+        if (typeof GOVUK.expireCookieAcrossDomains === 'function') {
+          GOVUK.expireCookieAcrossDomains(`_ga_${this.gaId}`);
+          GOVUK.expireCookieAcrossDomains('_ga');
+        } else {
+          const domain =
+            this.cookieDomains[document.location.hostname] ||
+            '.justice.gov.uk';
 
-        // Remove session state _ga cookie
-        document.cookie = `_ga_${this.gaId}=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+          document.cookie = `_ga_${this.gaId}=; domain=${domain}; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;`;
+        }
         return;
       }
 

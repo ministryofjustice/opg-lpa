@@ -103,7 +103,7 @@ interface SharedSpaceRepositoryInterface
 
     public function deleteMember(string $sharedSpaceId, string $userId): void;
 
-    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite;
+    public function getInvite(string $accessCode, string $sharedSpaceName, string $userEmail): ?MemberInvite;
 
     /**
      * @return array<MemberInvite>

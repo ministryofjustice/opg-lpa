@@ -19,6 +19,7 @@ class OneLoginSignOutTest extends TestCase
 {
     private const string ID_TOKEN = 'header.payload.sig';
     private const string DONE_URL = 'https://www.gov.uk/done/lasting-power-of-attorney';
+    private const string MOCK_REDIRECT_URI = 'https://front-ssl/auth/redirect';
     private const string ONE_LOGIN_LOGOUT_URL = 'https://oidc.example.com/logout?id_token_hint=header.payload.sig';
 
     private OneLoginService&MockObject $oneLoginService;
@@ -40,10 +41,13 @@ class OneLoginSignOutTest extends TestCase
         $this->oneLoginService
             ->expects($this->once())
             ->method('logoutUrl')
-            ->with(self::ID_TOKEN, self::DONE_URL)
+            ->with(self::ID_TOKEN, self::DONE_URL, self::MOCK_REDIRECT_URI)
             ->willReturn(self::ONE_LOGIN_LOGOUT_URL);
 
-        $this->assertSame(self::ONE_LOGIN_LOGOUT_URL, $this->signOut()->url(self::ID_TOKEN, self::DONE_URL));
+        $this->assertSame(
+            self::ONE_LOGIN_LOGOUT_URL,
+            $this->signOut()->url(self::ID_TOKEN, self::DONE_URL, self::MOCK_REDIRECT_URI),
+        );
     }
 
     public function testReturnsNullWithoutCallingTheApiWhenOneLoginIsOff(): void

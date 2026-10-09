@@ -5,12 +5,17 @@ declare(strict_types=1);
 namespace App\Service\OneLogin;
 
 use App\Service\ApiClient\Client as ApiClient;
+use Laminas\Diactoros\Uri;
 use RuntimeException;
 
 class OneLoginService
 {
+    /**
+     * @param array<string, string> $mockAuthorizationUrls Callback URI to mock authorization endpoint.
+     */
     public function __construct(
         private readonly ApiClient $client,
+        private readonly array $mockAuthorizationUrls = [],
     ) {
     }
 
@@ -41,7 +46,18 @@ class OneLoginService
             );
         }
 
-        return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $result['url']];
+        $url = $result['url'];
+        if ($this->mockAuthorizationUrls !== []) {
+            if (!isset($this->mockAuthorizationUrls[$redirectUri])) {
+                throw new RuntimeException('No mock One Login authorization endpoint configured for callback URI');
+            }
+
+            $authorizationUri = new Uri($url);
+            $mockUri = new Uri($this->mockAuthorizationUrls[$redirectUri]);
+            $url = (string) $mockUri->withQuery($authorizationUri->getQuery());
+        }
+
+        return ['state' => $result['state'], 'nonce' => $result['nonce'], 'url' => $url];
     }
 
     /**
@@ -107,10 +123,17 @@ class OneLoginService
      * Returns the One Login URL that ends the user's One Login session and then sends them to
      * $postLogoutRedirectUri.
      *
+     * $mockRedirectUri is the same callback URI used to start the sign-in (e.g. "https://front-ssl/auth/redirect"),
+     * used to look up the mock One Login host reachable from whichever front-end host is signing out, since the
+     * end_session_endpoint returned by One Login's discovery document is not necessarily reachable from there.
+     *
      * @throws RuntimeException
      */
-    public function logoutUrl(#[\SensitiveParameter] string $idToken, string $postLogoutRedirectUri): string
-    {
+    public function logoutUrl(
+        #[\SensitiveParameter] string $idToken,
+        string $postLogoutRedirectUri,
+        ?string $mockRedirectUri = null,
+    ): string {
         /** @var array<string, mixed>|null $result */
         $result = $this->client->httpPost(
             '/v2/auth/onelogin/logout',
@@ -125,7 +148,22 @@ class OneLoginService
             throw new RuntimeException('Invalid response from API: url must be a non-empty string');
         }
 
-        return $result['url'];
+        $url = $result['url'];
+
+        if ($this->mockAuthorizationUrls !== []) {
+            if ($mockRedirectUri === null || !isset($this->mockAuthorizationUrls[$mockRedirectUri])) {
+                throw new RuntimeException('No mock One Login authorization endpoint configured for callback URI');
+            }
+
+            $mockUri = new Uri($this->mockAuthorizationUrls[$mockRedirectUri]);
+            $logoutUri = new Uri($url);
+            $url = (string) $logoutUri
+                ->withScheme($mockUri->getScheme())
+                ->withHost($mockUri->getHost())
+                ->withPort($mockUri->getPort());
+        }
+
+        return $url;
     }
 
     /**

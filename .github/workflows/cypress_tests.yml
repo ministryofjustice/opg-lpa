@@ -19,6 +19,11 @@ on:
         description: "URL of the frontend"
         required: true
         type: string
+      onelogin_mock_url:
+        description: "URL of the deployed mock One Login service for this environment, if any"
+        required: false
+        type: string
+        default: ""
       cypress_tags:
         description: "Cypress tags to run"
         required: true
@@ -101,12 +106,14 @@ jobs:
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
           CYPRESS_baseUrl: ${{ inputs.front_url }}
+          CYPRESS_oneLoginMockUrl: ${{ inputs.onelogin_mock_url }}
           CYPRESS_visualRegressionEnabled: ${{ inputs.visual_regression_enabled }}
           CYPRESS_TAGS: ${{ inputs.cypress_tags }}
         run: |
           pushd cypress ; python3 stitch.py ; popd
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
           sed -i -e "s|https://admin-ssl|${CYPRESS_adminUrl}|g" docker-compose.yml
+          sed -i -e "s|http://mock-onelogin:8080|${CYPRESS_oneLoginMockUrl}|g" docker-compose.yml
           CYPRESS_userNumber=`python3 cypress/user_number.py`
           mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
           chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads

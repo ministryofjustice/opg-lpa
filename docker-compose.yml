@@ -39,7 +39,7 @@ services:
       PORT: "8080"
       PUBLIC_URL: "http://localhost:4549"
       INTERNAL_URL: "http://mock-onelogin:8080"
-      REDIRECT_URL: "https://localhost:7002/auth/redirect"
+      REDIRECT_URL: "https://localhost:7002/auth/redirect,https://front-ssl/auth/redirect"
       CLIENT_ID: "theClientId"
       TEMPLATE_SUB: "1"
       TEMPLATE_SUB_DEFAULT: "random"
@@ -165,7 +165,7 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
-      ONELOGIN_REDIRECT_BASE_URL: "https://localhost:7002"
+      ONELOGIN_MOCK_AUTHORIZATION_URLS: '{"https://localhost:7002/auth/redirect":"http://localhost:4549/authorize","https://front-ssl/auth/redirect":"http://mock-onelogin:8080/authorize"}'
       MEZZIO_DEBUG: "1"
       SHARED_SPACES_ENABLED: true
       CYPRESS_FIXTURES_ENABLED: true
@@ -548,6 +548,7 @@ services:
       CYPRESS_baseUrl: https://front-ssl
       CYPRESS_adminUrl: https://admin-ssl
       CYPRESS_cognitoMockUrl: "http://mock-cognito:8080"
+      CYPRESS_oneLoginMockUrl: "http://mock-onelogin:8080"
     volumes:
       - ./cypress:/app/cypress
       - ./cypress.config.js:/app/cypress.config.js

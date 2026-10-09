@@ -79,12 +79,35 @@
     return consentCookieObj;
   };
 
+  // This exists because third-party scripts and our own domain-matching
+  // logic don't always agree on which domain to use, in which case deleting
+  // a cookie at only a single guessed domain leaves the real cookie, set at
+  // a different scope, untouched.
+  GOVUK.getCookieDeletionDomains = function () {
+    var labels = window.location.hostname.split('.');
+    var domains = [];
+
+    for (var i = 0; i < labels.length - 1; i++) {
+      var domain = labels.slice(i).join('.');
+      domains.push(domain);
+      domains.push('.' + domain);
+    }
+
+    return domains;
+  };
+
+  GOVUK.expireCookieAcrossDomains = function (name) {
+    var expiry = 'expires=Thu, 01 Jan 1970 00:00:00 UTC';
+
+    document.cookie = name + '=; path=/; ' + expiry;
+
+    GOVUK.getCookieDeletionDomains().forEach(function (domain) {
+      document.cookie = name + '=; domain=' + domain + '; path=/; ' + expiry;
+    });
+  };
+
   GOVUK.setConsentCookie = function (options) {
     var cookieConsent = GOVUK.getConsentCookie();
-    var regEx = new RegExp('^www.');
-    var cookieDomain = regEx.test(document.domain)
-      ? document.domain.replace(regEx, '.')
-      : document.domain;
 
     if (!cookieConsent) {
       cookieConsent = JSON.parse(JSON.stringify(DEFAULT_COOKIE_CONSENT));
@@ -97,7 +120,7 @@
       if (!options[cookieType]) {
         for (var cookie in COOKIE_CATEGORIES) {
           if (COOKIE_CATEGORIES[cookie] === cookieType) {
-            GOVUK.cookie(cookie, null, { days: -1, domain: cookieDomain });
+            GOVUK.expireCookieAcrossDomains(cookie);
           }
         }
       }
