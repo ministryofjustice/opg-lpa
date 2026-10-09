@@ -154,7 +154,7 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
   actions_enabled     = true
   alarm_actions       = [var.aws_sns_topic_cloudwatch_to_pagerduty_arn]
   ok_actions          = [var.aws_sns_topic_cloudwatch_to_pagerduty_arn]
-  treat_missing_data  = "Breaching"
+  treat_missing_data  = "notBreaching"
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 1
   evaluation_periods  = 1
