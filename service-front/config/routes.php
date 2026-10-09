@@ -87,8 +87,6 @@ use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginSignInHandler;
-use App\Handler\PingHandler;
-use App\Handler\PingHandlerJson;
 use App\Handler\PingHandlerPingdom;
 use App\Handler\PostcodeHandler;
 use App\Handler\PrivacyHandler;
@@ -110,7 +108,6 @@ use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
 use App\Handler\WhichBestDescribesYouHandler;
 use App\Middleware\LpaLoaderMiddleware;
-use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
@@ -121,12 +118,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/health-check/service', HealthCheckServiceHandler::class, 'health-check.service')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/health-check/dependencies', HealthCheckDependenciesHandler::class, 'health-check.dependencies')
-        ->setOptions(['unauthenticated_route' => true]);
-    $app->get('/ping', PingHandler::class, 'ping')
-        ->setOptions(['unauthenticated_route' => true]);
-    $app->get('/ping/json', PingHandlerJson::class, 'ping/json')
-        ->setOptions(['unauthenticated_route' => true]);
-    $app->get('/ping/elb', PingHandlerElb::class, 'ping/elb')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/pingdom', PingHandlerPingdom::class, 'ping/pingdom')
         ->setOptions(['unauthenticated_route' => true]);
