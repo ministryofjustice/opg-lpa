@@ -194,6 +194,9 @@ return [
                 $c->get('config'),
                 $c->get(StatusService::class),
             ),
+            Handler\HealthCheckHandler::class => static fn(ContainerInterface $c) => new Handler\HealthCheckHandler(
+                $c->get('config'),
+            ),
             Handler\DeleteAccountHandler::class          => static fn(ContainerInterface $c) => new Handler\DeleteAccountHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get(AuthenticationService::class),

@@ -17,6 +17,7 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -68,20 +69,24 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
     }
 
-    public function testSkipsRefreshForPingElb(): void
+    public static function skipProvider(): array
+    {
+        return [
+            ['https://example.com/ping/elb'],
+            ['https://example.com/ping/json'],
+            ['https://example.com/health-check'],
+            ['https://example.com/health-check/dependencies'],
+            ['https://example.com/health-check/service'],
+        ];
+    }
+
+    #[DataProvider('skipProvider')]
+    public function testSkipsRefreshForPingsAndHealthChecks(string $uri): void
     {
         $this->authService->expects($this->never())->method('getIdentity');
         $this->storage->expects($this->never())->method('setSession');
 
-        $request = new ServerRequest(uri: 'https://example.com/ping/elb');
-        $this->middleware->process($request, $this->makeHandler());
-    }
-
-    public function testSkipsRefreshForPingJson(): void
-    {
-        $this->authService->expects($this->never())->method('getIdentity');
-
-        $request = new ServerRequest(uri: 'https://example.com/ping/json');
+        $request = new ServerRequest(uri: $uri);
         $this->middleware->process($request, $this->makeHandler());
     }
 
