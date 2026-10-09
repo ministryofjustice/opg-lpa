@@ -192,6 +192,7 @@ class LegacyCompatExtension extends AbstractExtension
         $identity = $this->sessionStorage->read();
         $userLoggedIn = $identity instanceof User;
         $lastLoginAt = $userLoggedIn ? $identity->lastLogin() : null;
+        $inSharedSpace = Feature::SharedSpace->isEnabled() && $userLoggedIn && $identity->inSharedSpace();
 
         $name = '';
         $hasOneOrMoreLPAs = false;
@@ -205,14 +206,28 @@ class LegacyCompatExtension extends AbstractExtension
             $hasOneOrMoreLPAs = $userDetails->getNumberOfLpas() > 0;
         }
 
+        $parentRoute = match (true) {
+            ( $currentRoute == 'shared-space.dashboard'
+              || $currentRoute == 'user/dashboard' || str_starts_with($currentRoute, 'user/dashboard/')
+              || $currentRoute === 'lpa-type-no-id' || str_starts_with($currentRoute, 'lpa/')
+            ) => $inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
+
+            $currentRoute === 'shared-space' || str_starts_with($currentRoute, 'shared-space.') => 'shared-space',
+
+            str_starts_with($currentRoute, 'user/') => 'user/about-you',
+
+            default => $currentRoute,
+        };
+
         return $env->render('application/partials/nav.twig', [
             'nav' => (object) [
-                'userLoggedIn'     => $userLoggedIn,
-                'name'             => $name,
-                'lastLoginAt'      => $lastLoginAt,
-                'route'            => $currentRoute,
-                'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
-                'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
+                'userLoggedIn'       => $userLoggedIn,
+                'name'               => $name,
+                'lastLoginAt'        => $lastLoginAt,
+                'route'              => $currentRoute,
+                'parentRoute'        => $parentRoute,
+                'hasOneOrMoreLPAs'   => $hasOneOrMoreLPAs,
+                'inSharedSpace'      => $inSharedSpace,
                 'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
                 'showOneLoginHeader' => $this->showOneLoginHeader(),
             ],
