@@ -22,3 +22,6 @@ output "public_facing_lastingpowerofattorney_fqdn" {
   value = aws_route53_record.public_facing_lastingpowerofattorney.fqdn
 }
 
+output "healthcheck_sns_topic" {
+  value = aws_sns_topic.service_health_checks_global
+}
