@@ -27,3 +27,11 @@ variable "environment_name" {
   type        = string
   description = "environment name"
 }
+
+variable "pagerduty_service_name" {
+  type = string
+}
+
+variable "pagerduty_integration_enabled" {
+  type = bool
+}

@@ -12,3 +12,11 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
 #   key_id   = "opg-lpa-${var.account_name}-sns-encryption-key"
 #   provider = us_east_1
 # }
+
+data "pagerduty_vendor" "cloudwatch" {
+  name = "Cloudwatch"
+}
+
+data "pagerduty_service" "main" {
+  name = var.pagerduty_service_name
+}
