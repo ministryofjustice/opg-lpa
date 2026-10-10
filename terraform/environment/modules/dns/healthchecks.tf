@@ -49,7 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
 
 resource "aws_route53_health_check" "service_health_check" {
   fqdn              = aws_route53_record.front.fqdn
-  reference_name    = "${var.environment_name}-service-hc"
+  reference_name    = "${substr(var.environment_name, 0, 20)}-service"
   port              = 443
   type              = "HTTPS"
   failure_threshold = 1
@@ -86,7 +86,7 @@ resource "aws_cloudwatch_metric_alarm" "service_health_check" {
 
 resource "aws_route53_health_check" "dependencies_health_check" {
   fqdn              = aws_route53_record.front.fqdn
-  reference_name    = "${var.environment_name}-dependencies-hc"
+  reference_name    = "${substr(var.environment_name, 0, 20)}-dependencies"
   port              = 443
   type              = "HTTPS"
   failure_threshold = 1
