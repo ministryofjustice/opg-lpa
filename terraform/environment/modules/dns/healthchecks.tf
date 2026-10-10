@@ -12,7 +12,7 @@ resource "aws_sns_topic" "dependencies_health_checks_global" {
 
 resource "aws_route53_health_check" "public_facing_lastingpowerofattorney" {
   fqdn              = aws_route53_record.public_facing_lastingpowerofattorney.fqdn
-  reference_name    = "${substr(var.environment_name, 0, 20)}-lpapub"
+  reference_name    = "${substr(var.environment_name, 0, 10)}-lpapub"
   port              = 443
   type              = "HTTPS"
   failure_threshold = 1
@@ -49,7 +49,7 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
 
 resource "aws_route53_health_check" "service_health_check" {
   fqdn              = aws_route53_record.front.fqdn
-  reference_name    = "${substr(var.environment_name, 0, 20)}-service"
+  reference_name    = "${substr(var.environment_name, 0, 10)}-service"
   port              = 443
   type              = "HTTPS"
   failure_threshold = 1
@@ -64,7 +64,7 @@ resource "aws_route53_health_check" "service_health_check" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "service_health_check" {
-  alarm_description   = "${var.environment_name} service health check for"
+  alarm_description   = "${var.environment_name} service health check"
   alarm_name          = "${var.environment_name}-service-health-check-alarm"
   alarm_actions       = [aws_sns_topic.service_health_checks_global.arn]
   ok_actions          = [aws_sns_topic.service_health_checks_global.arn]
@@ -86,7 +86,7 @@ resource "aws_cloudwatch_metric_alarm" "service_health_check" {
 
 resource "aws_route53_health_check" "dependencies_health_check" {
   fqdn              = aws_route53_record.front.fqdn
-  reference_name    = "${substr(var.environment_name, 0, 20)}-dependencies"
+  reference_name    = "${substr(var.environment_name, 0, 10)}-dependencies"
   port              = 443
   type              = "HTTPS"
   failure_threshold = 1
@@ -101,7 +101,7 @@ resource "aws_route53_health_check" "dependencies_health_check" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
-  alarm_description   = "${var.environment_name} dependencies health check for"
+  alarm_description   = "${var.environment_name} dependencies health check"
   alarm_name          = "${var.environment_name}-dependencies-health-check-alarm"
   alarm_actions       = [aws_sns_topic.dependencies_health_checks_global.arn]
   ok_actions          = [aws_sns_topic.dependencies_health_checks_global.arn]
