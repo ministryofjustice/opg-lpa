@@ -146,6 +146,38 @@ class OneLoginSessionManagerTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string, array{?string, string}>
+     */
+    public static function finishOnboardingProvider(): array
+    {
+        return [
+            'no page asked for first' => [null, '/user/dashboard'],
+            'a page asked for first'  => ['/lpa/123/donor', '/lpa/123/donor'],
+            'an off-site page'        => ['https://evil.example.com', '/user/dashboard'],
+        ];
+    }
+
+    #[DataProvider('finishOnboardingProvider')]
+    public function testFinishOnboardingSignsTheUserInAndSaysWhereToGo(?string $preAuthUrl, string $expected): void
+    {
+        $this->session->method('get')->willReturnCallback(
+            fn (string $key) => $key === 'pre_auth_request_url' ? $preAuthUrl : null,
+        );
+        $this->session->expects($this->once())->method('clear');
+        $this->session->expects($this->once())->method('regenerate');
+
+        $identity = [
+            'userId'         => 'uid-1',
+            'token'          => 'tok-abc',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->assertSame($expected, $this->manager->finishOnboarding($this->session, $identity, self::ID_TOKEN));
+    }
+
     public function testForgetIdTokenRemovesIt(): void
     {
         $this->session->expects($this->once())->method('unset')->with(self::ID_TOKEN_KEY);

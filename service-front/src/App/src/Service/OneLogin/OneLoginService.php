@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service\OneLogin;
 
 use App\Service\ApiClient\Client as ApiClient;
+use MakeShared\OneLogin\UserType;
 use RuntimeException;
 
 class OneLoginService
@@ -139,6 +140,7 @@ class OneLoginService
         #[\SensitiveParameter] string $password,
         string $oneLoginSub,
         string $oneLoginEmail,
+        UserType $userType,
     ): array {
         /** @var array{linked: true, identity: array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}}|array{linked: false, reason: string} $result */
         $result = $this->client->httpPost(
@@ -148,6 +150,7 @@ class OneLoginService
                 'password'      => $password,
                 'oneLoginSub'   => $oneLoginSub,
                 'oneLoginEmail' => $oneLoginEmail,
+                'userType'      => $userType->value,
             ],
             anonymous: true,
         );
@@ -174,12 +177,15 @@ class OneLoginService
     }
 
     /**
+     * @param array<string, mixed> $profile the user's name, date of birth and address
      * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string}
      * @throws RuntimeException
      */
     public function createAndLinkAccount(
         string $oneLoginSub,
         string $oneLoginEmail,
+        UserType $userType,
+        array $profile,
     ): array {
         /** @var array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $result */
         $result = $this->client->httpPost(
@@ -187,6 +193,8 @@ class OneLoginService
             [
                 'oneLoginSub'   => $oneLoginSub,
                 'oneLoginEmail' => $oneLoginEmail,
+                'userType'      => $userType->value,
+                'profile'       => $profile,
             ],
             anonymous: true,
         );

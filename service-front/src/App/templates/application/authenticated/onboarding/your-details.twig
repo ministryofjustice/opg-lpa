@@ -1,0 +1,32 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Your details' -%}
+
+{% block errorSummary %}
+  {% include 'application/authenticated/about-you/partials/form-error-summary.twig' %}
+{% endblock %}
+
+{% block backLink %}
+  <a href="{{ url(backRoute) }}" class="govuk-back-link" data-cy="back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <p class="govuk-body">
+      Entering these details here may help you save time when using this service to create and work on LPAs.
+      If you are to be named on any LPA you create, you can re-use the details instead of entering them multiple times.
+    </p>
+
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+    {% include 'application/authenticated/about-you/partials/details-fields.twig' with { addressFieldsFirst: true } %}
+
+    <button type="submit" name="save" id="save" data-cy="save" class="govuk-button">Save</button>
+
+    {{ form().closeTag|raw }}
+  </div>
+</div>
+{% endblock content %}

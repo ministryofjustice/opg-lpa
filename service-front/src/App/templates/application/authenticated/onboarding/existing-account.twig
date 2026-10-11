@@ -1,0 +1,23 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Do you have an existing Make a lasting power of attorney account?' %}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set form = formErrorTextExchange(form, {
+    'hasExistingAccount': {
+        'isEmpty': 'Select whether you have an existing Make a lasting power of attorney account',
+    },
+}) %}
+
+{% block backLink %}
+  <a href="{{ url('which-best-describes-you') }}" class="govuk-back-link" data-cy="back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+  {% include 'application/authenticated/onboarding/partials/radio-question.twig' with {
+    element: form.get('hasExistingAccount'),
+    heading: pageTitle,
+    description: 'We need to know if you already have an account, from before you signed in today using GOV.UK One Login.',
+    continueCy: 'existing-account-continue',
+  } %}
+{% endblock content %}

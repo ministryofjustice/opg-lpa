@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service\OneLogin;
 
+use App\Middleware\AuthenticationMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
+use App\Service\SafeRedirectPath;
 use Mezzio\Session\SessionInterface;
 
 class OneLoginSessionManager
@@ -88,6 +90,24 @@ class OneLoginSessionManager
         $session->clear();
         $session->set(IdentityTokenRefreshMiddleware::SESSION_KEY_IDENTITY, $identity);
         $session->set(self::SESSION_KEY_ID_TOKEN, $idToken);
+    }
+
+    /**
+     * Signs in a user who has finished One Login onboarding, and returns where to send them:
+     * the page they first asked for, or their dashboard.
+     *
+     * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
+     */
+    public function finishOnboarding(
+        SessionInterface $session,
+        array $identity,
+        #[\SensitiveParameter] string $idToken,
+    ): string {
+        $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
+
+        $this->startSession($session, $identity, $idToken);
+
+        return $preAuthUrl ?? '/user/dashboard';
     }
 
     public function getIdToken(SessionInterface $session): ?string

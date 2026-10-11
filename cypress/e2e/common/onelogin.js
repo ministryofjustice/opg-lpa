@@ -1,6 +1,14 @@
 import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { openEmailAndVisitLink } from '../../support/reset_link';
-import { sayIMakeLpasFor } from '../../support/onboarding';
+import {
+  checkSignedIn,
+  enterMyAddressManually,
+  enterMyDetails,
+  saveMyDetails,
+  sayIMakeLpasFor,
+  sayWhetherIHaveAnAccount,
+  sayWhetherIKeepMyLpas,
+} from '../../support/onboarding';
 
 let oneLoginEnabled = null;
 
@@ -49,6 +57,8 @@ function checkOnMockOneLoginPage() {
 }
 
 function continueThroughMockOneLogin() {
+  // Wait for the mock page to load, or the click can land on the page it is replacing
+  cy.url().should('include', 'localhost:4549');
   cy.origin('http://localhost:4549', () => {
     cy.contains('button', 'Continue').click();
     cy.wrap(null);
@@ -61,14 +71,6 @@ function continueThroughMockOneLogin() {
       Cypress.env('a11yCheckedPages', new Set());
     }
   });
-}
-
-function chooseToCreateNewMakeAccount() {
-  cy.get('input[name="choice"][value="create"]').check();
-}
-
-function checkSignedIn() {
-  cy.get('[data-cy=sign-out]').should('be.visible');
 }
 
 // Runs in every environment with One Login enabled, so dev and preprod check the start of sign in
@@ -100,13 +102,21 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   checkOnMockOneLoginPage();
   continueThroughMockOneLogin();
   sayIMakeLpasFor('myself, family or friends');
-  cy.url().should(
-    'include',
-    Cypress.config().baseUrl + '/link-or-create-account',
-  );
-  chooseToCreateNewMakeAccount();
-  cy.get('main [type="submit"]:visible').should('not.be.disabled').click();
+  sayWhetherIHaveAnAccount('No, I am new to this service');
+  cy.url().should('eq', Cypress.config().baseUrl + '/your-details');
+  enterMyDetails();
+  enterMyAddressManually();
+  saveMyDetails();
   checkSignedIn();
+});
+
+When(`I sign in through mock One Login to keep my existing Make account`, () => {
+  cy.get('[data-cy="onelogin-signin-button"]').click();
+  checkOnMockOneLoginPage();
+  continueThroughMockOneLogin();
+  sayIMakeLpasFor('myself, family or friends');
+  sayWhetherIHaveAnAccount('Yes, I already have an account');
+  sayWhetherIKeepMyLpas('Yes');
 });
 
 Then(
@@ -117,14 +127,6 @@ Then(
     cy.contains('a', 'Return to sign in').should('have.attr', 'href', '/login');
   },
 );
-
-Then(`I choose to link an existing Make account`, () => {
-  cy.get('input[name="choice"][value="link"]').check();
-});
-
-Then(`I choose to create a new Make account`, chooseToCreateNewMakeAccount);
-
-Then(`I am signed in with my new Make account`, checkSignedIn);
 
 const MOCK_ONELOGIN_LOGOUT = 'http://localhost:4549/logout*';
 const TIMEOUT_PAGE = '/login/timeout';
@@ -240,13 +242,6 @@ Then(
     cy.get('[data-cy=link-account-submit]').click();
   },
 );
-
-Then(`I am advised my Make account credentials were not recognised`, () => {
-  cy.get('[data-cy=link-account-error]').should(
-    'contain',
-    'Email address and password combination not recognised',
-  );
-});
 
 Then(`I choose to reset my Make account password`, () => {
   cy.get('[data-cy=link-account-forgot-password]').click();

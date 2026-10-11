@@ -14,6 +14,8 @@ final class OnboardingState
 {
     public function __construct(
         public ?UserType $userType = null,
+        public ?bool $hasExistingAccount = null,
+        public ?bool $keepExistingAccount = null,
     ) {
     }
 
@@ -24,18 +26,41 @@ final class OnboardingState
     {
         $userType = $data['userType'] ?? null;
 
+        $hasExistingAccount  = $data['hasExistingAccount'] ?? null;
+        $keepExistingAccount = $data['keepExistingAccount'] ?? null;
+
         return new self(
             userType: is_string($userType) ? UserType::tryFrom($userType) : null,
+            hasExistingAccount: is_bool($hasExistingAccount) ? $hasExistingAccount : null,
+            keepExistingAccount: is_bool($keepExistingAccount) ? $keepExistingAccount : null,
         );
     }
 
     /**
-     * @return array{userType: ?string}
+     * @return array{userType: ?string, hasExistingAccount: ?bool, keepExistingAccount: ?bool}
      */
     public function toArray(): array
     {
         return [
-            'userType' => $this->userType?->value,
+            'userType'            => $this->userType?->value,
+            'hasExistingAccount'  => $this->hasExistingAccount,
+            'keepExistingAccount' => $this->keepExistingAccount,
         ];
+    }
+
+    /**
+     * Whether the user is new to Make, or has chosen not to keep their existing account.
+     */
+    public function createsNewAccount(): bool
+    {
+        return $this->hasExistingAccount === false || $this->keepExistingAccount === false;
+    }
+
+    /**
+     * Whether the user has an existing Make account and wants to keep it.
+     */
+    public function linksExistingAccount(): bool
+    {
+        return $this->hasExistingAccount === true && $this->keepExistingAccount === true;
     }
 }

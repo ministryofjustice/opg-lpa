@@ -44,9 +44,11 @@ Feature: HTML and JS prevent common exploits
 
     Examples:
       | path                      |
+      | /existing-account         |
+      | /keep-your-lpas           |
       | /link-account             |
-      | /link-or-create-account   |
       | /which-best-describes-you |
+      | /your-details             |
 
   Scenario: Signing in with the wrong CSRF token is rejected
     When I post to "/login" with an invalid CSRF token

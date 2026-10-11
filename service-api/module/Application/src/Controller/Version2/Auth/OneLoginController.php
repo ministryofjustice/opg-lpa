@@ -5,8 +5,10 @@ namespace Application\Controller\Version2\Auth;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
+use InvalidArgumentException;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\OneLogin\UserType;
 use MakeShared\Telemetry\TelemetryEventManager;
 
 /**
@@ -96,12 +98,18 @@ class OneLoginController extends AbstractAuthController
     /**
      * Link an existing Make account to a One Login identity that is not yet associated with any Make account.
      *
-     * @return JsonModel
+     * @return JsonModel|ApiProblem
      */
-    public function linkAction(): JsonModel
+    public function linkAction(): JsonModel|ApiProblem
     {
-        /** @var array{username: string, password: string, oneLoginSub: string, oneLoginEmail: string} $body */
+        /** @var array{username: string, password: string, oneLoginSub: string, oneLoginEmail: string, userType?: mixed} $body */
         $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        $userType = $this->userType($body['userType'] ?? null);
+
+        if ($userType === null) {
+            return new ApiProblem(400, 'userType must be one of: lay, professional');
+        }
 
         TelemetryEventManager::triggerStart('OneLoginController.linkAction');
 
@@ -111,6 +119,7 @@ class OneLoginController extends AbstractAuthController
                 $body['password'],
                 $body['oneLoginSub'],
                 $body['oneLoginEmail'],
+                $userType,
             );
         } finally {
             TelemetryEventManager::triggerStop();
@@ -180,12 +189,24 @@ class OneLoginController extends AbstractAuthController
     }
 
     /**
-     * @return JsonModel
+     * @return JsonModel|ApiProblem
      */
-    public function createAction(): JsonModel
+    public function createAction(): JsonModel|ApiProblem
     {
-        /** @var array{oneLoginSub: string, oneLoginEmail: string} $body */
+        /** @var array{oneLoginSub: string, oneLoginEmail: string, userType?: mixed, profile?: mixed} $body */
         $body = json_decode((string) $this->getRequest()->getContent(), true);
+
+        $userType = $this->userType($body['userType'] ?? null);
+
+        if ($userType === null) {
+            return new ApiProblem(400, 'userType must be one of: lay, professional');
+        }
+
+        $profile = $body['profile'] ?? null;
+
+        if (!is_array($profile)) {
+            return new ApiProblem(400, 'profile must be provided');
+        }
 
         TelemetryEventManager::triggerStart('OneLoginController.createAction');
 
@@ -193,11 +214,20 @@ class OneLoginController extends AbstractAuthController
             $result = $this->getService()->createAndLinkAccount(
                 $body['oneLoginSub'],
                 $body['oneLoginEmail'],
+                $userType,
+                $profile,
             );
+        } catch (InvalidArgumentException $e) {
+            return new ApiProblem(400, $e->getMessage());
         } finally {
             TelemetryEventManager::triggerStop();
         }
 
         return new JsonModel($result);
+    }
+
+    private function userType(mixed $value): ?UserType
+    {
+        return is_string($value) ? UserType::tryFrom($value) : null;
     }
 }

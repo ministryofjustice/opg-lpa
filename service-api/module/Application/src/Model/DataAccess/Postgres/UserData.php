@@ -386,6 +386,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             $data['one_login_email'] = $details['one_login_email'];
         }
 
+        if (isset($details['user_type'])) {
+            $data['user_type'] = $details['user_type'];
+        }
+
+        if (isset($details['profile'])) {
+            $data['profile'] = $this->encodeProfile($details['profile']);
+        }
+
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -819,17 +827,25 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function saveProfile(ProfileUserModel $data): void
     {
+        $this->updateRow(
+            ['id' => $data->getId()],
+            [
+                'profile' => $this->encodeProfile($data),
+            ]
+        );
+    }
+
+    /**
+     * The profile column holds the user's details without the fields kept in their own columns.
+     */
+    private function encodeProfile(ProfileUserModel $data): string
+    {
         $user = $data->toArray();
 
         // Remove unwarned fields
         unset($user['id'], $user['createdAt'], $user['updatedAt']);
 
-        $this->updateRow(
-            ['id' => $data->getId()],
-            [
-                'profile' => json_encode($user),
-            ]
-        );
+        return json_encode($user, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -837,14 +853,16 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param string $userId
      * @param string $oneLoginSub
      * @param string $oneLoginEmail Email supplied by One Login (contact address).
+     * @param string $userType How the user makes LPAs, given during One Login onboarding.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, string $userType): void
     {
         $this->updateRow(
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
                 'one_login_email' => $oneLoginEmail,
+                'user_type' => $userType,
                 'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]

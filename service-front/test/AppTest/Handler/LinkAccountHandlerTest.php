@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Handler;
 
-use App\Form\User\Login;
+use App\Form\User\LinkAccountForm;
 use App\Handler\LinkAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\OneLogin\OneLoginService;
@@ -15,6 +15,7 @@ use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
 use Laminas\Form\FormElementManager;
 use MakeShared\OneLogin\LinkReason;
+use MakeShared\OneLogin\UserType;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -34,7 +35,7 @@ class LinkAccountHandlerTest extends TestCase
     private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
     private SessionInterface&MockObject $session;
-    private Login $form;
+    private LinkAccountForm $form;
     private LinkAccountHandler $handler;
 
     protected function setUp(): void
@@ -45,10 +46,10 @@ class LinkAccountHandlerTest extends TestCase
         $this->logger             = $this->createMock(LoggerInterface::class);
         $this->session            = $this->createMock(SessionInterface::class);
 
-        $this->form = new Login();
+        $this->form = new LinkAccountForm();
         $this->form->init();
 
-        $this->formElementManager->method('get')->willReturn($this->form);
+        $this->formElementManager->method('get')->with(LinkAccountForm::class)->willReturn($this->form);
 
         $this->handler = new LinkAccountHandler(
             $this->renderer,
@@ -65,6 +66,7 @@ class LinkAccountHandlerTest extends TestCase
         ?string $pendingSub = self::PENDING_SUB,
         ?string $preAuthUrl = null,
         ?string $userType = 'lay',
+        ?bool $keepExistingAccount = true,
     ): ServerRequest {
         $pendingLink = $pendingSub === null
             ? null
@@ -74,7 +76,11 @@ class LinkAccountHandlerTest extends TestCase
             ->method('get')
             ->willReturnCallback(fn(string $key) => match ($key) {
                 'onelogin_pending_link' => $pendingLink,
-                'onelogin_onboarding'   => ['userType' => $userType],
+                'onelogin_onboarding'   => [
+                    'userType'            => $userType,
+                    'hasExistingAccount'  => true,
+                    'keepExistingAccount' => $keepExistingAccount,
+                ],
                 'pre_auth_request_url'  => $preAuthUrl,
                 default                 => null,
             });
@@ -97,7 +103,7 @@ class LinkAccountHandlerTest extends TestCase
         $this->renderer->expects($this->once())
             ->method('render')
             ->with(
-                'application/authenticated/linking/link-account.twig',
+                'application/authenticated/onboarding/link-account.twig',
                 $this->callback(fn(array $vars) => isset($vars['form']) && $vars['csrfToken'] === 'test-token'),
             )
             ->willReturn('<html>form</html>');
@@ -111,7 +117,7 @@ class LinkAccountHandlerTest extends TestCase
     {
         $this->logger->expects($this->once())
             ->method('warning')
-            ->with('auth.onelogin.link_missing_pending_sub');
+            ->with('auth.onelogin.onboarding_missing_pending_link');
 
         $response = $this->handler->handle($this->createRequest('GET', [], null));
 
@@ -127,6 +133,27 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/which-best-describes-you', $response->getHeaderLine('Location'));
+    }
+
+    /**
+     * @return array<string, array{?bool}>
+     */
+    public static function notKeepingProvider(): array
+    {
+        return ['not answered' => [null], 'chose not to keep' => [false]];
+    }
+
+    #[DataProvider('notKeepingProvider')]
+    public function testOnlyAUserKeepingTheirAccountIsAskedToSignInToIt(?bool $keepExistingAccount): void
+    {
+        $this->oneLoginService->expects($this->never())->method('linkExistingAccount');
+
+        $response = $this->handler->handle(
+            $this->createRequest('GET', [], self::PENDING_SUB, null, 'lay', $keepExistingAccount)
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/keep-your-lpas', $response->getHeaderLine('Location'));
     }
 
     public function testPostWithInvalidFormRendersForm(): void
@@ -156,7 +183,7 @@ class LinkAccountHandlerTest extends TestCase
 
         $this->oneLoginService->expects($this->once())
             ->method('linkExistingAccount')
-            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
+            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com', UserType::Lay)
             ->willReturn(['linked' => true, 'identity' => $identity]);
 
         $this->session->expects($this->once())->method('regenerate');
@@ -239,46 +266,60 @@ class LinkAccountHandlerTest extends TestCase
         $this->assertEquals('/cannot-link-account', $response->getHeaderLine('Location'));
     }
 
-    /**
-     * @return array<string, array{string, string}>
-     */
-    public static function correctableFailureProvider(): array
+    public function testPostWithAnEmailAddressInTheWrongFormatRendersTheFormWithoutTryingToLink(): void
     {
-        return [
-            'wrong password'  => [LinkReason::INVALID_CREDENTIALS, 'authentication-failed'],
-            'unknown account' => [LinkReason::ACCOUNT_NOT_FOUND, 'authentication-failed'],
-            'deleted account' => [LinkReason::ACCOUNT_DELETED, 'authentication-failed'],
-            'locked account'  => [LinkReason::ACCOUNT_LOCKED, 'locked'],
-            'inactive'        => [LinkReason::ACCOUNT_NOT_ACTIVE, 'not-activated'],
-        ];
-    }
-
-    #[DataProvider('correctableFailureProvider')]
-    public function testCorrectableFailureStaysOnFormWithInlineError(string $reason, string $expectedAuthError): void
-    {
-        $email = 'my.email@example.com';
-        $word  = 'guessable';
-
-        $this->oneLoginService->expects($this->once())
-            ->method('linkExistingAccount')
-            ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
-            ->willReturn(['linked' => false, 'reason' => $reason]);
-
-        // A correctable failure keeps the user on the form and never signs them in.
-        $this->session->expects($this->never())->method('set');
-
-        $this->renderer->expects($this->once())
-            ->method('render')
-            ->with(
-                'application/authenticated/linking/link-account.twig',
-                $this->callback(fn(array $vars) => ($vars['authError'] ?? null) === $expectedAuthError),
-            )
-            ->willReturn('<html>form with errors</html>');
+        $this->oneLoginService->expects($this->never())->method('linkExistingAccount');
+        $this->renderer->expects($this->once())->method('render')->willReturn('<html>form with errors</html>');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['email' => $email, 'password' => $word])
+            $this->createRequest('POST', ['email' => 'not-an-email', 'password' => 'guessable']) // pragma: allowlist secret
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertArrayHasKey('invalidEmailAddress', $this->form->get('email')->getMessages());
+    }
+
+    /**
+     * @return array<string, array{string}>
+     */
+    public static function failedLinkProvider(): array
+    {
+        return [
+            'wrong password'  => [LinkReason::INVALID_CREDENTIALS],
+            'unknown account' => [LinkReason::ACCOUNT_NOT_FOUND],
+            'deleted account' => [LinkReason::ACCOUNT_DELETED],
+            'locked account'  => [LinkReason::ACCOUNT_LOCKED],
+            'inactive'        => [LinkReason::ACCOUNT_NOT_ACTIVE],
+        ];
+    }
+
+    #[DataProvider('failedLinkProvider')]
+    public function testAnyOtherFailureGoesToTheCannotLinkPage(string $reason): void
+    {
+        $this->oneLoginService->method('linkExistingAccount')->willReturn(['linked' => false, 'reason' => $reason]);
+        $this->logger->expects($this->once())->method('info')->with('auth.onelogin.link_failed', ['reason' => $reason]);
+        $this->session->expects($this->never())->method('set');
+        $this->renderer->expects($this->never())->method('render');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', ['email' => 'my.email@example.com', 'password' => 'guessable']) // pragma: allowlist secret
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/cannot-link-account', $response->getHeaderLine('Location'));
+    }
+
+    public function testAnApiFailureGoesToTheCannotLinkPage(): void
+    {
+        $this->oneLoginService->method('linkExistingAccount')->willThrowException(new \RuntimeException('api down'));
+        $this->logger->expects($this->once())->method('error')->with('auth.onelogin.link_error');
+        $this->session->expects($this->never())->method('set');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', ['email' => 'my.email@example.com', 'password' => 'guessable']) // pragma: allowlist secret
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/cannot-link-account', $response->getHeaderLine('Location'));
     }
 }

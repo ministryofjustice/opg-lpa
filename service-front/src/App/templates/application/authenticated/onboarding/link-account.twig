@@ -1,0 +1,73 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Enter the sign-in details for your existing Make a lasting power of attorney account' -%}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set email = form.get('email') %}
+{% set password = form.get('password') %}
+
+{% set form = formErrorTextExchange(form, {
+    'email': {
+        'cannot-be-empty': 'Enter your email address',
+        'invalidEmailAddress': 'Enter an email address in the correct format, like name@example.com',
+    },
+    'password' : {
+        'cannot-be-empty' : 'Enter your password'
+    }
+}) %}
+
+{% block backLink %}
+  <a href="{{ url('keep-your-lpas') }}" class="govuk-back-link" data-cy="back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      {{ macros.formErrorSummary(null, form) }}
+
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+      <p class="govuk-body">
+        We need these details to make the account’s information and LPAs available to you in this account.
+      </p>
+
+      {{ email.setAttributes({
+        id: 'email',
+        class: 'govuk-input',
+        'data-cy': 'login-email'
+      }) ? ''}}
+
+      {{ password.setAttributes({
+        id: 'password',
+        class: 'govuk-input',
+        'data-cy': 'login-password'
+      }) ? '' }}
+
+      {{ email.setOptions({ label: 'Email address' }) ? '' }}
+
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      {{ macros.formGroup2(email) }}
+
+      <div class="govuk-form-group {{ password.getMessages|length > 0 ? 'govuk-form-group--error'}}">
+        <label class="govuk-label" for="{{ password.getAttribute('id') }}">Password</label>
+        {{ formElementErrorsV2(password) }}
+        {{ formElement(password) }}
+        <div>
+          <a href="#" class="hidden js-showHidePassword govuk-link" data-for="password">Show password</a>
+        </div>
+      </div>
+
+      <button type="submit" class="govuk-button" data-cy="link-account-submit">Keep LPAs and account information</button>
+
+      {{ form().closeTag|raw }}
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="{{ url('forgot-password') }}" data-cy="link-account-forgot-password">Forgotten your password?</a>
+      </p>
+    </div>
+  </div>
+{% endblock content %}
