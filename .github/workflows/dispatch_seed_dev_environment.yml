@@ -31,7 +31,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Don't run on production
-        working-directory: terraform/environment
         run: |
           if [${TARGET_ENVIRONMENT} == "production"]; then
             echo "Cannot run on production"
