@@ -74,7 +74,8 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     Then I am asked to sign in to my existing Make account
     And I see the One Login header but not the Make navigation
     When I link the newly created fixture users Make account
-    Then I am taken to the dashboard page
+    Then I am taken to "/user/dashboard?account=linked"
+    And I see a success notification with content "The account information you chose to keep is now available in this account"
 
   Scenario: Signing in to my existing account without my details asks for them
     When I sign in through mock One Login to keep my existing Make account
@@ -154,11 +155,10 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     And I select option "THE OFFICE OF THE PUBLIC GUARDIAN, THE AXIS, 10 HOLLIDAY STREET, BIRMINGHAM" of "address-search-result"
     Then I see "address-postcode" prepopulated with "B1 1TF"
     When I enter my name and date of birth and save
+    Then I am taken to "/user/dashboard?account=created"
+    And I see a success notification with content "You’ve created your Make a lasting power of attorney account"
     Then my new Make account has my details
     And I see "address-postcode" prepopulated with "B1 1TF"
-    And I visit "/user/dashboard"
-    And If I am on dashboard I click to create lpa
-    And I am taken to the lpa type page
 
   Scenario: Saving my details without my name asks me for it and creates no account
     When I click "onelogin-signin-button"

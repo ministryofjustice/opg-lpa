@@ -201,7 +201,7 @@ class LinkAccountHandlerTest extends TestCase
         $this->assertSame(['identity' => $identity, 'onelogin_id_token' => self::PENDING_ID_TOKEN], $written);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+        $this->assertEquals('/user/dashboard?account=linked', $response->getHeaderLine('Location'));
     }
 
     public function testSuccessfulLinkReturnsUserToTheirDeepLink(): void
@@ -217,7 +217,7 @@ class LinkAccountHandlerTest extends TestCase
         $response = $this->handleSuccessfulLink('//evil.example/');
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/user/dashboard', $response->getHeaderLine('Location'));
+        $this->assertEquals('/user/dashboard?account=linked', $response->getHeaderLine('Location'));
     }
 
     private function handleSuccessfulLink(?string $preAuthUrl): ResponseInterface

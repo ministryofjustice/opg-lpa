@@ -147,19 +147,19 @@ class OneLoginSessionManagerTest extends TestCase
     }
 
     /**
-     * @return array<string, array{?string, string}>
+     * @return array<string, array{?string, string, string}>
      */
     public static function finishOnboardingProvider(): array
     {
         return [
-            'no page asked for first' => [null, '/user/dashboard'],
-            'a page asked for first'  => ['/lpa/123/donor', '/lpa/123/donor'],
-            'an off-site page'        => ['https://evil.example.com', '/user/dashboard'],
+            'no page asked for first' => [null, 'linked', '/user/dashboard?account=linked'],
+            'a page asked for first'  => ['/lpa/123/donor', 'created', '/lpa/123/donor'],
+            'an off-site page'        => ['https://evil.example.com', 'created', '/user/dashboard?account=created'],
         ];
     }
 
     #[DataProvider('finishOnboardingProvider')]
-    public function testFinishOnboardingSignsTheUserInAndSaysWhereToGo(?string $preAuthUrl, string $expected): void
+    public function testFinishOnboardingSignsTheUserInAndSaysWhereToGo(?string $preAuthUrl, string $linkedOrCreated, string $expected): void
     {
         $this->session->method('get')->willReturnCallback(
             fn (string $key) => $key === 'pre_auth_request_url' ? $preAuthUrl : null,
@@ -175,7 +175,7 @@ class OneLoginSessionManagerTest extends TestCase
             'sharedSpaceId'  => null,
         ];
 
-        $this->assertSame($expected, $this->manager->finishOnboarding($this->session, $identity, self::ID_TOKEN));
+        $this->assertSame($expected, $this->manager->finishOnboarding($this->session, $identity, self::ID_TOKEN, $linkedOrCreated));
     }
 
     public function testForgetIdTokenRemovesIt(): void

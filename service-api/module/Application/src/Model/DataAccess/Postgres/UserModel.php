@@ -70,6 +70,7 @@ class UserModel implements UserRepository\UserInterface
             'isSharedSpaceAdmin' => $this->isSharedSpaceAdmin(),
             'isActiveInSharedSpace' => $this->isActiveInSharedSpace(),
             'oneLoginEmail' => $this->oneLoginEmail(),
+            'isProfessional' => $this->isProfessional(),
         ];
     }
 
@@ -289,5 +290,10 @@ class UserModel implements UserRepository\UserInterface
         }
 
         return ($this->data['isActiveInSharedSpace'] === true || $this->data['isActiveInSharedSpace'] === 'Y');
+    }
+
+    public function isProfessional(): bool
+    {
+        return ($this->data['is_professional'] ?? false) === true;
     }
 }
