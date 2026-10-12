@@ -8,23 +8,23 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
+use App\Service\CorrespondenceSetService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
-use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Attorneys\TrustCorporation;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use RuntimeException;
 
 class CorrespondentEditHandler implements RequestHandlerInterface
 {
@@ -37,6 +37,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly UrlHelper $urlHelper,
         private readonly ActorReuseDetailsService $actorReuseDetailsService,
+        private readonly CorrespondenceSetService $correspondenceSetService,
     ) {
     }
 
@@ -95,6 +96,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
 
         $backButtonUrl = null;
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -104,33 +106,38 @@ class CorrespondentEditHandler implements RequestHandlerInterface
             // Check if this is a reuse-details POST ('Use my details' link / single-option reuse)
             $reuseDetailsIndex = $postData['reuse-details'] ?? null;
 
-            if ($reuseDetailsIndex !== null) {
-                // Bind selected reuse data to the form
-                $reuseDetails = $this->actorReuseDetailsService->getCorrespondentReuseDetails($user, $lpa);
+            $ifMatchVersion = (int)$postData['version'];
+            try {
+                if ($reuseDetailsIndex !== null) {
+                    // Bind selected reuse data to the form
+                    $reuseDetails = $this->actorReuseDetailsService->getCorrespondentReuseDetails($user, $lpa);
 
-                if ($reuseDetailsIndex == '0' && count($reuseDetails) == 1) {
-                    $actorDetailsToReuse = array_pop($reuseDetails);
-                    $form->bind($actorDetailsToReuse['data']);
-                } elseif (array_key_exists($reuseDetailsIndex, $reuseDetails)) {
-                    $form->bind($reuseDetails[$reuseDetailsIndex]['data']);
+                    if ($reuseDetailsIndex == '0' && count($reuseDetails) == 1) {
+                        $actorDetailsToReuse = array_pop($reuseDetails);
+                        $form->bind($actorDetailsToReuse['data']);
+                    } elseif (array_key_exists($reuseDetailsIndex, $reuseDetails)) {
+                        $form->bind($reuseDetails[$reuseDetailsIndex]['data']);
+                    }
+
+                    // If data is non-editable, process it directly
+                    if (!$form->isEditable()) {
+                        $form->isValid();
+                        $correspondentData = $form->getModelDataFromValidatedForm() ?? [];
+                        return $this->correspondenceSetService->setCorrespondent($lpa, $correspondentData, $flowChecker, $isPopup, $ifMatchVersion);
+                    }
+                } else {
+                    // Regular form POST — validate and save
+                    $form->setData($postData);
+
+                    if ($form->isValid()) {
+                        $correspondentData = $form->getModelDataFromValidatedForm();
+                        $correspondentData['contactDetailsEnteredManually'] = true;
+
+                        return $this->correspondenceSetService->setCorrespondent($lpa, $correspondentData, $flowChecker, $isPopup, $ifMatchVersion);
+                    }
                 }
-
-                // If data is non-editable, process it directly
-                if (!$form->isEditable()) {
-                    $form->isValid();
-                    $correspondentData = $form->getModelDataFromValidatedForm() ?? [];
-                    return $this->processCorrespondentData($lpa, $correspondentData, $flowChecker, $isPopup);
-                }
-            } else {
-                // Regular form POST — validate and save
-                $form->setData($postData);
-
-                if ($form->isValid()) {
-                    $correspondentData = $form->getModelDataFromValidatedForm();
-                    $correspondentData['contactDetailsEnteredManually'] = true;
-
-                    return $this->processCorrespondentData($lpa, $correspondentData, $flowChecker, $isPopup);
-                }
+            } catch (ConflictException $e) {
+                $conflictError = $e;
             }
         } else {
             $reuseDetailsIndex = $queryParams['reuseDetailsIndex'] ?? null;
@@ -141,13 +148,6 @@ class CorrespondentEditHandler implements RequestHandlerInterface
 
                 if (array_key_exists($reuseDetailsIndex, $reuseDetails)) {
                     $form->bind($reuseDetails[$reuseDetailsIndex]['data']);
-
-                    // If data is non-editable, process it directly
-                    if (!$form->isEditable()) {
-                        $form->isValid();
-                        $correspondentData = $form->getModelDataFromValidatedForm() ?? [];
-                        return $this->processCorrespondentData($lpa, $correspondentData, $flowChecker, $isPopup);
-                    }
                 }
 
                 // Set the back button URL from the callingUrl query param
@@ -161,7 +161,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
 
                 if (
                     $existingCorrespondent instanceof Correspondence ||
-                    $existingCorrespondent instanceof TrustCorporation
+                        $existingCorrespondent instanceof TrustCorporation
                 ) {
                     $form->bind($existingCorrespondent->flatten());
                 }
@@ -186,6 +186,7 @@ class CorrespondentEditHandler implements RequestHandlerInterface
             'form'          => $form,
             'cancelUrl'     => $cancelUrl,
             'backButtonUrl' => $backButtonUrl,
+            'conflictError' => $conflictError,
         ];
 
         if ($isPopup) {
@@ -201,48 +202,6 @@ class CorrespondentEditHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
-    }
-
-    /**
-     * Process the correspondent data and return an appropriate response.
-     */
-    private function processCorrespondentData(
-        Lpa $lpa,
-        array $correspondentData,
-        FormFlowChecker $flowChecker,
-        bool $isPopup
-    ): ResponseInterface {
-        $lpaCorrespondent = $lpa->document->correspondent;
-
-        // Set aside any data to retain that is not present in the form
-        $existingDataToRetain = [];
-
-        if ($lpaCorrespondent instanceof Correspondence) {
-            $existingDataToRetain = [
-                'contactByPost'  => $lpaCorrespondent->contactByPost,
-                'contactInWelsh' => $lpaCorrespondent->contactInWelsh,
-            ];
-        }
-
-        $lpaCorrespondent = new Correspondence(array_merge($correspondentData, $existingDataToRetain));
-
-        if (!$this->lpaApplicationService->setCorrespondent($lpa, $lpaCorrespondent)) {
-            throw new RuntimeException('API client failed to update correspondent for id: ' . $lpa->id);
-        }
-
-        if ($isPopup) {
-            return new JsonResponse(['success' => true]);
-        }
-
-        $nextRoute = $flowChecker->nextRoute('lpa/correspondent/edit');
-
-        return new RedirectResponse(
-            $this->urlHelper->generate(
-                $nextRoute,
-                ['lpa-id' => $lpa->id],
-                $flowChecker->getRouteOptions($nextRoute)
-            )
-        );
     }
 
     /**

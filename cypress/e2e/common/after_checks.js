@@ -8,7 +8,7 @@ const { After } = require('@badeball/cypress-cucumber-preprocessor');
 // is recommended by the GOV.UK design system guidelines
 // https://design-system.service.gov.uk/styles/typography/#links
 After({ tags: '@RunLinkCheckAfterStep' }, () => {
-  cy.log('Checking link targets, noreferrer and noopener');
+  cy.task('log', 'Checking link targets, noreferrer and noopener');
 
   cy.document().then((doc) => {
     doc.querySelectorAll('a[target="_blank"]').forEach((el) => {

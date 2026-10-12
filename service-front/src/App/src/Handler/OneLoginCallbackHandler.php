@@ -6,6 +6,8 @@ namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Session\SessionInterface;
@@ -20,8 +22,6 @@ use RuntimeException;
 class OneLoginCallbackHandler implements RequestHandlerInterface
 {
     private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
-    private const string SESSION_KEY_IDENTITY     = 'identity';
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
     private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
@@ -87,7 +87,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return $this->renderError('The sign-in request could not be verified. Please try again.');
             }
 
-            $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+            $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
             try {
                 $result = $this->oneLoginService->callback(
@@ -102,30 +102,28 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 return $this->renderError('There was a problem completing your sign-in. Please try again.');
             }
 
-            // Regenerate to prevent session fixation before writing any identity data.
-            $session->regenerate();
-
             if ($result['linked']) {
                 // Account already linked: establish full authenticated session.
-                $session->clear();
-                $session->set(self::SESSION_KEY_IDENTITY, $result['identity']);
+                $this->sessionManager->startSession($session, $result['identity'], $result['idToken']);
 
-                if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+                if ($preAuthUrl !== null) {
                     return new RedirectResponse($preAuthUrl);
                 }
 
                 return new RedirectResponse('/user/dashboard');
             }
 
+            // Regenerate to prevent session fixation before writing the pending link.
+            $session->regenerate();
             $session->clear();
 
-            if (is_string($preAuthUrl) && $preAuthUrl !== '') {
-                $session->set(self::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
+            if ($preAuthUrl !== null) {
+                $session->set(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
             }
 
-            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email']);
+            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email'], $result['idToken']);
 
-            return new RedirectResponse('/link-or-create-account');
+            return new RedirectResponse('/which-best-describes-you');
         } finally {
             if ($session->has(self::SESSION_KEY_ONELOGIN)) {
                 $session->unset(self::SESSION_KEY_ONELOGIN);

@@ -15,10 +15,7 @@ Feature: Change User Personal Details
     Scenario: Change email
         Given I ignore application exceptions
         When I log in as seeded user
-        And I visit link containing "Your details"
-        Then I am taken to "/user/about-you"
-        When I visit link containing "Change Email Address"
-        Then I am taken to "/user/change-email-address"
+        And I visit "/user/change-email-address"
         And I see "email_current" prepopulated with "seeded_test_user@digital.justice.gov.uk"
         When I try to change email address with a mismatch
         Then I am taken to "/user/change-email-address"

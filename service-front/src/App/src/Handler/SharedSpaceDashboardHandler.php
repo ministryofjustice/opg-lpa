@@ -67,7 +67,8 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
                 ],
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
                 'sharedSpaceName' => $lpasSummary['name'],
-                'joinedSuccess'   => ($request->getQueryParams()['joined'] ?? null) === 'success'
+                'joinedSuccess'   => ($request->getQueryParams()['joined'] ?? null) === 'success',
+                'createdSuccess'   => ($request->getQueryParams()['created'] ?? null) === 'success'
             ]
         );
 

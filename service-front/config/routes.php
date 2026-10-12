@@ -20,6 +20,9 @@ use App\Handler\FeedbackHandler;
 use App\Handler\FeedbackThanksHandler;
 use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
+use App\Handler\HealthCheckHandler;
+use App\Handler\HealthCheckDependenciesHandler;
+use App\Handler\HealthCheckServiceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\InviteMemberHandler;
@@ -32,13 +35,9 @@ use App\Handler\LpaTypeHandler;
 use App\Handler\Lpa\ApplicantHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderAddHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderConfirmDeleteHandler;
-use App\Handler\Lpa\CertificateProvider\CertificateProviderDeleteHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderEditHandler;
 use App\Handler\Lpa\CertificateProvider\CertificateProviderHandler;
-use App\Handler\Lpa\CheckoutChequeHandler;
-use App\Handler\Lpa\CheckoutConfirmHandler;
 use App\Handler\Lpa\CheckoutIndexHandler;
-use App\Handler\Lpa\CheckoutPayHandler;
 use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Handler\Lpa\CompleteIndexHandler;
 use App\Handler\Lpa\CompleteViewDocsHandler;
@@ -64,20 +63,17 @@ use App\Handler\Lpa\LifeSustainingHandler;
 use App\Handler\Lpa\MoreInfoRequiredHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyAddHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyConfirmDeleteHandler;
-use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyDeleteHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyEditHandler;
 use App\Handler\Lpa\PeopleToNotify\PeopleToNotifyHandler;
 use App\Handler\Lpa\PrimaryAttorneyHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyAddTrustHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyConfirmDeleteHandler;
-use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyDeleteHandler;
 use App\Handler\Lpa\PrimaryAttorney\PrimaryAttorneyEditHandler;
 use App\Handler\Lpa\RepeatApplicationHandler;
 use App\Handler\Lpa\ReplacementAttorneyAddHandler;
 use App\Handler\Lpa\ReplacementAttorneyAddTrustHandler;
 use App\Handler\Lpa\ReplacementAttorneyConfirmDeleteHandler;
-use App\Handler\Lpa\ReplacementAttorneyDeleteHandler;
 use App\Handler\Lpa\ReplacementAttorneyEditHandler;
 use App\Handler\Lpa\ReplacementAttorneyIndexHandler;
 use App\Handler\Lpa\ReuseDetailsHandler;
@@ -90,7 +86,6 @@ use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
-use App\Handler\OneLoginHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerJson;
@@ -104,10 +99,8 @@ use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
 use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
-use App\Handler\SharedSpaceCreatedHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
-use App\Handler\SharedSpaceImportFailedHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
@@ -115,6 +108,7 @@ use App\Handler\TermsHandler;
 use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\WhichBestDescribesYouHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -122,6 +116,12 @@ use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+    $app->get('/health-check', HealthCheckHandler::class, 'health-check')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/service', HealthCheckServiceHandler::class, 'health-check.service')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/dependencies', HealthCheckDependenciesHandler::class, 'health-check.dependencies')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping', PingHandler::class, 'ping')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/json', PingHandlerJson::class, 'ping/json')
@@ -157,17 +157,17 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         ->setOptions(['unauthenticated_route' => true]);
 
     $app->route('/login[/{state:(?:timeout|internal-system-error)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route('/signup', RegisterHandler::class, ['GET', 'POST'], 'register')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/signup/confirm/{token:[a-zA-Z0-9]+}', ConfirmRegistrationHandler::class, 'register/confirm')
         ->setOptions(['unauthenticated_route' => true]);
     $app->route('/signup/resend-email', ResendActivationEmailHandler::class, ['GET', 'POST'], 'register/resend-email')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route(
         '/forgot-password/reset[/{token:[^\r\n]*}]',
         ResetPasswordHandler::class,
@@ -176,21 +176,21 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     )
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
-        ->setOptions(['unauthenticated_route' => true]);
+        ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
-        $app->get('/login-onelogin', OneLoginHandler::class, 'application.login-onelogin')
-            ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/onelogin', OneLoginSignInHandler::class, 'auth.onelogin')
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
             ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/which-best-describes-you', WhichBestDescribesYouHandler::class, ['GET', 'POST'], 'which-best-describes-you')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
-            ->setOptions(['unauthenticated_route' => true]);
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
-            ->setOptions(['unauthenticated_route' => true]);
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
             ->setOptions(['unauthenticated_route' => true]);
         $app->post(
@@ -201,10 +201,9 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
+        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
-        $app->get('/shared-space/created', SharedSpaceCreatedHandler::class, 'shared-space.created');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
@@ -220,8 +219,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
-        $app->get('/shared-space/import-failed', SharedSpaceImportFailedHandler::class, 'shared-space.import-failed');
-        $app->route('/shared-space/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'shared-space.forgot-password');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {
@@ -277,30 +274,26 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/add', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyAddHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/add');
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/add-trust', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyAddTrustHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/add-trust');
     $app->route('/lpa/{lpa-id:\d+}/primary-attorney/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyEditHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/edit');
-    $app->get('/lpa/{lpa-id:\d+}/primary-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyConfirmDeleteHandler::class), 'lpa/primary-attorney/confirm-delete');
-    $app->get('/lpa/{lpa-id:\d+}/primary-attorney/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyDeleteHandler::class), 'lpa/primary-attorney/delete');
+    $app->route('/lpa/{lpa-id:\d+}/primary-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PrimaryAttorneyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/primary-attorney/confirm-delete');
     $app->route('/lpa/{lpa-id:\d+}/how-primary-attorneys-make-decision', $factory->pipeline(LpaLoaderMiddleware::class, HowPrimaryAttorneysMakeDecisionHandler::class), ['GET', 'POST'], 'lpa/how-primary-attorneys-make-decision');
 
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyIndexHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney');
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/add', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyAddHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/add');
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/add-trust', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyAddTrustHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/add-trust');
     $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyEditHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/edit');
-    $app->get('/lpa/{lpa-id:\d+}/replacement-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyConfirmDeleteHandler::class), 'lpa/replacement-attorney/confirm-delete');
-    $app->get('/lpa/{lpa-id:\d+}/replacement-attorney/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyDeleteHandler::class), 'lpa/replacement-attorney/delete');
+    $app->route('/lpa/{lpa-id:\d+}/replacement-attorney/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, ReplacementAttorneyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/replacement-attorney/confirm-delete');
     $app->route('/lpa/{lpa-id:\d+}/how-replacement-attorneys-make-decision', $factory->pipeline(LpaLoaderMiddleware::class, HowReplacementAttorneysMakeDecisionHandler::class), ['GET', 'POST'], 'lpa/how-replacement-attorneys-make-decision');
     $app->route('/lpa/{lpa-id:\d+}/when-replacement-attorney-step-in', $factory->pipeline(LpaLoaderMiddleware::class, WhenReplacementAttorneyStepInHandler::class), ['GET', 'POST'], 'lpa/when-replacement-attorney-step-in');
 
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderHandler::class), ['GET', 'POST'], 'lpa/certificate-provider');
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider/add', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderAddHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/add');
     $app->route('/lpa/{lpa-id:\d+}/certificate-provider/edit', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderEditHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/edit');
-    $app->get('/lpa/{lpa-id:\d+}/certificate-provider/confirm-delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderConfirmDeleteHandler::class), 'lpa/certificate-provider/confirm-delete');
-    $app->get('/lpa/{lpa-id:\d+}/certificate-provider/delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderDeleteHandler::class), 'lpa/certificate-provider/delete');
+    $app->route('/lpa/{lpa-id:\d+}/certificate-provider/confirm-delete', $factory->pipeline(LpaLoaderMiddleware::class, CertificateProviderConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/certificate-provider/confirm-delete');
 
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyHandler::class), ['GET', 'POST'], 'lpa/people-to-notify');
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify/add', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyAddHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/add');
     $app->route('/lpa/{lpa-id:\d+}/people-to-notify/edit/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyEditHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/edit');
-    $app->get('/lpa/{lpa-id:\d+}/people-to-notify/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyConfirmDeleteHandler::class), 'lpa/people-to-notify/confirm-delete');
-    $app->get('/lpa/{lpa-id:\d+}/people-to-notify/delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyDeleteHandler::class), 'lpa/people-to-notify/delete');
+    $app->route('/lpa/{lpa-id:\d+}/people-to-notify/confirm-delete/{idx:\d+}', $factory->pipeline(LpaLoaderMiddleware::class, PeopleToNotifyConfirmDeleteHandler::class), ['GET', 'POST'], 'lpa/people-to-notify/confirm-delete');
 
     $app->route('/lpa/{lpa-id:\d+}/correspondent', $factory->pipeline(LpaLoaderMiddleware::class, CorrespondentHandler::class), ['GET', 'POST'], 'lpa/correspondent');
     $app->route('/lpa/{lpa-id:\d+}/correspondent/edit', $factory->pipeline(LpaLoaderMiddleware::class, CorrespondentEditHandler::class), ['GET', 'POST'], 'lpa/correspondent/edit');
@@ -312,10 +305,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/lpa/{lpa-id:\d+}/applicant', $factory->pipeline(LpaLoaderMiddleware::class, ApplicantHandler::class), ['GET', 'POST'], 'lpa/applicant');
 
     $app->route('/lpa/{lpa-id:\d+}/checkout', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutIndexHandler::class), ['GET', 'POST'], 'lpa/checkout');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/cheque', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutChequeHandler::class), ['GET', 'POST'], 'lpa/checkout/cheque');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/pay', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayHandler::class), ['GET', 'POST'], 'lpa/checkout/pay');
     $app->route('/lpa/{lpa-id:\d+}/checkout/pay/response', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutPayResponseHandler::class), ['GET', 'POST'], 'lpa/checkout/pay/response');
-    $app->route('/lpa/{lpa-id:\d+}/checkout/confirm', $factory->pipeline(LpaLoaderMiddleware::class, CheckoutConfirmHandler::class), ['GET', 'POST'], 'lpa/checkout/confirm');
 
     $app->route('/lpa/{lpa-id:\d+}/date-check', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check');
     $app->route('/lpa/{lpa-id:\d+}/date-check/complete', $factory->pipeline(LpaLoaderMiddleware::class, DateCheckHandler::class), ['GET', 'POST'], 'lpa/date-check/complete');

@@ -84,15 +84,14 @@ resource "aws_security_group_rule" "mock_onelogin_ecs_service_ingress" {
   provider = aws.region
 }
 
-
-resource "aws_security_group_rule" "mock_one_login_service_app_ingress" {
-  description              = "Allow Port 8080 ingress from the app ecs service"
+resource "aws_security_group_rule" "mock_one_login_service_api_ingress" {
+  description              = "Allow Port 8080 ingress from the api ecs service"
   type                     = "ingress"
   from_port                = var.container_port
   to_port                  = var.container_port
   protocol                 = "tcp"
   security_group_id        = aws_security_group.mock_onelogin_ecs_service.id
-  source_security_group_id = var.front_app_ecs_service_security_group_id
+  source_security_group_id = var.api_app_ecs_service_security_group_id
   lifecycle {
     create_before_destroy = true
   }
@@ -188,16 +187,14 @@ locals {
           max-buffer-size       = "25m"
         }
       },
-      secrets = [
-        {
-          name      = "CLIENT_ID",
-          valueFrom = data.aws_secretsmanager_secret.mock_onelogin_client_id.arn
-        }
-      ],
       environment = [
         {
           name  = "PORT",
           value = tostring(var.container_port)
+        },
+        {
+          name  = "CLIENT_ID",
+          value = var.onelogin_client_id
         },
         {
           name  = "PUBLIC_URL",

@@ -36,7 +36,7 @@ class InstructionPreferenceControllerTest extends AbstractControllerTestCase
 
         $this->service
             ->shouldReceive('update')
-            ->withArgs([$this->lpaId, ['some' => 'data']])
+            ->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn([
                 $this->createEntity(['instruction' => 'an instruction']),
                 $this->createEntity(['preference' => 'a preference']),
@@ -55,7 +55,7 @@ class InstructionPreferenceControllerTest extends AbstractControllerTestCase
 
         $this->service
             ->shouldReceive('update')
-            ->withArgs([$this->lpaId, ['some' => 'data']])
+            ->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
             ->andReturn(new ValidationApiProblem(new ValidatorResponse([])))->once();
 
         $response = $controller->update(10, ['some' => 'data']);

@@ -21,6 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class ReplacementAttorneyIndexHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private UrlHelper&MockObject $urlHelper;
@@ -103,8 +105,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
                 $this->callback(function (array $vars) use ($lpa): bool {
                     return count($vars['attorneys']) === count($lpa->document->replacementAttorneys)
                         && isset($vars['attorneys'][0]['editRoute'])
-                        && isset($vars['attorneys'][0]['confirmDeleteRoute'])
-                        && isset($vars['attorneys'][0]['deleteRoute']);
+                        && isset($vars['attorneys'][0]['confirmDeleteRoute']);
                 })
             )
             ->willReturn('html');
@@ -120,7 +121,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
 
         $this->renderer->expects($this->once())->method('render')->willReturn('html');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['csrf' => 'token']));
+        $response = $this->handler->handle($this->createRequest('POST', ['csrf' => 'token', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -130,7 +131,7 @@ class ReplacementAttorneyIndexHandlerTest extends TestCase
         $this->form->method('isValid')->willReturn(true);
         $this->metadata->expects($this->once())->method('setReplacementAttorneysConfirmed');
 
-        $response = $this->handler->handle($this->createRequest('POST', ['csrf' => 'token']));
+        $response = $this->handler->handle($this->createRequest('POST', ['csrf' => 'token', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertStringContainsString('when-replacement-attorney-step-in', $response->getHeaderLine('Location'));

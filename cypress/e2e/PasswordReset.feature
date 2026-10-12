@@ -22,7 +22,7 @@ Feature: PasswordReset
       And I use password reset email for "PasswordResetUser" to visit the link
 
       # use a valid new password
-      Then I do not see "Sign Out" in the page text
+      Then I cannot find "sign-out"
       When I choose a new password
       Then I am returned to the appropriate page shown after a password reset
       And I see "Password successfully reset" in the page text
@@ -42,8 +42,8 @@ Feature: PasswordReset
       Then I am taken to "/user/about-you/new"
 
       # have to fill out personal details to enable changing password back
-      When I select "Mr" on "name-title" with data-inited
       And I force fill out
+        | name-title| Mr |
         | name-first| Chris |
         | name-last| Smith |
         | dob-date-day| 1 |
@@ -55,10 +55,7 @@ Feature: PasswordReset
       And If I am on dashboard I click to create lpa
       Then I am taken to the lpa type page
 
-      When I visit link containing "Your details"
-      And I visit link containing "Change Password"
-      Then I am taken to "/user/change-password"
-
+      Then I visit "/user/change-password"
       When I change password for "PasswordResetUser" back to my old one
       Then I see "Your new password has been saved" in the page text
 
@@ -152,22 +149,3 @@ Feature: PasswordReset
 
     When I click "reset-my-password"
     Then I see "That password link does not work" in the title
-
-  @PasswordReset
-  Scenario: The reset page does not sign out if token is for a shared space
-    Given I create a new user stored as "userToImport" with 5 LPAs
-    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
-    When I log in as the newly created fixture user
-    Then I should be on "/shared-space/dashboard"
-    When I click element marked "Shared space"
-    Then I should be on "/shared-space"
-    When I click link "Import LPAs from existing account"
-    When I click link "Forgotten your password?"
-    Then I should be on "/shared-space/forgot-password"
-    Then I enter the email of "userToImport"
-    Then I submit the form
-    Then I should be on "/shared-space/forgot-password"
-    Then I see "Thank you" in the page text
-    Then I use shared space password reset email for "userToImport" to visit the link
-    Then I should be on "/forgot-password/reset/"
-    Then I see "Sign Out" in the page text

@@ -23,6 +23,7 @@ use RuntimeException;
 class CardPaymentsTest extends TestCase
 {
     private const string GATEWAY_REFERENCE = '9aphnjaet2k20e31ue3272m28i';
+    private const int IF_MATCH_VERSION = 5;
 
     private GovPayClient&MockObject $paymentClient;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -161,7 +162,9 @@ class CardPaymentsTest extends TestCase
         $this->paymentClient->expects($this->never())->method('getPayment');
         $this->lpaApplicationService->expects($this->never())->method('updateApplication');
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertFalse($ok);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
     }
 
     public function testSuccessfulPaymentIsRecordedAndReported(): void
@@ -190,7 +193,9 @@ class CardPaymentsTest extends TestCase
             ->method('warning')
             ->with($this->stringContains('recorded a completed GOV.UK Pay payment'));
 
-        $this->assertTrue($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertTrue($ok);
+        $this->assertEquals(self::IF_MATCH_VERSION + 1, $newVersion);
 
         $this->assertSame(Payment::PAYMENT_TYPE_CARD, $recorded['method']);
         $this->assertSame('A12345678901', $recorded['reference']); // pragma: allowlist secret
@@ -210,7 +215,9 @@ class CardPaymentsTest extends TestCase
         $this->lpaApplicationService->expects($this->never())->method('updateApplication');
         $this->logger->expects($this->never())->method('warning');
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertFalse($ok);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
         $this->assertNull($lpa->getPayment()->getDate());
     }
 
@@ -241,7 +248,9 @@ class CardPaymentsTest extends TestCase
         $this->lpaApplicationService->expects($this->never())->method('updateApplication');
         $this->logger->expects($this->never())->method('warning');
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertFalse($ok);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
         $this->assertNull($lpa->getPayment()->getMethod());
         $this->assertNull($lpa->getPayment()->getDate());
     }
@@ -262,7 +271,9 @@ class CardPaymentsTest extends TestCase
             ->method('warning')
             ->with($this->stringContains('carries no reference'));
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertFalse($ok);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
         $this->assertNull($lpa->getPayment()->getMethod());
         $this->assertNull($lpa->getPayment()->getDate());
     }
@@ -291,7 +302,9 @@ class CardPaymentsTest extends TestCase
             ->method('warning')
             ->with($this->stringContains('Payment recovery'));
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
+        $this->assertFalse($ok);
         $this->assertNull($lpa->getPayment()->getDate());
     }
 
@@ -308,7 +321,9 @@ class CardPaymentsTest extends TestCase
 
         $this->logger->expects($this->never())->method('warning');
 
-        $this->assertFalse($this->cardPayments->recoverCompletedPayment($lpa));
+        [$newVersion, $ok] = $this->cardPayments->recoverCompletedPayment($lpa, self::IF_MATCH_VERSION);
+        $this->assertEquals(self::IF_MATCH_VERSION, $newVersion);
+        $this->assertFalse($ok);
     }
 
     /**
@@ -331,7 +346,8 @@ class CardPaymentsTest extends TestCase
 
         $this->assertTrue($this->cardPayments->recordSuccessfulPayment(
             $lpa,
-            $this->makeSuccessfulGovPayPayment($given)
+            $this->makeSuccessfulGovPayPayment($given),
+            self::IF_MATCH_VERSION,
         ));
 
         $this->assertSame($expected, (string) $lpa->getPayment()->getEmail());
@@ -355,7 +371,7 @@ class CardPaymentsTest extends TestCase
 
         $this->lpaApplicationService->method('updateApplication')->willReturn($lpa);
 
-        $this->cardPayments->recordSuccessfulPayment($lpa, $this->makeSuccessfulGovPayPayment($given));
+        $this->cardPayments->recordSuccessfulPayment($lpa, $this->makeSuccessfulGovPayPayment($given), self::IF_MATCH_VERSION);
 
         $this->assertNull($lpa->getPayment()->getEmail());
     }
@@ -370,7 +386,7 @@ class CardPaymentsTest extends TestCase
             'payment_id' => self::GATEWAY_REFERENCE,
             'reference'  => 'A12345678901', // pragma: allowlist secret
             'state'      => ['status' => 'success', 'finished' => true],
-        ]));
+        ]), self::IF_MATCH_VERSION);
 
         $this->assertNull($lpa->getPayment()->getEmail());
     }

@@ -23,8 +23,7 @@ Feature: Add donor to Health and Welfare LPA
         And accessibility checks should pass for "donorHW page with popup open"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        # casper simply checked for 8 options so we do too, but we may ultimately wish to check the values
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         When I type "B1 1TF" into "postcode-lookup" working around cypress bug
         # cypress is not reliable at filling in postcode fully before hitting next button, so, ensure it is now filled in
         And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
@@ -34,14 +33,15 @@ Feature: Add donor to Health and Welfare LPA
 
         # Check error message when donor > 100 years old
         When I force fill out
-            | dob-date-day| 22 |
-            | dob-date-month| 10 |
-            | dob-date-year| 1808 |
-        And I select "Mr" on "name-title"
+            | name-title | Mr |
+            | dob-date-day | 22 |
+            | dob-date-month | 10 |
+            | dob-date-year | 1808 |
+        And I click element marked "Date of birth"
         Then I see "By saving this section, you confirm that the donor is more than 100 years old. If not, please change the date." in the page text
 
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |
@@ -61,8 +61,8 @@ Feature: Add donor to Health and Welfare LPA
 
         When I click "view-change-donor"
         Then I can find "form-donor"
-        And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
+            | name-title | Mrs |
             | name-first | Nancy |
             | name-last | Garrison |
             | dob-date-day| 22 |

@@ -25,6 +25,8 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateProviderEditHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -137,7 +139,7 @@ class CertificateProviderEditHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/people-to-notify');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => 'Updated'])
+            $this->createRequest('POST', null, ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE])
         );
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
@@ -155,7 +157,7 @@ class CertificateProviderEditHandlerTest extends TestCase
         $this->formElementManager->method('get')->willReturn($form);
         $this->lpaApplicationService->method('setCertificateProvider')->willReturn(true);
 
-        $request = $this->createRequest('POST', null, ['name-first' => 'Updated'])
+        $request = $this->createRequest('POST', null, ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE])
             ->withHeader('X-Requested-With', 'XMLHttpRequest');
 
         $response = $this->handler->handle($request);
@@ -172,7 +174,7 @@ class CertificateProviderEditHandlerTest extends TestCase
         $this->renderer->method('render')->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => ''])
+            $this->createRequest('POST', null, ['name-first' => '', 'version' => self::IF_MATCH_VALUE])
         );
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -193,7 +195,7 @@ class CertificateProviderEditHandlerTest extends TestCase
         $this->expectException(\RuntimeException::class);
 
         $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => 'Updated'])
+            $this->createRequest('POST', null, ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE])
         );
     }
 }

@@ -49,6 +49,21 @@ class PrimaryAttorneyDecisionsTest extends TestCase
         $this->assertNotNull($errors['when']);
     }
 
+    public function testValidationErrorsExcludeTheEnteredHowDetails()
+    {
+        $details = 'My social security number is 943 476 5919. '
+            . str_repeat('a', (1000 * 1024));
+
+        $decisions = new PrimaryAttorneyDecisions();
+        $decisions->setHow(AbstractDecisions::LPA_DECISION_HOW_DEPENDS);
+        $decisions->setHowDetails($details);
+
+        $errors = $decisions->validate()->getArrayCopy();
+
+        $this->assertEquals(['messages'], array_keys($errors['howDetails']));
+        $this->assertStringNotContainsString('943 476 5919', (string)json_encode($errors));
+    }
+
     public function testGetsAndSets()
     {
         $model = new PrimaryAttorneyDecisions();

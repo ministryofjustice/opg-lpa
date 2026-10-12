@@ -26,21 +26,6 @@ abstract class AbstractActorForm extends AbstractLpaForm
             ];
         }
 
-        if (isset($this->formElements['name-title'])) {
-            $this->formElements['name-title']['attributes'] = [
-                'data-select-options' => json_encode([
-                    '',
-                    'Mr',
-                    'Mrs',
-                    'Miss',
-                    'Ms',
-                    'Dr',
-                    self::PREFER_NOT_TO_SAY_TITLE,
-                    'Other',
-                ]),
-            ];
-        }
-
         parent::init();
     }
 
@@ -142,7 +127,7 @@ abstract class AbstractActorForm extends AbstractLpaForm
 
         if (
             isset($dataForModel['name']['title']) &&
-            $dataForModel['name']['title'] == self::PREFER_NOT_TO_SAY_TITLE
+            $dataForModel['name']['title'] == ''
         ) {
             $dataForModel['name']['title'] = null;
         }
@@ -152,10 +137,6 @@ abstract class AbstractActorForm extends AbstractLpaForm
 
     public function bind(array|object $object, int $flags = FormInterface::VALUES_NORMALIZED)
     {
-        if (is_array($object) && array_key_exists('name-title', $object) && is_null($object['name-title'])) {
-            $object['name-title'] = self::PREFER_NOT_TO_SAY_TITLE;
-        }
-
         return parent::bind($object, $flags);
     }
 

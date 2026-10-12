@@ -58,10 +58,10 @@
     {{ form.prepare() ? '' }}
     {{ form().openTag( form )|raw }}
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
-        <input type="hidden" name="version" value="{{ lpaVersion }}">
+        <input type="hidden" name="version" value="{{ lpa.version }}">
 
         {# Error summary #}
-        {{ macros.formErrorSummary(error,form) }}
+        {{ macros.formErrorSummary(error, form, conflictError) }}
 
         <div class="govuk-form-group {{ type.getMessages|length > 0 ? 'govuk-form-group--error'}}">
             <fieldset>

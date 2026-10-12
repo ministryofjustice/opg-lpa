@@ -21,19 +21,18 @@
     {{ macros.formErrorSummary(error, form) }}
 
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
-
       {{ form.prepare() ? '' }}
       {{ form().openTag( form )|raw }}
       <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
       <div class="govuk-form-group {{ spaceName.getMessages|length > 0 ? 'govuk-form-group--error'}}">
-        <label class="govuk-label" for="{{ spaceName.getAttribute('id') }}">
-          Your shared space name
-        </label>
-        <div class="govuk-hint">
-          For example, Alzheimer's Society or Joe Bloggs Solicitors.
-        </div>
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--xl" for="{{ spaceName.getAttribute('id') }}">
+            {{ overridePageTitle }}
+          </label>
+        </h1>
+
+        <p class="govuk-body">The name you give your shared space will be visible to all its members and cannot be changed.</p>
 
         {{ formElementErrorsV2(spaceName) }}
         {{ formElement(spaceName) }}

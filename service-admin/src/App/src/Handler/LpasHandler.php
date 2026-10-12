@@ -5,10 +5,11 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\RequestAttributes;
-use App\Service\User\UserService;
+use App\Service\Paginator;
+use App\Service\UserService;
+use Laminas\Diactoros\Response\HtmlResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\Response\HtmlResponse;
 
 /**
  * As this class is instantiated via autowiring and referenced only by class
@@ -19,6 +20,7 @@ class LpasHandler extends AbstractHandler
 {
     public function __construct(
         private readonly UserService $userService,
+        private readonly Paginator $paginator,
     ) {
     }
 
@@ -29,6 +31,9 @@ class LpasHandler extends AbstractHandler
         $userEmail = $request->getQueryParams()['email'] ?? null;
         $sharedSpaceName = $request->getQueryParams()['sharedSpaceName'] ?? null;
 
+        $this->paginator->setPerPage(20);
+        $this->paginator->setPage((int) ($request->getQueryParams()['page'] ?? 1));
+
         if (empty($userEmail) && empty($sharedSpaceName)) {
             return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
                 'userId' => $userId,
@@ -36,14 +41,19 @@ class LpasHandler extends AbstractHandler
             ]), 404);
         }
 
-        $lpas = $sharedSpaceId ? $this->userService->sharedSpaceLpas($sharedSpaceId) : $this->userService->userLpas($userId);
+        $result = $sharedSpaceId
+            ? $this->userService->sharedSpaceLpas($sharedSpaceId, $this->paginator->getPage(), $this->paginator->getPerPage())
+            : $this->userService->userLpas($userId, $this->paginator->getPage(), $this->paginator->getPerPage());
 
-        if ($lpas === false) {
+        if ($result === false) {
             return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
                 'userId' => $userId,
                 'failureReason' => 'No LPAs found',
             ]), 404);
         }
+
+        $lpas = $result['results'];
+        $this->paginator->setTotal($result['total']);
 
         $this->auditLog(
             $request->getAttribute(RequestAttributes::USER_EMAIL),
@@ -59,6 +69,10 @@ class LpasHandler extends AbstractHandler
         return new HtmlResponse($this->getTemplateRenderer()->render('app::view-lpas', [
             'lpasOwner' => $userEmail ?: $sharedSpaceName,
             'lpas' => $lpas,
+            'routeName' => $sharedSpaceId ? 'shared-space.lpas' : 'user.lpas',
+            'routeParams' => $sharedSpaceId ? ['sharedSpaceId' => $sharedSpaceId] : ['userId' => $userId],
+            'queryParams' => $sharedSpaceId ? ['sharedSpaceName' => $sharedSpaceName] : ['email' => $userEmail],
+            'paginator' => $this->paginator,
         ]));
     }
 }

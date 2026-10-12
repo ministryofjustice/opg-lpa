@@ -93,9 +93,5 @@ class AboutYou extends AbstractActorForm
         ) {
             $data['address'] = null;
         }
-
-        if (array_key_exists('name-title', $data) && $data['name-title'] == self::PREFER_NOT_TO_SAY_TITLE) {
-            $data['name-title'] = null;
-        }
     }
 }

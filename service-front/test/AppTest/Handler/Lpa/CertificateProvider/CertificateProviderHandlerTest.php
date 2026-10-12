@@ -24,6 +24,8 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateProviderHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -123,7 +125,7 @@ class CertificateProviderHandlerTest extends TestCase
 
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/people-to-notify');
 
-        $response = $this->handler->handle($this->createRequest('POST', null, ['submit' => 'skip']));
+        $response = $this->handler->handle($this->createRequest('POST', null, ['submit' => 'skip', 'version' => self::IF_MATCH_VALUE]));
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
 
@@ -140,7 +142,7 @@ class CertificateProviderHandlerTest extends TestCase
             ->method('render')
             ->willReturn('rendered-html');
 
-        $response = $this->handler->handle($this->createRequest('POST', null, ['submit' => 'skip']));
+        $response = $this->handler->handle($this->createRequest('POST', null, ['submit' => 'skip', 'version' => self::IF_MATCH_VALUE]));
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 }

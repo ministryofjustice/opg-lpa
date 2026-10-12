@@ -138,3 +138,10 @@ echo "==-------=="
 PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
   ${OPG_LPA_POSTGRES_NAME} \
   --echo-all -f seed_test_deletion_log.sql
+
+echo "==-------=="
+echo "Seeding data: UR data"
+echo "==-------=="
+PGPASSWORD=${OPG_LPA_POSTGRES_PASSWORD} psql ${API_OPTS} \
+  ${OPG_LPA_POSTGRES_NAME} \
+  --echo-all -f seed_ur.sql

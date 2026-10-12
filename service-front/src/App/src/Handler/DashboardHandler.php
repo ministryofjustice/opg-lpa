@@ -37,6 +37,9 @@ class DashboardHandler implements RequestHandlerInterface
 
         /** @var User $identity */
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
+        if ($identity->getSharedSpaceId() !== null) {
+            return new RedirectResponse('/shared-space/dashboard');
+        }
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;

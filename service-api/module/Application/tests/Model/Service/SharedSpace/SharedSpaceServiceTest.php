@@ -10,7 +10,6 @@ use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
-use Application\Model\Service\Authentication\Service;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
@@ -33,7 +32,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
     private MockInterface|UserRepositoryInterface $userRepository;
     private MockInterface|LogRepositoryInterface $logRepository;
-    private MockInterface|Service $authenticationService;
     private MockInterface|LoggerInterface $logger;
     private SharedSpaceService $service;
 
@@ -45,7 +43,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
         $this->userRepository = Mockery::mock(UserRepositoryInterface::class);
         $this->logRepository = Mockery::mock(LogRepositoryInterface::class);
-        $this->authenticationService = Mockery::mock(Service::class);
 
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->logger->shouldReceive('info')->byDefault();
@@ -56,7 +53,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             $this->applicationRepository,
             $this->userRepository,
             $this->logRepository,
-            $this->authenticationService,
             $this->logger,
         );
     }
@@ -140,6 +136,17 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->assertEquals('a name', $result);
     }
 
+    public function testCountMembers()
+    {
+        $this->sharedSpaceRepository->shouldReceive('countMembers')
+            ->with('my-space')
+            ->once()
+            ->andReturn(3);
+
+        $result = $this->service->countMembers('my-space');
+        $this->assertSame(3, $result);
+    }
+
     public function testGetMembers()
     {
         $sharedSpaceId = 'my-space';
@@ -212,6 +219,47 @@ final class SharedSpaceServiceTest extends MockeryTestCase
                 'isAdmin' => false,
                 'sharedSpaceName' => 'My Space'
             ],
+        ], $result);
+    }
+
+    public function testGetMembersPaginated()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getMembersPaginated')
+            ->with($sharedSpaceId, 20, 10)
+            ->andReturn([
+                'results' => [
+                    new SharedSpaceMember(
+                        [
+                            'sharedSpaceName' => 'My Space',
+                            'userId' => 'user1',
+                            'isAdmin' => true,
+                            'isActive' => true,
+                            'name' => ['first' => 'me'],
+                            'email' => '1@example.com',
+                            'lastLoginAt' => (new DateTime('2020-01-01'))->format('Y-m-d\TH:i:s.uO'),
+                        ]
+                    ),
+                ],
+                'total' => 25,
+            ]);
+
+        $result = $this->service->getMembersPaginated($sharedSpaceId, 3, 10);
+
+        $this->assertEquals([
+            'results' => [
+                [
+                    'userId' => 'user1',
+                    'name' => new Name(['first' => 'me']),
+                    'email' => '1@example.com',
+                    'lastLoginAt' => (new DateTime('2020-01-01'))->format('Y-m-d\TH:i:s.uO'),
+                    'isActive' => true,
+                    'isAdmin' => true,
+                    'sharedSpaceName' => 'My Space',
+                ],
+            ],
+            'total' => 25,
         ], $result);
     }
 
@@ -419,20 +467,52 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $result = $this->service->getInvites($sharedSpaceId);
 
-        $this->assertEquals([
-            [
-                'fullName' => 'a b',
-                'email' => 'c',
-                'isExpired' => false,
-                'id' => 1,
-            ],
-            [
-                'fullName' => 'd e',
-                'email' => 'f',
-                'isExpired' => true,
-                'id' => 2,
-            ],
-        ], $result);
+        $this->assertCount(2, $result);
+        $this->assertEquals(1, $result[0]['id']);
+        $this->assertEquals('a b', $result[0]['fullName']);
+        $this->assertEquals('c', $result[0]['email']);
+        $this->assertFalse($result[0]['isExpired']);
+        $this->assertArrayHasKey('createdAt', $result[0]);
+
+        $this->assertEquals(2, $result[1]['id']);
+        $this->assertEquals('d e', $result[1]['fullName']);
+        $this->assertEquals('f', $result[1]['email']);
+        $this->assertTrue($result[1]['isExpired']);
+        $this->assertArrayHasKey('createdAt', $result[1]);
+    }
+
+    public function testGetInvitesPaginated()
+    {
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceRepository->shouldReceive('getInvitesPaginated')
+            ->with($sharedSpaceId, 10, 5)
+            ->andReturn([
+                'results' => [
+                    new MemberInvite(
+                        id: 1,
+                        userId: '',
+                        sharedSpaceId: '',
+                        firstNames: 'a',
+                        lastName: 'b',
+                        email: 'c',
+                        isAdmin: false,
+                        code: '',
+                        created: new DateTime(),
+                        expires: new DateTime('+1 minute'),
+                    ),
+                ],
+                'total' => 12,
+            ]);
+
+        $result = $this->service->getInvitesPaginated($sharedSpaceId, 3, 5);
+
+        $this->assertCount(1, $result['results']);
+        $this->assertEquals(1, $result['results'][0]['id']);
+        $this->assertEquals('a b', $result['results'][0]['fullName']);
+        $this->assertEquals('c', $result['results'][0]['email']);
+        $this->assertFalse($result['results'][0]['isExpired']);
+        $this->assertEquals(12, $result['total']);
     }
 
     public function testInvite()
@@ -639,61 +719,246 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->join('my user', 'My Space', '1234');
     }
 
-    public function testImport()
+    #[DoesNotPerformAssertions]
+    public function testDeleteAccount()
     {
-        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
-        $this->sharedSpaceRepository->shouldReceive('commit');
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
 
-        $this->authenticationService->shouldReceive('withPassword')
-            ->with('an-email', 'a-password', false)
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(2);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('commit');
 
-        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
-            ->with('import-user-id', 'space-id')
-            ->andReturn(5);
-
-        $this->userRepository->shouldReceive('delete')
-            ->with('import-user-id')
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
             ->andReturn(true);
 
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-        $this->assertNull($result);
+        $this->logRepository->shouldReceive('addLog')
+            ->with(Mockery::on(function ($args): bool {
+                return $args['type'] === 'account-deleted'
+                    && $args['reason'] === 'User deleted their account';
+            }));
+
+        $this->service->deleteAccount('xyz', '1');
     }
 
-    public function testImportWhenAuthProblem()
+    #[DoesNotPerformAssertions]
+    public function testDeleteAccountWhenLastMember()
     {
-        $this->authenticationService->shouldReceive('withPassword')
-            ->with('an-email', 'a-password', false)
-            ->andReturn('a-problem');
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
 
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-        $this->assertEquals('a-problem', $result);
-    }
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(1);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteSharedSpace')
+            ->with('xyz');
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('commit');
 
-    public function testImportWhenUserInSharedSpace()
-    {
-        $this->authenticationService->shouldReceive('withPassword')
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => 'import-space-id']);
-
-        $this->expectException(UserAlreadyInSharedSpaceException::class);
-        $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
-    }
-
-    public function testImportWhenDeleteFails()
-    {
-        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
-        $this->sharedSpaceRepository->shouldReceive('rollback');
-
-        $this->authenticationService->shouldReceive('withPassword')
-            ->andReturn(['userId' => 'import-user-id', 'sharedSpaceId' => null]);
-
-        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
+        $this->applicationRepository
+            ->shouldReceive('deleteAllForSharedSpace')
+            ->with('xyz')
             ->andReturn(5);
 
-        $this->userRepository->shouldReceive('delete')
-            ->andReturn(false);
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(true);
+
+        $this->logger
+            ->shouldReceive('info')
+            ->with('Shared space deleted', [
+                'event'              => 'shared_space.deleted',
+                'shared_space_id'    => 'xyz',
+                'deleted_by_user_id' => '1',
+                'lpas_deleted'       => 5,
+            ]);
+
+        $this->logRepository->shouldReceive('addLog')
+            ->with(Mockery::on(function ($args): bool {
+                return $args['type'] === 'account-deleted'
+                    && $args['reason'] === 'User deleted their account';
+            }));
+
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenUserNotFound()
+    {
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn(null);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not found', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
 
         $this->expectException(RuntimeException::class);
-        $result = $this->service->import('space-id', 'user-id', 'an-email', 'a-password');
+        $this->expectExceptionMessage('User not found');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenNoMembersFound()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(0);
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: No members found in shared space', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('No members found in shared space');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenUserNotDeleted()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(2);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(false);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not deleted', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('User not deleted');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testDeleteAccountWhenLastMemberAndUserNotDeleted()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(1);
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteMember')
+            ->with('xyz', '1');
+        $this->sharedSpaceRepository
+            ->shouldReceive('deleteSharedSpace')
+            ->with('xyz');
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->applicationRepository
+            ->shouldReceive('deleteAllForSharedSpace')
+            ->with('xyz')
+            ->andReturn(5);
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+        $this->userRepository
+            ->shouldReceive('delete')
+            ->with('1')
+            ->andReturn(false);
+
+        $this->logger
+            ->shouldReceive('error')
+            ->with('Unable to delete shared space member account: User not deleted', [
+                'shared_space_id' => 'xyz',
+                'user_id'         => '1',
+            ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('User not deleted');
+        $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testMatchSharedSpaces()
+    {
+        $query = 'the space';
+        $options = ['offset' => 0, 'limit' => 20];
+        $expected = [
+            'results' => [['sharedSpaceId' => 'ss1', 'sharedSpaceName' => 'The Space']],
+            'total' => 1,
+        ];
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('matchSharedSpaces')
+            ->with($query, $options)
+            ->andReturn($expected)
+            ->once();
+
+        $result = $this->service->matchSharedSpaces($query, $options);
+
+        $this->assertEquals($expected, $result);
     }
 }

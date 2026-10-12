@@ -22,8 +22,9 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         And I opt not to re-use details if lpa is a clone
         Then I can find "form-attorney"
         And I can find "postcode-lookup"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         When I force fill out
+            | name-title | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day | 01 |
@@ -36,14 +37,14 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         And I click "form-save"
         Then I see in the page text
             | There is a problem |
-            | Enter the replacement attorney's title |
+            | Title must be 35 characters or less |
             | Enter a first name that's less than 51 characters long |
             | Enter a last name that's less than 51 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Ms" on "name-title"
         And I force fill out
+            | name-title | Ms |
             | name-first | Isobel |
             | name-last | Ward |
             | address-address1 | 2 Westview |
@@ -56,9 +57,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         When I click "add-replacement-attorney"
         And I can find use-my-details if lpa is new
         And I opt not to re-use details if lpa is a clone
-        # deliberately Mrs instead of Ms this time
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Isobel |
             | name-last | Ward |
             | dob-date-day | 22 |
@@ -69,8 +69,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
             | address-address3| Marchington, Uttoxeter, Staffordshire |
             | address-postcode| ST14 8NX |
         Then I see "There is also a replacement attorney called Isobel Ward. A person cannot be named as a replacement attorney twice on the same LPA." in the page text
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |
@@ -93,8 +93,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         When I click "add-replacement-attorney"
         And I can find use-my-details if lpa is new
         And I opt not to re-use details if lpa is a clone
-        And I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |
@@ -112,8 +112,8 @@ Feature: Add Replacement Attorneys to a Property and Finance LPA
         # re-view 2cnd replacement attorney
         When I click occurrence 1 of "view-change-attorney"
         Then I can find "form-attorney"
-        And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
+            | name-title | Mr |
             | name-first | Ewan |
             | name-last | Adams |
             | dob-date-day | 12 |

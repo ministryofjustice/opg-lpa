@@ -31,8 +31,8 @@ Feature: SignupAndChangeDetails
         And I click "save"
         Then I see "There is a problem" in the page text
         And I see "Error" in the title
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Mr |
           | name-first| Chris |
           | name-last| Smith |
           | dob-date-day| 1 |
@@ -48,8 +48,8 @@ Feature: SignupAndChangeDetails
         Given I log in as "SignupAndChangeDetailsUser" test user
         Then I see "Make a lasting power of attorney" in the page text
         And I see "Your details" in the title
-        When I select "Mr" on "name-title" with data-inited
         And I force fill out
+          | name-title| Mr |
           | name-first| Hammer |
           | name-last| Vortigax |
           | dob-date-day| 1 |
@@ -70,14 +70,14 @@ Feature: SignupAndChangeDetails
         Then I see "Your details" in the page text
         And I see "Cancel" in the page text
 
-        When I click element marked "Change Password"
+        When I visit "/user/change-password"
         Then I see "Change your password" in the page text
         And I see "Cancel" in the page text
 
         When I visit link containing "Cancel"
         Then I am taken to "/user/about-you"
 
-        When I click element marked "Change Email Address"
+        When I visit "/user/change-email-address"
         Then I see "Change your sign-in email address" in the page text
         Then I see "Cancel" in the page text
 
@@ -90,16 +90,12 @@ Feature: SignupAndChangeDetails
 
     Scenario: Mismatched passwords in password change screen result in error message instead of raw 500 page (LPAL-651)
         Given I log in as "SignupAndChangeDetailsUser" test user
-        And I visit the your details page
-        And I visit link containing "Your details"
-        And I visit link containing "Change Password"
+        When I visit "/user/change-password"
         When I try to change password for "SignupAndChangeDetailsUser" with a mismatch
         Then I see "Enter matching passwords" in the page text
 
     Scenario: Mismatched email addresses in email change screen result in error message instead of raw 500 page (LPAL-651)
         Given I log in as "SignupAndChangeDetailsUser" test user
-        And I visit the your details page
-        And I visit link containing "Your details"
-        And I visit link containing "Change Email Address"
-        When I try to change email address for "SignupAndChangeDetailsUser" with a mismatch
+        When I visit "/user/change-email-address"
+        And I try to change email address for "SignupAndChangeDetailsUser" with a mismatch
         Then I see "Enter matching email addresses" in the page text

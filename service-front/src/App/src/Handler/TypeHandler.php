@@ -119,7 +119,6 @@ class TypeHandler implements RequestHandlerInterface
                     'cloneUrl'        => $cloneUrl,
                     'nextUrl'         => $nextUrl,
                     'isChangeAllowed' => $isChangeAllowed,
-                    'lpaVersion'      => $lpa->getVersion(),
                     'conflictError'   => $conflictError,
                 ]
             )

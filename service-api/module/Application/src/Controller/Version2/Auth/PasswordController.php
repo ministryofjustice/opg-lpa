@@ -115,12 +115,20 @@ class PasswordController extends AbstractAuthController
      */
     public function resetAction(): Json|ApiProblem
     {
-        $data = $this->processBodyContent($this->getRequest());
+        $username = $this->getBodyContent('username');
+        if (empty($username)) {
+            return new ApiProblem(400, 'username must be passed');
+        }
 
-        $username = $data['username'];
-        $forSharedSpace = $data['forSharedSpace'];
+        $result = $this->getService()->generateToken($username);
 
-        $result = $this->getService()->generateToken($username, $forSharedSpace);
+        if ($result === Service::ACCOUNT_USES_ONE_LOGIN) {
+            $this->getLogger()->info('Password reset refused for a One Login account', [
+                'event' => 'auth.password_reset.refused_one_login',
+            ]);
+
+            return new ApiProblem(403, 'Account uses GOV.UK One Login');
+        }
 
         if ($result == 'user-not-found') {
             $this->getLogger()->warning('Password reset request for unknown user', [
@@ -135,11 +143,7 @@ class PasswordController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        //  Determine the token value for the logging message
-        $token = (isset($result['activation_token']) ? $result['activation_token'] : $result['token']);
-
         $this->getLogger()->info('Password reset token requested', [
-            'token'    => $token,
             'username' => $username
         ]);
 

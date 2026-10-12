@@ -108,7 +108,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'user' => ['value' => '3', 'messages' => ['length-must-equal:32']],
+                    'user' => ['messages' => ['length-must-equal:32']],
                 ]
             ],
             $validationError->toArray()

@@ -8,6 +8,8 @@ use App\Form\User\Login;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -25,9 +27,6 @@ use RuntimeException;
 class LinkAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-
-    private const string SESSION_KEY_IDENTITY     = 'identity';
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -52,6 +51,10 @@ class LinkAccountHandler implements RequestHandlerInterface
             $this->logger->warning('auth.onelogin.link_missing_pending_sub');
 
             return new RedirectResponse('/login');
+        }
+
+        if ($this->sessionManager->getOnboarding($session)->userType === null) {
+            return new RedirectResponse('/which-best-describes-you');
         }
 
         /** @var Login $form */
@@ -82,7 +85,7 @@ class LinkAccountHandler implements RequestHandlerInterface
                 }
 
                 if ($result['linked'] === true) {
-                    return $this->establishSession($session, $result['identity']);
+                    return $this->establishSession($session, $result['identity'], $pendingLink->idToken);
                 }
 
                 $reason = $result['reason'];
@@ -133,17 +136,18 @@ class LinkAccountHandler implements RequestHandlerInterface
     /**
      * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
      */
-    private function establishSession(SessionInterface $session, array $identity): RedirectResponse
-    {
-        $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+    private function establishSession(
+        SessionInterface $session,
+        array $identity,
+        #[\SensitiveParameter] string $idToken,
+    ): RedirectResponse {
+        $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
-        $session->regenerate();
-        $session->clear();
-        $session->set(self::SESSION_KEY_IDENTITY, $identity);
+        $this->sessionManager->startSession($session, $identity, $idToken);
 
         $this->logger->info('auth.onelogin.link_success');
 
-        if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+        if ($preAuthUrl !== null) {
             return new RedirectResponse($preAuthUrl);
         }
 

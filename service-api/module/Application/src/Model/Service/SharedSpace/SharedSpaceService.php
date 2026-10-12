@@ -10,8 +10,8 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use Application\Model\Service\Authentication\Service;
 use DateTime;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -26,7 +26,6 @@ class SharedSpaceService
         private readonly ApplicationRepositoryInterface $applicationRepository,
         private readonly UserRepositoryInterface $userRepository,
         private readonly LogRepositoryInterface $logRepository,
-        private readonly Service $authenticationService,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -144,17 +143,35 @@ class SharedSpaceService
     {
         $members = $this->sharedSpaceRepository->getMembers($sharedSpaceId);
 
-        return array_map(function ($member) {
-            return [
-                'sharedSpaceName' => $member->getSharedSpaceName(),
-                'userId' => $member->getUserId(),
-                'name' => $member->getName(),
-                'email' => $member->getEmail(),
-                'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
-                'isActive' => $member->isActive(),
-                'isAdmin' => $member->isAdmin(),
-            ];
-        }, $members);
+        return array_map($this->mapMember(...), $members);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function getMembersPaginated(string $sharedSpaceId, int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $result = $this->sharedSpaceRepository->getMembersPaginated($sharedSpaceId, $offset, $perPage);
+
+        return [
+            'results' => array_map($this->mapMember(...), $result['results']),
+            'total' => $result['total'],
+        ];
+    }
+
+    private function mapMember(SharedSpaceMember $member): array
+    {
+        return [
+            'sharedSpaceName' => $member->getSharedSpaceName(),
+            'userId' => $member->getUserId(),
+            'name' => $member->getName(),
+            'email' => $member->getEmail(),
+            'lastLoginAt' => $member->getLastLoginAt()?->format('Y-m-d\TH:i:s.uO'),
+            'isActive' => $member->isActive(),
+            'isAdmin' => $member->isAdmin(),
+        ];
     }
 
     public function isAdmin(string $sharedSpaceId, string $userId): bool
@@ -278,14 +295,33 @@ class SharedSpaceService
     {
         $invites = $this->sharedSpaceRepository->getInvites($sharedSpaceId);
 
-        return array_map(function (MemberInvite $invite) {
-            return [
-                'id' => $invite->id,
-                'fullName' => $invite->firstNames . ' ' . $invite->lastName,
-                'email' => $invite->email,
-                'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
-            ];
-        }, $invites);
+        return array_map($this->mapInvite(...), $invites);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function getInvitesPaginated(string $sharedSpaceId, int $page, int $perPage): array
+    {
+        $offset = ($page - 1) * $perPage;
+
+        $result = $this->sharedSpaceRepository->getInvitesPaginated($sharedSpaceId, $offset, $perPage);
+
+        return [
+            'results' => array_map($this->mapInvite(...), $result['results']),
+            'total' => $result['total'],
+        ];
+    }
+
+    private function mapInvite(MemberInvite $invite): array
+    {
+        return [
+            'id' => $invite->id,
+            'fullName' => $invite->firstNames . ' ' . $invite->lastName,
+            'email' => $invite->email,
+            'createdAt' => $invite->created->format('Y-m-d\TH:i:s.uO'),
+            'isExpired' => $invite->expires->getTimestamp() < (new DateTime())->getTimestamp(),
+        ];
     }
 
     /**
@@ -378,46 +414,89 @@ class SharedSpaceService
         return $invite->sharedSpaceId;
     }
 
-    public function import(string $sharedSpaceId, string $userId, #[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
+    public function countMembers(string $sharedSpaceId): int
     {
-        $userToImport = $this->authenticationService->withPassword($email, $password, false);
-        if (is_string($userToImport)) {
-            return $userToImport;
-        }
+        return $this->sharedSpaceRepository->countMembers($sharedSpaceId);
+    }
 
-        if ($userToImport['sharedSpaceId'] !== null) {
-            throw new UserAlreadyInSharedSpaceException();
-        }
-
+    /**
+     * @throws Throwable
+     */
+    public function deleteAccount(string $sharedSpaceId, string $userId): void
+    {
         $this->sharedSpaceRepository->beginTransaction();
+        $lpasDeleted = 0;
+
         try {
-            $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userToImport['userId'], $sharedSpaceId);
+            $user = $this->userRepository->getById($userId);
 
-            $this->logger->info('Reassigned LPA ownership', [
-                'user_id' => $userToImport['userId'],
-                'shared_space_id' => $sharedSpaceId,
-                'count' => $lpasMoved,
-            ]);
-
-            if (!$this->userRepository->delete($userToImport['userId'])) {
-                throw new \RuntimeException('User not deleted');
+            if ($user === null) {
+                throw new RuntimeException('User not found');
             }
+
+            $memberCount = $this->sharedSpaceRepository->countMembers($sharedSpaceId);
+
+            if ($memberCount === 0) {
+                throw new RuntimeException('No members found in shared space');
+            }
+
+            $isLastMember = $memberCount === 1;
+
+            // The shared_space_members -> shared_space foreign key does not
+            // cascade on delete, so the membership row must always be
+            // deleted explicitly before the shared space itself.
+            $this->sharedSpaceRepository->deleteMember($sharedSpaceId, $userId);
+
+            if ($isLastMember) {
+                $lpasDeleted = $this->applicationRepository->deleteAllForSharedSpace($sharedSpaceId);
+                $this->sharedSpaceRepository->deleteSharedSpace($sharedSpaceId);
+            }
+
+            if (!$this->userRepository->delete($userId)) {
+                throw new RuntimeException('User not deleted');
+            }
+
+            $this->logRepository->addLog([
+                'identity_hash' => hash('sha512', strtolower(trim($user->username()))),
+                'type'          => 'account-deleted',
+                'reason'        => 'User deleted their account',
+                'loggedAt'      => new MillisecondDateTime(),
+            ]);
 
             $this->sharedSpaceRepository->commit();
         } catch (Throwable $e) {
             $this->sharedSpaceRepository->rollback();
 
+            $this->logger->error('Unable to delete shared space member account: ' . $e->getMessage(), [
+                'shared_space_id' => $sharedSpaceId,
+                'user_id'         => $userId,
+            ]);
+
             throw $e;
         }
 
-        $this->logger->info('User imported to shared space', [
-            'event' => 'shared_space.import',
-            'shared_space_id' => $sharedSpaceId,
-            'user_id' => $userId,
-            'imported_user_id' => $userToImport['userId'],
-            'lpas_moved' => $lpasMoved,
-        ]);
+        if ($isLastMember) {
+            $this->logger->info('Shared space deleted', [
+                'event'              => 'shared_space.deleted',
+                'shared_space_id'    => $sharedSpaceId,
+                'deleted_by_user_id' => $userId,
+                'lpas_deleted'       => $lpasDeleted,
+            ]);
+        }
 
-        return null;
+        $this->logger->info('Shared space member account deleted', [
+            'event'           => 'shared_space.member_account_deleted',
+            'shared_space_id' => $sharedSpaceId,
+            'user_id'         => $userId,
+            'was_last_member' => $isLastMember,
+        ]);
+    }
+
+    /**
+     * @return array{results: array, total: int}
+     */
+    public function matchSharedSpaces(string $query, array $options = []): array
+    {
+        return $this->sharedSpaceRepository->matchSharedSpaces($query, $options);
     }
 }

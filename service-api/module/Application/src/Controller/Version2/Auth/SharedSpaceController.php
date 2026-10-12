@@ -149,6 +149,18 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json(['member' => $member]);
     }
 
+    public function countMembersAction(): Json|ApiProblem
+    {
+        $result = $this->checkTokenForSharedSpace();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        $count = $this->sharedSpaceService->countMembers($result['sharedSpaceId']);
+
+        return new Json(['count' => $count]);
+    }
+
     public function membersAndInvitesAction(): Json|ApiProblem
     {
         $result = $this->checkTokenForSharedSpace();
@@ -339,30 +351,6 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new NoContent();
-    }
-
-    public function importAction(): NoContent|Json|ApiProblem
-    {
-        $token = $this->checkTokenForSharedSpace();
-        if ($token instanceof ApiProblem) {
-            return $token;
-        }
-
-        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
-            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
-        }
-
-        $data = $this->processBodyContent($this->getRequest());
-
-        try {
-            $problem = $this->sharedSpaceService->import($token['sharedSpaceId'], $token['userId'], $data['email'], $data['password']);
-        } catch (UserAlreadyInSharedSpaceException $e) {
-            $problem = 'user-already-in-space';
-        } catch (Throwable $e) {
-            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
-        }
-
-        return $problem ? new Json(['problem' => $problem]) : new NoContent();
     }
 
     private function checkToken(): array|ApiProblem

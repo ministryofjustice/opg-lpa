@@ -19,7 +19,7 @@ class Service extends AbstractService
      * @param $data
      * @return ValidationApiProblem|DataModelEntity
      */
-    public function update(string $lpaId, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
     {
         $correspondent = new Correspondence($data);
 
@@ -30,6 +30,8 @@ class Service extends AbstractService
         }
 
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
         $lpa->getDocument()->setCorrespondent($correspondent);
 
         $this->assertLpaValid($lpa, 'after setting correspondent');
@@ -43,9 +45,11 @@ class Service extends AbstractService
      * @param $lpaId
      * @return ValidationApiProblem|bool
      */
-    public function delete(string $lpaId)
+    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId)
     {
         $lpa = $this->getLpa($lpaId);
+        $lpa->setVersion($ifMatchVersion);
+        $lpa->setUpdatedBy($userId);
 
         $lpa->getDocument()->correspondent = null;
 

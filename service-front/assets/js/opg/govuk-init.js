@@ -15,6 +15,10 @@ import {
   Tabs,
 } from '/assets/v2/js/govuk-frontend.min.js';
 
+import * as MOJFrontend from '/assets/v2/js/moj-frontend.min.js';
+
+import { initCrossServiceHeader } from '/assets/v2/js/one-login-service-header.js';
+
 /**
  * Workaround for a known govuk-frontend bug (issue #979, still open as of v6.x):
  * https://github.com/alphagov/govuk-frontend/issues/979
@@ -64,8 +68,11 @@ if (!window.__govukInited) {
       Tabs,
     ].forEach((Component) => createAll(Component));
 
+    initCrossServiceHeader();
+
     document.documentElement.dataset.govukInit = 'done';
     document.dispatchEvent(new CustomEvent('govuk:init'));
+    MOJFrontend.initAll();
   };
 
   document.readyState === 'loading'

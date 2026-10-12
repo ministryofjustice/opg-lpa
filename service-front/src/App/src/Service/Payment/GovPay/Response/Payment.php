@@ -7,9 +7,6 @@ namespace App\Service\Payment\GovPay\Response;
 use GuzzleHttp\Psr7\Uri;
 use Psr\Http\Message\UriInterface;
 
-/**
- * @psalm-suppress UndefinedMagicPropertyFetch
- */
 class Payment extends AbstractData
 {
     use IncludeResponseTrait;

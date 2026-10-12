@@ -26,6 +26,8 @@ use PHPUnit\Framework\TestCase;
 
 class PeopleToNotifyHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -129,7 +131,7 @@ class PeopleToNotifyHandlerTest extends TestCase
         $this->metadata->expects($this->once())->method('setPeopleToNotifyConfirmed');
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/instructions');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['submit' => 'Save and continue']));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['submit' => 'Save and continue', 'version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
@@ -144,7 +146,7 @@ class PeopleToNotifyHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->method('render')->willReturn('<html>index</html>');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa, []));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }

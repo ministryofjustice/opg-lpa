@@ -24,6 +24,8 @@ use RuntimeException;
 
 class InstructionsAndPreferencesHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -36,6 +38,7 @@ class InstructionsAndPreferencesHandlerTest extends TestCase
     private array $postData = [
         'instruction' => 'Unit test instructions',
         'preference' => 'Unit test preferences',
+        'version' => '5',
     ];
 
     protected function setUp(): void

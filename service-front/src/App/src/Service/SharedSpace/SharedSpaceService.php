@@ -85,6 +85,25 @@ class SharedSpaceService
         return new SharedSpaceMember($result['member']);
     }
 
+    public function getMemberCount(): ?int
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/count-members');
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve shared space member count failed', [
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        if (!is_array($result) || !isset($result['count']) || !is_int($result['count'])) {
+            return null;
+        }
+
+        return $result['count'];
+    }
+
     public function getMembersAndInvites(): ?array
     {
         try {
@@ -268,23 +287,5 @@ class SharedSpaceService
         }
 
         return $response['sharedSpaceId'];
-    }
-
-    public function import(#[\SensitiveParameter] string $email, #[\SensitiveParameter] string $password): ?string
-    {
-        try {
-            $response = $this->client->httpPost(
-                '/v2/shared-space/import',
-                ['email' => $email, 'password' => $password],
-            );
-        } catch (Throwable $e) {
-            $this->logger->warning('Import account to shared space failed', [
-                'exception' => $e,
-            ]);
-
-            return 'failed';
-        }
-
-        return $response['problem'] ?? null;
     }
 }

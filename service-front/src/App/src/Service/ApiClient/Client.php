@@ -10,6 +10,7 @@ use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Request;
 use MakeShared\Telemetry\Tracer;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -58,7 +59,7 @@ class Client
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
-            200     => $this->handleResponse($response, $jsonResponse),
+            200     => $this->handleResponse($response, $jsonResponse, $request),
             204     => null,
             default => $this->handleErrorResponse($response),
         };
@@ -78,8 +79,9 @@ class Client
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
-            200, 201 => $this->handleResponse($response),
+            200, 201 => $this->handleResponse($response, true, $request),
             204      => null,
+            412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
         };
     }
@@ -94,7 +96,7 @@ class Client
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
-            200, 201 => $this->handleResponse($response),
+            200, 201 => $this->handleResponse($response, true, $request),
             204      => null,
             412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
@@ -111,7 +113,7 @@ class Client
         $response = $this->httpClient->sendRequest($request);
 
         return match ($response->getStatusCode()) {
-            200, 201 => $this->handleResponse($response),
+            200, 201 => $this->handleResponse($response, true, $request),
             412      => $this->handlePreconditionFailedResponse($response),
             default  => $this->handleErrorResponse($response),
         };
@@ -128,6 +130,7 @@ class Client
 
         return match ($response->getStatusCode()) {
             204     => null,
+            412     => $this->handlePreconditionFailedResponse($response),
             default => $this->handleErrorResponse($response),
         };
     }
@@ -162,18 +165,34 @@ class Client
         return $headers;
     }
 
-    private function handleResponse(ResponseInterface $response, bool $jsonResponse = true): array|string
-    {
+    private function handleResponse(
+        ResponseInterface $response,
+        bool $jsonResponse = true,
+        ?RequestInterface $request = null,
+    ): array|string {
         $body = strval($response->getBody());
 
-        if ($jsonResponse) {
-            $body = json_decode($body, true);
-            if (!is_array($body)) {
-                throw new ApiException($response, 'Malformed JSON response from server');
-            }
+        if (!$jsonResponse) {
+            return $body;
         }
 
-        return $body;
+        $decoded = json_decode($body, true);
+
+        if (is_array($decoded)) {
+            return $decoded;
+        }
+
+        $this->logger->warning('Malformed JSON response from server', [
+            'error_code'  => 'API_CLIENT_MALFORMED_JSON',
+            'status'      => $response->getStatusCode(),
+            'path'        => $request?->getUri()->getPath(),
+            'contentType' => $response->getHeaderLine('Content-Type'),
+            'bodyLength'  => strlen($body),
+            'jsonError'   => json_last_error_msg(),
+            'bodyPreview' => mb_substr($body, 0, 200),
+        ]);
+
+        throw new ApiException($response, 'Malformed JSON response from server');
     }
 
     private function handleErrorResponse(ResponseInterface $response): never

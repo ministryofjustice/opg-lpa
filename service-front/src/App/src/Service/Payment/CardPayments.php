@@ -45,10 +45,13 @@ class CardPayments
             && $lpa->hasFinishedCreation();
     }
 
-    public function recoverCompletedPayment(Lpa $lpa): bool
+    /**
+     * @return array{int, bool}
+     */
+    public function recoverCompletedPayment(Lpa $lpa, int $ifMatchVersion): array
     {
         if (!$this->isAwaitingConfirmation($lpa)) {
-            return false;
+            return [$ifMatchVersion, false];
         }
 
         $gatewayReference = $lpa->getPayment()->getGatewayReference();
@@ -62,7 +65,7 @@ class CardPayments
                     'gatewayReference' => $gatewayReference,
                 ]);
 
-                return false;
+                return [$ifMatchVersion, false];
             }
 
             if (!$govPayPayment->isSuccess()) {
@@ -73,7 +76,7 @@ class CardPayments
                     'finished'         => $govPayPayment->state->finished ?? null,
                 ]);
 
-                return false;
+                return [$ifMatchVersion, false];
             }
 
             $reference = $govPayPayment->reference ?? null;
@@ -84,12 +87,13 @@ class CardPayments
                     'gatewayReference' => $gatewayReference,
                 ]);
 
-                return false;
+                return [$ifMatchVersion, false];
             }
 
-            if (!$this->recordSuccessfulPayment($lpa, $govPayPayment)) {
-                return false;
+            if (!$this->recordSuccessfulPayment($lpa, $govPayPayment, $ifMatchVersion)) {
+                return [$ifMatchVersion, false];
             }
+            $ifMatchVersion++;
         } catch (Throwable $e) {
             $this->logger->warning('Payment recovery: could not check or record the outstanding payment', [
                 'lpaId'            => $lpa->getId(),
@@ -97,7 +101,7 @@ class CardPayments
                 'exception'        => $e,
             ]);
 
-            return false;
+            return [$ifMatchVersion, false];
         }
 
         $this->logger->warning('Payment recovery: recorded a completed GOV.UK Pay payment that was never saved', [
@@ -106,10 +110,10 @@ class CardPayments
             'paymentReference' => $lpa->getPayment()->getReference(),
         ]);
 
-        return true;
+        return [$ifMatchVersion, true];
     }
 
-    public function recordSuccessfulPayment(Lpa $lpa, GovPayPayment $govPayPayment): bool
+    public function recordSuccessfulPayment(Lpa $lpa, GovPayPayment $govPayPayment, int $ifMatchVersion): bool
     {
         $lpa->getPayment()->setMethod(Payment::PAYMENT_TYPE_CARD);
         $lpa->getPayment()->setReference($govPayPayment->reference);
@@ -121,7 +125,7 @@ class CardPayments
             ? new EmailAddress(['address' => strtolower(trim($govPayEmail))])
             : null);
 
-        $result = $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()]);
+        $result = $this->lpaApplicationService->updateApplication($lpa->getId(), ['payment' => $lpa->getPayment()->toArray()], $ifMatchVersion);
 
         if ($result === false) {
             $this->logger->critical('PAYMENT RECORDING FAILED — payment taken but LPA not updated', [

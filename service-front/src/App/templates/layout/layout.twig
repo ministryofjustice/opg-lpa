@@ -64,6 +64,9 @@
 </div>
 
 <header class="govuk-template__header">
+  {% if showOneLoginHeader() %}
+  {% include 'layout/partials/one-login-header.twig' %}
+  {% else %}
   <div class="govuk-header" data-module="govuk-header" data-cy="banner">
     <div class="govuk-header__container govuk-width-container">
       <div class="govuk-header__logo">
@@ -95,12 +98,28 @@
       </div>
     </div>
   </div>
+  {% endif %}
   {{ renderNavigation(currentRouteName|default('')) }}
 </header>
 
-<div class="govuk-width-container" role="main">
+<div class="govuk-width-container">
   {% block backLink %}{% endblock %}
   <main class="govuk-main-wrapper" id="main-content">
+
+    {% if currentRouteName in ['application.login', 'application.home', 'register', 'root'] and systemMessage() %}
+    <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+      <div class="govuk-notification-banner__header">
+        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+          Important
+        </h2>
+      </div>
+      <div class="govuk-notification-banner__content">
+        {{ systemMessage() }}
+      </div>
+    </div>
+    {% endif %}
+
+
     {% block errorSummary %}{% endblock %}
     {% block mainTitle %}
       {% if pageTitle %}
@@ -243,7 +262,7 @@
     </div>
 </footer>
 
-<script type="module" src='/assets/v2/js/govuk-init.js'></script>
+<script type="module" src="{{ '/assets/v2/js/govuk-init.js' | asset_path }}"></script>
 <script src="{{ '/assets/v2/js/application.js' | asset_path({ 'minify':true }) }}"></script>
 {% include 'layout/partials/timeout.twig' %}
 

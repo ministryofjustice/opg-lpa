@@ -152,7 +152,8 @@ class ApplicationController extends AbstractLpaController
         $result = $this->getService()->patch(
             $data,
             $id,
-            $this->params()->fromRoute('userId')
+            $this->ifMatch(),
+            $this->params()->fromRoute('userId'),
         );
 
         if ($result instanceof ApiProblem) {

@@ -29,6 +29,8 @@ use PHPUnit\Framework\TestCase;
 
 class PeopleToNotifyAddHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -204,7 +206,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/people-to-notify');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', $lpa, ['name-first' => 'New'])
+            $this->createRequest('POST', $lpa, ['name-first' => 'New', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -228,7 +230,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', $lpa, ['name-first' => 'New'], [], ['X-Requested-With' => 'XMLHttpRequest'])
+            $this->createRequest('POST', $lpa, ['name-first' => 'New', 'version' => self::IF_MATCH_VALUE], [], ['X-Requested-With' => 'XMLHttpRequest'])
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -252,7 +254,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
 
         $this->expectException(\RuntimeException::class);
 
-        $this->handler->handle($this->createRequest('POST', $lpa, ['name-first' => 'New']));
+        $this->handler->handle($this->createRequest('POST', $lpa, ['name-first' => 'New', 'version' => self::IF_MATCH_VALUE]));
     }
 
     public function testPostInvalidRendersForm(): void
@@ -267,7 +269,7 @@ class PeopleToNotifyAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
         $this->renderer->method('render')->willReturn('<html>form</html>');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa, []));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => self::IF_MATCH_VALUE]));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -291,6 +293,6 @@ class PeopleToNotifyAddHandlerTest extends TestCase
         $this->metadata->expects($this->never())->method('setPeopleToNotifyConfirmed');
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
-        $this->handler->handle($this->createRequest('POST', $lpa, ['name-first' => 'New']));
+        $this->handler->handle($this->createRequest('POST', $lpa, ['name-first' => 'New', 'version' => self::IF_MATCH_VALUE]));
     }
 }

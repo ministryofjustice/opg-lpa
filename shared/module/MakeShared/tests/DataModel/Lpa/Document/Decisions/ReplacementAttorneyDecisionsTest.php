@@ -50,6 +50,21 @@ class ReplacementAttorneyDecisionsTest extends TestCase
         $this->assertNotNull($errors['when']);
     }
 
+    public function testValidationErrorsExcludeTheEnteredWhenDetails()
+    {
+        $details = 'My social security number is 943 476 5919. '
+            . str_repeat('a', (1000 * 1024));
+
+        $decisions = new ReplacementAttorneyDecisions();
+        $decisions->setWhen(ReplacementAttorneyDecisions::LPA_DECISION_WHEN_DEPENDS);
+        $decisions->setWhenDetails($details);
+
+        $errors = $decisions->validate()->getArrayCopy();
+
+        $this->assertEquals(['messages'], array_keys($errors['whenDetails']));
+        $this->assertStringNotContainsString('943 476 5919', (string)json_encode($errors));
+    }
+
     public function testGetsAndSets()
     {
         $model = new ReplacementAttorneyDecisions();

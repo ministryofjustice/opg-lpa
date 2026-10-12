@@ -14,11 +14,11 @@ final class RedirectUriBuilder
     {
     }
 
-    public function __invoke(UriInterface $requestUri): string
+    public function __invoke(UriInterface $requestUri, string $path = self::CALLBACK_PATH): string
     {
         $base = $this->baseUrl
             ?? ($requestUri->getScheme() . '://' . $requestUri->getAuthority());
 
-        return rtrim($base, '/') . self::CALLBACK_PATH;
+        return rtrim($base, '/') . $path;
     }
 }

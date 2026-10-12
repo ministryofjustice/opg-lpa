@@ -48,6 +48,7 @@ class ReplacementAttorneyAddTrustHandlerTest extends TestCase
             'postcode' => 'PO5 3DE',
         ],
         'email' => ['address' => 'unit@test.com'],
+        'version' => '5',
     ];
 
     protected function setUp(): void

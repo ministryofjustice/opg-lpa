@@ -34,9 +34,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     ];
 
     private const array LINKED_RESULT = [
-        'linked' => true,
-        'sub'    => 'urn:fdc:gov.uk:2022:abc123',
-        'email'  => 'user@example.com',
+        'linked'   => true,
+        'sub'      => 'urn:fdc:gov.uk:2022:abc123',
+        'email'    => 'user@example.com',
+        'idToken'  => 'linked.id.token',
         'identity' => [
             'userId'         => 'user-id-1',
             'token'          => 'tok-abc',
@@ -47,9 +48,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     ];
 
     private const array UNLINKED_RESULT = [
-        'linked' => false,
-        'sub'    => 'urn:fdc:gov.uk:2022:newuser',
-        'email'  => 'newuser@example.com',
+        'linked'  => false,
+        'sub'     => 'urn:fdc:gov.uk:2022:newuser',
+        'email'   => 'newuser@example.com',
+        'idToken' => 'unlinked.id.token',
     ];
 
     protected function setUp(): void
@@ -261,7 +263,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     // ─── Linked happy path ────────────────────────────────────────────────
 
-    public function testLinkedAccountRegeneratesAndSetsIdentityAndRedirectsToDashboard(): void
+    public function testLinkedAccountRegeneratesAndSetsIdentityAndIdTokenAndRedirectsToDashboard(): void
     {
         $this->oneLoginService->method('callback')->willReturn(self::LINKED_RESULT);
         $this->session->method('unset');
@@ -269,10 +271,13 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->session->expects($this->once())->method('regenerate');
         $this->session->expects($this->once())->method('clear');
 
+        $written = [];
         $this->session
-            ->expects($this->once())
+            ->expects($this->exactly(2))
             ->method('set')
-            ->with('identity', self::LINKED_RESULT['identity']);
+            ->willReturnCallback(function (string $key, mixed $value) use (&$written): void {
+                $written[$key] = $value;
+            });
 
         $response = $this->handler->handle(
             $this->buildRequest(
@@ -283,6 +288,10 @@ class OneLoginCallbackHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertSame('/user/dashboard', $response->getHeaderLine('Location'));
+        $this->assertSame(
+            ['identity' => self::LINKED_RESULT['identity'], 'onelogin_id_token' => self::LINKED_RESULT['idToken']],
+            $written,
+        );
     }
 
     public function testLinkedAccountHonoursPreAuthRequestUrl(): void
@@ -358,8 +367,9 @@ class OneLoginCallbackHandlerTest extends TestCase
             ->expects($this->once())
             ->method('set')
             ->with('onelogin_pending_link', [
-                'sub'   => self::UNLINKED_RESULT['sub'],
-                'email' => self::UNLINKED_RESULT['email'],
+                'sub'     => self::UNLINKED_RESULT['sub'],
+                'email'   => self::UNLINKED_RESULT['email'],
+                'idToken' => self::UNLINKED_RESULT['idToken'],
             ]);
 
         $response = $this->handler->handle(
@@ -370,7 +380,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/link-or-create-account', $response->getHeaderLine('Location'));
+        $this->assertSame('/which-best-describes-you', $response->getHeaderLine('Location'));
     }
 
     public function testUnlinkedAccountCarriesPreAuthUrlAcrossTheClear(): void
@@ -398,6 +408,58 @@ class OneLoginCallbackHandlerTest extends TestCase
         );
 
         $this->assertSame('/lpa/12345/type', $written['pre_auth_request_url'] ?? null);
+        $this->assertArrayHasKey('onelogin_pending_link', $written);
+    }
+
+    public function testLinkedAccountIgnoresAnOffSitePreAuthUrl(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::LINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+        $this->session->method('set');
+
+        $this->session
+            ->method('get')
+            ->willReturnCallback(fn(string $key) => match ($key) {
+                'onelogin_auth'        => self::VALID_SESSION,
+                'pre_auth_request_url' => '//evil.example/',
+                default                => null,
+            });
+
+        $response = $this->handler->handle(
+            $this->buildRequest('code=authcode&state=valid-state-abc')
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/user/dashboard', $response->getHeaderLine('Location'));
+    }
+
+    public function testUnlinkedAccountDoesNotCarryAnOffSitePreAuthUrl(): void
+    {
+        $this->oneLoginService->method('callback')->willReturn(self::UNLINKED_RESULT);
+        $this->session->method('unset');
+        $this->session->method('regenerate');
+        $this->session->method('clear');
+
+        $written = [];
+        $this->session
+            ->method('set')
+            ->willReturnCallback(function (string $key, $value) use (&$written): void {
+                $written[$key] = $value;
+            });
+
+        $this->handler->handle(
+            $this->buildRequest(
+                'code=authcode&state=valid-state-abc',
+                [
+                    'onelogin_auth'        => self::VALID_SESSION,
+                    'pre_auth_request_url' => '//evil.example/',
+                ],
+            )
+        );
+
+        $this->assertArrayNotHasKey('pre_auth_request_url', $written);
         $this->assertArrayHasKey('onelogin_pending_link', $written);
     }
 

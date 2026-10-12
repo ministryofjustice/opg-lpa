@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\ApiClient\Exception\ConflictException;
 use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
@@ -52,9 +53,8 @@ class RepeatApplicationHandler implements RequestHandlerInterface
             'lpa' => $lpa,
         ]);
 
-        $isPost = strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST;
-
-        if ($isPost) {
+        $conflictError = null;
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
                 $postData = [];
@@ -67,68 +67,77 @@ class RepeatApplicationHandler implements RequestHandlerInterface
             }
 
             if ($form->isValid()) {
-                /** @var array $formData */
-                $formData = $form->getData();
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    /** @var array $formData */
+                    $formData = $form->getData();
 
-                $previousRepeatCaseNumber = $lpa->repeatCaseNumber;
+                    $previousRepeatCaseNumber = $lpa->repeatCaseNumber;
 
-                if ($formData['isRepeatApplication'] === 'is-repeat') {
-                    if ($formData['repeatCaseNumber'] !== $lpa->repeatCaseNumber) {
-                        $setOk = $this->lpaApplicationService->setRepeatCaseNumber(
-                            $lpa,
-                            $formData['repeatCaseNumber']
-                        );
+                    if ($formData['isRepeatApplication'] === 'is-repeat') {
+                        if ($formData['repeatCaseNumber'] !== $lpa->repeatCaseNumber) {
+                            $setOk = $this->lpaApplicationService->setRepeatCaseNumber(
+                                $lpa,
+                                $formData['repeatCaseNumber'],
+                                $ifMatchVersion,
+                            );
+                            $ifMatchVersion++;
 
-                        if ($setOk === false) {
+                            if ($setOk === false) {
+                                throw new RuntimeException(
+                                    'API client failed to set repeat case number for id: ' . $lpa->id
+                                );
+                            }
+                        }
+
+                        $lpa->repeatCaseNumber = $formData['repeatCaseNumber'];
+                    } else {
+                        if ($lpa->repeatCaseNumber !== null) {
+                            $deleteOk = $this->lpaApplicationService->deleteRepeatCaseNumber($lpa, $ifMatchVersion);
+                            $ifMatchVersion++;
+
+                            if ($deleteOk === false) {
+                                throw new RuntimeException(
+                                    'API client failed to set repeat case number for id: ' . $lpa->id
+                                );
+                            }
+                        }
+
+                        $lpa->repeatCaseNumber = null;
+                    }
+
+                    if ($lpa->payment instanceof Payment && $lpa->repeatCaseNumber != $previousRepeatCaseNumber) {
+                        Calculator::calculate($lpa);
+
+                        if (!$this->lpaApplicationService->setPayment($lpa, $lpa->payment, $ifMatchVersion)) {
                             throw new RuntimeException(
-                                'API client failed to set repeat case number for id: ' . $lpa->id
+                                'API client failed to set payment details for id: '
+                                    . $lpa->id . ' in RepeatApplicationHandler'
                             );
                         }
+                        $ifMatchVersion++;
                     }
 
-                    $lpa->repeatCaseNumber = $formData['repeatCaseNumber'];
-                } else {
-                    if ($lpa->repeatCaseNumber !== null) {
-                        $deleteOk = $this->lpaApplicationService->deleteRepeatCaseNumber($lpa);
+                    $ifMatchVersion = $this->metadata->setRepeatApplicationConfirmed($lpa, $ifMatchVersion);
 
-                        if ($deleteOk === false) {
-                            throw new RuntimeException(
-                                'API client failed to set repeat case number for id: ' . $lpa->id
-                            );
-                        }
+                    $isPopup = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
                     }
 
-                    $lpa->repeatCaseNumber = null;
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                if ($lpa->payment instanceof Payment && $lpa->repeatCaseNumber != $previousRepeatCaseNumber) {
-                    Calculator::calculate($lpa);
-
-                    if (!$this->lpaApplicationService->setPayment($lpa, $lpa->payment)) {
-                        throw new RuntimeException(
-                            'API client failed to set payment details for id: '
-                            . $lpa->id . ' in RepeatApplicationHandler'
-                        );
-                    }
-                }
-
-                $this->metadata->setRepeatApplicationConfirmed($lpa);
-
-                $isPopup = $request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest';
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             if (array_key_exists(Lpa::REPEAT_APPLICATION_CONFIRMED, $lpa->metadata)) {
@@ -144,7 +153,8 @@ class RepeatApplicationHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form'      => $form,
+                    'form'          => $form,
+                    'conflictError' => $conflictError,
                 ]
             )
         );

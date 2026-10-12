@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace AppTest\Handler\Lpa;
 
+use App\Form\Lpa\CorrespondentForm;
 use App\Handler\Lpa\ReuseDetailsHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Form\Lpa\ReuseDetailsForm;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
+use App\Service\CorrespondenceSetService;
 use App\Service\Lpa\ActorReuseDetailsService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -19,17 +22,22 @@ use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\User\User;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
 
 class ReuseDetailsHandlerTest extends TestCase
 {
-    private TemplateRendererInterface&MockObject $renderer;
-    private FormElementManager&MockObject $formElementManager;
-    private UrlHelper&MockObject $urlHelper;
-    private ActorReuseDetailsService&MockObject $actorReuseDetailsService;
-    private ReuseDetailsForm&MockObject $form;
+    private MockObject&TemplateRendererInterface $renderer;
+    private MockObject&FormElementManager $formElementManager;
+    private MockObject&UrlHelper $urlHelper;
+    private MockObject&ActorReuseDetailsService $actorReuseDetailsService;
+    private MockObject&ReuseDetailsForm $form;
+    private MockObject&CorrespondentForm $correspondentForm;
+    private MockObject&CorrespondenceSetService $correspondenceSetService;
+    private MockObject&LoggerInterface $logger;
     private ReuseDetailsHandler $handler;
 
     private array $reuseDetails = [
@@ -44,8 +52,12 @@ class ReuseDetailsHandlerTest extends TestCase
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->actorReuseDetailsService = $this->createMock(ActorReuseDetailsService::class);
         $this->form = $this->createMock(ReuseDetailsForm::class);
+        $this->correspondentForm = $this->createMock(CorrespondentForm::class);
+        $this->correspondenceSetService = $this->createMock(CorrespondenceSetService::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->formElementManager->method('get')->willReturn($this->form);
+        $this->formElementManager->method('get')
+            ->willReturnOnConsecutiveCalls($this->form, $this->correspondentForm);
         $this->urlHelper->method('generate')->willReturn('/lpa/123/reuse-details');
 
         $this->handler = new ReuseDetailsHandler(
@@ -53,6 +65,8 @@ class ReuseDetailsHandlerTest extends TestCase
             $this->formElementManager,
             $this->urlHelper,
             $this->actorReuseDetailsService,
+            $this->correspondenceSetService,
+            $this->logger,
         );
     }
 
@@ -60,6 +74,7 @@ class ReuseDetailsHandlerTest extends TestCase
     {
         $lpa = new Lpa();
         $lpa->id = 123;
+        $lpa->version = 5;
         $lpa->document = new Document();
         return $lpa;
     }
@@ -72,12 +87,17 @@ class ReuseDetailsHandlerTest extends TestCase
         $lpa = $this->createLpa();
         $user = $this->createMock(User::class);
 
+        $flowChecker = $this->createMock(FormFlowChecker::class);
+        $flowChecker->method('nextRoute')->willReturn('lpa/date-check');
+        $flowChecker->method('getRouteOptions')->willReturn([]);
+
         $request = (new ServerRequest())
             ->withMethod($method)
             ->withUri(new Uri('/lpa/123/reuse-details'))
             ->withQueryParams($queryParams)
             ->withAttribute(RequestAttribute::LPA, $lpa)
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
+            ->withAttribute(RequestAttribute::FLOW_CHECKER, $flowChecker)
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
 
         if ($method === 'POST') {
@@ -212,6 +232,37 @@ class ReuseDetailsHandlerTest extends TestCase
         $this->assertStringContainsString('callingUrl=', $location);
     }
 
+    #[DataProvider('offSiteCallingUrlDataProvider')]
+    public function testOffSiteCallingUrlIsRejected(string $callingUrl): void
+    {
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('lpa.reuse_details.calling_url_rejected', $this->anything());
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('calling-url must be a path on this service');
+
+        $this->handler->handle($this->createRequest('GET', [
+            'calling-url'    => $callingUrl,
+            'include-trusts' => '0',
+            'actor-name'     => 'Donor',
+        ]));
+    }
+
+    /**
+     * @return array<string, array{0: string}>
+     */
+    public static function offSiteCallingUrlDataProvider(): array
+    {
+        return [
+            'absolute https'      => ['https://evil.example'],
+            'absolute http'       => ['http://evil.example/x'],
+            'protocol relative'   => ['//evil.example'],
+            'javascript scheme'   => ['javascript:alert(1)'],
+            'relative path'       => ['lpa/123/donor/add'],
+        ];
+    }
+
     public function testPostWithTrustSelectionAppendsTrustToUrl(): void
     {
         $this->actorReuseDetailsService->method('getActorReuseDetails')->willReturn($this->reuseDetails);
@@ -232,5 +283,42 @@ class ReuseDetailsHandlerTest extends TestCase
         $location = $response->getHeaderLine('Location');
         $this->assertStringContainsString('/lpa/123/primary-attorney/add-trust', $location);
         $this->assertStringContainsString('reuseDetailsIndex=t', $location);
+    }
+
+    public function testCorrespondentReturningFromReuseDetailsWithNonEditableDataProcessesDirectly(): void
+    {
+        $redirect = new RedirectResponse('');
+
+        $this->actorReuseDetailsService
+            ->method('getCorrespondentReuseDetails')
+            ->willReturn([
+                0 => ['label' => 'John Doe (donor)', 'data' => ['who' => 'donor', 'name-first' => 'John']],
+            ]);
+
+        $this->form->method('isValid')->willReturn(true);
+        $this->form->method('getData')->willReturn(['reuse-details' => '0']);
+
+        $this->correspondentForm->method('isEditable')->willReturn(false);
+        $this->correspondentForm->method('isValid')->willReturn(true);
+        $this->correspondentForm
+            ->method('getModelDataFromValidatedForm')
+            ->willReturn([
+                'who' => 'donor',
+                'name' => ['title' => 'Mr', 'first' => 'John', 'last' => 'Doe'],
+            ]);
+
+        $this->correspondenceSetService->method('setCorrespondent')->willReturn($redirect);
+
+        $queryParams = [
+            'calling-url'    => '/lpa/123/correspondent',
+            'include-trusts' => '0',
+            'actor-name'     => 'Correspondent',
+        ];
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', $queryParams, ['reuse-details' => '0', 'version' => '5'])
+        );
+
+        $this->assertEquals($redirect, $response);
     }
 }

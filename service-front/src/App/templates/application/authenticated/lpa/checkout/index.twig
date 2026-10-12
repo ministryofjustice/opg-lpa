@@ -1,6 +1,7 @@
+{% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Final check: LPA details' -%}
+{%- set overridePageTitle = 'Final check: LPA details' -%}
 
 {% set exemption = false %}
 {% set remission = false %}
@@ -20,8 +21,12 @@
 
 {% block content %}
 
+  {{ macros.formErrorSummary(error, form, conflictError) }}
+
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
+          <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+
             <p class="govuk-body">Check all the details on this page are correct and everyone has agreed to be part of this lasting power of attorney before continuing.</p>
         </div>
     </div>
@@ -111,8 +116,16 @@
 
         {% if lpa.payment.amount == 0 %}
 
-            {# -- Nothing to pay -- #}
-            <p class="govuk-body divorced"><a href="{{ url('lpa/checkout/confirm', {'lpa-id': lpa.id}) }}" role="button" class="govuk-button" data-cy="confirm-and-finish">Confirm and finish</a></p>
+          {# -- Nothing to pay -- #}
+          {{ form.prepare() ? '' }}
+          {{ form().openTag( form )|raw }}
+          <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+          <input type="hidden" name="version" value="{{ lpa.version }}">
+
+          <div class="govuk-button-group">
+            <button type="submit" class="govuk-button" data-cy="confirm-and-finish" name="action" value="finish">Confirm and finish</button>
+          </div>
+          {{ form().closeTag|raw }}
 
         {% else %}
 
@@ -141,17 +154,16 @@
 
             {# -- GDS Pay -- #}
             <p class="govuk-body divorced">
-                {# begin form #}
-                {{ form.prepare() ? '' }}
-                {{ form().openTag( form )|raw }}
-                <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+              {{ form.prepare() ? '' }}
+              {{ form().openTag( form )|raw }}
+              <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+              <input type="hidden" name="version" value="{{ lpa.version }}">
 
-            <div class="govuk-button-group">
-                {{ formElement(form.get('submit')) }}
-                <a href="{{ url('lpa/checkout/cheque', {'lpa-id': lpa.id}) }}" class="govuk-link" data-cy="confirm-and-pay-by-cheque">Confirm and pay by cheque</a>
-            </div>
-
-            {{ form().closeTag|raw }}
+              <div class="govuk-button-group">
+                <button type="submit" class="govuk-button" name="action" value="card" data-cy="confirm-and-pay-by-card">Confirm and pay by card</button>
+                <button class="govuk-button govuk-button--secondary" data-cy="confirm-and-pay-by-cheque" name="action" value="cheque">Confirm and pay by cheque</button>
+              </div>
+              {{ form().closeTag|raw }}
             </p>
 
         {% endif %}

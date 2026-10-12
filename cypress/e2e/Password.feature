@@ -7,10 +7,7 @@ Feature: Password
     Scenario: Change password with mismatched details
       Given I ignore application exceptions
       When I log in as seeded user
-      And I visit link containing "Your details"
-      Then I am taken to "/user/about-you"
-      When I visit link containing "Change Password"
-      Then I am taken to "/user/change-password"
+      And I visit "/user/change-password"
       When I try to change password with a mismatch
       Then I am taken to "/user/change-password"
       And I see in the page text
@@ -22,10 +19,7 @@ Feature: Password
     Scenario: Change existing password with invalid details
       Given I ignore application exceptions
       When I log in as seeded user
-      And I visit link containing "Your details"
-      Then I am taken to "/user/about-you"
-      When I visit link containing "Change Password"
-      Then I am taken to "/user/change-password"
+      And I visit "/user/change-password"
       When I try to change password to an invalid one
       Then I am taken to "/user/change-password"
       And I see in the page text

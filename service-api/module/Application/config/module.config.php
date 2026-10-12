@@ -224,6 +224,15 @@ return [
                                     ],
                                 ],
                             ],
+                            'count-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/count-members',
+                                    'defaults' => [
+                                        'action' => 'countMembers',
+                                    ],
+                                ],
+                            ],
                             'invite' => [
                                 'type' => 'Segment',
                                 'options' => [
@@ -263,23 +272,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'import' => [
-                                'type' => 'Segment',
-                                'options' => [
-                                    'route'    => '/import',
-                                ],
-                                'child_routes'  => [
-                                    'post' => [
-                                        'type'    => 'Method',
-                                        'options' => [
-                                            'verb'     => 'post',
-                                            'defaults' => [
-                                                'action' => 'import',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
                         ],
                     ],
 
@@ -301,6 +293,17 @@ return [
                             'defaults' => [
                                 'controller' => 'OneLoginController',
                                 'action'     => 'link',
+                            ],
+                        ],
+                    ],
+
+                    'onelogin-logout' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/logout',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'logout',
                             ],
                         ],
                     ],
@@ -347,6 +350,16 @@ return [
                                 ],
                             ],
 
+                            'match-shared-spaces' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-shared-spaces',
+                                    'defaults' => [
+                                        'action' => 'matchSharedSpaces',
+                                    ],
+                                ],
+                            ],
+
                             'match-users' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -366,6 +379,19 @@ return [
                                     ],
                                     'defaults' => [
                                         'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/members',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceMembers',
                                     ],
                                 ],
                             ],
@@ -429,7 +455,15 @@ return [
                                     ],
                                 ],
                             ],
-
+                            'delete' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '[/:userId]',
+                                    'constraints' => [
+                                        'userId' => '[a-f0-9]+',
+                                    ],
+                                ],
+                            ],
                         ],
                     ],
 
@@ -738,7 +772,9 @@ return [
                     $clientId,
                     $discoveryUrl,
                     $container->get(OneLoginService\KeyPairManager::class),
-                    new GuzzlePsr18(new GuzzleClient()),
+                    new GuzzlePsr18(new GuzzleClient([
+                        'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                    ])),
                     $container->get('OneLoginPsr16Cache'),
                 );
             },
@@ -751,8 +787,14 @@ return [
                 );
             },
 
-            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (): OneLoginService\FacileAuthorizationServiceAdapter {
-                $httpClient = new GuzzlePsr18(new GuzzleClient());
+            OneLoginService\FacileAuthorizationServiceAdapter::class => static function (
+                ServiceLocatorInterface $container
+            ): OneLoginService\FacileAuthorizationServiceAdapter {
+                $config = $container->get('config');
+
+                $httpClient = new GuzzlePsr18(new GuzzleClient([
+                    'headers' => ['User-Agent' => $config['onelogin']['user_agent']],
+                ]));
 
                 $authBuilder = new AuthorizationServiceBuilder();
                 $authBuilder->setHttpClient($httpClient);

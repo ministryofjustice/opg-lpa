@@ -143,6 +143,7 @@ dc-up: all-composer-install ecrlogin
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build --build-arg ENABLE_XDEBUG=0 front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
+	@${MAKE} dc-restart-web
 	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
 	docker compose run --rm npm-front install
 	docker compose run --rm npm-front run watch
@@ -156,6 +157,10 @@ dc-up-debug: all-composer-install ecrlogin
 	export OPG_LPA_COMMON_APP_VERSION=${APP_VERSION}; \
 	docker compose build front-app admin-app api-app pdf-app mock-cognito; \
 	docker compose up -d --remove-orphans
+	@${MAKE} dc-restart-web
+	$(info ${YELLOW}starting asset watcher for service-front...${RESET})
+	docker compose run --rm npm-front install
+	docker compose run --rm npm-front run watch
 
 .PHONY: dc-build
 dc-build:
@@ -230,7 +235,7 @@ reset-api:
 .PHONY: dc-restart-web
 dc-restart-web:
 	@echo "Restarting web containers to refresh nginx DNS..."
-	@docker compose restart front-web api-web admin-web front-ssl admin-ssl
+	@docker compose restart front-web api-web admin-web
 	@echo "Waiting for api-web (http://localhost:7001)..."
 	@for i in $$(seq 1 30); do \
 		if curl -s -o /dev/null --max-time 2 http://localhost:7001/; then \
@@ -239,6 +244,8 @@ dc-restart-web:
 		if [ $$i -eq 30 ]; then echo "  api-web did not become available"; exit 1; fi; \
 		sleep 1; \
 	done
+	@echo "Restarting front-ssl/admin-ssl"
+	@docker compose restart front-ssl admin-ssl
 	@echo "Waiting for front-web (https://localhost:7002)..."
 	@for i in $$(seq 1 30); do \
 		if curl -sk -o /dev/null --max-time 2 https://localhost:7002/; then \
@@ -350,19 +357,21 @@ _cypress-prepare-dirs:
 cypress-open: npm-install python-api-venv
 	CYPRESS_userNumber=`python3 cypress/user_number.py` CYPRESS_baseUrl="https://localhost:7002" \
 		CYPRESS_adminUrl="https://localhost:7003" ./node_modules/.bin/cypress open \
-		--project ./ -e stepDefinitions="cypress/e2e/common/*.js"
+		--project ./ -x stepDefinitions="cypress/e2e/common/*.js"
 
 # Provide name of the spec file (assuming it is in cypress/e2e/) e.g. cypress-run-spec SPEC=Admin.feature
-# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+# Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
+# (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-spec
 cypress-run-spec: _cypress-prepare-dirs
-	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -e stepDefinitions="/app/cypress/e2e/common/*.js"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # This should be used in the form : make cypress-run-tags tags=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
-# Note that the first -e is an argument to docker compose run and the second an argument to cypress run, so these need to be positioned exactly as they are
+# Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
+# (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags: _cypress-prepare-dirs
-	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
 .PHONY: cypress-run-stitched-suites
@@ -371,8 +380,8 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="@Signup" && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="@StitchedHW or @StitchedPF or @StitchedClone"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@StitchedHW or @StitchedPF or @StitchedClone"
 
 # Runs the "remaining" cypress tests - everything not covered by stitched suites or signup.
 # Mirrors the exclusion expression used in CI (workflow_merge_queue.yml cypress_tests_Remaining),
@@ -401,8 +410,8 @@ _cypress-run-baseline-suite: _cypress-prepare-dirs
 	$(info ${YELLOW}exporting secrets from aws secrets manager. you will be prompted for a password${RESET})
 	@export OPG_LPA_API_NOTIFY_API_KEY=${NOTIFY}; \
 	CYPRESS_userNumber=`python3 cypress/user_number.py` && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="@Signup" && \
-	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",CI="True",tags="${SUITE_TAG}"
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
+	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose updateBaseline=true,visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${SUITE_TAG}"
 
 # Replicates CI cypress runs locally to ensure visual regression test baseline images use the same user to keep
 # consistent page dimensions and LPA data for each stitched suite.
@@ -447,6 +456,7 @@ reset-front-app:
 .PHONY: dc-reseed
 dc-reseed:
 	@docker compose run --rm seeding
+	@${MAKE} dc-restart-web
 
 .PHONY: update-secrets-baseline
 update-secrets-baseline:

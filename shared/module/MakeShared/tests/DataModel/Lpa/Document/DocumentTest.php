@@ -88,6 +88,23 @@ class DocumentTest extends TestCase
         $this->assertNotNull($errors['preference']);
     }
 
+    public function testValidationErrorsExcludeTheEnteredInstructionAndPreference()
+    {
+        $instruction = 'Please see http://example.com, my NHS number is 943 476 5919';
+        $preference = 'Contact me on https://example.com or 07700 900123';
+
+        $document = new Document();
+        $document->set('instruction', $instruction);
+        $document->set('preference', $preference);
+
+        $errors = $document->validate(['instruction', 'preference'])->getArrayCopy();
+
+        $this->assertEquals(['messages'], array_keys($errors['instruction']));
+        $this->assertEquals(['messages'], array_keys($errors['preference']));
+        $this->assertStringNotContainsString($instruction, (string)json_encode($errors));
+        $this->assertStringNotContainsString($preference, (string)json_encode($errors));
+    }
+
     public function testValidationInstructionWordTooLongFailed()
     {
         $longWord = str_repeat('a', 86);

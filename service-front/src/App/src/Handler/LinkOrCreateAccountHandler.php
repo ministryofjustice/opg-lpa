@@ -8,6 +8,8 @@ use App\Form\User\LinkOrCreateAccountForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Middleware\AuthenticationMiddleware;
+use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -24,9 +26,6 @@ use RuntimeException;
 class LinkOrCreateAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-
-    private const string SESSION_KEY_IDENTITY     = 'identity';
-    private const string SESSION_KEY_PRE_AUTH_URL = 'pre_auth_request_url';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -53,6 +52,10 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             return new RedirectResponse('/login');
         }
 
+        if ($this->sessionManager->getOnboarding($session)->userType === null) {
+            return new RedirectResponse('/which-best-describes-you');
+        }
+
         /** @var LinkOrCreateAccountForm $form */
         $form = $this->formElementManager->get(LinkOrCreateAccountForm::class);
 
@@ -75,7 +78,7 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
                         $pendingLink->email,
                     );
 
-                    return $this->establishSession($session, $identity);
+                    return $this->establishSession($session, $identity, $pendingLink->idToken);
                 } catch (RuntimeException $e) {
                     $this->logger->error('auth.onelogin.create_error', ['message' => $e->getMessage()]);
                     $error = 'api-error';
@@ -98,17 +101,18 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
     /**
      * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
      */
-    private function establishSession(SessionInterface $session, array $identity): RedirectResponse
-    {
-        $preAuthUrl = $session->get(self::SESSION_KEY_PRE_AUTH_URL);
+    private function establishSession(
+        SessionInterface $session,
+        array $identity,
+        #[\SensitiveParameter] string $idToken,
+    ): RedirectResponse {
+        $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
-        $session->regenerate();
-        $session->clear();
-        $session->set(self::SESSION_KEY_IDENTITY, $identity);
+        $this->sessionManager->startSession($session, $identity, $idToken);
 
         $this->logger->info('auth.onelogin.create_and_link_success');
 
-        if (is_string($preAuthUrl) && $preAuthUrl !== '') {
+        if ($preAuthUrl !== null) {
             return new RedirectResponse($preAuthUrl);
         }
 

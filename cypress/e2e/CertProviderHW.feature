@@ -17,11 +17,11 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         When I click "add-certificate-provider"
         Then I can find "form-certificate-provider"
         And I can find "form-cancel"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | Reece |
             | name-last | Richards |
             | address-address1 | 11 Brookside |
@@ -38,8 +38,8 @@ Feature: Add a Certificate Provider to a Health and Welfare LPA
         And I click "cancel"
         And I click "view-change-certificate-provider"
         Then I can find "form-certificate-provider"
-        And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
+            | name-title | Mr |
             | name-first | Reece |
             | name-last | Richards |
             | address-address1 | 11 Brookside |

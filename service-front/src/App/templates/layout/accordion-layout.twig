@@ -6,6 +6,10 @@
     </h3>
 {% endblock %}
 
+{% block backLink %}
+  <a href="{{ url('user/dashboard') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {%- block accordionInstructions -%}
     <details class="govuk-details" data-module="govuk-details" data-role="details-instructions" data-cy="details-instructions">
         <summary class="govuk-details__summary">
@@ -20,7 +24,7 @@
         </div>
     </details>
 
-    {% if inSharedSpace %}
+    {% if inSharedSpace() %}
       <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
         <strong class="govuk-warning-text__text">

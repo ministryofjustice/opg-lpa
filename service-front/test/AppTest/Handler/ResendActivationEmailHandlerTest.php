@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\ResendActivationEmailHandler;
 use App\Form\User\ConfirmEmail;
+use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -53,7 +54,8 @@ final class ResendActivationEmailHandlerTest extends TestCase
     public function testDisplaysResendEmailFormOnGetRequest(): void
     {
         $request = (new ServerRequest([], [], '/signup/resend-email', 'GET'))
-            ->withAttribute(RequestAttribute::IDENTITY, null);
+            ->withAttribute(RequestAttribute::IDENTITY, null)
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'a-real-token');
 
         $form = $this->createMock(ConfirmEmail::class);
         $form->expects($this->once())->method('setAttribute')->with('action', '/signup/resend-email');
@@ -68,6 +70,7 @@ final class ResendActivationEmailHandlerTest extends TestCase
             ->method('render')
             ->with('application/general/register/resend-email.twig', $this->callback(
                 fn($data) => isset($data['form']) && $data['form'] === $form
+                    && $data['csrfToken'] === 'a-real-token'
             ))
             ->willReturn('<html>Resend Form</html>');
 

@@ -30,7 +30,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->update(strval($lpa->getId()), ['repeatCaseNumber' => 'Invalid']);
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, ['repeatCaseNumber' => 'Invalid']);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -40,7 +40,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'repeatCaseNumber' => ['value' => 'Invalid', 'messages' => ['expected-type:int']],
+                    'repeatCaseNumber' => ['messages' => ['expected-type:int']],
                 ]
             ],
             $validationError->toArray()
@@ -55,7 +55,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $entity = $this->service->update(strval($lpa->getId()), ['repeatCaseNumber' => '123456789']);
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, ['repeatCaseNumber' => '123456789']);
 
         $this->assertEquals(new Entity('123456789'), $entity);
     }
@@ -70,7 +70,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $validationError = $this->service->delete(strval($lpa->getId()));
+        $validationError = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -80,7 +80,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'document.whoIsRegistering' => ['value' => '1,2', 'messages' => ['allowed-values:']],
+                    'document.whoIsRegistering' => ['messages' => ['allowed-values:']],
                 ]
             ],
             $validationError->toArray()
@@ -95,7 +95,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
 
-        $response = $this->service->delete(strval($lpa->getId()));
+        $response = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
 
         $this->assertTrue($response);
         $this->assertNull($lpa->getRepeatCaseNumber());

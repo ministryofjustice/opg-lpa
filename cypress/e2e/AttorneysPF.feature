@@ -19,11 +19,12 @@ Feature: Add attorneys to a Property and Finance LPA
         Then I can find "form-attorney"
         And I can find "form-cancel"
         And I can find "postcode-lookup"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         # todo - casper merely checked for existence of use-my-details. We need ultimately to actually test this
         And I can find use-my-details if lpa is new
         And I can find "use-trust-corporation"
         And I force fill out
+            | name-title | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-first | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | name-last | qo06zCs3DEtroWJF8U7eqo7LWeO47Cc5NVbCLPOfL7TROMO5S7JCCZkNulCD7tpVi0x9kB |
             | dob-date-day| 22 |
@@ -37,14 +38,14 @@ Feature: Add attorneys to a Property and Finance LPA
         When I click "form-save"
         Then I see in the page text
             | There is a problem |
-            | Enter the attorney's title |
+            | Title must be 35 characters or less |
             | Enter a first name that's less than 51 characters long |
             | Enter a last name that's less than 51 characters long |
             | Change address line 1 so that it has fewer than 51 characters |
             | Change address line 2 so that it has fewer than 51 characters |
             | Change address line 3 so that it has fewer than 51 characters |
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -71,18 +72,17 @@ Feature: Add attorneys to a Property and Finance LPA
         # Test adding same attorney twice
         When I click "add-attorney"
         And I opt not to re-use details if lpa is a clone
-        # line below is deliberately Mr rather than Mrs, as was done in Casper tests
-        When I select "Mr" on "name-title"
         # NB we don't need to type in all fields, just the name then move to another field
         # so the JS change event triggers to show the duplicate person error message
         And I force fill out
+            | name-title | Mr |
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
         # Add 2cnd attorney
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |
@@ -171,8 +171,8 @@ Feature: Add attorneys to a Property and Finance LPA
         # re-view 1st attorney
         When I click occurrence 0 of "view-change-attorney"
         Then I can find "form-attorney"
-        And I see "name-title" prepopulated with "Mrs"
         And I see form prepopulated with
+            | name-title | Mrs |
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |

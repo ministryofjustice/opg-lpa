@@ -17,16 +17,16 @@ Feature: Add attorneys to a Health and Welfare LPA
         When I click "add-attorney"
         Then I can find "form-attorney"
         And I can find "form-cancel"
-        And I can find "name-title" with 8 options
+        And I can find "name-title"
         # todo - casper just looked for use-my-details. We need ultimately to actually test this
         And I can find "use-my-details"
 
         # check client-side validation of duplicate names - add attorney with same name as donor
         When I force fill out
+            | name-title | Mrs |
             | name-first | Nancy |
             | name-last | Garrison |
-        # shift focus to the title drop-down to trigger the client-side duplicate name validation
-        And I select "Mrs" on "name-title"
+        And I click element marked "Last name"
         Then I see "The donor's name is also Nancy Garrison. The donor cannot be an attorney." in the page text
         And I see "By saving this section, you are confirming that these are 2 different people with the same name." in the page text
 
@@ -36,7 +36,7 @@ Feature: Add attorneys to a Health and Welfare LPA
             | dob-date-day | 21  |
             | dob-date-month | 9 |
         # shift focus to the title drop-down to trigger the client-side age validation
-        And I select "Mrs" on "name-title"
+        And I click element marked "Last name"
         Then I see "This attorney is under 18. I understand that the attorney must be at least 18 on the date the donor signs the LPA, otherwise the LPA will be rejected." in the page text
 
         # check client-side age validation - over 100
@@ -45,11 +45,11 @@ Feature: Add attorneys to a Health and Welfare LPA
             | dob-date-month | 9 |
             | dob-date-year | 1910 |
         # shift focus to the title drop-down to trigger the client-side age validation
-        And I select "Mrs" on "name-title"
+        And I click element marked "Last name"
         Then I see "By saving this section, you confirm that this attorney is more than 100 years old. If not, please change the date." in the page text
 
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -76,8 +76,8 @@ Feature: Add attorneys to a Health and Welfare LPA
 
         # Test adding same attorney twice
         When I click "add-attorney"
-        When I select "Mrs" on "name-title"
         And I force fill out
+            | name-title | Mrs |
             | name-first | Amy |
             | name-last | Wheeler |
             | dob-date-day| 22 |
@@ -92,8 +92,8 @@ Feature: Add attorneys to a Health and Welfare LPA
         Then I see "There is also an attorney called Amy Wheeler. A person cannot be named as an attorney twice on the same LPA." in the page text
 
         # Add 2nd attorney
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |
@@ -122,8 +122,8 @@ Feature: Add attorneys to a Health and Welfare LPA
         And I can find save pointing to replacement attorney page
         # Re-add 2cnd attorney
         When I click "add-attorney"
-        When I select "Mr" on "name-title"
         And I force fill out
+            | name-title | Mr |
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |
@@ -142,8 +142,8 @@ Feature: Add attorneys to a Health and Welfare LPA
         # re-view 2cnd attorney
         When I click occurrence 1 of "view-change-attorney"
         Then I can find "form-attorney"
-        And I see "name-title" prepopulated with "Mr"
         And I see form prepopulated with
+            | name-title | Mr |
             | name-first | David |
             | name-last | Wheeler |
             | dob-date-day| 12 |

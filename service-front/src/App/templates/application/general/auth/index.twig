@@ -37,11 +37,11 @@
     If you already have a registered LPA and want to use it online, go to the<br>
     <a class="govuk-link" href="https://use-lasting-power-of-attorney.service.gov.uk/home" data-analytics-click="page:link:navigation: Use an LPA visit">Use a lasting power of attorney service</a>.
 </div><br>
-{{ systemMessage() }}
 
 {# begin form #}
 {{ form.prepare() ? '' }}
 {{ form().openTag( form )|raw }}
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
     <fieldset>
         <legend class="govuk-visually-hidden">Sign in</legend>
@@ -78,7 +78,7 @@
         <p class="govuk-body">
             If you have a GOV.UK One Login that is linked to your LPA account, you can sign in with it.
         </p>
-        <a href="/login-onelogin" role="button" class="govuk-button govuk-button--secondary" data-cy="onelogin-signin-button">
+        <a href="{{ url('auth.onelogin') }}" role="button" class="govuk-button govuk-button--secondary" data-cy="onelogin-signin-button">
             Continue with GOV.UK One Login
         </a>
     {% endif %}

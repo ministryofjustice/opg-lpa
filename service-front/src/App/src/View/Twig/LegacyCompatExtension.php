@@ -11,6 +11,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
@@ -45,6 +46,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
         private readonly SystemMessage $systemMessage,
+        private readonly OneLoginSessionManager $oneLoginSessionManager,
     ) {
     }
 
@@ -68,6 +70,7 @@ class LegacyCompatExtension extends AbstractExtension
             new TwigFunction('url', [$this, 'url']),
             new TwigFunction('flashMessenger', fn () => new FlashMessenger($this->flashMessagesHolder)),
             new TwigFunction('renderNavigation', [$this, 'renderNavigation'], ['is_safe' => ['html'], 'needs_environment' => true]),
+            new TwigFunction('showOneLoginHeader', [$this, 'showOneLoginHeader']),
             new TwigFunction('systemMessage', fn () => $this->systemMessage->fetchSanitised() ?? '', ['is_safe' => ['html']]),
             // FormRendererStub provides openTag(form) and closeTag — covers all (currently ported) template usage
             new TwigFunction('form', fn () => new FormRendererStub(), ['is_safe' => ['html']]),
@@ -94,6 +97,11 @@ class LegacyCompatExtension extends AbstractExtension
                 'current' => $this->persistentSessionDetails->getCurrentRoute(),
                 'previous' => $this->persistentSessionDetails->getPreviousRoute(),
             ]),
+            new TwigFunction('inSharedSpace', function (): bool {
+                $identity = $this->sessionStorage->read();
+
+                return $identity !== null && $identity->inSharedSpace();
+            }),
             // Ported from AppFunctionsExtension — delegates to AccordionService
             new TwigFunction('accordionTop', [$this, 'accordionTop']),
             new TwigFunction('accordionBottom', [$this, 'accordionBottom']),
@@ -163,10 +171,10 @@ class LegacyCompatExtension extends AbstractExtension
     // Functions
     // -------------------------------------------------------------------------
 
-    public function url(string $routeName, array $params = []): string
+    public function url(string $routeName, array $routeParams = [], array $queryParams = []): string
     {
         try {
-            return $this->urlHelper->generate($routeName, $params);
+            return $this->urlHelper->generate($routeName, $routeParams, $queryParams);
         } catch (\Throwable) {
             // Route not yet registered in Mezzio — fall back to treating the
             // route name as a path so legacy templates don't break.
@@ -186,6 +194,7 @@ class LegacyCompatExtension extends AbstractExtension
         $identity = $this->sessionStorage->read();
         $userLoggedIn = $identity instanceof User;
         $lastLoginAt = $userLoggedIn ? $identity->lastLogin() : null;
+        $inSharedSpace = Feature::SharedSpace->isEnabled() && $userLoggedIn && $identity->inSharedSpace();
 
         $name = '';
         $hasOneOrMoreLPAs = false;
@@ -199,17 +208,47 @@ class LegacyCompatExtension extends AbstractExtension
             $hasOneOrMoreLPAs = $userDetails->getNumberOfLpas() > 0;
         }
 
+        $parentRoute = match (true) {
+            ( $currentRoute == 'shared-space.dashboard'
+              || $currentRoute == 'user/dashboard' || str_starts_with($currentRoute, 'user/dashboard/')
+              || $currentRoute === 'lpa-type-no-id' || str_starts_with($currentRoute, 'lpa/')
+            ) => $inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
+
+            $currentRoute === 'shared-space' || str_starts_with($currentRoute, 'shared-space.') => 'shared-space',
+
+            str_starts_with($currentRoute, 'user/') => 'user/about-you',
+
+            default => $currentRoute,
+        };
+
         return $env->render('application/partials/nav.twig', [
             'nav' => (object) [
-                'userLoggedIn'     => $userLoggedIn,
-                'name'             => $name,
-                'lastLoginAt'      => $lastLoginAt,
-                'route'            => $currentRoute,
-                'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
-                'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
+                'userLoggedIn'       => $userLoggedIn,
+                'name'               => $name,
+                'lastLoginAt'        => $lastLoginAt,
+                'route'              => $currentRoute,
+                'parentRoute'        => $parentRoute,
+                'hasOneOrMoreLPAs'   => $hasOneOrMoreLPAs,
+                'inSharedSpace'      => $inSharedSpace,
                 'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
+                'showOneLoginHeader' => $this->showOneLoginHeader(),
             ],
         ]);
+    }
+
+    public function showOneLoginHeader(): bool
+    {
+        if (!Feature::OneLogin->isEnabled()) {
+            return false;
+        }
+
+        if ($this->sessionStorage->read() instanceof User) {
+            return true;
+        }
+
+        $session = $this->sessionStorage->session();
+
+        return $session !== null && $this->oneLoginSessionManager->getPendingLink($session) !== null;
     }
 
     /**

@@ -1,20 +1,28 @@
+{% import "application/macros.twig" as macros %}
 {% extends isPopup ? 'layout/popup.twig' : 'layout/layout.twig' %}
 
-
 {% block content %}
-
-<header class="popup-header">
+  <header class="popup-header">
     <i class="icon icon-bin"></i>
     <h2 class="govuk-heading-s govuk-!-margin-top-4 popup-header-title" id="dialog-title">
-        Are you sure you want to delete your certificate provider?
+      Are you sure you want to delete your certificate provider?
     </h2>
-</header>
+  </header>
 
-<div class="form">
-    <h2 class="govuk-heading-m govuk-!-margin-top-8">{{ certificateProviderName }}</h2>
+  {{ macros.formErrorSummary(error, form, conflictError) }}
+
+  <div class="form">
+    <h2 class="govuk-heading-m">{{ certificateProviderName }}</h2>
     <p class="govuk-body">{{ certificateProviderAddress }}</p>
-    <a href="{{ deleteRoute }}" data-cy="delete" class="govuk-button govuk-button--warning govuk-!-margin-left-0">Delete</a>
-    <a href="{{ cancelUrl }}" data-cy="cancel" class="govuk-button govuk-button--secondary js-cancel">Cancel</a>
-</div>
 
+    <form method="post" action="{{ actionUrl }}" novalidate>
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+      <input type="hidden" name="version" value="{{ lpa.version }}">
+
+      <div class="govuk-button-group app-use-standard">
+        <button type="submit" class="govuk-button govuk-button--warning" data-cy="delete">Delete</button>
+        <a href="{{ cancelUrl }}" data-cy="cancel" class="govuk-button govuk-button--secondary js-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
 {% endblock %}

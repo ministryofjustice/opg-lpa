@@ -6,59 +6,31 @@ Feature: Admin
   Background:
     Given I log in to admin using SSO
 
-  Scenario: Find users, search for deleted user
-    When I click "find-users-link"
-    Then I am taken to the find users page
-
-    # search for the users seeded into the database
-    When I type "FindUser" into "query-input" working around cypress bug
-    And I click "submit-button"
-    Then there are "ten" '[data-cy="user-summary-card"]' elements on the page
-    And the first user email address is "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
-
-    # next
-    When I click element marked "Next"
-    Then there are "ten" '[data-cy="user-summary-card"]' elements on the page
-    And the first user email address is "FindUser_Paging42MzQ5OTU20@uat.justice.gov.uk"
-
-    # previous
-    When I click element marked "Previous"
-    Then there are "ten" '[data-cy="user-summary-card"]' elements on the page
-    And the first user email address is "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
-
-    When I click element marked "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
-    Then the email address input contains "FindUser_Paging42MzQ5OTU10@uat.justice.gov.uk"
-
-    # LPAL-1164: case-insensitive search on find users page
-    When I click "find-users-link"
-    And I type "finduser" into "query-input" working around cypress bug
-    And I click "submit-button"
-    Then there are "ten" '[data-cy="user-summary-card"]' elements on the page
-
-    # search for deleted user elliot@townx.org
-    When I click "user-search-link"
-    And I type "elliot@townx.org" into "email-address-input" working around cypress bug
-    And I click "submit-button"
+  Scenario: Search for deleted user
+    When I click link "Search"
+    Then I should be on admin page matching "/search"
+    When I search for user "elliot@townx.org" by "Exact or partial email"
     Then deleted user is displayed with deletion date of "5th May 2021 at 1:21:20 pm"
+    And the first deletion reason is "User manually deleted their account"
 
   Scenario: Search for user by email address
-    When I search for user "seeded_test_user@digital.justice.gov.uk" by "Email"
+    When I search for user "seeded_test_user@digital.justice.gov.uk" by "Exact or partial email"
     Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
     And the user account status is "Activated"
 
   Scenario: Search for user by user ID
-    When I search for user "082347fe0f7da026fa6187fc00b05c55" by "User ID"
+    When I search for user "082347fe0f7da026fa6187fc00b05c55" by "Exact user ID"
     Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
     And the user account status is "Activated"
     And the user ID displayed is "082347fe0f7da026fa6187fc00b05c55"
 
   Scenario: Search for user by A Reference
-    When I search for user "A033718377316" by "A Reference"
+    When I search for user "A033718377316" by "Exact a-reference"
     Then I see "seeded_test_user@digital.justice.gov.uk" in the page text
     And the user account status is "Activated"
 
   Scenario: Search for second user by A Reference
-    When I search for user "A033718377327" by "A Reference"
+    When I search for user "A033718377327" by "Exact a-reference"
     Then I see "seeded_test_user2@digital.justice.gov.uk" in the page text
     And the user account status is "Activated"
 
@@ -79,8 +51,23 @@ Feature: Admin
     Then I should be on admin page matching "/shared-space/.+/lpas.+"
     And there are "2" '.govuk-summary-card' elements on the page
 
+  Scenario: Search for shared space by name
+    Given I create a new user with 2 LPAs that belongs to a shared space called "Random"
+    And I search for the newly created shared space by name
+    Then I can see the shared space in the search results
+    When I click the link containing the name of the newly created shared space
+    Then I should be on admin page matching "/shared-space/.+/members"
+    And I should see details of the newly created shared space member
+
+  Scenario: Shared space member invites are displayed on shared space member page
+    Given I have been invited to a shared space called "Random" with 2 LPAs
+    And I search for the newly created shared space by name
+    When I click the link containing the name of the newly created shared space
+    Then I should be on admin page matching "/shared-space/.+/members"
+    And I should see details of the newly created shared space invite
+
   Scenario: Show error when searching by A Reference with no match
-    When I search for user "A000000000001" by "A Reference"
+    When I search for user "A000000000001" by "Exact a-reference"
     Then I see "No user found for A Reference" in the page text
 
   Scenario: Set a system message

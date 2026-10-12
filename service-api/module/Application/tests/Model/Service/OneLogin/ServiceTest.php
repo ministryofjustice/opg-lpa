@@ -15,6 +15,8 @@ use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service;
 use DateTime;
 use Facile\OpenIDClient\Client\ClientInterface;
+use Facile\OpenIDClient\Issuer\IssuerInterface;
+use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadataInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
 use MakeShared\OneLogin\LinkReason;
 use Mockery;
@@ -116,6 +118,30 @@ class ServiceTest extends MockeryTestCase
         $this->assertNotSame($first['nonce'], $second['nonce']);
     }
 
+    public function testCreateLogoutRequestBuildsEndSessionUrl(): void
+    {
+        $this->stubEndSessionEndpoint('https://oidc.example.com/logout');
+
+        $url = $this->service->createLogoutRequest('header.payload.sig', 'https://www.gov.uk/done/lasting-power-of-attorney');
+
+        $this->assertSame(
+            'https://oidc.example.com/logout'
+                . '?id_token_hint=header.payload.sig'
+                . '&post_logout_redirect_uri=https%3A%2F%2Fwww.gov.uk%2Fdone%2Flasting-power-of-attorney',
+            $url,
+        );
+    }
+
+    public function testCreateLogoutRequestThrowsWhenDiscoveryHasNoEndSessionEndpoint(): void
+    {
+        $this->stubEndSessionEndpoint(null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('end_session_endpoint');
+
+        $this->service->createLogoutRequest('header.payload.sig', 'https://www.gov.uk/done/lasting-power-of-attorney');
+    }
+
     public function testMissingClientManagerThrows(): void
     {
         $service = new Service();
@@ -194,6 +220,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertTrue($result['linked']);
         $this->assertSame($sub, $result['sub']);
         $this->assertSame($email, $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertSame('user-1', $result['identity']['userId']);
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
@@ -470,6 +497,7 @@ class ServiceTest extends MockeryTestCase
         $this->assertFalse($result['linked']);
         $this->assertSame($sub, $result['sub']);
         $this->assertSame($email, $result['email']);
+        $this->assertSame('header.payload.sig', $result['idToken']);
         $this->assertNull($result['identity']);
     }
 
@@ -494,6 +522,55 @@ class ServiceTest extends MockeryTestCase
         $this->expectException(OneLoginAuthenticationException::class);
 
         $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+    }
+
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function rejectedVotProvider(): array
+    {
+        return [
+            'vot missing'                   => [null, 'missing_vot_claim'],
+            'low authentication'            => ['Cl', 'invalid_vot_claim'],
+            'identity level included'       => ['Cl.Cm.P2', 'invalid_vot_claim'],
+            'vot as an array, not a string' => [['Cl.Cm'], 'invalid_vot_claim'],
+            'empty vot'                     => ['', 'invalid_vot_claim'],
+        ];
+    }
+
+    /**
+     * @dataProvider rejectedVotProvider
+     */
+    public function testHandleCallbackRejectsAnIdTokenWithoutTheRequestedVot(mixed $vot, string $expectedReason): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => $vot]));
+
+        $this->authorizationService->shouldNotReceive('getUserInfo');
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->authenticationService->shouldNotReceive('issueAuthToken');
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+            $this->fail('Expected the ID token to be rejected');
+        } catch (OneLoginAuthenticationException $e) {
+            $this->assertSame($expectedReason, $e->reason());
+        }
+    }
+
+    public function testHandleCallbackLogsTheVotItRejects(): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => 'Cl.Cm.P2']));
+
+        $this->expectException(OneLoginAuthenticationException::class);
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        } finally {
+            $this->logger->shouldHaveReceived('warning')->with('auth.onelogin.unexpected_vot', ['vot' => 'Cl.Cm.P2'])->once();
+        }
     }
 
     public function testHandleCallbackMissingSubThrows(): void
@@ -811,11 +888,30 @@ class ServiceTest extends MockeryTestCase
         return $user;
     }
 
-    private function makeTokenSet(string $sub): MockInterface|TokenSetInterface
+    private function stubEndSessionEndpoint(?string $endpoint): void
     {
+        $metadata = Mockery::mock(IssuerMetadataInterface::class);
+        $metadata->shouldReceive('get')->with('end_session_endpoint')->andReturn($endpoint);
+
+        $issuer = Mockery::mock(IssuerInterface::class);
+        $issuer->shouldReceive('getMetadata')->andReturn($metadata);
+
+        $this->oidcClient->shouldReceive('getIssuer')->andReturn($issuer);
+    }
+
+    /**
+     * @param array<string, mixed> $claims overrides the ID token's default claims; a null value removes the claim
+     */
+    private function makeTokenSet(string $sub, array $claims = []): MockInterface|TokenSetInterface
+    {
+        $claims = array_filter(
+            [...['sub' => $sub, 'vot' => 'Cl.Cm'], ...$claims],
+            static fn (mixed $value): bool => $value !== null,
+        );
+
         $tokenSet = Mockery::mock(TokenSetInterface::class);
         $tokenSet->shouldReceive('getIdToken')->andReturn('header.payload.sig');
-        $tokenSet->shouldReceive('claims')->andReturn(['sub' => $sub]);
+        $tokenSet->shouldReceive('claims')->andReturn($claims);
 
         return $tokenSet;
     }

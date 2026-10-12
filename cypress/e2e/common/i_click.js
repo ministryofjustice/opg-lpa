@@ -55,12 +55,19 @@ Then(`I click {string} for LPA ID {int}`, (clickable, LpaId) => {
 
 // this step exists because newly signed-up user goes straight to type page whereas existing user may get taken to dashboard
 Then(`If I am on dashboard I click to create lpa`, () => {
-  cy.url().then((urlStr) => {
-    if (urlStr.includes('dashboard')) {
-      cy.get('[data-cy=createnewlpa]').click();
-      cy.OPGCheckA11y();
-    }
-  });
+  // Wait for the previous step's navigation to land on one of the two pages first: read
+  // straight away, the URL can still be the form that was just submitted, skipping the click.
+  cy.url()
+    .should('match', /\/(user\/dashboard|lpa\/type)/)
+    .then((urlStr) => {
+      if (urlStr.includes('dashboard')) {
+        cy.get('[data-cy=createnewlpa]').click();
+        // Let the navigation finish first: the accessibility check audits the current page,
+        // and never completes if that page is replaced part-way through.
+        cy.url().should('include', '/lpa/type');
+        cy.OPGCheckA11y();
+      }
+    });
 });
 
 Then('I click continue on the dashboard for the test fixture lpa', () => {

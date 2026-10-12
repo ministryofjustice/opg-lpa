@@ -6,15 +6,21 @@ namespace App\Handler\Lpa\PeopleToNotify;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
+use App\Service\ApiClient\Exception\ConflictException;
+use App\Service\Lpa\Application as LpaApplicationService;
+use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\JsonResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use RuntimeException;
 
 class PeopleToNotifyConfirmDeleteHandler implements RequestHandlerInterface
 {
@@ -22,6 +28,7 @@ class PeopleToNotifyConfirmDeleteHandler implements RequestHandlerInterface
     use RequestInspectorTrait;
 
     public function __construct(
+        private readonly LpaApplicationService $lpaApplicationService,
         private readonly TemplateRendererInterface $renderer,
         private readonly UrlHelper $urlHelper,
     ) {
@@ -46,22 +53,47 @@ class PeopleToNotifyConfirmDeleteHandler implements RequestHandlerInterface
         $personIdx = (int) $personIdx;
         $notifiedPerson = $lpa->document->peopleToNotify[$personIdx];
 
+        $conflictError = null;
+        if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
+            $postData = $request->getParsedBody() ?? [];
+            if (!is_array($postData)) {
+                $postData = [];
+            }
+
+            $ifMatchVersion = (int)$postData['version'];
+            try {
+                if (!$this->lpaApplicationService->deleteNotifiedPerson($lpa, $notifiedPerson->id, $ifMatchVersion)) {
+                    throw new RuntimeException(
+                        'API client failed to delete notified person ' . $personIdx . ' for id: ' . $lpa->id
+                    );
+                }
+
+                if ($isPopup) {
+                    return new JsonResponse(['success' => true]);
+                }
+
+                return new RedirectResponse(
+                    $this->urlHelper->generate('lpa/people-to-notify', ['lpa-id' => $lpa->id])
+                );
+            } catch (ConflictException $e) {
+                $conflictError = $e;
+            }
+        }
+
         $templateParams = [
-            'deleteRoute' => $this->urlHelper->generate(
-                'lpa/people-to-notify/delete',
-                ['lpa-id' => $lpa->id, 'idx' => $personIdx]
-            ),
+            'isPopup' => $isPopup,
             'personName' => $notifiedPerson->name,
             'personAddress' => $notifiedPerson->address,
             'cancelUrl' => $this->urlHelper->generate(
                 'lpa/people-to-notify',
                 ['lpa-id' => $lpa->id]
             ),
+            'actionUrl' => $this->urlHelper->generate(
+                'lpa/people-to-notify/confirm-delete',
+                ['lpa-id' => $lpa->id, 'idx' => $personIdx],
+            ),
+            'conflictError' => $conflictError,
         ];
-
-        if ($isPopup) {
-            $templateParams['isPopup'] = true;
-        }
 
         $html = $this->renderer->render(
             'application/authenticated/lpa/people-to-notify/confirm-delete.twig',

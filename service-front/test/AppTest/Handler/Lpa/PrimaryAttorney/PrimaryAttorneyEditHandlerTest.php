@@ -31,6 +31,8 @@ use RuntimeException;
 
 class PrimaryAttorneyEditHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -201,7 +203,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/next-route');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name-first' => 'Updated'])
+            $this->createRequest('POST', ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
@@ -218,7 +220,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/some-url');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name-first' => 'Updated'], null, 0, true)
+            $this->createRequest('POST', ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE], null, 0, true)
         );
 
         $this->assertInstanceOf(JsonResponse::class, $response);
@@ -237,7 +239,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         $this->expectExceptionMessage('API client failed to update a primary attorney');
 
         $this->handler->handle(
-            $this->createRequest('POST', ['name-first' => 'Updated'])
+            $this->createRequest('POST', ['name-first' => 'Updated', 'version' => self::IF_MATCH_VALUE])
         );
     }
 
@@ -249,7 +251,7 @@ class PrimaryAttorneyEditHandlerTest extends TestCase
         $this->renderer->expects($this->once())->method('render')->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['name-first' => ''])
+            $this->createRequest('POST', ['name-first' => '', 'version' => self::IF_MATCH_VALUE])
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);

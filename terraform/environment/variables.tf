@@ -35,7 +35,8 @@ variable "environments" {
         admin_cognito_client_supported_identity_providers = list(string)
         front_cognito_auth_enabled                        = bool
       })
-      onelogin_client_id = string
+      onelogin_client_id                   = string
+      pagerduty_healthcheck_alarms_enabled = bool
       feature_flags = object({
         onelogin_enabled         = bool
         onelogin_use_mock        = bool

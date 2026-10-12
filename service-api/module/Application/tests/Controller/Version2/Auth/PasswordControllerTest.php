@@ -4,10 +4,10 @@ namespace ApplicationTest\Controller\Version2\Auth;
 
 use Application\Controller\Version2\Auth\PasswordController;
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Model\Service\Password\Service as PasswordService;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Password\Service;
 use Mockery;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class PasswordControllerTest extends AbstractAuthControllerTestCase
 {
@@ -332,13 +332,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         $this->assertEquals('Unknown error: Big error', $data['detail']);
     }
 
-    public static function forSharedSpaceProvider()
-    {
-        return [[true], [false]];
-    }
-
-    #[DataProvider('forSharedSpaceProvider')]
-    public function testResetActionActivationToken(bool $forSharedSpace)
+    public function testResetActionActivationToken()
     {
         $username = 'user@name.com';
         $resetToken = 'resetTok';
@@ -348,20 +342,18 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         ];
 
         $this->service->shouldReceive('generateToken')
-            ->with($username, $forSharedSpace)
+            ->with($username)
             ->andReturn($resetReturnData)
             ->once();
 
         $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
-                'token'    => $resetToken,
                 'username' => $username
             ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
             'username' => $username,
-            'forSharedSpace' => $forSharedSpace,
         ]);
 
         $result = $controller->resetAction();
@@ -380,20 +372,18 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         ];
 
         $this->service->shouldReceive('generateToken')
-            ->with($username, false)
+            ->with($username)
             ->andReturn($resetReturnData)
             ->once();
 
         $this->logger->shouldReceive('info')
             ->with('Password reset token requested', [
-                'token'    => $resetToken,
                 'username' => $username
             ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
             'username' => $username,
-            'forSharedSpace' => false,
         ]);
 
         $result = $controller->resetAction();
@@ -401,12 +391,53 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         $this->assertInstanceOf(Json::class, $result);
     }
 
+    public function testResetActionFailedNoUsername()
+    {
+        /** @var PasswordController $controller */
+        $controller = $this->getController(PasswordController::class);
+
+        /** @var ApiProblem $result */
+        $result = $controller->resetAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $data = $result->toArray();
+
+        $this->assertEquals(400, $data['status']);
+        $this->assertEquals('username must be passed', $data['detail']);
+    }
+
+    public function testResetActionReturns403ForAOneLoginAccount()
+    {
+        $username = 'linked@name.com';
+
+        $this->service->shouldReceive('generateToken')
+            ->with($username)
+            ->andReturn(PasswordService::ACCOUNT_USES_ONE_LOGIN)
+            ->once();
+
+        $this->logger->shouldReceive('info')
+            ->with('Password reset refused for a One Login account', [
+                'event' => 'auth.password_reset.refused_one_login',
+            ]);
+
+        /** @var PasswordController $controller */
+        $controller = $this->getController(PasswordController::class, [
+            'username' => $username,
+        ]);
+
+        $result = $controller->resetAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(403, $result->toArray()['status']);
+    }
+
     public function testResetActionFailedUserNotFound()
     {
         $username = 'user@name.com';
 
         $this->service->shouldReceive('generateToken')
-            ->with($username, false)
+            ->with($username)
             ->andReturn('user-not-found')
             ->once();
 
@@ -418,7 +449,6 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
             'username' => $username,
-            'forSharedSpace' => false,
         ]);
 
         /** @var ApiProblem $result */

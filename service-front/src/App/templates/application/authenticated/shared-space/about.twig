@@ -8,32 +8,31 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-      <h2 class="govuk-heading-m">Create a shared space</h2>
+      <p class="govuk-body">A shared space means that you and other authorised users have access to all the LPAs you’ve each created, both before and after joining it. </p>
+      <p class="govuk-body">This is particularly useful for organisations, such as charities or legal professionals, that create lots of LPAs on behalf of the people they help.</p>
+      <p class="govuk-body">You can become a member of a shared space by either creating or joining one.</p>
 
-      <p class="govuk-body">Creating a shared space means that you and other users have access to all the LPAs that you’ve each created.</p>
+      <h2 class="govuk-heading-m">Creating a shared space</h2>
 
-      <p class="govuk-body">You can choose what level of access each user has. As the person creating a shared space, you will automatically be given the highest level of access. This means you’ll be able to:</p>
+      <p class="govuk-body">You can create and name a shared space yourself and invite other users to join it. </p>
+      <p class="govuk-body">You also choose the level of access each user is given. As the person creating the shared space, you would automatically have the highest level of access - you’d be an ‘admin’.</p>
 
-      <ul class="govuk-list govuk-list--bullet">
-        <li>invite other users to the shared dashboard</li>
-        <li>make an LPA that other users in the shared space can access/edit</li>
-      </ul>
+      <h2 class="govuk-heading-m">Joining a shared space</h2>
 
-      <p class="govuk-body">
-        <a class="govuk-button app-use-standard" href="{{ url('shared-space/make') }}">Create shared space</a>
-      </p>
+      <p class="govuk-body">You can join a shared space if you’ve received an email inviting you to do so. You’ll need to enter the name of the shared space and the 8-character code that are included in the email.</p>
 
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+      <div class="govuk-inset-text">
+        <p class="govuk-body">Before creating or joining a shared space, be aware that</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>your account will only let you be a member of one shared space at a time</li>
+          <li>if you choose to leave a shared space you’d need to delete your account.  The LPAs you created or worked on will remain available to the users who still have access to the shared space</li>
+        </ul>
+      </div>
 
-      <h2 class="govuk-heading-m">Join a shared space</h2>
-
-      <p class="govuk-body">You can join a shared space if you’ve been invited by an admin. You will have access to all the LPAs that have been created within the shared space, and will be able to make LPAs that the rest of the team can access/edit.</p>
-
-      <p class="govuk-body">To join a shared space you need to have received an email from an admin which contains a code.</p>
-
-      <p class="govuk-body">
-        <a class="govuk-button govuk-button--secondary app-use-standard" href="{{ url('shared-space/join') }}">Join shared space</a>
-      </p>
+      <div class="govuk-button-group">
+        <a class="govuk-button app-use-standard" href="{{ url('shared-space/make') }}">Create a shared space</a>
+        <a class="govuk-button govuk-button--secondary app-use-standard" href="{{ url('shared-space/join') }}">Join a shared space using a code</a>
+      </div>
     </div>
 </div>
 

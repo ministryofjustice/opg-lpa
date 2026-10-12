@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Handler\Lpa;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
-use Mezzio\Helper\UrlHelper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -16,6 +16,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\Correspondence;
 use MakeShared\DataModel\Lpa\Document\Decisions\PrimaryAttorneyDecisions;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -53,6 +54,7 @@ class ApplicantHandler implements RequestHandlerInterface
             ['lpa' => $lpa]
         );
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -70,8 +72,8 @@ class ApplicantHandler implements RequestHandlerInterface
                 } else {
                     if (
                         count($lpaDocument->primaryAttorneys) > 1 &&
-                        $lpaDocument->primaryAttorneyDecisions->how !=
-                        PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
+                            $lpaDocument->primaryAttorneyDecisions->how !=
+                            PrimaryAttorneyDecisions::LPA_DECISION_HOW_JOINTLY
                     ) {
                         $applicants = $formData['attorneyList'];
                     } else {
@@ -79,22 +81,27 @@ class ApplicantHandler implements RequestHandlerInterface
                     }
                 }
 
-                // Save applicant if the value has changed
-                if ($applicants != $lpa->document->whoIsRegistering) {
-                    if (!$this->lpaApplicationService->setWhoIsRegistering($lpa, $applicants)) {
-                        throw new RuntimeException('API client failed to set applicant for id: ' . $lpaId);
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    // Save applicant if the value has changed
+                    if ($applicants != $lpa->document->whoIsRegistering) {
+                        if (!$this->lpaApplicationService->setWhoIsRegistering($lpa, $applicants, $ifMatchVersion)) {
+                            throw new RuntimeException('API client failed to set applicant for id: ' . $lpaId);
+                        }
                     }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
+                    );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             if (is_array($lpaDocument->whoIsRegistering)) {
@@ -123,7 +130,8 @@ class ApplicantHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form'      => $form,
+                    'form'          => $form,
+                    'conflictError' => $conflictError,
                 ]
             )
         );

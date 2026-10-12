@@ -28,6 +28,8 @@ use RuntimeException;
 
 class FeeReductionHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -237,7 +239,7 @@ class FeeReductionHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', ['reductionOptions' => 'notApply'], $lpa)
+            $this->createRequest('POST', ['reductionOptions' => 'notApply', 'version' => self::IF_MATCH_VALUE], $lpa)
         );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
@@ -295,7 +297,7 @@ class FeeReductionHandlerTest extends TestCase
     ): void {
         $lpa = $this->createLpa();
 
-        $postData = ['reductionOptions' => $option];
+        $postData = ['reductionOptions' => $option, 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -335,7 +337,7 @@ class FeeReductionHandlerTest extends TestCase
 
         $lpa = $this->createLpa($payment);
 
-        $postData = ['reductionOptions' => 'notApply'];
+        $postData = ['reductionOptions' => 'notApply', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -364,7 +366,7 @@ class FeeReductionHandlerTest extends TestCase
 
         $lpa = $this->createLpa($payment);
 
-        $postData = ['reductionOptions' => 'reducedFeeLowIncome'];
+        $postData = ['reductionOptions' => 'reducedFeeLowIncome', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -387,7 +389,7 @@ class FeeReductionHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $postData = ['reductionOptions' => 'reducedFeeReceivesBenefits'];
+        $postData = ['reductionOptions' => 'reducedFeeReceivesBenefits', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -410,7 +412,7 @@ class FeeReductionHandlerTest extends TestCase
     {
         $lpa = $this->createLpa();
 
-        $postData = ['reductionOptions' => 'notApply'];
+        $postData = ['reductionOptions' => 'notApply', 'version' => self::IF_MATCH_VALUE];
 
         $this->form->method('isValid')->willReturn(true);
         $this->form->method('getData')->willReturn($postData);
@@ -466,7 +468,7 @@ class FeeReductionHandlerTest extends TestCase
 
         $lpa = $this->createLpa($payment);
 
-        $postData = ['reductionOptions' => 'notApply'];
+        $postData = ['reductionOptions' => 'notApply', 'version' => self::IF_MATCH_VALUE];
 
         $this->form
             ->expects($this->never())

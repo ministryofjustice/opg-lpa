@@ -49,7 +49,7 @@ trait CheckoutTrait
 
     private function finishCheckout(Lpa $lpa, ServerRequestInterface $request): ResponseInterface
     {
-        $this->lpaApplicationService->lockLpa($lpa);
+        $this->lpaApplicationService->lockLpa($lpa, $ifMatchVersion);
         $this->communicationService->sendRegistrationCompleteEmail($lpa);
 
         return new RedirectResponse(

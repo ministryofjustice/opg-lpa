@@ -9,8 +9,8 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
+use App\Service\ApiClient\Exception\ConflictException;
 use App\Service\Lpa\Application as LpaApplicationService;
-use Mezzio\Helper\UrlHelper;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -18,6 +18,7 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Lpa\Document\CertificateProvider;
 use MakeShared\DataModel\Lpa\Lpa;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -58,6 +59,7 @@ class CertificateProviderEditHandler implements RequestHandlerInterface
         );
         $form->setActorData('certificate provider', $this->getActorsList($lpa));
 
+        $conflictError = null;
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             $postData = $request->getParsedBody() ?? [];
             if (!is_array($postData)) {
@@ -69,28 +71,33 @@ class CertificateProviderEditHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 $certificateProvider = new CertificateProvider($form->getModelDataFromValidatedForm());
 
-                if (!$this->lpaApplicationService->setCertificateProvider($lpa, $certificateProvider)) {
-                    throw new RuntimeException(
-                        'API client failed to update certificate provider for id: ' . $lpa->id
+                $ifMatchVersion = (int)$postData['version'];
+                try {
+                    if (!$this->lpaApplicationService->setCertificateProvider($lpa, $certificateProvider, $ifMatchVersion)) {
+                        throw new RuntimeException(
+                            'API client failed to update certificate provider for id: ' . $lpa->id
+                        );
+                    }
+
+                    // Update correspondent data if the certificate provider is also the correspondent
+                    $this->updateCorrespondentData($lpa, $certificateProvider, false, $ifMatchVersion + 1);
+
+                    if ($isPopup) {
+                        return new JsonResponse(['success' => true]);
+                    }
+
+                    $nextRoute = $flowChecker->nextRoute($currentRoute);
+
+                    return new RedirectResponse(
+                        $this->urlHelper->generate(
+                            $nextRoute,
+                            ['lpa-id' => $lpa->id],
+                            $flowChecker->getRouteOptions($nextRoute)
+                        )
                     );
+                } catch (ConflictException $e) {
+                    $conflictError = $e;
                 }
-
-                // Update correspondent data if the certificate provider is also the correspondent
-                $this->updateCorrespondentData($lpa, $certificateProvider);
-
-                if ($isPopup) {
-                    return new JsonResponse(['success' => true]);
-                }
-
-                $nextRoute = $flowChecker->nextRoute($currentRoute);
-
-                return new RedirectResponse(
-                    $this->urlHelper->generate(
-                        $nextRoute,
-                        ['lpa-id' => $lpa->id],
-                        $flowChecker->getRouteOptions($nextRoute)
-                    )
-                );
             }
         } else {
             if ($lpa->document->certificateProvider !== null) {
@@ -106,6 +113,7 @@ class CertificateProviderEditHandler implements RequestHandlerInterface
                 'lpa/certificate-provider',
                 ['lpa-id' => $lpa->id]
             ),
+            'conflictError' => $conflictError,
         ];
 
         $html = $this->renderer->render(

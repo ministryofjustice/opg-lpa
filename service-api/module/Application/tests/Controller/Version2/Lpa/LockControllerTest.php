@@ -32,7 +32,7 @@ class LockControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn($this->createEntity(['key' => 'value']))->once();
 
         $response = $controller->create(['some' => 'data']);
@@ -46,7 +46,7 @@ class LockControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn(new ApiProblem(500, 'error'))->once();
 
         $response = $controller->create(['some' => 'data']);
@@ -65,7 +65,7 @@ class LockControllerTest extends AbstractControllerTestCase
     {
         $controller = $this->getController();
 
-        $this->service->shouldReceive('create')->withArgs([$this->lpaId])
+        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
             ->andReturn('unexpected type')->once();
 
         $response = $controller->create(['some' => 'data']);

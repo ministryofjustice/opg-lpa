@@ -315,7 +315,7 @@ final class UserDetailsTest extends TestCase
     {
         $this->apiClient->expects($this->once())
             ->method('httpDelete')
-            ->with('/v2/user/user-123')
+            ->with('/v2/users/user-123')
             ->willReturn(null);
 
         $this->assertTrue($this->service->delete());
@@ -343,12 +343,111 @@ final class UserDetailsTest extends TestCase
         $this->assertTrue($this->service->activateAccount('tok'));
     }
 
+    public function testRequestPasswordResetEmailTellsAOneLoginAccountWhereToSignIn(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException($this->makeApiException(403));
+        $this->urlHelper->expects($this->once())
+            ->method('generate')
+            ->with('application.login', [])
+            ->willReturn('/login');
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with($this->callback(static function (MailParameters $mailParameters): bool {
+                return $mailParameters->getToAddresses() === ['linked@example.com']
+                    && $mailParameters->getTemplateRef() === UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD
+                    && array_keys($mailParameters->getData()) === ['signInUrl']
+                    && str_ends_with($mailParameters->getData()['signInUrl'], '/login');
+            }));
+
+        $this->assertTrue($this->service->requestPasswordResetEmail('linked@example.com'));
+    }
+
     public function testActivateAccountReturnsFalseOnApiException(): void
     {
         $this->apiClient->method('httpPost')
             ->willThrowException($this->makeApiException(400));
 
         $this->assertFalse($this->service->activateAccount('bad-token'));
+    }
+
+    public function testActivateAccountLogsAnExpiredLinkAtInfo(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException($this->makeApiException(400));
+
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('info')
+            ->with('Failed to activate account', $this->anything());
+
+        $this->assertFalse($this->service->activateAccount('expired-token'));
+    }
+
+    public function testActivateAccountLogsAServerFailureAtWarning(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException($this->makeApiException(503));
+
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('Failed to activate account', $this->anything());
+
+        $this->assertFalse($this->service->activateAccount('tok'));
+    }
+
+    public function testSetNewPasswordLogsARejectedTokenAtInfo(): void
+    {
+        $this->apiClient->method('httpPost')
+            ->willThrowException($this->makeApiException(400, 'Invalid passwordToken'));
+
+        // setNewPassword already logs an info on entry, so capture rather than count.
+        $logged = [];
+        $this->logger->method('info')->willReturnCallback(
+            function (string $message, array $context = []) use (&$logged): void {
+                $logged[$message] = $context;
+            }
+        );
+
+        $this->logger->expects($this->never())->method('error');
+
+        $this->assertSame('invalid-token', $this->service->setNewPassword('bad', 'NewPass@1'));
+
+        $this->assertArrayHasKey('Password reset token rejected', $logged);
+        $this->assertSame(
+            'auth.password_reset.token_rejected',
+            $logged['Password reset token rejected']['event'],
+        );
+    }
+
+    public function testSetNewPasswordLogsAServerFailureAtWarning(): void
+    {
+        $this->apiClient->method('httpPost')->willThrowException($this->makeApiException(503));
+
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with('Failed to set new password', $this->anything());
+
+        $this->assertSame('api-error', $this->service->setNewPassword('tok', 'NewPass@1'));
+    }
+
+    public function testActivateAccountReportsAnAlreadyActivatedAccount(): void
+    {
+        $this->apiClient->method('httpPost')
+            ->willThrowException($this->makeApiException(400, 'account-already-activated'));
+
+        $this->logger->expects($this->never())->method('error');
+        $this->logger->expects($this->once())
+            ->method('info')
+            ->with(
+                'Account already activated',
+                $this->callback(
+                    static fn(array $context): bool
+                    => $context['event'] === 'auth.account.already_activated'
+                )
+            );
+
+        $this->assertSame('already-activated', $this->service->activateAccount('used-token'));
     }
 
     // -------------------------------------------------------------------------
@@ -544,7 +643,7 @@ final class UserDetailsTest extends TestCase
         try {
             $this->apiClient->expects($this->once())
                 ->method('httpPost')
-                ->with('/v2/users/password-reset', ['username' => 'person@example.com', 'forSharedSpace' => false])
+                ->with('/v2/users/password-reset', ['username' => 'person@example.com'])
                 ->willReturn(['activation_token' => 'activate-token']);
 
             $this->urlHelper->expects($this->once())
@@ -718,7 +817,7 @@ final class UserDetailsTest extends TestCase
         try {
             $this->apiClient->expects($this->once())
                 ->method('httpPost')
-                ->with('/v2/users/password-reset', ['username' => 'person@example.com', 'forSharedSpace' => false])
+                ->with('/v2/users/password-reset', ['username' => 'person@example.com'])
                 ->willReturn(['activation_token' => 'activate-token']);
 
             $this->urlHelper->expects($this->once())

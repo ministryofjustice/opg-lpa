@@ -86,6 +86,18 @@ interface ApplicationRepositoryInterface
     public function deleteById(int $lpaId, string $userId, ?string $sharedSpaceId = null): void;
 
     /**
+     * Delete (anonymise) every LPA owned by the given shared space. Used
+     * when the last member of a shared space is deleted and the shared
+     * space itself is being torn down, so that its LPAs don't get
+     * hard-deleted by the shared_space table's ON DELETE CASCADE foreign
+     * key when the shared space row is subsequently removed.
+     *
+     * @param string $sharedSpaceId
+     * @return int Number of LPAs deleted
+     */
+    public function deleteAllForSharedSpace(string $sharedSpaceId): int;
+
+    /**
      * Move ownership of all of $userId's individually-owned LPAs (i.e. those
      * not already claimed by a different shared space) into $sharedSpaceId.
      * Used when a user creates (or joins) a shared space.

@@ -36,7 +36,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $payment = new Payment();
         $payment->setMethod('Invalid');
 
-        $validationError = $this->service->update(strval($lpa->getId()), $payment->toArray());
+        $validationError = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $payment->toArray());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
         $this->assertEquals(
@@ -46,7 +46,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'method' => ['value' => 'Invalid', 'messages' => ['allowed-values:card,cheque']],
+                    'method' => ['messages' => ['allowed-values:card,cheque']],
                 ]
             ],
             $validationError->toArray()
@@ -67,7 +67,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->update(strval($lpa->getId()), $lpa->getPayment()->toArray());
+        $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $lpa->getPayment()->toArray());
     }
 
     public function testUpdate()
@@ -81,7 +81,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $payment = new Payment($lpa->getPayment()->toArray());
         $payment->setReference('Edited');
 
-        $entity = $this->service->update(strval($lpa->getId()), $payment->toArray());
+        $entity = $this->service->update(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $payment->toArray());
 
         $this->assertEquals(new DataModelEntity($payment), $entity);
     }

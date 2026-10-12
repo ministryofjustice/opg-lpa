@@ -1,9 +1,10 @@
 # INFO - Table used for working out which IP addresses should be blocked on our WAF
 #trivy:ignore:avd-aws-0024 ignore:avd-aws-0025 - point in time recovery not needed as transient data
 resource "aws_dynamodb_table" "blocked_ips_table" {
-  name         = "BlockedIPs"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "IP" # Set IP as the primary key
+  name                        = "BlockedIPs"
+  billing_mode                = "PAY_PER_REQUEST"
+  deletion_protection_enabled = true
+  hash_key                    = "IP" # Set IP as the primary key
 
   attribute {
     name = "IP"

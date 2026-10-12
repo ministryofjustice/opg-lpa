@@ -6,6 +6,7 @@ namespace AppTest\Handler\Lpa;
 
 use App\Handler\Lpa\CheckoutIndexHandler;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\CheckoutHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -13,22 +14,25 @@ use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Form\Element\Submit;
 use Laminas\Form\FormElementManager;
+use MakeSharedTest\DataModel\FixturesData;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use MakeShared\DataModel\Lpa\Payment\Payment;
-use MakeSharedTest\DataModel\FixturesData;
 use Mezzio\Helper\UrlHelper;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class CheckoutIndexHandlerTest extends TestCase
 {
-    private TemplateRendererInterface&MockObject $renderer;
-    private FormElementManager&MockObject $formElementManager;
-    private UrlHelper&MockObject $urlHelper;
-    private CheckoutHelper&MockObject $checkoutHelper;
-    private CardPayments&MockObject $cardPayments;
+    private MockObject&TemplateRendererInterface $renderer;
+    private MockObject&FormElementManager $formElementManager;
+    private MockObject&UrlHelper $urlHelper;
+    private MockObject&CardPayments $cardPayments;
+    private MockObject&CheckoutHelper $checkoutHelper;
+    private MockObject&FormFlowChecker $flowChecker;
     private CheckoutIndexHandler $handler;
 
     protected function setUp(): void
@@ -36,8 +40,9 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
-        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
         $this->cardPayments = $this->createMock(CardPayments::class);
+        $this->checkoutHelper = $this->createMock(CheckoutHelper::class);
+        $this->flowChecker = $this->createMock(FormFlowChecker::class);
 
         $this->handler = new CheckoutIndexHandler(
             $this->renderer,
@@ -45,6 +50,7 @@ class CheckoutIndexHandlerTest extends TestCase
             $this->urlHelper,
             $this->cardPayments,
             $this->checkoutHelper,
+            $this->createMock(LoggerInterface::class),
         );
     }
 
@@ -63,14 +69,15 @@ class CheckoutIndexHandlerTest extends TestCase
         return $lpa;
     }
 
-    private function createRequest(string $method, Lpa $lpa): ServerRequest
+    private function createRequest(string $method, Lpa $lpa, array $postData = []): ServerRequest
     {
         $request = new ServerRequest([], [], 'https://example.com/lpa/' . $lpa->getId() . '/checkout', $method)
             ->withAttribute(RequestAttribute::LPA, $lpa)
+            ->withAttribute(RequestAttribute::FLOW_CHECKER, $this->flowChecker)
             ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'lpa/checkout');
 
         if ($method === 'POST') {
-            $request = $request->withParsedBody([]);
+            $request = $request->withParsedBody($postData);
         }
 
         return $request;
@@ -100,11 +107,11 @@ class CheckoutIndexHandlerTest extends TestCase
         $this->cardPayments->expects($this->once())
             ->method('recoverCompletedPayment')
             ->with($lpa)
-            ->willReturn(true);
+            ->willReturn([6, true]);
 
         $this->checkoutHelper->expects($this->once())
             ->method('finishCheckout')
-            ->with($lpa, $this->isInstanceOf(ServerRequest::class))
+            ->with($lpa, $this->isInstanceOf(ServerRequest::class), 6)
             ->willReturn($finishResponse);
 
         $this->renderer->expects($this->never())->method('render');
@@ -116,19 +123,18 @@ class CheckoutIndexHandlerTest extends TestCase
     public function testPostWithIncompleteLpaRedirectsToMoreInfoRequired(): void
     {
         $lpa = $this->createCompleteLpa();
-        $redirectResponse = new RedirectResponse('/lpa/123/more-info-required');
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(false);
-        $this->checkoutHelper->expects($this->once())
-            ->method('redirectToMoreInfoRequired')
-            ->with($lpa, $this->isInstanceOf(ServerRequest::class))
-            ->willReturn($redirectResponse);
+        $this->urlHelper->method('generate')
+            ->with('lpa/more-info-required', ['lpa-id' => $lpa->getId()])
+            ->willReturn('blah');
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/something');
 
         $this->renderer->expects($this->never())->method('render');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa));
-        $this->assertSame($redirectResponse, $response);
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => '6']));
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertStringContainsString('blah', $response->getHeaderLine('location'));
     }
 
     public function testGetRendersCheckoutForm(): void
@@ -136,8 +142,8 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockForm();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
@@ -153,24 +159,51 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockForm();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
         $this->renderer->expects($this->once())
             ->method('render')
             ->with('application/authenticated/lpa/checkout/index.twig', $this->anything())
             ->willReturn('html');
 
-        $response = $this->handler->handle($this->createRequest('POST', $lpa));
+        $response = $this->handler->handle($this->createRequest('POST', $lpa, ['version' => '6']));
         $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public static function actionProvider(): array
+    {
+        return [
+            ['cheque', 'confirmAndPayByCheque'],
+            ['card', 'confirmAndPayByCard'],
+            ['finish', 'confirmAndPayNothing'],
+        ];
+    }
+
+    #[DataProvider('actionProvider')]
+    public function testPostWithActionDoesCheckOut(string $action, string $method): void
+    {
+        $redirect = new RedirectResponse('');
+
+        $lpa = $this->createCompleteLpa();
+        $this->mockForm();
+
+        $request = $this->createRequest('POST', $lpa, ['action' => $action, 'version' => '6']);
+
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
+        $this->checkoutHelper->method($method)->with($lpa, $request, 5)->willReturn($redirect);
+
+        $response = $this->handler->handle($request);
+        $this->assertEquals($redirect, $response);
     }
 
     public function testFormIsConfiguredWithCorrectActionAndClass(): void
     {
         $lpa = $this->createCompleteLpa();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
         $this->renderer->method('render')->willReturn('html');
 
@@ -200,10 +233,7 @@ class CheckoutIndexHandlerTest extends TestCase
 
         $this->handler->handle($this->createRequest('GET', $lpa));
 
-        $this->assertContains(['action', '/lpa/123/checkout/pay'], $formSetAttributes);
         $this->assertContains(['class', 'js-single-use'], $formSetAttributes);
-        $this->assertContains(['value', 'Confirm and pay by card'], $submitSetAttributes);
-        $this->assertContains(['data-cy', 'confirm-and-pay-by-card'], $submitSetAttributes);
     }
 
     public function testNonRepeatApplicationFeesArePassed(): void
@@ -211,8 +241,8 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockForm();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
 
         $this->renderer->expects($this->once())
@@ -235,8 +265,8 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createRepeatApplicationLpa();
         $this->mockForm();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
 
         $this->renderer->expects($this->once())
@@ -259,8 +289,8 @@ class CheckoutIndexHandlerTest extends TestCase
         $lpa = $this->createCompleteLpa();
         $this->mockForm();
 
-        $this->cardPayments->method('recoverCompletedPayment')->willReturn(false);
-        $this->checkoutHelper->method('isLpaComplete')->willReturn(true);
+        $this->cardPayments->method('recoverCompletedPayment')->willReturn([5, false]);
+        $this->flowChecker->method('backToForm')->willReturn('lpa/checkout');
         $this->urlHelper->method('generate')->willReturn('/lpa/123/checkout/pay');
 
         $this->renderer->expects($this->once())

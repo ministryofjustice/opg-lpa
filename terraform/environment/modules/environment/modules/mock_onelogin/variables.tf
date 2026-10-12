@@ -1,5 +1,6 @@
 locals {
   policy_region_prefix = lower(replace(data.aws_region.current.region, "-", ""))
+  cert_prefix_internal = var.account_name == "production" ? "" : "*."
 }
 
 variable "ecs_execution_role" {
@@ -58,6 +59,7 @@ variable "image_digest" {
 variable "ingress_allow_list_cidr" {
   type        = list(string)
   description = "List of CIDR ranges permitted to access the service"
+  sensitive   = true
 }
 
 variable "alb_deletion_protection_enabled" {
@@ -88,9 +90,9 @@ variable "aws_service_discovery_private_dns_namespace" {
   description = "ID and name of the AWS Service Discovery private DNS namespace"
 }
 
-variable "front_app_ecs_service_security_group_id" {
+variable "api_app_ecs_service_security_group_id" {
   type        = string
-  description = "ID of the security group for the app ECS service"
+  description = "ID of the security group for the api ECS service"
 }
 
 variable "waf_alb_association_enabled" {
@@ -121,4 +123,8 @@ variable "tags" {
     source-code            = string
     Name                   = string
   })
+}
+
+variable "onelogin_client_id" {
+  type = string
 }

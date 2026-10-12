@@ -121,7 +121,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
 
-        $entity = $this->service->update(strval($lpa->getId()), ['seed' => 'Invalid'], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => 'Invalid'], self::IF_MATCH_VALUE, $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -151,7 +151,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
 
-        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], self::IF_MATCH_VALUE, $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -182,7 +182,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user));
         $this->service->setApplicationsService($applicationsService);
 
-        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], self::IF_MATCH_VALUE, $user->getId());
 
         $this->assertTrue($entity instanceof ApiProblem);
         $this->assertEquals(
@@ -215,7 +215,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('A malformed LPA object');
 
-        $this->service->update(strval($lpa->getId()), ['seed' => $lpa->getId()], $user->getId());
+        $this->service->update(strval($lpa->getId()), ['seed' => $lpa->getId()], self::IF_MATCH_VALUE, $user->getId());
     }
 
     public function testUpdate()
@@ -234,7 +234,7 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->service->setApplicationRepository($this->getApplicationRepository($lpa, $user, true));
         $this->service->setApplicationsService($applicationsService);
 
-        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], $user->getId());
+        $entity = $this->service->update(strval($lpa->getId()), ['seed' => $seedLpa->getId()], self::IF_MATCH_VALUE, $user->getId());
 
         $this->assertEquals(new Entity($seedLpa), $entity);
     }

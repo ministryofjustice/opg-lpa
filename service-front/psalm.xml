@@ -33,6 +33,12 @@
         <!-- We magically assign properties to Laminas\Session\Container and Laminas\View\Model\ViewModel -->
         <UndefinedMagicPropertyAssignment errorLevel="suppress" />
         <UndefinedMagicPropertyFetch errorLevel="suppress" />
+
+        <!-- Raised by upgrading to v7, not to fix now -->
+        <MissingAbstractPureAnnotation errorLevel="suppress" />
+        <MissingImmutableAnnotation errorLevel="suppress" />
+        <MissingInterfaceImmutableAnnotation errorLevel="suppress" />
+        <MissingPureAnnotation errorLevel="suppress" />
     </issueHandlers>
 
     <projectFiles>

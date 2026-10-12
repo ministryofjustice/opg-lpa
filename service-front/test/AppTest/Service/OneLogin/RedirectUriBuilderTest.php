@@ -49,4 +49,12 @@ class RedirectUriBuilderTest extends TestCase
 
         $this->assertSame('http://local.dev/auth/redirect', $builder($uri));
     }
+
+    public function testBuildsUriForAGivenPath(): void
+    {
+        $builder = new RedirectUriBuilder('https://production.example.gov.uk/');
+        $uri     = new Uri('https://irrelevant.example.com/');
+
+        $this->assertSame('https://production.example.gov.uk/login/timeout', $builder($uri, '/login/timeout'));
+    }
 }

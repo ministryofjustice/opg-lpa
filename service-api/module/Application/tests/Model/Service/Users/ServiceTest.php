@@ -19,7 +19,6 @@ use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeSharedTest\DataModel\FixturesData;
-use ArrayObject;
 use DateTime;
 
 final class ServiceTest extends AbstractServiceTestCase
@@ -151,11 +150,21 @@ final class ServiceTest extends AbstractServiceTestCase
 
     public function testActivateNoAccount()
     {
+        $this->authUserRepository->shouldReceive('activationTokenExists')->andReturn(false);
+
         $this->authUserRepository->shouldReceive('activate')->andReturn(null);
         $this->assertEquals('account-not-found', $this->service->activate('foo'));
 
         $this->authUserRepository->shouldReceive('activate')->andReturn(false);
         $this->assertEquals('account-not-found', $this->service->activate('bar'));
+    }
+
+    public function testActivateReportsAnAlreadyUsedTokenSeparately()
+    {
+        $this->authUserRepository->shouldReceive('activate')->andReturn(false);
+        $this->authUserRepository->shouldReceive('activationTokenExists')->andReturn(true);
+
+        $this->assertEquals('account-already-activated', $this->service->activate('used-token'));
     }
 
     public function testActivateSuccess()
@@ -372,7 +381,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->shouldNotReceive('saveProfile');
 
         $userUpdate = FixturesData::getUser();
-        $userUpdate->getName()->setTitle('TooLong');
+        $userUpdate->getName()->setTitle('TooLongTooLongTooLongTooLongTooLongTooLong');
         $validationError = $this->service->update($userUpdate->toArray(), $user->getId());
 
         $this->assertTrue($validationError instanceof ValidationApiProblem);
@@ -383,7 +392,7 @@ final class ServiceTest extends AbstractServiceTestCase
                 'status' => 400,
                 'detail' => 'Your request could not be processed due to validation error',
                 'validation' => [
-                    'name.title' => ['value' => 'TooLong', 'messages' => ['must-be-less-than-or-equal:5']],
+                    'name.title' => ['messages' => ['must-be-less-than-or-equal:35']],
                 ]
             ],
             $validationError->toArray()
@@ -455,17 +464,17 @@ final class ServiceTest extends AbstractServiceTestCase
         $email = FixturesData::getUser()->getEmail()->getAddress();
         $collectionUser1 = new CollectionUser(['identity' => $email]);
         $collectionUser2 = new CollectionUser(['identity' => $email]);
-        $users = (new ArrayObject([$collectionUser1, $collectionUser2]))->getIterator();
 
         $this->authUserRepository
             ->shouldReceive('matchUsers')
             ->with($query, [])
-            ->andReturn($users)
+            ->andReturn(['results' => [$collectionUser1, $collectionUser2], 'total' => 2])
             ->once();
 
-        $results = $this->service->matchUsers($query);
+        $result = $this->service->matchUsers($query);
 
-        $this->assertEquals(count($results), 2);
+        $this->assertEquals(2, count($result['results']));
+        $this->assertEquals(2, $result['total']);
     }
 
     public function testSearchByUsernameNotUserOrDeleted()
@@ -515,6 +524,36 @@ final class ServiceTest extends AbstractServiceTestCase
         ];
 
         $this->assertEquals($expected, $this->service->searchByUsername($username));
+    }
+
+    public function testSearchById()
+    {
+        $userId = 'abc123def456abc123def456abc12345';
+
+        $userRecord = new UserModel(['id' => $userId]);
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn($userRecord)
+            ->once();
+
+        $expected = $userRecord->toArray();
+
+        $this->assertEquals($expected, $this->service->searchById($userId));
+    }
+
+    public function testSearchByIdNotFound()
+    {
+        $userId = 'does-not-exist';
+
+        $this->authUserRepository
+            ->shouldReceive('getById')
+            ->with($userId)
+            ->andReturn(null)
+            ->once();
+
+        $this->assertFalse($this->service->searchById($userId));
     }
 
     public function testSearchByUsername()

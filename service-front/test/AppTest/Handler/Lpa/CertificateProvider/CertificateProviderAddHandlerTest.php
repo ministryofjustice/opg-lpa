@@ -27,6 +27,8 @@ use PHPUnit\Framework\TestCase;
 
 class CertificateProviderAddHandlerTest extends TestCase
 {
+    private const string IF_MATCH_VALUE = '5';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
@@ -170,7 +172,7 @@ class CertificateProviderAddHandlerTest extends TestCase
         $this->urlHelper->method('generate')->willReturn('/lpa/91333263035/people-to-notify');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => 'Test'])
+            $this->createRequest('POST', null, ['name-first' => 'Test', 'version' => self::IF_MATCH_VALUE])
         );
         $this->assertInstanceOf(RedirectResponse::class, $response);
     }
@@ -190,7 +192,7 @@ class CertificateProviderAddHandlerTest extends TestCase
         $this->lpaApplicationService->method('setCertificateProvider')->willReturn(true);
         $this->metadata->method('removeMetadata');
 
-        $request = $this->createRequest('POST', null, ['name-first' => 'Test'])
+        $request = $this->createRequest('POST', null, ['name-first' => 'Test', 'version' => self::IF_MATCH_VALUE])
             ->withHeader('X-Requested-With', 'XMLHttpRequest');
 
         $response = $this->handler->handle($request);
@@ -212,7 +214,7 @@ class CertificateProviderAddHandlerTest extends TestCase
             ->willReturn('rendered-html');
 
         $response = $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => ''])
+            $this->createRequest('POST', null, ['name-first' => '', 'version' => self::IF_MATCH_VALUE])
         );
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -234,7 +236,7 @@ class CertificateProviderAddHandlerTest extends TestCase
         $this->expectException(\RuntimeException::class);
 
         $this->handler->handle(
-            $this->createRequest('POST', null, ['name-first' => 'Test'])
+            $this->createRequest('POST', null, ['name-first' => 'Test', 'version' => self::IF_MATCH_VALUE])
         );
     }
 

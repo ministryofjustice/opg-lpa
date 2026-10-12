@@ -50,8 +50,7 @@
 }) ? ''}}
 
 {{ form().openTag( form )|raw }}
-
-
+<input type="hidden" name="__csrf" value="{{ csrfToken }}">
     <fieldset>
         <div class="govuk-body">
             <p class="govuk-body">We will not respond to your feedback directly but will use it to improve this service.</p>
