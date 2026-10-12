@@ -32,7 +32,7 @@ jobs:
     steps:
       - name: Don't run on production
         run: |
-          if [${TARGET_ENVIRONMENT} == "production"]; then
+          if ["${TARGET_ENVIRONMENT}" == "production"]; then
             echo "Cannot run on production"
             exit 1
           fi
