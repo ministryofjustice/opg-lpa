@@ -265,33 +265,30 @@ resource "aws_wafv2_web_acl" "main" {
     }
   }
 
-  rule {
-    name     = "RateLimitByIP"
-    priority = 60
+  dynamic "rule" {
+    for_each = var.account.web_application_firewall.rate_limit_by_ip_enabled ? [1] : []
+    content {
+      name     = "RateLimitByIP"
+      priority = 60
 
-    action {
-      block {}
-    }
+      action {
+        block {}
+      }
 
-    statement {
-      rate_based_statement {
-        limit                 = var.account.web_application_firewall.rate_limit_by_ip_rate
-        aggregate_key_type    = "IP"
-        evaluation_window_sec = 60
+      statement {
+        rate_based_statement {
+          limit                 = var.account.web_application_firewall.rate_limit_by_ip_rate
+          aggregate_key_type    = "IP"
+          evaluation_window_sec = 60
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "RateLimitByIP"
+        sampled_requests_enabled   = true
       }
     }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "RateLimitByIP"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "${local.account_name}-${local.region_name}-web-acl"
-    sampled_requests_enabled   = true
   }
 
   rule {
@@ -321,6 +318,12 @@ resource "aws_wafv2_web_acl" "main" {
       metric_name                = "AWS-AWSManagedRulesCommonRuleSet"
       sampled_requests_enabled   = true
     }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${local.account_name}-${local.region_name}-web-acl"
+    sampled_requests_enabled   = true
   }
 }
 
