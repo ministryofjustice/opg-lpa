@@ -43,6 +43,17 @@ jobs:
           role-duration-seconds: 900
           role-session-name: MLPASeedDevEnv
 
+      - name: Get terraform version
+        id: set-terraform-version
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          terraform_directory: "./terraform/environment"
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
+          terraform_wrapper: false
+
       - name: Terraform Targetted Apply
         working-directory: terraform/environment
         run: |
