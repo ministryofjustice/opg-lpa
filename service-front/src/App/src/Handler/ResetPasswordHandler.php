@@ -26,7 +26,6 @@ class ResetPasswordHandler implements RequestHandlerInterface
     use CommonTemplateVariablesTrait;
 
     private const SESSION_KEY_IDENTITY = 'identity';
-    private const SHARED_SPACE_TOKEN_PREFIX = 'sharedspace';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -48,17 +47,11 @@ class ResetPasswordHandler implements RequestHandlerInterface
             );
         }
 
-        $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
-
         if ($session->has(self::SESSION_KEY_IDENTITY)) {
-            if (str_starts_with($token, self::SHARED_SPACE_TOKEN_PREFIX)) {
-                $destination = '/shared-space/dashboard';
-            } else {
-                // If logged in, clear session and redirect back
-                $session->clear();
-                $session->regenerate();
-                return new RedirectResponse('/forgot-password/reset/' . $token);
-            }
+            // If logged in, clear session and redirect back
+            $session->clear();
+            $session->regenerate();
+            return new RedirectResponse('/forgot-password/reset/' . $token);
         }
 
         /** @var FormInterface $form */
@@ -85,6 +78,8 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
                     $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
+
+                    $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
 
                     return new RedirectResponse($destination);
                 }

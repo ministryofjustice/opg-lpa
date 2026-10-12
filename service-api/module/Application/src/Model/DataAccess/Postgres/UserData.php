@@ -132,17 +132,19 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     /**
      * Returns zero or more users by case-insensitive and partial
-     * matching
+     * matching, along with the total number of matching users
+     * (ignoring offset/limit), so that callers can paginate without
+     * needing a separate count query.
      *
      * @param $query
      * @param $options - array of optional parameters, including
      * 'offset' (int, default 0) and 'limit' (int, default 10)
-     * @return iterable UserModel instances
+     * @return array{results: UserModel[], total: int}
      */
-    public function matchUsers(string $query, array $options = []): iterable
+    public function matchUsers(string $query, array $options = []): array
     {
         $offset = 0;
-        $limit = 10;
+        $limit = 20;
 
         if (isset($options['offset'])) {
             $offset = intval($options['offset']);
@@ -159,9 +161,12 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             ->columns(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
             ->group(['user']);
 
-        // case-insensitive match on user email
+        // case-insensitive match on user email (either the identity used to log in,
+        // or the email address registered with One Login)
         $queryQuoted = $this->dbWrapper->quoteValue(sprintf('%%%s%%', $query));
-        $like = new Expression('users.identity ILIKE ' . $queryQuoted);
+        $like = new Expression(
+            'users.identity ILIKE ' . $queryQuoted . ' OR users.one_login_email ILIKE ' . $queryQuoted
+        );
 
         // main query
         // WARNING join type is "FULL" here as using Select::JOIN_OUTER produces
@@ -206,16 +211,20 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                 'inactivity_flags',
                 'one_login_sub',
                 'one_login_email',
+                // Window function: total matching rows, ignoring LIMIT/OFFSET,
+                // avoiding the need for a separate COUNT(*) query.
+                'total' => new SqlExpression('COUNT(*) OVER()'),
             ])
             ->order('identity ASC')
             ->offset($offset)
             ->limit($limit);
 
-        $users = $sql->prepareStatementForSqlObject($select)->execute();
+        $rows = iterator_to_array($sql->prepareStatementForSqlObject($select)->execute(), false);
 
-        foreach ($users as $user) {
-            yield new UserModel($user);
-        }
+        return [
+            'results' => array_map(fn ($row) => new UserModel($row), $rows),
+            'total' => empty($rows) ? 0 : (int) reset($rows)['total'],
+        ];
     }
 
     /**
@@ -377,6 +386,14 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             $data['one_login_email'] = $details['one_login_email'];
         }
 
+        if (isset($details['is_professional'])) {
+            $data['is_professional'] = $details['is_professional'];
+        }
+
+        if (isset($details['profile'])) {
+            $data['profile'] = $this->encodeProfile($details['profile']);
+        }
+
         $insert->values($data);
 
         $statement = $sql->prepareStatementForSqlObject($insert);
@@ -449,14 +466,21 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     public function activate(string $token): bool
     {
         return $this->updateRow(
-            ['activation_token' => $token],
+            [
+                'activation_token' => $token,
+                new IsNull('activated'),
+            ],
             [
                 'active' => true,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
                 'activated' => gmdate(DbWrapper::TIME_FORMAT),
-                'activation_token' => null,
             ]
         );
+    }
+
+    public function activationTokenExists(string $token): bool
+    {
+        return $this->countRows(['activation_token' => $token]) > 0;
     }
 
     /**
@@ -803,17 +827,25 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function saveProfile(ProfileUserModel $data): void
     {
+        $this->updateRow(
+            ['id' => $data->getId()],
+            [
+                'profile' => $this->encodeProfile($data),
+            ]
+        );
+    }
+
+    /**
+     * The profile column holds the user's details without the fields kept in their own columns.
+     */
+    private function encodeProfile(ProfileUserModel $data): string
+    {
         $user = $data->toArray();
 
         // Remove unwarned fields
         unset($user['id'], $user['createdAt'], $user['updatedAt']);
 
-        $this->updateRow(
-            ['id' => $data->getId()],
-            [
-                'profile' => json_encode($user),
-            ]
-        );
+        return json_encode($user, JSON_THROW_ON_ERROR);
     }
 
     /**
@@ -821,14 +853,16 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param string $userId
      * @param string $oneLoginSub
      * @param string $oneLoginEmail Email supplied by One Login (contact address).
+     * @param bool $isProfessional Whether the user makes LPAs professionally, given during One Login onboarding.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, bool $isProfessional): void
     {
         $this->updateRow(
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
                 'one_login_email' => $oneLoginEmail,
+                'is_professional' => $isProfessional,
                 'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]

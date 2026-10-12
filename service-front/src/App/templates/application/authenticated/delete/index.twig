@@ -1,30 +1,34 @@
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Deleting your account' -%}
+{%- set overridePageTitle = 'Deleting your account' -%}
+
+{% block backLink %}
+  <a href="{{ url('user/about-you') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-<div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
-    <p class="govuk-body">You are about to delete your account. Doing this will permanently remove {% if memberCount !== null %}your personal details from our system.{% else %}all your LPAs and personal details from our system.{% endif %}</p>
+      <p class="govuk-body">You are about to delete your account. Doing this will permanently remove {% if memberCount !== null %}your personal details from our system.{% else %}all your LPAs and personal details from our system.{% endif %}</p>
 
-    {% if memberCount !== null %}
-      {%  if memberCount === 1 %}
-        <p class="govuk-body">You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.</p>
-      {% else %}
-        <p class="govuk-body">You are currently part of a shared space. Deleting your account will remove you from the shared space and you will no longer have access to any LPAs that have been created within it.</p>
+      {% if memberCount !== null %}
+        {%  if memberCount === 1 %}
+          <p class="govuk-body">You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.</p>
+        {% else %}
+          <p class="govuk-body">You are currently part of a shared space. Deleting your account will remove you from the shared space and you will no longer have access to any LPAs that have been created within it.</p>
+        {% endif %}
       {% endif %}
-    {% endif %}
 
-    <form novalidate method="post">
-      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+      <form novalidate method="post">
+        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-      <div class="govuk-button-group">
-        <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete account</button>
-        <a class="govuk-button govuk-button--secondary" href="{{ url( 'user/dashboard' ) }}">Return to my LPAs</a>
-      </div>
-    </form>
+        <div class="govuk-button-group">
+          <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete account</button>
+          <a class="govuk-button govuk-button--secondary" href="{{ url( 'user/dashboard' ) }}">Return to my LPAs</a>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
-
 {% endblock content %}

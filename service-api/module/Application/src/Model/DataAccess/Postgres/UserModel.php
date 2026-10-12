@@ -69,6 +69,7 @@ class UserModel implements UserRepository\UserInterface
             'sharedSpaceId' => $this->sharedSpaceId(),
             'isSharedSpaceAdmin' => $this->isSharedSpaceAdmin(),
             'isActiveInSharedSpace' => $this->isActiveInSharedSpace(),
+            'oneLoginEmail' => $this->oneLoginEmail(),
         ];
     }
 

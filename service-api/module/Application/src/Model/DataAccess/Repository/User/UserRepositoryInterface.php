@@ -14,12 +14,14 @@ interface UserRepositoryInterface
 
     /**
      * Returns zero or more users whose username (email address) approximately
-     * matches the query (case insensitive, using LIKE).
+     * matches the query (case insensitive, using LIKE), along with the total
+     * number of matching users (ignoring offset/limit), to support pagination.
      *
      * @param $query - string to match users against
      * @param $options - optional query criteria
+     * @return array{results: UserInterface[], total: int}
      */
-    public function matchUsers(string $query, array $options): iterable;
+    public function matchUsers(string $query, array $options): array;
 
     public function getById(string $id): ?UserInterface;
 
@@ -55,6 +57,12 @@ interface UserRepositoryInterface
      * Activates a user account
      */
     public function activate(string $token): bool|null;
+
+    /**
+     * Whether any account still holds this activation token, so an already-used token can be
+     * told apart from one we have never seen.
+     */
+    public function activationTokenExists(string $token): bool;
 
     /**
      * Updates a user's password.
@@ -141,10 +149,10 @@ interface UserRepositoryInterface
     public function saveProfile(ProfileUserModel $data): void;
 
     /**
-     * Links a user to a GOV.UK One Login identity, storing the subject id and the
-     * One Login email.
+     * Links a user to a GOV.UK One Login identity, storing the subject id, the
+     * One Login email and whether they make LPAs professionally.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void;
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, bool $isProfessional): void;
 
     /**
      * Refreshes the One Login email held for an already-linked account.

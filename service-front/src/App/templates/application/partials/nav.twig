@@ -1,6 +1,6 @@
-{% macro navigationItem(nav, route, name, orActive = false) %}
-    {% if nav.route == route or orActive %}
-        <li class="govuk-service-navigation__item {{ nav.route == route ? 'govuk-service-navigation__item--active' : ''}}">
+{% macro navigationItem(nav, route, name) %}
+    {% if nav.parentRoute == route %}
+        <li class="govuk-service-navigation__item {{ nav.parentRoute == route ? 'govuk-service-navigation__item--active' : ''}}">
             <a class="govuk-service-navigation__link" href="{{ url(route) }}" aria-current="true">
                 <strong class="govuk-service-navigation__active-fallback">{{ name }}</strong>
             </a>
@@ -35,9 +35,8 @@
 
               {{ _self.navigationItem(
                    nav,
-                   nav.sharedSpaceEnabled and nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
-                   nav.sharedSpaceEnabled and nav.inSharedSpace ? 'Shared LPAs' : 'Your LPAs',
-                   nav.route == 'lpa-type-no-id' and nav.hasOneOrMoreLPAs == false
+                   nav.inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
+                   nav.inSharedSpace ? 'Shared LPAs' : 'Your LPAs'
                 ) }}
 
               {% if nav.sharedSpaceEnabled %}

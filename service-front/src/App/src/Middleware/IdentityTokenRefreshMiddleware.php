@@ -33,6 +33,9 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface
     private const array EXCLUDED_PATHS = [
         '/ping/elb',
         '/ping/json',
+        '/health-check',
+        '/health-check/dependencies',
+        '/health-check/service',
     ];
 
     public function __construct(

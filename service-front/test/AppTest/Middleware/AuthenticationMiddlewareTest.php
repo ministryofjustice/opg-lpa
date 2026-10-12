@@ -37,12 +37,15 @@ class AuthenticationMiddlewareTest extends TestCase
     private LoggerInterface&MockObject $logger;
     private OneLoginSignOut&MockObject $oneLoginSignOut;
     private AuthenticationMiddleware $middleware;
+    private string|false $oneLoginEnabled;
 
     private const string ID_TOKEN = 'header.payload.sig';
     private const string ONE_LOGIN_LOGOUT_URL = 'https://oidc.example.com/logout?id_token_hint=header.payload.sig';
 
     protected function setUp(): void
     {
+        $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
@@ -56,6 +59,11 @@ class AuthenticationMiddlewareTest extends TestCase
             $this->oneLoginSignOut,
             new RedirectUriBuilder('https://front.example.com'),
         );
+    }
+
+    protected function tearDown(): void
+    {
+        putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
     }
 
     private function stubMiddleware(): MiddlewareInterface
@@ -381,5 +389,50 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->assertEquals('/login/internal-system-error', $result->getHeaderLine('Location'));
         $this->assertSame([], $unset);
+    }
+
+    /**
+     * @return array<string, array{bool, bool, bool, bool}>
+     */
+    public static function oneLoginOnboardingProvider(): array
+    {
+        return [
+            'onboarding user on a route that allows it' => [true, true, true, true],
+            'no pending One Login link'                  => [true, true, false, false],
+            'route does not allow onboarding users'      => [true, false, true, false],
+            'One Login turned off'                       => [false, true, true, false],
+        ];
+    }
+
+    #[DataProvider('oneLoginOnboardingProvider')]
+    public function testARouteCanBeOpenedToOneLoginUsersStillOnboarding(
+        bool $oneLoginEnabled,
+        bool $routeAllowsOnboarding,
+        bool $hasPendingLink,
+        bool $allowed,
+    ): void {
+        putenv('ONELOGIN_ENABLED=' . ($oneLoginEnabled ? 'true' : 'false'));
+        $this->authenticationService->method('getIdentity')->willReturn(null);
+
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')->willReturnCallback(
+            fn (string $key) => $hasPendingLink && $key === 'onelogin_pending_link'
+                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => self::ID_TOKEN]
+                : null,
+        );
+
+        $routeResult = $this->makeRouteResult('postcode', $routeAllowsOnboarding ? ['allowOneLoginOnboarding' => true] : []);
+        $request = new ServerRequest(uri: '/address-lookup')
+            ->withAttribute(RouteResult::class, $routeResult)
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
+
+        $this->urlHelper->method('generate')->willReturn('/login');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($allowed ? $this->once() : $this->never())->method('handle')->willReturn(new PSR7Response());
+
+        $result = $this->middleware->process($request, $handler);
+
+        $this->assertSame($allowed, !$result instanceof RedirectResponse);
     }
 }

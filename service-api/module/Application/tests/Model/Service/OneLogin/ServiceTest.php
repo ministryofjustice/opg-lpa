@@ -18,7 +18,10 @@ use Facile\OpenIDClient\Client\ClientInterface;
 use Facile\OpenIDClient\Issuer\IssuerInterface;
 use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadataInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
+use InvalidArgumentException;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeShared\OneLogin\LinkReason;
+use MakeShared\OneLogin\UserType;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -28,6 +31,12 @@ use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
 {
+    private const array PROFILE = [
+        'name'    => ['title' => 'Mr', 'first' => 'Joe', 'last' => 'Bloggs'],
+        'dob'     => ['date' => '1980-04-14T00:00:00.000Z'],
+        'address' => ['address1' => '1 High Street', 'address2' => 'Town', 'postcode' => 'AB1 2CD'],
+    ];
+
     private Service $service;
     private MockInterface|AuthorisationClientManager $clientManager;
     private MockInterface|AuthorizationServiceInterface $authorizationService;
@@ -524,6 +533,55 @@ class ServiceTest extends MockeryTestCase
         $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
     }
 
+    /**
+     * @return array<string, array{mixed, string}>
+     */
+    public static function rejectedVotProvider(): array
+    {
+        return [
+            'vot missing'                   => [null, 'missing_vot_claim'],
+            'low authentication'            => ['Cl', 'invalid_vot_claim'],
+            'identity level included'       => ['Cl.Cm.P2', 'invalid_vot_claim'],
+            'vot as an array, not a string' => [['Cl.Cm'], 'invalid_vot_claim'],
+            'empty vot'                     => ['', 'invalid_vot_claim'],
+        ];
+    }
+
+    /**
+     * @dataProvider rejectedVotProvider
+     */
+    public function testHandleCallbackRejectsAnIdTokenWithoutTheRequestedVot(mixed $vot, string $expectedReason): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => $vot]));
+
+        $this->authorizationService->shouldNotReceive('getUserInfo');
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->authenticationService->shouldNotReceive('issueAuthToken');
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+            $this->fail('Expected the ID token to be rejected');
+        } catch (OneLoginAuthenticationException $e) {
+            $this->assertSame($expectedReason, $e->reason());
+        }
+    }
+
+    public function testHandleCallbackLogsTheVotItRejects(): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['vot' => 'Cl.Cm.P2']));
+
+        $this->expectException(OneLoginAuthenticationException::class);
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        } finally {
+            $this->logger->shouldHaveReceived('warning')->with('auth.onelogin.unexpected_vot', ['vot' => 'Cl.Cm.P2'])->once();
+        }
+    }
+
     public function testHandleCallbackMissingSubThrows(): void
     {
         $tokenSet = Mockery::mock(TokenSetInterface::class);
@@ -590,9 +648,9 @@ class ServiceTest extends MockeryTestCase
             ]);
 
         $this->userRepository->shouldReceive('setOneLoginSub')
-            ->once()->with('user-1', $sub, 'joe.bloggs@gmail.com');
+            ->once()->with('user-1', $sub, 'joe.bloggs@gmail.com', false);
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub, 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub, 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertTrue($result['linked']);
         $identity = $result['identity'] ?? null;
@@ -610,7 +668,7 @@ class ServiceTest extends MockeryTestCase
         $this->logRepository->shouldReceive('getLogByIdentityHash')->once()->andReturn(null);
         $this->authenticationService->shouldNotReceive('withPassword');
 
-        $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('gone@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
@@ -623,7 +681,7 @@ class ServiceTest extends MockeryTestCase
             ->once()->andReturn(['type' => 'account-deleted', 'reason' => 'user-initiated']);
         $this->authenticationService->shouldNotReceive('withPassword');
 
-        $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('deleted@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_DELETED, $result['reason'] ?? null);
@@ -638,7 +696,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldNotReceive('withPassword');
         $this->userRepository->shouldNotReceive('setOneLoginSub');
 
-        $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('taken@example.com', 'pw', 'urn:fdc:gov.uk:2022:me', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ALREADY_LINKED, $result['reason'] ?? null);
@@ -653,7 +711,7 @@ class ServiceTest extends MockeryTestCase
             ->once()->andReturn('invalid-user-credentials');
         $this->userRepository->shouldNotReceive('setOneLoginSub');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'wrong', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::INVALID_CREDENTIALS, $result['reason'] ?? null);
@@ -667,7 +725,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('withPassword')
             ->once()->andReturn('account-locked/max-login-attempts');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_LOCKED, $result['reason'] ?? null);
@@ -681,7 +739,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldReceive('withPassword')
             ->once()->andReturn('account-not-active');
 
-        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('alice@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_ACTIVE, $result['reason'] ?? null);
@@ -704,7 +762,10 @@ class ServiceTest extends MockeryTestCase
                     && $details['activated'] instanceof DateTime
                     && $details['failed_login_attempts'] === 0
                     && $details['one_login_sub'] === $sub
-                    && $details['one_login_email'] === $email;
+                    && $details['one_login_email'] === $email
+                    && $details['is_professional'] === true
+                    && $details['profile'] instanceof ProfileUserModel
+                    && $details['profile']->getName()?->getFirst() === 'Joe';
             }))
             ->andReturn(true);
 
@@ -720,13 +781,38 @@ class ServiceTest extends MockeryTestCase
             ->with($user)
             ->andReturn(['token' => 'tok-new', 'expiresIn' => 4500, 'expiresAt' => $expires]);
 
-        $result = $this->service->createAndLinkAccount($sub, $email);
+        $result = $this->service->createAndLinkAccount($sub, $email, UserType::Professional, self::PROFILE);
 
         $this->assertSame($userId, $result['userId']);
         $this->assertSame('tok-new', $result['token']);
         $this->assertSame($expires->format('c'), $result['tokenExpiresAt']);
         $this->assertNull($result['sharedSpaceId']);
         $this->assertNotEmpty($result['lastLogin']);
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function invalidProfileProvider(): array
+    {
+        return [
+            'no name'       => [['address' => self::PROFILE['address']]],
+            'name not data' => [['name' => 'Joe Bloggs']],
+            'dob not a date' => [['dob' => ['date' => 'not a date']] + self::PROFILE],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidProfileProvider
+     * @param array<string, mixed> $profile
+     */
+    public function testCreateAndLinkAccountRejectsAnInvalidProfileWithoutCreatingAnAccount(array $profile): void
+    {
+        $this->userRepository->shouldNotReceive('create');
+
+        $this->expectException(InvalidArgumentException::class);
+
+        $this->service->createAndLinkAccount('urn:fdc:gov.uk:2022:brand-new', 'new@example.com', UserType::Lay, $profile);
     }
 
     public function testBackChannelLogoutClearsAuthTokenForTheMatchingUser(): void
@@ -850,11 +936,19 @@ class ServiceTest extends MockeryTestCase
         $this->oidcClient->shouldReceive('getIssuer')->andReturn($issuer);
     }
 
-    private function makeTokenSet(string $sub): MockInterface|TokenSetInterface
+    /**
+     * @param array<string, mixed> $claims overrides the ID token's default claims; a null value removes the claim
+     */
+    private function makeTokenSet(string $sub, array $claims = []): MockInterface|TokenSetInterface
     {
+        $claims = array_filter(
+            [...['sub' => $sub, 'vot' => 'Cl.Cm'], ...$claims],
+            static fn (mixed $value): bool => $value !== null,
+        );
+
         $tokenSet = Mockery::mock(TokenSetInterface::class);
         $tokenSet->shouldReceive('getIdToken')->andReturn('header.payload.sig');
-        $tokenSet->shouldReceive('claims')->andReturn(['sub' => $sub]);
+        $tokenSet->shouldReceive('claims')->andReturn($claims);
 
         return $tokenSet;
     }

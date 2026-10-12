@@ -95,7 +95,7 @@ class StatusService
         return $result;
     }
 
-    private function checkApi(): array
+    public function checkApi(): array
     {
         $result = [
             'ok' => false,
@@ -121,7 +121,7 @@ class StatusService
         return $result;
     }
 
-    private function checkSession(): array
+    public function checkSession(): array
     {
         if ($this->sessionSaveHandler === null) {
             return ['ok' => true, 'status' => Constants::STATUS_PASS];
@@ -135,7 +135,7 @@ class StatusService
         ];
     }
 
-    private function checkMail(): array
+    public function checkMail(): array
     {
         if ($this->mailTransport === null) {
             return ['ok' => true, 'status' => Constants::STATUS_PASS];
@@ -144,7 +144,7 @@ class StatusService
         return $this->mailTransport->healthcheck();
     }
 
-    private function checkDynamo(): array
+    public function checkDynamo(): array
     {
         if ($this->dynamoDbClient === null) {
             return ['ok' => true, 'status' => Constants::STATUS_PASS];
@@ -169,7 +169,7 @@ class StatusService
         return ['ok' => false, 'status' => Constants::STATUS_FAIL];
     }
 
-    private function checkOrdnanceSurvey(): array
+    public function checkOrdnanceSurvey(): array
     {
         if ($this->ordnanceSurveyClient === null || $this->redisClient === null) {
             return ['ok' => true, 'status' => Constants::STATUS_PASS];

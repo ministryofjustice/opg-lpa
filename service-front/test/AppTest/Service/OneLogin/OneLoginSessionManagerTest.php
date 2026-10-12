@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace AppTest\Service\OneLogin;
 
+use App\Service\OneLogin\OnboardingState;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\PendingLink;
+use MakeShared\OneLogin\UserType;
 use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -144,6 +146,38 @@ class OneLoginSessionManagerTest extends TestCase
         );
     }
 
+    /**
+     * @return array<string, array{?string, string}>
+     */
+    public static function finishOnboardingProvider(): array
+    {
+        return [
+            'no page asked for first' => [null, '/user/dashboard'],
+            'a page asked for first'  => ['/lpa/123/donor', '/lpa/123/donor'],
+            'an off-site page'        => ['https://evil.example.com', '/user/dashboard'],
+        ];
+    }
+
+    #[DataProvider('finishOnboardingProvider')]
+    public function testFinishOnboardingSignsTheUserInAndSaysWhereToGo(?string $preAuthUrl, string $expected): void
+    {
+        $this->session->method('get')->willReturnCallback(
+            fn (string $key) => $key === 'pre_auth_request_url' ? $preAuthUrl : null,
+        );
+        $this->session->expects($this->once())->method('clear');
+        $this->session->expects($this->once())->method('regenerate');
+
+        $identity = [
+            'userId'         => 'uid-1',
+            'token'          => 'tok-abc',
+            'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
+            'lastLogin'      => '2025-01-01T00:00:00+00:00',
+            'sharedSpaceId'  => null,
+        ];
+
+        $this->assertSame($expected, $this->manager->finishOnboarding($this->session, $identity, self::ID_TOKEN));
+    }
+
     public function testForgetIdTokenRemovesIt(): void
     {
         $this->session->expects($this->once())->method('unset')->with(self::ID_TOKEN_KEY);
@@ -179,5 +213,30 @@ class OneLoginSessionManagerTest extends TestCase
         $this->session->method('get')->willReturn($stored);
 
         $this->assertNull($this->manager->getIdToken($this->session));
+    }
+
+    public function testGetOnboardingIsEmptyWhenNothingIsStored(): void
+    {
+        $this->session->method('get')->with('onelogin_onboarding')->willReturn(null);
+
+        $this->assertNull($this->manager->getOnboarding($this->session)->userType);
+    }
+
+    public function testOnboardingAnswersAreSavedAndReadBack(): void
+    {
+        $stored = null;
+        $this->session->method('set')->willReturnCallback(function (string $key, mixed $value) use (&$stored): void {
+            $this->assertSame('onelogin_onboarding', $key);
+            $stored = $value;
+        });
+        $this->session->method('get')->willReturnCallback(
+            function (string $key) use (&$stored): mixed {
+                return $key === 'onelogin_onboarding' ? $stored : null;
+            },
+        );
+
+        $this->manager->saveOnboarding($this->session, new OnboardingState(UserType::Professional));
+
+        $this->assertSame(UserType::Professional, $this->manager->getOnboarding($this->session)->userType);
     }
 }

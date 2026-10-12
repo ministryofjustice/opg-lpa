@@ -1,0 +1,35 @@
+{% import "application/macros.twig" as macros %}
+
+{% set name = element.getName() %}
+{% set hasError = element.getMessages|length > 0 %}
+
+<div class="govuk-grid-row">
+  {{ macros.formErrorSummary(null, form) }}
+
+  <div class="govuk-grid-column-two-thirds">
+    {{ form.prepare() ? '' }}
+    {{ form().openTag( form )|raw }}
+    <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+    <div class="govuk-form-group {{ hasError ? 'govuk-form-group--error'}}">
+      <fieldset class="govuk-fieldset" aria-describedby="{{ name }}-description{{ hasError ? ' ' ~ name ~ '-error' }}">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--xl">
+          <h1 class="govuk-fieldset__heading">{{ heading }}</h1>
+        </legend>
+
+        <p class="govuk-body" id="{{ name }}-description">{{ description }}</p>
+
+        {% if hasError %}
+          <div id="{{ name }}-error">{{ formElementErrorsV2(element) }}</div>
+        {% endif %}
+
+        <div class="govuk-radios" data-module="govuk-radios">
+          {{ formRadio(element) }}
+        </div>
+      </fieldset>
+    </div>
+
+    <button class="govuk-button" type="submit" data-cy="{{ continueCy }}">Continue</button>
+    {{ form().closeTag|raw }}
+  </div>
+</div>

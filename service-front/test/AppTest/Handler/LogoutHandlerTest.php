@@ -34,11 +34,15 @@ class LogoutHandlerTest extends TestCase
         return new LogoutHandler($config, new OneLoginSessionManager(), $this->oneLoginSignOut);
     }
 
-    private function createRequest(?string $idToken = null): ServerRequest
+    private function createRequest(?string $idToken = null, ?array $pendingLink = null): ServerRequest
     {
         $this->session
             ->method('get')
-            ->willReturnCallback(fn(string $key) => $key === 'onelogin_id_token' ? $idToken : null);
+            ->willReturnCallback(fn(string $key) => match ($key) {
+                'onelogin_id_token'     => $idToken,
+                'onelogin_pending_link' => $pendingLink,
+                default                 => null,
+            });
 
         return (new ServerRequest())
             ->withMethod('GET')
@@ -65,6 +69,36 @@ class LogoutHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/goodbye', $response->getHeaderLine('Location'));
+    }
+
+    public function testUserStillOnboardingIsSignedOutOfOneLoginWithThePendingLinksIdToken(): void
+    {
+        $this->oneLoginSignOut
+            ->expects($this->once())
+            ->method('url')
+            ->with('pending.id.token', '/goodbye')
+            ->willReturn('https://oidc.example.com/logout?id_token_hint=pending.id.token');
+
+        $response = $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest(
+            null,
+            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token'],
+        ));
+
+        $this->assertEquals('https://oidc.example.com/logout?id_token_hint=pending.id.token', $response->getHeaderLine('Location'));
+    }
+
+    public function testASignedInUsersIdTokenIsUsedRatherThanALeftoverPendingLink(): void
+    {
+        $this->oneLoginSignOut
+            ->expects($this->once())
+            ->method('url')
+            ->with('session.id.token', '/goodbye')
+            ->willReturn(null);
+
+        $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest(
+            'session.id.token',
+            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token'],
+        ));
     }
 
     public function testRedirectsToRootAndSkipsOneLoginWhenNoConfiguredUrl(): void

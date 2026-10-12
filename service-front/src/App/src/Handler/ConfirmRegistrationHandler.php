@@ -8,6 +8,7 @@ use App\Service\UserDetails as UserService;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
+use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -25,8 +26,13 @@ class ConfirmRegistrationHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // To account for safelinks and similar activating accounts before page render
-        if ($request->getMethod() === RequestMethodInterface::METHOD_HEAD) {
+        // Safelinks and similar prefetch the emailed link, which would otherwise consume the
+        // activation before the person ever opens it. The route is GET-only, so a HEAD is
+        // re-dispatched as GET by ImplicitHeadMiddleware and $request->getMethod() reports
+        // 'GET' here — the original verb survives only in this attribute.
+        $attribute = ImplicitHeadMiddleware::FORWARDED_HTTP_METHOD_ATTRIBUTE;
+
+        if ($request->getAttribute($attribute) === RequestMethodInterface::METHOD_HEAD) {
             return new Response();
         }
 
@@ -50,9 +56,11 @@ class ConfirmRegistrationHandler implements RequestHandlerInterface
         }
 
         // Activate the account
-        $success = $this->userService->activateAccount($token);
+        $result = $this->userService->activateAccount($token);
 
-        if (!$success) {
+        if ($result === 'already-activated') {
+            $data['error'] = 'already-activated';
+        } elseif ($result !== true) {
             $data['error'] = 'account-missing';
         }
 

@@ -1,0 +1,19 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Which best describes you?' %}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set form = formErrorTextExchange(form, {
+    'userType': {
+        'isEmpty': 'Select which best describes you',
+    },
+}) %}
+
+{% block content %}
+  {% include 'application/authenticated/onboarding/partials/radio-question.twig' with {
+    element: form.get('userType'),
+    heading: pageTitle,
+    description: 'We need to know how you make LPAs so we can set up your account.',
+    continueCy: 'which-best-describes-you-continue',
+  } %}
+{% endblock content %}

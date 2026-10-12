@@ -6,6 +6,7 @@ namespace AppTest\Service\OneLogin;
 
 use App\Service\ApiClient\Client as ApiClient;
 use App\Service\OneLogin\OneLoginService;
+use MakeShared\OneLogin\UserType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -264,13 +265,14 @@ class OneLoginServiceTest extends TestCase
                     'password'      => 'sup3r-secret', //pragma: allowlist secret
                     'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
                     'oneLoginEmail' => 'joe.bloggs@gmail.com',
+                    'userType'      => 'professional',
                 ],
                 [],
                 true,
             )
             ->willReturn(['linked' => true, 'identity' => $identity]);
 
-        $result = $this->service->linkExistingAccount('user@example.com', 'sup3r-secret', 'urn:fdc:gov.uk:2022:new', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('user@example.com', 'sup3r-secret', 'urn:fdc:gov.uk:2022:new', 'joe.bloggs@gmail.com', UserType::Professional);
 
         $this->assertTrue($result['linked']);
         $this->assertSame($identity, $result['identity'] ?? null);
@@ -280,7 +282,7 @@ class OneLoginServiceTest extends TestCase
     {
         $this->apiClient->method('httpPost')->willReturn(['linked' => false, 'reason' => 'already-linked']);
 
-        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $result = $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
 
         $this->assertFalse($result['linked']);
         $this->assertSame('already-linked', $result['reason'] ?? null);
@@ -293,7 +295,7 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com');
+        $this->service->linkExistingAccount('user@example.com', 'pw', 'urn:x', 'joe.bloggs@gmail.com', UserType::Lay);
     }
 
     public function testCreateAndLinkAccountPostsSubAndReturnsIdentity(): void
@@ -314,13 +316,20 @@ class OneLoginServiceTest extends TestCase
                 [
                     'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
                     'oneLoginEmail' => 'brand.new.user@gmail.com',
+                    'userType'      => 'lay',
+                    'profile'       => ['name' => ['title' => 'Mr', 'first' => 'Joe', 'last' => 'Bloggs']],
                 ],
                 [],
                 true,
             )
             ->willReturn($identity);
 
-        $result = $this->service->createAndLinkAccount('urn:fdc:gov.uk:2022:new', 'brand.new.user@gmail.com');
+        $result = $this->service->createAndLinkAccount(
+            'urn:fdc:gov.uk:2022:new',
+            'brand.new.user@gmail.com',
+            UserType::Lay,
+            ['name' => ['title' => 'Mr', 'first' => 'Joe', 'last' => 'Bloggs']],
+        );
 
         $this->assertSame($identity, $result);
     }
@@ -331,7 +340,7 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->createAndLinkAccount('urn:x', 'someone@example.com');
+        $this->service->createAndLinkAccount('urn:x', 'someone@example.com', UserType::Lay, []);
     }
 
     // ─── logoutUrl() ──────────────────────────────────────────────────────

@@ -380,7 +380,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         );
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/link-or-create-account', $response->getHeaderLine('Location'));
+        $this->assertSame('/which-best-describes-you', $response->getHeaderLine('Location'));
     }
 
     public function testUnlinkedAccountCarriesPreAuthUrlAcrossTheClear(): void
