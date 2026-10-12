@@ -1,6 +1,6 @@
 FROM composer:2.10.1@sha256:7725eb4545c438629ae8bde3ef0bb9a5038ef566126ad878442a69007242d267 AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:03752771e43c05ae599d1e5856b583b669c1f51763ffbd02a19048ae235e4259 AS base
+FROM php:8.4-fpm-alpine3.23@sha256:b2a757dc9d3c05a6a97c05cacd26b981b6225e65cc78da6ccb2ea0a8b4b6196b AS base
 
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools

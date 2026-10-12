@@ -9,6 +9,10 @@
 {% set email = form.get('email') %}
 {% set permissions = form.get('permissions') %}
 
+{% block backLink %}
+  <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block content %}
   <div class="govuk-grid-row">
     {{ macros.formErrorSummary(error, form) }}

@@ -2,6 +2,7 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
+use Laminas\Db\Sql\Predicate\IsNull;
 use Mockery\MockInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Laminas\Db\Adapter\Driver\Pdo\Statement;
@@ -192,7 +193,7 @@ class UserDataTest extends MockeryTestCase
         $selectMock = Mockery::mock(Select::class);
         $statementMock = Mockery::mock(StatementInterface::class);
         $resultMock = $resultMock = Helpers::makePdoResultMock([
-            [],
+            ['total' => 1],
         ]);
 
         // expectations
@@ -262,29 +263,23 @@ class UserDataTest extends MockeryTestCase
             )
             ->andReturn($selectMock);
 
-        // key test: is the ILIKE statement case insensitive?
+        // key test: is the ILIKE statement case insensitive, and does it also match
+        // against the One Login email?
         $selectMock->shouldReceive('where')
             ->with(Mockery::on(function ($expression) use ($query) {
-                return $expression->getExpression() == "users.identity ILIKE %{$query}%";
+                return $expression->getExpression() ==
+                    "users.identity ILIKE %{$query}% OR users.one_login_email ILIKE %{$query}%";
             }))
             ->andReturn($selectMock);
 
         $selectMock->shouldReceive('columns')
-            ->with([
-                'id',
-                'identity',
-                'active',
-                'created',
-                'updated',
-                'deleted',
-                'activated',
-                'last_login',
-                'last_failed_login',
-                'failed_login_attempts',
-                'inactivity_flags',
-                'one_login_sub',
-                'one_login_email',
-            ])
+            ->with(Mockery::on(function ($columns) {
+                $countExpression = $columns['total'];
+
+                return $columns[0] === 'id' &&
+                    is_a($countExpression, SqlExpression::class) &&
+                    $countExpression->getExpression() === 'COUNT(*) OVER()';
+            }))
             ->andReturn($selectMock);
 
         $selectMock->shouldReceive('order')
@@ -307,9 +302,10 @@ class UserDataTest extends MockeryTestCase
 
         // test method
         $userData = new UserData($dbWrapperMock);
-        $actual = iterator_to_array($userData->matchUsers($query, ['offset' => $offset, 'limit' => $limit]));
+        $actual = $userData->matchUsers($query, ['offset' => $offset, 'limit' => $limit]);
 
-        $this->assertEquals(1, count($actual));
+        $this->assertEquals(1, count($actual['results']));
+        $this->assertEquals(1, $actual['total']);
     }
 
     public function testCreate()
@@ -1052,12 +1048,15 @@ class UserDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         $updateMock = $this->makeUpdateMock($dbWrapperMock);
-        $updateMock->shouldReceive('where')->with(['activation_token' => $token]);
+        $updateMock->shouldReceive('where')->with(Mockery::on(function ($where) use ($token) {
+            return $where['activation_token'] === $token
+                && $where[0] instanceof IsNull;
+        }));
         $updateMock->shouldReceive('set')->with(Mockery::on(function ($set) {
             return Helpers::isGmDateString($set['activated']) &&
                 Helpers::isGmDateString($set['updated']) &&
                 $set['active'] &&
-                is_null($set['activation_token']);
+                !array_key_exists('activation_token', $set);
         }));
 
         // test

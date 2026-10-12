@@ -1,5 +1,5 @@
 locals {
-  enable_all_alarms = contains(["preproduction", "production"], var.environment_name)
+  enable_all_alarms = contains(["demo", "preproduction", "production"], var.environment_name)
 
   # For non-preprod/prod environments, set this to one alarm resource name to test it.
   # Example: test_alarm = "front_4xx_anomaly"
@@ -26,7 +26,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.front_component_tag
-  threshold                 = 1
+  threshold                 = 0
   treat_missing_data        = "notBreaching"
 }
 
@@ -50,7 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.admin_component_tag
-  threshold                 = 2
+  threshold                 = 0
   treat_missing_data        = "notBreaching"
 }
 
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   period                    = 60
   statistic                 = "Sum"
-  threshold                 = 2
+  threshold                 = 0
   treat_missing_data        = "notBreaching"
 }
 
@@ -128,7 +128,7 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 
   metric_query {
     id          = "ad1"
-    expression  = "ANOMALY_DETECTION_BAND(m1, 4)"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
     label       = "4XX anomaly detection band"
     return_data = true
   }

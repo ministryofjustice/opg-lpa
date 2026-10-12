@@ -52,6 +52,10 @@ class LinkOrCreateAccountHandler implements RequestHandlerInterface
             return new RedirectResponse('/login');
         }
 
+        if ($this->sessionManager->getOnboarding($session)->userType === null) {
+            return new RedirectResponse('/which-best-describes-you');
+        }
+
         /** @var LinkOrCreateAccountForm $form */
         $form = $this->formElementManager->get(LinkOrCreateAccountForm::class);
 

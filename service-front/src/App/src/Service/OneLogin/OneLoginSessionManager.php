@@ -11,6 +11,8 @@ class OneLoginSessionManager
 {
     private const string SESSION_KEY_PENDING_LINK = 'onelogin_pending_link';
 
+    private const string SESSION_KEY_ONBOARDING = 'onelogin_onboarding';
+
     /**
      * Held for the whole signed-in session: it is the id_token_hint One Login needs to sign the
      * user out, and its presence is what marks the session as a One Login sign-in.
@@ -53,6 +55,22 @@ class OneLoginSessionManager
     public function clearPendingLink(SessionInterface $session): void
     {
         $session->unset(self::SESSION_KEY_PENDING_LINK);
+    }
+
+    /**
+     * The onboarding answers given so far. Starting the Make session clears them.
+     */
+    public function getOnboarding(SessionInterface $session): OnboardingState
+    {
+        /** @var mixed $onboarding */
+        $onboarding = $session->get(self::SESSION_KEY_ONBOARDING);
+
+        return is_array($onboarding) ? OnboardingState::fromArray($onboarding) : new OnboardingState();
+    }
+
+    public function saveOnboarding(SessionInterface $session, OnboardingState $onboarding): void
+    {
+        $session->set(self::SESSION_KEY_ONBOARDING, $onboarding->toArray());
     }
 
     /**

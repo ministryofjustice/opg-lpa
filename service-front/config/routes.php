@@ -20,6 +20,9 @@ use App\Handler\FeedbackHandler;
 use App\Handler\FeedbackThanksHandler;
 use App\Handler\ForgotPasswordHandler;
 use App\Handler\GuidanceHandler;
+use App\Handler\HealthCheckHandler;
+use App\Handler\HealthCheckDependenciesHandler;
+use App\Handler\HealthCheckServiceHandler;
 use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\InviteMemberHandler;
@@ -98,7 +101,6 @@ use App\Handler\SessionKeepAliveHandler;
 use App\Handler\SessionSetExpiryHandler;
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Handler\SharedSpaceHandler;
-use App\Handler\SharedSpaceImportFailedHandler;
 use App\Handler\StatsHandler;
 use App\Handler\StatusesHandler;
 use App\Handler\TermsChangedHandler;
@@ -106,6 +108,7 @@ use App\Handler\TermsHandler;
 use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
+use App\Handler\WhichBestDescribesYouHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -113,6 +116,12 @@ use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+    $app->get('/health-check', HealthCheckHandler::class, 'health-check')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/service', HealthCheckServiceHandler::class, 'health-check.service')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check/dependencies', HealthCheckDependenciesHandler::class, 'health-check.dependencies')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping', PingHandler::class, 'ping')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/json', PingHandlerJson::class, 'ping/json')
@@ -176,6 +185,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->get('/auth/redirect', OneLoginCallbackHandler::class, 'auth.onelogin.callback')
             ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/which-best-describes-you', WhichBestDescribesYouHandler::class, ['GET', 'POST'], 'which-best-describes-you')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
@@ -190,7 +201,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space');
+        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
         $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
@@ -208,8 +219,6 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         );
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
-        $app->get('/shared-space/import-failed', SharedSpaceImportFailedHandler::class, 'shared-space.import-failed');
-        $app->route('/shared-space/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'shared-space.forgot-password');
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {

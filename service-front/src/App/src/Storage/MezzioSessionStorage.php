@@ -30,6 +30,11 @@ class MezzioSessionStorage implements StorageInterface
         $this->session = $session;
     }
 
+    public function session(): ?SessionInterface
+    {
+        return $this->session;
+    }
+
     public function isEmpty(): bool
     {
         return $this->session === null || !$this->session->has(self::SESSION_KEY);

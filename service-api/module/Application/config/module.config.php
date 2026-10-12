@@ -272,23 +272,6 @@ return [
                                     ],
                                 ],
                             ],
-                            'import' => [
-                                'type' => 'Segment',
-                                'options' => [
-                                    'route'    => '/import',
-                                ],
-                                'child_routes'  => [
-                                    'post' => [
-                                        'type'    => 'Method',
-                                        'options' => [
-                                            'verb'     => 'post',
-                                            'defaults' => [
-                                                'action' => 'import',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
                         ],
                     ],
 
@@ -367,6 +350,16 @@ return [
                                 ],
                             ],
 
+                            'match-shared-spaces' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/match-shared-spaces',
+                                    'defaults' => [
+                                        'action' => 'matchSharedSpaces',
+                                    ],
+                                ],
+                            ],
+
                             'match-users' => [
                                 'type'    => 'Segment',
                                 'options' => [
@@ -386,6 +379,19 @@ return [
                                     ],
                                     'defaults' => [
                                         'action' => 'sharedSpaceLpas',
+                                    ],
+                                ],
+                            ],
+
+                            'shared-space-members' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/shared-space/:sharedSpaceId/members',
+                                    'constraints' => [
+                                        'sharedSpaceId'  => '[a-zA-Z0-9]+',
+                                    ],
+                                    'defaults' => [
+                                        'action' => 'sharedSpaceMembers',
                                     ],
                                 ],
                             ],

@@ -6,6 +6,10 @@
 
 {%- set pageTitle = 'Change your password' -%}
 
+{% block backLink %}
+  <a href="{{ url('user/about-you') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block content %}
 
 {% import "application/macros.twig" as macros %}

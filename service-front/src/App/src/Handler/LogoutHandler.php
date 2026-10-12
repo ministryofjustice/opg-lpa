@@ -29,7 +29,8 @@ class LogoutHandler implements RequestHandlerInterface
         $idToken = null;
 
         if ($session instanceof SessionInterface) {
-            $idToken = $this->oneLoginSessionManager->getIdToken($session);
+            $idToken = $this->oneLoginSessionManager->getIdToken($session)
+                ?? $this->oneLoginSessionManager->getPendingLink($session)?->idToken;
 
             $session->clear();
             $session->regenerate();

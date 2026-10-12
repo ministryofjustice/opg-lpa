@@ -11,6 +11,7 @@ use App\Model\FormFlowChecker;
 use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
+use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\ConcatNamesTrait;
@@ -45,6 +46,7 @@ class LegacyCompatExtension extends AbstractExtension
         private readonly UrlHelper $urlHelper,
         private readonly FlashMessagesHolder $flashMessagesHolder,
         private readonly SystemMessage $systemMessage,
+        private readonly OneLoginSessionManager $oneLoginSessionManager,
     ) {
     }
 
@@ -192,6 +194,7 @@ class LegacyCompatExtension extends AbstractExtension
         $identity = $this->sessionStorage->read();
         $userLoggedIn = $identity instanceof User;
         $lastLoginAt = $userLoggedIn ? $identity->lastLogin() : null;
+        $inSharedSpace = Feature::SharedSpace->isEnabled() && $userLoggedIn && $identity->inSharedSpace();
 
         $name = '';
         $hasOneOrMoreLPAs = false;
@@ -205,27 +208,47 @@ class LegacyCompatExtension extends AbstractExtension
             $hasOneOrMoreLPAs = $userDetails->getNumberOfLpas() > 0;
         }
 
+        $parentRoute = match (true) {
+            ( $currentRoute == 'shared-space.dashboard'
+              || $currentRoute == 'user/dashboard' || str_starts_with($currentRoute, 'user/dashboard/')
+              || $currentRoute === 'lpa-type-no-id' || str_starts_with($currentRoute, 'lpa/')
+            ) => $inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
+
+            $currentRoute === 'shared-space' || str_starts_with($currentRoute, 'shared-space.') => 'shared-space',
+
+            str_starts_with($currentRoute, 'user/') => 'user/about-you',
+
+            default => $currentRoute,
+        };
+
         return $env->render('application/partials/nav.twig', [
             'nav' => (object) [
-                'userLoggedIn'     => $userLoggedIn,
-                'name'             => $name,
-                'lastLoginAt'      => $lastLoginAt,
-                'route'            => $currentRoute,
-                'hasOneOrMoreLPAs' => $hasOneOrMoreLPAs,
-                'inSharedSpace'    => $userLoggedIn && $identity->inSharedSpace(),
+                'userLoggedIn'       => $userLoggedIn,
+                'name'               => $name,
+                'lastLoginAt'        => $lastLoginAt,
+                'route'              => $currentRoute,
+                'parentRoute'        => $parentRoute,
+                'hasOneOrMoreLPAs'   => $hasOneOrMoreLPAs,
+                'inSharedSpace'      => $inSharedSpace,
                 'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
                 'showOneLoginHeader' => $this->showOneLoginHeader(),
             ],
         ]);
     }
 
-    /**
-     * Signed-in users get the GOV.UK One Login service header, which carries the sign-out link,
-     * whenever One Login is enabled.
-     */
     public function showOneLoginHeader(): bool
     {
-        return Feature::OneLogin->isEnabled() && $this->sessionStorage->read() instanceof User;
+        if (!Feature::OneLogin->isEnabled()) {
+            return false;
+        }
+
+        if ($this->sessionStorage->read() instanceof User) {
+            return true;
+        }
+
+        $session = $this->sessionStorage->session();
+
+        return $session !== null && $this->oneLoginSessionManager->getPendingLink($session) !== null;
     }
 
     /**

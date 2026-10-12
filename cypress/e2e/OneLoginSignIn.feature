@@ -20,17 +20,18 @@ Feature: One Login Sign In
     And I am on the mock One Login page
 
   @RequiresMockOneLogin
-  Scenario: Signing in through One Login reaches the link-or-create-account page
+  Scenario: Signing in through One Login as a new user starts onboarding
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
-    And I should be on "/link-or-create-account"
+    And I am asked which best describes me
 
   @RequiresMockOneLogin
   Scenario: An unlinked user links their existing Make account and reaches the dashboard
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I choose to link an existing Make account
     And I submit the form
@@ -43,6 +44,7 @@ Feature: One Login Sign In
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I choose to create a new Make account
     And I submit the form
@@ -66,6 +68,7 @@ Feature: One Login Sign In
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I choose to link an existing Make account
     And I submit the form
@@ -82,6 +85,7 @@ Feature: One Login Sign In
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I choose to link an existing Make account
     And I submit the form
@@ -96,6 +100,7 @@ Feature: One Login Sign In
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
     And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
     And I should be on "/link-or-create-account"
     And I choose to link an existing Make account
     And I submit the form

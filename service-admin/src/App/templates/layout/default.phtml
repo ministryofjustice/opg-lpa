@@ -79,14 +79,9 @@
                                     <strong class="govuk-service-navigation__active-fallback">Feedback</strong>
                                 </a>
                             </li>
-                            <li class="govuk-service-navigation__item<?php if ($this->url('user.find') === $currentPath) { ?> govuk-service-navigation__item--active<?php } ?>">
-                                <a class="govuk-service-navigation__link" data-cy="find-users-link" href="<?= $this->url('user.find') ?>">
-                                    Find Users
-                                </a>
-                            </li>
-                            <li class="govuk-service-navigation__item<?php if ($this->url('user.search') === $currentPath) { ?> govuk-service-navigation__item--active<?php } ?>">
-                                <a class="govuk-service-navigation__link" data-cy="user-search-link" href="<?= $this->url('user.search') ?>">
-                                    User Search
+                            <li class="govuk-service-navigation__item<?php if ($this->url('search') === $currentPath) { ?> govuk-service-navigation__item--active<?php } ?>">
+                                <a class="govuk-service-navigation__link" data-cy="user-search-link" href="<?= $this->url('search') ?>">
+                                    Search
                                 </a>
                             </li>
                         </ul>

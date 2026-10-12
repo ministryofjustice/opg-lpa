@@ -124,15 +124,35 @@ class ServiceTest extends MockeryTestCase
      * @throws ApiProblemException
      * @throws Exception
      */
-    public function testGetStatuses500()
+    public function testGetStatuses500DegradesInsteadOfThrowing()
     {
-        $this->expectException(ApiProblemException::class);
-
         $this->setUpSigning();
 
         $this->setUpRequest(500, '{}');
 
-        $this->service->getStatuses([1000000000]);
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => null
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $this->service->getStatuses([1000000000]));
+    }
+
+    public function testGetStatusesKeepsHealthyIdsWhenOneFails()
+    {
+        $this->setUpSigning(2);
+        $this->setUpRequest(503, '{}');
+        $this->setUpRequest();
+
+        $statusResult = $this->service->getStatuses([1000000000, 1000000001]);
+
+        $this->assertEquals(['deleted' => false, 'response' => null], $statusResult[1000000000]);
+        $this->assertEquals(
+            ['deleted' => false, 'response' => ['status' => 'Received']],
+            $statusResult[1000000001],
+        );
     }
 
     /**
@@ -191,7 +211,12 @@ class ServiceTest extends MockeryTestCase
 
         $statusResultArray  = $this->service->getStatuses([1000000000]);
 
-        $expectedResult = [];
+        $expectedResult = [
+            1000000000 => [
+                'deleted'   => false,
+                'response'  => null
+            ]
+        ];
 
         $this->assertEquals($expectedResult, $statusResultArray);
     }

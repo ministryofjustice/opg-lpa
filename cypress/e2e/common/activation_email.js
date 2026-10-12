@@ -16,9 +16,3 @@ Then(`I use activation email for {string} to visit the link`, (name) => {
 Then(`I use password reset email for {string} to visit the link`, (name) => {
   openEmailAndVisitLink('passwordreset', Cypress.env(name + '-user'));
 });
-
-Then(`I use shared space password reset email for {string} to visit the link`, (name) => {
-  cy.get(`@${name}`).then(({ email }) => {
-    openEmailAndVisitLink('sharedspacepasswordreset', email);
-  });
-});

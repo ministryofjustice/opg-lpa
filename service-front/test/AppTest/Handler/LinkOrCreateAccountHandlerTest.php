@@ -65,11 +65,13 @@ class LinkOrCreateAccountHandlerTest extends TestCase
         array $postData = [],
         ?array $pendingLink = self::PENDING_LINK,
         ?string $preAuthUrl = null,
+        ?string $userType = 'lay',
     ): ServerRequest {
         $this->session
             ->method('get')
             ->willReturnCallback(fn(string $key) => match ($key) {
                 'onelogin_pending_link' => $pendingLink,
+                'onelogin_onboarding'   => ['userType' => $userType],
                 'pre_auth_request_url'  => $preAuthUrl,
                 default                 => null,
             });
@@ -112,6 +114,16 @@ class LinkOrCreateAccountHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
+    }
+
+    public function testUserWhoHasNotSaidWhichBestDescribesThemIsAskedFirst(): void
+    {
+        $this->oneLoginService->expects($this->never())->method('createAndLinkAccount');
+
+        $response = $this->handler->handle($this->createRequest('GET', [], self::PENDING_LINK, null, null));
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/which-best-describes-you', $response->getHeaderLine('Location'));
     }
 
     public function testPostWithInvalidFormRendersForm(): void

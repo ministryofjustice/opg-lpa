@@ -13,6 +13,10 @@
 
 {% endblock %}
 
+{% block backLink %}
+  <a href="{{ url('user/dashboard') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
 {% block content %}
 
     {% if status != 'completed' %}
