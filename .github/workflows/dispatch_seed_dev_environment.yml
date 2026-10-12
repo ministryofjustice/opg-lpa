@@ -1,0 +1,43 @@
+name: "Seed development environment"
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: "Development account environment to seed with data"
+        required: true
+        type: string
+
+permissions:
+  actions: none
+  checks: none
+  contents: read # zizmor: ignore[excessive-permissions]
+  deployments: none
+  id-token: write # zizmor: ignore[excessive-permissions]
+  issues: none
+  packages: none
+  pull-requests: none
+  repository-projects: none
+  security-events: none # zizmor: ignore[excessive-permissions]
+  statuses: none
+
+jobs:
+  seed_environment:
+    name: Output workflow variables
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Seeding ${{ inputs.target_environment }}
+        id: seeding_env
+        run: |
+          echo "Seeding ${TARGET_ENVIRONMENT}..."
+        env:
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
