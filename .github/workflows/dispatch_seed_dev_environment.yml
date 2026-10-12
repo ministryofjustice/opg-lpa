@@ -26,13 +26,13 @@ permissions:
   statuses: none
 
 jobs:
-  seed_environmetn:
+  seed_environment:
     name: Seed ${{ inputs.target_environment }} environment
     runs-on: ubuntu-latest
     steps:
       - name: Don't run on production
         run: |
-          if ["$TARGET_ENVIRONMENT" == "test"]; then
+          if [${TARGET_ENVIRONMENT} == "test"]; then
             echo "Cannot run on production"
             exit 1
           fi
