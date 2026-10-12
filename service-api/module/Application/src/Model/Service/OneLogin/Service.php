@@ -383,7 +383,7 @@ class Service extends AbstractService
             return $this->rejectLink($this->mapAuthFailure($authResult));
         }
 
-        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType->value);
+        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType === UserType::Professional);
 
         $this->getLogger()->info('auth.onelogin.link_success', [
             'user_id' => $authResult['userId'],
@@ -425,7 +425,7 @@ class Service extends AbstractService
             $userId = bin2hex($generator(16));
 
             $created = $this->getUserRepository()->create($userId, [
-                'user_type'             => $userType->value,
+                'is_professional'       => $userType === UserType::Professional,
                 'profile'               => $this->validProfile($userId, $now, $profile),
                 'identity'              => $identity,
                 'password_hash'         => null,

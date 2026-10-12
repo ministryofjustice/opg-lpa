@@ -386,8 +386,8 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             $data['one_login_email'] = $details['one_login_email'];
         }
 
-        if (isset($details['user_type'])) {
-            $data['user_type'] = $details['user_type'];
+        if (isset($details['is_professional'])) {
+            $data['is_professional'] = $details['is_professional'];
         }
 
         if (isset($details['profile'])) {
@@ -853,16 +853,16 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      * @param string $userId
      * @param string $oneLoginSub
      * @param string $oneLoginEmail Email supplied by One Login (contact address).
-     * @param string $userType How the user makes LPAs, given during One Login onboarding.
+     * @param bool $isProfessional Whether the user makes LPAs professionally, given during One Login onboarding.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, string $userType): void
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, bool $isProfessional): void
     {
         $this->updateRow(
             ['id' => $userId],
             [
                 'one_login_sub' => $oneLoginSub,
                 'one_login_email' => $oneLoginEmail,
-                'user_type' => $userType,
+                'is_professional' => $isProfessional,
                 'password_hash' => null,
                 'updated' => gmdate(DbWrapper::TIME_FORMAT),
             ]

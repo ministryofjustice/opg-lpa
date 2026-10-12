@@ -18,7 +18,7 @@ use RuntimeException;
  */
 trait OneLoginOnboardingTrait
 {
-    private function onboardingSession(ServerRequestInterface $request): SessionInterface
+    private function getSession(ServerRequestInterface $request): SessionInterface
     {
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 

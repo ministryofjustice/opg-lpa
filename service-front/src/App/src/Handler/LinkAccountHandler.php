@@ -41,7 +41,7 @@ class LinkAccountHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $session     = $this->onboardingSession($request);
+        $session     = $this->getSession($request);
         $pendingLink = $this->sessionManager->getPendingLink($session);
 
         if ($pendingLink === null) {

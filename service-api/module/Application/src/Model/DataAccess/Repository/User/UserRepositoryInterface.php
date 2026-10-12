@@ -150,9 +150,9 @@ interface UserRepositoryInterface
 
     /**
      * Links a user to a GOV.UK One Login identity, storing the subject id, the
-     * One Login email and the user type given during onboarding.
+     * One Login email and whether they make LPAs professionally.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, string $userType): void;
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, bool $isProfessional): void;
 
     /**
      * Refreshes the One Login email held for an already-linked account.

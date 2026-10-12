@@ -648,7 +648,7 @@ class ServiceTest extends MockeryTestCase
             ]);
 
         $this->userRepository->shouldReceive('setOneLoginSub')
-            ->once()->with('user-1', $sub, 'joe.bloggs@gmail.com', 'lay');
+            ->once()->with('user-1', $sub, 'joe.bloggs@gmail.com', false);
 
         $result = $this->service->linkExistingAccount('alice@example.com', 'correct-horse', $sub, 'joe.bloggs@gmail.com', UserType::Lay);
 
@@ -763,7 +763,7 @@ class ServiceTest extends MockeryTestCase
                     && $details['failed_login_attempts'] === 0
                     && $details['one_login_sub'] === $sub
                     && $details['one_login_email'] === $email
-                    && $details['user_type'] === 'professional'
+                    && $details['is_professional'] === true
                     && $details['profile'] instanceof ProfileUserModel
                     && $details['profile']->getName()?->getFirst() === 'Joe';
             }))

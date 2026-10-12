@@ -37,7 +37,7 @@ class ExistingAccountHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $session = $this->onboardingSession($request);
+        $session = $this->getSession($request);
 
         if ($this->sessionManager->getPendingLink($session) === null) {
             return $this->signInAgain();

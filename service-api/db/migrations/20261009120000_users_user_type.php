@@ -9,7 +9,7 @@ class UsersUserType extends AbstractMigration
         $users = $this->table('users');
 
         $users
-            ->addColumn('user_type', 'text', ['null' => true])
+            ->addColumn('is_professional', 'boolean', ['null' => false, 'default' => false])
             ->update();
     }
 }
