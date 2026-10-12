@@ -27,9 +27,18 @@ permissions:
 
 jobs:
   seed_environmetn:
-    name: Get ${{ inputs.target_environment }} environment configuration
+    name: Seed ${{ inputs.target_environment }} environment
     runs-on: ubuntu-latest
     steps:
+      - name: Don't run on production
+        working-directory: terraform/environment
+        run: |
+          if [${TARGET_ENVIRONMENT} == "production"]; then
+            echo "Cannot run on production"
+            exit 1
+          fi
+        env:
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
