@@ -63,7 +63,7 @@ jobs:
         run: |
           terraform init
           terraform workspace select ${TARGET_ENVIRONMENT}
-          terraform plan -target local_file.environment_pipeline_tasks_config
+          terraform apply -target local_file.environment_pipeline_tasks_config
         env:
           TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
           TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
