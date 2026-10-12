@@ -9,3 +9,7 @@ output "load_balancer_security_group" {
 output "ecs_service" {
   value = aws_ecs_service.mock_onelogin
 }
+
+output "mock_onelogin_url" {
+  value = local.mock_onelogin_url
+}

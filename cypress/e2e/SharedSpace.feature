@@ -9,14 +9,12 @@ Feature: Shared Space
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     And I see "Shared space" in the title
-    When I click element marked "Create shared space"
+    When I click element marked "Create a shared space"
     Then I should be on "/shared-space/make"
     When I type "Example Organisation" into "space-name"
     When I click element marked "Save"
-    Then I should be on "/shared-space/created"
-    And I see a success notification with content "Example Organisation has been successfully created"
-    When I click element marked "Continue"
-    Then I should be on "/shared-space/dashboard"
+    Then I should be on "/shared-space/dashboard?created=success"
+    And I see a success notification with content "Example Organisation has been created"
     And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
@@ -139,12 +137,14 @@ Feature: Shared Space
 
   Scenario: Can join a shared space
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
-    When I log in as the newly created fixture user
+    When I log in through Onelogin as the newly created fixture user
+    And I say I make LPAs for "myself, family or friends"
+    And I create a new Make account
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
     And I should be on "/shared-space"
     And I see "Shared space" in the title
-    And I click link "Join shared space"
+    And I click link "Join a shared space using a code"
     And I should be on "/shared-space/join"
     And I type "Example Organisation" into field labelled "Shared space name"
     And I type the access code into field labelled "Your shared space access code"
@@ -153,6 +153,22 @@ Feature: Shared Space
     And I see a success notification with content "Shared Space joined"
     And I click element marked "Shared space"
     And I cannot see any invites
+
+  Scenario: Cannot join a shared space when invite email does not match one login email
+    Given I have been invited to a shared space called "Example Organisation" with 1 LPA
+    When I log in through Onelogin as a random user
+    And I say I make LPAs for "myself, family or friends"
+    And I should be on "/link-or-create-account"
+    And I create a new Make account
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    And I see "Shared space" in the title
+    When I click link "Join a shared space using a code"
+    Then I should be on "/shared-space/join"
+    When I type "Example Organisation" into field labelled "Shared space name"
+    And I type the access code into field labelled "Your shared space access code"
+    And I click element marked "Continue"
+    Then I see "No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address." in the page text
 
   Scenario: Can delete a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -177,21 +193,6 @@ Feature: Shared Space
     Then I should be on "/login"
     Then I should not be logged in
 
-  Scenario: Can ask for password reset when importing
-    Given I create a new user stored as "userToImport" with 5 LPAs
-    And I create a new user with 5 LPAs that belongs to a shared space called "Example Organisation"
-    When I log in as the newly created fixture user
-    Then I should be on "/shared-space/dashboard"
-    When I click element marked "Shared space"
-    Then I should be on "/shared-space"
-    When I click link "Import LPAs from existing account"
-    When I click link "Forgotten your password?"
-    Then I should be on "/shared-space/forgot-password"
-    Then I enter the email of "userToImport"
-    Then I submit the form
-    Then I should be on "/shared-space/forgot-password"
-    Then I see "Thank you" in the page text
-
   Scenario: Non-admin members cannot manage shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is a "member"
@@ -202,7 +203,6 @@ Feature: Shared Space
     And I see "View Shared Space" in the page text
     And I cannot see any links to manage members
 
-  @only
   Scenario: Deleting the last member of a shared space deletes the shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user

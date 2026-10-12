@@ -270,13 +270,13 @@ class SharedSpaceService
         return true;
     }
 
-    public function join(string $sharedSpaceName, string $accessCode): string
+    public function join(string $sharedSpaceName, string $accessCode, string $userEmail): string
     {
         try {
             /** @var array{sharedSpaceId: string} $response */
             $response = $this->client->httpPost(
                 '/v2/shared-space/join',
-                ['sharedSpaceName' => $sharedSpaceName, 'accessCode' => $accessCode],
+                ['sharedSpaceName' => $sharedSpaceName, 'accessCode' => $accessCode, 'email' => $userEmail],
             );
         } catch (Throwable $e) {
             $this->logger->warning('Join shared space failed', [

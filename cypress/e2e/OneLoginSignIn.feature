@@ -11,35 +11,19 @@ Feature: One Login Sign In
   Scenario: The login page offers GOV.UK One Login
     Then I can find "onelogin-signin-button" and it is visible
 
-  Scenario: Starting sign in redirects to the One Login authorize endpoint
-    Then starting One Login sign in redirects to the authorize endpoint
-
-  @RequiresMockOneLogin
-  Scenario: Continuing from the login page goes straight to One Login
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-
-  @RequiresMockOneLogin
-  Scenario: Signing in through One Login as a new user starts onboarding
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
-    And I am asked which best describes me
-
-  @RequiresMockOneLogin
   Scenario: An unlinked user links their existing Make account and reaches the dashboard
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
+    Given I create a new user with 1 LPA
+    When I log in through Onelogin as a random user
     And I say I make LPAs for "myself, family or friends"
-    And I should be on "/link-or-create-account"
-    And I choose to link an existing Make account
-    And I submit the form
-    And I should be on "/link-account"
-    And I link the "link" Make account
-    And I am taken to the dashboard page
+    Then I should be on "/link-or-create-account"
 
-  @RequiresMockOneLogin
+    When I choose to link an existing Make account
+    And I submit the form
+    Then I should be on "/link-account"
+
+    When I link the newly created fixture users Make account
+    Then I am taken to the dashboard page
+
   Scenario: An unlinked user chooses to create a new Make account
     Then I click "onelogin-signin-button"
     And I am on the mock One Login page
@@ -63,61 +47,54 @@ Feature: One Login Sign In
     And If I am on dashboard I click to create lpa
     Then I am taken to the lpa type page
 
-  @RequiresMockOneLogin
   Scenario: An unlinked user entering incorrect credentials is advised and can retry
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
+    Given I create a new user with 1 LPA
+    When I log in through Onelogin as a random user
     And I say I make LPAs for "myself, family or friends"
-    And I should be on "/link-or-create-account"
-    And I choose to link an existing Make account
-    And I submit the form
-    And I should be on "/link-account"
-    And I attempt to link the "retry" Make account with an incorrect password
-    And I should be on "/link-account"
-    And I am advised my Make account credentials were not recognised
-    And I link the "retry" Make account
-    And If I am on dashboard I click to create lpa
-    And I am taken to the lpa type page
+    Then I should be on "/link-or-create-account"
 
-  @RequiresMockOneLogin
-  Scenario: An unlinked user who has forgotten their password can go to reset it from the link page
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
-    And I say I make LPAs for "myself, family or friends"
-    And I should be on "/link-or-create-account"
-    And I choose to link an existing Make account
-    And I submit the form
-    And I should be on "/link-account"
-    And I attempt to link the "forgot" Make account with an incorrect password
+    When I attempt to link the newly created fixture users Make account with an incorrect password
+    Then I should be on "/link-account"
     And I am advised my Make account credentials were not recognised
-    And I choose to reset my Make account password
+
+    When I link the newly created fixture users Make account
+    Then I am taken to the dashboard page
+
+  Scenario: An unlinked user who has forgotten their password can go to reset it from the link page
+    Given I create a new user with 1 LPA
+    When I log in through Onelogin as a random user
+    And I say I make LPAs for "myself, family or friends"
+    Then I should be on "/link-or-create-account"
+
+    When I attempt to link the newly created fixture users Make account with an incorrect password
+    Then I should be on "/link-account"
+    And I am advised my Make account credentials were not recognised
+
+    When I choose to reset my Make account password
     And I should be on "/forgot-password"
 
-  @RequiresMockOneLogin
   Scenario: Being told a Make account cannot be linked returns the user to the link-or-create question
-    Then I click "onelogin-signin-button"
-    And I am on the mock One Login page
-    And I continue through mock One Login
+    Given I create a new user with 1 LPA
+    When I log in through Onelogin as a random user
     And I say I make LPAs for "myself, family or friends"
-    And I should be on "/link-or-create-account"
-    And I choose to link an existing Make account
+    Then I should be on "/link-or-create-account"
+
+    When I choose to link an existing Make account
     And I submit the form
-    And I should be on "/link-account"
-    And I attempt to link a Make account already linked to another One Login
-    And I should be on "/cannot-link-account"
+    Then I should be on "/link-account"
+
+    When I attempt to link a Make account already linked to another One Login
+    Then I should be on "/cannot-link-account"
     And I am advised my account could not be linked
-    And I choose to try again
+
+    When I choose to try again
     And I should be on "/link-or-create-account"
 
-  @RequiresMockOneLogin
   Scenario: Signing out of Make also signs the user out of One Login
     Given I sign in through mock One Login with a new Make account
     When I sign out and am signed out of One Login
     Then I am taken to the post logout url
 
-  @RequiresMockOneLogin
   Scenario: Timing out of Make also signs the user out of One Login, even after a background request
     Given I ignore application exceptions
     And I sign in through mock One Login with a new Make account
@@ -127,12 +104,10 @@ Feature: One Login Sign In
     And I return to "/user/about-you" after timing out and am signed out of One Login
     Then I see "We’ve signed you out" in the page text
 
-  @RequiresMockOneLogin
   Scenario: A password user who signs out is not sent to One Login
     Given I log in as appropriate test user
     Then I sign out without going through One Login
 
-  @RequiresMockOneLogin
   Scenario: A password user who times out is not sent to One Login
     Given I ignore application exceptions
     And I log in as appropriate test user

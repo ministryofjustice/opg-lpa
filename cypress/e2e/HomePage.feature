@@ -32,7 +32,7 @@ Feature: Homepage
   Scenario: Check Response headers are present and correct
     Given I verify that the homepage response contains all the required headers
 
-  @RequiresOneLogin @RequiresMockOneLogin
+  @RequiresOneLogin
   Scenario: Continue on the home page goes straight to One Login
     Given I visit "/home"
     When I click "onelogin-continue-button"

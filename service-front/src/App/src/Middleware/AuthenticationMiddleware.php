@@ -108,7 +108,11 @@ class AuthenticationMiddleware implements MiddlewareInterface
             return null;
         }
 
-        $url = $this->oneLoginSignOut->url($idToken, ($this->redirectUriBuilder)($request->getUri(), $loginUrl));
+        $url = $this->oneLoginSignOut->url(
+            $idToken,
+            ($this->redirectUriBuilder)($request->getUri(), $loginUrl),
+            ($this->redirectUriBuilder)($request->getUri()),
+        );
 
         // Forget the token only once we're sending the user to One Login, so a failure can be
         // retried by a later sign-out and the return trip to the timeout page cannot loop.

@@ -771,13 +771,15 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $userId = 'my-user';
         $sharedSpaceName = 'My space';
         $accessCode = '1234';
+        $email = 'user@example.com';
 
         $this->sharedSpaceService->shouldReceive('join')
-            ->with($userId, $sharedSpaceName, $accessCode);
+            ->with($userId, $sharedSpaceName, $accessCode, $email);
 
         $this->makeRequest(['userId' => $userId], [
             'sharedSpaceName' => $sharedSpaceName,
             'accessCode' => $accessCode,
+            'email' => $email,
         ]);
         $result = $this->controller->joinAction();
 
@@ -789,7 +791,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->sharedSpaceService->shouldReceive('join')
             ->andThrow(new UserAlreadyInSharedSpaceException('my space'));
 
-        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3', 'email' => '4']);
         $result = $this->controller->joinAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
@@ -803,7 +805,7 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->sharedSpaceService->shouldReceive('join')
             ->andThrow(new InviteNotFoundException());
 
-        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3']);
+        $this->makeRequest(['userId' => '1'], ['sharedSpaceName' => '2', 'accessCode' => '3', 'email' => '4']);
         $result = $this->controller->joinAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);

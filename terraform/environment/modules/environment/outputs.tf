@@ -22,6 +22,14 @@ output "admin_load_balancer_sg_id" {
   value = aws_security_group.admin_loadbalancer.id
 }
 
+output "mock_onelogin_load_balancer_sg_id" {
+  value = try(module.mock_onelogin[0].load_balancer_security_group.id, null)
+}
+
+output "mock_onelogin_url" {
+  value = try(module.mock_onelogin[0].mock_onelogin_url, null)
+}
+
 
 output "db_client_security_group_id" {
   value = aws_security_group.rds_client.id

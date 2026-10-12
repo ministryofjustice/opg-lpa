@@ -17,6 +17,10 @@ function detectOneLoginEnabled() {
   });
 }
 
+function oneLoginMockUrl() {
+  return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
+}
+
 Before({ tags: '@RequiresOneLogin' }, function () {
   detectOneLoginEnabled().then((enabled) => {
     if (!enabled) {
@@ -24,14 +28,6 @@ Before({ tags: '@RequiresOneLogin' }, function () {
       this.skip();
     }
   });
-});
-
-Before({ tags: '@RequiresMockOneLogin' }, function () {
-  const baseUrl = Cypress.config('baseUrl') || '';
-  if (!baseUrl.includes('localhost')) {
-    cy.log('Mock One Login only exists locally, skipping');
-    this.skip();
-  }
 });
 
 Then(`I am returned to the appropriate page shown after a password reset`, () => {
@@ -44,23 +40,27 @@ Then(`I am returned to the appropriate page shown after a password reset`, () =>
 
 
 function checkOnMockOneLoginPage() {
-  cy.url().should('include', 'localhost:4549');
+  cy.url().should('include', new URL(oneLoginMockUrl()).host);
   cy.contains('Continue').should('be.visible');
 }
 
+function repairA11yCheckedPagesAfterOrigin() {
+  cy.then(() => {
+    if (!(Cypress.env('a11yCheckedPages') instanceof Set)) {
+      Cypress.env('a11yCheckedPages', new Set());
+    }
+  });
+}
+
 function continueThroughMockOneLogin() {
-  cy.origin('http://localhost:4549', () => {
+  cy.origin(oneLoginMockUrl(), () => {
     cy.contains('button', 'Continue').click();
     cy.wrap(null);
   });
 
   cy.location('origin').should('eq', new URL(Cypress.config('baseUrl')).origin);
 
-  cy.then(() => {
-    if (!(Cypress.env('a11yCheckedPages') instanceof Set)) {
-      Cypress.env('a11yCheckedPages', new Set());
-    }
-  });
+  repairA11yCheckedPagesAfterOrigin();
 }
 
 function chooseToCreateNewMakeAccount() {
@@ -109,6 +109,32 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   checkSignedIn();
 });
 
+When(/I log in through Onelogin as the newly created fixture user/, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.visit('/home')
+    cy.contains('Continue').click();
+
+    cy.origin(oneLoginMockUrl(), { args: { email } }, ({ email }) => {
+      cy.get('input[name="subject"][value="email"]').check();
+      cy.get('#f-email').clear().type(email)
+      cy.contains('Continue').click();
+    });
+
+    repairA11yCheckedPagesAfterOrigin();
+  });
+});
+
+When(/I log in through Onelogin as a random user/, () => {
+  cy.visit('/home')
+  cy.contains('Continue').click();
+
+  cy.origin(oneLoginMockUrl(), () => {
+    cy.contains('Continue').click();
+  });
+
+  repairA11yCheckedPagesAfterOrigin();
+});
+
 Then(
   `the One Login callback shows the problem page for {string}`,
   (queryString) => {
@@ -126,11 +152,14 @@ Then(`I choose to create a new Make account`, chooseToCreateNewMakeAccount);
 
 Then(`I am signed in with my new Make account`, checkSignedIn);
 
-const MOCK_ONELOGIN_LOGOUT = 'http://localhost:4549/logout*';
 const TIMEOUT_PAGE = '/login/timeout';
 
+function mockOneLoginLogoutPattern() {
+  return oneLoginMockUrl() + '/logout*';
+}
+
 function expectOneLoginLogout(navigate, postLogoutRedirectUri) {
-  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+  cy.intercept('GET', mockOneLoginLogoutPattern()).as('oneLoginLogout');
 
   navigate();
 
@@ -153,7 +182,7 @@ Then(`I sign out and am signed out of One Login`, () => {
 });
 
 function expectNoOneLoginLogout(navigate, expectedUrl) {
-  cy.intercept('GET', MOCK_ONELOGIN_LOGOUT).as('oneLoginLogout');
+  cy.intercept('GET', mockOneLoginLogoutPattern()).as('oneLoginLogout');
 
   navigate();
 
@@ -211,9 +240,6 @@ Then(
 );
 
 const ONELOGIN_LINK_ACCOUNTS = {
-  link: 'onelogin_link_email',
-  retry: 'onelogin_retry_email',
-  forgot: 'onelogin_forgot_email',
   'already linked': 'already_linked_email',
   'created through One Login': 'onelogin_created_email',
 };
@@ -225,6 +251,41 @@ function oneLoginLinkEmail(account) {
   }
   return Cypress.env(envKey);
 }
+
+When(`I create a new Make account`, () => {
+  cy.get('input[name="choice"][value="create"]').check();
+  cy.get('main [type="submit"]:visible').click();
+  cy.get('input[name="name-first"]').clear().type('a');
+  cy.get('input[name="name-last"]').clear().type('b');
+  cy.get('input[name="dob-date[day]"]').clear().type('1');
+  cy.get('input[name="dob-date[month]"]').clear().type('1');
+  cy.get('input[name="dob-date[year]"]').clear().type('2000');
+
+  cy.contains('a', 'Enter address manually').click();
+  cy.get('input[name="address-address1"]').clear().type('123 Test Street');
+  cy.get('input[name="address-postcode"]').clear().type('SW1A 1AA');
+
+  cy.contains('button', 'Save and continue').click();
+});
+
+When(`I link the newly created fixture users Make account`, () => {
+  cy.get('@fixtureUser').then(({ email, password }) => {
+    cy.get('input[name="email"]').clear().type(email);
+    cy.get('input[name="password"]').clear().type(password);
+    cy.contains('button', 'Sign in').click();
+  });
+});
+
+When(`I attempt to link the newly created fixture users Make account with an incorrect password`, () => {
+  cy.get('input[name="choice"][value="link"]').check();
+  cy.get('main [type="submit"]:visible').click();
+
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.get('input[name="email"]').clear().type(email);
+    cy.get('input[name="password"]').clear().type('this-is-the-wrong-password');
+    cy.contains('button', 'Sign in').click();
+  });
+});
 
 Then(`I link the {string} Make account`, (account) => {
   cy.get('[data-cy=login-email]').clear().type(oneLoginLinkEmail(account));

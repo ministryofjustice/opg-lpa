@@ -45,14 +45,26 @@ function addMemberToSharedSpace(sharedSpaceId, userToAddId, userAddingEmail, isA
     .then((response) => response.body);
 }
 
-function createInvite(sharedSpaceId, userEmail) {
+function createInvite(sharedSpaceId, userEmail, inviteEmail) {
   return cy
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space-invite',
-      body: { sharedSpaceId, userEmail },
+      body: { sharedSpaceId, userEmail, inviteEmail },
     })
     .then((response) => response.body);
+}
+
+function login(email, password) {
+  cy.visitWithChecks('/login');
+
+  cy.title().then((title) => {
+    expect(title.toLowerCase()).to.include('sign in');
+  });
+
+  cy.get('[data-cy=login-email]').clear().type(email);
+  cy.get('[data-cy=login-password]').clear().type(password);
+  cy.get('[data-cy=login-submit-button]').click();
 }
 
 Before({ tags: '@CleanupUserFixtures' }, () => {
@@ -115,8 +127,8 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
         cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, spaceEmail, userFullName }).as('fixtureUser');
 
-        createInvite(sharedSpaceId, spaceEmail).then(({ accessCode, fullName, inviteEmail }) => {
-          cy.wrap({ accessCode, fullName, inviteEmail }).as('invitedUser');
+        createInvite(sharedSpaceId, spaceEmail, email).then(({ accessCode, fullName, inviteEmail }) => {
+          cy.wrap({ accessCode, fullName, inviteEmail, lpaIds }).as('invitedUser');
         });
       });
     });
@@ -141,18 +153,6 @@ When(`I (try to )log in as the member added to the shared space`, () => {
     login(email, password)
   });
 });
-
-function login(email, password) {
-  cy.visitWithChecks('/login');
-
-  cy.title().then((title) => {
-    expect(title.toLowerCase()).to.include('sign in');
-  });
-
-  cy.get('[data-cy=login-email]').clear().type(email);
-  cy.get('[data-cy=login-password]').clear().type(password);
-  cy.get('[data-cy=login-submit-button]').click();
-}
 
 Then(`I should not be logged in`, () => {
   cy.url().should('include', Cypress.config().baseUrl + '/login');
@@ -202,7 +202,7 @@ Then(`{string} status should be {string}`, (memberName, activeStatus) => {
 });
 
 When(`I type the access code into field labelled {string}`, (label) => {
-  cy.get('@fixtureUser').then(({ accessCode }) => {
+  cy.get('@invitedUser').then(({ accessCode }) => {
     cy.contains('label', label)
       .invoke('attr', 'for')
       .then((id) => cy.get('#' + id))

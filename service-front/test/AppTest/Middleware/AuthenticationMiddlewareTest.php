@@ -318,7 +318,11 @@ class AuthenticationMiddlewareTest extends TestCase
         $this->oneLoginSignOut
             ->expects($this->once())
             ->method('url')
-            ->with(self::ID_TOKEN, 'https://front.example.com/login/timeout')
+            ->with(
+                self::ID_TOKEN,
+                'https://front.example.com/login/timeout',
+                'https://front.example.com/auth/redirect',
+            )
             ->willReturn(self::ONE_LOGIN_LOGOUT_URL);
 
         $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
