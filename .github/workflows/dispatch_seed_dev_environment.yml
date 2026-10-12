@@ -66,6 +66,7 @@ jobs:
           terraform plan -target local_file.environment_pipeline_tasks_config
         env:
           TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
+          PAGERDUTY_TOKEN: ${{ secrets.PAGERDUTY_TOKEN }}
 
   seed_environment:
     name: Seed ${{ inputs.target_environment }} environment
