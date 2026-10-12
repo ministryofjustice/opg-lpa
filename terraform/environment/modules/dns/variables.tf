@@ -28,7 +28,10 @@ variable "environment_name" {
   description = "environment name"
 }
 
-variable "aws_sns_topic_cloudwatch_to_pagerduty_arn" {
-  type        = string
-  description = "SNS topic ARN for CloudWatch PagerDuty notifications"
+variable "pagerduty_service_name" {
+  type = string
+}
+
+variable "pagerduty_integration_enabled" {
+  type = bool
 }

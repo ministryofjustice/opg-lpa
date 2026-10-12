@@ -21,4 +21,3 @@ output "public_facing_lastingpowerofattorney_domain" {
 output "public_facing_lastingpowerofattorney_fqdn" {
   value = aws_route53_record.public_facing_lastingpowerofattorney.fqdn
 }
-
