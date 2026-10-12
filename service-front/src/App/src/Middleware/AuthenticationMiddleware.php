@@ -6,6 +6,7 @@ namespace App\Middleware;
 
 use App\Middleware\RequestAttribute;
 use App\Authentication\AuthenticationService;
+use App\Feature;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Service\SafeRedirectPath;
 use App\Model\Service\Authentication\Identity\User;
@@ -79,11 +80,16 @@ class AuthenticationMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+
+        if ($this->isOneLoginOnboarding($routeOptions, $session)) {
+            return $handler->handle($request);
+        }
+
         $matchedRouteName = $route->getMatchedRouteName();
         $routeName        = $matchedRouteName !== false ? $matchedRouteName : '';
         $allowRedirect    = !($routeName === 'user/delete' || str_starts_with($routeName, 'user/dashboard'));
 
-        $session  = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
         $reason   = $this->getUnauthorisedReason($session, $allowRedirect, $request->getUri()->getPath() ?: '');
         $loginUrl = $this->urlHelper->generate('application.login', ['state' => $reason]);
 
@@ -96,6 +102,18 @@ class AuthenticationMiddleware implements MiddlewareInterface
         }
 
         return new RedirectResponse($loginUrl);
+    }
+
+    /**
+     * A route with the 'allowOneLoginOnboarding' option is also open to a user who has signed in
+     * to GOV.UK One Login and is still onboarding, before their Make account exists.
+     */
+    private function isOneLoginOnboarding(array $routeOptions, mixed $session): bool
+    {
+        return ($routeOptions['allowOneLoginOnboarding'] ?? false) === true
+            && Feature::OneLogin->isEnabled()
+            && $session instanceof SessionInterface
+            && $this->oneLoginSessionManager->getPendingLink($session) !== null;
     }
 
     private function oneLoginLogoutUrl(ServerRequestInterface $request, SessionInterface $session, string $loginUrl): ?string

@@ -6,6 +6,7 @@ namespace AppTest\Middleware;
 
 use App\Middleware\RequestAttribute;
 use App\Middleware\UserDetailsMiddleware;
+use App\Model\Service\Authentication\Identity\User;
 use App\Model\UserDetailsHolder;
 use App\Authentication\AuthenticationService;
 use App\Service\UserDetails as Details;
@@ -35,6 +36,7 @@ class UserDetailsMiddlewareTest extends TestCase
     {
         $this->userService           = $this->createMock(Details::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
+        $this->authenticationService->method('getIdentity')->willReturn($this->createMock(User::class));
         $this->userDetailsHolder     = new UserDetailsHolder();
         $this->logger                = $this->createMock(LoggerInterface::class);
     }
@@ -65,6 +67,29 @@ class UserDetailsMiddlewareTest extends TestCase
         $result = $this->makeMiddleware()->process($request, $handler);
 
         $this->assertEquals($expectedResponse, $result);
+    }
+
+    public function testProcessWithoutASignedInUserDoesNotLoadUserDetails(): void
+    {
+        $authenticationService = $this->createMock(AuthenticationService::class);
+        $authenticationService->method('getIdentity')->willReturn(null);
+        $this->authenticationService = $authenticationService;
+
+        $route = $this->createMock(Route::class);
+        $route->method('getOptions')->willReturn(['allowOneLoginOnboarding' => true]);
+
+        $routeResult = $this->createMock(RouteResult::class);
+        $routeResult->method('getMatchedRoute')->willReturn($route);
+
+        $request          = new ServerRequest()->withAttribute(RouteResult::class, $routeResult);
+        $expectedResponse = new PSR7Response();
+
+        $this->userService->expects($this->never())->method('getUserDetails');
+
+        $handler = $this->createMock(RequestHandlerInterface::class);
+        $handler->expects($this->once())->method('handle')->with($request)->willReturn($expectedResponse);
+
+        $this->assertSame($expectedResponse, $this->makeMiddleware()->process($request, $handler));
     }
 
     public function testProcessWhenRouteIsUnauthenticated(): void

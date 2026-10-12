@@ -7,11 +7,20 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Laminas\View\Model\JsonModel;
+use InvalidArgumentException;
 use MakeShared\OneLogin\LinkReason;
+use MakeShared\OneLogin\UserType;
 use Mockery;
 
 class OneLoginControllerTest extends AbstractAuthControllerTestCase
 {
+    private const array CREATE_BODY = [
+        'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+        'oneLoginEmail' => 'brand.new.user@gmail.com',
+        'userType'      => 'lay',
+        'profile'       => ['name' => ['title' => 'Mr', 'first' => 'Joe', 'last' => 'Bloggs']],
+    ];
+
     public function setUp(): void
     {
         parent::setUp();
@@ -195,12 +204,13 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             'password'      => 'sup3r-secret', //pragma: allowlist secret
             'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
             'oneLoginEmail' => 'joe.bloggs@gmail.com',
+            'userType'      => 'professional',
         ];
 
         $serviceResult = ['linked' => false, 'reason' => LinkReason::ALREADY_LINKED];
 
         $this->service->shouldReceive('linkExistingAccount')
-            ->with($body['username'], $body['password'], $body['oneLoginSub'], $body['oneLoginEmail'])
+            ->with($body['username'], $body['password'], $body['oneLoginSub'], $body['oneLoginEmail'], UserType::Professional)
             ->andReturn($serviceResult)
             ->once();
 
@@ -316,10 +326,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
 
     public function testCreateActionReturnsJsonModelWithServiceResult(): void
     {
-        $body = [
-            'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
-            'oneLoginEmail' => 'brand.new.user@gmail.com',
-        ];
+        $body = self::CREATE_BODY;
 
         $identity = [
             'userId'         => 'uid-new',
@@ -330,7 +337,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         ];
 
         $this->service->shouldReceive('createAndLinkAccount')
-            ->with($body['oneLoginSub'], $body['oneLoginEmail'])
+            ->with($body['oneLoginSub'], $body['oneLoginEmail'], UserType::Lay, $body['profile'])
             ->andReturn($identity)
             ->once();
 
@@ -341,5 +348,105 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
 
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertEquals($identity, $result->getVariables());
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function invalidUserTypeProvider(): array
+    {
+        return [
+            'missing userType' => [[]],
+            'unknown userType' => [['userType' => 'robot']],
+            'userType not a string' => [['userType' => ['lay']]],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidUserTypeProvider
+     * @param array<string, mixed> $userType
+     */
+    public function testLinkActionReturnsBadRequestForAnInvalidUserType(array $userType): void
+    {
+        $this->service->shouldNotReceive('linkExistingAccount');
+
+        $body = [
+            'username'      => 'user@example.com',
+            'password'      => 'sup3r-secret', //pragma: allowlist secret
+            'oneLoginSub'   => 'urn:fdc:gov.uk:2022:new',
+            'oneLoginEmail' => 'joe.bloggs@gmail.com',
+        ] + $userType;
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->linkAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertSame(400, $result->status);
+    }
+
+    /**
+     * @dataProvider invalidUserTypeProvider
+     * @param array<string, mixed> $userType
+     */
+    public function testCreateActionReturnsBadRequestForAnInvalidUserType(array $userType): void
+    {
+        $this->service->shouldNotReceive('createAndLinkAccount');
+
+        $body = $userType + self::CREATE_BODY;
+        if ($userType === []) {
+            unset($body['userType']);
+        }
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->createAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertSame(400, $result->status);
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidProfileBodyProvider(): array
+    {
+        return ['missing profile' => [null], 'profile not an object' => ['Joe Bloggs']];
+    }
+
+    /**
+     * @dataProvider invalidProfileBodyProvider
+     */
+    public function testCreateActionReturnsBadRequestWithoutAProfile(mixed $profile): void
+    {
+        $this->service->shouldNotReceive('createAndLinkAccount');
+
+        $body = ['profile' => $profile] + self::CREATE_BODY;
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, $body);
+
+        $result = $controller->createAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertSame(400, $result->status);
+    }
+
+    public function testCreateActionReturnsBadRequestWhenTheServiceRejectsTheProfile(): void
+    {
+        $this->service->shouldReceive('createAndLinkAccount')
+            ->andThrow(new InvalidArgumentException('profile is not valid'))
+            ->once();
+
+        /** @var OneLoginController $controller */
+        $controller = $this->getController(OneLoginController::class, self::CREATE_BODY);
+
+        $result = $controller->createAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertSame(400, $result->status);
+        $this->assertSame('profile is not valid', $result->detail);
     }
 }

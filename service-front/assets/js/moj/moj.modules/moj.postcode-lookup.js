@@ -13,9 +13,13 @@
   // - To change whether a red bar is displayed next to the error,
   //   set data-showerrorbar="true", e.g.
   //     <div class=".js-PostcodeLookup" data-showerrorbar="true">
+  // - To show the address fields straight away, with a link to search
+  //   by postcode instead, set data-showfieldsfirst="true", e.g.
+  //     <div class=".js-PostcodeLookup" data-showfieldsfirst="true">
   const PostcodeLookup = function (el, data) {
     this.errorAfterLabel = !!data.errorafterlabel;
     this.showErrorBar = !!data.showerrorbar;
+    this.showFieldsFirst = !!data.showfieldsfirst;
 
     _.bindAll(
       this,
@@ -93,6 +97,7 @@
 
       // if all fields are empty and there are no validation messages, hide them
       if (
+        !this.showFieldsFirst &&
         moj.Helpers.hasCleanFields(this.$postalFields) &&
         !$('.govuk-error-summary').length
       ) {
@@ -125,6 +130,7 @@
         .addClass('hidden');
       this.$wrap.find('.js-PostcodeLookup__search').removeClass('hidden');
       if (
+        !this.showFieldsFirst &&
         moj.Helpers.hasCleanFields(this.$postalFields) &&
         !$('.govuk-error-summary').length
       ) {

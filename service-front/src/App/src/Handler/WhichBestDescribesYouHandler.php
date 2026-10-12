@@ -6,20 +6,18 @@ namespace App\Handler;
 
 use App\Form\User\WhichBestDescribesYouForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Handler\Traits\OneLoginOnboardingTrait;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\OneLogin\UserType;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
-use RuntimeException;
 
 /**
  * The first One Login onboarding page: whether the user makes LPAs for themselves,
@@ -29,6 +27,7 @@ use RuntimeException;
 class WhichBestDescribesYouHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
+    use OneLoginOnboardingTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -40,16 +39,10 @@ class WhichBestDescribesYouHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-
-        if (!$session instanceof SessionInterface) {
-            throw new RuntimeException('Session middleware is not configured');
-        }
+        $session = $this->getSession($request);
 
         if ($this->sessionManager->getPendingLink($session) === null) {
-            $this->logger->warning('auth.onelogin.onboarding_missing_pending_link');
-
-            return new RedirectResponse('/login');
+            return $this->signInAgain();
         }
 
         /** @var WhichBestDescribesYouForm $form */
@@ -64,7 +57,7 @@ class WhichBestDescribesYouHandler implements RequestHandlerInterface
                 $onboarding->userType = UserType::from((string) $form->get('userType')->getValue());
                 $this->sessionManager->saveOnboarding($session, $onboarding);
 
-                return new RedirectResponse('/link-or-create-account');
+                return new RedirectResponse('/existing-account');
             }
         } else {
             $form->setData(['userType' => $onboarding->userType?->value]);

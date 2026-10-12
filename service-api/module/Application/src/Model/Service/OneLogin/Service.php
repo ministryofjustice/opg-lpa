@@ -11,8 +11,11 @@ use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use DateTime;
 use Facile\OpenIDClient\Session\AuthSession;
+use InvalidArgumentException;
+use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\OneLogin\LinkReason;
+use MakeShared\OneLogin\UserType;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
@@ -350,6 +353,7 @@ class Service extends AbstractService
         #[\SensitiveParameter] string $password,
         string $oneLoginSub,
         string $oneLoginEmail,
+        UserType $userType,
     ): array {
         if ($this->authenticationService === null) {
             throw new RuntimeException('AuthenticationService must be set');
@@ -379,7 +383,7 @@ class Service extends AbstractService
             return $this->rejectLink($this->mapAuthFailure($authResult));
         }
 
-        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail);
+        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType === UserType::Professional);
 
         $this->getLogger()->info('auth.onelogin.link_success', [
             'user_id' => $authResult['userId'],
@@ -400,9 +404,14 @@ class Service extends AbstractService
     }
 
     /**
+     * Creates a Make account for a One Login identity, with the user type and details
+     * given during onboarding.
+     *
+     * @param array<string, mixed> $profile the user's name, date of birth and address
      * @return array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: null}
+     * @throws InvalidArgumentException if the profile is not valid
      */
-    public function createAndLinkAccount(string $sub, string $oneLoginEmail): array
+    public function createAndLinkAccount(string $sub, string $oneLoginEmail, UserType $userType, array $profile): array
     {
         if ($this->authenticationService === null) {
             throw new RuntimeException('AuthenticationService must be set');
@@ -416,6 +425,8 @@ class Service extends AbstractService
             $userId = bin2hex($generator(16));
 
             $created = $this->getUserRepository()->create($userId, [
+                'is_professional'       => $userType === UserType::Professional,
+                'profile'               => $this->validProfile($userId, $now, $profile),
                 'identity'              => $identity,
                 'password_hash'         => null,
                 'activation_token'      => null,
@@ -450,6 +461,29 @@ class Service extends AbstractService
             'lastLogin'      => (new DateTime())->format('c'),
             'sharedSpaceId'  => null,
         ];
+    }
+
+    /**
+     * Builds the new account's profile from the details the client may set, and validates it.
+     *
+     * @param array<string, mixed> $profile
+     * @throws InvalidArgumentException
+     */
+    private function validProfile(string $userId, DateTime $now, array $profile): ProfileUserModel
+    {
+        $details = array_intersect_key($profile, array_flip(['name', 'dob', 'address']));
+
+        try {
+            $user = new ProfileUserModel(['id' => $userId, 'createdAt' => $now, 'updatedAt' => $now] + $details);
+        } catch (\Throwable $e) {
+            throw new InvalidArgumentException('profile is not valid', 0, $e);
+        }
+
+        if ($user->validate()->hasErrors()) {
+            throw new InvalidArgumentException('profile is not valid');
+        }
+
+        return $user;
     }
 
     /**

@@ -11,14 +11,14 @@ use Laminas\Form\Element\Radio;
  * @template T
  * @template-extends AbstractForm<T>
  */
-class LinkOrCreateAccountForm extends AbstractForm
+class KeepYourLpasForm extends AbstractForm
 {
     public function init(): void
     {
-        $this->setName('linkOrCreateAccount');
+        $this->setName('keepYourLpas');
 
         $this->add([
-            'name'       => 'choice',
+            'name'       => 'keepExistingAccount',
             'type'       => Radio::class,
             'required'   => true,
             'attributes' => [
@@ -27,14 +27,14 @@ class LinkOrCreateAccountForm extends AbstractForm
             ],
             'options'    => [
                 'value_options' => [
-                    'link' => [
-                        'label' => 'Yes',
-                        'value' => 'link',
+                    'yes' => [
+                        'label'            => 'Yes',
+                        'value'            => 'yes',
                         'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
-                    'create'  => [
-                        'label' => 'No, create a Make account',
-                        'value' => 'create',
+                    'no' => [
+                        'label'            => 'No',
+                        'value'            => 'no',
                         'label_attributes' => ['class' => 'govuk-label govuk-radios__label'],
                     ],
                 ],

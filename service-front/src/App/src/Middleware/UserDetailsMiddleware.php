@@ -50,6 +50,11 @@ class UserDetailsMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
+        // A One Login user still onboarding has no Make account to load.
+        if ($this->authenticationService->getIdentity() === null) {
+            return $handler->handle($request);
+        }
+
         $userDetails = $this->userService->getUserDetails();
 
         if (!$userDetails instanceof User) {

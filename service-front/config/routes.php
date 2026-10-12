@@ -16,6 +16,7 @@ use App\Handler\DeleteAccountHandler;
 use App\Handler\DeleteSharedSpaceMemberHandler;
 use App\Handler\DeletedAccountHandler;
 use App\Handler\EnableCookieHandler;
+use App\Handler\ExistingAccountHandler;
 use App\Handler\FeedbackHandler;
 use App\Handler\FeedbackThanksHandler;
 use App\Handler\ForgotPasswordHandler;
@@ -27,8 +28,8 @@ use App\Handler\HomeHandler;
 use App\Handler\HomeRedirectHandler;
 use App\Handler\InviteMemberHandler;
 use App\Handler\JoinSharedSpaceHandler;
+use App\Handler\KeepYourLpasHandler;
 use App\Handler\LinkAccountHandler;
-use App\Handler\LinkOrCreateAccountHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\LpaTypeHandler;
@@ -109,6 +110,7 @@ use App\Handler\Testing\CypressFixtureHandler;
 use App\Handler\TypeHandler;
 use App\Handler\VerifyEmailAddressHandler;
 use App\Handler\WhichBestDescribesYouHandler;
+use App\Handler\YourDetailsHandler;
 use App\Middleware\LpaLoaderMiddleware;
 use MakeShared\Handler\PingHandlerElb;
 use Mezzio\Application;
@@ -187,7 +189,11 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true]);
         $app->route('/which-best-describes-you', WhichBestDescribesYouHandler::class, ['GET', 'POST'], 'which-best-describes-you')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
-        $app->route('/link-or-create-account', LinkOrCreateAccountHandler::class, ['GET', 'POST'], 'link-or-create-account')
+        $app->route('/existing-account', ExistingAccountHandler::class, ['GET', 'POST'], 'existing-account')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
+        $app->route('/your-details', YourDetailsHandler::class, ['GET', 'POST'], 'your-details')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
+        $app->route('/keep-your-lpas', KeepYourLpasHandler::class, ['GET', 'POST'], 'keep-your-lpas')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
@@ -231,7 +237,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     $app->get('/address-lookup', PostcodeHandler::class, 'postcode')
-        ->setOptions(['allowIncompleteUser' => true]);
+        ->setOptions(['allowIncompleteUser' => true, 'allowOneLoginOnboarding' => true]);
     $app->get('/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'statuses');
 
     $app->get('/deleted', DeletedAccountHandler::class, 'deleted')

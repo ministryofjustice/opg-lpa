@@ -4,19 +4,16 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
-use App\Form\User\Login;
+use App\Form\User\LinkAccountForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Handler\Traits\OneLoginOnboardingTrait;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
-use App\Middleware\AuthenticationMiddleware;
-use App\Service\SafeRedirectPath;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
 use MakeShared\OneLogin\LinkReason;
-use Mezzio\Session\SessionInterface;
-use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,9 +21,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 
+/**
+ * One Login onboarding for a user keeping their existing Make account: they sign in to it
+ * so it can be linked to their GOV.UK One Login.
+ */
 class LinkAccountHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
+    use OneLoginOnboardingTrait;
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -39,36 +41,29 @@ class LinkAccountHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-
-        if (!$session instanceof SessionInterface) {
-            throw new RuntimeException('Session middleware is not configured');
-        }
-
+        $session     = $this->getSession($request);
         $pendingLink = $this->sessionManager->getPendingLink($session);
 
         if ($pendingLink === null) {
-            $this->logger->warning('auth.onelogin.link_missing_pending_sub');
-
-            return new RedirectResponse('/login');
+            return $this->signInAgain();
         }
 
-        if ($this->sessionManager->getOnboarding($session)->userType === null) {
+        $onboarding = $this->sessionManager->getOnboarding($session);
+
+        if ($onboarding->userType === null) {
             return new RedirectResponse('/which-best-describes-you');
         }
 
-        /** @var Login $form */
-        $form = $this->formElementManager->get(Login::class);
+        if (!$onboarding->linksExistingAccount()) {
+            return new RedirectResponse('/keep-your-lpas');
+        }
 
-        $authError = null;
+        /** @var LinkAccountForm $form */
+        $form = $this->formElementManager->get(LinkAccountForm::class);
 
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            $postData = $request->getParsedBody() ?? [];
-            if (!is_array($postData)) {
-                $postData = [];
-            }
-
-            $form->setData($postData);
+            $postData = $request->getParsedBody();
+            $form->setData(is_array($postData) ? $postData : []);
 
             if ($form->isValid()) {
                 try {
@@ -77,80 +72,39 @@ class LinkAccountHandler implements RequestHandlerInterface
                         (string) $form->get('password')->getValue(),
                         $pendingLink->sub,
                         $pendingLink->email,
+                        $onboarding->userType,
                     );
                 } catch (RuntimeException $e) {
                     $this->logger->error('auth.onelogin.link_error', ['message' => $e->getMessage()]);
 
-                    $result = ['linked' => false, 'reason' => 'api-error'];
-                }
-
-                if ($result['linked'] === true) {
-                    return $this->establishSession($session, $result['identity'], $pendingLink->idToken);
-                }
-
-                $reason = $result['reason'];
-
-                if ($reason === LinkReason::ALREADY_LINKED) {
-                    $this->logger->warning('auth.onelogin.link_rejected', ['reason' => $reason]);
-
                     return new RedirectResponse('/cannot-link-account');
                 }
 
-                $this->logger->info('auth.onelogin.link_failed', ['reason' => $reason]);
+                if ($result['linked'] === true) {
+                    $this->logger->info('auth.onelogin.link_success');
 
-                $authError = $this->mapReasonToAuthError($reason);
+                    return new RedirectResponse(
+                        $this->sessionManager->finishOnboarding($session, $result['identity'], $pendingLink->idToken),
+                    );
+                }
 
-                // Throttle brute-force attempts, mirroring LoginHandler.
-                sleep(1);
+                if ($result['reason'] === LinkReason::ALREADY_LINKED) {
+                    $this->logger->warning('auth.onelogin.link_rejected', ['reason' => $result['reason']]);
+                } else {
+                    $this->logger->info('auth.onelogin.link_failed', ['reason' => $result['reason']]);
+
+                    // Throttle brute-force attempts, mirroring LoginHandler.
+                    sleep(1);
+                }
+
+                // Every failure goes to the same page, so it never reveals whether an account exists.
+                return new RedirectResponse('/cannot-link-account');
             }
         }
 
         return new HtmlResponse($this->renderer->render(
-            'application/authenticated/linking/link-account.twig',
-            array_merge(
-                $this->getTemplateVariables($request),
-                [
-                    'form' => $form,
-                    'authError' => $authError,
-                ],
-            )
+            'application/authenticated/onboarding/link-account.twig',
+            array_merge($this->getTemplateVariables($request), ['form' => $form]),
         ));
-    }
-
-    /**
-     * Map the API's rejection reason to the inline error key the template renders.
-     */
-    private function mapReasonToAuthError(string $reason): string
-    {
-        return match ($reason) {
-            LinkReason::ACCOUNT_LOCKED     => 'locked',
-            LinkReason::ACCOUNT_NOT_ACTIVE => 'not-activated',
-            'api-error'                    => 'api-error',
-            // invalid-credentials, account-not-found, account-deleted, unknown:
-            // shown as the generic "not recognised" message to avoid disclosing
-            // whether the account exists.
-            default                        => 'authentication-failed',
-        };
-    }
-
-    /**
-     * @param array{userId: string, token: string, tokenExpiresAt: string, lastLogin: string, sharedSpaceId: ?string} $identity
-     */
-    private function establishSession(
-        SessionInterface $session,
-        array $identity,
-        #[\SensitiveParameter] string $idToken,
-    ): RedirectResponse {
-        $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
-
-        $this->sessionManager->startSession($session, $identity, $idToken);
-
-        $this->logger->info('auth.onelogin.link_success');
-
-        if ($preAuthUrl !== null) {
-            return new RedirectResponse($preAuthUrl);
-        }
-
-        return new RedirectResponse('/user/dashboard');
     }
 }

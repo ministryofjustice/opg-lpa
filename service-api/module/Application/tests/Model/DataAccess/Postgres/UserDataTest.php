@@ -1605,6 +1605,7 @@ class UserDataTest extends MockeryTestCase
                 return Helpers::isGmDateString($set['updated']) &&
                     $set['one_login_sub'] === $oneLoginSub &&
                     $set['one_login_email'] === $oneLoginEmail &&
+                    $set['is_professional'] === true &&
                     array_key_exists('password_hash', $set) &&
                     $set['password_hash'] === null;
             }
@@ -1612,7 +1613,7 @@ class UserDataTest extends MockeryTestCase
 
         $userData = new UserData($dbWrapperMock);
 
-        $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail);
+        $userData->setOneLoginSub($id, $oneLoginSub, $oneLoginEmail, true);
     }
 
     public function testClearAuthToken(): void
@@ -1776,6 +1777,13 @@ class UserDataTest extends MockeryTestCase
             'activated' => new DateTime(),
             'one_login_sub' => $sub,
             'one_login_email' => $email,
+            'is_professional' => false,
+            'profile' => new ProfileUserModel([
+                'id' => $id,
+                'createdAt' => new DateTime(),
+                'updatedAt' => new DateTime(),
+                'name' => ['title' => 'Ms', 'first' => 'Jo', 'last' => 'Bloggs'],
+            ]),
         ];
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -1788,8 +1796,13 @@ class UserDataTest extends MockeryTestCase
 
         $insertMock->shouldReceive('values')
             ->with(Mockery::on(function ($data) use ($sub, $email) {
+                $profile = json_decode($data['profile'], true);
+
                 return $data['one_login_sub'] === $sub
                     && $data['one_login_email'] === $email
+                    && $data['is_professional'] === false
+                    && $profile['name']['first'] === 'Jo'
+                    && !array_key_exists('id', $profile)
                     && $data['password_hash'] === null
                     && array_key_exists('activated', $data);
             }))

@@ -144,11 +144,11 @@ class WhichBestDescribesYouHandlerTest extends TestCase
     {
         $this->session->expects($this->once())
             ->method('set')
-            ->with('onelogin_onboarding', ['userType' => $userType]);
+            ->with('onelogin_onboarding', ['userType' => $userType, 'hasExistingAccount' => null, 'keepExistingAccount' => null]);
 
         $response = $this->handler->handle($this->createRequest('POST', ['userType' => $userType]));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/link-or-create-account', $response->getHeaderLine('Location'));
+        $this->assertSame('/existing-account', $response->getHeaderLine('Location'));
     }
 }

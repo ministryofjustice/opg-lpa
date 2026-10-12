@@ -149,10 +149,10 @@ interface UserRepositoryInterface
     public function saveProfile(ProfileUserModel $data): void;
 
     /**
-     * Links a user to a GOV.UK One Login identity, storing the subject id and the
-     * One Login email.
+     * Links a user to a GOV.UK One Login identity, storing the subject id, the
+     * One Login email and whether they make LPAs professionally.
      */
-    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail): void;
+    public function setOneLoginSub(string $userId, string $oneLoginSub, string $oneLoginEmail, bool $isProfessional): void;
 
     /**
      * Refreshes the One Login email held for an already-linked account.

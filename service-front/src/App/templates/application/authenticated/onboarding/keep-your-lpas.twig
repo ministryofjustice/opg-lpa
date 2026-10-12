@@ -1,0 +1,63 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set pageTitle = 'Keeping your lasting powers of attorney (LPAs) and account information' %}
+{% block mainTitle %}{% endblock mainTitle %}
+
+{% set form = formErrorTextExchange(form, {
+    'keepExistingAccount': {
+        'isEmpty': 'Select whether you want to keep your existing LPAs and account information',
+    },
+}) %}
+
+{% set keepExistingAccount = form.get('keepExistingAccount') %}
+{% set hasError = keepExistingAccount.getMessages|length > 0 %}
+
+{% block backLink %}
+  <a href="{{ url('existing-account') }}" class="govuk-back-link" data-cy="back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    {{ macros.formErrorSummary(null, form) }}
+
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+
+      <p class="govuk-body">
+        If you want to keep your existing LPAs and account information, you'll be asked for the email address and password you use to sign into your existing account.
+      </p>
+
+      {{ form.prepare() ? '' }}
+      {{ form().openTag( form )|raw }}
+      <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+      <div class="govuk-form-group {{ hasError ? 'govuk-form-group--error'}}">
+        <fieldset class="govuk-fieldset"{% if hasError %} aria-describedby="keepExistingAccount-error"{% endif %}>
+          <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+            Do you want to keep your existing LPAs and account information?
+          </legend>
+
+          {% if hasError %}
+            <div id="keepExistingAccount-error">{{ formElementErrorsV2(keepExistingAccount) }}</div>
+          {% endif %}
+
+          <div class="govuk-radios" data-module="govuk-radios">
+            {{ formRadio(keepExistingAccount) }}
+          </div>
+        </fieldset>
+      </div>
+
+      <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+          <span class="govuk-visually-hidden">Warning</span>
+          If you choose not to keep your existing LPAs and account information now, you will lose access to that information permanently.
+        </strong>
+      </div>
+
+      <button class="govuk-button" type="submit" data-cy="keep-your-lpas-continue">Continue</button>
+      {{ form().closeTag|raw }}
+    </div>
+  </div>
+{% endblock content %}
