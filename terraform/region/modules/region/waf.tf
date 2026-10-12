@@ -275,7 +275,7 @@ resource "aws_wafv2_web_acl" "main" {
 
     statement {
       rate_based_statement {
-        limit                 = var.account.is_production == "true" ? 200 : 1000
+        limit                 = 200
         aggregate_key_type    = "IP"
         evaluation_window_sec = 60
       }
