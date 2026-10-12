@@ -275,7 +275,7 @@ resource "aws_wafv2_web_acl" "main" {
 
     statement {
       rate_based_statement {
-        limit                 = 200
+        limit                 = var.account.web_application_firewall.rate_limit_by_ip_rate
         aggregate_key_type    = "IP"
         evaluation_window_sec = 60
       }
