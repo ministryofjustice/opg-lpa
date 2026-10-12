@@ -93,7 +93,7 @@ module "environment_dns" {
   admin_dns_name                = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_dns_name : module.eu-west-2[0].admin_load_balancer_dns_name
   admin_zone_id                 = !local.dr_enabled ? module.eu-west-1.admin_load_balancer_zone_id : module.eu-west-2[0].admin_load_balancer_zone_id
   pagerduty_service_name        = local.environment.pagerduty_service_name
-  pagerduty_integration_enabled = true
+  pagerduty_integration_enabled = local.environment.pagerduty_healthcheck_alarms_enabled
 }
 
 module "cross_region_backup" {
