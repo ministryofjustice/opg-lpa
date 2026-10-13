@@ -15,6 +15,12 @@ resource "aws_sns_topic" "rds_events" {
   kms_master_key_id = data.aws_kms_alias.sns_encryption_key.target_key_arn
 }
 
+resource "aws_sns_topic" "waf_events" {
+  name              = "${local.account_name}-${local.region_name}-waf-events"
+  tags              = local.db_component_tag
+  kms_master_key_id = data.aws_kms_alias.sns_encryption_key.target_key_arn
+}
+
 # All events split into different subscriptions by source type to allow filtering based on source type and event type
 resource "aws_db_event_subscription" "rds_events_db_cluster" {
   name      = "${local.account_name}-${local.region_name}-rds-event-db-cluster-sub"
