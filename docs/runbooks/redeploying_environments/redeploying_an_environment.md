@@ -24,8 +24,10 @@ This forces redeployment of the containers in the current ECS task definition. U
 
 The ECS cluster name is the Terraform workspace name followed by `-online-lpa`. For example, workspace `3872lpal2484update` uses cluster `3872lpal2484update-online-lpa`.
 
+**Note:** Omit `mock-onelogin` for production.
+
 ``` bash
-for service in api admin pdf front; \
+for service in api admin pdf front mock_onelogin; \
 do aws-vault exec <aws-vault-profile> -- \
 aws ecs update-service --cluster <cluster-name> \
 --force-new-deployment --service $service; done
@@ -34,7 +36,7 @@ aws ecs update-service --cluster <cluster-name> \
 For example,
 
 ```bash
-for service in api admin pdf front; \
+for service in api admin pdf front mock_onelogin; \
 do aws-vault exec ual-dev -- \
 aws ecs update-service --cluster 3872lpal2484update-online-lpa \
 --force-new-deployment --service $service; done
