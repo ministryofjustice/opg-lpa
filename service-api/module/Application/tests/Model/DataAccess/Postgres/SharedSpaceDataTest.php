@@ -1052,6 +1052,33 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sharedSpaceData->deleteInvite($inviteId);
     }
 
+    #[DoesNotPerformAssertions]
+    public function testDeleteInvites(): void
+    {
+        $email = 'a@example.com';
+        $deleteMock = Mockery::mock(Delete::class);
+        $deleteMock->shouldReceive('where')
+            ->with(['email' => $email])
+            ->andReturn($deleteMock);
+
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('execute');
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('delete')
+            ->with(SharedSpaceData::SHARED_SPACE_INVITES)
+            ->andReturn($deleteMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($deleteMock)
+            ->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $sharedSpaceData->deleteInvites('a@example.com');
+    }
+
     public function testHasMemberWithEmail(): void
     {
         $selectMock = Mockery::mock(Select::class);

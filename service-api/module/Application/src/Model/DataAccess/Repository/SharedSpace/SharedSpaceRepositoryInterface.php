@@ -131,6 +131,12 @@ interface SharedSpaceRepositoryInterface
     public function deleteInvite(int $inviteId): void;
 
     /**
+     * Deletes all invites associated with email address
+     * @throws InvalidQueryException
+     */
+    public function deleteInvites(string $email): void;
+
+    /**
      * Check if an invite exists for a given shared space and email.
      */
     public function hasInvite(string $sharedSpaceId, string $email): bool;

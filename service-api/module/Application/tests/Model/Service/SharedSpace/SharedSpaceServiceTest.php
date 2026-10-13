@@ -691,8 +691,8 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->andReturn($user);
         $this->sharedSpaceRepository->shouldReceive('addMember')
             ->with($invite->sharedSpaceId, $userId, $invite->isAdmin);
-        $this->sharedSpaceRepository->shouldReceive('deleteInvite')
-            ->with($invite->id);
+        $this->sharedSpaceRepository->shouldReceive('deleteInvites')
+            ->with($email);
         $this->sharedSpaceRepository->shouldReceive('commit');
 
         $this->applicationRepository->shouldReceive('setSharedSpaceOwner')

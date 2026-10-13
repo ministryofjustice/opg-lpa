@@ -69,7 +69,7 @@ Feature: Shared Space
     And I type the email of the added member into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space/invite"
-    And I see "This email address is already part of the shared space" in the page text
+    And I see "Email address belongs to an active member of this shared space -– enter a different email address" in the page text
     When I type "John" into field labelled "First names"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
@@ -83,7 +83,7 @@ Feature: Shared Space
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space/invite"
-    And I see "This email address has already been invited to the shared space" in the page text
+    And I see "Email address is for a pending member of this shared space – enter a different one or cancel the previous invite" in the page text
 
   Scenario: Can revoke a members invite
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

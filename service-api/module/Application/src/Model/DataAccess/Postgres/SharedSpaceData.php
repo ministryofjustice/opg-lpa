@@ -533,6 +533,23 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function deleteInvites(string $email): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $delete = $sql
+            ->delete(self::SHARED_SPACE_INVITES)
+            ->where(['email' => $email]);
+
+        try {
+            $sql->prepareStatementForSqlObject($delete)->execute();
+        } catch (InvalidQueryException $e) {
+            throw $e;
+        }
+    }
+
     public function hasInvite(string $sharedSpaceId, string $email): bool
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_INVITES, [
