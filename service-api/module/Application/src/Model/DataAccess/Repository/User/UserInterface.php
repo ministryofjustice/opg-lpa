@@ -137,4 +137,6 @@ interface UserInterface
      * not a shared space member.
      */
     public function isActiveInSharedSpace(): ?bool;
+
+    public function isProfessional(): bool;
 }
