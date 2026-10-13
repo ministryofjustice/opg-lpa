@@ -206,18 +206,14 @@ The container tag for a release is `main-` followed by the Git tag. Plan the dep
 
 ```bash
 aws-vault exec identity -- \
-terraform plan \
--var container_version=main-v0.327.130 \
--var admin_container_version=main-v0.327.130
+terraform plan -var container_version=main-v0.327.130
 ```
 
 Review the plan carefully. If it only contains the expected infrastructure and ECS task definition changes, apply it:
 
 ```bash
 aws-vault exec identity -- \
-terraform apply \
--var container_version=main-v0.327.130 \
--var admin_container_version=main-v0.327.130
+terraform apply -var container_version=main-v0.327.130
 ```
 
 After applying, use the [Check deployment status](#check-deployment-status) section to confirm that the ECS services are stable.
