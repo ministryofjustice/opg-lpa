@@ -89,7 +89,7 @@ class PingHandlerTest extends MockeryTestCase
             'database' => [
                 'ok' => true,
             ],
-            'gateway' => [
+            'opg-data-lpa' => [
                 'ok' => true,
             ],
             'ok' => true,
@@ -134,7 +134,7 @@ class PingHandlerTest extends MockeryTestCase
             'database' => [
                 'ok' => false,
             ],
-            'gateway' => [
+            'opg-data-lpa' => [
                 'ok' => false,
             ],
             'ok' => false,
@@ -173,7 +173,7 @@ class PingHandlerTest extends MockeryTestCase
             'database' => [
                 'ok' => false,
             ],
-            'gateway' => [
+            'opg-data-lpa' => [
                 'ok' => false,
             ],
             'ok' => false,

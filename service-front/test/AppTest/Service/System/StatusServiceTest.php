@@ -15,6 +15,7 @@ use Exception;
 use MakeShared\Constants;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Client\ClientInterface;
 use ReflectionMethod;
 use SessionHandlerInterface;
 
@@ -23,17 +24,19 @@ use function time;
 
 class StatusServiceTest extends TestCase
 {
-    private ApiClient&MockObject $apiClient;
-    private DynamoDbClient&MockObject $dynamoDbClient;
-    private SessionHandlerInterface&MockObject $sessionSaveHandler;
-    private MailTransportInterface&MockObject $mailTransport;
-    private OrdnanceSurvey&MockObject $ordnanceSurveyClient;
-    private RedisClient&MockObject $redisClient;
+    private MockObject&ApiClient $apiClient;
+    private MockObject&ClientInterface $httpClient;
+    private MockObject&DynamoDbClient $dynamoDbClient;
+    private MockObject&SessionHandlerInterface $sessionSaveHandler;
+    private MockObject&MailTransportInterface $mailTransport;
+    private MockObject&OrdnanceSurvey $ordnanceSurveyClient;
+    private MockObject&RedisClient $redisClient;
     private array $config;
 
     protected function setUp(): void
     {
         $this->apiClient            = $this->createMock(ApiClient::class);
+        $this->httpClient           = $this->createMock(ClientInterface::class);
         $this->dynamoDbClient       = $this->createMock(DynamoDbClient::class);
         $this->sessionSaveHandler   = $this->createMock(SessionHandlerInterface::class);
         $this->mailTransport        = $this->createMock(MailTransportInterface::class);
@@ -153,9 +156,10 @@ class StatusServiceTest extends TestCase
 
     public function testCheckSessionReturnsPassWithoutHandlerAndFailWhenOpenFails(): void
     {
-        $serviceWithoutHandler     = new StatusService($this->apiClient);
+        $serviceWithoutHandler     = new StatusService($this->apiClient, $this->httpClient);
         $serviceWithFailingHandler = new StatusService(
             $this->apiClient,
+            $this->httpClient,
             null,
             $this->sessionSaveHandler,
         );
@@ -183,11 +187,12 @@ class StatusServiceTest extends TestCase
 
         $serviceWithMail    = new StatusService(
             $this->apiClient,
+            $this->httpClient,
             null,
             null,
             $this->mailTransport,
         );
-        $serviceWithoutMail = new StatusService($this->apiClient);
+        $serviceWithoutMail = new StatusService($this->apiClient, $this->httpClient);
 
         $this->assertSame(
             ['ok' => false, 'status' => Constants::STATUS_FAIL],
@@ -330,6 +335,7 @@ class StatusServiceTest extends TestCase
     {
         return new StatusService(
             $this->apiClient,
+            $this->httpClient,
             $this->dynamoDbClient,
             $this->sessionSaveHandler,
             $this->mailTransport,

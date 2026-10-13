@@ -10,6 +10,7 @@ use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\Redis\RedisClient;
 use App\Service\Session\FilteringSaveHandler;
 use Aws\DynamoDb\DynamoDbClient;
+use Http\Adapter\Guzzle7\Client as GuzzleClient;
 use Psr\Container\ContainerInterface;
 
 class StatusServiceFactory
@@ -27,6 +28,7 @@ class StatusServiceFactory
 
         return new StatusService(
             $container->get(ApiClient::class),
+            $container->get(GuzzleClient::class),
             $getOrNull(DynamoDbClient::class),
             $getOrNull(FilteringSaveHandler::class),
             $getOrNull(MailTransportInterface::class),

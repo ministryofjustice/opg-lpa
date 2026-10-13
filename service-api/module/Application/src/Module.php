@@ -3,6 +3,7 @@
 namespace Application;
 
 use Alphagov\Notifications\Client as NotifyClient;
+use Application\Handler\HealthCheckDependenciesHandler;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Library\Authentication\AuthenticationListener;
@@ -171,6 +172,13 @@ class Module
                 },
 
                 PingHandler::class => PingHandlerFactory::class,
+                HealthCheckDependenciesHandler::class => function ($sm) {
+                    return new HealthCheckDependenciesHandler(
+                        $sm->get(ClientInterface::class),
+                        $sm->get(LoggerInterface::class),
+                        $sm->get('config')['onelogin'],
+                    );
+                },
 
             ], // factories
         ];

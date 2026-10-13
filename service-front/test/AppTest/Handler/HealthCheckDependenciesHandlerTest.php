@@ -24,14 +24,20 @@ class HealthCheckDependenciesHandlerTest extends TestCase
     {
         $this->statusService->expects($this->once())
             ->method('checkMail')
-            ->willReturn(['mail-good']);
+            ->willReturn(['ok' => true, 'mail' => 'good']);
         $this->statusService->expects($this->once())
             ->method('checkOrdnanceSurvey')
-            ->willReturn(['os-good']);
+            ->willReturn(['ok' => true, 'os' => 'good']);
+        $this->statusService->expects($this->once())
+            ->method('checkPay')
+            ->willReturn(['ok' => true, 'pay' => 'good']);
+        $this->statusService->expects($this->once())
+            ->method('checkApiDependencies')
+            ->willReturn(['ok' => true, 'api' => 'good']);
 
         $response = (new HealthCheckDependenciesHandler($this->statusService))->handle(new ServerRequest());
 
         $this->assertInstanceOf(JsonResponse::class, $response);
-        $this->assertSame('{"mail":["mail-good"],"ordnanceSurvey":["os-good"]}', (string) $response->getBody());
+        $this->assertSame('{"mail":{"ok":true,"mail":"good"},"ordnanceSurvey":{"ok":true,"os":"good"},"pay":{"ok":true,"pay":"good"},"api":{"ok":true,"api":"good"},"ok":true}', (string) $response->getBody());
     }
 }

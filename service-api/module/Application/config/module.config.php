@@ -33,6 +33,17 @@ return [
                 ],
             ],
 
+            'health-check-dependencies' => [
+                'type' => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route' => '/health-check/dependencies',
+                    'defaults' => [
+                        'controller' => PipeSpec::class,
+                        'middleware' => Handler\HealthCheckDependenciesHandler::class,
+                    ],
+                ],
+            ],
+
             'ping' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [

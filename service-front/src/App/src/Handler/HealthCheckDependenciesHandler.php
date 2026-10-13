@@ -19,9 +19,22 @@ class HealthCheckDependenciesHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new JsonResponse([
+        $results = [
             'mail' => $this->statusService->checkMail(),
             'ordnanceSurvey' => $this->statusService->checkOrdnanceSurvey(),
-        ]);
+            'pay' => $this->statusService->checkPay(),
+            'api' => $this->statusService->checkApiDependencies(),
+        ];
+
+        $ok = true;
+        foreach ($results as $value) {
+            if (!$value['ok']) {
+                $ok = false;
+                break;
+            }
+        }
+
+        $results['ok'] = $ok;
+        return new JsonResponse($results, $ok ? 200 : 500);
     }
 }

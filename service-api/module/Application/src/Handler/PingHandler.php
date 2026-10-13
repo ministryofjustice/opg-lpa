@@ -122,7 +122,7 @@ readonly class PingHandler implements RequestHandlerInterface
             'database' => [
                 'ok' => $dbOk,
             ],
-            'gateway' => [
+            'opg-data-lpa' => [
                 'ok' => $opgGatewayOk,
             ],
             'ok' => $ok,
