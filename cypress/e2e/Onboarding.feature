@@ -107,6 +107,24 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     Then I should be on "/cannot-link-account"
     And I am advised my account could not be linked
 
+  Scenario: After failing to link an account I can continue to make a new account
+    Given Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
+    When I sign in through mock One Login to keep my existing Make account
+    And I attempt to link a Make account already linked to another One Login
+    Then I should be on "/cannot-link-account"
+    And I am advised my account could not be linked
+    When I choose to create a new account
+    Then I am asked for my details
+    When I click element marked "Search for UK postcode"
+    And I type "B1 1TF" into "postcode-lookup" working around cypress bug
+    And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
+    And I click element marked "Find UK address"
+    And I select option "THE OFFICE OF THE PUBLIC GUARDIAN, THE AXIS, 10 HOLLIDAY STREET, BIRMINGHAM" of "address-search-result"
+    Then I see "address-postcode" prepopulated with "B1 1TF"
+    When I enter my name and date of birth and save
+    Then I am taken to "/user/dashboard?account=created"
+    And I see a success notification with content "You’ve created your Make a lasting power of attorney account"
+
   Scenario: I can reset a forgotten password, or go back, from signing in to my existing account
     When I sign in through mock One Login to keep my existing Make account
     And I go back

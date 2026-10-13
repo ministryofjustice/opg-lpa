@@ -314,12 +314,16 @@ Then(
 Then(`I am advised my account could not be linked`, () => {
   cy.get('[data-cy=cannot-link-heading]').should(
     'contain',
-    'We cannot link this account',
+    'We could not complete your request to keep LPAs and account information',
   );
 });
 
 Then(`I choose to try again`, () => {
   cy.get('[data-cy=cannot-link-try-again]').click();
+});
+
+Then(`I choose to create a new account`, () => {
+  cy.get('[data-cy=cannot-link-create-new-account]').click();
 });
 
 When(

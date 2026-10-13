@@ -197,8 +197,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
-        $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
-            ->setOptions(['unauthenticated_route' => true]);
+        $app->route('/cannot-link-account', CannotLinkAccountHandler::class, ['GET', 'POST'], 'cannot-link-account')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->post(
             '/auth/onelogin/backchannel-logout',
             OneLoginBackChannelLogoutHandler::class,
