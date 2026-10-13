@@ -248,7 +248,7 @@ class SharedSpaceController extends AbstractRestfulController
         $data = $this->processBodyContent($this->getRequest());
 
         try {
-            $sharedSpaceId = $this->sharedSpaceService->join($result['userId'], $data['sharedSpaceName'], $data['accessCode']);
+            $sharedSpaceId = $this->sharedSpaceService->join($result['userId'], $data['sharedSpaceName'], $data['accessCode'], $data['email']);
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'user-already-in-shared-space', null, null, ['sharedSpaceId' => $e->sharedSpaceId]);
         } catch (InviteNotFoundException $e) {

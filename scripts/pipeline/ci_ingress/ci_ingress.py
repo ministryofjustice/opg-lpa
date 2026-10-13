@@ -19,9 +19,7 @@ class IngressManager:
 
     def __init__(self, config_file):
         self.read_parameters_from_file(config_file)
-        self.aws_ec2_client = boto3.client(
-                "ec2", region_name=self.aws_region
-            )
+        self.aws_ec2_client = boto3.client("ec2", region_name=self.aws_region)
 
     def read_parameters_from_file(self, config_file):
         with open(config_file) as json_file:
@@ -32,6 +30,11 @@ class IngressManager:
                 parameters["front_load_balancer_security_group_id"],
                 parameters["admin_load_balancer_security_group_id"],
             ]
+            mock_onelogin_sg_id = parameters.get(
+                "mock_onelogin_load_balancer_security_group_id"
+            )
+            if mock_onelogin_sg_id:
+                self.security_groups.append(mock_onelogin_sg_id)
 
     def get_ip_addresses(self):
         host_public_cidr = (

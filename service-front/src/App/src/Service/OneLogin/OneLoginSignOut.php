@@ -24,15 +24,21 @@ class OneLoginSignOut
 
     /**
      * Returns the One Login /logout URL for a user who signed in through One Login.
+     *
+     * $mockRedirectUri is the callback URI that would be used to start a sign-in from the current
+     * request (see RedirectUriBuilder), used to resolve the mock One Login host when configured.
      */
-    public function url(#[\SensitiveParameter] ?string $idToken, string $postLogoutRedirectUri): ?string
-    {
+    public function url(
+        #[\SensitiveParameter] ?string $idToken,
+        string $postLogoutRedirectUri,
+        ?string $mockRedirectUri = null,
+    ): ?string {
         if (!$this->oneLoginEnabled || $idToken === null) {
             return null;
         }
 
         try {
-            return $this->oneLoginService->logoutUrl($idToken, $postLogoutRedirectUri);
+            return $this->oneLoginService->logoutUrl($idToken, $postLogoutRedirectUri, $mockRedirectUri);
         } catch (RuntimeException | ClientExceptionInterface $e) {
             $this->logger->warning('auth.onelogin.logout_url_failed', ['message' => $e->getMessage()]);
 
