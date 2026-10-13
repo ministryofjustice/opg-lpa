@@ -27,17 +27,100 @@ permissions:
 
 jobs:
   seed_environment:
-    name: Output workflow variables
+    name: Seed ${{ inputs.target_environment }} environment
     runs-on: ubuntu-latest
     steps:
+      - name: Don't run on production
+        run: |
+          if [[ ${TARGET_ENVIRONMENT} == "production" ]]; then
+            echo "Cannot run on production"
+            exit 1
+          fi
+        env:
+          TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
-      - name: Seeding ${{ inputs.target_environment }}
-        id: seeding_env
+      - name: Get terraform version
+        id: set-terraform-version
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          terraform_directory: "./terraform/environment"
+
+      - uses: hashicorp/setup-terraform@dfe3c3f87815947d99a8997f908cb6525fc44e9e # v4.0.1
+        with:
+          terraform_version: ${{ steps.set-terraform-version.outputs.version }}
+          terraform_wrapper: false
+
+      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        with:
+          deploy_key: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
+
+      - name: Unset AWS Credentials
+        id: unset_aws_credentials_1
+        if: always()
         run: |
-          echo "Seeding ${TARGET_ENVIRONMENT}..."
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
+          role-duration-seconds: 900
+          role-session-name: MLPASeedDevEnv
+
+      - name: Terraform Targetted Apply
+        working-directory: terraform/environment
+        run: |
+          terraform init
+          terraform workspace select ${TARGET_ENVIRONMENT}
+          terraform apply --auto-approve -target local_file.environment_pipeline_tasks_config
         env:
           TARGET_ENVIRONMENT: ${{ inputs.target_environment }}
+          TF_VAR_pagerduty_token: ${{ secrets.PAGERDUTY_TOKEN }}
+
+      - name: Unset AWS Credentials
+        id: unset_aws_credentials_2
+        if: always()
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
+        with:
+          version: "0.12.3"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
+
+      - name: Install Python dependencies
+        working-directory: scripts/pipeline
+        run: uv sync --locked
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          aws-region: eu-west-1
+          role-to-assume: ${{ vars.OIDC_ECS_START_TASK_DEVELOPMENT }}
+          role-duration-seconds: 900
+          role-session-name: MLPASeedDevEnv
+
+      - name: Start ECS task
+        working-directory: scripts/pipeline
+        run: uv run python start_task/ecs_start_task.py --task_name seeding --config_file_path /tmp/terraform_artifacts/environment_pipeline_tasks_config.json
+
+      - name: Unset AWS Credentials
+        id: unset_aws_credentials_3
+        if: always()
+        run: |
+          unset AWS_ACCESS_KEY_ID
+          unset AWS_SECRET_ACCESS_KEY
+          unset AWS_SESSION_TOKEN
