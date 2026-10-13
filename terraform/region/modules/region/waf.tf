@@ -452,13 +452,12 @@ data "aws_iam_policy_document" "waf_cloudwatch_log_encryption_kms" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "waf_blocked_rule_alarm" {
-  alarm_name          = "WAF Blocked Rule Anomaly detection"
-  alarm_description   = "Anomaly detected, waf blocked rules above threshold"
-  comparison_operator = "GreaterThanUpperThreshold"
-  evaluation_periods  = 1
-  datapoints_to_alarm = 1
-  threshold_metric_id = "ad1"
-
+  alarm_name                = "WAF Blocked Rule Anomaly detection"
+  alarm_description         = "Anomaly detected, waf blocked rules above threshold"
+  comparison_operator       = "GreaterThanUpperThreshold"
+  evaluation_periods        = 1
+  datapoints_to_alarm       = 1
+  threshold_metric_id       = "ad1"
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
   alarm_actions             = [aws_sns_topic.waf_events.arn]

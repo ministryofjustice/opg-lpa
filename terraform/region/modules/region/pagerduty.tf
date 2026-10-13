@@ -54,5 +54,5 @@ resource "aws_sns_topic_subscription" "waf_blocked_rule_alarm" {
   topic_arn              = aws_sns_topic.waf_events.arn
   protocol               = "https"
   endpoint_auto_confirms = true
-  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.db_alerts_integration[0].integration_key}/enqueue"
+  endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration.integration_key}/enqueue"
 }
