@@ -450,3 +450,41 @@ data "aws_iam_policy_document" "waf_cloudwatch_log_encryption_kms" {
     }
   }
 }
+
+resource "aws_cloudwatch_metric_alarm" "waf_blocked_rule_alarm" {
+  alarm_name                = "WAF Blocked Rule Anomaly detection"
+  alarm_description         = "Anomaly detected, waf blocked rules above threshold"
+  comparison_operator       = "GreaterThanUpperThreshold"
+  evaluation_periods        = 1
+  datapoints_to_alarm       = 1
+  threshold_metric_id       = "ad1"
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.waf_events.arn]
+  ok_actions                = [aws_sns_topic.waf_events.arn]
+
+  metric_query {
+    id          = "m1"
+    period      = 0
+    return_data = true
+
+    metric {
+      dimensions = {
+        "Region" = local.region_name
+        "Rule"   = "ALL"
+        "WebACL" = aws_wafv2_web_acl.main.name
+      }
+      metric_name = "BlockedRequests"
+      namespace   = "AWS/WAFV2"
+      period      = 300
+      stat        = "Average"
+    }
+  }
+  metric_query {
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    id          = "ad1"
+    label       = "BlockedRequests (expected)"
+    period      = 0
+    return_data = true
+  }
+}
