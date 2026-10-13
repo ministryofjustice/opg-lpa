@@ -19,12 +19,11 @@ Sets the desired task count to zero for all services.
 **Note:** Omit `mock-onelogin` for production.
 
 ```bash
-for service in aapi admin pdf front mock_onelogin; do
+for service in api admin pdf front mock_onelogin; do
   aws-vault exec <profile> -- aws ecs update-service \
     --cluster <environment>-online-lpa \
     --service $service \
-    --desired-count 0
-done
+    --desired-count 0; done
 ```
 
 Check that every service's running and desired count is `0`:
@@ -32,7 +31,7 @@ Check that every service's running and desired count is `0`:
 ```bash
 aws-vault exec <profile> -- aws ecs describe-services \
   --cluster <environment>-online-lpa \
-  --services aapi admin pdf front mock_onelogin \
+  --services api admin pdf front mock_onelogin \
   --query 'services[].{name:serviceName,desired:desiredCount,running:runningCount}'
 ```
 
