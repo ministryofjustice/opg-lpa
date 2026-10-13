@@ -396,7 +396,7 @@ class SharedSpaceService
             ]);
 
             $this->sharedSpaceRepository->addMember($invite->sharedSpaceId, $userId, $invite->isAdmin);
-            $this->sharedSpaceRepository->deleteInvite($invite->id);
+            $this->sharedSpaceRepository->deleteInvites($userEmail);
 
             $this->sharedSpaceRepository->commit();
         } catch (Throwable $e) {
