@@ -119,8 +119,8 @@ class InviteMemberHandlerTest extends TestCase
     public static function sharedServiceErrorProvider(): array
     {
         return [
-            ['user-already-in-shared-space', 'This email address is already part of the shared space'],
-            ['invite-already-exists', 'This email address has already been invited to the shared space'],
+            ['user-already-in-shared-space', 'Email address belongs to an active member of this shared space -– enter a different email address   '],
+            ['invite-already-exists', 'Email address is for a pending member of this shared space – enter a different one or cancel the previous invite'],
         ];
     }
 
