@@ -3,16 +3,18 @@
 namespace Application\Model\Service;
 
 use Application\Model\DataAccess\Repository\Application as ApplicationRepository;
-use Application\Model\DataAccess\Repository\User as UserRepository;
-use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\DataAccess\Repository\Feedback as FeedbackRepository;
 use Application\Model\DataAccess\Repository\SharedSpace as SharedSpaceRepository;
+use Application\Model\DataAccess\Repository\Stats as StatsRepository;
+use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Users\Service as UsersService;
+use Aws\Credentials\CredentialsInterface;
+use Aws\Signature\SignatureV4;
+use Exception;
 use GuzzleHttp\Client;
 use Laminas\ServiceManager\Factory\AbstractFactoryInterface;
-use Exception;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -58,8 +60,8 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         ProcessingStatus\Service::class => [
             'setClient' => Client::class,
             'setConfig' => 'config',
-            'setCredentials' => 'AwsCredentials',
-            'setAwsSignatureV4' => 'AwsApiGatewaySignature',
+            'setCredentials' => CredentialsInterface::class,
+            'setAwsSignatureV4' => SignatureV4::class,
         ],
         OneLogin\Service::class => [
             'setAuthorisationClientManager' => OneLogin\AuthorisationClientManager::class,

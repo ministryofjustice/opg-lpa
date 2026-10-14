@@ -2,16 +2,12 @@
 
 namespace ApplicationTest\Model\Service;
 
-use Aws\Credentials\CredentialsInterface;
-use Aws\Signature\SignatureV4;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Alphagov\Notifications\Client;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
-use Application\Model\Service\ServiceAbstractFactory;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
@@ -22,15 +18,19 @@ use Application\Model\Service\OneLogin\LogoutTokenVerifier;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Application\Model\Service\Password\Service as PasswordService;
 use Application\Model\Service\Pdfs\Service as PdfsService;
-use Application\Model\Service\Seed\Service as SeedService;
-use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
+use Application\Model\Service\Seed\Service as SeedService;
+use Application\Model\Service\ServiceAbstractFactory;
+use Application\Model\Service\Users\Service as UsersService;
+use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
+use Aws\Signature\SignatureV4;
 use Aws\Sqs\SqsClient;
-use Psr\Container\ContainerInterface;
+use GuzzleHttp\Client as GuzzleHttpClient;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use GuzzleHttp\Client as GuzzleHttpClient;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 
@@ -118,8 +118,8 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                 [
                     GuzzleHttpClient::class => Mockery::mock(GuzzleHttpClient::class),
                     'config' => ['processing-status' => ['endpoint' => 'test endpoint']],
-                    'AwsCredentials' => Mockery::mock(CredentialsInterface::class),
-                    'AwsApiGatewaySignature' => Mockery::mock(SignatureV4::class),
+                    CredentialsInterface::class => Mockery::mock(CredentialsInterface::class),
+                    SignatureV4::class => Mockery::mock(SignatureV4::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ]

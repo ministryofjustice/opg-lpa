@@ -5,12 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Handle;
 
 use Application\Handler\PingHandler;
-use Aws\Credentials\CredentialsInterface;
-use Aws\Signature\SignatureV4;
 use Aws\Sqs\SqsClient;
-use Exception;
-use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Psr7\Response;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\DriverInterface;
@@ -24,8 +19,6 @@ use Psr\Log\LoggerInterface;
 
 class PingHandlerTest extends MockeryTestCase
 {
-    private MockInterface&CredentialsInterface $credentialProvider;
-    private MockInterface&SignatureV4 $signer;
     private MockInterface&DbAdapter $database;
     private MockInterface&SqsClient $sqsClient;
     private MockInterface&ClientInterface $httpClient;
@@ -35,21 +28,15 @@ class PingHandlerTest extends MockeryTestCase
 
     public function setUp(): void
     {
-        $this->credentialProvider = Mockery::mock(CredentialsInterface::class);
-        $this->signer             = Mockery::mock(SignatureV4::class);
         $this->database           = Mockery::mock(DbAdapter::class);
         $this->sqsClient          = Mockery::mock(SqsClient::class);
         $this->httpClient         = Mockery::mock(ClientInterface::class);
         $this->logger             = Mockery::mock(LoggerInterface::class);
 
         $this->handler = new PingHandler(
-            $this->credentialProvider,
-            $this->signer,
             $this->database,
             $this->sqsClient,
             'http://test',
-            'http://test',
-            $this->httpClient,
             $this->logger,
         );
     }
@@ -65,16 +52,6 @@ class PingHandlerTest extends MockeryTestCase
                 ]
             ]);
 
-        // good response from Sirius
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->allows('getStatusCode')->andReturns(200);
-
-        $mockRequest = Mockery::mock(Request::class);
-        $this->signer->allows('signRequest')->andReturns($mockRequest);
-
-        $this->httpClient->allows('sendRequest')
-            ->andReturns($mockResponse);
-
         // good response from db
         $mockConnection = Mockery::mock(ConnectionInterface::class);
         $mockConnection->allows('connect')->andReturns($mockConnection);
@@ -87,9 +64,6 @@ class PingHandlerTest extends MockeryTestCase
         // ping response JSON we expect
         $expectedResult = [
             'database' => [
-                'ok' => true,
-            ],
-            'opg-data-lpa' => [
                 'ok' => true,
             ],
             'ok' => true,
@@ -121,31 +95,19 @@ class PingHandlerTest extends MockeryTestCase
                 ]
             ]);
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->allows('getStatusCode')->andReturns(500);
-
-        $mockRequest = Mockery::mock(Request::class);
-        $this->signer->allows('signRequest')->andReturns($mockRequest);
-
-        $this->httpClient->allows('sendRequest')
-            ->andReturns($mockResponse);
-
         $expectedResult = [
+            'ok' => false,
+            'status' => Constants::STATUS_FAIL,
             'database' => [
                 'ok' => false,
             ],
-            'opg-data-lpa' => [
-                'ok' => false,
-            ],
-            'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'queue' => [
+                'ok' => true,
                 'details' => [
                     'available' => true,
                     'length' => 3,
                     'lengthAcceptable' => true,
                 ],
-                'ok' => true,
             ],
         ];
 
@@ -158,22 +120,15 @@ class PingHandlerTest extends MockeryTestCase
         $this->assertEquals($expectedResult, json_decode($result->getBody()->getContents(), true));
     }
 
-    public function testItReturnsQueueDownDBandGatewayExceptions(): void
+    public function testItReturnsQueueDownAndDatabaseException(): void
     {
         // bad response from SQS, so we throw an exception
         $this->sqsClient->allows('getQueueAttributes')
             ->andReturns([]);
 
-        // exception from Sirius gateway client
-        $this->httpClient->allows('sendRequest')
-            ->andThrow(new Exception('something went wrong with the client'));
-
         // ping response JSON we expect
         $expectedResult = [
             'database' => [
-                'ok' => false,
-            ],
-            'opg-data-lpa' => [
                 'ok' => false,
             ],
             'ok' => false,
@@ -189,7 +144,7 @@ class PingHandlerTest extends MockeryTestCase
         ];
 
         $this->logger->expects('error')
-            ->times(3);
+            ->times(2);
 
         $this->logger->expects('info')
             ->with('PingController results', $expectedResult);

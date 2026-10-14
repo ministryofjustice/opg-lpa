@@ -5,48 +5,67 @@ declare(strict_types=1);
 namespace ApplicationTest\Handle;
 
 use Application\Handler\HealthCheckDependenciesHandler;
+use Aws\Credentials\CredentialsInterface;
+use Aws\Signature\SignatureV4;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use MakeShared\Constants;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Mockery\MockInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LoggerInterface;
 
-class HealthCheckDependenciesHandlerTest extends MockeryTestCase
+class HealthCheckDependenciesHandlerTest extends TestCase
 {
-    private MockInterface&ClientInterface $httpClient;
-    private MockInterface&LoggerInterface $logger;
+    private MockObject&ClientInterface $httpClient;
+    private MockObject&CredentialsInterface $credentialProvider;
+    private MockObject&SignatureV4 $signer;
+    private MockObject&LoggerInterface $logger;
 
     private HealthCheckDependenciesHandler $handler;
 
     public function setUp(): void
     {
-        $this->httpClient         = Mockery::mock(ClientInterface::class);
-        $this->logger             = Mockery::mock(LoggerInterface::class);
+        $this->httpClient         = $this->createMock(ClientInterface::class);
+        $this->credentialProvider = $this->createMock(CredentialsInterface::class);
+        $this->signer             = $this->createMock(SignatureV4::class);
+        $this->logger             = $this->createMock(LoggerInterface::class);
 
         $this->handler = new HealthCheckDependenciesHandler(
             $this->httpClient,
+            $this->credentialProvider,
+            $this->signer,
             $this->logger,
-            ['discovery_url' => 'http://onelogin', 'user_agent' => 'us'],
+            [
+                'onelogin' => ['discovery_url' => 'http://onelogin', 'user_agent' => 'us'],
+                'processing-status' => ['endpoint' => 'http://status/v2/'],
+            ],
         );
     }
 
     public function testItReturnsAllServiceOk(): void
     {
-        $response = Mockery::mock(Response::class);
-        $response->allows('getStatusCode')->andReturns(200);
+        $response = $this->createMock(Response::class);
+        $response->method('getStatusCode')->willReturn(200);
 
-        $this->httpClient->expects('sendRequest')
-            ->with($this->callback(function (Request $r): bool {
-                $this->assertEquals('GET', $r->getMethod());
-                $this->assertEquals('http://onelogin', (string) $r->getUri());
-                $this->assertEquals(['us'], $r->getHeader('User-Agent'));
-                return true;
-            }))
-            ->andReturns($response);
+        $this->signer->expects($this->once())
+            ->method('signRequest')
+            ->with(
+                $this->callback(fn (Request $r): bool => (string) $r->getUri() === 'http://status/v2/healthcheck'),
+                $this->credentialProvider,
+            )
+            ->willReturnArgument(0);
+
+        $this->httpClient->expects($this->exactly(2))
+            ->method('sendRequest')
+            ->willReturnCallback(function (Request $r) use ($response): Response {
+                return match ([$r->getMethod(), (string) $r->getUri(), $r->getHeader('User-Agent')]) {
+                    ['GET', 'http://onelogin', ['us']] => $response,
+                    ['GET', 'http://status/v2/healthcheck', []] => $response,
+                    default => $this->fail('missing branch for: ' . $r->getMethod() . ' ' . $r->getUri()),
+                };
+            });
 
         $expectedResult = [
             'ok' => true,
@@ -58,9 +77,18 @@ class HealthCheckDependenciesHandlerTest extends MockeryTestCase
                     'response_code' => 200,
                 ],
             ],
+            'opg-data-lpa' => [
+                'ok' => true,
+                'status' => Constants::STATUS_PASS,
+                'details' => [
+                    'response_code' => 200,
+                ],
+            ],
         ];
 
-        $result = $this->handler->handle(Mockery::mock(ServerRequestInterface::class));
+        $request = $this->createMock(ServerRequestInterface::class);
+
+        $result = $this->handler->handle($request);
         $this->assertEquals($expectedResult, json_decode($result->getBody()->getContents(), true));
     }
 }
