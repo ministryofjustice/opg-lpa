@@ -49,6 +49,20 @@
   {% else %}
 
     <div class="govuk-body">
+      {% if showOneLoginChangesBanner %}
+        <div class="govuk-notification-banner" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+          <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">Important</h2>
+          </div>
+
+          <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading app-full-width">We are changing the way you sign in to Make a lasting power of attorney</h3>
+
+            <p class="govuk-body app-full-width">From 25 November 2026 you will only be able to sign in to this service using GOV.UK One Login. <a href="{{ url("onelogin-changes") }}" class="govuk-link">Read more about this change</a>.</p>
+          </div>
+        </div>
+      {% endif %}
+
       <h1 class="govuk-heading-xl" data-cy="main-title">{{ pageTitle }}</h1>
 
       <p class="govuk-body-l">This online service will help you to make a lasting power of attorney

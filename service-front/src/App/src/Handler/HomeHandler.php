@@ -6,6 +6,8 @@ namespace App\Handler;
 
 use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use DateTime;
+use DateTimeZone;
 use Laminas\Diactoros\Response\HtmlResponse;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
 use Mezzio\Template\TemplateRendererInterface;
@@ -20,12 +22,15 @@ class HomeHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly array $config,
+        private readonly DateTime $now,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $dockerTag = $this->config['version']['tag'] ?? '';
+        $showBanner = $this->now < new DateTime('2026-11-26', new DateTimeZone('UTC')) &&
+            $this->now >= new DateTime('2026-11-11', new DateTimeZone('UTC'));
 
         $html = $this->renderer->render(
             'application/general/home/index.twig',
@@ -34,6 +39,7 @@ class HomeHandler implements RequestHandlerInterface
                 'dockerTag' => $dockerTag,
                 'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
                 'pageTitle' => 'Make a lasting power of attorney',
+                'showOneLoginChangesBanner' => $showBanner,
             ])
         );
 
