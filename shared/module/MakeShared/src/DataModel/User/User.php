@@ -27,6 +27,7 @@ class User extends AbstractData
     protected ?string $sharedSpaceId = null;
     protected ?bool $isSharedSpaceAdmin = null;
     protected ?bool $isActiveInSharedSpace = null;
+    protected bool $isProfessional = false;
 
     public static function loadValidatorMetadata(ClassMetadata $metadata)
     {
@@ -260,5 +261,10 @@ class User extends AbstractData
     public function getIsActiveInSharedSpace(): ?bool
     {
         return $this->isActiveInSharedSpace;
+    }
+
+    public function getIsProfessional(): bool
+    {
+        return $this->isProfessional;
     }
 }

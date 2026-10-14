@@ -102,12 +102,13 @@ class OneLoginSessionManager
         SessionInterface $session,
         array $identity,
         #[\SensitiveParameter] string $idToken,
+        string $linkedOrCreated,
     ): string {
         $preAuthUrl = SafeRedirectPath::filter($session->get(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL));
 
         $this->startSession($session, $identity, $idToken);
 
-        return $preAuthUrl ?? '/user/dashboard';
+        return $preAuthUrl ?? '/user/dashboard?account=' . $linkedOrCreated;
     }
 
     public function getIdToken(SessionInterface $session): ?string

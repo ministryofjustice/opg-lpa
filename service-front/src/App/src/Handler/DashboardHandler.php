@@ -12,8 +12,9 @@ use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Template\TemplateRendererInterface;
+use MakeShared\DataModel\User\User as UserModel;
 use Mezzio\Router\RouteResult;
+use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -40,6 +41,9 @@ class DashboardHandler implements RequestHandlerInterface
         if ($identity->getSharedSpaceId() !== null) {
             return new RedirectResponse('/shared-space/dashboard');
         }
+
+        /** @var ?UserModel $userDetails */
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;
@@ -73,8 +77,11 @@ class DashboardHandler implements RequestHandlerInterface
                 'isSearch'              => (is_string($search) && !empty($search)),
                 'user'                  => [
                     'lastLogin' => $identity->lastLogin(),
+                    'isProfessional' => $userDetails->getIsProfessional(),
                 ],
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
+                'accountCreated'  => ($request->getQueryParams()['account'] ?? null) === 'created',
+                'accountLinked'  => ($request->getQueryParams()['account'] ?? null) === 'linked',
             ]
         );
 

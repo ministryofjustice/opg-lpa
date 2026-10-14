@@ -7,6 +7,7 @@ namespace AppTest\Handler;
 use App\Handler\LogoutHandler;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
+use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
@@ -19,6 +20,7 @@ class LogoutHandlerTest extends TestCase
     private const string DONE_URL = 'https://www.gov.uk/done/lasting-power-of-attorney';
     private const string ID_TOKEN = 'header.payload.sig';
     private const string ONE_LOGIN_LOGOUT_URL = 'https://oidc.example.com/logout?id_token_hint=header.payload.sig';
+    private const string MOCK_REDIRECT_URI = 'https://front.example.com/auth/redirect';
 
     private SessionInterface&MockObject $session;
     private OneLoginSignOut&MockObject $oneLoginSignOut;
@@ -31,7 +33,12 @@ class LogoutHandlerTest extends TestCase
 
     private function createHandler(array $config = ['redirects' => ['logout' => self::DONE_URL]]): LogoutHandler
     {
-        return new LogoutHandler($config, new OneLoginSessionManager(), $this->oneLoginSignOut);
+        return new LogoutHandler(
+            $config,
+            new OneLoginSessionManager(),
+            $this->oneLoginSignOut,
+            new RedirectUriBuilder('https://front.example.com'),
+        );
     }
 
     private function createRequest(?string $idToken = null, ?array $pendingLink = null): ServerRequest
@@ -62,7 +69,7 @@ class LogoutHandlerTest extends TestCase
         $this->oneLoginSignOut
             ->expects($this->once())
             ->method('url')
-            ->with(null, '/goodbye')
+            ->with(null, '/goodbye', self::MOCK_REDIRECT_URI)
             ->willReturn(null);
 
         $response = $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest());
@@ -113,7 +120,7 @@ class LogoutHandlerTest extends TestCase
 
     public function testHandlesNullSessionGracefully(): void
     {
-        $this->oneLoginSignOut->method('url')->with(null, self::DONE_URL)->willReturn(null);
+        $this->oneLoginSignOut->method('url')->with(null, self::DONE_URL, self::MOCK_REDIRECT_URI)->willReturn(null);
 
         $request = (new ServerRequest())
             ->withMethod('GET')
@@ -136,7 +143,7 @@ class LogoutHandlerTest extends TestCase
         $this->oneLoginSignOut
             ->expects($this->once())
             ->method('url')
-            ->with(self::ID_TOKEN, self::DONE_URL)
+            ->with(self::ID_TOKEN, self::DONE_URL, self::MOCK_REDIRECT_URI)
             ->willReturnCallback(function () use (&$calls): string {
                 $calls[] = 'url';
 

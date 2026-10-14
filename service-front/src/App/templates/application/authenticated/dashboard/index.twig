@@ -2,14 +2,48 @@
 
 {% import "application/authenticated/dashboard/macros.twig" as macros %}
 
-{%- set pageTitle = 'Your LPAs' -%}
+{%- set overridePageTitle = 'Your LPAs' -%}
 
 {% block content %}
 
 {% set shortList = lpaTotalCount <= 6 and isSearch == false %}
 
+{% if accountCreated or accountLinked %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+          <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            Success
+          </h2>
+        </div>
+
+        <div class="govuk-notification-banner__content">
+          {% if accountCreated %}
+            <h3 class="govuk-notification-banner__heading app-full-width">
+              You’ve created your Make a lasting power of attorney account
+            </h3>
+          {% elseif accountLinked %}
+            <h3 class="govuk-notification-banner__heading app-full-width">
+              The account information you chose to keep is now available in this account.
+            </h3>
+          {% endif %}
+
+          {% if user.isProfessional %}
+            <p class="govuk-body app-full-width">You can {% if lpaTotalCount == 0 %}now start{% else %}continue{% endif %} making a lasting power of attorney or read about how to use a <a href="{{ url('shared-space') }}" class="govuk-link">shared space</a> with other members of your team.</p>
+          {% elseif accountLinked %}
+            <p class="govuk-body app-full-width">You can {% if lpaTotalCount == 0 %}now start{% else %}continue{% endif %} making a lasting power of attorney.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+      <div class="govuk-heading-xl">Your LPAs</div>
+
         <p class="govuk-body-l">On this page you'll find all the LPAs that you've made. As well as making a new LPA from scratch, you can:</p>
         <ul class="govuk-list govuk-list--bullet">
             <li><span class="govuk-!-font-weight-bold">continue making</span> an LPA</li>
@@ -22,10 +56,12 @@
     </div>
     <div class="govuk-grid-column-one-third">
         <div class="panel-cta tablet-and-up">
-            <div class="panel-heading govuk-heading-m">Make another LPA</div>
+            <div class="panel-heading govuk-heading-m">{{ lpaTotalCount > 0 ? 'Make another LPA' : 'Make an LPA' }}</div>
             <div class="panel-body">
                 <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
-                <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+                {% if lpaTotalCount > 0 %}
+                    <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+                {% endif %}
             </div>
         </div>
     </div>

@@ -265,33 +265,30 @@ resource "aws_wafv2_web_acl" "main" {
     }
   }
 
-  rule {
-    name     = "RateLimitByIP"
-    priority = 60
+  dynamic "rule" {
+    for_each = var.account.web_application_firewall.rate_limit_by_ip_enabled ? [1] : []
+    content {
+      name     = "RateLimitByIP"
+      priority = 60
 
-    action {
-      block {}
-    }
+      action {
+        block {}
+      }
 
-    statement {
-      rate_based_statement {
-        limit                 = 200
-        aggregate_key_type    = "IP"
-        evaluation_window_sec = 60
+      statement {
+        rate_based_statement {
+          limit                 = var.account.web_application_firewall.rate_limit_by_ip_rate
+          aggregate_key_type    = "IP"
+          evaluation_window_sec = 60
+        }
+      }
+
+      visibility_config {
+        cloudwatch_metrics_enabled = true
+        metric_name                = "RateLimitByIP"
+        sampled_requests_enabled   = true
       }
     }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name                = "RateLimitByIP"
-      sampled_requests_enabled   = true
-    }
-  }
-
-  visibility_config {
-    cloudwatch_metrics_enabled = true
-    metric_name                = "${local.account_name}-${local.region_name}-web-acl"
-    sampled_requests_enabled   = true
   }
 
   rule {
@@ -321,6 +318,12 @@ resource "aws_wafv2_web_acl" "main" {
       metric_name                = "AWS-AWSManagedRulesCommonRuleSet"
       sampled_requests_enabled   = true
     }
+  }
+
+  visibility_config {
+    cloudwatch_metrics_enabled = true
+    metric_name                = "${local.account_name}-${local.region_name}-web-acl"
+    sampled_requests_enabled   = true
   }
 }
 
@@ -445,5 +448,43 @@ data "aws_iam_policy_document" "waf_cloudwatch_log_encryption_kms" {
       type        = "AWS"
       identifiers = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass"]
     }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "waf_blocked_rule_alarm" {
+  alarm_name                = "WAF Blocked Rule Anomaly detection"
+  alarm_description         = "Anomaly detected, waf blocked rules above threshold"
+  comparison_operator       = "GreaterThanUpperThreshold"
+  evaluation_periods        = 1
+  datapoints_to_alarm       = 1
+  threshold_metric_id       = "ad1"
+  insufficient_data_actions = []
+  treat_missing_data        = "notBreaching"
+  alarm_actions             = [aws_sns_topic.waf_events.arn]
+  ok_actions                = [aws_sns_topic.waf_events.arn]
+
+  metric_query {
+    id          = "m1"
+    period      = 0
+    return_data = true
+
+    metric {
+      dimensions = {
+        "Region" = local.region_name
+        "Rule"   = "ALL"
+        "WebACL" = aws_wafv2_web_acl.main.name
+      }
+      metric_name = "BlockedRequests"
+      namespace   = "AWS/WAFV2"
+      period      = 300
+      stat        = "Average"
+    }
+  }
+  metric_query {
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    id          = "ad1"
+    label       = "BlockedRequests (expected)"
+    period      = 0
+    return_data = true
   }
 }

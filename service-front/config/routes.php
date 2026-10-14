@@ -30,6 +30,7 @@ use App\Handler\InviteMemberHandler;
 use App\Handler\JoinSharedSpaceHandler;
 use App\Handler\KeepYourLpasHandler;
 use App\Handler\LinkAccountHandler;
+use App\Handler\LinkAccountResetPasswordHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\LpaTypeHandler;
@@ -197,8 +198,15 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
-        $app->get('/cannot-link-account', CannotLinkAccountHandler::class, 'cannot-link-account')
-            ->setOptions(['unauthenticated_route' => true]);
+        $app->route(
+            '/link-account/reset-password',
+            LinkAccountResetPasswordHandler::class,
+            ['GET', 'POST'],
+            'link-account.reset-password',
+        )
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
+        $app->route('/cannot-link-account', CannotLinkAccountHandler::class, ['GET', 'POST'], 'cannot-link-account')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->post(
             '/auth/onelogin/backchannel-logout',
             OneLoginBackChannelLogoutHandler::class,
@@ -258,8 +266,10 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/user/dashboard/new-terms', TermsChangedHandler::class, ['GET', 'POST'], 'user/dashboard/terms-changed');
     $app->get('/user/dashboard/statuses/{lpa-ids:[0-9,]+}', StatusesHandler::class, 'user/dashboard/statuses');
 
-    $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive');
-    $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry');
+    $app->get('/session-keep-alive', SessionKeepAliveHandler::class, 'session-keep-alive')
+        ->setOptions(['allowIncompleteUser' => true]);
+    $app->post('/session-set-expiry', SessionSetExpiryHandler::class, 'session-set-expiry')
+        ->setOptions(['allowIncompleteUser' => true]);
 
     $app->route('/lpa/type', LpaTypeHandler::class, ['GET', 'POST'], 'lpa-type-no-id');
     $app->get('/user/dashboard/confirm-delete-lpa/{lpa-id:\d+}', ConfirmDeleteLpaHandler::class, 'user/dashboard/confirm-delete-lpa');

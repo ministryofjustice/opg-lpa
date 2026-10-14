@@ -66,8 +66,8 @@ class InviteMemberHandler implements RequestHandlerInterface
                     }
                 } catch (Throwable $e) {
                     match ($e->getMessage()) {
-                        'user-already-in-shared-space' => $form->setMessages(['email' => ['This email address is already part of the shared space']]),
-                        'invite-already-exists' => $form->setMessages(['email' => ['This email address has already been invited to the shared space']]),
+                        'user-already-in-shared-space' => $form->setMessages(['email' => ['Email address belongs to an active member of this shared space -– enter a different email address   ']]),
+                        'invite-already-exists' => $form->setMessages(['email' => ['Email address is for a pending member of this shared space – enter a different one or cancel the previous invite']]),
                         default => $error = 'An error occurred while sending the invitation. Please try again later.',
                     };
                 }

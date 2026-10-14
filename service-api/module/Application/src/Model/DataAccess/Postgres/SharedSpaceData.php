@@ -383,7 +383,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function getInviteByCodeAndSharedSpaceName(string $accessCode, string $sharedSpaceName): ?MemberInvite
+    public function getInvite(string $accessCode, string $sharedSpaceName, string $userEmail): ?MemberInvite
     {
         $sql = $this->dbWrapper->createSql();
         $select = $sql->select()
@@ -391,6 +391,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             ->join(['space' => self::SHARED_SPACE], 'invite.sharedSpaceId = space.id', ['name'])
             ->where([
                 'invite.code' => $accessCode,
+                'invite.email' => $userEmail,
                 'space.name' => $sharedSpaceName,
             ])
             ->limit(1);
@@ -524,6 +525,23 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         $delete = $sql
             ->delete(self::SHARED_SPACE_INVITES)
             ->where(['id' => $inviteId]);
+
+        try {
+            $sql->prepareStatementForSqlObject($delete)->execute();
+        } catch (InvalidQueryException $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteInvites(string $email): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $delete = $sql
+            ->delete(self::SHARED_SPACE_INVITES)
+            ->where(['email' => $email]);
 
         try {
             $sql->prepareStatementForSqlObject($delete)->execute();

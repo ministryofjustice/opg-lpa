@@ -1,6 +1,6 @@
 resource "aws_db_proxy" "rds_proxy" {
   name                = lower("proxy-${var.environment_name}")
-  debug_logging       = true # this may uncover sensitive information in the logs - but it shouldn't
+  debug_logging       = false # this may uncover sensitive information in the logs - but it shouldn't
   engine_family       = "POSTGRESQL"
   idle_client_timeout = 1800
   require_tls         = true
