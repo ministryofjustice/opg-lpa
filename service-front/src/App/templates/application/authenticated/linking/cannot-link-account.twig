@@ -1,30 +1,30 @@
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'We cannot link this account' -%}
+{%- set pageTitle = 'We could not complete your request to keep LPAs and account information' -%}
 {% block mainTitle %}{% endblock mainTitle %}
 
 {% block content %}
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <h1 class="govuk-heading-xl" data-cy="cannot-link-heading">We cannot link this account</h1>
+            <h1 class="govuk-heading-xl" data-cy="cannot-link-heading">We could not complete your request to keep LPAs and account information</h1>
 
-            <p class="govuk-body" data-cy="cannot-link-intro">
-                We could not link this Make account to your GOV.UK One Login. This could be because:
-            </p>
+            <p class="govuk-body" data-cy="cannot-link-intro">This could be because the:</p>
 
             <ul class="govuk-list govuk-list--bullet" data-cy="cannot-link-reasons">
+                <li>details were entered incorrectly</li>
                 <li>the account does not exist</li>
-                <li>the account has already been linked</li>
-                <li>the account has been deleted</li>
             </ul>
 
-            <p class="govuk-body">
-                You can try again to link a different Make account, or create a new one.
-            </p>
+            <p class="govuk-body"> You can try entering the details again, enter sign-in details for a  different account, or continue without keeping LPA and account information.</p>
 
-            <a href="{{ url('keep-your-lpas') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button" data-cy="cannot-link-try-again">
-                Try again
-            </a>
+          <form novalidate method="post">
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+
+            <div class="govuk-button-group">
+              <a class="govuk-button" href="{{ url('keep-your-lpas') }}" role="button" draggable="false" data-module="govuk-button" data-cy="cannot-link-try-again">Try again</a>
+              <button class="govuk-button govuk-button--secondary" type="submit" data-module="govuk-button" data-cy="cannot-link-create-new-account">Continue without keeping LPA and account information</button>
+            </div>
+          </form>
         </div>
     </div>
 {% endblock content %}

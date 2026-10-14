@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace AppTest\Handler\Lpa;
 
 use App\Handler\CannotLinkAccountHandler;
+use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
 use App\Service\OneLogin\OneLoginSessionManager;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Uri;
+use Mezzio\Helper\UrlHelper;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use RuntimeException;
+
+use function array_key_exists;
 
 class CannotLinkAccountHandlerTest extends TestCase
 {
@@ -24,18 +30,21 @@ class CannotLinkAccountHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private LoggerInterface&MockObject $logger;
     private SessionInterface&MockObject $session;
+    private UrlHelper&MockObject $urlHelper;
     private CannotLinkAccountHandler $handler;
 
     protected function setUp(): void
     {
-        $this->renderer = $this->createMock(TemplateRendererInterface::class);
-        $this->logger   = $this->createMock(LoggerInterface::class);
-        $this->session  = $this->createMock(SessionInterface::class);
+        $this->renderer  = $this->createMock(TemplateRendererInterface::class);
+        $this->logger    = $this->createMock(LoggerInterface::class);
+        $this->session   = $this->createMock(SessionInterface::class);
+        $this->urlHelper = $this->createMock(UrlHelper::class);
 
         $this->handler = new CannotLinkAccountHandler(
             $this->renderer,
             new OneLoginSessionManager(),
             $this->logger,
+            $this->urlHelper,
         );
     }
 
@@ -59,12 +68,70 @@ class CannotLinkAccountHandlerTest extends TestCase
     {
         $this->renderer->expects($this->once())
             ->method('render')
-            ->with('application/authenticated/linking/cannot-link-account.twig')
+            ->with(
+                'application/authenticated/linking/cannot-link-account.twig',
+                $this->callback(fn(array $vars) => $vars['csrfToken'] === 'csrf-token'
+                    && $vars['currentRouteName'] === 'cannot-link-account'
+                    && array_key_exists('signedInUser', $vars))
+            )
             ->willReturn('<html>cannot link</html>');
 
-        $response = $this->handler->handle($this->createRequest());
+        $request = $this->createRequest()
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'csrf-token')
+            ->withAttribute(RequestAttribute::CURRENT_ROUTE_NAME, 'cannot-link-account');
+
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertEquals('<html>cannot link</html>', (string) $response->getBody());
+    }
+
+    public function testThrowsWhenSessionMissingOnGet(): void
+    {
+        $request = (new ServerRequest())->withMethod('GET');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Session middleware is not configured');
+
+        $this->handler->handle($request);
+    }
+
+    public function testPostClearsExistingAccountAndRedirectsToYourDetails(): void
+    {
+        $this->session->method('get')->willReturnCallback(
+            fn(string $key) => $key === 'onelogin_onboarding' ? ['hasExistingAccount' => true] : null
+        );
+        $this->session->expects($this->once())
+            ->method('set')
+            ->with(
+                'onelogin_onboarding',
+                $this->callback(fn(array $data) => $data['hasExistingAccount'] === false)
+            );
+        $this->urlHelper->expects($this->once())
+            ->method('generate')
+            ->with('your-details')
+            ->willReturn('/your-details');
+        $this->renderer->expects($this->never())->method('render');
+
+        $request = (new ServerRequest())
+            ->withMethod('POST')
+            ->withUri(new Uri('/cannot-link-account'))
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/your-details', $response->getHeaderLine('Location'));
+    }
+
+    public function testThrowsWhenSessionMissingOnPost(): void
+    {
+        $request = (new ServerRequest())->withMethod('POST');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Session middleware is not configured');
+
+        $this->handler->handle($request);
     }
 
     public function testRedirectsToLoginWhenNoPendingLink(): void
