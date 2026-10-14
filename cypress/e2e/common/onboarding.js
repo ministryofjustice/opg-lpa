@@ -16,6 +16,7 @@ const WHICH_BEST_DESCRIBES_YOU = '/which-best-describes-you';
 const EXISTING_ACCOUNT = '/existing-account';
 const YOUR_DETAILS = '/your-details';
 const KEEP_YOUR_LPAS = '/keep-your-lpas';
+const LINK_ACCOUNT_RESET_PASSWORD = '/link-account/reset-password';
 
 Then(`I am asked which best describes me`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + WHICH_BEST_DESCRIBES_YOU);
@@ -143,6 +144,25 @@ Then(`I am asked to sign in to my existing Make account`, () => {
   );
   cy.get('[data-cy="link-account-submit"]').should('have.text', 'Keep LPAs and account information');
   cy.OPGCheckA11y();
+});
+
+Then(`I am asked for the email address of my existing Make account`, () => {
+  cy.url().should('eq', Cypress.config().baseUrl + LINK_ACCOUNT_RESET_PASSWORD);
+  cy.contains('h1', 'Reset the password for your existing Make a lasting power of attorney account').should(
+    'be.visible',
+  );
+  cy.get('[data-cy="email-me-the-link"]').should('have.text', 'Email me the link');
+  cy.OPGCheckA11y();
+});
+
+Then(`I ask for a password reset link for {string} confirmed as {string}`, (email, confirmation) => {
+  if (email) {
+    cy.get('[data-cy=email]').clear().type(email);
+  }
+  if (confirmation) {
+    cy.get('[data-cy=email_confirm]').clear().type(confirmation);
+  }
+  cy.get('[data-cy=email-me-the-link]').click();
 });
 
 Then(`I try to sign in to my existing Make account as {string} with no password`, (email) => {

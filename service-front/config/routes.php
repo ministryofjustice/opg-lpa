@@ -30,6 +30,7 @@ use App\Handler\InviteMemberHandler;
 use App\Handler\JoinSharedSpaceHandler;
 use App\Handler\KeepYourLpasHandler;
 use App\Handler\LinkAccountHandler;
+use App\Handler\LinkAccountResetPasswordHandler;
 use App\Handler\LoginHandler;
 use App\Handler\LogoutHandler;
 use App\Handler\LpaTypeHandler;
@@ -196,6 +197,13 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/keep-your-lpas', KeepYourLpasHandler::class, ['GET', 'POST'], 'keep-your-lpas')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/link-account', LinkAccountHandler::class, ['GET', 'POST'], 'link-account')
+            ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
+        $app->route(
+            '/link-account/reset-password',
+            LinkAccountResetPasswordHandler::class,
+            ['GET', 'POST'],
+            'link-account.reset-password',
+        )
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
         $app->route('/cannot-link-account', CannotLinkAccountHandler::class, ['GET', 'POST'], 'cannot-link-account')
             ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
