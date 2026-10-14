@@ -1,4 +1,4 @@
-FROM nginx:1.31.3-alpine3.24@sha256:818f487daa916d5bad276afac9ec1b219cdad6fd3901c39aee0efaf150b14606
+FROM nginx:1.31.6-alpine3.24@sha256:527de634221553670afa2617c96625cd0f860000f3525169b100f41c5b9b8213
 
 # Remove unused packages
 RUN apk del freetype nginx-module-image-filter
