@@ -298,6 +298,7 @@ Then(
 
 Then(`I choose to reset my Make account password`, () => {
   cy.get('[data-cy=link-account-forgot-password]').click();
+  cy.location('pathname').should('eq', '/link-account/reset-password');
 });
 
 Then(

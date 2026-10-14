@@ -132,7 +132,34 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     And my answer "Yes" to keeping my existing LPAs is still selected
     When I say "Yes" to keeping my existing LPAs
     And I choose to reset my Make account password
-    Then I should be on "/forgot-password"
+    Then I am asked for the email address of my existing Make account
+    When I go back
+    Then I am asked to sign in to my existing Make account
+
+  Scenario: Resetting my password without my email address asks for it
+    When I sign in through mock One Login to keep my existing Make account
+    And I choose to reset my Make account password
+    And I ask for a password reset link for "" confirmed as ""
+    Then I see the error "Enter your email address"
+    And I see the error "Confirm your email address"
+
+  Scenario: Resetting my password with an email address in the wrong format asks me to correct it
+    When I sign in through mock One Login to keep my existing Make account
+    And I choose to reset my Make account password
+    And I ask for a password reset link for "not-an-email" confirmed as "not-an-email"
+    Then I see the error "Enter an email address in the correct format, like name@example.com"
+
+  Scenario: Resetting my password with email addresses that do not match asks me to correct them
+    When I sign in through mock One Login to keep my existing Make account
+    And I choose to reset my Make account password
+    And I ask for a password reset link for "me@example.com" confirmed as "someone-else@example.com"
+    Then I see the error "Enter matching email addresses"
+
+  Scenario: I can ask for a link to reset my forgotten password
+    When I sign in through mock One Login to keep my existing Make account
+    And I choose to reset my Make account password
+    And I ask for a password reset link for "me@example.com" confirmed as "me@example.com"
+    Then I see "We've emailed a link" in the page text
 
   Scenario: Not keeping my LPAs starts a new account, and going back keeps my answer
     When I click "onelogin-signin-button"
