@@ -87,6 +87,7 @@ use App\Handler\MakeSharedSpaceHandler;
 use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
+use App\Handler\OneLoginChangesHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerJson;
@@ -180,6 +181,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/send-feedback', FeedbackHandler::class, ['GET', 'POST'], 'send-feedback')
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/feedback-thanks', FeedbackThanksHandler::class, 'feedback-thanks')
+        ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/onelogin-changes', OneLoginChangesHandler::class, 'onelogin-changes')
         ->setOptions(['unauthenticated_route' => true]);
 
     if (App\Feature::OneLogin->isEnabled()) {
