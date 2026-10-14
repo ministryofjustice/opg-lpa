@@ -88,7 +88,7 @@ class YourDetailsHandler implements RequestHandlerInterface
                     $this->logger->info('auth.onelogin.create_and_link_success');
 
                     return new RedirectResponse(
-                        $this->sessionManager->finishOnboarding($session, $identity, $pendingLink->idToken),
+                        $this->sessionManager->finishOnboarding($session, $identity, $pendingLink->idToken, 'created'),
                     );
                 } catch (RuntimeException $e) {
                     $this->logger->error('auth.onelogin.create_error', ['message' => $e->getMessage()]);

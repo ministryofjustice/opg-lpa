@@ -58,10 +58,12 @@
     </div>
     <div class="govuk-grid-column-one-third">
         <div class="panel-cta tablet-and-up">
-            <div class="panel-heading govuk-heading-m">Make another LPA</div>
+s            <div class="panel-heading govuk-heading-m">{{ lpaTotalCount > 0 ? 'Make another LPA' : 'Make an LPA' }}</div>
             <div class="panel-body">
                 <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
-                <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+                {% if lpaTotalCount > 0 %}
+                    <p class="govuk-!-font-weight-bold govuk-body-s">Or reuse the details of an LPA below</p>
+                {% endif %}
             </div>
         </div>
     </div>

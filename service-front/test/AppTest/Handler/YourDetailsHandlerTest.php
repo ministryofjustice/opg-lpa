@@ -225,7 +225,7 @@ class YourDetailsHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('POST', self::DETAILS));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/user/dashboard', $response->getHeaderLine('Location'));
+        $this->assertSame('/user/dashboard?account=created', $response->getHeaderLine('Location'));
     }
 
     public function testAnApiFailureKeepsTheUserOnThePageWithAnError(): void

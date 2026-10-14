@@ -84,7 +84,7 @@ class LinkAccountHandler implements RequestHandlerInterface
                     $this->logger->info('auth.onelogin.link_success');
 
                     return new RedirectResponse(
-                        $this->sessionManager->finishOnboarding($session, $result['identity'], $pendingLink->idToken),
+                        $this->sessionManager->finishOnboarding($session, $result['identity'], $pendingLink->idToken, 'linked'),
                     );
                 }
 

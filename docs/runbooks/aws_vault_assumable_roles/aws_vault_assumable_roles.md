@@ -11,7 +11,7 @@ brew install awscli
 ```
 
 You also will need to have a working installation of aws-vault, configured with an identity profile.
-instructions on how to install are in the [OPG New Starter Guide](https://ministryofjustice.github.io/opg-new-starter/amazon.html#aws-vault>),
+instructions on how to install are in the [OPG Digital Documentation Hub - AWS Access and Configuration](https://digital-docs.opg.service.justice.gov.uk/guides/aws-access-and-configuration.html),
 
 ## Setting up credentials
 

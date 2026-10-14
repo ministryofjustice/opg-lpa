@@ -811,6 +811,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'createdAt' => $user['created'],
             'updatedAt' => $user['updated'],
             'lastLoginAt' => $user['last_login'],
+            'isProfessional' => $user['is_professional'],
         ]);
 
         if (!empty($user['one_login_email'])) {

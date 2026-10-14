@@ -12,6 +12,7 @@ use DateTime;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\User\User as UserModel;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -59,16 +60,19 @@ class DashboardHandlerTest extends TestCase
         int $page = 1,
         ?string $search = null,
         ?User $identity = null,
+        ?UserModel $user = null,
     ): ServerRequest {
         $routeResult = $this->createMock(RouteResult::class);
         $routeResult->method('getMatchedParams')->willReturn(['page' => $page]);
 
         $identity ??= $this->createMock(User::class);
+        $user ??= $this->createMock(UserModel::class);
 
         $request = (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RouteResult::class, $routeResult)
-            ->withAttribute(RequestAttribute::IDENTITY, $identity);
+            ->withAttribute(RequestAttribute::IDENTITY, $identity)
+            ->withAttribute(RequestAttribute::USER_DETAILS, $user);
 
         if ($search !== null) {
             $request = $request->withQueryParams(['search' => $search]);
@@ -221,6 +225,9 @@ class DashboardHandlerTest extends TestCase
         $identity = $this->createMock(User::class);
         $identity->expects($this->once())->method('lastLogin')->willReturn($lastLogin);
 
+        $user = $this->createMock(UserModel::class);
+        $user->expects($this->once())->method('getIsProfessional')->willReturn(true);
+
         $lpas = [
             ['id' => 1001, 'donor' => 'Alice Example'],
             ['id' => 1002, 'donor' => 'Bob Example'],
@@ -248,6 +255,7 @@ class DashboardHandlerTest extends TestCase
                         && $params['isSearch'] === false
                         && $params['trackingEnabled'] === true
                         && $params['user']['lastLogin'] === $lastLogin
+                        && $params['user']['isProfessional'] === true
                         && $params['paginationControlData']['page'] === 1
                         && $params['paginationControlData']['pageCount'] === 1
                         && $params['paginationControlData']['pagesInRange'] === [1];
@@ -255,7 +263,7 @@ class DashboardHandlerTest extends TestCase
             )
             ->willReturn('<html>dashboard</html>');
 
-        $response = $this->handler->handle($this->createRequest(identity: $identity));
+        $response = $this->handler->handle($this->createRequest(identity: $identity, user: $user));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
