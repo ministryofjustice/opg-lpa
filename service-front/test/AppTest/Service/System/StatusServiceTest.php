@@ -16,6 +16,8 @@ use MakeShared\Constants;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use ReflectionMethod;
 use SessionHandlerInterface;
 
@@ -54,6 +56,9 @@ class StatusServiceTest extends TestCase
                 'ordnance_survey' => [
                     'max_call_per_min' => 6,
                 ],
+            ],
+            'alphagov' => [
+                'pay' => ['url' => 'http://pay.example.com'],
             ],
         ];
     }
@@ -202,6 +207,54 @@ class StatusServiceTest extends TestCase
             ['ok' => true, 'status' => Constants::STATUS_PASS],
             $this->invokePrivate($serviceWithoutMail, 'checkMail')
         );
+    }
+
+    public function testCheckPayReturnsPassResultOnSuccessfulPing(): void
+    {
+        $response = $this->createMock(ResponseInterface::class);
+        $response->method('getStatusCode')->willReturn(200);
+
+        $this->httpClient->expects($this->once())
+            ->method('sendRequest')
+            ->with($this->callback(function (RequestInterface $r): bool {
+                $this->assertEquals('GET', $r->getMethod());
+                $this->assertEquals('http://pay.example.com/healthcheck', (string) $r->getUri());
+                return true;
+            }))
+            ->willReturn($response);
+
+        $result = $this->createService()->checkPay();
+
+        $this->assertSame([
+            'ok'      => true,
+            'status'  => Constants::STATUS_PASS,
+            'details' => [
+                'url' => 'http://pay.example.com/healthcheck',
+                'response_code' => 200,
+            ],
+        ], $result);
+    }
+
+    public function testCheckApiDependenciesReturnsPassResultOnSuccessfulPing(): void
+    {
+        $this->apiClient->expects($this->once())
+            ->method('httpGet')
+            ->with('/health-check/dependencies')
+            ->willReturn([
+                'ok'     => true,
+                'status' => Constants::STATUS_PASS,
+                'other'  => 'data',
+            ]);
+
+        $result = $this->createService()->checkApiDependencies();
+
+        $this->assertSame([
+            'ok'      => true,
+            'status'  => Constants::STATUS_PASS,
+            'details' => [
+                'other' => 'data',
+            ],
+        ], $result);
     }
 
     public function testCheckDynamoReturnsPassForActiveTable(): void

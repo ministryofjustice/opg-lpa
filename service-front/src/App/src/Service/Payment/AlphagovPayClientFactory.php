@@ -13,12 +13,8 @@ class AlphagovPayClientFactory
     public function __invoke(ContainerInterface $container): GovPayClient
     {
         $config    = $container->get('config');
-        $payConfig = $config['alphagov']['pay'] ?? [];
+        $payConfig = $config['alphagov']['pay'];
 
-        return new GovPayClient([
-            'apiKey'     => $payConfig['key'] ?? '',
-            'httpClient' => new GuzzleClient(),
-            'baseUrl'    => $payConfig['url'] ?? null,
-        ]);
+        return new GovPayClient(new GuzzleClient(), $payConfig['key'], $payConfig['url']);
     }
 }

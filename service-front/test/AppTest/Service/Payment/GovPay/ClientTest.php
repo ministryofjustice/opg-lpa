@@ -35,13 +35,13 @@ class ClientTest extends TestCase
     // -------------------------------------------------------------------------
     // Helpers
 
-    private function makeClient(array $overrides = []): Client
+    private function makeClient(?string $baseUrl = null): Client
     {
-        return new Client(array_merge([
-            'httpClient' => $this->httpClient,
-            'apiKey'     => 'test-api-key', // pragma: allowlist secret
-            'baseUrl'    => 'https://pay.example.com',
-        ], $overrides));
+        return new Client(
+            $this->httpClient,
+            'test-api-key', // pragma: allowlist secret
+            $baseUrl ?? 'https://pay.example.com',
+        );
     }
 
     /**
@@ -70,21 +70,9 @@ class ClientTest extends TestCase
     // -------------------------------------------------------------------------
     // Constructor
 
-    public function testConstructorDefaultsToProductionUrl(): void
-    {
-        $client = new Client([
-            'httpClient' => $this->httpClient,
-            'apiKey'     => 'key', // pragma: allowlist secret
-        ]);
-
-        // White-box: access protected $baseUrl via reflection
-        $ref = new \ReflectionProperty(Client::class, 'baseUrl');
-        $this->assertSame(Client::BASE_URL_PRODUCTION, $ref->getValue($client));
-    }
-
     public function testConstructorAcceptsCustomBaseUrl(): void
     {
-        $client = $this->makeClient(['baseUrl' => 'https://custom.example.com']);
+        $client = $this->makeClient(baseUrl: 'https://custom.example.com');
 
         $ref = new \ReflectionProperty(Client::class, 'baseUrl');
         $this->assertSame('https://custom.example.com', $ref->getValue($client));
@@ -95,22 +83,7 @@ class ClientTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Invalid 'baseUrl'");
 
-        $this->makeClient(['baseUrl' => 'not-a-url']);
-    }
-
-    public function testConstructorThrowsWhenHttpClientMissing(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('HttpClientInterface');
-
-        new Client(['apiKey' => 'key', 'httpClient' => null]); // pragma: allowlist secret
-    }
-
-    public function testConstructorThrowsWhenHttpClientInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        new Client(['apiKey' => 'key', 'httpClient' => new \stdClass()]); // pragma: allowlist secret
+        $this->makeClient(baseUrl: 'not-a-url');
     }
 
     public function testConstructorThrowsWhenApiKeyMissing(): void
@@ -118,7 +91,7 @@ class ClientTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("'apiKey' must be set");
 
-        new Client(['httpClient' => $this->httpClient, 'apiKey' => null]);
+        new Client($this->httpClient, null, 'http://example.com');
     }
 
     // -------------------------------------------------------------------------

@@ -149,10 +149,10 @@ class StatusService
 
     public function checkPay(): array
     {
-        $payUrl = $this->config['alphagov']['pay']['url'];
+        $payUrl = $this->config['alphagov']['pay']['url'] . '/healthcheck';
 
         $response = $this->httpClient->sendRequest(new Request('GET', $payUrl));
-        $ok = $response->getStatusCode() === 404;
+        $ok = $response->getStatusCode() === 200;
 
         return [
             'ok' => $ok,
