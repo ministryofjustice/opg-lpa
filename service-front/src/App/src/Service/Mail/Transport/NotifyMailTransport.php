@@ -6,6 +6,7 @@ namespace App\Service\Mail\Transport;
 
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
+use App\Feature;
 use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\SharedSpace\SharedSpaceService;
@@ -13,7 +14,6 @@ use App\Service\UserDetails;
 use Laminas\Http\Response;
 use MakeShared\Constants;
 use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
 
 class NotifyMailTransport implements MailTransportInterface
 {
@@ -34,17 +34,21 @@ class NotifyMailTransport implements MailTransportInterface
         SharedSpaceService::EMAIL_SUSPEND_MEMBER                 => '0bee6f68-9c18-4c42-a180-1f5916e88bf6',
     ];
 
+    // Template IDs to use instead of that specified defaultTemplateMap if One Login is enabled.
+    private array $oneLoginTemplateMap = [
+        UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT => '255e40d8-f51c-48f0-8e3d-d2e790d8d6d2'
+    ];
+
     private array $templateMap;
-    private readonly LoggerInterface $logger;
 
     public function __construct(
         private readonly NotifyClient $client,
-        private readonly ?string $smokeTestEmailAddress = null,
-        ?array $templateMap = null,
-        ?LoggerInterface $logger = null,
+        private readonly ?string $smokeTestEmailAddress,
+        private readonly LoggerInterface $logger,
     ) {
-        $this->templateMap = $templateMap ?? $this->defaultTemplateMap;
-        $this->logger = $logger ?? new NullLogger();
+        $this->templateMap = Feature::OneLogin->isEnabled()
+            ? array_merge($this->defaultTemplateMap, $this->oneLoginTemplateMap)
+            : $this->defaultTemplateMap;
     }
 
     public function send(MailParameters $mailParameters): void
