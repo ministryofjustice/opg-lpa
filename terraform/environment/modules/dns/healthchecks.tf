@@ -81,7 +81,7 @@ resource "aws_cloudwatch_metric_alarm" "service_health_check" {
 
 resource "pagerduty_service_integration" "service_health_check" {
   count   = var.pagerduty_integration_enabled ? 1 : 0
-  name    = "Modernising LPA ${var.environment_name} Service Health Check Alarm"
+  name    = "Make a Lasting Power of Attorney ${var.environment_name} Service Health Check Alarm"
   service = data.pagerduty_service.main.id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
@@ -109,13 +109,13 @@ resource "aws_route53_health_check" "dependencies_health_check" {
   tags = {
     Name = "${var.environment_name} dependencies health check"
   }
-  provider = aws.us_east_1
+  provider = aws.eu-west-2
 }
 
 resource "aws_sns_topic" "dependencies_health_check" {
   name = "${var.environment_name}-dependencies-health-checks"
   # kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
-  provider = aws.us_east_1
+  provider = aws.eu-west-2
 }
 
 resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
@@ -136,12 +136,12 @@ resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
     HealthCheckId = aws_route53_health_check.dependencies_health_check.id
   }
 
-  provider = aws.us_east_1
+  provider = aws.eu-west-2
 }
 
 resource "pagerduty_service_integration" "dependencies_health_check" {
   count   = var.pagerduty_integration_enabled ? 1 : 0
-  name    = "Modernising LPA ${var.environment_name} Dependency Health Check Alarm"
+  name    = "Make a Lasting Power of Attorney ${var.environment_name} Dependency Health Check Alarm"
   service = data.pagerduty_service.main.id
   vendor  = data.pagerduty_vendor.cloudwatch.id
 }
@@ -152,5 +152,5 @@ resource "aws_sns_topic_subscription" "dependencies_health_check" {
   protocol               = "https"
   endpoint_auto_confirms = true
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.dependencies_health_check[0].integration_key}/enqueue"
-  provider               = aws.us_east_1
+  provider               = aws.eu-west-2
 }
