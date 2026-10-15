@@ -31,7 +31,6 @@ final class MailTransportFactory
                 'httpClient' => new GuzzleClient(),
             ]),
             $smokeTestEmail,
-            null,
             $container->get(LoggerInterface::class),
         );
     }
