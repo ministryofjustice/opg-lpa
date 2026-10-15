@@ -174,7 +174,6 @@ class SharedSpaceService
                 $member->getEmail(),
                 self::EMAIL_SUSPEND_MEMBER,
                 [
-                    'suspendedUserFullName' => $fullName,
                     'sharedSpaceName' => $member->getSharedSpaceName()
                 ],
             );
