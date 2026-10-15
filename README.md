@@ -149,9 +149,9 @@ cd tests/load
 uv sync --locked
 ```
 
-3. Run the test suite: `uv run bin/run_load_tests.sh tests/suite.py`
-    The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
-    Running `run_load_tests.sh` without arguments shows the available switches.
+3. Run the test suite: `uv run bin/run_load_tests.sh tests/suite.py` or `PYTHONPATH="." uv run bin/run_load_tests.sh tests/suite.py` if no environment variable is set.
+The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
+Running `run_load_tests.sh` without arguments shows the available switches.
 
 When working on the tests, it can be useful to debug HTTP requests made by the requests library.
 To enable this, edit the `tests/load/load-test-config.json` file and set `"requests_debugging": true`.
