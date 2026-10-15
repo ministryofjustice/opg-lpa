@@ -3,6 +3,8 @@
 namespace Application;
 
 use Alphagov\Notifications\Client as NotifyClient;
+use Application\Handler\HealthCheckDependenciesHandler;
+use Application\Handler\HealthCheckDependenciesHandlerFactory;
 use Application\Handler\PingHandler;
 use Application\Handler\PingHandlerFactory;
 use Application\Library\Authentication\AuthenticationListener;
@@ -13,6 +15,7 @@ use Application\Model\DataAccess\Repository;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
 use Application\Model\Service\Feedback\FeedbackValidator;
 use Aws\Credentials\CredentialProvider;
+use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
 use Aws\Signature\SignatureV4;
 use Aws\Sns\SnsClient;
@@ -129,7 +132,6 @@ class Module
                 Postgres\FeedbackData::class    => Postgres\DataFactory::class,
                 Postgres\SharedSpaceData::class => Postgres\DataFactory::class,
 
-
                 // Get S3Client Client
                 'S3Client' => function ($sm) {
                     $config = $sm->get('config');
@@ -148,12 +150,12 @@ class Module
                     return new SqsClient($config['pdf']['queue']['sqs']['client']);
                 },
 
-                'AwsCredentials' => function () {
+                CredentialsInterface::class => function () {
                     $provider = CredentialProvider::defaultProvider();
                     return $provider()->wait();
                 },
 
-                'AwsApiGatewaySignature' => function () {
+                SignatureV4::class => function () {
                     return new SignatureV4('execute-api', self::awsRegion());
                 },
 
@@ -171,7 +173,7 @@ class Module
                 },
 
                 PingHandler::class => PingHandlerFactory::class,
-
+                HealthCheckDependenciesHandler::class => HealthCheckDependenciesHandlerFactory::class,
             ], // factories
         ];
     }

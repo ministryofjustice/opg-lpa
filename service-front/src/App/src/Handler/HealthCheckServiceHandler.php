@@ -25,12 +25,15 @@ class HealthCheckServiceHandler implements RequestHandlerInterface
             'dynamo' => $this->statusService->checkDynamo(),
         ];
 
-        $response['ok'] = (
-            $response['api']['ok']
-                && $response['sessionSaveHandler']['ok']
-                && $response['dynamo']['ok']
-        );
+        $ok = true;
+        foreach ($response as $value) {
+            if (!$value['ok']) {
+                $ok = false;
+                break;
+            }
+        }
 
-        return new JsonResponse($response);
+        $response['ok'] = $ok;
+        return new JsonResponse($response, $ok ? 200 : 500);
     }
 }

@@ -21,8 +21,6 @@ class Client
 {
     public const VERSION = '1.0.0';
 
-    public const BASE_URL_PRODUCTION = 'https://publicapi.payments.service.gov.uk';
-
     public const PATH_PAYMENT_LIST    = '/v1/payments';
     public const PATH_PAYMENT_CREATE  = '/v1/payments';
     public const PATH_PAYMENT_LOOKUP  = '/v1/payments/%s';
@@ -31,51 +29,23 @@ class Client
     public const PATH_PAYMENT_REFUND  = '/v1/payments/%s/refunds/%s';
     public const PATH_PAYMENT_REFUNDS = '/v1/payments/%s/refunds';
 
-    protected string $baseUrl;
-    private HttpClientInterface $httpClient;
+    private string $baseUrl;
     private string $apiKey;
 
-    /**
-     * Instantiates a new GOV.UK Pay client.
-     *
-     * Accepted keys:
-     *  - httpClient: (HttpClientInterface) Required.
-     *  - apiKey:     (string)              Required.
-     *  - baseUrl:    (string|null)         Optional. Defaults to the production API.
-     *
-     * @param array<string, mixed> $config
-     */
-    public function __construct(array $config)
+    public function __construct(private HttpClientInterface $httpClient, ?string $apiKey, string $baseUrl)
     {
-        $config = array_merge([
-            'httpClient' => null,
-            'apiKey'     => null,
-            'baseUrl'    => null,
-        ], $config);
-
-        if (!isset($config['baseUrl'])) {
-            $this->baseUrl = self::BASE_URL_PRODUCTION;
-        } elseif (filter_var($config['baseUrl'], FILTER_VALIDATE_URL) !== false) {
-            $this->baseUrl = $config['baseUrl'];
-        } else {
-            throw new Exception\InvalidArgumentException(
-                "Invalid 'baseUrl' set. This must be either a valid URL, or null to use the production URL."
-            );
-        }
-
-        if ($config['httpClient'] instanceof HttpClientInterface) {
-            $this->setHttpClient($config['httpClient']);
-        } else {
-            throw new Exception\InvalidArgumentException(
-                "An instance of HttpClientInterface must be set under 'httpClient'"
-            );
-        }
-
-        if (is_string($config['apiKey'])) {
-            $this->apiKey = $config['apiKey'];
-        } else {
+        if ($apiKey === null) {
             throw new Exception\InvalidArgumentException("'apiKey' must be set");
         }
+
+        if (filter_var($baseUrl, FILTER_VALIDATE_URL) === false) {
+            throw new Exception\InvalidArgumentException(
+                "Invalid 'baseUrl' set. This must be set to a valid URL."
+            );
+        }
+
+        $this->baseUrl = $baseUrl;
+        $this->apiKey = $apiKey;
     }
 
     // -------------------------------------------------------------------------
@@ -301,7 +271,7 @@ class Client
         $request = new Request('GET', $url, $this->buildHeaders());
 
         try {
-            $response = $this->getHttpClient()->sendRequest($request);
+            $response = $this->httpClient->sendRequest($request);
         } catch (\RuntimeException $e) {
             throw new Exception\PayException($e->getMessage(), $e->getCode(), $e);
         }
@@ -329,7 +299,7 @@ class Client
         $request = new Request('POST', $url, $this->buildHeaders(), $body);
 
         try {
-            $response = $this->getHttpClient()->sendRequest($request);
+            $response = $this->httpClient->sendRequest($request);
         } catch (\RuntimeException $e) {
             throw new Exception\PayException($e->getMessage(), $e->getCode(), $e);
         }
@@ -344,33 +314,12 @@ class Client
     // -------------------------------------------------------------------------
     // Response handling
 
-    protected function createErrorException(ResponseInterface $response): Exception\ApiException
+    private function createErrorException(ResponseInterface $response): Exception\ApiException
     {
         return new Exception\ApiException(
             "HTTP:{$response->getStatusCode()} - Unexpected response from server",
             $response->getStatusCode(),
             $response
         );
-    }
-
-    // -------------------------------------------------------------------------
-    // Getters / setters
-
-    /**
-     * @throws Exception\UnexpectedValueException
-     */
-    final protected function getHttpClient(): HttpClientInterface
-    {
-        if (!($this->httpClient instanceof HttpClientInterface)) {
-            throw new Exception\UnexpectedValueException('Invalid HttpClient set');
-        }
-
-        return $this->httpClient;
-    }
-
-    final protected function setHttpClient(HttpClientInterface $client): void
-    {
-
-        $this->httpClient = $client;
     }
 }

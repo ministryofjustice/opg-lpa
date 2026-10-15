@@ -11,7 +11,9 @@ use App\Service\Redis\RedisClient;
 use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
+use GuzzleHttp\Psr7\Request;
 use MakeShared\Constants;
+use Psr\Http\Client\ClientInterface;
 
 class StatusService
 {
@@ -23,6 +25,7 @@ class StatusService
 
     public function __construct(
         private readonly ApiClient $apiClient,
+        private readonly ClientInterface $httpClient,
         private readonly ?DynamoDbClient $dynamoDbClient = null,
         private readonly ?\SessionHandlerInterface $sessionSaveHandler = null,
         private readonly ?MailTransportInterface $mailTransport = null,
@@ -142,6 +145,47 @@ class StatusService
         }
 
         return $this->mailTransport->healthcheck();
+    }
+
+    public function checkPay(): array
+    {
+        $payUrl = $this->config['alphagov']['pay']['url'] . '/healthcheck';
+
+        $response = $this->httpClient->sendRequest(new Request('GET', $payUrl));
+        $ok = $response->getStatusCode() === 200;
+
+        return [
+            'ok' => $ok,
+            'status' => $ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL,
+            'details' => [
+                'url' => $payUrl,
+                'response_code' => $response->getStatusCode(),
+            ],
+        ];
+    }
+
+    public function checkApiDependencies(): array
+    {
+        $result = [
+            'ok' => false,
+            'status' => Constants::STATUS_FAIL,
+            'details' => [],
+        ];
+
+        try {
+            $api = $this->apiClient->httpGet('/health-check/dependencies');
+
+            $result['ok'] = $api['ok'];
+            $result['status'] = $api['status'];
+            unset($api['ok'], $api['status']);
+
+            $result['details'] += $api;
+        } catch (Exception) {
+            $result['ok'] = false;
+            $result['status'] = Constants::STATUS_FAIL;
+        }
+
+        return $result;
     }
 
     public function checkDynamo(): array
