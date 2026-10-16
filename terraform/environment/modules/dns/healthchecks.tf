@@ -125,7 +125,7 @@ resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
   ok_actions          = [aws_sns_topic.dependencies_health_check.arn]
   actions_enabled     = true
   comparison_operator = "LessThanThreshold"
-  datapoints_to_alarm = 1
+  datapoints_to_alarm = 2
   evaluation_periods  = 1
   metric_name         = "HealthCheckStatus"
   namespace           = "AWS/Route53"
