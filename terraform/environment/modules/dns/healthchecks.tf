@@ -109,13 +109,13 @@ resource "aws_route53_health_check" "dependencies_health_check" {
   tags = {
     Name = "${var.environment_name} dependencies health check"
   }
-  provider = aws.eu-west-2
+  provider = aws.eu_west_2
 }
 
 resource "aws_sns_topic" "dependencies_health_check" {
   name = "${var.environment_name}-dependencies-health-checks"
   # kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
-  provider = aws.eu-west-2
+  provider = aws.eu_west_2
 }
 
 resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
@@ -136,7 +136,7 @@ resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
     HealthCheckId = aws_route53_health_check.dependencies_health_check.id
   }
 
-  provider = aws.eu-west-2
+  provider = aws.eu_west_2
 }
 
 resource "pagerduty_service_integration" "dependencies_health_check" {
@@ -152,5 +152,5 @@ resource "aws_sns_topic_subscription" "dependencies_health_check" {
   protocol               = "https"
   endpoint_auto_confirms = true
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.dependencies_health_check[0].integration_key}/enqueue"
-  provider               = aws.eu-west-2
+  provider               = aws.eu_west_2
 }
