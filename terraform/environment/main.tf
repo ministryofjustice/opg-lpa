@@ -83,7 +83,7 @@ module "environment_dns" {
   source = "./modules/dns"
   providers = {
     aws            = aws
-    aws.eu-west-2  = aws.eu_west_2
+    aws.eu_west_2  = aws.eu_west_2
     aws.us_east_1  = aws.us_east_1
     aws.management = aws.management
   }
