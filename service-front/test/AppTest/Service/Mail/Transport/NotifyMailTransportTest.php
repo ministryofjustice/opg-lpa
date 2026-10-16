@@ -11,7 +11,6 @@ use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\NotifyMailTransport;
 use App\Service\UserDetails;
 use Laminas\Http\Response;
-use MakeShared\Constants;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -168,7 +167,6 @@ final class NotifyMailTransportTest extends TestCase
         $this->assertSame(
             [
                 'ok' => true,
-                'status' => Constants::STATUS_PASS,
                 'details' => ['smokeTestEmailAddress' => 'smoke@example.com'],
             ],
             $transport->healthcheck()
@@ -197,7 +195,6 @@ final class NotifyMailTransportTest extends TestCase
         $this->assertSame(
             [
                 'ok' => false,
-                'status' => Constants::STATUS_FAIL,
                 'details' => [
                     'smokeTestEmailAddress' => 'smoke@example.com',
                     'exception' => 'Unable to send email to smoke test address',

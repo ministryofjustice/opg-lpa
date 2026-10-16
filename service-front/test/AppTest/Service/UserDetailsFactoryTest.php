@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace AppTest\Service;
 
+use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\UserDetailsFactory;
 use App\Service\ApiClient\Client as ApiClient;
 use App\Authentication\AuthenticationService;
@@ -23,6 +24,7 @@ final class UserDetailsFactoryTest extends TestCase
     private UrlHelper&MockObject $urlHelper;
     private LoggerInterface&MockObject $logger;
     private MezzioSessionStorage&MockObject $sessionStorage;
+    private MailTransportInterface&MockObject $mailTransport;
 
     protected function setUp(): void
     {
@@ -32,6 +34,7 @@ final class UserDetailsFactoryTest extends TestCase
         $this->urlHelper      = $this->createMock(UrlHelper::class);
         $this->logger         = $this->createMock(LoggerInterface::class);
         $this->sessionStorage = $this->createMock(MezzioSessionStorage::class);
+        $this->mailTransport  = $this->createMock(MailTransportInterface::class);
 
         $this->container->method('get')->willReturnMap([
             [AuthenticationService::class,  $this->authService],
@@ -39,47 +42,13 @@ final class UserDetailsFactoryTest extends TestCase
             [UrlHelper::class,              $this->urlHelper],
             [LoggerInterface::class,        $this->logger],
             [MezzioSessionStorage::class,   $this->sessionStorage],
+            [MailTransportInterface::class, $this->mailTransport],
             ['config',                      ['email' => ['notify' => ['key' => null]]]],
         ]);
     }
 
     public function testReturnsUserServiceInstance(): void
     {
-        $factory = new UserDetailsFactory();
-        $service = $factory($this->container);
-
-        $this->assertInstanceOf(UserService::class, $service);
-    }
-
-    public function testUsesNullMailTransportWhenNoNotifyKey(): void
-    {
-        $factory = new UserDetailsFactory();
-        $service = $factory($this->container);
-
-        // Verify the service was constructed — if it were to throw on send()
-        // internally we'd know the wrong transport was picked. We test indirectly
-        // by confirming the service is usable (no exception on construction).
-        $this->assertInstanceOf(UserService::class, $service);
-    }
-
-    public function testUsesNotifyMailTransportWhenKeyIsPresent(): void
-    {
-        $this->container->method('get')->willReturnMap([
-            [AuthenticationService::class,  $this->authService],
-            [ApiClient::class,              $this->apiClient],
-            [UrlHelper::class,              $this->urlHelper],
-            [LoggerInterface::class,        $this->logger],
-            [MezzioSessionStorage::class,   $this->sessionStorage],
-            ['config', [
-                'email' => [
-                    'notify' => [
-                        'key'                   => 'test-notify-key',
-                        'smokeTestEmailAddress' => 'smoke@example.com',
-                    ],
-                ],
-            ]],
-        ]);
-
         $factory = new UserDetailsFactory();
         $service = $factory($this->container);
 

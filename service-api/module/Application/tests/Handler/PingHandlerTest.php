@@ -9,7 +9,6 @@ use Aws\Sqs\SqsClient;
 use Laminas\Db\Adapter\Adapter as DbAdapter;
 use Laminas\Db\Adapter\Driver\ConnectionInterface;
 use Laminas\Db\Adapter\Driver\DriverInterface;
-use MakeShared\Constants;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -67,7 +66,6 @@ class PingHandlerTest extends MockeryTestCase
                 'ok' => true,
             ],
             'ok' => true,
-            'status' => Constants::STATUS_PASS,
             'queue' => [
                 'details' => [
                     'available' => true,
@@ -77,9 +75,6 @@ class PingHandlerTest extends MockeryTestCase
                 'ok' => true,
             ],
         ];
-
-        $this->logger->expects('info')
-            ->with('PingController results', $expectedResult);
 
         $result = $this->handler->handle(Mockery::mock(ServerRequestInterface::class));
         $this->assertEquals($expectedResult, json_decode($result->getBody()->getContents(), true));
@@ -97,7 +92,6 @@ class PingHandlerTest extends MockeryTestCase
 
         $expectedResult = [
             'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'database' => [
                 'ok' => false,
             ],
@@ -112,9 +106,6 @@ class PingHandlerTest extends MockeryTestCase
         ];
 
         $this->logger->expects('error');
-
-        $this->logger->expects('info')
-            ->with('PingController results', $expectedResult);
 
         $result = $this->handler->handle(Mockery::mock(ServerRequestInterface::class));
         $this->assertEquals($expectedResult, json_decode($result->getBody()->getContents(), true));
@@ -132,7 +123,6 @@ class PingHandlerTest extends MockeryTestCase
                 'ok' => false,
             ],
             'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'queue' => [
                 'details' => [
                     'available' => false,
@@ -145,9 +135,6 @@ class PingHandlerTest extends MockeryTestCase
 
         $this->logger->expects('error')
             ->times(2);
-
-        $this->logger->expects('info')
-            ->with('PingController results', $expectedResult);
 
         $result = $this->handler->handle(Mockery::mock(ServerRequestInterface::class));
         $this->assertEquals($expectedResult, json_decode($result->getBody()->getContents(), true));

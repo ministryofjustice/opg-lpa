@@ -15,7 +15,7 @@ interface MailTransportInterface
     public function send(MailParameters $mailParameters): void;
 
     /**
-     * @return array{ok: bool, status: string}
+     * @return array{ok: bool, details?: mixed}
      */
     public function healthcheck(): array;
 }

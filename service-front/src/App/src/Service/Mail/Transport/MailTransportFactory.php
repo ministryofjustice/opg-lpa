@@ -15,15 +15,13 @@ final class MailTransportFactory
     {
         $config = $container->get('config');
         $emailConfig = $config['email'] ?? [];
-
-        $notifyKey = $emailConfig['notify']['key']
-            ?? (getenv('OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY') ?: '');
+        $notifyKey = $emailConfig['notify']['key'];
 
         if (!$notifyKey) {
             return new NullMailTransport();
         }
 
-        $smokeTestEmail = $emailConfig['notify']['smokeTestEmailAddress'] ?? null;
+        $smokeTestEmail = $emailConfig['notify']['smokeTestEmailAddress'];
 
         return new NotifyMailTransport(
             new NotifyClient([
