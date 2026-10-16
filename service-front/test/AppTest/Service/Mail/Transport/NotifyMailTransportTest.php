@@ -12,6 +12,7 @@ use App\Service\Mail\Transport\NotifyMailTransport;
 use App\Service\UserDetails;
 use Laminas\Http\Response;
 use MakeShared\Constants;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -82,6 +83,31 @@ final class NotifyMailTransportTest extends TestCase
 
         $this->assertCount(count($templateRefs), $notifyIds);
         $this->assertCount(count($templateRefs), array_unique($notifyIds));
+    }
+
+    public static function oneLoginProvider(): array
+    {
+        return [
+            [true, '255e40d8-f51c-48f0-8e3d-d2e790d8d6d2'],
+            [false, '4f57dea9-5433-4c49-9a69-365ab60a3b95'],
+        ];
+    }
+
+    #[DataProvider('oneLoginProvider')]
+    public function testUsesOneLoginTemplateWhenEnabled(bool $oneLoginEnabled, string $expectedId): void
+    {
+        putenv('ONELOGIN_ENABLED=' . ($oneLoginEnabled ? 'true' : 'false'));
+
+        $this->client
+            ->expects($this->once())
+            ->method('sendEmail')
+            ->with('someone@example.com', $expectedId, [])
+            ->willReturn([]);
+
+        $transport = $this->createTransport();
+        $transport->send(new MailParameters('someone@example.com', UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT, []));
+
+        putenv('ONELOGIN_ENABLED');
     }
 
     public function testSendThrowsWhenTemplateReferenceIsUnknown(): void
@@ -183,6 +209,6 @@ final class NotifyMailTransportTest extends TestCase
 
     private function createTransport(?string $smokeTestEmailAddress = null): NotifyMailTransport
     {
-        return new NotifyMailTransport($this->client, $smokeTestEmailAddress, null, $this->logger);
+        return new NotifyMailTransport($this->client, $smokeTestEmailAddress, $this->logger);
     }
 }

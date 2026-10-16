@@ -33,7 +33,6 @@ class UserDetailsFactory
                     'httpClient' => new GuzzleAdapter(),
                 ]),
                 $emailConfig['notify']['smokeTestEmailAddress'] ?? null,
-                null,
                 $container->get(LoggerInterface::class),
             );
         } else {
