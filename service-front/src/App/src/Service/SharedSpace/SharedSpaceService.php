@@ -8,10 +8,12 @@ use App\Service\ApiClient\Client;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
+use DateTime;
+use Exception;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\DataModel\User\User;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Exception;
 use Throwable;
 
 class SharedSpaceService
@@ -211,7 +213,7 @@ class SharedSpaceService
     /**
      * @throws Throwable|ApiException|ClientExceptionInterface
      */
-    public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
+    public function invite(User $inviter, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
     {
         try {
             $result = $this->client->httpPost(
@@ -232,10 +234,13 @@ class SharedSpaceService
             $email,
             self::EMAIL_INVITE_MEMBER,
             [
-                'inviteeFullName' => $firstNames . ' ' . $lastName,
-                'inviterEmail' => $inviterEmail,
+                'inviteeFirstName' => $firstNames,
+                'inviteeEmail' => $email,
+                'inviterFullName' => $inviter->getName()->getFirst() . ' ' . $inviter->getName()->getLast(),
+                'inviterEmail' => $inviter->getEmail()->getAddress(),
                 'sharedSpaceName' => $result['sharedSpaceName'],
-                'inviteCode' => $result['inviteCode'],
+                'joiningCode' => $result['inviteCode'],
+                'expiryDate' => (new DateTime($result['expires']))->format('j F Y'),
             ],
         );
 

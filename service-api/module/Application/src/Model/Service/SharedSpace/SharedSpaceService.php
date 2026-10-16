@@ -325,7 +325,7 @@ class SharedSpaceService
     }
 
     /**
-     * @return array{id: int, sharedSpaceName: string, inviteCode: string}
+     * @return array{id: int, sharedSpaceName: string, inviteCode: string, expires: string}
      */
     public function invite(MemberInvite $memberInvite): array
     {
@@ -344,6 +344,7 @@ class SharedSpaceService
             'id' => $id,
             'sharedSpaceName' => $sharedSpaceName,
             'inviteCode' => $memberInvite->code,
+            'expires' => $memberInvite->expires->format('Y-m-d\TH:i:s.u0'),
         ];
     }
 
