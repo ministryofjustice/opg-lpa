@@ -526,7 +526,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             isAdmin: false,
             code: '12341234',
             created: new DateTime(),
-            expires: new DateTime('-1 minute'),
+            expires: new DateTime('2024-01-02T12:13:14'),
         );
 
         $this->sharedSpaceRepository->shouldReceive('hasInvite')
@@ -551,6 +551,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             'id' => 1234,
             'sharedSpaceName' => 'my space',
             'inviteCode' => $memberInvite->code,
+            'expires' => '2024-01-02T12:13:14.0000000',
         ], $result);
     }
 

@@ -8,16 +8,19 @@ use App\Service\ApiClient\Client;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
+use DateTime;
+use Exception;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\DataModel\User\User;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Log\LoggerInterface;
-use Exception;
 use Throwable;
 
 class SharedSpaceService
 {
     public const string EMAIL_INVITE_MEMBER = 'email-invite-member';
     public const string EMAIL_SUSPEND_MEMBER = 'email-suspend-member';
+    public const string EMAIL_DELETE_MEMBER = 'email-delete-member';
 
     public function __construct(
         private readonly Client $client,
@@ -192,17 +195,31 @@ class SharedSpaceService
         return true;
     }
 
-    public function deleteMember(string $memberUserId): bool
+    public function deleteMember(SharedSpaceMember $member): bool
     {
         try {
-            $this->client->httpDelete('/v2/shared-space/members/' . $memberUserId);
+            $this->client->httpDelete('/v2/shared-space/members/' . $member->getUserId());
         } catch (Throwable $e) {
             $this->logger->error('Deleting shared space member failed', [
                 'exception' => $e,
-                'memberUserId' => $memberUserId,
+                'memberUserId' => $member->getUserId(),
             ]);
 
             return false;
+        }
+
+        try {
+            $params = new MailParameters(
+                $member->getEmail(),
+                self::EMAIL_DELETE_MEMBER,
+                ['sharedSpaceName' => $member->getSharedSpaceName()],
+            );
+
+            $this->mailTransport->send($params);
+        } catch (Throwable $e) {
+            $this->logger->error('Failed to send member deleted email', [
+                'member_user_id' => $member->getUserId(),
+            ]);
         }
 
         return true;
@@ -211,7 +228,7 @@ class SharedSpaceService
     /**
      * @throws Throwable|ApiException|ClientExceptionInterface
      */
-    public function invite(string $inviterEmail, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
+    public function invite(User $inviter, string $firstNames, string $lastName, string $email, bool $isAdmin): bool
     {
         try {
             $result = $this->client->httpPost(
@@ -232,10 +249,13 @@ class SharedSpaceService
             $email,
             self::EMAIL_INVITE_MEMBER,
             [
-                'inviteeFullName' => $firstNames . ' ' . $lastName,
-                'inviterEmail' => $inviterEmail,
+                'inviteeFirstName' => $firstNames,
+                'inviteeEmail' => $email,
+                'inviterFullName' => $inviter->getName()->getFirst() . ' ' . $inviter->getName()->getLast(),
+                'inviterEmail' => $inviter->getEmail()->getAddress(),
                 'sharedSpaceName' => $result['sharedSpaceName'],
-                'inviteCode' => $result['inviteCode'],
+                'joiningCode' => $result['inviteCode'],
+                'expiryDate' => (new DateTime($result['expires']))->format('j F Y'),
             ],
         );
 

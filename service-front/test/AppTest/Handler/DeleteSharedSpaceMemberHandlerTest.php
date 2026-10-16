@@ -94,7 +94,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
         $this->sharedSpaceService
             ->method('deleteMember')
-            ->with(self::MEMBER_ID)
+            ->with($this->member)
             ->willReturn(true);
 
         $response = $this->handler->handle($this->createRequest()->withMethod('POST'));
@@ -109,7 +109,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
         $this->sharedSpaceService
             ->method('deleteMember')
-            ->with(self::MEMBER_ID)
+            ->with($this->member)
             ->willReturn(false);
 
         $this->renderer->method('render')
