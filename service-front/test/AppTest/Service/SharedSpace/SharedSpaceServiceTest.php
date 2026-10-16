@@ -9,6 +9,7 @@ use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\MailTransportInterface;
 use App\Service\SharedSpace\SharedSpaceService;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\DataModel\User\User;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -216,6 +217,12 @@ final class SharedSpaceServiceTest extends TestCase
 
     public function testInvite(): void
     {
+        $user = new User([
+            'id' => 1,
+            'name' => ['first' => 'Inv', 'last' => 'Ite'],
+            'email' => ['address' => 'inv@example.com'],
+        ]);
+
         $this->client->expects($this->once())
             ->method('httpPost')
             ->with('/v2/shared-space/invite', [
@@ -224,18 +231,21 @@ final class SharedSpaceServiceTest extends TestCase
                 'email' => 'you@example.com',
                 'isAdmin' => true,
             ])
-            ->willReturn(['sharedSpaceName' => 'my space', 'inviteCode' => '12341234']);
+            ->willReturn(['sharedSpaceName' => 'my space', 'inviteCode' => '12341234', 'expires' => '2024-12-11T12:11:10']);
 
         $this->mailTransport->expects($this->once())
             ->method('send')
             ->with(new MailParameters('you@example.com', SharedSpaceService::EMAIL_INVITE_MEMBER, [
-                'inviteeFullName' => 'a b',
-                'inviterEmail' => 'me@example.com',
+                'inviteeFirstName' => 'a',
+                'inviteeEmail' => 'you@example.com',
+                'inviterFullName' => 'Inv Ite',
+                'inviterEmail' => 'inv@example.com',
                 'sharedSpaceName' => 'my space',
-                'inviteCode' => '12341234',
+                'joiningCode' => '12341234',
+                'expiryDate' => '11 December 2024',
             ]));
 
-        $result = $this->service->invite('me@example.com', 'a', 'b', 'you@example.com', true);
+        $result = $this->service->invite($user, 'a', 'b', 'you@example.com', true);
 
         $this->assertTrue($result);
     }
