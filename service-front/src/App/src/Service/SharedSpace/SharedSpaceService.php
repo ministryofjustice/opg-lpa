@@ -20,6 +20,7 @@ class SharedSpaceService
 {
     public const string EMAIL_INVITE_MEMBER = 'email-invite-member';
     public const string EMAIL_SUSPEND_MEMBER = 'email-suspend-member';
+    public const string EMAIL_DELETE_MEMBER = 'email-delete-member';
 
     public function __construct(
         private readonly Client $client,
@@ -194,17 +195,31 @@ class SharedSpaceService
         return true;
     }
 
-    public function deleteMember(string $memberUserId): bool
+    public function deleteMember(SharedSpaceMember $member): bool
     {
         try {
-            $this->client->httpDelete('/v2/shared-space/members/' . $memberUserId);
+            $this->client->httpDelete('/v2/shared-space/members/' . $member->getUserId());
         } catch (Throwable $e) {
             $this->logger->error('Deleting shared space member failed', [
                 'exception' => $e,
-                'memberUserId' => $memberUserId,
+                'memberUserId' => $member->getUserId(),
             ]);
 
             return false;
+        }
+
+        try {
+            $params = new MailParameters(
+                $member->getEmail(),
+                self::EMAIL_DELETE_MEMBER,
+                ['sharedSpaceName' => $member->getSharedSpaceName()],
+            );
+
+            $this->mailTransport->send($params);
+        } catch (Throwable $e) {
+            $this->logger->error('Failed to send member deleted email', [
+                'member_user_id' => $member->getUserId(),
+            ]);
         }
 
         return true;
