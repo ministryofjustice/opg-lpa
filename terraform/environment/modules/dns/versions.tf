@@ -4,6 +4,7 @@ terraform {
       source = "hashicorp/aws"
       configuration_aliases = [
         aws.management,
+        aws.eu-west-2,
         aws.us_east_1
       ]
       version = ">= 6.28.0"
