@@ -32,6 +32,7 @@ class NotifyMailTransport implements MailTransportInterface
         UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING           => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
         SharedSpaceService::EMAIL_INVITE_MEMBER                  => '9c62363d-549f-435c-a99d-5ae7a2fb646c',
         SharedSpaceService::EMAIL_SUSPEND_MEMBER                 => '9a0c93a8-fbdf-485f-a9cc-123af872bbed',
+        SharedSpaceService::EMAIL_DELETE_MEMBER                  => '1f864b05-d0b7-4419-a82d-f5013962d45c',
     ];
 
     // Template IDs to use instead of that specified defaultTemplateMap if One Login is enabled.

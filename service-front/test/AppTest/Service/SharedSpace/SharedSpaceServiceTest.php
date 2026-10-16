@@ -201,7 +201,17 @@ final class SharedSpaceServiceTest extends TestCase
             ->method('httpDelete')
             ->with('/v2/shared-space/members/member-id');
 
-        $result = $this->service->deleteMember('member-id');
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with(new MailParameters('you@example.com', SharedSpaceService::EMAIL_DELETE_MEMBER, [
+                'sharedSpaceName' => 'Blah',
+            ]));
+
+        $result = $this->service->deleteMember(new SharedSpaceMember([
+            'userId' => 'member-id',
+            'email' => 'you@example.com',
+            'sharedSpaceName' => 'Blah',
+        ]));
         $this->assertTrue($result);
     }
 
@@ -211,7 +221,7 @@ final class SharedSpaceServiceTest extends TestCase
             ->method('httpDelete')
             ->willThrowException(new \RuntimeException('oops'));
 
-        $result = $this->service->deleteMember('member-id');
+        $result = $this->service->deleteMember(new SharedSpaceMember(['userId' => 'member-id']));
         $this->assertFalse($result);
     }
 
