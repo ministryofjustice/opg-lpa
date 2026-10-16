@@ -36,7 +36,6 @@ data "aws_iam_policy_document" "api_permissions_role" {
     resources = [
       aws_dynamodb_table.lpa-locks.arn,
       aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
   statement {
@@ -156,7 +155,6 @@ data "aws_iam_policy_document" "admin_permissions_role" {
     resources = [
       aws_dynamodb_table.lpa-locks.arn,
       aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
   statement {
@@ -222,7 +220,6 @@ data "aws_iam_policy_document" "front_permissions_role" {
     resources = [
       aws_dynamodb_table.lpa-locks.arn,
       aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
   statement {
@@ -289,7 +286,6 @@ data "aws_iam_policy_document" "pdf_permissions_role" {
     resources = [
       aws_dynamodb_table.lpa-locks.arn,
       aws_dynamodb_table.lpa-properties.arn,
-      aws_dynamodb_table.lpa-sessions.arn,
     ]
   }
   statement {
