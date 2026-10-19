@@ -122,8 +122,8 @@ class SharedSpaceController extends AbstractRestfulController
 
     /**
      * Returns a single member's details within the requesting user's shared
-     * space. Only an admin member of the shared space may access this, since
-     * it's used to render the permissions-management form for that member.
+     * space. If not an admin, can only retrieve your own details, since it's
+     * used to render the permissions-management form for that member.
      *
      * @return Json|ApiProblem
      */
@@ -134,14 +134,13 @@ class SharedSpaceController extends AbstractRestfulController
             return $token;
         }
 
-        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
+        $memberUserId = $this->params()->fromRoute('memberUserId');
+
+        if ($memberUserId !== $token['userId'] && !$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
             return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
         }
 
-        $memberUserId = $this->params()->fromRoute('memberUserId');
-
         $member = $this->sharedSpaceService->getMember($token['sharedSpaceId'], $memberUserId);
-
         if ($member === null) {
             return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'Member not found');
         }

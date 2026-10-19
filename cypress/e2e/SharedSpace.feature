@@ -1,11 +1,23 @@
 @SharedSpace
 Feature: Shared Space
 
-  Scenario: Can create a shared space from user dashboard
-    Given I create a new user with 5 LPAs
-    When I log in as the newly created fixture user
-    Then I should be on "/user/dashboard"
-    And there are "five" 'LPA' elements on the page
+  @RequiresOneLogin
+  Scenario: Professionals can create a shared space from user dashboard
+    Given I visit "/login"
+    And Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
+    When I click "onelogin-signin-button"
+    And I continue through mock One Login
+    And I say I make LPAs for "other people as part of my work"
+    And I say "No"
+    Then I am asked for my details
+    When I click element marked "Search for UK postcode"
+    And I type "B1 1TF" into "postcode-lookup" working around cypress bug
+    And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
+    And I click element marked "Find UK address"
+    And I select option "THE OFFICE OF THE PUBLIC GUARDIAN, THE AXIS, 10 HOLLIDAY STREET, BIRMINGHAM" of "address-search-result"
+    Then I see "address-postcode" prepopulated with "B1 1TF"
+    When I enter my name and date of birth and save
+    Then I am taken to "/user/dashboard?account=created"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     And I see "Shared space" in the title
@@ -15,11 +27,29 @@ Feature: Shared Space
     When I click element marked "Save"
     Then I should be on "/shared-space/dashboard?created=success"
     And I see a success notification with content "Example Organisation has been created"
-    And there are "five" 'LPA' elements on the page
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     And I see "Manage Shared Space" in the title
-    And I can see myself
+    And element "table" contains "Brand New"
+
+  @RequiresOneLogin
+  Scenario: Lay users cannot create a shared space from user dashboard
+    Given I visit "/login"
+    And Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
+    When I click "onelogin-signin-button"
+    And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
+    And I say "No"
+    Then I am asked for my details
+    When I click element marked "Search for UK postcode"
+    And I type "B1 1TF" into "postcode-lookup" working around cypress bug
+    And I see "postcode-lookup" prepopulated within timeout with "B1 1TF"
+    And I click element marked "Find UK address"
+    And I select option "THE OFFICE OF THE PUBLIC GUARDIAN, THE AXIS, 10 HOLLIDAY STREET, BIRMINGHAM" of "address-search-result"
+    Then I see "address-postcode" prepopulated with "B1 1TF"
+    When I enter my name and date of birth and save
+    Then I am taken to "/user/dashboard?account=created"
+    Then element "nav" does not contain "Shared space"
 
   Scenario: Can manage admin permissions of other members
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -136,16 +166,13 @@ Feature: Shared Space
     And "Member 1" status should be "active"
 
   @RequiresOneLogin
-  Scenario: Can join a shared space
+  Scenario: Lay users can join a shared space
     Given I have been invited to a shared space called "Example Organisation" with 1 LPA
     When I log in through Onelogin as the newly created fixture user
     And I say I make LPAs for "myself, family or friends"
     And I create a new Make account
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
-    And I should be on "/shared-space"
-    And I see "Shared space" in the title
-    And I click link "Join a shared space using a code"
     And I should be on "/shared-space/join"
     And I type "Example Organisation" into field labelled "Shared space name"
     And I type the access code into field labelled "Your shared space access code"
@@ -162,15 +189,7 @@ Feature: Shared Space
     And I say I make LPAs for "myself, family or friends"
     And I should be on "/existing-account"
     And I create a new Make account
-    When I click element marked "Shared space"
-    Then I should be on "/shared-space"
-    And I see "Shared space" in the title
-    When I click link "Join a shared space using a code"
-    Then I should be on "/shared-space/join"
-    When I type "Example Organisation" into field labelled "Shared space name"
-    And I type the access code into field labelled "Your shared space access code"
-    And I click element marked "Continue"
-    Then I see "No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address." in the page text
+    Then element "nav" does not contain "Shared space"
 
   Scenario: Can delete a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

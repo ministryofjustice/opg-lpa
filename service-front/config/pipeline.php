@@ -3,21 +3,21 @@
 declare(strict_types=1);
 
 use App\Middleware\AuthenticationMiddleware;
-use App\Middleware\CheckMemberStatusMiddleware;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\FlashMessagesHolderMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Middleware\PersistentSessionDetailsMiddleware;
 use App\Middleware\RegisterSessionSaveHandlerMiddleware;
 use App\Middleware\RouteNameMiddleware;
+use App\Middleware\SharedSpaceAccessMiddleware;
 use App\Middleware\TelemetryMiddleware;
 use App\Middleware\TermsAndConditionsMiddleware;
 use App\Middleware\UserDetailsMiddleware;
 use App\Middleware\UserIdMiddleware;
-use MakeShared\Logging\RequestLoggingMiddleware;
-use Mezzio\Csrf\CsrfMiddleware;
 use Laminas\Stratigility\Middleware\ErrorHandler;
+use MakeShared\Logging\RequestLoggingMiddleware;
 use Mezzio\Application;
+use Mezzio\Csrf\CsrfMiddleware;
 use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\ServerUrlMiddleware;
@@ -53,7 +53,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe(PersistentSessionDetailsMiddleware::class);
     $app->pipe(AuthenticationMiddleware::class);
     $app->pipe(UserDetailsMiddleware::class);
-    $app->pipe(CheckMemberStatusMiddleware::class);
+    $app->pipe(SharedSpaceAccessMiddleware::class);
     $app->pipe(TermsAndConditionsMiddleware::class);
     $app->pipe(DispatchMiddleware::class);
     $app->pipe(NotFoundHandler::class);

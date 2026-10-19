@@ -272,6 +272,29 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertEquals(['member' => ['id' => $memberUserId, 'isAdmin' => false]], $body);
     }
 
+    public function testMemberActionForSelf()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn($userId);
+
+        $this->sharedSpaceService->shouldReceive('getMember')
+            ->with($sharedSpaceId, $userId)
+            ->andReturn(['id' => $userId, 'isAdmin' => false])
+            ->once();
+
+        $this->makeRequest(['userId' => $userId, 'sharedSpaceId' => $sharedSpaceId]);
+        $result = $this->controller->memberAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['member' => ['id' => $userId, 'isAdmin' => false]], $body);
+    }
+
     public function testMemberActionNotFound()
     {
         $userId = 'my-user';
@@ -303,6 +326,11 @@ class SharedSpaceControllerTest extends MockeryTestCase
     {
         $userId = 'my-user';
         $sharedSpaceId = 'my-space';
+        $memberUserId = 'member-user';
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberUserId')
+            ->andReturn($memberUserId);
 
         $this->sharedSpaceService->shouldReceive('isAdmin')
             ->with($sharedSpaceId, $userId)

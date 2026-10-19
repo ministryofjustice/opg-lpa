@@ -14,7 +14,9 @@
 {% set sharedSpaceAccessCode = form.get('sharedSpaceAccessCode') %}
 
 {% block backLink %}
-  <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+  {% if isProfessional %}
+    <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+  {% endif %}
 {% endblock %}
 
 {% block content %}
