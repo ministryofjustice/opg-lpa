@@ -10,7 +10,6 @@ use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\Mail\Transport\NotifyMailTransport;
 use App\Service\UserDetails;
-use Laminas\Http\Response;
 use MakeShared\Constants;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -136,7 +135,7 @@ final class NotifyMailTransportTest extends TestCase
                 'Failed sending email via Notify',
                 $this->callback(
                     static fn (array $context): bool =>
-                        $context['status'] === Response::STATUS_CODE_500
+                        $context['status'] === 500
                         && $context['exception'] === $exception
                 )
             );
@@ -189,7 +188,7 @@ final class NotifyMailTransportTest extends TestCase
                 'Healthcheck on Notify failed',
                 $this->callback(
                     static fn (array $context): bool =>
-                        $context['status'] === Response::STATUS_CODE_500
+                        $context['status'] === 500
                         && $context['exception'] === $exception
                 )
             );

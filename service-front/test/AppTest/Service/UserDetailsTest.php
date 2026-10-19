@@ -518,8 +518,6 @@ final class UserDetailsTest extends TestCase
 
     public function testUpdateAllDetailsReturnsApiResponseAfterNormalisingAddressAndDob(): void
     {
-        $this->ensureLaminasHttpResponseClassExists();
-
         $user = json_decode(
             (string) file_get_contents(dirname(__DIR__, 4) . '/shared/module/MakeShared/tests/fixtures/user.json'),
             true
@@ -555,8 +553,6 @@ final class UserDetailsTest extends TestCase
 
     public function testUpdateAllDetailsThrowsRuntimeExceptionWhenValidationFails(): void
     {
-        $this->ensureLaminasHttpResponseClassExists();
-
         $user = json_decode(
             (string) file_get_contents(dirname(__DIR__, 4) . '/shared/module/MakeShared/tests/fixtures/user.json'),
             true
@@ -575,8 +571,6 @@ final class UserDetailsTest extends TestCase
 
     public function testUpdateAllDetailsRethrowsApiExceptionWhenUpdateFails(): void
     {
-        $this->ensureLaminasHttpResponseClassExists();
-
         $user = json_decode(
             (string) file_get_contents(dirname(__DIR__, 4) . '/shared/module/MakeShared/tests/fixtures/user.json'),
             true
@@ -928,12 +922,5 @@ final class UserDetailsTest extends TestCase
         $this->apiClient->method('httpPost')->willReturn(['unexpected' => true]);
 
         $this->assertSame('unknown-error', $this->service->registerAccount('new@example.com', 'Pass@word1'));
-    }
-
-    private function ensureLaminasHttpResponseClassExists(): void
-    {
-        if (!class_exists(\Laminas\Http\Response::class)) {
-            eval('namespace Laminas\Http; class Response { public const STATUS_CODE_400 = 400; }');
-        }
     }
 }

@@ -11,7 +11,6 @@ use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails;
-use Laminas\Http\Response;
 use MakeShared\Constants;
 use Psr\Log\LoggerInterface;
 
@@ -69,7 +68,7 @@ class NotifyMailTransport implements MailTransportInterface
                 $this->client->sendEmail($toAddress, $notifyTemplateId, $data);
             } catch (NotifyException $ex) {
                 $this->logger->error('Failed sending email via Notify', [
-                    'status'    => Response::STATUS_CODE_500,
+                    'status'    => 500,
                     'exception' => $ex,
                 ]);
 
@@ -111,7 +110,7 @@ class NotifyMailTransport implements MailTransportInterface
             );
         } catch (NotifyException $ex) {
             $this->logger->error('Healthcheck on Notify failed', [
-                'status'    => Response::STATUS_CODE_500,
+                'status'    => 500,
                 'exception' => $ex,
             ]);
 
