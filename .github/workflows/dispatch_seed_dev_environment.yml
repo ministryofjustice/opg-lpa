@@ -45,7 +45,7 @@ jobs:
 
       - name: Get terraform version
         id: set-terraform-version
-        uses: ministryofjustice/opg-github-actions/actions/terraform-version@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+        uses: ministryofjustice/opg-github-actions/actions/terraform-version@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
         with:
           terraform_directory: "./terraform/environment"
 
@@ -54,7 +54,7 @@ jobs:
           terraform_version: ${{ steps.set-terraform-version.outputs.version }}
           terraform_wrapper: false
 
-      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@722a5f955424aaba01e9ca43d68390cd4048d6e1 # v4.10.2
+      - uses: ministryofjustice/opg-github-actions/actions/github-deploy-key@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
         with:
           deploy_key: ${{ secrets.OPG_LPA_DEPLOY_KEY_PRIVATE_KEY }}
 
@@ -67,7 +67,7 @@ jobs:
           unset AWS_SESSION_TOKEN
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ vars.OIDC_TERRAFORM_ROLE_DEVELOPMENT }}
@@ -95,7 +95,7 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990  # v8.3.2
         with:
-          version: "0.12.3"
+          version: "0.13.0"
           enable-cache: true
 
       - name: Install Python
@@ -106,7 +106,7 @@ jobs:
         run: uv sync --locked
 
       - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        uses: aws-actions/configure-aws-credentials@e1253824e5c10ff9df46874f81ed3ec929e19cfd # v6.3.0
         with:
           aws-region: eu-west-1
           role-to-assume: ${{ vars.OIDC_ECS_START_TASK_DEVELOPMENT }}
