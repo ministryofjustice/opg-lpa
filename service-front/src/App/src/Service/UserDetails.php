@@ -13,7 +13,6 @@ use App\Service\Mail\Transport\MailTransportInterface;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\Traits\MoneyFormatterTrait;
 use Exception;
-use Laminas\Http\Response;
 use MakeShared\DataModel\User\User;
 use Mezzio\Helper\UrlHelper;
 use Psr\Log\LoggerInterface;
@@ -137,7 +136,7 @@ class UserDetails implements ApiClientAwareInterface
 
         if ($validator->hasErrors()) {
             $this->logger->warning('Unable to validate user details for update', [
-                'status'    => Response::STATUS_CODE_400,
+                'status'    => 400,
                 'exception' => $validator->getArrayCopy(),
             ]);
 

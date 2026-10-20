@@ -54,7 +54,7 @@ class InviteMemberHandler implements RequestHandlerInterface
 
                 try {
                     $ok = $this->sharedSpaceService->invite(
-                        $userDetails->getEmail()->getAddress(),
+                        $userDetails,
                         $form->get('firstNames')->getValue(),
                         $form->get('lastName')->getValue(),
                         $form->get('email')->getValue(),

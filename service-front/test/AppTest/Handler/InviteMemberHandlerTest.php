@@ -30,6 +30,7 @@ class InviteMemberHandlerTest extends TestCase
     private MockObject&TemplateRendererInterface $renderer;
     private MockObject&FormElementManager $formElementManager;
     private MockObject&SharedSpaceService $sharedSpaceService;
+    private User $user;
     private InviteMemberForm $form;
     private InviteMemberHandler $handler;
 
@@ -38,6 +39,9 @@ class InviteMemberHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
+        $this->user = new User([
+            'email' => new EmailAddress(['address' => 'me@example.com']),
+        ]);
 
         $this->form = new InviteMemberForm();
         $this->form->init();
@@ -59,9 +63,7 @@ class InviteMemberHandlerTest extends TestCase
             ->withMethod($method)
             ->withUri(new Uri('/invite-member'))
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token')
-            ->withAttribute(RequestAttribute::USER_DETAILS, new User([
-                'email'     => new EmailAddress(['address' => 'me@example.com']),
-            ]));
+            ->withAttribute(RequestAttribute::USER_DETAILS, $this->user);
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);
@@ -98,7 +100,9 @@ class InviteMemberHandlerTest extends TestCase
 
     public function testPostWithValidFormRedirectsToCorrectUrl(): void
     {
-        $this->sharedSpaceService->method('invite')
+        $this->sharedSpaceService->expects($this->once())
+            ->method('invite')
+            ->with($this->user, 'a', 'b', 'me@example.com', true)
             ->willReturn(true);
 
         $response = $this->handler->handle(
