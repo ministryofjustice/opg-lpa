@@ -1,0 +1,33 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'We are changing the way you sign in to Make a lasting power of attorney' -%}
+
+{% block backLink %}
+  <a href="{{ url('application.home') }}" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl" data-cy="main-title">{{ overridePageTitle }}</h1>
+
+      <p class="govuk-body-l">From 25 November 2026, you’ll only be able to sign in to your Make a lasting power of attorney account using GOV.UK One Login. This will be the only way to access your account and any lasting powers of attorney (LPAs) you’ve been making.</p>
+
+      <h2 class="govuk-heading-l">What is GOV.UK One Login?</h2>
+
+      <p class="govuk-body">GOV.UK One Login lets you sign in to central government services, using the same email address and password. It does not work with all government services yet.</p>
+      <p class="govuk-body">If you do not have a GOV.UK One Login now, you can set it up when you sign in to the Make a lasting power of attorney service for the first time after 25 November 2026.</p>
+
+      <h2 class="govuk-heading-l">What email address should I use for GOV.UK One Login?</h2>
+
+      <p class="govuk-body">You can use any email address you like for GOV.UK One Login. It does not need to be the same email address you currently use for the Make a lasting power of attorney service.</p>
+      <p class="govuk-body">When you first sign in with GOV.UK One Login, you’ll be given the opportunity to keep everything from your existing Make a lasting power of attorney account. This means you’ll still be able to access any LPAs you’ve previously made.</p>
+
+      <h2 class="govuk-heading-l">What if I don’t want to use GOV.UK One Login?</h2>
+
+      <p class="govuk-body">If you finish making your LPAs and download them for printing before 25 November 2026, you won’t need to use GOV.UK One Login.</p>
+    </div>
+  </div>
+
+{% endblock content %}

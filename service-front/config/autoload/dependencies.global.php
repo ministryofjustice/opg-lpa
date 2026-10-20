@@ -165,6 +165,7 @@ return [
             Handler\HomeHandler::class                  => static fn(ContainerInterface $c) => new Handler\HomeHandler(
                 $c->get(TemplateRendererInterface::class),
                 $c->get('config'),
+                new DateTime('now', new DateTimeZone('UTC'))
             ),
             Handler\LogoutHandler::class                => static fn(ContainerInterface $c) => new Handler\LogoutHandler(
                 $c->get('config'),
