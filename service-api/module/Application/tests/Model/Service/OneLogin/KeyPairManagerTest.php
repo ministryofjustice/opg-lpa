@@ -108,6 +108,21 @@ class KeyPairManagerTest extends TestCase
         new KeyPairManager(self::rsaPrivateKey(), '');
     }
 
+    public function testPublicJwksHoldsOnlyThePublicHalfOfTheSigningKey(): void
+    {
+        $jwks = (new KeyPairManager(self::rsaPrivateKey(), 'signing-kid'))->publicJwks();
+
+        $this->assertCount(1, $jwks['keys']);
+        $this->assertSame('signing-kid', $jwks['keys'][0]['kid']);
+        $this->assertSame('RSA', $jwks['keys'][0]['kty']);
+        $this->assertSame('RS256', $jwks['keys'][0]['alg']);
+        $this->assertSame('sig', $jwks['keys'][0]['use']);
+
+        foreach (['d', 'p', 'q', 'dp', 'dq', 'qi'] as $privateParameter) {
+            $this->assertArrayNotHasKey($privateParameter, $jwks['keys'][0]);
+        }
+    }
+
     public function testMalformedKeyThrows(): void
     {
         $manager = new KeyPairManager('not-a-valid-pem-key', 'test-kid');

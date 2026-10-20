@@ -9,6 +9,7 @@ use App\Handler\YourDetailsHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -22,6 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use RuntimeException;
 
 class YourDetailsHandlerTest extends TestCase
@@ -76,7 +78,7 @@ class YourDetailsHandlerTest extends TestCase
         $this->handler = new YourDetailsHandler(
             $this->renderer,
             $formElementManager,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginService,
             $this->logger,
         );
@@ -95,7 +97,8 @@ class YourDetailsHandlerTest extends TestCase
         $this->session
             ->method('get')
             ->willReturnCallback(fn (string $key) => match ($key) {
-                'onelogin_pending_link' => $pendingLink,
+                // Signed in just now, so the pending link has not expired
+                'onelogin_pending_link' => $pendingLink === null ? null : $pendingLink + ['signedInAt' => time()],
                 'onelogin_onboarding'   => $onboarding,
                 default                 => null,
             });

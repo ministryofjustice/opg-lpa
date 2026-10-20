@@ -8,6 +8,7 @@ use App\Form\User\ConfirmEmail;
 use App\Handler\LinkAccountResetPasswordHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use App\Service\UserDetails as UserService;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -21,6 +22,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LinkAccountResetPasswordHandlerTest extends TestCase
 {
@@ -46,7 +48,7 @@ class LinkAccountResetPasswordHandlerTest extends TestCase
             $this->renderer,
             $formElementManager,
             $this->userService,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->logger,
         );
     }
@@ -54,7 +56,7 @@ class LinkAccountResetPasswordHandlerTest extends TestCase
     private function createRequest(string $method = 'GET', array $postData = [], bool $onboarding = true): ServerRequest
     {
         $pendingLink = $onboarding
-            ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com', 'idToken' => 'pending.id.token']
+            ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com', 'idToken' => 'pending.id.token', 'signedInAt' => time()]
             : null;
 
         $this->session

@@ -19,6 +19,8 @@ use MakeShared\OneLogin\UserType;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
+use function Facile\OpenIDClient\base64url_encode;
+
 class Service extends AbstractService
 {
     use LoggerTrait;
@@ -31,6 +33,7 @@ class Service extends AbstractService
     private ?SharedSpaceRepositoryInterface $sharedSpaceRepository = null;
     private ?LogoutTokenVerifier $logoutTokenVerifier = null;
     private ?CacheInterface $cache = null;
+    private ?KeyPairManager $keyPairManager = null;
 
     /**
      * Must not accept the same jti twice within three minutes.
@@ -43,7 +46,12 @@ class Service extends AbstractService
      */
     private const string CREDENTIAL_TRUST_LEVEL = 'Cl.Cm';
 
-    private const string VECTORS_OF_TRUST = '["' . self::CREDENTIAL_TRUST_LEVEL . '"]';
+    private const array VECTOR_OF_TRUST = [self::CREDENTIAL_TRUST_LEVEL];
+
+    /**
+     * One Login recommends the request object expires after 5 minutes.
+     */
+    private const int REQUEST_OBJECT_LIFETIME_SECONDS = 300;
 
     /** @var callable(positive-int): string */
     private $randomBytes;
@@ -105,6 +113,14 @@ class Service extends AbstractService
     }
 
     /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function setKeyPairManager(KeyPairManager $keyPairManager): void
+    {
+        $this->keyPairManager = $keyPairManager;
+    }
+
+    /**
      * Optional seam for tests: override the random-byte generator.
      *
      * @param callable(positive-int): string $generator
@@ -118,7 +134,7 @@ class Service extends AbstractService
     /**
      * Build and return an OIDC authorisation request.
      *
-     * @return array{state: string, nonce: string, url: string}
+     * @return array{state: string, nonce: string, codeVerifier: string, url: string}
      * @throws RuntimeException
      */
     public function createAuthenticationRequest(string $redirectUrl): array
@@ -131,27 +147,62 @@ class Service extends AbstractService
             throw new RuntimeException('AuthorizationService must be set');
         }
 
+        if ($this->keyPairManager === null) {
+            throw new RuntimeException('KeyPairManager must be set');
+        }
+
         $generator = $this->randomBytes;
 
-        $state = bin2hex($generator(12));
-        $nonce = bin2hex($generator(16));
+        $state        = bin2hex($generator(12));
+        $nonce        = bin2hex($generator(16));
+        $codeVerifier = base64url_encode($generator(32));
 
-        $url = $this->authorizationService->getAuthorizationUri(
-            $this->clientManager->get(),
-            [
-                'redirect_uri' => $redirectUrl,
-                'scope'        => 'openid email',
-                'state'        => $state,
-                'nonce'        => $nonce,
-                'vtr'          => self::VECTORS_OF_TRUST,
-            ],
-        );
+        $client   = $this->clientManager->get();
+        $clientId = $client->getMetadata()->getClientId();
+        $scope    = 'openid email';
+
+        // The claims One Login requires in a request object:
+        // https://docs.sign-in.service.gov.uk/integrate-with-integration-environment/authenticate-your-user/#secure-your-authorisation-request-parameters-with-jwt
+        $requestObject = JwtSigner::sign($this->keyPairManager->jwk(), [
+            'aud'                   => $client->getIssuer()->getMetadata()->getAuthorizationEndpoint(),
+            'iss'                   => $clientId,
+            'client_id'             => $clientId,
+            'exp'                   => time() + self::REQUEST_OBJECT_LIFETIME_SECONDS,
+            'response_type'         => 'code',
+            'scope'                 => $scope,
+            'redirect_uri'          => $redirectUrl,
+            'state'                 => $state,
+            'nonce'                 => $nonce,
+            'vtr'                   => self::VECTOR_OF_TRUST,
+            'code_challenge'        => base64url_encode(hash('sha256', $codeVerifier, true)),
+            'code_challenge_method' => 'S256',
+        ]);
+
+        $url = $this->authorizationService->getAuthorizationUri($client, [
+            'scope'   => $scope,
+            'request' => $requestObject,
+        ]);
 
         $this->getLogger()->info('auth.onelogin.request_created', [
             'redirect_host' => parse_url($redirectUrl, PHP_URL_HOST),
         ]);
 
-        return ['state' => $state, 'nonce' => $nonce, 'url' => $url];
+        return ['state' => $state, 'nonce' => $nonce, 'codeVerifier' => $codeVerifier, 'url' => $url];
+    }
+
+    /**
+     * Our public keys, for the JWKS endpoint One Login reads them from.
+     *
+     * @return array{keys: list<array<string, mixed>>}
+     * @throws RuntimeException
+     */
+    public function publicJwks(): array
+    {
+        if ($this->keyPairManager === null) {
+            throw new RuntimeException('KeyPairManager must be set');
+        }
+
+        return $this->keyPairManager->publicJwks();
     }
 
     /**
@@ -189,11 +240,15 @@ class Service extends AbstractService
     /**
      * Exchange the authorisation code and validate the ID token.
      *
+     * `signedInAt` is the ID token's `iat`: when One Login signed the user in. The front
+     * compares it with any later back-channel sign-out before letting a pending link go on.
+     *
      * @return array{
      *     linked: bool,
      *     sub: string,
      *     email: string,
      *     idToken: string,
+     *     signedInAt: int,
      *     identity: null|array{
      *         userId: string,
      *         token: string,
@@ -208,6 +263,7 @@ class Service extends AbstractService
         #[\SensitiveParameter] string $code,
         #[\SensitiveParameter] string $state,
         #[\SensitiveParameter] string $nonce,
+        #[\SensitiveParameter] string $codeVerifier,
         string $redirectUri,
     ): array {
         if ($this->clientManager === null) {
@@ -227,9 +283,10 @@ class Service extends AbstractService
         }
 
         $authSession = AuthSession::fromArray([
-            'state'   => $state,
-            'nonce'   => $nonce,
-            'customs' => ['redirect_uri' => $redirectUri],
+            'state'         => $state,
+            'nonce'         => $nonce,
+            'code_verifier' => $codeVerifier,
+            'customs'       => ['redirect_uri' => $redirectUri],
         ]);
 
         $client = $this->clientManager->get();
@@ -278,6 +335,12 @@ class Service extends AbstractService
             throw new OneLoginAuthenticationException('invalid_vot_claim');
         }
 
+        $signedInAt = $claims['iat'] ?? null;
+
+        if (!is_int($signedInAt)) {
+            throw new OneLoginAuthenticationException('missing_iat_claim');
+        }
+
         // GOV.UK One Login returns the email from the UserInfo endpoint, not in the
         // ID token, so fetch it from there. (getUserInfo also checks the userinfo
         // `sub` matches the ID token's.)
@@ -299,11 +362,12 @@ class Service extends AbstractService
 
         if (!$user instanceof UserInterface) {
             return [
-                'linked'   => false,
-                'sub'      => $sub,
-                'email'    => $email,
-                'idToken'  => $idToken,
-                'identity' => null,
+                'linked'     => false,
+                'sub'        => $sub,
+                'email'      => $email,
+                'idToken'    => $idToken,
+                'signedInAt' => $signedInAt,
+                'identity'   => null,
             ];
         }
 
@@ -324,11 +388,12 @@ class Service extends AbstractService
         ]);
 
         return [
-            'linked'   => true,
-            'sub'      => $sub,
-            'email'    => $email,
-            'idToken'  => $idToken,
-            'identity' => [
+            'linked'     => true,
+            'sub'        => $sub,
+            'email'      => $email,
+            'idToken'    => $idToken,
+            'signedInAt' => $signedInAt,
+            'identity'   => [
                 'userId'         => $userId,
                 'token'          => $tokenDetails['token'],
                 'tokenExpiresAt' => $tokenDetails['expiresAt']->format('c'),
@@ -520,7 +585,10 @@ class Service extends AbstractService
     }
 
     /**
-     * @return array{accepted: bool, reason?: string}
+     * The verified `sub` and the token's `iat` (when the user signed out) are returned so
+     * the front can stop a pending account link for a user who has no Make account yet.
+     *
+     * @return array{accepted: true, sub: string, signedOutAt: int}|array{accepted: false, reason: string}
      */
     public function handleBackChannelLogout(#[\SensitiveParameter] string $logoutToken): array
     {
@@ -533,7 +601,7 @@ class Service extends AbstractService
         }
 
         try {
-            ['sub' => $sub, 'jti' => $jti] = $this->logoutTokenVerifier->verify($logoutToken);
+            ['sub' => $sub, 'jti' => $jti, 'iat' => $signedOutAt] = $this->logoutTokenVerifier->verify($logoutToken);
         } catch (LogoutTokenException $e) {
             return $this->rejectLogout($e->getMessage());
         }
@@ -553,15 +621,13 @@ class Service extends AbstractService
 
         if ($userId === null) {
             $this->getLogger()->info('auth.onelogin.backchannel_logout_no_user', []);
-
-            return ['accepted' => true];
+        } else {
+            $this->getLogger()->info('auth.onelogin.backchannel_logout_success', [
+                'user_id' => $userId,
+            ]);
         }
 
-        $this->getLogger()->info('auth.onelogin.backchannel_logout_success', [
-            'user_id' => $userId,
-        ]);
-
-        return ['accepted' => true];
+        return ['accepted' => true, 'sub' => $sub, 'signedOutAt' => $signedOutAt];
     }
 
     /**

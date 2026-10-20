@@ -7,11 +7,13 @@ namespace AppTest\Service\OneLogin;
 use App\Service\OneLogin\OnboardingState;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\PendingLink;
+use App\Service\OneLogin\SignedOutSubjects;
 use MakeShared\OneLogin\UserType;
 use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 
 class OneLoginSessionManagerTest extends TestCase
 {
@@ -20,23 +22,28 @@ class OneLoginSessionManagerTest extends TestCase
     private const string ID_TOKEN = 'header.payload.sig';
 
     private SessionInterface&MockObject $session;
+    private SignedOutSubjects&MockObject $signedOutSubjects;
+    private LoggerInterface&MockObject $logger;
     private OneLoginSessionManager $manager;
 
     protected function setUp(): void
     {
-        $this->session = $this->createMock(SessionInterface::class);
-        $this->manager = new OneLoginSessionManager();
+        $this->session           = $this->createMock(SessionInterface::class);
+        $this->signedOutSubjects = $this->createMock(SignedOutSubjects::class);
+        $this->logger            = $this->createMock(LoggerInterface::class);
+        $this->manager           = new OneLoginSessionManager($this->signedOutSubjects, $this->logger);
     }
 
-    public function testSetPendingLinkStoresSubEmailAndIdTokenUnderTheOwnedKey(): void
+    public function testSetPendingLinkStoresSubEmailIdTokenAndSignInTimeUnderTheOwnedKey(): void
     {
         $this->session
             ->expects($this->once())
             ->method('set')
             ->with(self::SESSION_KEY, [
-                'sub'     => 'urn:fdc:gov.uk:2022:newuser',
-                'email'   => 'newuser@example.com',
-                'idToken' => self::ID_TOKEN,
+                'sub'        => 'urn:fdc:gov.uk:2022:newuser',
+                'email'      => 'newuser@example.com',
+                'idToken'    => self::ID_TOKEN,
+                'signedInAt' => 1791280000,
             ]);
 
         $this->manager->setPendingLink(
@@ -44,6 +51,7 @@ class OneLoginSessionManagerTest extends TestCase
             'urn:fdc:gov.uk:2022:newuser',
             'newuser@example.com',
             self::ID_TOKEN,
+            1791280000,
         );
     }
 
@@ -53,9 +61,10 @@ class OneLoginSessionManagerTest extends TestCase
             ->method('get')
             ->with(self::SESSION_KEY)
             ->willReturn([
-                'sub'     => 'urn:fdc:gov.uk:2022:newuser',
-                'email'   => 'newuser@example.com',
-                'idToken' => self::ID_TOKEN,
+                'sub'        => 'urn:fdc:gov.uk:2022:newuser',
+                'email'      => 'newuser@example.com',
+                'idToken'    => self::ID_TOKEN,
+                'signedInAt' => $signedInAt = time() - 60,
             ]);
 
         $pendingLink = $this->manager->getPendingLink($this->session);
@@ -64,13 +73,69 @@ class OneLoginSessionManagerTest extends TestCase
         $this->assertSame('urn:fdc:gov.uk:2022:newuser', $pendingLink->sub);
         $this->assertSame('newuser@example.com', $pendingLink->email);
         $this->assertSame(self::ID_TOKEN, $pendingLink->idToken);
+        $this->assertSame($signedInAt, $pendingLink->signedInAt);
+    }
+
+    public function testPendingLinkIsStillUsableJustInsideTheMaximumAge(): void
+    {
+        $this->session->method('get')->willReturn($this->storedPendingLink(
+            time() - OneLoginSessionManager::PENDING_LINK_MAX_AGE_SECONDS + 60,
+        ));
+
+        $this->assertInstanceOf(PendingLink::class, $this->manager->getPendingLink($this->session));
+    }
+
+    public function testPendingLinkOlderThanTheMaximumAgeIsNotUsable(): void
+    {
+        $this->session->method('get')->willReturn($this->storedPendingLink(
+            time() - OneLoginSessionManager::PENDING_LINK_MAX_AGE_SECONDS - 1,
+        ));
+
+        $this->assertNull($this->manager->getPendingLink($this->session));
+    }
+
+    public function testPendingLinkIsClearedOnceTheUserHasSignedOutOfOneLogin(): void
+    {
+        $signedInAt = time() - 60;
+        $this->session->method('get')->willReturn($this->storedPendingLink($signedInAt));
+
+        $this->signedOutSubjects->expects($this->once())
+            ->method('signedOutSince')
+            ->with('urn:fdc:gov.uk:2022:newuser', $signedInAt)
+            ->willReturn(true);
+        $this->session->expects($this->once())->method('unset')->with(self::SESSION_KEY);
+        $this->logger->expects($this->once())->method('info')->with('auth.onelogin.pending_link_signed_out');
+
+        $this->assertNull($this->manager->getPendingLink($this->session));
+    }
+
+    public function testPendingLinkIsUsableIfTheUserHasNotSignedOutSinceSigningIn(): void
+    {
+        $this->session->method('get')->willReturn($this->storedPendingLink(time() - 60));
+        $this->signedOutSubjects->method('signedOutSince')->willReturn(false);
+        $this->session->expects($this->never())->method('unset');
+
+        $this->assertInstanceOf(PendingLink::class, $this->manager->getPendingLink($this->session));
+    }
+
+    /**
+     * @return array{sub: string, email: string, idToken: string, signedInAt: int}
+     */
+    private function storedPendingLink(int $signedInAt): array
+    {
+        return [
+            'sub'        => 'urn:fdc:gov.uk:2022:newuser',
+            'email'      => 'newuser@example.com',
+            'idToken'    => self::ID_TOKEN,
+            'signedInAt' => $signedInAt,
+        ];
     }
 
     public function testGetPendingLinkDefaultsEmailToEmptyStringWhenMissing(): void
     {
         $this->session
             ->method('get')
-            ->willReturn(['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => self::ID_TOKEN]);
+            ->willReturn(['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => self::ID_TOKEN, 'signedInAt' => time()]);
 
         $pendingLink = $this->manager->getPendingLink($this->session);
 
@@ -84,13 +149,15 @@ class OneLoginSessionManagerTest extends TestCase
     public static function invalidPendingLinkProvider(): array
     {
         return [
-            'nothing stored'  => [null],
-            'not an array'    => ['a string'],
-            'missing sub'     => [['email' => 'newuser@example.com']],
-            'empty sub'       => [['sub' => '', 'email' => 'newuser@example.com']],
-            'non-string sub'  => [['sub' => 123, 'email' => 'newuser@example.com']],
-            'missing idToken' => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com']],
-            'empty idToken'   => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => '']],
+            'nothing stored'    => [null],
+            'not an array'      => ['a string'],
+            'missing sub'       => [['email' => 'newuser@example.com']],
+            'empty sub'         => [['sub' => '', 'email' => 'newuser@example.com']],
+            'non-string sub'    => [['sub' => 123, 'email' => 'newuser@example.com']],
+            'missing idToken'   => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'newuser@example.com']],
+            'empty idToken'     => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => '']],
+            'no sign-in time'   => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => 'h.p.s']],
+            'text sign-in time' => [['sub' => 'urn:fdc:gov.uk:2022:newuser', 'idToken' => 'h.p.s', 'signedInAt' => 'yesterday']],
         ];
     }
 

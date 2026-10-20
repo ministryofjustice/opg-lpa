@@ -57,7 +57,7 @@ class OneLoginSignInHandlerTest extends TestCase
         $this->oneLoginService
             ->expects($this->once())
             ->method('start')
-            ->willReturn(['state' => 'abc', 'nonce' => 'def', 'url' => $authUrl]);
+            ->willReturn(['state' => 'abc', 'nonce' => 'def', 'codeVerifier' => 'ghi', 'url' => $authUrl]);
 
         $this->session
             ->expects($this->once())
@@ -83,7 +83,7 @@ class OneLoginSignInHandlerTest extends TestCase
             ->method('start')
             ->willReturnCallback(function (string $redirectUri) use (&$capturedRedirectUri) {
                 $capturedRedirectUri = $redirectUri;
-                return ['state' => 'x', 'nonce' => 'y', 'url' => 'https://auth.example.com'];
+                return ['state' => 'x', 'nonce' => 'y', 'codeVerifier' => 'z', 'url' => 'https://auth.example.com'];
             });
 
         $this->session->method('set');
@@ -97,7 +97,7 @@ class OneLoginSignInHandlerTest extends TestCase
     {
         $this->oneLoginService
             ->method('start')
-            ->willReturn(['state' => 'x', 'nonce' => 'y', 'url' => 'https://auth.example.com']);
+            ->willReturn(['state' => 'x', 'nonce' => 'y', 'codeVerifier' => 'z', 'url' => 'https://auth.example.com']);
 
         $sessionData = null;
         $this->session
@@ -114,20 +114,28 @@ class OneLoginSignInHandlerTest extends TestCase
         $this->assertSame('https://myservice.example.com/auth/redirect', $sessionData['redirect_uri']);
     }
 
-    public function testSessionReceivesExactStateAndNonceUnderOneloginAuthKey(): void
+    public function testSessionReceivesExactStateNonceAndCodeVerifierUnderOneloginAuthKey(): void
     {
-        $state = 'state-abc-123';
-        $nonce = 'nonce-xyz-456';
+        $state        = 'state-abc-123';
+        $nonce        = 'nonce-xyz-456';
+        $codeVerifier = 'verifier-789';
 
         $this->oneLoginService
             ->method('start')
-            ->willReturn(['state' => $state, 'nonce' => $nonce, 'url' => 'https://auth.example.com']);
+            ->willReturn([
+                'state'        => $state,
+                'nonce'        => $nonce,
+                'codeVerifier' => $codeVerifier,
+                'url'          => 'https://auth.example.com',
+            ]);
 
         $this->session
             ->expects($this->once())
             ->method('set')
-            ->with('onelogin_auth', $this->callback(function (array $data) use ($state, $nonce): bool {
-                return $data['state'] === $state && $data['nonce'] === $nonce;
+            ->with('onelogin_auth', $this->callback(function (array $data) use ($state, $nonce, $codeVerifier): bool {
+                return $data['state'] === $state
+                    && $data['nonce'] === $nonce
+                    && $data['code_verifier'] === $codeVerifier;
             }));
 
         $this->handler->handle($this->buildRequest());
@@ -143,7 +151,7 @@ class OneLoginSignInHandlerTest extends TestCase
             ->method('start')
             ->willReturnCallback(function (string $redirectUri) use (&$capturedRedirectUri) {
                 $capturedRedirectUri = $redirectUri;
-                return ['state' => 'x', 'nonce' => 'y', 'url' => 'https://auth.example.com'];
+                return ['state' => 'x', 'nonce' => 'y', 'codeVerifier' => 'z', 'url' => 'https://auth.example.com'];
             });
 
         $this->session->method('set');

@@ -8,6 +8,7 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Service\SafeRedirectPath;
 use Mezzio\Session\SessionInterface;
+use Psr\Log\LoggerInterface;
 
 class OneLoginSessionManager
 {
@@ -15,25 +16,40 @@ class OneLoginSessionManager
 
     private const string SESSION_KEY_ONBOARDING = 'onelogin_onboarding';
 
+    public const int PENDING_LINK_MAX_AGE_SECONDS = 3600;
+
     /**
      * Held for the whole signed-in session: it is the id_token_hint One Login needs to sign the
      * user out, and its presence is what marks the session as a One Login sign-in.
      */
     private const string SESSION_KEY_ID_TOKEN = 'onelogin_id_token';
 
+    public function __construct(
+        private readonly SignedOutSubjects $signedOutSubjects,
+        private readonly LoggerInterface $logger,
+    ) {
+    }
+
     public function setPendingLink(
         SessionInterface $session,
         string $sub,
         string $email,
         #[\SensitiveParameter] string $idToken,
+        int $signedInAt,
     ): void {
         $session->set(self::SESSION_KEY_PENDING_LINK, [
-            'sub'     => $sub,
-            'email'   => $email,
-            'idToken' => $idToken,
+            'sub'        => $sub,
+            'email'      => $email,
+            'idToken'    => $idToken,
+            'signedInAt' => $signedInAt,
         ]);
     }
 
+    /**
+     * The user's pending link, or null if there is none they may still use. One Login says
+     * that after a back-channel logout the user must not continue until they sign in again:
+     * https://docs.sign-in.service.gov.uk/integrate-with-integration-environment/managing-your-users-sessions/
+     */
     public function getPendingLink(SessionInterface $session): ?PendingLink
     {
         /** @var mixed $pendingLink */
@@ -43,15 +59,27 @@ class OneLoginSessionManager
             return null;
         }
 
-        $sub     = $pendingLink['sub'] ?? null;
-        $email   = $pendingLink['email'] ?? null;
-        $idToken = $pendingLink['idToken'] ?? null;
+        $sub        = $pendingLink['sub'] ?? null;
+        $email      = $pendingLink['email'] ?? null;
+        $idToken    = $pendingLink['idToken'] ?? null;
+        $signedInAt = $pendingLink['signedInAt'] ?? null;
 
-        if (! is_string($sub) || $sub === '' || ! is_string($idToken) || $idToken === '') {
+        if (! is_string($sub) || $sub === '' || ! is_string($idToken) || $idToken === '' || ! is_int($signedInAt)) {
             return null;
         }
 
-        return new PendingLink($sub, is_string($email) ? $email : '', $idToken);
+        if (time() - $signedInAt > self::PENDING_LINK_MAX_AGE_SECONDS) {
+            return null;
+        }
+
+        if ($this->signedOutSubjects->signedOutSince($sub, $signedInAt)) {
+            $this->logger->info('auth.onelogin.pending_link_signed_out');
+            $this->clearPendingLink($session);
+
+            return null;
+        }
+
+        return new PendingLink($sub, is_string($email) ? $email : '', $idToken, $signedInAt);
     }
 
     public function clearPendingLink(SessionInterface $session): void

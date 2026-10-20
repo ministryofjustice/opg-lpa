@@ -9,16 +9,24 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
+use Application\Model\Service\OneLogin\KeyPairManager;
 use Application\Model\Service\OneLogin\LogoutTokenException;
 use Application\Model\Service\OneLogin\LogoutTokenVerifier;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service;
 use DateTime;
 use Facile\OpenIDClient\Client\ClientInterface;
+use Facile\OpenIDClient\Client\Metadata\ClientMetadata;
 use Facile\OpenIDClient\Issuer\IssuerInterface;
+use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadata;
 use Facile\OpenIDClient\Issuer\Metadata\IssuerMetadataInterface;
+use Facile\OpenIDClient\Session\AuthSessionInterface;
 use Facile\OpenIDClient\Token\TokenSetInterface;
 use InvalidArgumentException;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Signature\Algorithm\RS256;
+use Jose\Component\Signature\JWSVerifier;
+use Jose\Component\Signature\Serializer\CompactSerializer;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
@@ -48,8 +56,16 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|LoggerInterface $logger;
     private MockInterface|LogoutTokenVerifier $logoutTokenVerifier;
     private MockInterface|CacheInterface $cache;
+    private KeyPairManager $keyPairManager;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
+
+    private const string CLIENT_ID              = 'test-client-id';
+    private const string KEY_ID                 = 'test-kid';
+    private const string AUTHORIZATION_ENDPOINT = 'https://oidc.integration.account.gov.uk/authorize';
+
+    private const int SIGNED_IN_AT  = 1791280000;
+    private const int SIGNED_OUT_AT = 1791283600;
 
     public function setUp(): void
     {
@@ -75,6 +91,8 @@ class ServiceTest extends MockeryTestCase
 
         $this->cache = Mockery::mock(CacheInterface::class);
 
+        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), self::KEY_ID);
+
         $this->service = new Service();
         $this->service->setLogger($this->logger);
         $this->service->setLogoutTokenVerifier($this->logoutTokenVerifier);
@@ -85,46 +103,110 @@ class ServiceTest extends MockeryTestCase
         $this->service->setUserRepository($this->userRepository);
         $this->service->setLogRepository($this->logRepository);
         $this->service->setSharedSpaceRepository($this->sharedSpaceRepository);
+        $this->service->setKeyPairManager($this->keyPairManager);
     }
 
-    public function testCreateAuthenticationRequestReturnsExpectedParams(): void
+    public function testCreateAuthenticationRequestSignsTheParametersIntoARequestObject(): void
     {
-        $seededBytes = $this->seedRandomBytes();
-        $this->service->setRandomByteGenerator($seededBytes);
+        $this->stubClientForRequestObject();
+        $this->service->setRandomByteGenerator($this->seedRandomBytes());
 
-        $expectedState = bin2hex(str_repeat(chr(3), 12));
-        $expectedNonce = bin2hex(str_repeat(chr(6), 16));
-        $builtUrl      = 'https://oidc.example.com/auth?state=' . $expectedState;
+        $expectedState     = bin2hex(str_repeat(chr(3), 12));
+        $expectedNonce     = bin2hex(str_repeat(chr(6), 16));
+        $expectedVerifier  = rtrim(strtr(base64_encode(str_repeat(chr(9), 32)), '+/', '-_'), '=');
+        $expectedChallenge = rtrim(strtr(base64_encode(hash('sha256', $expectedVerifier, true)), '+/', '-_'), '=');
 
+        // Only the request object travels as a parameter; facile adds response_type and client_id.
+        $requestObject = null;
         $this->authorizationService->shouldReceive('getAuthorizationUri')
             ->once()
-            ->with($this->oidcClient, Mockery::on(function (array $params) use ($expectedState, $expectedNonce): bool {
-                return $params['state'] === $expectedState
-                    && $params['nonce'] === $expectedNonce
-                    && $params['scope'] === 'openid email'
-                    && $params['vtr'] === '["Cl.Cm"]'
-                    && $params['redirect_uri'] === self::REDIRECT_URI;
+            ->with($this->oidcClient, Mockery::on(function (array $parameters) use (&$requestObject): bool {
+                $requestObject = $parameters['request'] ?? null;
+
+                return array_keys($parameters) === ['scope', 'request'] && $parameters['scope'] === 'openid email';
             }))
-            ->andReturn($builtUrl);
+            ->andReturn('https://oidc.example.com/authorize?request=signed.request.object');
 
         $result = $this->service->createAuthenticationRequest(self::REDIRECT_URI);
 
         $this->assertSame($expectedState, $result['state']);
         $this->assertSame($expectedNonce, $result['nonce']);
-        $this->assertSame($builtUrl, $result['url']);
+        $this->assertSame($expectedVerifier, $result['codeVerifier']);
+        $this->assertSame('https://oidc.example.com/authorize?request=signed.request.object', $result['url']);
+
+        $jws = (new CompactSerializer())->unserialize($requestObject);
+
+        $this->assertSame(['alg' => 'RS256', 'kid' => self::KEY_ID], $jws->getSignature(0)->getProtectedHeader());
+        $this->assertTrue(
+            (new JWSVerifier(new AlgorithmManager([new RS256()])))
+                ->verifyWithKey($jws, $this->keyPairManager->jwk()->toPublic(), 0),
+        );
+
+        $claims = json_decode((string) $jws->getPayload(), true, 512, JSON_THROW_ON_ERROR);
+        $expiresAt = $claims['exp'];
+        unset($claims['exp']);
+
+        $this->assertSame([
+            'aud'                   => self::AUTHORIZATION_ENDPOINT,
+            'iss'                   => self::CLIENT_ID,
+            'client_id'             => self::CLIENT_ID,
+            'response_type'         => 'code',
+            'scope'                 => 'openid email',
+            'redirect_uri'          => self::REDIRECT_URI,
+            'state'                 => $expectedState,
+            'nonce'                 => $expectedNonce,
+            'vtr'                   => ['Cl.Cm'],
+            'code_challenge'        => $expectedChallenge,
+            'code_challenge_method' => 'S256',
+        ], $claims);
+        $this->assertEqualsWithDelta(time() + 300, $expiresAt, 5);
     }
 
-    public function testTwoCallsProduceDifferentStateAndNonce(): void
+    public function testCodeVerifierMeetsThePkceLengthRules(): void
     {
+        $this->stubClientForRequestObject();
+        $this->authorizationService->shouldReceive('getAuthorizationUri')->andReturn('https://oidc.example.com/authorize');
+
+        $verifier = $this->service->createAuthenticationRequest(self::REDIRECT_URI)['codeVerifier'];
+
+        $this->assertMatchesRegularExpression('/^[A-Za-z0-9\-._~]{43,128}$/', $verifier);
+    }
+
+    public function testTwoCallsProduceDifferentStateNonceAndCodeVerifier(): void
+    {
+        $this->stubClientForRequestObject();
         $this->authorizationService->shouldReceive('getAuthorizationUri')
             ->twice()
-            ->andReturn('https://oidc.example.com/auth');
+            ->andReturn('https://oidc.example.com/authorize');
 
         $first  = $this->service->createAuthenticationRequest(self::REDIRECT_URI);
         $second = $this->service->createAuthenticationRequest(self::REDIRECT_URI);
 
         $this->assertNotSame($first['state'], $second['state']);
         $this->assertNotSame($first['nonce'], $second['nonce']);
+        $this->assertNotSame($first['codeVerifier'], $second['codeVerifier']);
+    }
+
+    public function testMissingKeyPairManagerThrows(): void
+    {
+        $service = new Service();
+        $service->setLogger(Mockery::spy(LoggerInterface::class));
+        $service->setAuthorisationClientManager($this->clientManager);
+        $service->setAuthorizationService($this->authorizationService);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('KeyPairManager must be set');
+
+        $service->createAuthenticationRequest(self::REDIRECT_URI);
+    }
+
+    public function testPublicJwksComesFromTheKeyPairManager(): void
+    {
+        $jwks = $this->service->publicJwks();
+
+        $this->assertCount(1, $jwks['keys']);
+        $this->assertSame(self::KEY_ID, $jwks['keys'][0]['kid']);
+        $this->assertArrayNotHasKey('d', $jwks['keys'][0]);
     }
 
     public function testCreateLogoutRequestBuildsEndSessionUrl(): void
@@ -185,7 +267,7 @@ class ServiceTest extends MockeryTestCase
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage('SharedSpaceRepository');
 
-        $service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testHandleCallbackLinkedReturnsIdentity(): void
@@ -197,6 +279,14 @@ class ServiceTest extends MockeryTestCase
 
         $this->authorizationService->shouldReceive('callback')
             ->once()
+            ->with(
+                $this->oidcClient,
+                ['code' => 'auth-code', 'state' => 'state-abc'],
+                self::REDIRECT_URI,
+                Mockery::on(fn (AuthSessionInterface $session): bool => $session->getState() === 'state-abc'
+                    && $session->getNonce() === 'nonce-xyz'
+                    && $session->getCodeVerifier() === 'verifier-123'),
+            )
             ->andReturn($tokenSet);
 
         $this->stubUserInfo($sub, $email);
@@ -224,12 +314,13 @@ class ServiceTest extends MockeryTestCase
             ->with('user-1')
             ->andReturn('shared-space-9');
 
-        $result = $this->service->handleCallback('auth-code', 'state-abc', 'nonce-xyz', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('auth-code', 'state-abc', 'nonce-xyz', 'verifier-123', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
         $this->assertSame($sub, $result['sub']);
         $this->assertSame($email, $result['email']);
         $this->assertSame('header.payload.sig', $result['idToken']);
+        $this->assertSame(self::SIGNED_IN_AT, $result['signedInAt']);
         $this->assertSame('user-1', $result['identity']['userId']);
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
@@ -261,7 +352,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
         $this->assertSame('new.address@example.com', $result['email']);
@@ -290,7 +381,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
     }
@@ -317,7 +408,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
     }
@@ -347,7 +438,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
     }
@@ -366,7 +457,7 @@ class ServiceTest extends MockeryTestCase
         $this->userRepository->shouldNotReceive('setOneLoginEmail');
         $this->userRepository->shouldNotReceive('updateLastLoginTime');
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertFalse($result['linked']);
         $this->assertSame('stranger@example.com', $result['email']);
@@ -397,7 +488,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertSame('padded@example.com', $result['email']);
     }
@@ -414,7 +505,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->expectException(OneLoginAuthenticationException::class);
 
-        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testHandleCallbackStillSignsUserInWhenEmailRefreshFails(): void
@@ -451,7 +542,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->once()->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
         $this->assertSame('tok', $result['identity']['token']);
@@ -481,7 +572,7 @@ class ServiceTest extends MockeryTestCase
             ->with('user-2')
             ->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertTrue($result['linked']);
         $this->assertNull($result['identity']['sharedSpaceId']);
@@ -501,7 +592,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->authenticationService->shouldNotReceive('issueAuthToken');
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertFalse($result['linked']);
         $this->assertSame($sub, $result['sub']);
@@ -518,7 +609,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->expectException(OneLoginAuthenticationException::class);
 
-        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testHandleCallbackMissingIdTokenThrows(): void
@@ -530,7 +621,22 @@ class ServiceTest extends MockeryTestCase
 
         $this->expectException(OneLoginAuthenticationException::class);
 
-        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
+    }
+
+    public function testHandleCallbackRejectsAnIdTokenWithoutIat(): void
+    {
+        $this->authorizationService->shouldReceive('callback')
+            ->once()
+            ->andReturn($this->makeTokenSet('urn:fdc:gov.uk:2022:sub-abc', ['iat' => null]));
+        $this->authorizationService->shouldNotReceive('getUserInfo');
+
+        try {
+            $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
+            $this->fail('Expected the ID token to be rejected');
+        } catch (OneLoginAuthenticationException $e) {
+            $this->assertSame('missing_iat_claim', $e->reason());
+        }
     }
 
     /**
@@ -561,7 +667,7 @@ class ServiceTest extends MockeryTestCase
         $this->authenticationService->shouldNotReceive('issueAuthToken');
 
         try {
-            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+            $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
             $this->fail('Expected the ID token to be rejected');
         } catch (OneLoginAuthenticationException $e) {
             $this->assertSame($expectedReason, $e->reason());
@@ -576,7 +682,7 @@ class ServiceTest extends MockeryTestCase
         $this->expectException(OneLoginAuthenticationException::class);
 
         try {
-            $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+            $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
         } finally {
             $this->logger->shouldHaveReceived('warning')->with('auth.onelogin.unexpected_vot', ['vot' => 'Cl.Cm.P2'])->once();
         }
@@ -592,7 +698,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->expectException(OneLoginAuthenticationException::class);
 
-        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testHandleCallbackSubReceived(): void
@@ -604,7 +710,7 @@ class ServiceTest extends MockeryTestCase
         $this->stubUserInfo($sub, 'sub@example.com');
         $this->userRepository->shouldReceive('getByOneLoginSub')->once()->with($sub)->andReturn(null);
 
-        $result = $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $result = $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
 
         $this->assertSame($sub, $result['sub']);
     }
@@ -621,7 +727,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->expectException(OneLoginAuthenticationException::class);
 
-        $this->service->handleCallback('code', 'state', 'nonce', self::REDIRECT_URI);
+        $this->service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testLinkExistingAccountSuccessSetsSubAndReturnsIdentity(): void
@@ -820,7 +926,7 @@ class ServiceTest extends MockeryTestCase
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
             ->with('a.logout.token')
-            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
 
         $this->expectJtiRecorded('jti-1');
 
@@ -834,7 +940,7 @@ class ServiceTest extends MockeryTestCase
 
         $result = $this->service->handleBackChannelLogout('a.logout.token');
 
-        $this->assertSame(['accepted' => true], $result);
+        $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'signedOutAt' => self::SIGNED_OUT_AT], $result);
     }
 
     public function testBackChannelLogoutRejectsInvalidTokenAndEndsNoSession(): void
@@ -857,7 +963,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
-            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
 
         $this->cache->shouldReceive('has')->once()->andReturn(true);
         $this->cache->shouldNotReceive('set');
@@ -875,7 +981,7 @@ class ServiceTest extends MockeryTestCase
     {
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
-            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:stranger', 'jti' => 'jti-2']);
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:stranger', 'jti' => 'jti-2', 'iat' => self::SIGNED_OUT_AT]);
 
         $this->expectJtiRecorded('jti-2');
 
@@ -884,14 +990,14 @@ class ServiceTest extends MockeryTestCase
 
         $result = $this->service->handleBackChannelLogout('a.logout.token');
 
-        $this->assertSame(['accepted' => true], $result);
+        $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:stranger', 'signedOutAt' => self::SIGNED_OUT_AT], $result);
     }
 
     public function testBackChannelLogoutDoesNotRecordJtiWhenTheLogoutFails(): void
     {
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
-            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1']);
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
 
         $this->cache->shouldReceive('has')->once()->andReturn(false);
         $this->cache->shouldNotReceive('set');
@@ -925,6 +1031,19 @@ class ServiceTest extends MockeryTestCase
         return $user;
     }
 
+    private function stubClientForRequestObject(): void
+    {
+        $issuer = Mockery::mock(IssuerInterface::class);
+        $issuer->shouldReceive('getMetadata')->andReturn(IssuerMetadata::fromArray([
+            'issuer'                 => 'https://oidc.integration.account.gov.uk/',
+            'authorization_endpoint' => self::AUTHORIZATION_ENDPOINT,
+            'jwks_uri'               => 'https://oidc.integration.account.gov.uk/.well-known/jwks.json',
+        ]));
+
+        $this->oidcClient->shouldReceive('getIssuer')->andReturn($issuer);
+        $this->oidcClient->shouldReceive('getMetadata')->andReturn(ClientMetadata::fromArray(['client_id' => self::CLIENT_ID]));
+    }
+
     private function stubEndSessionEndpoint(?string $endpoint): void
     {
         $metadata = Mockery::mock(IssuerMetadataInterface::class);
@@ -942,7 +1061,7 @@ class ServiceTest extends MockeryTestCase
     private function makeTokenSet(string $sub, array $claims = []): MockInterface|TokenSetInterface
     {
         $claims = array_filter(
-            [...['sub' => $sub, 'vot' => 'Cl.Cm'], ...$claims],
+            [...['sub' => $sub, 'vot' => 'Cl.Cm', 'iat' => self::SIGNED_IN_AT], ...$claims],
             static fn (mixed $value): bool => $value !== null,
         );
 
