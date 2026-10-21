@@ -1,0 +1,64 @@
+{
+  "Statement": [
+      {
+          "Action"   : [
+              "dynamodb:Update*",
+              "dynamodb:UntagResource",
+              "dynamodb:TagResource",
+              "dynamodb:Scan",
+              "dynamodb:Restore*",
+              "dynamodb:Query",
+              "dynamodb:PutItem",
+              "dynamodb:PartiQL*",
+              "dynamodb:List*",
+              "dynamodb:Get*",
+              "dynamodb:ExportTableToPointInTime",
+              "dynamodb:EnableKinesisStreamingDestination",
+              "dynamodb:DisableKinesisStreamingDestination",
+              "dynamodb:Delete*",
+              "dynamodb:Create*",
+              "dynamodb:ConditionCheckItem",
+              "dynamodb:Batch*"
+            ],
+          "Effect"   : "Deny",
+          "Principal": {
+              "AWS": "*"
+            },
+          "Resource" : "table_arn",
+          "Sid"      : "DenyAll"
+        },
+      {
+          "Action"   : [
+              "dynamodb:Describe*"
+            ],
+          "Effect"   : "Deny",
+          "Principal": {
+              "AWS": "*"
+            },
+          "Resource" : "table_arn",
+          "Sid"      : "DenyDescribe"
+        },
+      {
+          "Action"   : [
+              "dynamodb:Get*"
+            ],
+          "Effect"   : "Deny",
+          "Principal": {
+              "AWS": "*"
+            },
+          "Resource" : "table_arn",
+          "Sid"      : "DenyGet"
+        },
+      {
+          "Action"   : [
+              "dynamodb:PutResourcePolicy"
+            ],
+          "Effect"   : "Allow",
+          "Principal": {
+              "AWS": "breakglass_role"
+            },
+          "Resource" : "table_arn",
+          "Sid"      : "AllowBreakglassToUpdatePolicy"
+        }
+    ]
+}

@@ -1,0 +1,9 @@
+[project]
+name = "revoke-s3-permissions"
+version = "0.1.0"
+requires-python = "==3.14.8"
+dependencies = [
+    "boto3==1.43.107",
+]
+[tool.uv]
+package = false
