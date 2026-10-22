@@ -2,7 +2,7 @@ FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c4
 
 FROM pdftk/pdftk:3.3.3@sha256:01c1bc85f760226bc5d0dc2567c7f4ec6444f070212be610fe803cd5ce160872 AS pdftk
 
-FROM php:8.4-fpm-alpine3.23@sha256:b2a757dc9d3c05a6a97c05cacd26b981b6225e65cc78da6ccb2ea0a8b4b6196b AS base
+FROM php:8.4-fpm-alpine3.23@sha256:7dfa8083bb86667b9253a8faadee7da68268a1171fa75c7b061d7feb73935ab8 AS base
 
 
 RUN adduser -D -g '' appuser && \
