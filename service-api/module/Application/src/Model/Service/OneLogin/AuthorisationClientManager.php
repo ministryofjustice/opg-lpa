@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Application\Model\Service\OneLogin;
 
 use Facile\JoseVerifier\JWK\JwksProviderBuilder;
+use Facile\OpenIDClient\AuthMethod\AuthMethodFactory;
 use Facile\OpenIDClient\Client\ClientBuilder;
 use Facile\OpenIDClient\Client\Metadata\ClientMetadata;
 use Facile\OpenIDClient\Issuer\IssuerBuilder;
@@ -63,6 +64,7 @@ class AuthorisationClientManager
             ->setIssuer($issuer)
             ->setClientMetadata($clientMetadata)
             ->setJwksProvider($ourJwks->build())
+            ->setAuthMethodFactory(new AuthMethodFactory([new PrivateKeyJwtWithKeyId($this->keyPairManager)]))
             ->build();
     }
 }

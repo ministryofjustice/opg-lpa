@@ -7,6 +7,7 @@ namespace AppTest\Handler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -17,6 +18,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use RuntimeException;
 
 class OneLoginCallbackHandlerTest extends TestCase
@@ -28,17 +30,19 @@ class OneLoginCallbackHandlerTest extends TestCase
     private OneLoginCallbackHandler $handler;
 
     private const array VALID_SESSION = [
-        'state'        => 'valid-state-abc',
-        'nonce'        => 'valid-nonce-xyz',
-        'redirect_uri' => 'https://service.example.com/auth/redirect',
+        'state'         => 'valid-state-abc',
+        'nonce'         => 'valid-nonce-xyz',
+        'code_verifier' => 'valid-code-verifier',
+        'redirect_uri'  => 'https://service.example.com/auth/redirect',
     ];
 
     private const array LINKED_RESULT = [
-        'linked'   => true,
-        'sub'      => 'urn:fdc:gov.uk:2022:abc123',
-        'email'    => 'user@example.com',
-        'idToken'  => 'linked.id.token',
-        'identity' => [
+        'linked'     => true,
+        'sub'        => 'urn:fdc:gov.uk:2022:abc123',
+        'email'      => 'user@example.com',
+        'idToken'    => 'linked.id.token',
+        'signedInAt' => 1791280000,
+        'identity'   => [
             'userId'         => 'user-id-1',
             'token'          => 'tok-abc',
             'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
@@ -48,10 +52,11 @@ class OneLoginCallbackHandlerTest extends TestCase
     ];
 
     private const array UNLINKED_RESULT = [
-        'linked'  => false,
-        'sub'     => 'urn:fdc:gov.uk:2022:newuser',
-        'email'   => 'newuser@example.com',
-        'idToken' => 'unlinked.id.token',
+        'linked'     => false,
+        'sub'        => 'urn:fdc:gov.uk:2022:newuser',
+        'email'      => 'newuser@example.com',
+        'idToken'    => 'unlinked.id.token',
+        'signedInAt' => 1791280000,
     ];
 
     protected function setUp(): void
@@ -63,7 +68,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->handler         = new OneLoginCallbackHandler(
             $this->renderer,
             $this->oneLoginService,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->logger,
         );
     }
@@ -153,6 +158,27 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->renderer->method('render')->willReturn('<html>error</html>');
 
         $response = $this->handler->handle($this->buildRequest('code=c&state=s', []));
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    public function testSessionWithoutCodeVerifierLogsAndRendersError(): void
+    {
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with('auth.onelogin.session_missing');
+
+        $this->oneLoginService->expects($this->never())->method('callback');
+        $this->renderer->method('render')->willReturn('<html>error</html>');
+
+        $sessionWithoutVerifier = self::VALID_SESSION;
+        unset($sessionWithoutVerifier['code_verifier']);
+
+        $response = $this->handler->handle(
+            $this->buildRequest('code=c&state=valid-state-abc', ['onelogin_auth' => $sessionWithoutVerifier]),
+        );
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertSame(400, $response->getStatusCode());
@@ -336,6 +362,7 @@ class OneLoginCallbackHandlerTest extends TestCase
                 'authcode',
                 'valid-state-abc',
                 self::VALID_SESSION['nonce'],
+                self::VALID_SESSION['code_verifier'],
                 self::VALID_SESSION['redirect_uri'],
             )
             ->willReturn(self::LINKED_RESULT);
@@ -367,9 +394,10 @@ class OneLoginCallbackHandlerTest extends TestCase
             ->expects($this->once())
             ->method('set')
             ->with('onelogin_pending_link', [
-                'sub'     => self::UNLINKED_RESULT['sub'],
-                'email'   => self::UNLINKED_RESULT['email'],
-                'idToken' => self::UNLINKED_RESULT['idToken'],
+                'sub'        => self::UNLINKED_RESULT['sub'],
+                'email'      => self::UNLINKED_RESULT['email'],
+                'idToken'    => self::UNLINKED_RESULT['idToken'],
+                'signedInAt' => self::UNLINKED_RESULT['signedInAt'],
             ]);
 
         $response = $this->handler->handle(

@@ -42,9 +42,10 @@ class OneLoginSignInHandler implements RequestHandlerInterface
         $result = $this->oneLoginService->start($redirectUri);
 
         $session->set(self::SESSION_KEY_ONELOGIN, [
-            'state'        => $result['state'],
-            'nonce'        => $result['nonce'],
-            'redirect_uri' => $redirectUri,
+            'state'         => $result['state'],
+            'nonce'         => $result['nonce'],
+            'code_verifier' => $result['codeVerifier'],
+            'redirect_uri'  => $redirectUri,
         ]);
 
         return new RedirectResponse($result['url']);

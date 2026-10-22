@@ -330,6 +330,17 @@ return [
                         ],
                     ],
 
+                    'onelogin-jwks' => [
+                        'type'    => 'Segment',
+                        'options' => [
+                            'route'    => '/auth/onelogin/jwks',
+                            'defaults' => [
+                                'controller' => 'OneLoginController',
+                                'action'     => 'jwks',
+                            ],
+                        ],
+                    ],
+
                     'onelogin-create' => [
                         'type'    => 'Segment',
                         'options' => [

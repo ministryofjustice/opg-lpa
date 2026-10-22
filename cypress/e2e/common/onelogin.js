@@ -85,9 +85,17 @@ Then(`starting One Login sign in redirects to the authorize endpoint`, () => {
       expect(params.get('response_type')).to.eq('code');
       expect(params.get('scope')).to.include('openid');
       expect(params.get('client_id')).to.not.be.empty;
-      expect(params.get('state')).to.not.be.empty;
-      expect(params.get('nonce')).to.not.be.empty;
-      expect(params.get('redirect_uri')).to.match(/\/auth\/redirect$/);
+
+      // The other parameters travel inside the signed request object (JAR)
+      const payload = params.get('request').split('.')[1];
+      const claims = JSON.parse(
+        atob(payload.replace(/-/g, '+').replace(/_/g, '/')),
+      );
+      expect(claims.state).to.not.be.empty;
+      expect(claims.nonce).to.not.be.empty;
+      expect(claims.redirect_uri).to.match(/\/auth\/redirect$/);
+      expect(claims.code_challenge).to.not.be.empty;
+      expect(claims.code_challenge_method).to.eq('S256');
     },
   );
 });

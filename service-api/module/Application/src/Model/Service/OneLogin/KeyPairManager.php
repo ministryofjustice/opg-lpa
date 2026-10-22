@@ -61,6 +61,14 @@ class KeyPairManager
         return new JWK($jwk->all() + ['alg' => self::ALGORITHM]);
     }
 
+    /**
+     * @return array{keys: list<array<string, mixed>>}
+     */
+    public function publicJwks(): array
+    {
+        return ['keys' => [$this->jwk()->toPublic()->all()]];
+    }
+
     private function resolvePem(string $key): string
     {
         if (str_contains($key, 'BEGIN')) {

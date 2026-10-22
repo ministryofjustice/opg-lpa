@@ -89,6 +89,7 @@ use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginChangesHandler;
+use App\Handler\OneLoginJwksHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PingHandler;
 use App\Handler\PingHandlerJson;
@@ -215,6 +216,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             OneLoginBackChannelLogoutHandler::class,
             'auth.onelogin.backchannel-logout',
         )->setOptions(['unauthenticated_route' => true]);
+        $app->get('/.well-known/jwks.json', OneLoginJwksHandler::class, 'auth.onelogin.jwks')
+            ->setOptions(['unauthenticated_route' => true]);
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
