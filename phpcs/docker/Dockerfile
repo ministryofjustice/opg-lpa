@@ -1,8 +1,9 @@
 FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
 
-FROM php:8.4-cli-alpine3.23@sha256:da7a7a945a493ac9c015f327231afd820bbe57fc6ae22f4f520a79fbd635ba39
+FROM php:8.4-cli-alpine3.23@sha256:cfad62ae579344f0da20710517cd251777cb4e3cd824dd201d4169719d95fcbd
 
 RUN adduser -D -g '' appuser
+COPY --chown=root:root shared/docker/php-mitigations.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /app
 

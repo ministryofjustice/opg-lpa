@@ -1,6 +1,6 @@
 FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:b2a757dc9d3c05a6a97c05cacd26b981b6225e65cc78da6ccb2ea0a8b4b6196b AS base
+FROM php:8.4-fpm-alpine3.23@sha256:7dfa8083bb86667b9253a8faadee7da68268a1171fa75c7b061d7feb73935ab8 AS base
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -46,6 +46,7 @@ COPY --chown=root:root service-front/content /app/content
 
 # PHP config files (reuse the shared service config)
 COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/php-mitigations.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 

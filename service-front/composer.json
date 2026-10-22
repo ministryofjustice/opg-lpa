@@ -24,7 +24,7 @@
             "laminas/laminas-component-installer": true
         },
         "platform": {
-            "php": "8.4.12"
+            "php": "8.4.27"
         }
     },
     "extra": {
@@ -40,7 +40,7 @@
         }
     },
     "require": {
-        "php": "8.4.*",
+        "php": "~8.4.27",
         "ext-bcmath": "*",
         "ext-intl": "*",
         "ext-redis": "*",
