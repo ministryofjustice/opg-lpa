@@ -1477,6 +1477,7 @@ class UserDataTest extends MockeryTestCase
             'updated' => new DateTime(),
             'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
             'last_login' => new DateTime(),
+            'is_professional' => false,
         ];
 
         // mocks
@@ -1495,6 +1496,7 @@ class UserDataTest extends MockeryTestCase
         $this->assertEquals($user['created'], $userProfile->getCreatedAt());
         $this->assertEquals($user['updated'], $userProfile->getUpdatedAt());
         $this->assertEquals($user['last_login'], $userProfile->getLastLoginAt());
+        $this->assertEquals($user['is_professional'], $userProfile->getIsProfessional());
         $this->assertEquals('Prof', $name->getTitle());
         $this->assertEquals('Barr', $name->getFirst());
         $this->assertEquals('Rrrraaaaa', $name->getLast());
@@ -1513,6 +1515,7 @@ class UserDataTest extends MockeryTestCase
             'profile' => '{"name":{"title":"Mx","first":"Joe","last":"Bloggs"},'
                 . '"email":{"address":"onelogin:urn:fdc:gov.uk:2022:sub"}}',
             'last_login' => new DateTime(),
+            'is_professional' => false,
         ];
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
@@ -1538,6 +1541,7 @@ class UserDataTest extends MockeryTestCase
             'profile' => '{"name":{"title":"Mr","first":"Pass","last":"Word"},'
                 . '"email":{"address":"stored@example.com"}}',
             'last_login' => new DateTime(),
+            'is_professional' => false,
         ];
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
