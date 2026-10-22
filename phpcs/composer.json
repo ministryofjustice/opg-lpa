@@ -3,7 +3,7 @@
     "description": "Required config and dependencies to run PHPCS",
     "minimum-stability": "dev",
     "require": {
-        "php": "8.4.*"
+        "php": "~8.4.27"
     },
     "require-dev": {
         "slevomat/coding-standard": "^8.0",
@@ -15,7 +15,7 @@
             "dealerdirect/phpcodesniffer-composer-installer": true
         },
         "platform": {
-            "php": "8.4.12"
+            "php": "8.4.27"
         },
         "sort-packages": true
     }
