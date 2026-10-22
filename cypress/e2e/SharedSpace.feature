@@ -151,7 +151,7 @@ Feature: Shared Space
     And I type the access code into field labelled "Your shared space access code"
     And I click element marked "Continue"
     And I should be on "/shared-space/dashboard"
-    And I see a success notification with content "Shared Space joined"
+    And I see a success notification with content "You’ve joined the shared space."
     And I click element marked "Shared space"
     And I cannot see any invites
 
