@@ -53,13 +53,6 @@ class IngressManager:
             ],
         )
 
-    def get_security_group(self, sg_id):
-        return self.aws_ec2_client.describe_security_groups(
-            GroupIds=[
-                sg_id,
-            ],
-        )
-
     def clear_added_ingress_rule_from_sg(self, ingress_cidr: str):
         """Remove own ingress rule from security group"""
         for sg_id in self.security_groups:
