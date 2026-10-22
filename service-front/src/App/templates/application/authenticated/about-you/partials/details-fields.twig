@@ -1,9 +1,12 @@
 {#
   The name, date of birth and address fields of the AboutYou form, shared by /user/about-you
   and the One Login onboarding "Your details" page. Expects: form, sharedSpacesEnabled (optional),
-  addressFieldsFirst (optional: show the address fields straight away, with postcode search behind a link).
+  addressFieldsFirst (optional: show the address fields straight away, with postcode search behind a link),
+  updatingDetails (optional: the One Login "Your details" page, with short headings and no shared space inset).
 #}
 {% import "application/macros.twig" as macros %}
+
+{% set updatingDetails = updatingDetails|default(false) %}
 
 {# Set form fields variables #}
 {% set title = form.get('name-title') %}
@@ -103,7 +106,7 @@
 {{ monthOfBirth.setLabel('Month') ? '' }}
 {{ yearOfBirth.setLabel('Year') ? '' }}
 
-<h2 class="govuk-heading-m govuk-!-margin-top-8">What is your name?</h2>
+<h2 class="govuk-heading-m govuk-!-margin-top-8">{{ updatingDetails ? 'Name' : 'What is your name?' }}</h2>
 
 <fieldset>
   <legend class="govuk-visually-hidden">Name</legend>
@@ -114,13 +117,13 @@
 
 </fieldset>
 
-{% if sharedSpacesEnabled|default(false) %}
+{% if sharedSpacesEnabled|default(false) and not updatingDetails %}
   <div class="govuk-inset-text">
     If you belong to a shared space, your name is shown to other user’s who also belong to the shared space.
   </div>
 {% endif %}
 
-<h2 class="govuk-heading-m govuk-!-margin-top-8">What is your date of birth?</h2>
+<h2 class="govuk-heading-m govuk-!-margin-top-8">{{ updatingDetails ? 'Date of birth' : 'What is your date of birth?' }}</h2>
 
 <fieldset id="{{ dob.getAttribute('name') }}">
   <legend class="govuk-visually-hidden">Date of birth</legend>
@@ -153,7 +156,7 @@
 
 </fieldset>
 
-<h2 class="govuk-heading-m govuk-!-margin-top-8">What is your address?</h2>
+<h2 class="govuk-heading-m govuk-!-margin-top-8">{{ updatingDetails ? 'Address' : 'What is your address?' }}</h2>
 
 <fieldset class="js-PostcodeLookup" data-showerrorbar="true"{% if addressFieldsFirst|default(false) %} data-showfieldsfirst="true"{% endif %}>
   <legend class="govuk-visually-hidden">Address</legend>

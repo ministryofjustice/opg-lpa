@@ -1,6 +1,6 @@
 {% extends 'layout/layout.twig' %}
 
-{%- set overridePageTitle = 'Deleting your account' -%}
+{%- set overridePageTitle = oneLoginEnabled ? 'What happens if you delete your Make a lasting power of attorney account' : 'Deleting your account' -%}
 
 {% block backLink %}
   <a href="{{ url('user/about-you') }}" class="govuk-back-link">Back</a>
@@ -11,13 +11,24 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-      <p class="govuk-body">You are about to delete your account. Doing this will permanently remove {% if memberCount !== null %}your personal details from our system.{% else %}all your LPAs and personal details from our system.{% endif %}</p>
-
-      {% if memberCount !== null %}
-        {%  if memberCount === 1 %}
-          <p class="govuk-body">You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.</p>
+      {% if oneLoginEnabled %}
+        {% if memberCount > 1 %}
+          <p class="govuk-body">If you delete your account, you will no longer be able to access any LPAs you’ve created and worked on.</p>
+          <p class="govuk-body">The LPAs belong to the shared space {{ sharedSpaceName }}. This means they will remain available to the users who are still members of that shared space.</p>
+          <p class="govuk-body">Your account details will be permanently removed from our system.</p>
         {% else %}
-          <p class="govuk-body">You are currently part of a shared space. Deleting your account will remove you from the shared space and you will no longer have access to any LPAs that have been created within it.</p>
+          <p class="govuk-body">Deleting your account will permanently remove your LPAs and personal details from our system.</p>
+          <p class="govuk-body">Any completed LPAs you’ve previously downloaded or saved, or sent to OPG for registration, will not be affected.</p>
+        {% endif %}
+      {% else %}
+        <p class="govuk-body">You are about to delete your account. Doing this will permanently remove {% if memberCount !== null %}your personal details from our system.{% else %}all your LPAs and personal details from our system.{% endif %}</p>
+
+        {% if memberCount !== null %}
+          {%  if memberCount === 1 %}
+            <p class="govuk-body">You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.</p>
+          {% else %}
+            <p class="govuk-body">You are currently part of a shared space. Deleting your account will remove you from the shared space and you will no longer have access to any LPAs that have been created within it.</p>
+          {% endif %}
         {% endif %}
       {% endif %}
 
@@ -25,8 +36,13 @@
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="govuk-button-group">
-          <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete account</button>
-          <a class="govuk-button govuk-button--secondary" href="{{ url( 'user/dashboard' ) }}">Return to my LPAs</a>
+          {% if oneLoginEnabled %}
+            <a class="govuk-button govuk-button--secondary" href="{{ url('user/about-you') }}">Return to your details</a>
+            <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete my account</button>
+          {% else %}
+            <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete account</button>
+            <a class="govuk-button govuk-button--secondary" href="{{ url( 'user/dashboard' ) }}">Return to my LPAs</a>
+          {% endif %}
         </div>
       </form>
     </div>
