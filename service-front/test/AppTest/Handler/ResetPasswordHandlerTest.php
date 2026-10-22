@@ -83,23 +83,8 @@ class ResetPasswordHandlerTest extends TestCase
         return $request;
     }
 
-    public function testInvalidTokenFormatShowsInvalidTokenPage(): void
-    {
-        $this->session->method('has')->willReturn(false);
-
-        $this->renderer
-            ->expects($this->once())
-            ->method('render')
-            ->with('application/general/forgot-password/invalid-reset-token.twig')
-            ->willReturn('<html>invalid</html>');
-
-        $response = $this->handler->handle($this->createRequest(token: 'invalid!@#'));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
-    }
-
-    #[DataProvider('mangledTokens')]
-    public function testMangledTokenShowsInvalidTokenPage(string $token): void
+    #[DataProvider('invalidTokens')]
+    public function testInvalidTokenShowsInvalidTokenPage(string $token): void
     {
         $this->session->method('has')->willReturn(false);
 
@@ -118,9 +103,11 @@ class ResetPasswordHandlerTest extends TestCase
     }
 
     /** @return array<string, array{string}> */
-    public static function mangledTokens(): array
+    public static function invalidTokens(): array
     {
         return [
+            'empty'               => [''],
+            'invalid characters'  => ['invalid!@#'],
             'trailing full stop'  => ['aaaaaaaaaaaaaaaaaaaa.'],
             'trailing bracket'    => ['aaaaaaaaaaaaaaaaaaaa>'],
             'trailing comma'      => ['aaaaaaaaaaaaaaaaaaaa,'],
@@ -130,19 +117,6 @@ class ResetPasswordHandlerTest extends TestCase
             'extra path segment'  => ['aaaaaaaaaaaaaaaaaaaa/extra'],
             'crlf injection'      => ["aaaaaaaaaaaaaaaaaaaa\r\nSet-Cookie: evil=1"],
         ];
-    }
-
-    public function testEmptyTokenShowsInvalidTokenPage(): void
-    {
-        $this->renderer
-            ->expects($this->once())
-            ->method('render')
-            ->with('application/general/forgot-password/invalid-reset-token.twig')
-            ->willReturn('<html>invalid</html>');
-
-        $response = $this->handler->handle($this->createRequest(token: ''));
-
-        $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
     public function testLoggedInUserSessionIsClearedAndRedirected(): void
@@ -157,15 +131,27 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertEquals('/forgot-password/reset/validtoken', $response->getHeaderLine('Location'));
     }
 
-    public function testGetRequestDisplaysForm(): void
+    public static function getRequestDisplaysForm(): array
     {
+        return [
+            'oneLoginEnabled' => ['true', 'Enter a new password for your existing Make a lasting power of attorney account'],
+            'oneLoginDisabled' => ['false', 'Reset your password'],
+        ];
+    }
+
+    #[DataProvider('getRequestDisplaysForm')]
+    public function testGetRequestDisplaysForm(string $oneLoginEnabled, string $expectedTitle): void
+    {
+        putenv('ONELOGIN_ENABLED=' . $oneLoginEnabled);
         $this->session->method('has')->with('identity')->willReturn(false);
 
         $this->renderer
             ->expects($this->once())
             ->method('render')
             ->with('application/general/forgot-password/reset-password.twig', $this->callback(
-                fn($data) => isset($data['form']) && $data['error'] === null
+                fn($data) => isset($data['form']) &&
+                    $data['error'] === null &&
+                    $data['title'] === $expectedTitle
             ))
             ->willReturn('<html>form</html>');
 
@@ -174,34 +160,22 @@ class ResetPasswordHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testSuccessfulResetRedirectsToLoginWithFlash(): void
+    /** @return array<string, array{string, string, string}> */
+    public static function successfulResetProvider(): array
     {
-        $this->session->method('has')->with('identity')->willReturn(false);
-
-        $this->form->method('isValid')->willReturn(true);
-        $this->form->method('getData')->willReturn(['password' => 'NewPass123!']); // pragma: allowlist secret
-
-        $this->userService
-            ->expects($this->once())
-            ->method('setNewPassword')
-            ->with('abc123', 'NewPass123!')
-            ->willReturn(true);
-
-        $this->flash
-            ->expects($this->once())
-            ->method('flash')
-            ->with(FlashMessenger::SUCCESS, ['Password successfully reset']);
-
-        $request = $this->createRequest('POST', 'abc123', ['password' => 'NewPass123!', 'password_confirm' => 'NewPass123!']); // pragma: allowlist secret
-        $response = $this->handler->handle($request);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
+        return [
+            'oneLoginDisabled' => ['false', '/login', 'Password successfully reset'],
+            'oneLoginEnabled'  => ['true', '/home', 'You’ve reset the password for your existing account. '],
+        ];
     }
 
-    public function testSuccessfulResetRedirectsToHomeWhenOneLoginEnabled(): void
-    {
-        putenv('ONELOGIN_ENABLED=true');
+    #[DataProvider('successfulResetProvider')]
+    public function testSuccessfulResetRedirectsWithFlash(
+        string $oneLoginEnabled,
+        string $expectedLocation,
+        string $expectedMessage,
+    ): void {
+        putenv('ONELOGIN_ENABLED=' . $oneLoginEnabled);
 
         $this->session->method('has')->with('identity')->willReturn(false);
 
@@ -217,13 +191,13 @@ class ResetPasswordHandlerTest extends TestCase
         $this->flash
             ->expects($this->once())
             ->method('flash')
-            ->with(FlashMessenger::SUCCESS, ['Password successfully reset']);
+            ->with(FlashMessenger::SUCCESS, [$expectedMessage]);
 
         $request = $this->createRequest('POST', 'abc123', ['password' => 'NewPass123!', 'password_confirm' => 'NewPass123!']); // pragma: allowlist secret
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/home', $response->getHeaderLine('Location'));
+        $this->assertEquals($expectedLocation, $response->getHeaderLine('Location'));
     }
 
     public function testInvalidTokenResultShowsInvalidTokenPage(): void
