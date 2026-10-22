@@ -55,6 +55,7 @@ COPY --chown=root:root shared /shared
 
 # PHP config files
 COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/php-mitigations.ini /usr/local/etc/php/conf.d/
 COPY --chown=root:root shared/docker/app/php-fpm-logging.conf /usr/local/etc/php-fpm.d/
 COPY --chown=root:root shared/docker/app/www.conf /usr/local/etc/php-fpm.d/
 

@@ -46,6 +46,7 @@ COPY --from=pdftk /usr/share/java/pdftk.jar /usr/share/java
 COPY --chown=root:root shared /shared
 COPY --chown=root:root service-pdf /app
 COPY --chown=root:root shared/docker/app/app-php.ini /usr/local/etc/php/conf.d/
+COPY --chown=root:root shared/docker/php-mitigations.ini /usr/local/etc/php/conf.d/
 
 WORKDIR /app
 
