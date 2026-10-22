@@ -21,8 +21,8 @@ use RuntimeException;
 
 class OneLoginCallbackHandler implements RequestHandlerInterface
 {
-    private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
-    private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
+    private const string SESSION_KEY_ONELOGIN      = 'onelogin_auth';
+    private const string ERROR_TEMPLATE            = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -42,7 +42,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 'error_description' => $queryParams['error_description'] ?? null,
             ]);
 
-            return $this->renderError('There was a problem signing you in. Please try again.');
+            return $this->renderError($queryParams['error']);
         }
 
         $code  = $queryParams['code']  ?? null;
@@ -131,10 +131,10 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         }
     }
 
-    private function renderError(string $message): HtmlResponse
+    private function renderError(string $errorType): HtmlResponse
     {
         return new HtmlResponse(
-            $this->renderer->render(self::ERROR_TEMPLATE, ['error' => $message]),
+            $this->renderer->render(self::ERROR_TEMPLATE, ['errorType' => $errorType]),
             400,
         );
     }
