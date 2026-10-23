@@ -110,7 +110,7 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('application/general/auth/onelogin-error.twig', $this->arrayHasKey('error'))
+            ->with('application/general/auth/onelogin-error.twig', $this->arrayHasKey('errorType'))
             ->willReturn('<html>error</html>');
 
         $request = (new ServerRequest())
