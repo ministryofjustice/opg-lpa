@@ -15,8 +15,6 @@ class RemoveRDSSecurityGroupRules:
     def __init__(self, region):
         self.aws_ec2_client = boto3.client("ec2", region_name=region)
         self.account_id = boto3.client("sts").get_caller_identity().get("Account")
-        region = self.aws_ec2_client.meta.region_name
-        print(region)
 
     def get_security_group_id(self, security_group_name_prefix):
         return self.aws_ec2_client.describe_security_groups(
