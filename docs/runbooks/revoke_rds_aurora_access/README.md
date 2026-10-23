@@ -4,11 +4,12 @@ We can restrict access to at-risk Aurora clusters by removing network access to 
 
 The script in this folder removes security group rules for the Aurora cluster and the RDS proxy.
 
+These targetted security groups have a name prefix of `rds-proxy-<environment-name>`, and `rds-api-<environment-name>`.
 
 ## Prerequisites
 
 - Install `uv` and run `uv sync` from this directory. Run the commands from this directory.
-- Set up aws-vault using [aws-vault-assumable-roles](../aws-vault-assumable-roles.md), with the chosen profile assuming `role/breakglass` in the bucket's account.
+- Set up aws-vault using [aws-vault-assumable-roles](../aws_vault_assumable_roles/aws_vault_assumable_roles.md), with the chosen profile assuming `role/breakglass` in the bucket's account.
 - Verify the environments to revoke access to.
 
 ## Using the script

@@ -19,7 +19,7 @@ This policy grants the account's breakglass role permission to all DynamoDB acti
 ## Prerequisites
 
 - Install `uv` and run `uv sync` from this directory.
-- You will need to set up assumable roles in aws-vault. Follow the instructions at [aws-vault-assumable-roles](../aws-vault-assumable-roles.md).
+- You will need to set up assumable roles in aws-vault. Follow the instructions at [aws-vault-assumable-roles](../aws_vault_assumable_roles/aws_vault_assumable_roles.md).
 - Verify the table ARNs and region to revoke access to.
 
 ## Using the script

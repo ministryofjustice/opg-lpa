@@ -15,7 +15,7 @@ KMS key policies are regional. DynamoDB and S3 may cache data keys, so denying K
 ## Prerequisites
 
 - Install `uv` and run `uv sync` from this directory. Run the commands from this directory.
-- Set up aws-vault using [aws-vault-assumable-roles](../aws-vault-assumable-roles.md), with the chosen profile assuming `role/breakglass` in the key's account.
+- Set up aws-vault using [aws-vault-assumable-roles](../aws_vault_assumable_roles/aws_vault_assumable_roles.md), with the chosen profile assuming `role/breakglass` in the key's account.
 - Verify the key ARNs and regions. For multi-Region keys, run once for each regional key ARN.
 - Restore the original key policies by applying Terraform locally in the correct folder with breakglass.
 
