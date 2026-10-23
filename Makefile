@@ -451,6 +451,16 @@ reset-front-app:
 	docker compose up -d --force-recreate --renew-anon-volumes front-app
 	@${MAKE} dc-restart-web
 
+.PHONY: dc-account-cleanup
+dc-account-cleanup:
+	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup; echo "exit code: $$?"'
+
+age-user-login-1-week:
+	@docker compose exec postgres psql --username=lpauser --dbname=lpadb --command="UPDATE users SET last_login = now() - interval '8 months 3 weeks 5 days' WHERE identity = '${EMAIL}' OR one_login_email = '${EMAIL}';"
+
+age-user-login-1-month:
+	@docker compose exec postgres psql --username=lpauser --dbname=lpadb --command="UPDATE users SET last_login = now() - interval '8 months' WHERE identity = '${EMAIL}' OR one_login_email = '${EMAIL}';"
+
 # Re-run the non-live seeding scripts against the running dev stack, truncating
 # and re-populating the test users/applications/feedback/deletion-log tables.
 .PHONY: dc-reseed

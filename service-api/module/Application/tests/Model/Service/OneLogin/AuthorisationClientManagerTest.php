@@ -6,6 +6,7 @@ namespace ApplicationTest\Model\Service\OneLogin;
 
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\KeyPairManager;
+use Application\Model\Service\OneLogin\PrivateKeyJwtWithKeyId;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
 use Psr\SimpleCache\CacheInterface;
@@ -25,6 +26,13 @@ class AuthorisationClientManagerTest extends TestCase
 
         $this->assertSame('test-client-id', $metadata->getClientId());
         $this->assertSame('private_key_jwt', $metadata->getTokenEndpointAuthMethod());
+    }
+
+    public function testClientAssertionIsBuiltByOurKidCarryingAuthMethod(): void
+    {
+        $authMethod = $this->makeManager()->get()->getAuthMethodFactory()->create('private_key_jwt');
+
+        $this->assertInstanceOf(PrivateKeyJwtWithKeyId::class, $authMethod);
     }
 
     public function testIdTokenSigningAlgorithmIsPinnedToEs256(): void

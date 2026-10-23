@@ -14,6 +14,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
 use Application\Model\Service\OneLogin\FacileAuthorizationServiceAdapter;
+use Application\Model\Service\OneLogin\KeyPairManager;
 use Application\Model\Service\OneLogin\LogoutTokenVerifier;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Application\Model\Service\Password\Service as PasswordService;
@@ -79,6 +80,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     SharedSpaceRepositoryInterface::class => Mockery::mock(SharedSpaceRepositoryInterface::class),
                     LogoutTokenVerifier::class => Mockery::mock(LogoutTokenVerifier::class),
                     'OneLoginPsr16Cache' => Mockery::mock(CacheInterface::class),
+                    KeyPairManager::class => Mockery::mock(KeyPairManager::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],

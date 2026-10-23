@@ -2,6 +2,7 @@
 
 namespace Application\Model\Service\AccountCleanup;
 
+use Application\Feature;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
@@ -49,20 +50,24 @@ class Service extends AbstractService
     /**
      * Warning type constants
      */
-    public const WARNING_1_WEEK_NOTICE = '1-week-notice';
-    public const WARNING_1_MONTH_NOTICE = '1-month-notice';
+    public const string WARNING_1_WEEK_NOTICE = '1-week-notice';
+    public const string WARNING_1_MONTH_NOTICE = '1-month-notice';
 
     /**
      * Warning emails config
      */
-    private $warningEmailConfig = [
+    private array $warningEmailConfig = [
         self::WARNING_1_WEEK_NOTICE => [
-            'dateShift'  => '-9 months +1 week',
-            'templateId' => '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
+            'dateShift'                  => '-9 months +1 week',
+            'preOneLoginTemplateId'      => '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
+            'claimedAccountTemplateId'   => '399f2d80-9d3a-44c3-aa2e-8895d98b58fa',
+            'unclaimedAccountTemplateId' => '1704ba7b-ded7-4664-abf0-6ef6f4343ad6',
         ],
         self::WARNING_1_MONTH_NOTICE => [
-            'dateShift'  => '-8 months',
-            'templateId' => '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
+            'dateShift'                  => '-8 months',
+            'preOneLoginTemplateId'      => '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
+            'claimedAccountTemplateId'   => '1ccd99de-2067-457a-87de-cf5dabd13fff',
+            'unclaimedAccountTemplateId' => 'e6a5d415-8198-4c07-9dcb-81a039b812e7',
         ],
     ];
 
@@ -133,9 +138,7 @@ class Service extends AbstractService
         }
 
         $warningConfig = $this->warningEmailConfig[$warningType];
-
         $lastLoginBefore = new DateTime($warningConfig['dateShift']);
-        $templateId = $warningConfig['templateId'];
 
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $warningType);
@@ -143,6 +146,12 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
+            if (Feature::OneLogin->isEnabled()) {
+                $templateId = $user->oneLoginEmail() ? $warningConfig['claimedAccountTemplateId'] : $warningConfig['unclaimedAccountTemplateId'];
+            } else {
+                $templateId = $warningConfig['preOneLoginTemplateId'];
+            }
+
             // Tell users the day before, giving them that full day to login.
             $notificationDate = $user->lastLoginAt()->add(\DateInterval::createFromDateString('+9 months'));
 
@@ -160,10 +169,14 @@ class Service extends AbstractService
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
                 $this->getLogger()->warning('Unable to send account expiry notification', [
                     'exception' => $e,
+                    'template-id' => $templateId,
+                    'user-id' => $user->id()
                 ]);
             } catch (Exception $e) {
                 $this->getLogger()->alert('Unable to send account expiry notification', [
                     'exception' => $e,
+                    'template-id' => $templateId,
+                    'user-id' => $user->id()
                 ]);
             }
         }

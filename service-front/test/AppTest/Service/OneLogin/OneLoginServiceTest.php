@@ -36,23 +36,91 @@ class OneLoginServiceTest extends TestCase
                 [],
                 true,
             )
-            ->willReturn(['accepted' => true]);
+            ->willReturn(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:abc', 'signedOutAt' => 1791283600]);
 
-        $this->assertTrue($this->service->backChannelLogout('a.logout.token'));
+        $this->assertSame(
+            ['sub' => 'urn:fdc:gov.uk:2022:abc', 'signedOutAt' => 1791283600],
+            $this->service->backChannelLogout('a.logout.token'),
+        );
     }
 
-    public function testBackChannelLogoutReturnsFalseWhenTokenRejected(): void
+    public function testBackChannelLogoutReturnsNullWhenTokenRejected(): void
     {
         $this->apiClient->method('httpPost')
             ->willReturn(['accepted' => false, 'reason' => 'invalid_signature']);
 
-        $this->assertFalse($this->service->backChannelLogout('forged'));
+        $this->assertNull($this->service->backChannelLogout('forged'));
+    }
+
+    /**
+     * @return array<string, array{array<string, mixed>}>
+     */
+    public static function incompleteAcceptedLogoutProvider(): array
+    {
+        return [
+            'no sub'           => [['accepted' => true, 'signedOutAt' => 1791283600]],
+            'no sign-out time' => [['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:abc']],
+        ];
+    }
+
+    #[DataProvider('incompleteAcceptedLogoutProvider')]
+    public function testBackChannelLogoutThrowsWhenAnAcceptedLogoutIsIncomplete(array $response): void
+    {
+        $this->apiClient->method('httpPost')->willReturn($response);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('sub and signedOutAt');
+
+        $this->service->backChannelLogout('a.logout.token');
+    }
+
+    // ─── jwks() ───────────────────────────────────────────────────────────
+
+    public function testJwksFetchesOurPublicKeysAnonymously(): void
+    {
+        $keys = [['kty' => 'RSA', 'kid' => 'kid-1', 'use' => 'sig', 'alg' => 'RS256', 'n' => 'n', 'e' => 'AQAB']];
+
+        $this->apiClient
+            ->expects($this->once())
+            ->method('httpGet')
+            ->with('/v2/auth/onelogin/jwks', [], true, true)
+            ->willReturn(['keys' => $keys]);
+
+        $this->assertSame(['keys' => $keys], $this->service->jwks());
+    }
+
+    /**
+     * @return array<string, array{mixed}>
+     */
+    public static function invalidJwksResponseProvider(): array
+    {
+        return [
+            'null'       => [null],
+            'no keys'    => [[]],
+            'empty keys' => [['keys' => []]],
+            'keys text'  => [['keys' => 'nope']],
+        ];
+    }
+
+    #[DataProvider('invalidJwksResponseProvider')]
+    public function testJwksThrowsForAnInvalidResponse(mixed $response): void
+    {
+        $this->apiClient->method('httpGet')->willReturn($response);
+
+        $this->expectException(RuntimeException::class);
+
+        $this->service->jwks();
     }
 
     public function testStartForwardsCorrectPathQueryAndAnonymousFlag(): void
     {
         $redirectUri    = 'https://localhost:7002/auth/redirect';
-        $expectedResult = ['state' => 'abc123', 'nonce' => 'def456', 'url' => 'https://auth.example.com/authorize?x=y'];
+        $expectedResult = [
+            'state'        => 'abc123',
+            'nonce'        => 'def456',
+            'codeVerifier' => 'ghi789',
+            'url'          => 'https://auth.example.com/authorize?x=y',
+        ];
 
         $this->apiClient
             ->expects($this->once())
@@ -68,7 +136,18 @@ class OneLoginServiceTest extends TestCase
 
         $this->assertSame($expectedResult['state'], $result['state']);
         $this->assertSame($expectedResult['nonce'], $result['nonce']);
+        $this->assertSame($expectedResult['codeVerifier'], $result['codeVerifier']);
         $this->assertSame($expectedResult['url'], $result['url']);
+    }
+
+    public function testStartThrowsWhenCodeVerifierIsMissing(): void
+    {
+        $this->apiClient->method('httpGet')->willReturn(['state' => 'x', 'nonce' => 'y', 'url' => 'https://x']);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('codeVerifier');
+
+        $this->service->start('https://localhost:7002/auth/redirect');
     }
 
     public function testStartThrowsWhenStateIsMissing(): void
@@ -92,6 +171,7 @@ class OneLoginServiceTest extends TestCase
                 return [
                     'state' => 'abc123',
                     'nonce' => 'def456',
+                    'codeVerifier' => 'verifier789',
                     'url' => 'http://localhost:4549/authorize?state=abc123&nonce=def456&redirect_uri='
                         . rawurlencode($query['redirect_url']),
                 ];
@@ -103,6 +183,7 @@ class OneLoginServiceTest extends TestCase
             $this->assertSame([
                 'state' => 'abc123',
                 'nonce' => 'def456',
+                'codeVerifier' => 'verifier789',
                 'url' => $endpoint . '?state=abc123&nonce=def456&redirect_uri=' . rawurlencode($callback),
             ], $result);
         }
@@ -116,6 +197,7 @@ class OneLoginServiceTest extends TestCase
         $this->apiClient->method('httpGet')->willReturn([
             'state' => 'abc123',
             'nonce' => 'def456',
+            'codeVerifier' => 'verifier789',
             'url' => 'http://localhost:4549/authorize',
         ]);
 
@@ -165,11 +247,12 @@ class OneLoginServiceTest extends TestCase
     public function testCallbackPostsCorrectPayloadWithAnonymousFlag(): void
     {
         $linkedResponse = [
-            'linked'   => true,
-            'sub'      => 'urn:fdc:gov.uk:2022:abc',
-            'email'    => 'user@example.com',
-            'idToken'  => 'header.payload.sig',
-            'identity' => [
+            'linked'     => true,
+            'sub'        => 'urn:fdc:gov.uk:2022:abc',
+            'email'      => 'user@example.com',
+            'idToken'    => 'header.payload.sig',
+            'signedInAt' => 1791280000,
+            'identity'   => [
                 'userId'         => 'uid-1',
                 'token'          => 'tok-abc',
                 'tokenExpiresAt' => '2030-01-01T00:00:00+00:00',
@@ -184,10 +267,11 @@ class OneLoginServiceTest extends TestCase
             ->with(
                 '/v2/auth/onelogin/callback',
                 [
-                    'code'         => 'auth-code-123',
-                    'state'        => 'state-abc',
-                    'nonce'        => 'nonce-xyz',
-                    'redirect_uri' => 'https://service.example.com/auth/redirect',
+                    'code'          => 'auth-code-123',
+                    'state'         => 'state-abc',
+                    'nonce'         => 'nonce-xyz',
+                    'code_verifier' => 'verifier-123',
+                    'redirect_uri'  => 'https://service.example.com/auth/redirect',
                 ],
                 [],
                 true,
@@ -198,6 +282,7 @@ class OneLoginServiceTest extends TestCase
             'auth-code-123',
             'state-abc',
             'nonce-xyz',
+            'verifier-123',
             'https://service.example.com/auth/redirect',
         );
 
@@ -211,15 +296,16 @@ class OneLoginServiceTest extends TestCase
     public function testCallbackReturnsUnlinkedShape(): void
     {
         $unlinkedResponse = [
-            'linked'  => false,
-            'sub'     => 'urn:fdc:gov.uk:2022:new',
-            'email'   => 'new@example.com',
-            'idToken' => 'header.payload.sig',
+            'linked'     => false,
+            'sub'        => 'urn:fdc:gov.uk:2022:new',
+            'email'      => 'new@example.com',
+            'idToken'    => 'header.payload.sig',
+            'signedInAt' => 1791280000,
         ];
 
         $this->apiClient->method('httpPost')->willReturn($unlinkedResponse);
 
-        $result = $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $result = $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
 
         $this->assertFalse($result['linked']);
         $this->assertSame('urn:fdc:gov.uk:2022:new', $result['sub']);
@@ -234,7 +320,7 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testCallbackThrowsWhenSubIsMissing(): void
@@ -243,7 +329,7 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testCallbackThrowsWhenEmailIsMissing(): void
@@ -252,22 +338,38 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testCallbackThrowsWhenLinkedButIdentityMissing(): void
     {
         $this->apiClient->method('httpPost')->willReturn([
-            'linked'  => true,
+            'linked'     => true,
+            'sub'        => 'urn:x',
+            'email'      => 'x@x.com',
+            'idToken'    => 'h.p.s',
+            'signedInAt' => 1791280000,
+        ]);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('identity fields missing');
+
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
+    }
+
+    public function testCallbackThrowsWhenSignInTimeIsMissing(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn([
+            'linked'  => false,
             'sub'     => 'urn:x',
             'email'   => 'x@x.com',
             'idToken' => 'h.p.s',
         ]);
 
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('identity fields missing');
+        $this->expectExceptionMessage('signedInAt');
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testCallbackThrowsWhenIdTokenIsMissing(): void
@@ -277,7 +379,7 @@ class OneLoginServiceTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('idToken');
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testCallbackThrowsWhenResponseIsNull(): void
@@ -286,7 +388,7 @@ class OneLoginServiceTest extends TestCase
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->callback('c', 's', 'n', 'https://x/auth/redirect');
+        $this->service->callback('c', 's', 'n', 'v', 'https://x/auth/redirect');
     }
 
     public function testLinkExistingAccountPostsPayloadAndReturnsIdentityOnSuccess(): void

@@ -28,9 +28,9 @@ class LogoutTokenVerifier
     }
 
     /**
-     * Returns the `sub` and `jti` of a valid logout token.
+     * Returns the `sub`, `jti` and `iat` of a valid logout token.
      *
-     * @return array{sub: string, jti: string}
+     * @return array{sub: string, jti: string, iat: int}
      * @throws LogoutTokenException if the token fails any validation step
      */
     public function verify(#[\SensitiveParameter] string $logoutToken): array
@@ -68,6 +68,7 @@ class LogoutTokenVerifier
 
         $sub = $claims['sub'] ?? null;
         $jti = $claims['jti'] ?? null;
+        $iat = $claims['iat'] ?? null;
 
         if (!is_string($sub) || $sub === '') {
             throw new LogoutTokenException('missing_sub');
@@ -77,7 +78,11 @@ class LogoutTokenVerifier
             throw new LogoutTokenException('missing_jti');
         }
 
-        return ['sub' => $sub, 'jti' => $jti];
+        if (!is_int($iat)) {
+            throw new LogoutTokenException('missing_iat');
+        }
+
+        return ['sub' => $sub, 'jti' => $jti, 'iat' => $iat];
     }
 
     private function assertLogoutEvent(mixed $events): void

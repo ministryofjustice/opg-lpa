@@ -8,12 +8,14 @@ use App\Handler\LogoutHandler;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 
 class LogoutHandlerTest extends TestCase
 {
@@ -35,7 +37,7 @@ class LogoutHandlerTest extends TestCase
     {
         return new LogoutHandler(
             $config,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginSignOut,
             new RedirectUriBuilder('https://front.example.com'),
         );
@@ -88,7 +90,7 @@ class LogoutHandlerTest extends TestCase
 
         $response = $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest(
             null,
-            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token'],
+            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token', 'signedInAt' => time()],
         ));
 
         $this->assertEquals('https://oidc.example.com/logout?id_token_hint=pending.id.token', $response->getHeaderLine('Location'));
@@ -104,7 +106,7 @@ class LogoutHandlerTest extends TestCase
 
         $this->createHandler(['redirects' => ['logout' => '/goodbye']])->handle($this->createRequest(
             'session.id.token',
-            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token'],
+            ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'pending.id.token', 'signedInAt' => time()],
         ));
     }
 

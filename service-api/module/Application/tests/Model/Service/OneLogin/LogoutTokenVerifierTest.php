@@ -41,14 +41,16 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $this->publicKey  = $this->signingKey->toPublic();
     }
 
-    public function testValidTokenReturnsSubAndJti(): void
+    public function testValidTokenReturnsSubJtiAndIat(): void
     {
         $verifier = $this->verifierWithJwks([$this->publicKey->all()]);
+        $iat      = time() - 10;
 
-        $result = $verifier->verify($this->token());
+        $result = $verifier->verify($this->token(['iat' => $iat]));
 
         $this->assertSame('urn:fdc:gov.uk:2022:sub-abc', $result['sub']);
         $this->assertSame('jti-1', $result['jti']);
+        $this->assertSame($iat, $result['iat']);
     }
 
     public function testRejectsAlgNone(): void
