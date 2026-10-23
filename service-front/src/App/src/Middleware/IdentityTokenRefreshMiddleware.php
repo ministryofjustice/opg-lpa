@@ -31,8 +31,6 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface
     public const string SESSION_KEY_AUTH_FAILURE_CODE = 'auth_failure_code';
 
     private const array EXCLUDED_PATHS = [
-        '/ping/elb',
-        '/ping/json',
         '/health-check',
         '/health-check/dependencies',
         '/health-check/service',
