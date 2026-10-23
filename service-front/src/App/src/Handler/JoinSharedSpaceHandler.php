@@ -83,8 +83,9 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'form'      => $form,
-                    'joinError' => $joinError,
+                    'form'           => $form,
+                    'joinError'      => $joinError,
+                    'isProfessional' => $userDetails->getIsProfessional(),
                 ]
             )
         );

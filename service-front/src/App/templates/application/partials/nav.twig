@@ -39,8 +39,10 @@
                    nav.inSharedSpace ? 'Shared LPAs' : 'Your LPAs'
                 ) }}
 
-              {% if nav.sharedSpaceEnabled %}
+              {% if nav.inSharedSpace or nav.isProfessional %}
                 {{ _self.navigationItem(nav, 'shared-space', 'Shared space') }}
+              {% elseif nav.invitedToSharedSpace %}
+                {{ _self.navigationItem(nav, 'shared-space.join', 'Shared space') }}
               {% endif %}
             {% endif %}
 
