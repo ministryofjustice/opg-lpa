@@ -25,7 +25,7 @@ Feature: PasswordReset
       Then I cannot find "sign-out"
       When I choose a new password
       Then I am returned to the appropriate page shown after a password reset
-      And I see "Password successfully reset" in the page text
+      And I see "You’ve reset the password for your existing account." in the page text
 
       When I use password reset email for "PasswordResetUser" to visit the link
       And I choose a new password
@@ -60,11 +60,10 @@ Feature: PasswordReset
       Then I see "Your new password has been saved" in the page text
 
       When I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa"
-      Then I see "Reset your password" in the title
+      And I see "Enter a new password for your existing Make a lasting power of attorney account" in the title
       And I can find "reset-my-password" and it is visible
       And I visit "/user/dashboard" without being logged in
 
-  @PasswordReset
   Scenario: Asking for a reset link validates the address and does not disclose whether it exists
     Given I visit "/forgot-password"
     Then I see "Reset your password" in the title
@@ -85,11 +84,10 @@ Feature: PasswordReset
     Then I see "We've emailed a link" in the page text
     And I see "no.such.account@lpa.opg.service.justice.gov.uk" in the page text
 
-  @PasswordReset
   Scenario: The reset password screen enforces the password rules
     Given I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa"
-    Then I see "Reset your password" in the title
-    And I see "at least 12 characters" in the page text
+    Then I see "Enter a new password for your existing Make a lasting power of attorney account" in the title
+    And I see "12 characters" in the page text
 
     When I click "reset-my-password"
     Then I see "There is a problem" in the page text
@@ -112,7 +110,6 @@ Feature: PasswordReset
     And I click "reset-my-password"
     Then I see "Enter matching passwords" in the page text
 
-  @PasswordReset
   Scenario: A reset link that is no longer valid tells the user how to get a new one
     Given I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa"
     When I type "ValidPassword123" into "password"
@@ -124,7 +121,6 @@ Feature: PasswordReset
     When I visit link containing "Get a new link"
     Then I am taken to "/forgot-password"
 
-  @PasswordReset
   Scenario: A reset link mangled by an email client still explains itself (LPAL-2289)
     Given I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa."
     Then I see "That password link does not work" in the title
@@ -137,7 +133,6 @@ Feature: PasswordReset
     Then I see "That password link does not work" in the title
     And I see "changed the link" in the page text
 
-  @PasswordReset
   Scenario: The reset screen lets me reveal my password instead of confirming it (LPAL-2289)
     Given I visit "/forgot-password/reset/aaaaaaaaaaaaaaaaaaaa"
     Then I can find "password_confirm" and it is visible
