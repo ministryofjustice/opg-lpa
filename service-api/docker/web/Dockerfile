@@ -1,4 +1,4 @@
-FROM nginx:1.31.7-alpine3.24@sha256:7ddef4fb1b16816185c5e3ca4c76086e2db0d37f2e9eee57b9a3fb5182cca562
+FROM nginx:1.31.8-alpine3.24@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
 
 # Remove unused packages
 RUN apk del freetype nginx-module-image-filter
@@ -6,7 +6,7 @@ RUN apk del freetype nginx-module-image-filter
 # Upgrade vulnerable packages
 RUN apk upgrade --no-cache
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
-RUN apk update && apk add --upgrade "zlib==1.3.2-r1" "ca-certificates==20261020-r0"
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 RUN chown -R nginx:nginx /etc/nginx/conf.d
 

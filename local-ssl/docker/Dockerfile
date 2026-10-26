@@ -1,8 +1,6 @@
-FROM nginx:1.31.7-alpine3.24@sha256:7ddef4fb1b16816185c5e3ca4c76086e2db0d37f2e9eee57b9a3fb5182cca562
+FROM nginx:1.31.8-alpine3.24@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
 
 RUN apk upgrade --no-cache
-
-RUN apk update && apk add --upgrade "ca-certificates==20261020-r0"
 
 # the nginx entrypoint renders templates with envsubst; write the result over
 # nginx.conf. This config is tweaked to mock out an X-Amzn-Trace-Id header
