@@ -1,7 +1,7 @@
 FROM node:24.22.1-alpine3.23@sha256:0468540aa58203ff9e40c2aab3907c52644ab818af6176b1c70a026137dc92a2 AS asset-env
 
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
-RUN apk update && apk add --upgrade "zlib==1.3.2-r1" "ca-certificates==20261020-r0"
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
 
 WORKDIR /app
 

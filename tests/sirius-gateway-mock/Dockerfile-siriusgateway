@@ -1,3 +1,4 @@
 FROM nginx:stable-alpine3.21@sha256:aed99734248e851764f1f2146835ecad42b5f994081fa6631cc5d79240891ec9
+RUN apk update && apk add --upgrade "ca-certificates==20261020-r0" "ca-certificates-bundle==20261020-r0"
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 CMD nginx -g "daemon off;"
