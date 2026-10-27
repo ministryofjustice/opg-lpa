@@ -383,11 +383,6 @@ class SharedSpaceService
             }
 
             $invite = $this->sharedSpaceRepository->getInvite($accessCode, $sharedSpaceName, $userEmail);
-
-            if ($invite === null) {
-                throw new InviteNotFoundException();
-            }
-
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
 
             $this->logger->info('Reassigned LPA ownership', [

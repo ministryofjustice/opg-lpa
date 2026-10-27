@@ -19,6 +19,7 @@ use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
@@ -90,15 +91,34 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostWithInvalidFormRendersForm(): void
+    public static function invalidFormProvider(): array
     {
-        $this->renderer->method('render')->willReturn('<html>form with errors</html>');
+        return [
+            'empty' => ['', ''],
+            'non-digit code' => ['My Space', '1234567X'],
+            'too short code' => ['My Space', '1234567'],
+            'too long code' => ['My Space', '123456789'],
+        ];
+    }
 
-        $request = $this->createRequest('POST', [])
+    #[DataProvider('invalidFormProvider')]
+    public function testPostWithInvalidFormRendersForm(string $sharedSpaceName, string $accessCode): void
+    {
+        $request = $this->createRequest('POST', [
+            'sharedSpaceName' => $sharedSpaceName,
+            'sharedSpaceAccessCode' => $accessCode,
+        ])
             ->withAttribute(
                 RequestAttribute::USER_DETAILS,
                 new User(['isProfessional' => true])
             );
+
+        $this->renderer->method('render')
+            ->with(
+                'application/authenticated/shared-space/join.twig',
+                $this->callback(fn(array $data) => isset($data['form']) && !$data['form']->isValid()),
+            )
+            ->willReturn('<html>form with errors</html>');
 
         $response = $this->handler->handle($request);
 
@@ -109,7 +129,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
     {
         $sharedSpaceId = 'my-space';
         $sharedSpaceName = 'My Space';
-        $accessCode = '1234';
+        $accessCode = '12345678';
         $email = 'user@example.com';
 
         $this->sharedSpaceService->method('join')
@@ -139,7 +159,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
     {
         $sharedSpaceId = 'my-space';
         $sharedSpaceName = 'My Space';
-        $accessCode = '1234';
+        $accessCode = '12345678';
         $email = 'a@example.com';
 
         $stream = $this->createMock(StreamInterface::class);
@@ -177,7 +197,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
     public function testPostWhenInviteNotFound(): void
     {
         $sharedSpaceName = 'My Space';
-        $accessCode = '1234';
+        $accessCode = '12345678';
         $email = 'a@example.com';
 
         $stream = $this->createMock(StreamInterface::class);
@@ -195,10 +215,49 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $this->renderer->expects($this->once())
             ->method('render')
             ->with(
-                'application/authenticated/shared-space/join.twig',
-                $this->callback(fn(array $vars) => isset($vars['form'])
-                    && $vars['csrfToken'] === 'test-token'
-                    && $vars['joinError'] === 'No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address.'),
+                'application/authenticated/shared-space/invite-not-found.twig',
+                $this->callback(fn(array $vars) => $vars['email'] === $email),
+            )
+            ->willReturn('<html>form</html>');
+
+        $response = $this->handler->handle(
+            $this->createRequest('POST', [
+                'sharedSpaceName' => $sharedSpaceName,
+                'sharedSpaceAccessCode' => $accessCode,
+            ])
+                ->withAttribute(
+                    RequestAttribute::USER_DETAILS,
+                    new User(['email' => new EmailAddress(['address' => $email])])
+                )
+        );
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+    }
+
+    public function testPostWhenInviteExpired(): void
+    {
+        $sharedSpaceName = 'My Space';
+        $accessCode = '12345678';
+        $email = 'a@example.com';
+
+        $stream = $this->createMock(StreamInterface::class);
+        $stream->method('__toString')->willReturn(json_encode([
+            'detail' => 'invite-expired',
+            'expires' => '2024-01-02T12:13:14.000',
+        ]));
+
+        $errorResponse = $this->createMock(ResponseInterface::class);
+        $errorResponse->method('getBody')->willReturn($stream);
+
+        $this->sharedSpaceService->method('join')
+            ->with($sharedSpaceName, $accessCode, $email)
+            ->willThrowException(new ApiException($errorResponse));
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/shared-space/invite-expired.twig',
+                $this->callback(fn(array $vars) => $vars['inviteExpiry'] === '2 January 2024' && $vars['sharedSpaceName'] === $sharedSpaceName),
             )
             ->willReturn('<html>form</html>');
 
