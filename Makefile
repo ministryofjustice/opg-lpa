@@ -366,6 +366,18 @@ cypress-open: npm-install python-api-venv
 cypress-run-spec: _cypress-prepare-dirs
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
+# Runs the locust load tests headless against the local stack (same invocation as .github/workflows/locust_tests.yml).
+# Override with e.g. make locust-run LOCUST_USERS=10 LOCUST_RUN_TIME=5m LOCUST_FRONT_URL=https://localhost:7002
+# Must run from within locust/ as it looks for the activation_emails dir relative to there.
+LOCUST_USERS ?= 5
+LOCUST_RUN_TIME ?= 2m
+LOCUST_FRONT_URL ?= https://localhost:7002
+.PHONY: locust-run
+locust-run:
+	uv sync --locked --directory locust
+	cd locust && DISABLE_SSL_VERIFY=True uv run --no-project locust --headless -f ./locustfile.py -r 1 \
+		--host $(LOCUST_FRONT_URL) -u $(LOCUST_USERS) --run-time $(LOCUST_RUN_TIME)
+
 # This should be used in the form : make cypress-run-tags tags=@Signup. This is mainly used by CI, its normally more convenient locally to use cypress-run-spec
 # Note that -e is an argument to docker compose run (setting env vars in the container) and -x is an argument to cypress run
 # (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
