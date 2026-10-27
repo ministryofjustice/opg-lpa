@@ -170,11 +170,23 @@ When(`I sign in through mock One Login to keep my existing Make account`, () => 
 });
 
 Then(
-  `the One Login callback shows the problem page for {string}`,
-  (queryString) => {
-    cy.visit('/auth/redirect' + queryString, { failOnStatusCode: false });
-    cy.contains('There is a problem signing you in').should('be.visible');
-    cy.contains('a', 'Return to sign in').should('have.attr', 'href', '/login');
+  `One Login returns a {string} error`,
+  (errorType) => {
+    cy.visit('/auth/redirect?error=' + errorType, { failOnStatusCode: false });
+  },
+);
+
+Then(
+  `I can return to sign in`,
+  () => {
+    cy.contains('a', 'Return to sign in').should('have.attr', 'href', '/home');
+  },
+);
+
+Then(
+  `I can contact One Login support`,
+  () => {
+    cy.contains('a', 'GOV.UK One Login').should('have.attr', 'href', 'https://home.account.gov.uk/contact-gov-uk-one-login');
   },
 );
 

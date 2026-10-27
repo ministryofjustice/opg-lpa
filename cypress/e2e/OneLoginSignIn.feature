@@ -50,11 +50,13 @@ Feature: One Login Sign In
     And I return to "/user/about-you" after timing out without going through One Login
     Then I see "We’ve signed you out" in the page text
 
-  Scenario: The One Login callback fails gracefully when the provider returns an error
-    Then the One Login callback shows the problem page for "?error=access_denied"
-
-  Scenario: The One Login callback fails gracefully for an incomplete request
-    Then the One Login callback shows the problem page for ""
+  Scenario: Callback with errors show the problem page
+    When One Login returns a "access_denied" error
+    Then I can return to sign in
+    When One Login returns a "unauthorized_client" error
+    Then I can contact One Login support
+    When One Login returns a "unexpected" error
+    Then I can return to sign in
 
   Scenario: Signed-out pages show the GOV.UK header, not the One Login header
     Then I can find "banner"

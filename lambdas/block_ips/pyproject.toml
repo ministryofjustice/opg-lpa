@@ -2,7 +2,7 @@
 name = "block-ips"
 version = "0.1.0"
 description = "Monitor logs for IP addresses to block at AWS WAF"
-requires-python = "==3.14.7"
+requires-python = "==3.14.9"
 dependencies = [
     "boto3>=1.43.46",
 ]

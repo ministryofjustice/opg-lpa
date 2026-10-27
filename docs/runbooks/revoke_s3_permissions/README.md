@@ -13,7 +13,7 @@ The breakglass role can replace or remove the Deny policy. The root principal ca
 ## Prerequisites
 
 - Install `uv` and run `uv sync` from this directory. Run the commands from this directory.
-- Set up aws-vault using [aws-vault-assumable-roles](../aws-vault-assumable-roles.md), with the chosen profile assuming `role/breakglass` in the bucket's account.
+- Set up aws-vault using [aws-vault-assumable-roles](../aws_vault_assumable_roles/aws_vault_assumable_roles.md), with the chosen profile assuming `role/breakglass` in the bucket's account.
 - Verify the bucket names to revoke access to.
 
 ## Using the script

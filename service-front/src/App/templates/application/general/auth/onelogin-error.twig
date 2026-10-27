@@ -1,23 +1,27 @@
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'There is a problem' -%}
+{% if errorType == 'unauthorized_client' %}
+  {%- set overridePageTitle = 'You are unable to sign in to this service right now' -%}
+{% else %}
+  {%- set overridePageTitle = 'There is a problem signing you in' -%}
+{% endif %}
 
 {% block content %}
+  <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">There is a problem signing you in</h1>
+        {% if errorType == 'unauthorized_client' %}
+          <p class="govuk-body">Please try again later.</p>
 
-        {% if error %}
-        <p class="govuk-body">{{ error }}</p>
+          <p class="govuk-body">If the problem persists contact <a class="govuk-link" href="https://home.account.gov.uk/contact-gov-uk-one-login">GOV.UK One Login</a></p>
         {% else %}
-        <p class="govuk-body">We were unable to complete your sign in.</p>
+          <p class="govuk-body">Please try again.</p>
+
+          <a href="{{ url('application.home') }}" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+            Return to sign in
+          </a>
         {% endif %}
-
-        <p class="govuk-body">
-            <a class="govuk-link" href="/login">Return to sign in</a>
-        </p>
-    </div>
-</div>
-
+      </div>
+  </div>
 {% endblock content %}
