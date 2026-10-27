@@ -959,6 +959,21 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('invalid_signature', $result['reason']);
     }
 
+    public function testBackChannelLogoutLetsAKeyFetchFailureThroughSoOneLoginCanRetry(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andThrow(new RuntimeException('Unable to fetch One Login signing keys'));
+
+        $this->cache->shouldNotReceive('set');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to fetch One Login signing keys');
+
+        $this->service->handleBackChannelLogout('a.logout.token');
+    }
+
     public function testBackChannelLogoutRejectsReplayedJti(): void
     {
         $this->logoutTokenVerifier->shouldReceive('verify')

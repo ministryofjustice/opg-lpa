@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Application\Model\Service\OneLogin;
 
 use Facile\JoseVerifier\Builder\IdTokenVerifierBuilder;
+use Facile\JoseVerifier\Exception\InvalidTokenExceptionInterface;
+use Facile\JoseVerifier\Exception\RuntimeException as JoseRuntimeException;
 use RuntimeException;
 use Throwable;
 
@@ -32,6 +34,7 @@ class LogoutTokenVerifier
      *
      * @return array{sub: string, jti: string, iat: int}
      * @throws LogoutTokenException if the token fails any validation step
+     * @throws RuntimeException if One Login's signing keys cannot be fetched
      */
     public function verify(#[\SensitiveParameter] string $logoutToken): array
     {
@@ -56,6 +59,11 @@ class LogoutTokenVerifier
 
         try {
             $claims = $verifier->verify($logoutToken);
+        } catch (InvalidTokenExceptionInterface $e) {
+            throw new LogoutTokenException('invalid_token', 0, $e);
+        } catch (JoseRuntimeException $e) {
+            // Only the JWKS providers throw this: our failure, not a bad token, so One Login can retry.
+            throw new RuntimeException('Unable to fetch One Login signing keys', 0, $e);
         } catch (Throwable $e) {
             throw new LogoutTokenException('invalid_token', 0, $e);
         }
