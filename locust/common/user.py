@@ -29,10 +29,19 @@ class User:
         logger.debug("Initialising user with details: %s", self.account_details)
 
     def login(self):
-        data = {"email": self.account_details["email"], "password": PASSWORD}
-        response = self.client.post("/login", data=data)
+        token = get_csrf_token(self.client, "/login")
+        if token is None:
+            logger.info("No login form available (already logged in?), skipping login")
+            return
+        csrf_token_name, csrf_token = token
+        data = {
+            csrf_token_name: csrf_token,
+            "email": self.account_details["email"],
+            "password": PASSWORD,
+        }
+        response = self.client.post("/login", data=data, allow_redirects=False)
 
-        if self.client.cookies.get("lpa3") is not None and response.status_code == 200:
+        if response.status_code == 302 and response.headers.get("Location") != "/login":
             logger.info(
                 "%s %s %s logged in successfully using email address: %s",
                 self.account_details["title"],

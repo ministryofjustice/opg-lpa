@@ -1,4 +1,4 @@
-from common.helper import get_csrf_token
+from common.helper import get_csrf_token, get_form_version
 import random
 from faker import Faker
 from common.config import logger
@@ -29,6 +29,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "type": self.type,
             "save": "Save and continue",
         }
@@ -55,6 +56,7 @@ class LastingPowerAttorney:
         )
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "name-title": fake.prefix(),
             "name-first": fake.first_name(),
             "name-last": fake.last_name(),
@@ -101,6 +103,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "when": random.choice(["now", "no-capacity"]),
             "save": "Save and continue",
         }
@@ -132,6 +135,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "canSustainLife": random.randint(0, 1),
             "save": "Save and continue",
         }
@@ -169,6 +173,7 @@ class LastingPowerAttorney:
 
             data = {
                 csrf_token_name: csrf_token,
+                "version": get_form_version(self.client),
                 "name-title": fake.prefix(),
                 "name-first": fake.first_name(),
                 "name-last": fake.last_name(),
@@ -205,6 +210,7 @@ class LastingPowerAttorney:
         choice = random.choice(["jointly", "jointly-attorney-severally", "depends"])
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "how": choice,
             "howDetails": fake.text() if choice == "depends" else "",
             "save": "Save and continue",
@@ -249,6 +255,7 @@ class LastingPowerAttorney:
             )
             add_attorney_data = {
                 add_attorney_csrf_token_name: add_attorney_csrf_token,
+                "version": get_form_version(self.client),
                 "name-title": fake.prefix(),
                 "name-first": fake.first_name(),
                 "name-last": fake.last_name(),
@@ -273,7 +280,11 @@ class LastingPowerAttorney:
                 self.lpa_id,
             )
 
-        data = {csrf_token_name: csrf_token, "save": "Save and continue"}
+        data = {
+            csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
+            "save": "Save and continue",
+        }
 
         response = self.client.post(
             "/lpa/%s/replacement-attorney" % self.lpa_id,
@@ -300,6 +311,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "when": choice,
             "whenDetails": fake.text() if choice == "depends" else "",
             "save": "Save and continue",
@@ -323,6 +335,7 @@ class LastingPowerAttorney:
         )
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "name-title": fake.prefix(),
             "name-first": fake.first_name(),
             "name-last": fake.last_name(),
@@ -353,6 +366,7 @@ class LastingPowerAttorney:
         )
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "save": "Save and continue",
         }
 
@@ -377,6 +391,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "instruction": fake.text(),
             "preference": fake.text(),
             "save": "Save and continue",
@@ -402,6 +417,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "whoIsRegistering": "donor",
             "save": "Save and continue",
         }
@@ -424,6 +440,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "contactInWelsh": "0",
             "correspondence[contactByEmail]": "0",
             "correspondence[contactByPhone]": "0",
@@ -450,6 +467,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "who": "notSaid",
             "save": "Save and continue",
             "other": "",
@@ -472,6 +490,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "isRepeatApplication": "is-new",
             "repeatCaseNumber": "",
             "save": "Save and continue",
@@ -494,6 +513,7 @@ class LastingPowerAttorney:
 
         data = {
             csrf_token_name: csrf_token,
+            "version": get_form_version(self.client),
             "reductionOptions": "notApply",
             "save": "Save and continue",
         }
@@ -518,10 +538,17 @@ class LastingPowerAttorney:
         self.pay_by_cheque()
 
     def pay_by_cheque(self):
-        self.client.get(
-            "/lpa/%s/checkout/cheque" % self.lpa_id,
+        url = "/lpa/%s/checkout" % self.lpa_id
+        csrf_token_name, csrf_token = get_csrf_token(self.client, url)
+        self.client.post(
+            url,
+            data={
+                csrf_token_name: csrf_token,
+                "version": get_form_version(self.client),
+                "action": "cheque",
+            },
             allow_redirects=False,
-            name="/lpa/[id]/checkout/cheque",
+            name="/lpa/[id]/checkout",
         )
 
         logger.debug(
