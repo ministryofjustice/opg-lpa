@@ -4,7 +4,7 @@ services:
 
   postgres:
     container_name: lpa-postgres
-    image: postgres:14.18@sha256:90da0743e4ed7939b08e2945e0451401b4d7abd792530c7d3cc2da82ed534f08
+    image: postgres:15.19-alpine3.24@sha256:54e0dd8e8cddcdbb9156c2486eed5a43eccb7214d7c6828097d41ce049fb3984
     ports:
       - 5434:5432
     environment:

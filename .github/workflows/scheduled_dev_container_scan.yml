@@ -30,7 +30,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - image_name: postgres:14.18
+          - image_name: postgres:15.19-alpine3.24
             snyk_policy_path: local-development/postgres/.snyk
           - image_name: library/redis:8.8-alpine
             snyk_policy_path: local-development/redis/.snyk
