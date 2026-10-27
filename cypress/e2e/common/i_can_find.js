@@ -69,3 +69,11 @@ Then(`I can find {string} with options`, (object, dataTable) => {
 Then(`I can find element with data attribute {string} containing {string}`, (object, text) => {
   cy.get('[data-cy=' + object + ']').should('have.value', text);
 });
+
+Then(`element {string} contains {string}`, (el, str) => {
+  cy.contains(el, str);
+});
+
+Then(`element {string} does not contain {string}`, (el, str) => {
+  cy.contains(el, str).should('not.exist');
+});
