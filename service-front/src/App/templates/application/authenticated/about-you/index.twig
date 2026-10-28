@@ -5,6 +5,7 @@
 {% endblock %}
 
 {%- set pageTitle = 'Your details' -%}
+{%- set updatingDetails = oneLoginEnabled and not isNew -%}
 
 {% block content %}
 
@@ -34,18 +35,25 @@
     {% if (oneLoginEnabled) %}
       <details class="govuk-details">
         <summary class="govuk-details__summary">
-          <span class="govuk-details__summary-text">How can I change my email address or password?</span>
+          <span class="govuk-details__summary-text">Changing your sign-in details</span>
         </summary>
         <div class="govuk-details__text">
-          Your email address and password is managed via GOV.UK One Login. If you want to make changes to either then go to your GOV.UK One Login.
+          <p class="govuk-body">You use GOV.UK One Login to sign in to the Make a lasting power of attorney service.</p>
+          <p class="govuk-body">You can change these details in your GOV.UK One Login:</p>
+          <ul class="govuk-list govuk-list--bullet">
+            <li>email address</li>
+            <li>password</li>
+            <li>how you get security codes to sign in</li>
+          </ul>
+          <p class="govuk-body">Change your sign-in details in your <a class="govuk-link" href="https://home.account.gov.uk" target="_blank" rel="noopener noreferrer">GOV.UK One Login (opens in a new tab)</a>.</p>
         </div>
       </details>
     {% endif %}
 
-    {% include 'application/authenticated/about-you/partials/details-fields.twig' %}
+    {% include 'application/authenticated/about-you/partials/details-fields.twig' with { updatingDetails: updatingDetails } %}
 
     <div class="govuk-button-group">
-      <button type="submit" name="save" id="save" data-cy="save" class="govuk-button">Save and continue</button>
+      <button type="submit" name="save" id="save" data-cy="save" class="govuk-button">{{ updatingDetails ? 'Save' : 'Save and continue' }}</button>
       {%- if not isNew -%}
         <a href="{{ cancelUrl }}" class="govuk-button govuk-button--secondary js-cancel" data-cy="form-cancel">Cancel</a>
       {%- endif -%}
@@ -53,7 +61,7 @@
 
     {{ form().closeTag|raw }}
 
-    <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url('user/delete') }}">Delete Account</a></p>
+    <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="{{ url('user/delete') }}">{{ oneLoginEnabled ? 'Deleting your account - find out more' : 'Delete Account' }}</a></p>
   </div>
 </div>
 {% endblock content %}

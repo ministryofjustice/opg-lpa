@@ -210,6 +210,7 @@ return [
                 $c->get(SharedSpaceService::class),
                 $c->get(UserDetails::class),
                 Feature::SharedSpace->isEnabled(),
+                Feature::OneLogin->isEnabled(),
             ),
             LpaApplicationService::class                => LpaApplicationServiceFactory::class,
             GovPayClient::class                         => AlphagovPayClientFactory::class,
