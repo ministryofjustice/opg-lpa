@@ -99,7 +99,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@84a762ecab4a2d6217be908505351fd1f9312319 # v3.19.19
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@11715bf7e74f8c0429fff4c719462a6f5a5582cd # v3.19.22
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
