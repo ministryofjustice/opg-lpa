@@ -89,7 +89,7 @@ jobs:
 
       - name: Scan ${{ matrix.image_name }} image with Snyk
         continue-on-error: ${{ !inputs.otel_scan_required }}
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@12bdbe54f92af873347bc0cd6f4e7769265c1a90 # v4.10.5
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_address }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
