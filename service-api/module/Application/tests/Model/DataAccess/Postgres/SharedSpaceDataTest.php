@@ -1285,4 +1285,38 @@ class SharedSpaceDataTest extends MockeryTestCase
         $this->assertEquals('ss1', $actual['results'][0]['sharedSpaceId']);
         $this->assertEquals(3, $actual['total']);
     }
+
+    public static function hasExactlyOneActiveAdminDataProvider(): array
+    {
+        return [
+            'not a query result' => [false, 0, false],
+            'no active admins' => [true, 0, false],
+            'exactly one active admin' => [true, 1, true],
+            'multiple active admins' => [true, 2, false],
+        ];
+    }
+
+    #[DataProvider('hasExactlyOneActiveAdminDataProvider')]
+    public function testHasExactlyOneActiveAdmin(bool $isQueryResult, int $count, bool $expected): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')->andReturn($count);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(
+                SharedSpaceData::SHARED_SPACE_MEMBERS,
+                ['isAdmin' => true, 'isActive' => true, 'sharedSpaceId' => $sharedSpaceId],
+                ['columns' => ['id']]
+            )
+            ->once()
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->assertSame($expected, $sharedSpaceData->hasExactlyOneActiveAdmin($sharedSpaceId));
+    }
 }

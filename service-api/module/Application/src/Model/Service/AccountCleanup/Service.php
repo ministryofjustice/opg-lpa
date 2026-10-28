@@ -3,11 +3,13 @@
 namespace Application\Model\Service\AccountCleanup;
 
 use Application\Feature;
+use Application\Model\DataAccess\Postgres\UserModel;
 use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
 use Alphagov\Notifications\Client as NotifyClient;
 use Alphagov\Notifications\Exception\NotifyException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use DateTime;
 use Exception;
@@ -32,20 +34,10 @@ class Service extends AbstractService
      */
     public const CLEANUP_NOTIFICATION_TEMPLATE = '1acdd1fa-b463-4dac-847b-299e0ba3acb6';
 
-    /**
-     * @var array
-     */
-    private $config;
-
-    /**
-     * @var NotifyClient
-     */
-    private $notifyClient;
-
-    /**
-     * @var UsersService
-     */
-    private $usersService;
+    private array $config;
+    private NotifyClient $notifyClient;
+    private UsersService $usersService;
+    private SharedSpaceService $sharedSpaceService;
 
     /**
      * Warning type constants
@@ -62,12 +54,14 @@ class Service extends AbstractService
             'preOneLoginTemplateId'      => '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
             'claimedAccountTemplateId'   => '399f2d80-9d3a-44c3-aa2e-8895d98b58fa',
             'unclaimedAccountTemplateId' => '1704ba7b-ded7-4664-abf0-6ef6f4343ad6',
+            'sharedSpaceTemplateId'      => '84c0ea7d-1c18-4032-bf17-ee482a536d6e',
         ],
         self::WARNING_1_MONTH_NOTICE => [
             'dateShift'                  => '-8 months',
             'preOneLoginTemplateId'      => '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
             'claimedAccountTemplateId'   => '1ccd99de-2067-457a-87de-cf5dabd13fff',
             'unclaimedAccountTemplateId' => 'e6a5d415-8198-4c07-9dcb-81a039b812e7',
+            'sharedSpaceTemplateId'      => '59b4ea4b-c10b-4788-b550-1ff20a43c454',
         ],
     ];
 
@@ -116,6 +110,13 @@ class Service extends AbstractService
             }
         }
 
+        $this->getLogger()->info('Account cleanup completed', [
+            'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
+            'expiryAccountsWarning1WeekCount'   => $expiryAccountsWarning1WeekCount,
+            'expiryAccountsWarning1MonthCount'  => $expiryAccountsWarning1MonthCount,
+            'unactivatedAccountsDeletedCount'   => $unactivatedAccountsDeletedCount,
+        ]);
+
         return $result;
     }
 
@@ -137,8 +138,7 @@ class Service extends AbstractService
             throw new Exception('Invalid warning type: ' . $warningType);
         }
 
-        $warningConfig = $this->warningEmailConfig[$warningType];
-        $lastLoginBefore = new DateTime($warningConfig['dateShift']);
+        $lastLoginBefore = new DateTime($this->warningEmailConfig[$warningType]['dateShift']);
 
         // Pull back a list of accounts...
         $iterator = $this->getUserRepository()->getAccountsInactiveSince($lastLoginBefore, $warningType);
@@ -146,20 +146,16 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            if (Feature::OneLogin->isEnabled()) {
-                $templateId = $user->oneLoginEmail() ? $warningConfig['claimedAccountTemplateId'] : $warningConfig['unclaimedAccountTemplateId'];
-            } else {
-                $templateId = $warningConfig['preOneLoginTemplateId'];
-            }
+            $templateId = $this->selectTemplate($warningType, $user);
 
             // Tell users the day before, giving them that full day to login.
             $notificationDate = $user->lastLoginAt()->add(\DateInterval::createFromDateString('+9 months'));
 
             try {
+                $personalisations = $this->buildPersonalisations($user, $notificationDate);
+
                 // Call the notify to send the reminder email - this will thrown an exception on any errors
-                $this->notifyClient->sendEmail($user->contactEmail(), $templateId, [
-                    'deletionDate' => $notificationDate->format('j F Y'),
-                ]);
+                $this->notifyClient->sendEmail($user->contactEmail(), $templateId, $personalisations);
 
                 // Flag the account as 'notification sent'...
                 $this->getUserRepository()->setInactivityFlag($user->id(), $warningType);
@@ -182,6 +178,34 @@ class Service extends AbstractService
         }
 
         return $counter;
+    }
+
+    private function buildPersonalisations(UserModel $user, DateTime $notificationDate): array
+    {
+        $personalisations = ['deletionDate' => $notificationDate->format('j F Y')];
+
+        if ($user->isActiveInSharedSpace()) {
+            $personalisations['sharedSpaceName'] = $user->sharedSpaceName();
+            $personalisations['isOnlyAdmin'] = $user->isSharedSpaceAdmin()
+                && $this->sharedSpaceService->hasExactlyOneActiveAdmin($user->sharedSpaceId());
+        }
+
+        return $personalisations;
+    }
+
+    private function selectTemplate(string $warningType, UserModel $user): string
+    {
+        $warningConfig = $this->warningEmailConfig[$warningType];
+
+        if ($user->isActiveInSharedSpace()) {
+            return $warningConfig['sharedSpaceTemplateId'];
+        }
+
+        if (Feature::OneLogin->isEnabled()) {
+            return $user->oneLoginEmail() ? $warningConfig['claimedAccountTemplateId'] : $warningConfig['unclaimedAccountTemplateId'];
+        }
+
+        return $warningConfig['preOneLoginTemplateId'];
     }
 
     /**
@@ -237,7 +261,6 @@ class Service extends AbstractService
     }
 
     /**
-     * @param array $config
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function setConfig(array $config): void
@@ -246,7 +269,6 @@ class Service extends AbstractService
     }
 
     /**
-     * @param NotifyClient $notifyClient
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function setNotifyClient(NotifyClient $notifyClient): void
@@ -255,11 +277,18 @@ class Service extends AbstractService
     }
 
     /**
-     * @param UsersService $usersService
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function setUsersService(UsersService $usersService): void
     {
         $this->usersService = $usersService;
+    }
+
+    /**
+     * @psalm-suppress PossiblyUnusedMethod
+     */
+    public function setSharedSpaceService(SharedSpaceService $sharedSpaceService): void
+    {
+        $this->sharedSpaceService = $sharedSpaceService;
     }
 }

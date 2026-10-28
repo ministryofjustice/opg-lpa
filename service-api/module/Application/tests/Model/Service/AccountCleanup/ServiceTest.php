@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ApplicationTest\Model\Service\AccountCleanup;
 
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use ArrayIterator;
 use Application\Feature;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -21,20 +24,7 @@ use Mockery\MockInterface;
 
 class ServiceTest extends AbstractServiceTestCase
 {
-    /**
-     * @var MockInterface|UserRepositoryInterface
-     */
-    private $authUserRepository;
-
-    /**
-     * @var MockInterface|ApplicationRepositoryInterface
-     */
-    private $applicationRepository;
-
-    /**
-     * @var array
-     */
-    private $config = [
+    private array $config = [
         'stack' => [
             'name' => 'unit_test'
         ],
@@ -60,17 +50,12 @@ class ServiceTest extends AbstractServiceTestCase
         ],
     ];
 
-    /**
-     * @var MockInterface|NotifyClient
-     */
-    private $notifyClient;
-
-    /**
-     * @var MockInterface|UsersService
-     */
-    private $usersService;
-
     private string|false $originalOneLoginFlag;
+    private MockInterface|UserRepositoryInterface $authUserRepository;
+    private MockInterface|ApplicationRepositoryInterface $applicationRepository;
+    private MockInterface|NotifyClient $notifyClient;
+    private MockInterface|UsersService $usersService;
+    private MockInterface|SharedSpaceService $sharedSpaceService;
 
     public function setUp(): void
     {
@@ -81,12 +66,10 @@ class ServiceTest extends AbstractServiceTestCase
 
         //  Set up the services so they can be enhanced for each test
         $this->applicationRepository = Mockery::mock(ApplicationRepositoryInterface::class);
-
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
-
         $this->notifyClient = Mockery::mock(NotifyClient::class);
-
         $this->usersService = Mockery::mock(UsersService::class);
+        $this->sharedSpaceService = Mockery::mock(SharedSpaceService::class);
     }
 
     protected function tearDown(): void
@@ -220,56 +203,46 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals(null, $result);
     }
 
-    public static function warningEmailProvider(): array
+    public static function layWarningEmailProvider(): array
     {
         $weekFlag = AccountCleanupService::WARNING_1_WEEK_NOTICE;
         $monthFlag = AccountCleanupService::WARNING_1_MONTH_NOTICE;
+        $unclaimedUserData = ['identity' => 'identity@example.com'];
+        $layClaimedUserData = [
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
+            'one_login_email' => 'ol@example.com',
+        ];
 
         return [
             'week, feature off, legacy account' => [
-                false, $weekFlag, ['identity' => 'identity@example.com'],
-                'identity@example.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
+                false, $weekFlag, $unclaimedUserData, 'identity@example.com', '3e0cc4c8-0c2a-4d2a-808a-32407b2e6276',
             ],
-            'week, feature on, unclaimed account' => [
-                true, $weekFlag, ['identity' => 'identity@example.com'],
-                'identity@example.com', '1704ba7b-ded7-4664-abf0-6ef6f4343ad6',
+            'week, feature on, lay unclaimed account' => [
+                true, $weekFlag, $unclaimedUserData, 'identity@example.com', '1704ba7b-ded7-4664-abf0-6ef6f4343ad6',
             ],
-            'week, feature on, claimed account' => [
-                true, $weekFlag,
-                [
-                    'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
-                    'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
-                    'one_login_email' => 'ol@example.com',
-                ],
-                'ol@example.com', '399f2d80-9d3a-44c3-aa2e-8895d98b58fa',
+            'week, feature on, lay claimed account' => [
+                true, $weekFlag, $layClaimedUserData, 'ol@example.com', '399f2d80-9d3a-44c3-aa2e-8895d98b58fa',
             ],
             'month, feature off, legacy account' => [
-                false, $monthFlag, ['identity' => 'identity@example.com'],
-                'identity@example.com', '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
+                false, $monthFlag, $unclaimedUserData, 'identity@example.com', '0ef97354-9db2-4d52-a1cf-0aa762444cb1',
             ],
-            'month, feature on, unclaimed account' => [
-                true, $monthFlag, ['identity' => 'identity@example.com'],
-                'identity@example.com', 'e6a5d415-8198-4c07-9dcb-81a039b812e7',
+            'month, feature on, lay unclaimed account' => [
+                true, $monthFlag, $unclaimedUserData, 'identity@example.com', 'e6a5d415-8198-4c07-9dcb-81a039b812e7',
             ],
-            'month, feature on, claimed account' => [
-                true, $monthFlag,
-                [
-                    'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
-                    'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
-                    'one_login_email' => 'ol@example.com',
-                ],
-                'ol@example.com', '1ccd99de-2067-457a-87de-cf5dabd13fff',
+            'month, feature on, lay claimed account' => [
+                true, $monthFlag, $layClaimedUserData, 'ol@example.com', '1ccd99de-2067-457a-87de-cf5dabd13fff',
             ],
         ];
     }
 
-    #[DataProvider('warningEmailProvider')]
-    public function testCleanupSendsWarningEmail(
+    #[DataProvider('layWarningEmailProvider')]
+    public function testCleanupSendsWarningEmailToLays(
         bool $oneLoginEnabled,
         string $warningType,
         array $userData,
         string $expectedEmail,
-        string $expectedTemplateId
+        string $expectedTemplateId,
     ): void {
         putenv(Feature::OneLogin->value . '=' . ($oneLoginEnabled ? 'true' : 'false'));
 
@@ -292,6 +265,116 @@ class ServiceTest extends AbstractServiceTestCase
             ->withArgs([$expectedEmail, $expectedTemplateId, [
                 'deletionDate' => $lastLoginDate->format('j F Y'),
             ]])
+            ->once();
+
+        $this->authUserRepository->shouldReceive('setInactivityFlag')
+            ->withArgs([1, $warningType])
+            ->once();
+
+        $this->logger->shouldNotReceive('alert');
+
+        $this->assertSame(0, $this->buildService()->cleanup());
+    }
+
+    public static function sharedSpaceWarningEmailProvider(): array
+    {
+        $weekFlag = AccountCleanupService::WARNING_1_WEEK_NOTICE;
+        $monthFlag = AccountCleanupService::WARNING_1_MONTH_NOTICE;
+        $sharedSpaceMemberUserData = [
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
+            'one_login_email' => 'ol@example.com',
+            'isActiveInSharedSpace' => true,
+            'sharedSpaceName' => 'Example Shared Space',
+            'sharedSpaceId' => 'shared-space-1',
+        ];
+        $sharedSpaceAdminUserData = $sharedSpaceMemberUserData + ['isSharedSpaceAdmin' => true];
+        $weekDeletionDate = (new DateTime('-9 months +1 week'))->modify('+9 months')->format('j F Y');
+        $monthDeletionDate = (new DateTime('-8 months'))->modify('+9 months')->format('j F Y');
+
+        return [
+            'week, shared space member' => [
+                $weekFlag, $sharedSpaceMemberUserData, 'ol@example.com', '84c0ea7d-1c18-4032-bf17-ee482a536d6e',
+                [
+                    'deletionDate' =>  $weekDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => false
+                ]
+            ],
+            'month, shared space member' => [
+                $monthFlag, $sharedSpaceMemberUserData, 'ol@example.com', '59b4ea4b-c10b-4788-b550-1ff20a43c454',
+                [
+                    'deletionDate' =>  $monthDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => false
+                ]
+            ],
+            'week, shared space multiple admins' => [
+                $weekFlag, $sharedSpaceAdminUserData, 'ol@example.com', '84c0ea7d-1c18-4032-bf17-ee482a536d6e',
+                [
+                    'deletionDate' =>  $weekDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => false
+                ]
+            ],
+            'week, shared space only admin' => [
+                $weekFlag, $sharedSpaceAdminUserData, 'ol@example.com', '84c0ea7d-1c18-4032-bf17-ee482a536d6e',
+                [
+                    'deletionDate' =>  $weekDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => true
+                ]
+            ],
+            'month, shared space multiple admins' => [
+                $monthFlag, $sharedSpaceAdminUserData, 'ol@example.com', '59b4ea4b-c10b-4788-b550-1ff20a43c454',
+                [
+                    'deletionDate' =>  $monthDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => false
+                ]
+            ],
+            'month, shared space only admin' => [
+                $monthFlag, $sharedSpaceAdminUserData, 'ol@example.com', '59b4ea4b-c10b-4788-b550-1ff20a43c454',
+                [
+                    'deletionDate' =>  $monthDeletionDate,
+                    'sharedSpaceName' => 'Example Shared Space',
+                    'isOnlyAdmin' => true
+                ]
+            ],
+        ];
+    }
+
+    #[DataProvider('sharedSpaceWarningEmailProvider')]
+    public function testCleanupSendsWarningEmailToSharedSpaceMembers(
+        string $warningType,
+        array $userData,
+        string $expectedEmail,
+        string $expectedTemplateId,
+        array $expectedPersonalisations,
+    ): void {
+
+        $isWeek = $warningType === AccountCleanupService::WARNING_1_WEEK_NOTICE;
+        $lastLoginDate = new DateTime($isWeek ? '-9 months +1 week' : '-8 months');
+        $user = new User($userData + ['id' => 1, 'last_login' => clone $lastLoginDate]);
+
+        $this->setAccountsExpectations([], $isWeek ? [$user] : [], $isWeek ? [] : [$user]);
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->with(
+                Mockery::type('string'),
+                AccountCleanupService::CLEANUP_NOTIFICATION_TEMPLATE,
+                Mockery::type('array')
+            );
+
+        if (!empty($userData['isSharedSpaceAdmin'])) {
+            $this->sharedSpaceService->shouldReceive('hasExactlyOneActiveAdmin')
+                ->with('shared-space-1')
+                ->once()
+                ->andReturn($expectedPersonalisations['isOnlyAdmin']);
+        }
+
+        $this->notifyClient->shouldReceive('sendEmail')
+            ->withArgs([$expectedEmail, $expectedTemplateId, $expectedPersonalisations])
             ->once();
 
         $this->authUserRepository->shouldReceive('setInactivityFlag')
@@ -426,6 +509,7 @@ class ServiceTest extends AbstractServiceTestCase
         $service->setNotifyClient($this->notifyClient);
         $service->setUsersService($this->usersService);
         $service->setLogger($this->logger);
+        $service->setSharedSpaceService($this->sharedSpaceService);
 
         return $service;
     }

@@ -656,6 +656,19 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         ];
     }
 
+    public function hasExactlyOneActiveAdmin(string $sharedSpaceId): bool
+    {
+        $result = $this->dbWrapper->select(self::SHARED_SPACE_MEMBERS, [
+            'isAdmin' => true,
+            'isActive' => true,
+            'sharedSpaceId' => $sharedSpaceId,
+        ], [
+            'columns' => ['id'],
+        ]);
+
+        return $result->isQueryResult() && $result->count() === 1;
+    }
+
     /**
      * @inheritDoc
      */
