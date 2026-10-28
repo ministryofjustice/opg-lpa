@@ -320,6 +320,7 @@ module "sns_encryption_key" {
   usage_services = [
     "sns.*.amazonaws.com",
     "cloudwatch.*.amazonaws.com",
+    "cloudwatch.amazonaws.com",
     "events.*.amazonaws.com",
     "rds.*.amazonaws.com",
   ]
