@@ -89,7 +89,7 @@ jobs:
 
       - name: Scan ${{ matrix.image_name }} image with Snyk
         continue-on-error: ${{ !inputs.otel_scan_required }}
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@12bdbe54f92af873347bc0cd6f4e7769265c1a90 # v4.10.5
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_address }}
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
@@ -99,7 +99,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@84a762ecab4a2d6217be908505351fd1f9312319 # v3.19.19
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@11715bf7e74f8c0429fff4c719462a6f5a5582cd # v3.19.22
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
@@ -107,7 +107,7 @@ jobs:
       snyk_policy_path: ${{ matrix.snyk_policy_path }}
       snyk_container_options: --severity-threshold=high
       snyk_ecr_registry_id: "311462405659"
-      snyk_image: "shared/snyk:main-cli-1.1303.2-v0.3.0"
+      snyk_image: "shared/snyk:main-cli-1.1308.3-v0.3.2"
       artifact_name: ${{ matrix.artifact_name || '' }}
       build_target: ${{ matrix.build_target || '' }}
       build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
@@ -282,7 +282,7 @@ jobs:
 
       - name: Scan test image with Snyk
         id: snyk_scan
-        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@ae37b9b322286123971417e82b665e56e9d6aa3f # v4.10.3
+        uses: ministryofjustice/opg-github-actions/actions/snyk-scan@12bdbe54f92af873347bc0cd6f4e7769265c1a90 # v4.10.5
         with:
           SNYK_TEST_IMAGE: ${{ matrix.image_name }}:latest
           SNYK_TOKEN: ${{ secrets.SNYK_OPG_ORG_TOKEN }}
