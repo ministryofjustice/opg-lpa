@@ -230,8 +230,20 @@ Feature: Shared Space
     Then I should be on "/shared-space/dashboard"
     When I click link "Your details"
     Then I should be on "/user/about-you"
-    When I click link "Delete Account"
+    When I go to delete my account
     Then I should be on "/user/delete"
-    And I see "You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space." in the page text
-    When I click button "Delete account"
+    And I am told what deleting my account as the last shared space member does
+    When I confirm deleting my account
     Then I should be on "/deleted"
+
+  @RequiresOneLogin
+  Scenario: Deleting your account explains that the shared space keeps its LPAs
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the newly created fixture user
+    When I click link "Your details"
+    And I click link "Deleting your account - find out more"
+    Then I should be on "/user/delete"
+    And I see "The LPAs belong to the shared space Example Organisation." in the page text
+    When I click link "Return to your details"
+    Then I should be on "/user/about-you"
