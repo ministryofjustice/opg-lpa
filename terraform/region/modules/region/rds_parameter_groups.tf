@@ -2,7 +2,7 @@ locals {
   psql_parameter_group_family_list = [
     "postgres13",
     "postgres14",
-    # "postgres15",
+    "postgres15",
     # "postgres16",
     # "postgres17",
   ]

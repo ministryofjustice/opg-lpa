@@ -20,10 +20,14 @@ def get_csrf_token(client, url):
 
     soup = BeautifulSoup(response.text, "html.parser")
     hidden_tags = soup.find_all("input", type="hidden")
+
+    # LPA forms carry the LPA version (optimistic locking) which must be posted back
+    version_tag = soup.find("input", attrs={"type": "hidden", "name": "version"})
+    client.form_version = version_tag.get("value", "") if version_tag else ""
     csrf_token = None
 
     for tag in hidden_tags:
-        if tag["name"].startswith("secret_"):
+        if tag.get("name") == "__csrf":
             csrf_token = tag["value"]
             csrf_token_name = tag["name"]
             logger.debug("Found csrf token for %s", url)
@@ -32,3 +36,8 @@ def get_csrf_token(client, url):
     if csrf_token is None:
         logger.warning("Could not find csrf token for %s", url)
         return
+
+
+def get_form_version(client):
+    """Version of the LPA form last fetched via get_csrf_token."""
+    return getattr(client, "form_version", "")

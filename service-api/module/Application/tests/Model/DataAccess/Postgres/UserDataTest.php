@@ -2,35 +2,36 @@
 
 namespace ApplicationTest\Model\DataAccess\Postgres;
 
-use Laminas\Db\Sql\Predicate\IsNull;
-use Mockery\MockInterface;
-use PHPUnit\Framework\Attributes\DataProvider;
-use Laminas\Db\Adapter\Driver\Pdo\Statement;
-use Mockery;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
-use DateTime;
-use PDOException;
+use ApplicationTest\Helpers;
 use Application\Model\DataAccess\Postgres\ApplicationData;
+use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Postgres\SharedSpaceData;
 use Application\Model\DataAccess\Postgres\UserData;
 use Application\Model\DataAccess\Postgres\UserModel;
-use Application\Model\DataAccess\Postgres\DbWrapper;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use Application\Model\DataAccess\Repository\User\UpdatePasswordUsingTokenError;
 use Application\Model\DataAccess\Repository\User\UserInterface;
+use DateTime;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
+use Laminas\Db\Adapter\Driver\Pdo\Statement;
 use Laminas\Db\Adapter\Driver\StatementInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
 use Laminas\Db\Sql\Expression as SqlExpression;
 use Laminas\Db\Sql\Insert;
+use Laminas\Db\Sql\Predicate\Expression;
 use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Select;
+use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
 use MakeShared\DataModel\User\User as ProfileUserModel;
-use ApplicationTest\Helpers;
+use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\MockInterface;
+use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class UserDataTest extends MockeryTestCase
 {
@@ -101,14 +102,10 @@ class UserDataTest extends MockeryTestCase
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
         $resultMock = $this->makeSelectResult($isQueryResult, $count, []);
 
-        // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->with(
-                UserData::USERS_TABLE,
-                ['identity' => $username],
-                ['limit' => 1]
-            )
-            ->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.identity' => 'VictorFrankenstein'],
+            $resultMock,
+        );
 
         // expect null back if result is empty; otherwise expect
         // a call to the result which returns a UserInterface implementation
@@ -133,10 +130,10 @@ class UserDataTest extends MockeryTestCase
     {
         $email = 'created@onelogin.com';
 
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->with(UserData::USERS_TABLE, ['one_login_email' => $email], ['limit' => 1])
-            ->andReturn($this->makeSelectResult(true, 1, []));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.one_login_email' => 'created@onelogin.com'],
+            $this->makeSelectResult(true, 1, []),
+        );
 
         $userData = new UserData($dbWrapperMock);
 
@@ -147,10 +144,10 @@ class UserDataTest extends MockeryTestCase
     {
         $email = 'nobody@onelogin.com';
 
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->with(UserData::USERS_TABLE, ['one_login_email' => $email], ['limit' => 1])
-            ->andReturn($this->makeSelectResult(true, 0, []));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.one_login_email' => 'nobody@onelogin.com'],
+            $this->makeSelectResult(true, 0, []),
+        );
 
         $userData = new UserData($dbWrapperMock);
 
@@ -162,16 +159,10 @@ class UserDataTest extends MockeryTestCase
         $username = 'BShelley';
 
         // mocks
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->with(
-                UserData::USERS_TABLE,
-                ['identity' => $username],
-                ['limit' => 1]
-            )
-            ->andThrow(new LaminasDbAdapterRuntimeException('database connect failed'));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.identity' => 'BShelley'],
+            new LaminasDbAdapterRuntimeException('database connect failed'),
+        );
 
         // test method
         $userData = new UserData($dbWrapperMock);
@@ -205,32 +196,23 @@ class UserDataTest extends MockeryTestCase
             ->andReturn("%{$query}%");
 
         $sqlMock->shouldReceive('select')
-            ->andReturn($sqlMock);
+            ->andReturn($subselectMock, $selectMock);
 
-        $sqlMock->shouldReceive('from')
+        $subselectMock->shouldReceive('from')
             ->with(['applications' => ApplicationData::APPLICATIONS_TABLE])
-            ->andReturn($subselectMock);
-
-        $sqlMock->shouldReceive('select')
-            ->andReturn($sqlMock);
-
-        $sqlMock->shouldReceive('from')
-            ->with(['users' => UserData::USERS_TABLE])
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $subselectMock->shouldReceive('columns')
-            ->with(Mockery::on(function ($columns) {
-                $countExpression = $columns['numberOfLpas'];
+            ->with(['user', 'numberOfLpas' => new SqlExpression('COUNT(*)')])
+            ->andReturnSelf();
 
-                return in_array('user', $columns) &&
-                    is_a($countExpression, SqlExpression::class) &&
-                    $countExpression->getExpression() === 'COUNT(*)';
-            }))
-            ->andReturn($subselectMock);
+        $selectMock->shouldReceive('from')
+            ->with(['users' => UserData::USERS_TABLE])
+            ->andReturnSelf();
 
         $subselectMock->shouldReceive('group')
             ->with(['user'])
-            ->andReturn($subselectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('join')
             ->with(
@@ -239,7 +221,7 @@ class UserDataTest extends MockeryTestCase
                 ['numberOfLpas'],
                 'FULL'
             )
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('join')
             ->with(
@@ -252,7 +234,7 @@ class UserDataTest extends MockeryTestCase
                 ],
                 'FULL'
             )
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('join')
             ->with(
@@ -261,7 +243,7 @@ class UserDataTest extends MockeryTestCase
                 ['sharedSpaceName' => 'name'],
                 'FULL'
             )
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         // key test: is the ILIKE statement case insensitive, and does it also match
         // against the One Login email?
@@ -270,7 +252,7 @@ class UserDataTest extends MockeryTestCase
                 return $expression->getExpression() ==
                     "users.identity ILIKE %{$query}% OR users.one_login_email ILIKE %{$query}%";
             }))
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('columns')
             ->with(Mockery::on(function ($columns) {
@@ -280,19 +262,19 @@ class UserDataTest extends MockeryTestCase
                     is_a($countExpression, SqlExpression::class) &&
                     $countExpression->getExpression() === 'COUNT(*) OVER()';
             }))
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('order')
             ->with('identity ASC')
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('offset')
             ->with(intval($offset))
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $selectMock->shouldReceive('limit')
             ->with(intval($limit))
-            ->andReturn($selectMock);
+            ->andReturnSelf();
 
         $sqlMock->shouldReceive('prepareStatementForSqlObject')
             ->andReturn($statementMock);
@@ -473,7 +455,16 @@ class UserDataTest extends MockeryTestCase
 
         // mocks
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $updateMock = $this->makeUpdateMock($dbWrapperMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(Statement::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
 
         // query for token returns single user with matching token
         $getByFieldResult1 = $this->makeSelectResult(
@@ -493,9 +484,18 @@ class UserDataTest extends MockeryTestCase
         // query by email returns no matching user
         $getByFieldResult2 = $this->makeSelectResult(true, 0, null);
 
+        $getByFieldSql1 = $this->mockGetByFieldSql(
+            [new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)],
+            $getByFieldResult1,
+        );
+
+        $getByFieldSql2 = $this->mockGetByFieldSql(
+            ['users.identity' => $newEmail],
+            $getByFieldResult2,
+        );
+
         // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($getByFieldResult1, $getByFieldResult2);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($getByFieldSql1, $getByFieldSql2, $sqlMock);
 
         $updateMock->shouldReceive('where')
             ->with(['id' => $id])
@@ -527,7 +527,10 @@ class UserDataTest extends MockeryTestCase
 
         // expectations
         // query by token returns no user
-        $dbWrapperMock->shouldReceive('select')->andReturn($getByFieldResult);
+        $dbWrapperMock = $this->mockGetByField(
+            [new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)],
+            $getByFieldResult,
+        );
 
         // test method
         $userData = new UserData($dbWrapperMock);
@@ -550,11 +553,13 @@ class UserDataTest extends MockeryTestCase
                 ],
             ]),
         ]);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // expectations
         // query by token returns no user
-        $dbWrapperMock->shouldReceive('select')->andReturn($getByFieldResult);
+        $dbWrapperMock = $this->mockGetByField(
+            [new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)],
+            $getByFieldResult,
+        );
 
         // test method
         $userData = new UserData($dbWrapperMock);
@@ -592,8 +597,17 @@ class UserDataTest extends MockeryTestCase
         // query by email returns user with same email
         $getByFieldResult2 = $this->makeSelectResult(true, 1, []);
 
-        // expectations
-        $dbWrapperMock->shouldReceive('select')->andReturn($getByFieldResult1, $getByFieldResult2);
+        $getByFieldSql1 = $this->mockGetByFieldSql(
+            [new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)],
+            $getByFieldResult1,
+        );
+
+        $getByFieldSql2 = $this->mockGetByFieldSql(
+            ['users.identity' => $newEmail],
+            $getByFieldResult2,
+        );
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($getByFieldSql1, $getByFieldSql2);
 
         // test method
         $userData = new UserData($dbWrapperMock);
@@ -615,7 +629,6 @@ class UserDataTest extends MockeryTestCase
         $updateMock = Mockery::mock(Update::class);
         $statementMock = Mockery::mock(Statement::class);
         $resultMock = Mockery::mock(Result::class);
-
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
         // query for token returns single user with matching token
@@ -636,6 +649,16 @@ class UserDataTest extends MockeryTestCase
         // query by email returns no matching user
         $getByFieldResult2 = $this->makeSelectResult(true, 0, null);
 
+        $getByFieldSql1 = $this->mockGetByFieldSql(
+            [new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)],
+            $getByFieldResult1,
+        );
+
+        $getByFieldSql2 = $this->mockGetByFieldSql(
+            ['users.identity' => $newEmail],
+            $getByFieldResult2,
+        );
+
         // expectations
         $sqlMock->shouldReceive('update')->andReturn($updateMock);
         $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
@@ -644,10 +667,7 @@ class UserDataTest extends MockeryTestCase
 
         $resultMock->shouldReceive('getAffectedRows')->andReturn(0);
 
-        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
-
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($getByFieldResult1, $getByFieldResult2);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($getByFieldSql1, $getByFieldSql2, $sqlMock);
 
         $updateMock->shouldReceive('where')
             ->with(['id' => $id])
@@ -746,12 +766,11 @@ class UserDataTest extends MockeryTestCase
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
 
-        // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->with(UserData::USERS_TABLE, ['id' => $id], ['limit' => 1])
-            ->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.id' => $id],
+            $resultMock,
+        );
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -768,10 +787,10 @@ class UserDataTest extends MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.id' => $id],
+            $resultMock,
+        );
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -784,26 +803,11 @@ class UserDataTest extends MockeryTestCase
     {
         $id = '111111';
         $token = 'strutsandfrets';
-        $expression = new SqlExpression("auth_token ->> 'token' = ?", $token);
         $expected = new UserModel(['id' => $id]);
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, ['id' => $id]);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->with(
-                UserData::USERS_TABLE,
-                Mockery::on(function ($where) use ($token) {
-                    $expr = $where[0];
-
-                    return $expr->getExpression() === "auth_token ->> 'token' = ?" &&
-                        $expr->getParameters()[0] === $token;
-                }),
-                ['limit' => 1]
-            )
-            ->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField([new Expression("users.auth_token ->> 'token' = ?", $token)], $resultMock);
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -821,10 +825,10 @@ class UserDataTest extends MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField(
+            [new Expression("users.auth_token ->> 'token' = ?", $token)],
+            $resultMock,
+        );
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -839,8 +843,7 @@ class UserDataTest extends MockeryTestCase
         $rowData = ['id' => '111111', 'password_reset_token' => $storedToken];
 
         $resultMock = $this->makeSelectResult(true, 1, $rowData);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField([new Expression("users.password_reset_token ->> 'token' = ?", self::RESET_TOKEN)], $resultMock);
 
         $userData = new UserData($dbWrapperMock);
 
@@ -875,7 +878,7 @@ class UserDataTest extends MockeryTestCase
     {
         $id = '111111';
         $token = self::RESET_TOKEN;
-        $expression = new SqlExpression("password_reset_token ->> 'token' = ?", $token);
+
         $tokenJson = json_encode([
             'token' => $token,
             'expiresAt' => (new DateTime('+1 day'))->format(DbWrapper::TIME_FORMAT),
@@ -885,21 +888,7 @@ class UserDataTest extends MockeryTestCase
 
         // mocks
         $resultMock = $this->makeSelectResult(true, 1, $rowData);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')
-            ->with(
-                UserData::USERS_TABLE,
-                Mockery::on(function ($where) use ($token) {
-                    $expr = $where[0];
-
-                    return $expr->getExpression() === "password_reset_token ->> 'token' = ?" &&
-                        $expr->getParameters()[0] === $token;
-                }),
-                ['limit' => 1]
-            )
-            ->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField([new Expression("users.password_reset_token ->> 'token' = ?", $token)], $resultMock);
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -917,10 +906,7 @@ class UserDataTest extends MockeryTestCase
 
         // mocks - no records returned from query
         $resultMock = $this->makeSelectResult(true, 0, null);
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-
-        // expectations
-        $dbWrapperMock->shouldReceive('select')->andReturn($resultMock);
+        $dbWrapperMock = $this->mockGetByField([new Expression("users.password_reset_token ->> 'token' = ?", $token)], $resultMock);
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -1448,9 +1434,7 @@ class UserDataTest extends MockeryTestCase
     public function testGetProfileException(): void
     {
         // mocks
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andThrow(new LaminasDbAdapterRuntimeException());
+        $dbWrapperMock = $this->mockGetByField(['users.id' => ''], new LaminasDbAdapterRuntimeException());
 
         // assertions
         $this->assertNull((new UserData($dbWrapperMock))->getProfile(''));
@@ -1459,9 +1443,7 @@ class UserDataTest extends MockeryTestCase
     public function testGetProfileNoUser(): void
     {
         // mocks
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($this->makeSelectResult(true, 0, []));
+        $dbWrapperMock = $this->mockGetByField(['users.id' => ''], $this->makeSelectResult(true, 0, []));
 
         // assertions
         $this->assertNull((new UserData($dbWrapperMock))->getProfile(''));
@@ -1478,12 +1460,14 @@ class UserDataTest extends MockeryTestCase
             'profile' => '{"name":{"title":"Prof","first":"Barr","last":"Rrrraaaaa"}}',
             'last_login' => new DateTime(),
             'is_professional' => false,
+            'invite_count' => 0,
         ];
 
         // mocks
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($this->makeSelectResult(true, 1, $user));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.id' => 'barrrraaaaa'],
+            $this->makeSelectResult(true, 1, $user),
+        );
 
         // test
         $userData = new UserData($dbWrapperMock);
@@ -1516,11 +1500,13 @@ class UserDataTest extends MockeryTestCase
                 . '"email":{"address":"onelogin:urn:fdc:gov.uk:2022:sub"}}',
             'last_login' => new DateTime(),
             'is_professional' => false,
+            'invite_count' => 0,
         ];
 
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($this->makeSelectResult(true, 1, $user));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.id' => 'onelogin-user'],
+            $this->makeSelectResult(true, 1, $user),
+        );
 
         $userProfile = (new UserData($dbWrapperMock))->getProfile($id);
 
@@ -1542,16 +1528,58 @@ class UserDataTest extends MockeryTestCase
                 . '"email":{"address":"stored@example.com"}}',
             'last_login' => new DateTime(),
             'is_professional' => false,
+            'invite_count' => 0,
         ];
 
-        $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->andReturn($this->makeSelectResult(true, 1, $user));
+        $dbWrapperMock = $this->mockGetByField(
+            ['users.id' => 'password-user'],
+            $this->makeSelectResult(true, 1, $user),
+        );
 
         $userProfile = (new UserData($dbWrapperMock))->getProfile($id);
 
         $this->assertSame('stored@example.com', $userProfile->getEmail()->getAddress());
     }
+
+    private function mockGetByField(array $where, mixed $result): MockInterface
+    {
+        $sql = $this->mockGetByFieldSql($where, $result);
+
+        $dbWrapper = Mockery::mock(DbWrapper::class);
+        $dbWrapper->shouldReceive('createSql')->andReturn($sql);
+
+        return $dbWrapper;
+    }
+
+    private function mockGetByFieldSql(array $where, mixed $result): MockInterface
+    {
+        $select = Mockery::mock(Select::class);
+        $select->shouldReceive('from')->with(['users' => UserData::USERS_TABLE])->andReturnSelf();
+        $select->shouldReceive('join')->with(
+            ['invites' => SharedSpaceData::SHARED_SPACE_INVITES],
+            // for some reason this param can't be compared normally, but the COUNT below is fine...
+            $this->callback(fn(SqlExpression $expr): bool => $expr->getExpression() === '("users"."identity" = "invites"."email" OR "users"."one_login_email" = "invites"."email") AND "invites"."expires" > NOW()'),
+            ['invite_count' => new SqlExpression('COUNT("invites"."id")')],
+            Select::JOIN_LEFT,
+        )->andReturnSelf();
+        $select->shouldReceive('where')->with($where)->andReturnSelf();
+        $select->shouldReceive('group')->with(['users.id'])->andReturnSelf();
+        $select->shouldReceive('limit')->with(1)->andReturnSelf();
+
+        $statement = Mockery::mock(Statement::class);
+        if ($result instanceof \Exception) {
+            $statement->shouldReceive('execute')->andThrow($result);
+        } else {
+            $statement->shouldReceive('execute')->andReturn($result);
+        }
+
+        $sql = Mockery::mock(Sql::class);
+        $sql->shouldReceive('select')->andReturn($select);
+        $sql->shouldReceive('prepareStatementForSqlObject')->with($select)->andReturn($statement);
+
+        return $sql;
+    }
+
 
     /**
      * @doesNotPerformAssertions

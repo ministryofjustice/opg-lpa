@@ -75,11 +75,17 @@ class JoinSharedSpaceHandlerTest extends TestCase
             ->method('render')
             ->with(
                 'application/authenticated/shared-space/join.twig',
-                $this->callback(fn(array $vars) => isset($vars['form']) && $vars['csrfToken'] === 'test-token'),
+                $this->callback(fn(array $vars) => isset($vars['form']) && $vars['csrfToken'] === 'test-token' && $vars['isProfessional'] === true),
             )
             ->willReturn('<html>form</html>');
 
-        $response = $this->handler->handle($this->createRequest('GET', []));
+        $request = $this->createRequest('GET', [])
+            ->withAttribute(
+                RequestAttribute::USER_DETAILS,
+                new User(['isProfessional' => true])
+            );
+
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
@@ -88,9 +94,13 @@ class JoinSharedSpaceHandlerTest extends TestCase
     {
         $this->renderer->method('render')->willReturn('<html>form with errors</html>');
 
-        $response = $this->handler->handle(
-            $this->createRequest('POST', [])
-        );
+        $request = $this->createRequest('POST', [])
+            ->withAttribute(
+                RequestAttribute::USER_DETAILS,
+                new User(['isProfessional' => true])
+            );
+
+        $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }

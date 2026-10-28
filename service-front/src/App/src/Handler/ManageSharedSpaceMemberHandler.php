@@ -36,9 +36,6 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
         $routeResult = $request->getAttribute(RouteResult::class);
         $memberId = $routeResult?->getMatchedParams()['member-id'] ?? null;
 
-        // The API only returns member details to admins of the shared space,
-        // so a null response here covers both "member not found" and
-        // "signed-in user is not an admin" - either way, redirect back.
         $member = $this->sharedSpaceService->getMember($memberId);
         if ($member === null) {
             return new RedirectResponse('/shared-space');
