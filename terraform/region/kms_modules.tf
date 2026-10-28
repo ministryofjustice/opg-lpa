@@ -323,9 +323,13 @@ module "sns_encryption_key" {
     "cloudwatch.amazonaws.com",
     "events.*.amazonaws.com",
     "rds.*.amazonaws.com",
+    "route53.amazonaws.com",
   ]
-  primary_region     = "eu-west-1"
-  replicas_to_create = ["eu-west-2"]
+  primary_region = "eu-west-1"
+  replicas_to_create = [
+    "eu-west-2",
+    "us-east-1",
+  ]
 
   administrator_roles = [
     "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/breakglass",
