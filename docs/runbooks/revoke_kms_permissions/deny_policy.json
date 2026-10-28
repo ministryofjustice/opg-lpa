@@ -1,0 +1,26 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAllExceptBreakglass",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": ["kms:*"],
+      "Resource": "*",
+      "Condition": {
+        "ArnNotEquals": {
+          "aws:PrincipalArn": "breakglass_role"
+        }
+      }
+    },
+    {
+      "Sid": "AllowBreakglassFullAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "breakglass_role"
+      },
+      "Action": "kms:*",
+      "Resource": "*"
+    }
+  ]
+}

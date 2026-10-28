@@ -198,6 +198,8 @@ class LegacyCompatExtension extends AbstractExtension
 
         $name = '';
         $hasOneOrMoreLPAs = false;
+        $isProfessional = false;
+        $invitedToSharedSpace = false;
 
         $userDetails = $this->userDetailsHolder->get();
         if ($userDetails !== null) {
@@ -206,6 +208,8 @@ class LegacyCompatExtension extends AbstractExtension
                 $name = trim($sessionUserName->getFirst() . ' ' . $sessionUserName->getLast());
             }
             $hasOneOrMoreLPAs = $userDetails->getNumberOfLpas() > 0;
+            $isProfessional = Feature::SharedSpace->isEnabled() && $userLoggedIn && $userDetails->getIsProfessional();
+            $invitedToSharedSpace = Feature::SharedSpace->isEnabled() && $userLoggedIn && $userDetails->getIsInvited();
         }
 
         $parentRoute = match (true) {
@@ -214,7 +218,7 @@ class LegacyCompatExtension extends AbstractExtension
               || $currentRoute === 'lpa-type-no-id' || str_starts_with($currentRoute, 'lpa/')
             ) => $inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
 
-            $currentRoute === 'shared-space' || str_starts_with($currentRoute, 'shared-space.') => 'shared-space',
+            $currentRoute === 'shared-space' || str_starts_with($currentRoute, 'shared-space.') => $inSharedSpace || $isProfessional ? 'shared-space' : 'shared-space.join',
 
             str_starts_with($currentRoute, 'user/') => 'user/about-you',
 
@@ -223,15 +227,16 @@ class LegacyCompatExtension extends AbstractExtension
 
         return $env->render('application/partials/nav.twig', [
             'nav' => (object) [
-                'userLoggedIn'       => $userLoggedIn,
-                'name'               => $name,
-                'lastLoginAt'        => $lastLoginAt,
-                'route'              => $currentRoute,
-                'parentRoute'        => $parentRoute,
-                'hasOneOrMoreLPAs'   => $hasOneOrMoreLPAs,
-                'inSharedSpace'      => $inSharedSpace,
-                'sharedSpaceEnabled' => Feature::SharedSpace->isEnabled(),
-                'showOneLoginHeader' => $this->showOneLoginHeader(),
+                'userLoggedIn'         => $userLoggedIn,
+                'name'                 => $name,
+                'lastLoginAt'          => $lastLoginAt,
+                'route'                => $currentRoute,
+                'parentRoute'          => $parentRoute,
+                'hasOneOrMoreLPAs'     => $hasOneOrMoreLPAs,
+                'inSharedSpace'        => $inSharedSpace,
+                'isProfessional'       => $isProfessional,
+                'invitedToSharedSpace' => $invitedToSharedSpace,
+                'showOneLoginHeader'   => $this->showOneLoginHeader(),
             ],
         ]);
     }

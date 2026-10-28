@@ -12,6 +12,7 @@ use App\Model\Service\Authentication\Identity\User;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
+use App\Service\OneLogin\SignedOutSubjects;
 use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -29,6 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class AuthenticationMiddlewareTest extends TestCase
 {
@@ -55,7 +57,7 @@ class AuthenticationMiddlewareTest extends TestCase
             $this->authenticationService,
             $this->urlHelper,
             $this->logger,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginSignOut,
             new RedirectUriBuilder('https://front.example.com'),
         );
@@ -421,7 +423,7 @@ class AuthenticationMiddlewareTest extends TestCase
         $session = $this->createMock(SessionInterface::class);
         $session->method('get')->willReturnCallback(
             fn (string $key) => $hasPendingLink && $key === 'onelogin_pending_link'
-                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => self::ID_TOKEN]
+                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => self::ID_TOKEN, 'signedInAt' => time()]
                 : null,
         );
 

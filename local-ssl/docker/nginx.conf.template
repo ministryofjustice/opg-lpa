@@ -1,6 +1,5 @@
 worker_processes 1;
 pid /run/nginx.pid;
-daemon off;
 
 error_log stderr;
 

@@ -12,6 +12,7 @@ use App\Model\Service\Session\PersistentSessionDetails;
 use App\Model\UserDetailsHolder;
 use App\Service\AccordionService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use App\Service\SystemMessage;
 use App\Storage\MezzioSessionStorage;
 use App\View\Twig\LegacyCompatExtension;
@@ -28,6 +29,7 @@ use Mezzio\Session\SessionInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\NullLogger;
 use Twig\Environment;
 
 final class LegacyCompatExtensionTest extends TestCase
@@ -64,7 +66,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
         );
     }
 
@@ -130,7 +132,7 @@ final class LegacyCompatExtensionTest extends TestCase
         $session = $this->createMock(SessionInterface::class);
         $session->method('get')->willReturnCallback(
             fn (string $key) => $pendingLink && $key === 'onelogin_pending_link'
-                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'h.p.s']
+                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'h.p.s', 'signedInAt' => time()]
                 : null,
         );
         $this->sessionStorage->method('session')->willReturn($session);
@@ -190,7 +192,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
         );
 
         $this->assertSame('/assets/abc123/app.js', $ext->assetPath('/assets/app.js'));
@@ -1164,7 +1166,7 @@ final class LegacyCompatExtensionTest extends TestCase
             $this->urlHelper,
             $this->flashMessagesHolder,
             $this->systemMessage,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
         );
 
         $functions = $ext->getFunctions();

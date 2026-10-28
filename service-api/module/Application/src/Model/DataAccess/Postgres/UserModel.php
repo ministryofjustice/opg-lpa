@@ -71,6 +71,7 @@ class UserModel implements UserRepository\UserInterface
             'isActiveInSharedSpace' => $this->isActiveInSharedSpace(),
             'oneLoginEmail' => $this->oneLoginEmail(),
             'isProfessional' => $this->isProfessional(),
+            'isInivted' => $this->isInvited(),
         ];
     }
 
@@ -295,5 +296,10 @@ class UserModel implements UserRepository\UserInterface
     public function isProfessional(): bool
     {
         return ($this->data['is_professional'] ?? false) === true;
+    }
+
+    public function isInvited(): bool
+    {
+        return ($this->data['invite_count'] ?? 0) > 0;
     }
 }

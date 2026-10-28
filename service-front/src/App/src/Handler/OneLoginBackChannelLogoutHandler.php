@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Handler;
 
 use App\Service\OneLogin\OneLoginService;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -21,6 +22,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
 
     public function __construct(
         private readonly OneLoginService $oneLoginService,
+        private readonly SignedOutSubjects $signedOutSubjects,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -40,7 +42,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
         }
 
         try {
-            $accepted = $this->oneLoginService->backChannelLogout($logoutToken);
+            $signOut = $this->oneLoginService->backChannelLogout($logoutToken);
         } catch (Throwable $e) {
             $this->logger->error('auth.onelogin.backchannel_logout_failed', [
                 'message' => $e->getMessage(),
@@ -49,7 +51,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
             return $this->response(502);
         }
 
-        if (!$accepted) {
+        if ($signOut === null) {
             $this->logger->warning('auth.onelogin.backchannel_logout_rejected', [
                 'reason' => 'not_accepted',
             ]);
@@ -57,7 +59,24 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
             return $this->response(400);
         }
 
+        $this->rememberSignOut($signOut['sub'], $signOut['signedOutAt']);
+
         return $this->response(200);
+    }
+
+    /**
+     * Stops a user who has no Make account yet from finishing a pending account link.
+     * The logout itself has already succeeded, so a failure here does not change the response.
+     */
+    private function rememberSignOut(string $sub, int $signedOutAt): void
+    {
+        try {
+            $this->signedOutSubjects->recordSignOut($sub, $signedOutAt);
+        } catch (Throwable $e) {
+            $this->logger->error('auth.onelogin.signed_out_record_failed', [
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 
     private function response(int $status): ResponseInterface

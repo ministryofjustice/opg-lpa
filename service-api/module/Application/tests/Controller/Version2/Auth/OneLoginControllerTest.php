@@ -68,9 +68,10 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     {
         $redirectUrl   = 'https://example.com/auth/redirect';
         $serviceResult = [
-            'state' => 'some-state',
-            'nonce' => 'some-nonce',
-            'url'   => 'https://auth.example.com/authorize?foo=bar',
+            'state'        => 'some-state',
+            'nonce'        => 'some-nonce',
+            'codeVerifier' => 'some-verifier',
+            'url'          => 'https://auth.example.com/authorize?request=signed.request.object',
         ];
 
         $this->params->shouldReceive('fromQuery')
@@ -95,10 +96,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     public static function missingCallbackFieldProvider(): array
     {
         return [
-            'code'         => ['code'],
-            'state'        => ['state'],
-            'nonce'        => ['nonce'],
-            'redirect_uri' => ['redirect_uri'],
+            'code'          => ['code'],
+            'state'         => ['state'],
+            'nonce'         => ['nonce'],
+            'code_verifier' => ['code_verifier'],
+            'redirect_uri'  => ['redirect_uri'],
         ];
     }
 
@@ -108,10 +110,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     public function testCallbackActionReturnsBadRequestWhenFieldMissing(string $missingField): void
     {
         $body = [
-            'code'         => 'auth-code-123',
-            'state'        => 'state-abc',
-            'nonce'        => 'nonce-xyz',
-            'redirect_uri' => 'https://example.com/auth/redirect',
+            'code'          => 'auth-code-123',
+            'state'         => 'state-abc',
+            'nonce'         => 'nonce-xyz',
+            'code_verifier' => 'verifier-123',
+            'redirect_uri'  => 'https://example.com/auth/redirect',
         ];
         unset($body[$missingField]);
 
@@ -128,10 +131,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     public function testCallbackActionReturnsJsonModelWithServiceResult(): void
     {
         $body = [
-            'code'         => 'auth-code-123',
-            'state'        => 'state-abc',
-            'nonce'        => 'nonce-xyz',
-            'redirect_uri' => 'https://example.com/auth/redirect',
+            'code'          => 'auth-code-123',
+            'state'         => 'state-abc',
+            'nonce'         => 'nonce-xyz',
+            'code_verifier' => 'verifier-123',
+            'redirect_uri'  => 'https://example.com/auth/redirect',
         ];
 
         $serviceResult = [
@@ -142,7 +146,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         ];
 
         $this->service->shouldReceive('handleCallback')
-            ->with($body['code'], $body['state'], $body['nonce'], $body['redirect_uri'])
+            ->with($body['code'], $body['state'], $body['nonce'], $body['code_verifier'], $body['redirect_uri'])
             ->andReturn($serviceResult)
             ->once();
 
@@ -173,10 +177,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
     public function testCallbackActionReturnsUnauthorizedWhenAuthenticationFails(string $reason): void
     {
         $body = [
-            'code'         => 'auth-code-123',
-            'state'        => 'state-abc',
-            'nonce'        => 'nonce-xyz',
-            'redirect_uri' => 'https://example.com/auth/redirect',
+            'code'          => 'auth-code-123',
+            'state'         => 'state-abc',
+            'nonce'         => 'nonce-xyz',
+            'code_verifier' => 'verifier-123',
+            'redirect_uri'  => 'https://example.com/auth/redirect',
         ];
 
         $this->service->shouldReceive('handleCallback')
@@ -283,7 +288,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
 
         $this->service->shouldReceive('handleBackChannelLogout')
             ->with('a.logout.token')
-            ->andReturn(['accepted' => true])
+            ->andReturn(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:abc'])
             ->once();
 
         /** @var OneLoginController $controller */
@@ -292,7 +297,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $result = $controller->backChannelLogoutAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
-        $this->assertSame(['accepted' => true], $result->getVariables());
+        $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:abc'], $result->getVariables());
     }
 
     public function testBackChannelLogoutActionReturnsRejectionAsOkResponse(): void
@@ -322,6 +327,18 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertInstanceOf(JsonModel::class, $result);
         $this->assertFalse($result->getVariables()['accepted']);
         $this->assertSame('missing_logout_token', $result->getVariables()['reason']);
+    }
+
+    public function testJwksActionReturnsOurPublicKeys(): void
+    {
+        $jwks = ['keys' => [['kty' => 'RSA', 'kid' => 'kid-1', 'use' => 'sig', 'alg' => 'RS256', 'n' => 'n', 'e' => 'AQAB']]];
+
+        $this->service->shouldReceive('publicJwks')->andReturn($jwks)->once();
+
+        $result = $this->getOneLoginController()->jwksAction();
+
+        $this->assertInstanceOf(JsonModel::class, $result);
+        $this->assertSame($jwks, $result->getVariables());
     }
 
     public function testCreateActionReturnsJsonModelWithServiceResult(): void

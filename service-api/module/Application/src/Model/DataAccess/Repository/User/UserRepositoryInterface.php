@@ -2,6 +2,7 @@
 
 namespace Application\Model\DataAccess\Repository\User;
 
+use Application\Model\DataAccess\Postgres\UserModel;
 use DateTime;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 
@@ -92,7 +93,9 @@ interface UserRepositoryInterface
     /**
      * Returns all accounts that have not been logged into since $since.
      *
-     * If $withoutFlag is set, accounts that contain the passed flag will be excluded.
+     * If $excludeFlag is set, accounts that contain the passed flag will be excluded.
+     *
+     * @return iterable<UserModel>
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable;
 

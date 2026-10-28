@@ -58,10 +58,11 @@ class OneLoginController extends AbstractAuthController
             return new ApiProblem(400, 'A JSON request body must be provided');
         }
 
-        $code        = $body['code'] ?? null;
-        $state       = $body['state'] ?? null;
-        $nonce       = $body['nonce'] ?? null;
-        $redirectUri = $body['redirect_uri'] ?? null;
+        $code         = $body['code'] ?? null;
+        $state        = $body['state'] ?? null;
+        $nonce        = $body['nonce'] ?? null;
+        $codeVerifier = $body['code_verifier'] ?? null;
+        $redirectUri  = $body['redirect_uri'] ?? null;
 
         if (!is_string($code) || $code === '') {
             return new ApiProblem(400, 'code must be provided');
@@ -71,6 +72,9 @@ class OneLoginController extends AbstractAuthController
         }
         if (!is_string($nonce) || $nonce === '') {
             return new ApiProblem(400, 'nonce must be provided');
+        }
+        if (!is_string($codeVerifier) || $codeVerifier === '') {
+            return new ApiProblem(400, 'code_verifier must be provided');
         }
         if (!is_string($redirectUri) || $redirectUri === '') {
             return new ApiProblem(400, 'redirect_uri must be provided');
@@ -83,6 +87,7 @@ class OneLoginController extends AbstractAuthController
                 $code,
                 $state,
                 $nonce,
+                $codeVerifier,
                 $redirectUri,
             );
         } catch (OneLoginAuthenticationException $e) {
@@ -186,6 +191,16 @@ class OneLoginController extends AbstractAuthController
         }
 
         return new JsonModel($result);
+    }
+
+    /**
+     * Our public keys, which the front publishes as the JWKS One Login reads.
+     *
+     * @return JsonModel
+     */
+    public function jwksAction(): JsonModel
+    {
+        return new JsonModel($this->getService()->publicJwks());
     }
 
     /**

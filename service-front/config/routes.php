@@ -89,6 +89,7 @@ use App\Handler\ManageSharedSpaceMemberHandler;
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Handler\OneLoginCallbackHandler;
 use App\Handler\OneLoginChangesHandler;
+use App\Handler\OneLoginJwksHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PostcodeHandler;
 use App\Handler\PrivacyHandler;
@@ -203,27 +204,37 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             OneLoginBackChannelLogoutHandler::class,
             'auth.onelogin.backchannel-logout',
         )->setOptions(['unauthenticated_route' => true]);
+        $app->get('/.well-known/jwks.json', OneLoginJwksHandler::class, 'auth.onelogin.jwks')
+            ->setOptions(['unauthenticated_route' => true]);
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space');
-        $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join');
-        $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make');
-        $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard');
+        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space')
+            ->setOptions(['sharedSpaceAllow' => ['professional', 'member', 'admin']]);
+        $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join')
+            ->setOptions(['sharedSpaceAllow' => ['professional', 'invited']]);
+        $app->route('/shared-space/make', MakeSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.make')
+            ->setOptions(['sharedSpaceAllow' => ['professional']]);
+        $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard')
+            ->setOptions(['sharedSpaceAllow' => ['member', 'admin']]);
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
             ManageSharedSpaceMemberHandler::class,
             ['GET', 'POST'],
             'shared-space.members.manage'
-        );
+        )
+            ->setOptions(['sharedSpaceAllow' => ['admin']]);
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}/delete',
             DeleteSharedSpaceMemberHandler::class,
             ['GET', 'POST'],
             'shared-space.members.delete'
-        );
-        $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite');
-        $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite');
+        )
+            ->setOptions(['sharedSpaceAllow' => ['admin']]);
+        $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite')
+            ->setOptions(['sharedSpaceAllow' => ['admin']]);
+        $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite')
+            ->setOptions(['sharedSpaceAllow' => ['admin']]);
     }
 
     if (App\Feature::CypressFixtures->isEnabled()) {

@@ -139,4 +139,6 @@ interface UserInterface
     public function isActiveInSharedSpace(): ?bool;
 
     public function isProfessional(): bool;
+
+    public function isInvited(): bool;
 }

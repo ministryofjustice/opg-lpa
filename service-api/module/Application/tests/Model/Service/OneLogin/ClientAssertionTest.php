@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace ApplicationTest\Model\Service\OneLogin;
 
 use Application\Model\Service\OneLogin\KeyPairManager;
-use Facile\JoseVerifier\JWK\MemoryJwksProvider;
-use Facile\OpenIDClient\AuthMethod\PrivateKeyJwt;
+use Application\Model\Service\OneLogin\PrivateKeyJwtWithKeyId;
 use Facile\OpenIDClient\Client\ClientInterface;
 use Facile\OpenIDClient\Client\Metadata\ClientMetadata;
 use Facile\OpenIDClient\Issuer\IssuerInterface;
@@ -24,44 +23,81 @@ class ClientAssertionTest extends TestCase
     private const CLIENT_ID     = 'test-client-id';
     private const TOKEN_ENDPOINT = 'https://oidc.integration.account.gov.uk/token';
 
+    private KeyPairManager $keyPairManager;
+
+    protected function setUp(): void
+    {
+        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid-rsa');
+    }
+
     public function testRsaKeyProducesAVerifiableRs256Assertion(): void
     {
-        $privateKeyPem = KeyPairManagerTest::rsaPrivateKey();
-
-        $jwk = (new KeyPairManager($privateKeyPem, 'test-kid-rsa'))->jwk();
-
-        $assertion = $this->createAssertion($jwk);
+        $assertion = $this->createAssertion();
 
         $header = $this->protectedHeaderOf($assertion);
 
         $this->assertSame('RS256', $header['alg']);
+        $this->assertSame('test-kid-rsa', $header['kid']);
 
         $this->assertTrue(
-            $this->verify($assertion, $jwk->toPublic(), new RS256()),
+            $this->verify($assertion, $this->keyPairManager->jwk()->toPublic(), new RS256()),
             'The client assertion did not verify against the public half of the signing key',
         );
     }
 
     public function testAssertionCarriesTheClaimsOneLoginExpects(): void
     {
-        $jwk = (new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid-rsa'))->jwk();
+        $claims = $this->payloadOf($this->createAssertion());
 
-        $claims = $this->payloadOf($this->createAssertion($jwk));
-
+        $this->assertSame(['iss', 'sub', 'aud', 'iat', 'exp', 'jti'], array_keys($claims));
         $this->assertSame(self::CLIENT_ID, $claims['iss']);
         $this->assertSame(self::CLIENT_ID, $claims['sub']);
         $this->assertSame(self::TOKEN_ENDPOINT, $claims['aud']);
         $this->assertNotEmpty($claims['jti']);
-        $this->assertGreaterThan(time(), $claims['exp']);
+        $this->assertSame(PrivateKeyJwtWithKeyId::LIFETIME_SECONDS, $claims['exp'] - $claims['iat']);
         $this->assertLessThanOrEqual(time(), $claims['iat']);
     }
 
-    private function createAssertion(JWK $jwk): string
+    public function testTokenRequestParametersGoInTheBodyNotTheAssertion(): void
     {
-        $request = (new PrivateKeyJwt())->createRequest(
+        $body = $this->tokenRequestBody([
+            'grant_type'    => 'authorization_code',
+            'code'          => 'the-code',
+            'code_verifier' => 'the-verifier',
+        ]);
+
+        $this->assertSame('the-code', $body['code']);
+        $this->assertSame('the-verifier', $body['code_verifier']);
+
+        $claims = $this->payloadOf($body['client_assertion']);
+
+        $this->assertArrayNotHasKey('code', $claims);
+        $this->assertArrayNotHasKey('code_verifier', $claims);
+    }
+
+    public function testEachAssertionHasAUniqueJti(): void
+    {
+        $this->assertNotSame(
+            $this->payloadOf($this->createAssertion())['jti'],
+            $this->payloadOf($this->createAssertion())['jti'],
+        );
+    }
+
+    private function createAssertion(): string
+    {
+        return $this->tokenRequestBody([])['client_assertion'];
+    }
+
+    /**
+     * @param array<string, string> $parameters
+     * @return array<string, string>
+     */
+    private function tokenRequestBody(array $parameters): array
+    {
+        $request = (new PrivateKeyJwtWithKeyId($this->keyPairManager))->createRequest(
             new Request(self::TOKEN_ENDPOINT, 'POST'),
-            $this->clientFor($jwk),
-            [],
+            $this->client(),
+            $parameters,
         );
 
         parse_str((string) $request->getBody(), $body);
@@ -71,10 +107,10 @@ class ClientAssertionTest extends TestCase
             $body['client_assertion_type'],
         );
 
-        return $body['client_assertion'];
+        return $body;
     }
 
-    private function clientFor(JWK $jwk): ClientInterface
+    private function client(): ClientInterface
     {
         $issuer = $this->createMock(IssuerInterface::class);
         $issuer->method('getMetadata')->willReturn(IssuerMetadata::fromArray([
@@ -84,13 +120,8 @@ class ClientAssertionTest extends TestCase
             'token_endpoint'         => self::TOKEN_ENDPOINT,
         ]));
 
-        $jwksProvider = new MemoryJwksProvider(
-            ['keys' => [$jwk->jsonSerialize()]],
-        );
-
         $client = $this->createMock(ClientInterface::class);
         $client->method('getIssuer')->willReturn($issuer);
-        $client->method('getJwksProvider')->willReturn($jwksProvider);
         $client->method('getMetadata')->willReturn(ClientMetadata::fromArray([
             'client_id'                  => self::CLIENT_ID,
             'token_endpoint_auth_method' => 'private_key_jwt',

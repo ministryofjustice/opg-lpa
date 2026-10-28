@@ -1,4 +1,4 @@
-FROM node:24.21.0-alpine3.23@sha256:9ec4a2e289874ed0d722e1772ec2de45d2801541db8612f3638b26f128c69ac2 AS asset-env
+FROM node:24.22.1-alpine3.23@sha256:0468540aa58203ff9e40c2aab3907c52644ab818af6176b1c70a026137dc92a2 AS asset-env
 
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
 RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
@@ -14,7 +14,7 @@ COPY --link service-admin/public/.htaccess public/.htaccess
 COPY --link service-admin/public/robots.txt public/robots.txt
 RUN npm run build
 
-FROM nginx:1.31.6-alpine3.24@sha256:527de634221553670afa2617c96625cd0f860000f3525169b100f41c5b9b8213
+FROM nginx:1.31.8-alpine3.24@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
 
 # Remove unused packages
 RUN apk del freetype nginx-module-image-filter

@@ -20,7 +20,7 @@
                 {% if joinedSuccess %}
                   <div class="govuk-notification-banner__content">
                     <h3 class="govuk-notification-banner__heading">
-                      Shared Space joined
+                      You’ve joined the shared space.
                     </h3>
                   </div>
                 {% elseif createdSuccess %}
@@ -58,7 +58,7 @@
     </div>
     <div class="govuk-grid-column-one-third">
         <div class="panel-cta tablet-and-up">
-s            <div class="panel-heading govuk-heading-m">{{ lpaTotalCount > 0 ? 'Make another LPA' : 'Make an LPA' }}</div>
+            <div class="panel-heading govuk-heading-m">{{ lpaTotalCount > 0 ? 'Make another LPA' : 'Make an LPA' }}</div>
             <div class="panel-body">
                 <p class="govuk-body"><a id="create-new-lpa" class="govuk-button" data-cy="createnewlpa" href='{{ url('user/dashboard/create-lpa') }}' role="button">Start now</a></p>
                 {% if lpaTotalCount > 0 %}

@@ -12,7 +12,7 @@
         }
     ],
     "require": {
-        "php": "8.4.*",
+        "php": "~8.4.27",
         "aws/aws-sdk-php": "^3.393.2",
         "laminas/laminas-authentication": "^2.8",
         "laminas/laminas-filter": "^2.12.0",
@@ -53,7 +53,7 @@
             "php-http/discovery": false
         },
         "platform": {
-            "php": "8.4.13",
+            "php": "8.4.27",
             "ext-intl": "1"
         }
     }

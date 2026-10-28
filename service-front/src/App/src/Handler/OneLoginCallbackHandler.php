@@ -21,8 +21,8 @@ use RuntimeException;
 
 class OneLoginCallbackHandler implements RequestHandlerInterface
 {
-    private const string SESSION_KEY_ONELOGIN     = 'onelogin_auth';
-    private const string ERROR_TEMPLATE           = 'application/general/auth/onelogin-error.twig';
+    private const string SESSION_KEY_ONELOGIN      = 'onelogin_auth';
+    private const string ERROR_TEMPLATE            = 'application/general/auth/onelogin-error.twig';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -42,7 +42,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 'error_description' => $queryParams['error_description'] ?? null,
             ]);
 
-            return $this->renderError('There was a problem signing you in. Please try again.');
+            return $this->renderError($queryParams['error']);
         }
 
         $code  = $queryParams['code']  ?? null;
@@ -63,11 +63,13 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
 
         $expectedState = is_array($oneLoginAuth) ? ($oneLoginAuth['state'] ?? null) : null;
         $expectedNonce = is_array($oneLoginAuth) ? ($oneLoginAuth['nonce'] ?? null) : null;
+        $codeVerifier  = is_array($oneLoginAuth) ? ($oneLoginAuth['code_verifier'] ?? null) : null;
         $redirectUri   = is_array($oneLoginAuth) ? ($oneLoginAuth['redirect_uri'] ?? null) : null;
 
         if (
             !is_string($expectedState) || $expectedState === ''
             || !is_string($expectedNonce) || $expectedNonce === ''
+            || !is_string($codeVerifier) || $codeVerifier === ''
             || !is_string($redirectUri) || $redirectUri === ''
         ) {
             $this->logger->warning('auth.onelogin.session_missing', [
@@ -94,6 +96,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                     $code,
                     $state,
                     $expectedNonce,
+                    $codeVerifier,
                     $redirectUri,
                 );
             } catch (RuntimeException $e) {
@@ -121,7 +124,13 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
                 $session->set(AuthenticationMiddleware::SESSION_KEY_PRE_AUTH_URL, $preAuthUrl);
             }
 
-            $this->sessionManager->setPendingLink($session, $result['sub'], $result['email'], $result['idToken']);
+            $this->sessionManager->setPendingLink(
+                $session,
+                $result['sub'],
+                $result['email'],
+                $result['idToken'],
+                $result['signedInAt'],
+            );
 
             return new RedirectResponse('/which-best-describes-you');
         } finally {
@@ -131,10 +140,10 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         }
     }
 
-    private function renderError(string $message): HtmlResponse
+    private function renderError(string $errorType): HtmlResponse
     {
         return new HtmlResponse(
-            $this->renderer->render(self::ERROR_TEMPLATE, ['error' => $message]),
+            $this->renderer->render(self::ERROR_TEMPLATE, ['errorType' => $errorType]),
             400,
         );
     }

@@ -2,19 +2,20 @@
 
 namespace Application\Model\DataAccess\Postgres;
 
+use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\DataAccess\Repository\User\UpdateEmailUsingTokenResponse;
 use DateMalformedStringException;
-use Exception;
-use PDOException;
 use DateTime;
-use Laminas\Db\Sql\Expression as SqlExpression;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Predicate\Expression;
-use Laminas\Db\Sql\Predicate\IsNull;
-use Laminas\Db\Sql\Predicate\IsNotNull;
+use Exception;
 use Laminas\Db\Adapter\Exception\RuntimeException as LaminasDbAdapterRuntimeException;
+use Laminas\Db\Sql\Expression as SqlExpression;
+use Laminas\Db\Sql\Predicate\Expression;
+use Laminas\Db\Sql\Predicate\IsNotNull;
+use Laminas\Db\Sql\Predicate\IsNull;
+use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Select;
 use MakeShared\DataModel\User\User as ProfileUserModel;
-use Application\Model\DataAccess\Repository\User as UserRepository;
+use PDOException;
 
 class UserData extends AbstractBase implements UserRepository\UserRepositoryInterface
 {
@@ -32,7 +33,23 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     private function getByField(array $where): ?array
     {
         try {
-            $result = $this->dbWrapper->select(self::USERS_TABLE, $where, ['limit' => 1]);
+            $sql = $this->dbWrapper->createSql();
+
+            $select = $sql->select()
+                ->from(['users' => self::USERS_TABLE])
+                ->join(
+                    ['invites' => SharedSpaceData::SHARED_SPACE_INVITES],
+                    new SqlExpression('("users"."identity" = "invites"."email" OR "users"."one_login_email" = "invites"."email") AND "invites"."expires" > NOW()'),
+                    ['invite_count' => new SqlExpression('COUNT("invites"."id")')],
+                    Select::JOIN_LEFT,
+                )
+                ->where($where)
+                ->group(['users.id'])
+                ->limit(1);
+
+            $statement = $sql->prepareStatementForSqlObject($select);
+
+            $result = $statement->execute();
         } catch (LaminasDbAdapterRuntimeException $e) {
             // this occurs where the select against the db fails
             return null;
@@ -99,7 +116,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByUsername(string $username): ?UserRepository\UserInterface
     {
-        $user = $this->getByField(['identity' => $username]);
+        $user = $this->getByField(['users.identity' => $username]);
 
         if (!is_array($user)) {
             return null;
@@ -110,7 +127,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     public function getByOneLoginEmail(string $email): ?UserRepository\UserInterface
     {
-        $user = $this->getByField(['one_login_email' => $email]);
+        $user = $this->getByField(['users.one_login_email' => $email]);
 
         if (!is_array($user)) {
             return null;
@@ -121,7 +138,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
     public function getByOneLoginSub(string $sub): ?UserRepository\UserInterface
     {
-        $user = $this->getByField(['one_login_sub' => $sub]);
+        $user = $this->getByField(['users.one_login_sub' => $sub]);
 
         if (!is_array($user)) {
             return null;
@@ -233,7 +250,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getById(string $id): ?UserRepository\UserInterface
     {
-        $user = $this->getByField(['id' => $id]);
+        $user = $this->getByField(['users.id' => $id]);
 
         if (!is_array($user)) {
             return null;
@@ -248,7 +265,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByAuthToken(string $token): ?UserRepository\UserInterface
     {
-        $user = $this->getByField([new Expression("auth_token ->> 'token' = ?", $token)]);
+        $user = $this->getByField([new Expression("users.auth_token ->> 'token' = ?", $token)]);
 
         if (!is_array($user)) {
             return null;
@@ -263,7 +280,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getByResetToken(string $token): ?UserRepository\UserInterface
     {
-        $user = $this->getByField([new Expression("password_reset_token ->> 'token' = ?", $token)]);
+        $user = $this->getByField([new Expression("users.password_reset_token ->> 'token' = ?", $token)]);
 
         if (!is_array($user)) {
             return null;
@@ -635,7 +652,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function updateEmailUsingToken(string $token): UserRepository\UpdateEmailUsingTokenResponse
     {
-        $user = $this->getByField([new Expression("email_update_request -> 'token' ->> 'token' = ?", $token)]);
+        $user = $this->getByField([new Expression("users.email_update_request -> 'token' ->> 'token' = ?", $token)]);
 
         if (!is_array($user)) {
             return new UserRepository\UpdateEmailUsingTokenResponse('invalid-token');
@@ -653,7 +670,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
 
         $newEmail = $request['email'];
 
-        $clashUser = $this->getByField(['identity' => $newEmail]);
+        $clashUser = $this->getByField(['users.identity' => $newEmail]);
 
         if (is_array($clashUser)) {
             return new UserRepository\UpdateEmailUsingTokenResponse('username-already-exists');
@@ -679,13 +696,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     }
 
     /**
-     * Returns all accounts that have not been logged into since $since.
-     *
-     * If $excludeFlag is set, accounts that contain the passed flag will be excluded.
-     *
-     * @param DateTime $since
-     * @param string|null $excludeFlag
-     * @return iterable
+     * @InheritDoc
      */
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable
     {
@@ -799,7 +810,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
      */
     public function getProfile($id): ?ProfileUserModel
     {
-        $user = $this->getByField(['id' => $id]);
+        $user = $this->getByField(['users.id' => $id]);
 
         if (!is_array($user) || !isset($user['profile'])) {
             return null;
@@ -812,6 +823,7 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'updatedAt' => $user['updated'],
             'lastLoginAt' => $user['last_login'],
             'isProfessional' => $user['is_professional'],
+            'isInvited' => $user['invite_count'] > 0,
         ]);
 
         if (!empty($user['one_login_email'])) {

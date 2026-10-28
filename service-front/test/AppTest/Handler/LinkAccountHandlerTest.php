@@ -9,6 +9,7 @@ use App\Handler\LinkAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -24,6 +25,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
 class LinkAccountHandlerTest extends TestCase
 {
@@ -55,7 +57,7 @@ class LinkAccountHandlerTest extends TestCase
             $this->renderer,
             $this->formElementManager,
             $this->oneLoginService,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->logger,
         );
     }
@@ -70,7 +72,12 @@ class LinkAccountHandlerTest extends TestCase
     ): ServerRequest {
         $pendingLink = $pendingSub === null
             ? null
-            : ['sub' => $pendingSub, 'email' => 'newuser@example.com', 'idToken' => self::PENDING_ID_TOKEN];
+            : [
+                'sub'        => $pendingSub,
+                'email'      => 'newuser@example.com',
+                'idToken'    => self::PENDING_ID_TOKEN,
+                'signedInAt' => time(),
+            ];
 
         $this->session
             ->method('get')

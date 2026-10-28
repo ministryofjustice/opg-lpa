@@ -1,7 +1,7 @@
 [project]
 name = "locust-tests"
 version = "0.0.0"
-requires-python = "==3.14.7"
+requires-python = "==3.14.9"
 dependencies = [
     "boto3==1.43.96",
     "locust==2.46.5",

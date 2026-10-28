@@ -8,6 +8,7 @@ use App\Handler\CannotLinkAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\OneLogin\OneLoginSessionManager;
+use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -19,6 +20,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use RuntimeException;
 
 use function array_key_exists;
@@ -42,7 +44,7 @@ class CannotLinkAccountHandlerTest extends TestCase
 
         $this->handler = new CannotLinkAccountHandler(
             $this->renderer,
-            new OneLoginSessionManager(),
+            new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->logger,
             $this->urlHelper,
         );
@@ -52,7 +54,7 @@ class CannotLinkAccountHandlerTest extends TestCase
     {
         $pendingLink = $pendingSub === null
             ? null
-            : ['sub' => $pendingSub, 'email' => 'newuser@example.com', 'idToken' => 'pending.id.token'];
+            : ['sub' => $pendingSub, 'email' => 'newuser@example.com', 'idToken' => 'pending.id.token', 'signedInAt' => time()];
 
         $this->session
             ->method('get')

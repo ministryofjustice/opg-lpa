@@ -1,7 +1,12 @@
-FROM fsouza/docker-ssl-proxy:1.6@sha256:47d7505e2524e7396e92b6a05188d375b4d7d8bd22b2a758fd9432529cd2e84a
-
-# replace the nginx config from docker-ssl-proxy with a version tweaked
-# to mock out an X-Amzn-Trace-Id header
-COPY ./local-ssl/docker/nginx.conf.template /
+FROM nginx:1.31.8-alpine3.24@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
 
 RUN apk upgrade --no-cache
+
+# the nginx entrypoint renders templates with envsubst; write the result over
+# nginx.conf. This config is tweaked to mock out an X-Amzn-Trace-Id header
+ENV NGINX_ENVSUBST_OUTPUT_DIR=/etc/nginx \
+    TARGET_SCHEME=http \
+    CLIENT_MAX_BODY_SIZE=20M \
+    SSL_PORT=443
+
+COPY ./local-ssl/docker/nginx.conf.template /etc/nginx/templates/nginx.conf.template

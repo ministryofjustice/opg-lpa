@@ -1,0 +1,17 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DenyAllExceptBreakglass",
+      "Effect": "Deny",
+      "Principal": "*",
+      "Action": ["secretsmanager:*"],
+      "Resource": ["secret_arn"],
+      "Condition": {
+        "ArnNotEquals": {
+          "aws:PrincipalArn": "breakglass_role"
+        }
+      }
+    }
+  ]
+}

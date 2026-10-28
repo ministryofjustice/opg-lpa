@@ -4,7 +4,7 @@ RUN apk add --update --no-cache postgresql-client && \
     apk upgrade --no-cache
 
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
-RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
+RUN apk update && apk add --upgrade "zlib==1.3.2-r1" "ca-certificates-bundle==20261020-r0"
 
 RUN rm -rf /var/cache/apk/* /tmp/*
 

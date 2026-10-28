@@ -10,6 +10,7 @@ readonly class PendingLink
         public string $sub,
         public string $email,
         public string $idToken,
+        public int $signedInAt,
     ) {
     }
 }
