@@ -37,7 +37,7 @@ Feature: OneLoginPasswordReset
 
     When I use password reset email for "OneLoginResetControlUser" to visit the link
     And I choose a new password
-    Then I see "Password successfully reset" in the page text
+    Then I see "You’ve reset the password for your existing account." in the page text
 
   Scenario: Repeated password sign-in attempts never lock a One Login account
     When I attempt to sign in 6 times with an incorrect password as the "already linked" account
