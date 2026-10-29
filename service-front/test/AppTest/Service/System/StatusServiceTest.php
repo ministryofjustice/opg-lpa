@@ -12,7 +12,6 @@ use App\Service\System\StatusService;
 use Aws\DynamoDb\DynamoDbClient;
 use Aws\Result;
 use Exception;
-use MakeShared\Constants;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface;
@@ -70,58 +69,6 @@ class StatusServiceTest extends TestCase
         $this->assertInstanceOf(StatusService::class, $service);
     }
 
-    public function testCheckReturnsWarnWhenOptionalServiceIsUnavailable(): void
-    {
-        $this->apiClient->expects($this->once())
-            ->method('httpGet')
-            ->with('/ping')
-            ->willReturn([
-                'ok'      => true,
-                'status'  => Constants::STATUS_PASS,
-                'version' => '1.2.3',
-            ]);
-        $this->sessionSaveHandler->expects($this->once())
-            ->method('open')
-            ->with('', '')
-            ->willReturn(true);
-        $this->mailTransport->expects($this->once())
-            ->method('healthcheck')
-            ->willReturn([
-                'ok'     => true,
-                'status' => Constants::STATUS_PASS,
-            ]);
-
-        $result = $this->createMock(Result::class);
-        $result->method('toArray')->willReturn([
-            '@metadata' => ['statusCode' => 200],
-            'Table'     => ['TableStatus' => 'ACTIVE'],
-        ]);
-        $this->dynamoDbClient->expects($this->once())
-            ->method('__call')
-            ->with('describeTable', [['TableName' => 'status-table']])
-            ->willReturn($result);
-
-        $this->redisClient->expects($this->once())->method('open');
-        $this->redisClient->expects($this->exactly(3))
-            ->method('read')
-            ->willReturnCallback(fn (string $key) => match ($key) {
-                'os_last_call' => (string) time(),
-                'os_last_status' => '',
-                'os_last_details' => json_encode('cached failure'),
-            });
-        $this->redisClient->expects($this->once())->method('close');
-
-        $result = $this->createService()->check();
-
-        /** @var array<string, mixed> $result */
-        $this->assertTrue($result['ok']);
-        $this->assertSame(Constants::STATUS_WARN, $result['status']);
-        $this->assertSame(Constants::STATUS_PASS, $result['api']['status']);
-        $this->assertSame(Constants::STATUS_PASS, $result['dynamo']['status']);
-        $this->assertFalse($result['ordnanceSurvey']['ok']);
-        $this->assertTrue($result['ordnanceSurvey']['cached']);
-    }
-
     public function testCheckApiReturnsPassResultOnSuccessfulPing(): void
     {
         $this->apiClient->expects($this->once())
@@ -129,7 +76,6 @@ class StatusServiceTest extends TestCase
             ->with('/ping')
             ->willReturn([
                 'ok'      => true,
-                'status'  => Constants::STATUS_PASS,
                 'service' => 'api',
             ]);
 
@@ -137,7 +83,6 @@ class StatusServiceTest extends TestCase
 
         $this->assertSame([
             'ok'      => true,
-            'status'  => Constants::STATUS_PASS,
             'details' => [
                 'response_code' => 200,
                 'service'       => 'api',
@@ -155,7 +100,6 @@ class StatusServiceTest extends TestCase
         $result = $this->invokePrivate($this->createService(), 'checkApi');
 
         $this->assertFalse($result['ok']);
-        $this->assertSame(Constants::STATUS_FAIL, $result['status']);
         $this->assertSame(500, $result['details']['response_code']);
     }
 
@@ -175,11 +119,11 @@ class StatusServiceTest extends TestCase
             ->willReturn(false);
 
         $this->assertSame(
-            ['ok' => true, 'status' => Constants::STATUS_PASS],
+            ['ok' => true],
             $this->invokePrivate($serviceWithoutHandler, 'checkSession')
         );
         $this->assertSame(
-            ['ok' => false, 'status' => Constants::STATUS_FAIL],
+            ['ok' => false],
             $this->invokePrivate($serviceWithFailingHandler, 'checkSession')
         );
     }
@@ -188,7 +132,7 @@ class StatusServiceTest extends TestCase
     {
         $this->mailTransport->expects($this->once())
             ->method('healthcheck')
-            ->willReturn(['ok' => false, 'status' => Constants::STATUS_FAIL]);
+            ->willReturn(['ok' => false]);
 
         $serviceWithMail    = new StatusService(
             $this->apiClient,
@@ -200,11 +144,11 @@ class StatusServiceTest extends TestCase
         $serviceWithoutMail = new StatusService($this->apiClient, $this->httpClient);
 
         $this->assertSame(
-            ['ok' => false, 'status' => Constants::STATUS_FAIL],
+            ['ok' => false],
             $this->invokePrivate($serviceWithMail, 'checkMail')
         );
         $this->assertSame(
-            ['ok' => true, 'status' => Constants::STATUS_PASS],
+            ['ok' => true],
             $this->invokePrivate($serviceWithoutMail, 'checkMail')
         );
     }
@@ -227,7 +171,6 @@ class StatusServiceTest extends TestCase
 
         $this->assertSame([
             'ok'      => true,
-            'status'  => Constants::STATUS_PASS,
             'details' => [
                 'url' => 'http://pay.example.com/healthcheck',
                 'response_code' => 200,
@@ -242,7 +185,6 @@ class StatusServiceTest extends TestCase
             ->with('/health-check/dependencies')
             ->willReturn([
                 'ok'     => true,
-                'status' => Constants::STATUS_PASS,
                 'other'  => 'data',
             ]);
 
@@ -250,7 +192,6 @@ class StatusServiceTest extends TestCase
 
         $this->assertSame([
             'ok'      => true,
-            'status'  => Constants::STATUS_PASS,
             'details' => [
                 'other' => 'data',
             ],
@@ -271,7 +212,7 @@ class StatusServiceTest extends TestCase
             ->willReturn($result);
 
         $this->assertSame(
-            ['ok' => true, 'status' => Constants::STATUS_PASS],
+            ['ok' => true],
             $this->invokePrivate($this->createService(), 'checkDynamo')
         );
     }
@@ -284,7 +225,7 @@ class StatusServiceTest extends TestCase
             ->willThrowException(new Exception('Dynamo unavailable'));
 
         $this->assertSame(
-            ['ok' => false, 'status' => Constants::STATUS_FAIL],
+            ['ok' => false],
             $this->invokePrivate($this->createService(), 'checkDynamo')
         );
     }
@@ -305,7 +246,6 @@ class StatusServiceTest extends TestCase
         $result = $this->invokePrivate($this->createService(), 'checkOrdnanceSurvey');
 
         $this->assertTrue($result['ok']);
-        $this->assertSame(Constants::STATUS_PASS, $result['status']);
         $this->assertTrue($result['cached']);
         $this->assertSame(['postcode' => 'SW1A 1AA'], $result['details']);
     }
@@ -350,7 +290,6 @@ class StatusServiceTest extends TestCase
 
         $this->assertSame([
             'ok'      => true,
-            'status'  => Constants::STATUS_PASS,
             'cached'  => false,
             'details' => $lookupResult[0],
         ], $result);
@@ -378,7 +317,6 @@ class StatusServiceTest extends TestCase
 
         $this->assertSame([
             'ok'      => false,
-            'status'  => Constants::STATUS_FAIL,
             'cached'  => false,
             'details' => '',
         ], $result);
