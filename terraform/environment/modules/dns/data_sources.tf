@@ -9,7 +9,7 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
 }
 
 data "aws_kms_alias" "sns_kms_key_alias_global" {
-  name     = "opg-lpa-${var.account_name}-sns-encryption-key"
+  name     = "alias/opg-lpa-${var.account_name}-sns-encryption-key"
   provider = aws.us_east_1
 }
 
