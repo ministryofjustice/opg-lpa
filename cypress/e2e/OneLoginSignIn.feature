@@ -62,10 +62,48 @@ Feature: One Login Sign In
     Then I can find "banner"
     And I cannot find "one-login-header"
 
-  Scenario: Signed-in users get the One Login header, which carries the sign-out link
-    Given I log in as appropriate test user
+  Scenario: Users signed in through One Login get the One Login header, which carries the sign-out link
+    Given I sign in through mock One Login with a new Make account
     Then I can find "one-login-header" and it is visible
     And I cannot find "banner"
     And the "one-login-account-link" link goes to "https://home.account.gov.uk"
     And the "sign-out" link goes to "/logout"
     And the service navigation has no sign-out link
+
+  Scenario: A password user keeps the GOV.UK header and the service navigation's sign-out link
+    Given I log in as appropriate test user
+    Then I can find "banner"
+    And I cannot find "one-login-header"
+    And the service navigation has a sign-out link
+
+  Scenario: A returning user whose account is linked goes straight to their LPAs
+    Given I create a new user with 1 LPA
+    And the newly created fixture user has linked their Make account to One Login
+    And I sign out and am signed out of One Login
+    When I log in through Onelogin as the newly created fixture user
+    Then I am taken to "/user/dashboard"
+    And I am signed in to Make
+
+  Scenario: A returning user who follows a link while signed out is taken back to it after signing in
+    Given I create a new user with 1 LPA
+    And the newly created fixture user has linked their Make account to One Login
+    And I sign out and am signed out of One Login
+    When I visit "/user/about-you" without being logged in
+    And I click "onelogin-signin-button"
+    And I continue through mock One Login as the newly created fixture user
+    Then I am taken to "/user/about-you"
+
+  Scenario: A new user who follows a link while signed out is taken back to it after onboarding
+    When I visit "/user/about-you" without being logged in
+    And I click "onelogin-signin-button"
+    And I continue through mock One Login
+    And I say I make LPAs for "myself, family or friends"
+    And I create a new Make account
+    Then I am taken to "/user/about-you"
+
+  Scenario: The back-channel logout endpoint answers One Login with a 200 for a token it cannot accept
+    Then a back-channel logout request with "no logout token" is answered with a 200
+    And a back-channel logout request with "an invalid logout token" is answered with a 200
+
+  Scenario: The JWKS endpoint publishes the key One Login uses to check our signed requests
+    Then the JWKS endpoint publishes our signing key

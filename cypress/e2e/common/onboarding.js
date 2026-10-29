@@ -21,7 +21,7 @@ const LINK_ACCOUNT_RESET_PASSWORD = '/link-account/reset-password';
 Then(`I am asked which best describes me`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + WHICH_BEST_DESCRIBES_YOU);
   cy.contains('h1', 'Which best describes you?').should('be.visible');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I say I make LPAs for {string}`, sayIMakeLpasFor);
@@ -50,7 +50,7 @@ Then(`I see the One Login header but not the Make navigation`, () => {
 Then(`I am asked whether I have an existing Make account`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + EXISTING_ACCOUNT);
   cy.contains('h1', 'Do you have an existing Make a lasting power of attorney account?').should('be.visible');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I say {string}`, sayWhetherIHaveAnAccount);
@@ -80,7 +80,7 @@ Then(`I am asked for my details`, () => {
   cy.contains('a', 'Enter address manually').should('not.be.visible');
   cy.get('[data-cy="address-address1"]').should('be.visible');
   cy.get('[data-cy="address-postcode"]').should('be.visible');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I enter my name and date of birth and save`, () => {
@@ -100,7 +100,7 @@ Then(`I am told to enter my name`, () => {
     .should('be.visible')
     .and('contain', 'Enter your first names')
     .and('contain', 'Enter your last name');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`my new Make account has my details`, () => {
@@ -121,7 +121,7 @@ Then(`I am asked whether I want to keep my existing LPAs`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + KEEP_YOUR_LPAS);
   cy.contains('h1', 'Keeping your lasting powers of attorney (LPAs) and account information').should('be.visible');
   cy.get('.govuk-warning-text').should('contain', 'you will lose access to that information permanently');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I say {string} to keeping my existing LPAs`, sayWhetherIKeepMyLpas);
@@ -143,7 +143,7 @@ Then(`I am asked to sign in to my existing Make account`, () => {
     'be.visible',
   );
   cy.get('[data-cy="link-account-submit"]').should('have.text', 'Keep LPAs and account information');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I am asked for the email address of my existing Make account`, () => {
@@ -152,7 +152,7 @@ Then(`I am asked for the email address of my existing Make account`, () => {
     'be.visible',
   );
   cy.get('[data-cy="email-me-the-link"]').should('have.text', 'Email me the link');
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict();
 });
 
 Then(`I ask for a password reset link for {string} confirmed as {string}`, (email, confirmation) => {

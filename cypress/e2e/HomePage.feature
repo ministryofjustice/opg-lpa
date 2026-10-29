@@ -37,3 +37,15 @@ Feature: Homepage
     Given I visit "/home"
     When I click "onelogin-continue-button"
     Then I am on the mock One Login page
+
+  Scenario: The sign-in changes page explains the move to GOV.UK One Login
+    Given I visit "/onelogin-changes"
+    Then I see "We are changing the way you sign in to Make a lasting power of attorney" in the title
+    And the page has no accessibility violations
+    When I click link "Back"
+    Then I am taken to "/home"
+
+  @RequiresOneLogin
+  Scenario: With GOV.UK One Login on, the home page has no sign-in changes banner
+    Given I visit "/home"
+    Then I do not see "Read more about this change" in the page text

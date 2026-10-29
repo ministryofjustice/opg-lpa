@@ -6,6 +6,10 @@ export function tokenFor(email) {
   return sha1Obj.getHash('HEX');
 }
 
+export function newPassword() {
+  return 'NewPassword' + Cypress.env('userNumber');
+}
+
 export function openEmailAndVisitLink(type, identifier) {
   const token = tokenFor(identifier);
 

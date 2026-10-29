@@ -116,6 +116,11 @@ Cypress.Commands.add("OPGCheckA11y", (axeOptions, stopOnError, pageState) => {
     });
 });
 
+
+Cypress.Commands.add("OPGCheckA11yStrict", (pageState) => {
+    cy.OPGCheckA11y({}, true, pageState === undefined ? 'strict' : 'strict-' + pageState);
+});
+
 Cypress.Commands.add("OPGCheckA11yWithUrl", (url) => {
     if (!Cypress.env("a11yCheckedPages").has(url)) {
         cy.OPGCheckA11y();

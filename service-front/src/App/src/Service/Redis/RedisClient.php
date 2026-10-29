@@ -97,6 +97,16 @@ class RedisClient
         return $success !== false;
     }
 
+    /**
+     * Atomically stores the value only if the key does not exist yet.
+     *
+     * @return bool true if this call stored the value, false if the key already existed
+     */
+    public function writeIfAbsent(string $id, string $data, int $ttlSeconds): bool
+    {
+        return $this->redisClient->set($id, $data, ['nx', 'ex' => $ttlSeconds]) === true;
+    }
+
     public function destroy(string $id): bool
     {
         $this->redisClient->del($id);
