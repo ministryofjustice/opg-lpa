@@ -67,25 +67,29 @@ class Service extends AbstractService
 
     /**
      * Execute the account cleanup
+     *
+     * @param bool $dryRun When true, nothing is deleted, flagged or sent; the actions that
+     *                     would have been taken are logged instead.
      */
-    public function cleanup(): int
+    public function cleanup(bool $dryRun = false): int
     {
         //  Delete inactive accounts
-        $expiredAccountsDeletedCount = $this->deleteExpiredAccounts();
+        $expiredAccountsDeletedCount = $this->deleteExpiredAccounts($dryRun);
 
         //  Account inactive for 8 months and 3 weeks (1 week remaining)...
-        $expiryAccountsWarning1WeekCount = $this->sendWarningEmails(self::WARNING_1_WEEK_NOTICE);
+        $expiryAccountsWarning1WeekCount = $this->sendWarningEmails(self::WARNING_1_WEEK_NOTICE, $dryRun);
 
         //  Account inactive for 8 months (1 month remaining)...
-        $expiryAccountsWarning1MonthCount = $this->sendWarningEmails(self::WARNING_1_MONTH_NOTICE);
+        $expiryAccountsWarning1MonthCount = $this->sendWarningEmails(self::WARNING_1_MONTH_NOTICE, $dryRun);
 
         //  Remove accounts that have not been activated
-        $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts();
+        $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts($dryRun);
 
         $result = 0;
 
         // Send Account Cleanup notifications to site admins.
         if (
+            !$dryRun &&
             isset($this->config['admin']['account_cleanup_notification_recipients']) &&
             is_array($this->config['admin']['account_cleanup_notification_recipients'])
         ) {
@@ -110,7 +114,8 @@ class Service extends AbstractService
             }
         }
 
-        $this->getLogger()->info('Account cleanup completed', [
+        $this->getLogger()->info($dryRun ? 'Account cleanup dry run completed' : 'Account cleanup completed', [
+            'dryRun'                            => $dryRun,
             'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
             'expiryAccountsWarning1WeekCount'   => $expiryAccountsWarning1WeekCount,
             'expiryAccountsWarning1MonthCount'  => $expiryAccountsWarning1MonthCount,
@@ -125,6 +130,7 @@ class Service extends AbstractService
      * warning when their account will be deleted.
      *
      * @param $warningType: '1-week-notice', '1-month-notice'
+     * @param bool $dryRun Log the email that would be sent, without sending it or flagging the account
      *
      * @return int The number of users notified
      *
@@ -132,7 +138,7 @@ class Service extends AbstractService
      *
      * @psalm-param '1-month-notice'|'1-week-notice' $warningType
      */
-    private function sendWarningEmails(string $warningType)
+    private function sendWarningEmails(string $warningType, bool $dryRun = false)
     {
         if (!array_key_exists($warningType, $this->warningEmailConfig)) {
             throw new Exception('Invalid warning type: ' . $warningType);
@@ -153,6 +159,17 @@ class Service extends AbstractService
 
             try {
                 $personalisations = $this->buildPersonalisations($user, $notificationDate);
+
+                if ($dryRun) {
+                    $this->getLogger()->info('Dry run: would send account expiry notification', [
+                        'warning-type' => $warningType,
+                        'template-id' => $templateId,
+                        'user-id' => $user->id(),
+                        'personalisations' => $personalisations,
+                    ]);
+                    $counter++;
+                    continue;
+                }
 
                 // Call the notify to send the reminder email - this will thrown an exception on any errors
                 $this->notifyClient->sendEmail($user->contactEmail(), $templateId, $personalisations);
@@ -213,7 +230,7 @@ class Service extends AbstractService
      *
      * @return int The number of accounts deleted
      */
-    private function deleteExpiredAccounts()
+    private function deleteExpiredAccounts(bool $dryRun = false)
     {
         $lastLoginBefore = new DateTime('-9 months');
 
@@ -225,8 +242,12 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            //  Delete the user - this will also delete any LPAs
-            $this->usersService->delete($user->id(), 'expired');
+            if ($dryRun) {
+                $this->getLogger()->info('Dry run: would delete expired account', ['user-id' => $user->id()]);
+            } else {
+                //  Delete the user - this will also delete any LPAs
+                $this->usersService->delete($user->id(), 'expired');
+            }
 
             $counter++;
         }
@@ -239,7 +260,7 @@ class Service extends AbstractService
      *
      * @return int The number of accounts deleted
      */
-    private function deleteUnactivatedAccounts()
+    private function deleteUnactivatedAccounts(bool $dryRun = false)
     {
         $unactivatedSince = new DateTime('-24 hours');
 
@@ -251,8 +272,12 @@ class Service extends AbstractService
         $counter = 0;
 
         foreach ($iterator as $user) {
-            //  Delete the user account
-            $this->usersService->delete($user->id(), 'unactivated');
+            if ($dryRun) {
+                $this->getLogger()->info('Dry run: would delete unactivated account', ['user-id' => $user->id()]);
+            } else {
+                //  Delete the user account
+                $this->usersService->delete($user->id(), 'unactivated');
+            }
 
             $counter++;
         }

@@ -464,8 +464,9 @@ reset-front-app:
 	@${MAKE} dc-restart-web
 
 .PHONY: dc-account-cleanup
+# Add DRY_RUN=1 to log what would happen without deleting, flagging or emailing anything.
 dc-account-cleanup:
-	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup; echo "exit code: $$?"'
+	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run); echo "exit code: $$?"'
 
 # Run one-off jobs as an api-cron ECS task in a development-account environment.
 # Needs aws-vault (profile below); production/preproduction are refused by the script.
@@ -475,12 +476,12 @@ AWS_RUN_CRON_TASK = aws-vault exec ${AWS_CLEANUP_PROFILE} -- ./scripts/run_api_c
 # Sets last_login for a user (matched by identity or One Login email) to now() - INTERVAL.
 AWS_AGE_USER_LOGIN_PHP = $$d = new PDO(sprintf("pgsql:host=%s;port=%s;dbname=%s", getenv("OPG_LPA_POSTGRES_HOSTNAME"), getenv("OPG_LPA_POSTGRES_PORT"), getenv("OPG_LPA_POSTGRES_NAME")), getenv("OPG_LPA_POSTGRES_USERNAME"), getenv("OPG_LPA_POSTGRES_PASSWORD")); $$s = $$d->prepare("UPDATE users SET last_login = now() - CAST(:i AS interval) WHERE identity = :e1 OR one_login_email = :e2"); $$s->execute([":i" => $$argv[1], ":e1" => $$argv[2], ":e2" => $$argv[2]]); echo "rows updated: " . $$s->rowCount() . PHP_EOL;
 
-# This is NOT a dry run: it sends warning emails and deletes expired accounts.
-# Usage: make aws-account-cleanup ENV=<workspace>
+# Sends warning emails and deletes expired accounts unless DRY_RUN=1 is given.
+# Usage: make aws-account-cleanup ENV=<workspace> [DRY_RUN=1]
 .PHONY: aws-account-cleanup
 aws-account-cleanup:
 	@test -n "${ENV}" || { echo "Usage: make aws-account-cleanup ENV=<workspace>"; exit 1; }
-	@${AWS_RUN_CRON_TASK} php /app/vendor/bin/laminas service-api:account-cleanup
+	@${AWS_RUN_CRON_TASK} php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run)
 
 # Usage: make aws-age-user-login ENV=<workspace> EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']
 .PHONY: aws-age-user-login

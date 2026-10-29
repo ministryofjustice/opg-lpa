@@ -386,6 +386,67 @@ class ServiceTest extends AbstractServiceTestCase
         $this->assertSame(0, $this->buildService()->cleanup());
     }
 
+    public function testCleanupDryRunDoesNotDeleteFlagOrSend(): void
+    {
+        $sharedSpaceMember = new User([
+            'id' => 2,
+            'identity' => 'onelogin:urn:fdc:gov.uk:2022:sub-123',
+            'one_login_sub' => 'urn:fdc:gov.uk:2022:sub-123',
+            'one_login_email' => 'ol@example.com',
+            'isActiveInSharedSpace' => true,
+            'sharedSpaceName' => 'Example Shared Space',
+            'sharedSpaceId' => 'shared-space-1',
+            'last_login' => new DateTime('-9 months +1 week'),
+        ]);
+        $monthUser = new User(['id' => 3, 'identity' => 'unit@test.com', 'last_login' => new DateTime('-8 months')]);
+
+        $this->setAccountsExpectations(
+            [new User(['id' => 1])],
+            [$sharedSpaceMember],
+            [$monthUser],
+            [new User(['id' => 4])]
+        );
+
+        $this->notifyClient->shouldNotReceive('sendEmail');
+        $this->usersService->shouldNotReceive('delete');
+        $this->authUserRepository->shouldNotReceive('setInactivityFlag');
+        $this->sharedSpaceService->shouldNotReceive('hasExactlyOneActiveAdmin');
+        $this->logger->shouldNotReceive('alert');
+        $this->logger->shouldNotReceive('warning');
+
+        $this->logger->shouldReceive('info')
+            ->with('Dry run: would delete expired account', ['user-id' => 1])
+            ->once();
+        $this->logger->shouldReceive('info')
+            ->with('Dry run: would delete unactivated account', ['user-id' => 4])
+            ->once();
+        $this->logger->shouldReceive('info')
+            ->with('Dry run: would send account expiry notification', Mockery::on(function (array $extra) {
+                return $extra['user-id'] == 2
+                    && $extra['warning-type'] === AccountCleanupService::WARNING_1_WEEK_NOTICE
+                    && $extra['template-id'] === '84c0ea7d-1c18-4032-bf17-ee482a536d6e'
+                    && $extra['personalisations']['sharedSpaceName'] === 'Example Shared Space';
+            }))
+            ->once();
+        $this->logger->shouldReceive('info')
+            ->with('Dry run: would send account expiry notification', Mockery::on(function (array $extra) {
+                return $extra['user-id'] == 3
+                    && $extra['warning-type'] === AccountCleanupService::WARNING_1_MONTH_NOTICE;
+            }))
+            ->once();
+        $this->logger->shouldReceive('info')
+            ->with('Account cleanup dry run completed', Mockery::on(function (array $extra) {
+                return $extra['dryRun'] === true
+                    && $extra['expiredAccountsDeletedCount'] === 1
+                    && $extra['expiryAccountsWarning1WeekCount'] === 1
+                    && $extra['expiryAccountsWarning1MonthCount'] === 1
+                    && $extra['unactivatedAccountsDeletedCount'] === 1;
+            }))
+            ->once();
+
+        $this->assertSame(0, $this->buildService()->cleanup(true));
+    }
+
     public function testCleanupOneWeekWarningAccountsNotifyException()
     {
         $this->setAccountsExpectations([], [new User([
