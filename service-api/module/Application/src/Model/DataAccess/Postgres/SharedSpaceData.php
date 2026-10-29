@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Application\Model\DataAccess\Postgres;
 
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
+use Application\Model\Service\SharedSpace\InviteExpiredException;
+use Application\Model\Service\SharedSpace\InviteNotFoundException;
+use Application\Model\Service\SharedSpace\InviteNotMatchedException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceNotFoundException;
 use Application\Model\Entity\MemberInvite;
@@ -383,39 +386,56 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function getInvite(string $accessCode, string $sharedSpaceName, string $userEmail): ?MemberInvite
+    public function getInvite(string $accessCode, string $sharedSpaceName, string $userEmail): MemberInvite
     {
         $sql = $this->dbWrapper->createSql();
         $select = $sql->select()
             ->from(['invite' => self::SHARED_SPACE_INVITES])
             ->join(['space' => self::SHARED_SPACE], 'invite.sharedSpaceId = space.id', ['name'])
-            ->where([
-                'invite.code' => $accessCode,
-                'invite.email' => $userEmail,
-                'space.name' => $sharedSpaceName,
-            ])
-            ->limit(1);
+            ->where(['invite.email' => $userEmail]);
 
         $result = $sql->prepareStatementForSqlObject($select)->execute();
 
-        if (!$result->isQueryResult() || $result->count() !== 1) {
-            return null;
+        if (!$result->isQueryResult() || $result->count() === 0) {
+            throw new InviteNotFoundException();
         }
 
-        $value = $result->current();
+        $hasUsable = false;
 
-        return new MemberInvite(
-            id: (int) $value['id'],
-            userId: $value['invitedBy'],
-            sharedSpaceId: $value['sharedSpaceId'],
-            firstNames: $value['firstNames'],
-            lastName: $value['lastName'],
-            email: $value['email'],
-            isAdmin: $value['isAdmin'],
-            code: $value['code'],
-            created: new DateTime($value['created']),
-            expires: new DateTime($value['expires']),
-        );
+        foreach ($result as $value) {
+            $invite = new MemberInvite(
+                id: (int) $value['id'],
+                userId: $value['invitedBy'],
+                sharedSpaceId: $value['sharedSpaceId'],
+                firstNames: $value['firstNames'],
+                lastName: $value['lastName'],
+                email: $value['email'],
+                isAdmin: $value['isAdmin'],
+                code: $value['code'],
+                created: new DateTime($value['created']),
+                expires: new DateTime($value['expires']),
+            );
+
+            if ($value['code'] === $accessCode && $value['name'] === $sharedSpaceName) {
+                if ($invite->canBeDeleted()) {
+                    throw new InviteNotFoundException();
+                }
+                if ($invite->isExpired()) {
+                    throw new InviteExpiredException($invite->expires->format('c'));
+                }
+
+                return $invite;
+            } elseif (!$hasUsable && !$invite->isExpired() && !$invite->canBeDeleted()) {
+                $hasUsable = true;
+            } elseif ($invite->isExpired() && !$invite->canBeDeleted() && $result->count() === 1) {
+                // As we need to display when the invite expires on the error
+                // page, we can only returned invite expired when details don't
+                // match if there is only a single invite for the email.
+                throw new InviteExpiredException($invite->expires->format('c'));
+            }
+        }
+
+        throw ($hasUsable ? new InviteNotMatchedException() : new InviteNotFoundException());
     }
 
     /**
