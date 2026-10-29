@@ -26,6 +26,7 @@ Feature: OneLoginPasswordReset
     And I choose a new password
     Then I see "That password link does not work" in the title
 
+  @RequiresOneLogin
   Scenario: An ordinary account still gets a working reset link
     Given I sign up "OneLoginResetControlUser" test user with password "Pass12345678"
     When I use activation email for "OneLoginResetControlUser" to visit the link
@@ -37,7 +38,7 @@ Feature: OneLoginPasswordReset
 
     When I use password reset email for "OneLoginResetControlUser" to visit the link
     And I choose a new password
-    Then I see "Password successfully reset" in the page text
+    Then I see "You’ve reset the password for your existing account." in the page text
 
   Scenario: Repeated password sign-in attempts never lock a One Login account
     When I attempt to sign in 6 times with an incorrect password as the "already linked" account
