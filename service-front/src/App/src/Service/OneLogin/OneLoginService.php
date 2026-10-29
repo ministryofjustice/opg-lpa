@@ -221,7 +221,11 @@ class OneLoginService
             anonymous: true,
         );
 
-        if (!is_array($result) || ($result['accepted'] ?? false) !== true) {
+        if (!is_array($result)) {
+            throw new RuntimeException('Invalid response from API: expected a logout result');
+        }
+
+        if (($result['accepted'] ?? false) !== true) {
             return null;
         }
 

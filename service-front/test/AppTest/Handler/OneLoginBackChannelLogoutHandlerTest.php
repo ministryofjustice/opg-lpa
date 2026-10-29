@@ -57,7 +57,10 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
     }
 
-    public function testReturns400WhenTheTokenIsRejected(): void
+    /**
+     * One Login confirmed they expect 200 even for a rejected token, the rejection is still logged.
+     */
+    public function testReturns200AndLogsWhenTheTokenIsRejected(): void
     {
         $this->oneLoginService
             ->expects($this->once())
@@ -71,7 +74,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
     }
 
@@ -80,30 +83,45 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $this->oneLoginService->method('backChannelLogout')->willReturn(self::SIGN_OUT);
 
         $this->logger->expects($this->never())->method('info');
+        $this->logger->expects($this->never())->method('warning');
 
         $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
     }
 
-    public function testReturns400WhenLogoutTokenIsMissing(): void
+    public function testReturns200AndLogsWhenLogoutTokenIsMissing(): void
     {
         $this->oneLoginService->expects($this->never())->method('backChannelLogout');
+
+        $this->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'missing_logout_token']);
 
         $response = $this->handler->handle($this->request([]));
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
         $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
     }
 
-    public function testReturns400WhenLogoutTokenIsBlank(): void
+    public function testReturns200AndLogsWhenLogoutTokenIsBlank(): void
     {
         $this->oneLoginService->expects($this->never())->method('backChannelLogout');
 
+        $this->logger
+            ->expects($this->once())
+            ->method('info')
+            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'missing_logout_token']);
+
         $response = $this->handler->handle($this->request(['logout_token' => '   ']));
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
+        $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
     }
 
-    public function testApiFailureIsReportedAsServerErrorNotBadRequest(): void
+    /**
+     * Our own failure stays a 5xx so One Login's retry can still sign the user out.
+     */
+    public function testApiFailureIsReportedAsServerError(): void
     {
         $this->oneLoginService
             ->expects($this->once())
@@ -113,7 +131,6 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
         $this->assertSame(502, $response->getStatusCode());
-        $this->assertGreaterThanOrEqual(500, $response->getStatusCode());
         $this->assertSame('no-store', $response->getHeaderLine('Cache-Control'));
     }
 

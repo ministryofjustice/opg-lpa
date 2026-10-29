@@ -52,6 +52,16 @@ class OneLoginServiceTest extends TestCase
         $this->assertNull($this->service->backChannelLogout('forged'));
     }
 
+    public function testBackChannelLogoutThrowsWhenTheApiResponseIsNotAnArray(): void
+    {
+        $this->apiClient->method('httpPost')->willReturn(null);
+
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Invalid response from API');
+
+        $this->service->backChannelLogout('a.logout.token');
+    }
+
     /**
      * @return array<string, array{array<string, mixed>}>
      */

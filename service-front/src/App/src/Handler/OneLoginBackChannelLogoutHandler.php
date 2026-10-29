@@ -15,6 +15,11 @@ use Throwable;
 
 /**
  * Receives GOV.UK One Login's back-channel logout notification.
+ *
+ * One Login confirmed they expect 200 even for a token we reject (LPAL-2583), so rejections are
+ * logged rather than answered with 400. Our own failure (the API unreachable, or unable to fetch
+ * One Login's signing keys) returns 5xx so One Login's retry can try again; if the API had already
+ * processed the token, the retry is refused as a replay.
  */
 class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
 {
@@ -38,7 +43,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
                 'reason' => 'missing_logout_token',
             ]);
 
-            return $this->response(400);
+            return $this->response(200);
         }
 
         try {
@@ -56,7 +61,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
                 'reason' => 'not_accepted',
             ]);
 
-            return $this->response(400);
+            return $this->response(200);
         }
 
         $this->rememberSignOut($signOut['sub'], $signOut['signedOutAt']);
