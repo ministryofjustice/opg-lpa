@@ -33,6 +33,17 @@ return [
                 ],
             ],
 
+            'health-check' => [
+                'type' => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route' => '/health-check',
+                    'defaults' => [
+                        'controller' => PipeSpec::class,
+                        'middleware' => PingHandlerElb::class,
+                    ],
+                ],
+            ],
+
             'health-check-dependencies' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [

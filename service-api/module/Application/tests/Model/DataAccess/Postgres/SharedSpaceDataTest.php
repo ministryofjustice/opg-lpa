@@ -1310,7 +1310,7 @@ class SharedSpaceDataTest extends MockeryTestCase
             ->with(
                 SharedSpaceData::SHARED_SPACE_MEMBERS,
                 ['isAdmin' => true, 'isActive' => true, 'sharedSpaceId' => $sharedSpaceId],
-                ['columns' => ['id']]
+                ['columns' => ['id'], 'limit' => 2]
             )
             ->once()
             ->andReturn($resultMock);

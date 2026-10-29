@@ -664,6 +664,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             'sharedSpaceId' => $sharedSpaceId,
         ], [
             'columns' => ['id'],
+            'limit' => 2
         ]);
 
         return $result->isQueryResult() && $result->count() === 1;
