@@ -8,10 +8,10 @@ data "aws_route53_zone" "live_service_lasting_power_of_attorney" {
   name     = "lastingpowerofattorney.service.gov.uk"
 }
 
-# data "aws_kms_alias" "sns_kms_key_alias_global" {
-#   key_id   = "opg-lpa-${var.account_name}-sns-encryption-key"
-#   provider = us_east_1
-# }
+data "aws_kms_alias" "sns_kms_key_alias_global" {
+  name     = "opg-lpa-${var.account_name}-sns-encryption-key"
+  provider = aws.us_east_1
+}
 
 data "pagerduty_vendor" "cloudwatch" {
   name = "Cloudwatch"
