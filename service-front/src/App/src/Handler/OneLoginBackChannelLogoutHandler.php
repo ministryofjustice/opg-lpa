@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Service\OneLogin\LogoutTokenReplayGuard;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\EmptyResponse;
@@ -28,6 +29,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
     public function __construct(
         private readonly OneLoginService $oneLoginService,
         private readonly SignedOutSubjects $signedOutSubjects,
+        private readonly LogoutTokenReplayGuard $replayGuard,
         private readonly LoggerInterface $logger,
     ) {
     }
@@ -47,7 +49,13 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
         }
 
         try {
-            $signOut = $this->oneLoginService->backChannelLogout($logoutToken);
+            if (!$this->replayGuard->claim($logoutToken)) {
+                $this->logger->warning('auth.onelogin.backchannel_logout_rejected', [
+                    'reason' => 'replayed_jti',
+                ]);
+
+                return $this->response(400);
+            }
         } catch (Throwable $e) {
             $this->logger->error('auth.onelogin.backchannel_logout_failed', [
                 'message' => $e->getMessage(),
@@ -56,7 +64,21 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
             return $this->response(502);
         }
 
+        try {
+            $signOut = $this->oneLoginService->backChannelLogout($logoutToken);
+        } catch (Throwable $e) {
+            $this->releaseClaim($logoutToken);
+
+            $this->logger->error('auth.onelogin.backchannel_logout_failed', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->response(502);
+        }
+
         if ($signOut === null) {
+            $this->releaseClaim($logoutToken);
+
             $this->logger->warning('auth.onelogin.backchannel_logout_rejected', [
                 'reason' => 'not_accepted',
             ]);
@@ -79,6 +101,21 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
             $this->signedOutSubjects->recordSignOut($sub, $signedOutAt);
         } catch (Throwable $e) {
             $this->logger->error('auth.onelogin.signed_out_record_failed', [
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    /**
+     * A token that was not accepted must not stay claimed: a forged token would otherwise block
+     * the genuine one, and One Login's retry after our failure would look like a replay.
+     */
+    private function releaseClaim(#[\SensitiveParameter] string $logoutToken): void
+    {
+        try {
+            $this->replayGuard->release($logoutToken);
+        } catch (Throwable $e) {
+            $this->logger->error('auth.onelogin.backchannel_logout_release_failed', [
                 'message' => $e->getMessage(),
             ]);
         }

@@ -247,13 +247,18 @@ class LegacyCompatExtension extends AbstractExtension
             return false;
         }
 
-        if ($this->sessionStorage->read() instanceof User) {
-            return true;
-        }
-
         $session = $this->sessionStorage->session();
 
-        return $session !== null && $this->oneLoginSessionManager->getPendingLink($session) !== null;
+        if ($session === null) {
+            return false;
+        }
+
+        // Only users who signed in through One Login: a password sign-in has no ID token.
+        if ($this->sessionStorage->read() instanceof User) {
+            return $this->oneLoginSessionManager->getIdToken($session) !== null;
+        }
+
+        return $this->oneLoginSessionManager->getPendingLink($session) !== null;
     }
 
     /**

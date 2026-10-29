@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\OneLoginBackChannelLogoutHandler;
 use App\Service\ApiClient\Exception\ApiException;
+use App\Service\OneLogin\LogoutTokenReplayGuard;
 use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\SignedOutSubjects;
 use Laminas\Diactoros\Response\JsonResponse;
@@ -20,6 +21,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
     private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
     private SignedOutSubjects&MockObject $signedOutSubjects;
+    private LogoutTokenReplayGuard&MockObject $replayGuard;
     private OneLoginBackChannelLogoutHandler $handler;
 
     private const string SUB = 'urn:fdc:gov.uk:2022:abc';
@@ -35,10 +37,13 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $this->oneLoginService   = $this->createMock(OneLoginService::class);
         $this->logger            = $this->createMock(LoggerInterface::class);
         $this->signedOutSubjects = $this->createMock(SignedOutSubjects::class);
+        $this->replayGuard       = $this->createMock(LogoutTokenReplayGuard::class);
+        $this->replayGuard->method('claim')->willReturn(true);
 
         $this->handler = new OneLoginBackChannelLogoutHandler(
             $this->oneLoginService,
             $this->signedOutSubjects,
+            $this->replayGuard,
             $this->logger,
         );
     }
@@ -165,6 +170,102 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
         $this->assertSame(200, $response->getStatusCode());
+    }
+
+    public function testAReplayedTokenIsRejectedWithoutReachingTheApi(): void
+    {
+        $replayGuard = $this->createMock(LogoutTokenReplayGuard::class);
+        $replayGuard->expects($this->once())->method('claim')->with('a.logout.token')->willReturn(false);
+        $replayGuard->expects($this->never())->method('release');
+
+        $this->oneLoginService->expects($this->never())->method('backChannelLogout');
+        $this->signedOutSubjects->expects($this->never())->method('recordSignOut');
+
+        $this->logger
+            ->expects($this->once())
+            ->method('warning')
+            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'replayed_jti']);
+
+        $handler = new OneLoginBackChannelLogoutHandler(
+            $this->oneLoginService,
+            $this->signedOutSubjects,
+            $replayGuard,
+            $this->logger,
+        );
+
+        $response = $handler->handle($this->request(['logout_token' => 'a.logout.token']));
+
+        $this->assertSame(400, $response->getStatusCode());
+    }
+
+    public function testAnAcceptedTokenKeepsItsClaim(): void
+    {
+        $this->oneLoginService->method('backChannelLogout')->willReturn(self::SIGN_OUT);
+
+        $this->replayGuard->expects($this->never())->method('release');
+
+        $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
+    }
+
+    public function testARejectedTokenReleasesItsClaimSoItCannotBlockTheGenuineToken(): void
+    {
+        $this->oneLoginService->method('backChannelLogout')->willReturn(null);
+
+        $this->replayGuard->expects($this->once())->method('release')->with('forged');
+
+        $this->handler->handle($this->request(['logout_token' => 'forged']));
+    }
+
+    public function testAnApiFailureReleasesTheClaimSoOneLoginsRetryIsNotAReplay(): void
+    {
+        $this->oneLoginService
+            ->method('backChannelLogout')
+            ->willThrowException(new ApiException(new JsonResponse(['detail' => 'API unavailable'], 500)));
+
+        $this->replayGuard->expects($this->once())->method('release')->with('a.logout.token');
+
+        $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
+
+        $this->assertSame(502, $response->getStatusCode());
+    }
+
+    public function testRedisBeingUnreachableIsOurFailure(): void
+    {
+        $replayGuard = $this->createMock(LogoutTokenReplayGuard::class);
+        $replayGuard->method('claim')->willThrowException(new RuntimeException('Unable to connect to Redis'));
+
+        $this->oneLoginService->expects($this->never())->method('backChannelLogout');
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with('auth.onelogin.backchannel_logout_failed', ['message' => 'Unable to connect to Redis']);
+
+        $handler = new OneLoginBackChannelLogoutHandler(
+            $this->oneLoginService,
+            $this->signedOutSubjects,
+            $replayGuard,
+            $this->logger,
+        );
+
+        $response = $handler->handle($this->request(['logout_token' => 'a.logout.token']));
+
+        $this->assertSame(502, $response->getStatusCode());
+    }
+
+    public function testFailingToReleaseAClaimIsLoggedAndDoesNotChangeTheResponse(): void
+    {
+        $this->oneLoginService->method('backChannelLogout')->willReturn(null);
+        $this->replayGuard->method('release')->willThrowException(new RuntimeException('Redis down'));
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with('auth.onelogin.backchannel_logout_release_failed', ['message' => 'Redis down']);
+
+        $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
+
+        $this->assertSame(400, $response->getStatusCode());
     }
 
     private function request(array $body): ServerRequest

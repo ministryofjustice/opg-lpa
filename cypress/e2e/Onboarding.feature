@@ -107,6 +107,31 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     Then I should be on "/cannot-link-account"
     And I am advised my account could not be linked
 
+  Scenario: A locked Make account cannot be linked, even with the right password
+    Given I create a new user with 1 LPA
+    And the newly created fixture user has locked their account
+    And I visit "/login"
+    When I sign in through mock One Login to keep my existing Make account
+    And I link the newly created fixture users Make account
+    Then I should be on "/cannot-link-account"
+    And I am advised my account could not be linked
+
+  Scenario: A Make account that was never activated cannot be linked
+    Given I sign up "NotActivatedLinkUser" test user with password "Pass12345678"
+    And I visit "/login"
+    When I sign in through mock One Login to keep my existing Make account
+    And I link the "NotActivatedLinkUser" test users Make account
+    Then I should be on "/cannot-link-account"
+    And I am advised my account could not be linked
+
+  Scenario: A deleted Make account cannot be linked
+    Given I create a new user with 1 LPA
+    And the newly created fixture users account has been deleted
+    When I sign in through mock One Login to keep my existing Make account
+    And I link the newly created fixture users Make account
+    Then I should be on "/cannot-link-account"
+    And I am advised my account could not be linked
+
   Scenario: After failing to link an account I can continue to make a new account
     Given Ordnance Survey postcode lookup responses are stubbed out for good postcode B1 1TF
     When I sign in through mock One Login to keep my existing Make account
@@ -160,6 +185,20 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
     And I choose to reset my Make account password
     And I ask for a password reset link for "me@example.com" confirmed as "me@example.com"
     Then I see "We've emailed a link" in the page text
+
+  Scenario: Resetting a forgotten password lets me link my existing account with the new one
+    Given I create a new user with 1 LPA
+    When I sign in through mock One Login to keep my existing Make account
+    And I choose to reset my Make account password
+    And I ask for a password reset link for the newly created fixture user
+    Then I see "We've emailed a link" in the page text
+    When I use the password reset link for the newly created fixture user
+    And I choose a new password
+    Then I am returned to the appropriate page shown after a password reset
+    When I visit "/login"
+    And I sign in through mock One Login to keep my existing Make account
+    And I link the newly created fixture users Make account with my new password
+    Then I am taken to "/user/dashboard?account=linked"
 
   Scenario: Not keeping my LPAs starts a new account, and going back keeps my answer
     When I click "onelogin-signin-button"

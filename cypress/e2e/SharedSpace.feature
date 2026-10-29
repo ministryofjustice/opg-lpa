@@ -190,6 +190,21 @@ Feature: Shared Space
     And I should be on "/existing-account"
     And I create a new Make account
     Then element "nav" does not contain "Shared space"
+    When I visit "/shared-space/join"
+    Then I should be on "/user/dashboard"
+
+  @RequiresOneLogin
+  Scenario: A professional cannot join a shared space when the invite is for a different email
+    Given I have been invited to a shared space called "Example Organisation" with 1 LPA
+    When I log in through Onelogin as a random user
+    And I say I make LPAs for "other people as part of my work"
+    And I create a new Make account
+    And I visit "/shared-space/join"
+    And I type "Example Organisation" into field labelled "Shared space name"
+    And I type the access code into field labelled "Your shared space access code"
+    And I click element marked "Continue"
+    Then I should be on "/shared-space/join"
+    And I see "No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address." in the page text
 
   Scenario: Can delete a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

@@ -135,6 +135,12 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
   });
 });
 
+Given(`the newly created fixture users account has been deleted`, () => {
+  cy.get('@fixtureUser').then(({ email, password }) => {
+    deleteUserFixture(email, password).its('status').should('be.within', 200, 299);
+  });
+});
+
 When(`I log in as the newly created fixture user`, () => {
   cy.get('@fixtureUser').then(({ email, password }) => {
     login(email, password)

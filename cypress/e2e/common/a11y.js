@@ -66,6 +66,10 @@ Then('elements on the page should have sufficient contrast', () => {
   cy.OPGCheckA11y(axeOptions, stopOnError);
 });
 
+Then('the page has no accessibility violations', () => {
+  cy.OPGCheckA11yStrict();
+});
+
 /**
  * pageState is an identifier tacked onto the end of the URL to identify this
  * call to OPGCheckA11y(); this is to allow us to run this command on the same

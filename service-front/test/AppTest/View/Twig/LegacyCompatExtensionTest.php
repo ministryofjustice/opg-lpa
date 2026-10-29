@@ -106,16 +106,17 @@ final class LegacyCompatExtensionTest extends TestCase
     }
 
     /**
-     * @return array<string, array{bool, bool, bool, bool}>
+     * @return array<string, array{bool, bool, bool, bool, bool}>
      */
     public static function oneLoginHeaderProvider(): array
     {
         return [
-            'One Login on, signed in'                   => [true, true, false, true],
-            'One Login on, onboarding with a pending link' => [true, false, true, true],
-            'One Login on, signed out'                  => [true, false, false, false],
-            'One Login off, signed in'                  => [false, true, false, false],
-            'One Login off, onboarding with a pending link' => [false, false, true, false],
+            'One Login on, signed in through One Login'      => [true, true, true, false, true],
+            'One Login on, signed in with a password'        => [true, true, false, false, false],
+            'One Login on, onboarding with a pending link'   => [true, false, false, true, true],
+            'One Login on, signed out'                       => [true, false, false, false, false],
+            'One Login off, signed in through One Login'     => [false, true, true, false, false],
+            'One Login off, onboarding with a pending link'  => [false, false, false, true, false],
         ];
     }
 
@@ -123,19 +124,13 @@ final class LegacyCompatExtensionTest extends TestCase
     public function testShowOneLoginHeaderForUsersSignedInToOneLogin(
         bool $oneLoginEnabled,
         bool $signedIn,
+        bool $hasIdToken,
         bool $pendingLink,
         bool $expected,
     ): void {
         putenv('ONELOGIN_ENABLED=' . ($oneLoginEnabled ? 'true' : 'false'));
         $this->sessionStorage->method('read')->willReturn($signedIn ? $this->signedInUser() : null);
-
-        $session = $this->createMock(SessionInterface::class);
-        $session->method('get')->willReturnCallback(
-            fn (string $key) => $pendingLink && $key === 'onelogin_pending_link'
-                ? ['sub' => 'urn:fdc:gov.uk:2022:newuser', 'email' => 'new@example.com', 'idToken' => 'h.p.s', 'signedInAt' => time()]
-                : null,
-        );
-        $this->sessionStorage->method('session')->willReturn($session);
+        $this->sessionStorage->method('session')->willReturn($this->session($hasIdToken, $pendingLink));
 
         $this->assertSame($expected, $this->extension->showOneLoginHeader());
     }
@@ -153,6 +148,7 @@ final class LegacyCompatExtensionTest extends TestCase
     {
         putenv('ONELOGIN_ENABLED=true');
         $this->sessionStorage->method('read')->willReturn($this->signedInUser());
+        $this->sessionStorage->method('session')->willReturn($this->session(hasIdToken: true));
 
         $twig = $this->createMock(Environment::class);
         $twig->expects($this->once())
@@ -164,6 +160,23 @@ final class LegacyCompatExtensionTest extends TestCase
             ->willReturn('');
 
         $this->extension->renderNavigation($twig);
+    }
+
+    private function session(bool $hasIdToken = false, bool $pendingLink = false): SessionInterface
+    {
+        $session = $this->createMock(SessionInterface::class);
+        $session->method('get')->willReturnCallback(fn (string $key) => match (true) {
+            $hasIdToken && $key === 'onelogin_id_token'      => 'h.p.s',
+            $pendingLink && $key === 'onelogin_pending_link' => [
+                'sub'        => 'urn:fdc:gov.uk:2022:newuser',
+                'email'      => 'new@example.com',
+                'idToken'    => 'h.p.s',
+                'signedInAt' => time(),
+            ],
+            default => null,
+        });
+
+        return $session;
     }
 
     private function signedInUser(): User

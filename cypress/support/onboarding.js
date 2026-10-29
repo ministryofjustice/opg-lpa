@@ -29,7 +29,7 @@ export function checkAnswerIsSelected(label) {
 export function checkFormError(message) {
   cy.get('[data-cy="error-summary"]').should('be.visible').and('contain', message);
   cy.get('[data-cy="form-error"]').should('contain', message);
-  cy.OPGCheckA11y();
+  cy.OPGCheckA11yStrict('form-error');
 }
 
 // Details a new user enters on the onboarding "Your details" page.
