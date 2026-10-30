@@ -12,23 +12,20 @@ use Mockery\MockInterface;
 
 class LockControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var Service|MockInterface
-     */
-    private $service;
+    private Service|MockInterface $service;
 
-    public function getController(array $parameters = []): LockController
+    public function getController(): LockController
     {
         $this->service = Mockery::mock(Service::class);
 
         $controller = new LockController($this->authenticationService, $this->service);
-        $this->callDispatch($controller, $parameters);
+        $this->callDispatch($controller, []);
         $this->callOnDispatch($controller);
 
         return $controller;
     }
 
-    public function testCreateSuccess()
+    public function testCreateSuccess(): void
     {
         $controller = $this->getController();
 
@@ -42,7 +39,7 @@ class LockControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testCreateApiProblemFromService()
+    public function testCreateApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -61,26 +58,7 @@ class LockControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testCreateUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId)
-            ->andReturn('unexpected type')->once();
-
-        $response = $controller->create(['some' => 'data']);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testCreateUnauthorised()
+    public function testCreateUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);

@@ -30,13 +30,10 @@ class ReplacementAttorneyDecisionsController extends AbstractLpaController
 
         $result = $this->getService()->update($this->params()->fromRoute('lpaId'), $this->ifMatch(), $this->userId(), $data);
 
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
+        if ($result instanceof EntityInterface) {
             return new JsonResponse($result->toArray());
         }
 
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        return $result;
     }
 }

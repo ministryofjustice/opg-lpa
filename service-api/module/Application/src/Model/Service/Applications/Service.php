@@ -3,12 +3,15 @@
 namespace Application\Model\Service\Applications;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\EntityInterface;
 use Laminas\Db\Sql\Predicate\PredicateInterface;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Adapter\Callback as PaginatorCallback;
@@ -29,12 +32,7 @@ class Service extends AbstractService
     {
     }
 
-    /**
-     * @param $data
-     * @param $userId
-     * @return DataModelEntity
-     */
-    public function create($data, string $userId)
+    public function create($data, string $userId): EntityInterface
     {
         // If no data was passed, represent with an empty array.
         if (is_null($data)) {
@@ -77,9 +75,7 @@ class Service extends AbstractService
             $created = $this->getApplicationRepository()->insert($lpa);
         } while (!$created);
 
-        $entity = new DataModelEntity($lpa);
-
-        return $entity;
+        return new DataModelEntity($lpa);
     }
 
     /**
@@ -98,18 +94,17 @@ class Service extends AbstractService
 
     /**
      * @param array[] $data
-     * @param $id
-     * @param $userId
-     *
-     * @return ValidationApiProblem|DataModelEntity
-     *
      * @psalm-param array{metadata: array} $data
      */
-    public function patch(array $data, string $id, ?int $ifMatchVersion, string $userId)
+    public function patch(array $data, string $id, ?int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
     {
+        $fetched = $this->fetch($id, $userId);
+        if ($fetched instanceof ApiProblem) {
+            return $fetched;
+        }
 
         /** @var Lpa $lpa */
-        $lpa = $this->fetch($id, $userId)->getData();
+        $lpa = $fetched->getData();
         $lpa->setVersion($ifMatchVersion);
         $lpa->setUpdatedBy($userId);
 
@@ -132,17 +127,16 @@ class Service extends AbstractService
             return new ValidationApiProblem($validation);
         }
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         return new DataModelEntity($lpa);
     }
 
-    /**
-     * @param $id
-     * @param $userId
-     * @return ApiProblem|DataModelEntity
-     */
-    public function fetch(string $id, string $userId)
+    public function fetch(string $id, string $userId): ApiProblem|DataModelEntity
     {
         // Note: user (or their shared space) has to match
         $sharedSpaceId = $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId);
@@ -190,7 +184,7 @@ class Service extends AbstractService
      * @param array $params
      * @return Paginator<int, Lpa>
      */
-    public function fetchAll(string $userId, $params = [])
+    public function fetchAll(string $userId, $params = []): Paginator
     {
         return $this->paginate(
             $this->getApplicationRepository()->ownerPredicate($userId),
@@ -207,7 +201,7 @@ class Service extends AbstractService
      * @param array $params
      * @return Paginator<int, Lpa>
      */
-    public function fetchAllForSharedSpace(string $sharedSpaceId, array $params = [])
+    public function fetchAllForSharedSpace(string $sharedSpaceId, array $params = []): Paginator
     {
         return $this->paginate(
             $this->getApplicationRepository()->sharedSpacePredicate($sharedSpaceId),
@@ -219,7 +213,7 @@ class Service extends AbstractService
     /**
      * @return Paginator<int, Lpa>
      */
-    private function paginate(PredicateInterface $ownerPredicate, array $params, bool $forSharedSpace)
+    private function paginate(PredicateInterface $ownerPredicate, array $params, bool $forSharedSpace): Paginator
     {
         $filter = [
             $ownerPredicate,
@@ -291,12 +285,7 @@ class Service extends AbstractService
         return new Paginator($callback);
     }
 
-    /**
-     * @param $id
-     * @param $userId
-     * @return ApiProblem|bool
-     */
-    public function delete($id, string $userId)
+    public function delete($id, string $userId): ?ApiProblem
     {
         $sharedSpaceId = $this->sharedSpaceRepository->getSharedSpaceIdForUser($userId);
 
@@ -308,7 +297,7 @@ class Service extends AbstractService
 
         $this->getApplicationRepository()->deleteById($id, $userId, $sharedSpaceId);
 
-        return true;
+        return null;
     }
 
     /**

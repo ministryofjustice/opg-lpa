@@ -9,22 +9,20 @@ use RuntimeException;
 
 class ConflictException extends RuntimeException
 {
-    private int $statusCode;
-
-    /** @var null|array{lastUpdatedBy: string} $data */
-    private mixed $data;
+    private readonly int $statusCode;
+    private readonly string $lastUpdatedBy;
 
     public function __construct(ResponseInterface $response, ?string $message = null)
     {
         $body = json_decode(strval($response->getBody()), true);
-        $this->data = json_decode($body['detail'] ?? '', true);
+        $this->lastUpdatedBy = $body['lastUpdatedBy'];
         $this->statusCode = $response->getStatusCode();
 
-        parent::__construct(sprintf('Conflicts with changes by %s', $this->getLastUpdatedBy()), $this->statusCode);
+        parent::__construct('Conflict', $this->statusCode);
     }
 
-    public function getLastUpdatedBy(): ?string
+    public function getLastUpdatedBy(): string
     {
-        return $this->data['lastUpdatedBy'] ?? null;
+        return $this->lastUpdatedBy;
     }
 }

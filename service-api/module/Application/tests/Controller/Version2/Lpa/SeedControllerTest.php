@@ -13,23 +13,20 @@ use Mockery\MockInterface;
 
 class SeedControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var Service|MockInterface
-     */
-    private $service;
+    private Service|MockInterface $service;
 
-    public function getController(array $parameters = []): SeedController
+    public function getController(): SeedController
     {
         $this->service = Mockery::mock(Service::class);
 
         $controller = new SeedController($this->authenticationService, $this->service);
-        $this->callDispatch($controller, $parameters);
+        $this->callDispatch($controller, []);
         $this->callOnDispatch($controller);
 
         return $controller;
     }
 
-    public function testGetSuccess()
+    public function testGetSuccess(): void
     {
         $controller = $this->getController();
 
@@ -42,7 +39,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testGetSuccessEmpty()
+    public function testGetSuccessEmpty(): void
     {
         $controller = $this->getController();
 
@@ -54,7 +51,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(NoContent::class, $response);
     }
 
-    public function testGetApiProblemFromService()
+    public function testGetApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -73,25 +70,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testGetUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('fetch')->andReturn('unexpected type')->once();
-
-        $response = $controller->get(10);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testGetUnauthorised()
+    public function testGetUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);
@@ -101,7 +80,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         $controller->get(10);
     }
 
-    public function testUpdateSuccess()
+    public function testUpdateSuccess(): void
     {
         $controller = $this->getController();
 
@@ -115,7 +94,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testUpdateApiProblemFromService()
+    public function testUpdateApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -134,26 +113,7 @@ class SeedControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testUpdateUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('update')->with($this->lpaId, ['some' => 'data'], self::IF_MATCH_VALUE, $this->userId)
-            ->andReturn('unexpected type')->once();
-
-        $response = $controller->update(10, ['some' => 'data']);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testUpdateUnauthorised()
+    public function testUpdateUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);
