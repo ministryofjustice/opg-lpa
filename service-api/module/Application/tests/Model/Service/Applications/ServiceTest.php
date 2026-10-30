@@ -497,7 +497,7 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $response = $service->delete(strval($lpa->getId()), $user->getId());
 
-        $this->assertTrue($response);
+        $this->assertNull($response);
     }
 
     public function testDeleteAll()

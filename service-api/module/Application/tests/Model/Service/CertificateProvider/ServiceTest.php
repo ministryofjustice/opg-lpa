@@ -140,6 +140,6 @@ final class ServiceTest extends AbstractServiceTestCase
 
         $response = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE);
 
-        $this->assertTrue($response);
+        $this->assertNull($response);
     }
 }

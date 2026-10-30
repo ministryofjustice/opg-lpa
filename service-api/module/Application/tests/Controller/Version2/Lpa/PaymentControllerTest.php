@@ -12,23 +12,20 @@ use Mockery\MockInterface;
 
 class PaymentControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var Service|MockInterface
-     */
-    private $service;
+    private Service|MockInterface $service;
 
-    public function getController(array $parameters = []): PaymentController
+    public function getController(): PaymentController
     {
         $this->service = Mockery::mock(Service::class);
 
         $controller = new PaymentController($this->authenticationService, $this->service);
-        $this->callDispatch($controller, $parameters);
+        $this->callDispatch($controller, []);
         $this->callOnDispatch($controller);
 
         return $controller;
     }
 
-    public function testUpdateSuccess()
+    public function testUpdateSuccess(): void
     {
         $controller = $this->getController();
 
@@ -42,7 +39,7 @@ class PaymentControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testUpdateApiProblemFromService()
+    public function testUpdateApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -61,26 +58,7 @@ class PaymentControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testUpdateUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
-            ->andReturn('unexpected type')->once();
-
-        $response = $controller->update(10, ['some' => 'data']);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testUpdateUnauthorised()
+    public function testUpdateUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);

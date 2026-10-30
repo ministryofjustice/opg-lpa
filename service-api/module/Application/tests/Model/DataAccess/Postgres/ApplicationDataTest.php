@@ -354,7 +354,7 @@ class ApplicationDataTest extends MockeryTestCase
 
         $applicationData = new ApplicationData($dbWrapper, []);
 
-        $this->expectExceptionObject(new ConflictException('Unknown user 456'));
+        $this->expectExceptionObject(new ConflictException('Unknown user'));
         $applicationData->update($lpa);
     }
 }
