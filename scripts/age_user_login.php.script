@@ -1,0 +1,18 @@
+// Sets last_login for a user (matched by identity or One Login email) to now() - interval.
+// Run via `php -r "$(cat scripts/age_user_login.php.script)" '<interval>' '<email>'` - there is deliberately no opening PHP tag, as php -r doesn't accept one.
+// Reads the connection from the OPG_LPA_POSTGRES_* env vars.
+$db = new PDO(
+    sprintf(
+        'pgsql:host=%s;port=%s;dbname=%s',
+        getenv('OPG_LPA_POSTGRES_HOSTNAME'),
+        getenv('OPG_LPA_POSTGRES_PORT'),
+        getenv('OPG_LPA_POSTGRES_NAME')
+    ),
+    getenv('OPG_LPA_POSTGRES_USERNAME'),
+    getenv('OPG_LPA_POSTGRES_PASSWORD')
+);
+$stmt = $db->prepare(
+    'UPDATE users SET last_login = now() - CAST(:i AS interval) WHERE identity = :e1 OR one_login_email = :e2'
+);
+$stmt->execute([':i' => $argv[1], ':e1' => $argv[2], ':e2' => $argv[2]]);
+echo 'rows updated: ' . $stmt->rowCount() . PHP_EOL;
