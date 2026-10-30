@@ -496,4 +496,9 @@ class SharedSpaceService
     {
         return $this->sharedSpaceRepository->matchSharedSpaces($query, $options);
     }
+
+    public function hasExactlyOneActiveAdmin(string $sharedSpaceId): bool
+    {
+        return $this->sharedSpaceRepository->hasExactlyOneActiveAdmin($sharedSpaceId);
+    }
 }

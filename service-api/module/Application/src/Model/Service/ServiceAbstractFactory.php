@@ -9,6 +9,7 @@ use Application\Model\DataAccess\Repository\Stats as StatsRepository;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use Aws\Credentials\CredentialsInterface;
 use Aws\Signature\SignatureV4;
@@ -39,6 +40,7 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setConfig'         => 'config',
             'setNotifyClient'   => 'NotifyClient',
             'setUsersService'   => UsersService::class,
+            'setSharedSpaceService' => SharedSpaceService::class,
         ],
         Feedback\Service::class => [
             'setFeedbackValidator' => 'FeedbackValidator',

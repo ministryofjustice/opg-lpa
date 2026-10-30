@@ -464,14 +464,36 @@ reset-front-app:
 	@${MAKE} dc-restart-web
 
 .PHONY: dc-account-cleanup
+# Add DRY_RUN=1 to log what would happen without deleting, flagging or emailing anything.
 dc-account-cleanup:
-	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup; echo "exit code: $$?"'
+	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run); echo "exit code: $$?"'
 
-age-user-login-1-week:
-	@docker compose exec postgres psql --username=lpauser --dbname=lpadb --command="UPDATE users SET last_login = now() - interval '8 months 3 weeks 5 days' WHERE identity = '${EMAIL}' OR one_login_email = '${EMAIL}';"
+# Run one-off jobs as an api-cron ECS task in a development-account environment.
+# Needs aws-vault (profile below); production/preproduction are refused by the script.
+AWS_CLEANUP_PROFILE ?= moj-lpa-dev
+AWS_RUN_CRON_TASK = aws-vault exec ${AWS_CLEANUP_PROFILE} -- ./scripts/run_api_cron_task.sh "${ENV}"
 
-age-user-login-1-month:
-	@docker compose exec postgres psql --username=lpauser --dbname=lpadb --command="UPDATE users SET last_login = now() - interval '8 months' WHERE identity = '${EMAIL}' OR one_login_email = '${EMAIL}';"
+# Sets last_login for a user (matched by identity or One Login email) to now() - INTERVAL.
+AWS_AGE_USER_LOGIN_PHP = $$d = new PDO(sprintf("pgsql:host=%s;port=%s;dbname=%s", getenv("OPG_LPA_POSTGRES_HOSTNAME"), getenv("OPG_LPA_POSTGRES_PORT"), getenv("OPG_LPA_POSTGRES_NAME")), getenv("OPG_LPA_POSTGRES_USERNAME"), getenv("OPG_LPA_POSTGRES_PASSWORD")); $$s = $$d->prepare("UPDATE users SET last_login = now() - CAST(:i AS interval) WHERE identity = :e1 OR one_login_email = :e2"); $$s->execute([":i" => $$argv[1], ":e1" => $$argv[2], ":e2" => $$argv[2]]); echo "rows updated: " . $$s->rowCount() . PHP_EOL;
+
+# Sends warning emails and deletes expired accounts unless DRY_RUN=1 is given.
+# Usage: make aws-account-cleanup ENV=<workspace> [DRY_RUN=1]
+.PHONY: aws-account-cleanup
+aws-account-cleanup:
+	@test -n "${ENV}" || { echo "Usage: make aws-account-cleanup ENV=<workspace>"; exit 1; }
+	@${AWS_RUN_CRON_TASK} php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run)
+
+# Usage: make aws-age-user-login ENV=<workspace> EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']
+.PHONY: aws-age-user-login
+aws-age-user-login:
+	@test -n "${ENV}" -a -n "${EMAIL}" || { echo "Usage: make $@ ENV=<workspace> EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']"; exit 1; }
+	@${AWS_RUN_CRON_TASK} php -r '${AWS_AGE_USER_LOGIN_PHP}' '$(or ${INTERVAL},8 months 3 weeks 5 days)' '${EMAIL}'
+
+# Usage: make age-user-login EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']
+.PHONY: age-user-login
+age-user-login:
+	@test -n "${EMAIL}" || { echo "Usage: make $@ EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']"; exit 1; }
+	@docker compose exec -T postgres psql --username=lpauser --dbname=lpadb --set=interval='$(or ${INTERVAL},8 months 3 weeks 5 days)' --set=email='${EMAIL}' <<< "UPDATE users SET last_login = now() - :'interval'::interval WHERE identity = :'email' OR one_login_email = :'email';"
 
 # Re-run the non-live seeding scripts against the running dev stack, truncating
 # and re-populating the test users/applications/feedback/deletion-log tables.

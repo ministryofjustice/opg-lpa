@@ -175,4 +175,6 @@ interface SharedSpaceRepositoryInterface
      * @return array{results: array, total: int}
      */
     public function matchSharedSpaces(string $fullOrPartialName, array $options = []): array;
+
+    public function hasExactlyOneActiveAdmin(string $sharedSpaceId): bool;
 }
