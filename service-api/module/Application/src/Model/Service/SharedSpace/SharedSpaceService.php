@@ -383,11 +383,6 @@ class SharedSpaceService
             }
 
             $invite = $this->sharedSpaceRepository->getInvite($accessCode, $sharedSpaceName, $userEmail);
-
-            if ($invite === null) {
-                throw new InviteNotFoundException();
-            }
-
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
@@ -500,5 +495,10 @@ class SharedSpaceService
     public function matchSharedSpaces(string $query, array $options = []): array
     {
         return $this->sharedSpaceRepository->matchSharedSpaces($query, $options);
+    }
+
+    public function hasExactlyOneActiveAdmin(string $sharedSpaceId): bool
+    {
+        return $this->sharedSpaceRepository->hasExactlyOneActiveAdmin($sharedSpaceId);
     }
 }

@@ -6,10 +6,8 @@ use Application\Library\ApiProblem\ApiProblemExceptionInterface;
 
 class ConflictException extends \RuntimeException implements ApiProblemExceptionInterface
 {
-    public function __construct(string $lastUpdatedBy)
+    public function __construct(public readonly string $lastUpdatedBy)
     {
-        parent::__construct(json_encode([
-            'lastUpdatedBy' => $lastUpdatedBy,
-        ]), 412, null);
+        parent::__construct('Conflict');
     }
 }

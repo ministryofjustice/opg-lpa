@@ -1,0 +1,24 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'There is no invite to join a shared space linked to your account' -%}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+
+      <p class="govuk-body">This could be because:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>no invite has ever been sent to the email address you use when signing in to this account – ‘{{ email }}’</li>
+        <li>an invite expired – we delete any record of unanswered invites after 30 days</li>
+        <li>an invite has been revoked</li>
+      </ul>
+
+      <p class="govuk-body">
+        <a class="govuk-button" href="{{ url('shared-space') }}">Return to shared space</a>
+      </p>
+    </div>
+  </div>
+{% endblock content %}

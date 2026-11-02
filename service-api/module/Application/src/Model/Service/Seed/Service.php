@@ -3,10 +3,13 @@
 namespace Application\Model\Service\Seed;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\EntityInterface;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\Logging\LoggerTrait;
 
@@ -15,17 +18,9 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    /**
-     * @var ApplicationService
-     */
-    private $applicationsService;
+    private ApplicationService $applicationsService;
 
-    /**
-     * @param $lpaId
-     * @param $userId
-     * @return ApiProblem|Entity
-     */
-    public function fetch(string $lpaId, string $userId)
+    public function fetch(string $lpaId, string $userId): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
 
@@ -45,13 +40,7 @@ class Service extends AbstractService
         return new Entity($seedLpa);
     }
 
-    /**
-     * @param $lpaId
-     * @param $data
-     * @param $userId
-     * @return ApiProblem|Entity
-     */
-    public function update(string $lpaId, $data, ?int $ifMatchVersion, string $userId)
+    public function update(string $lpaId, $data, ?int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
     {
         if (!isset($data['seed']) || !is_numeric($data['seed'])) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');
@@ -85,13 +74,16 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting seed');
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         return new Entity($seedLpa);
     }
 
     /**
-     * @param ApplicationService $applicationsService
      * @psalm-suppress PossiblyUnusedMethod
      */
     public function setApplicationsService(ApplicationService $applicationsService): void

@@ -2,9 +2,13 @@
 
 namespace Application\Model\Service\WhoIsRegistering;
 
+use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\EntityInterface;
 use MakeShared\Logging\LoggerTrait;
 
 class Service extends AbstractService
@@ -12,12 +16,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    /**
-     * @param $lpaId
-     * @param $data
-     * @return ValidationApiProblem|Entity
-     */
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
     {
         $whoIsRegistering = (isset($data['whoIsRegistering']) ? $data['whoIsRegistering'] : null);
 
@@ -34,7 +33,11 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting whoIsRegistering');
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         return new Entity($whoIsRegistering);
     }

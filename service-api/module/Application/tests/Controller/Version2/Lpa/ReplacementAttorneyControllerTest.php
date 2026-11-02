@@ -13,24 +13,20 @@ use Mockery\MockInterface;
 
 class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
 {
-    /**
-     * @var Service|MockInterface
-     */
-    private $service;
+    private Service|MockInterface $service;
 
-    public function getController(array $parameters = []): ReplacementAttorneyController
+    public function getController(): ReplacementAttorneyController
     {
         $this->service = Mockery::mock(Service::class);
 
         $controller = new ReplacementAttorneyController($this->authenticationService, $this->service);
-        $this->callDispatch($controller, $parameters);
+        $this->callDispatch($controller, []);
         $this->callOnDispatch($controller);
 
         return $controller;
     }
 
-
-    public function testCreateSuccess()
+    public function testCreateSuccess(): void
     {
         $controller = $this->getController();
 
@@ -44,7 +40,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testCreateApiProblemFromService()
+    public function testCreateApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -63,26 +59,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testCreateUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('create')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'])
-            ->andReturn('unexpected type')->once();
-
-        $response = $controller->create(['some' => 'data']);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testCreateUnauthorised()
+    public function testCreateUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);
@@ -92,7 +69,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         $controller->create([]);
     }
 
-    public function testUpdateSuccess()
+    public function testUpdateSuccess(): void
     {
         $controller = $this->getController();
 
@@ -106,7 +83,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertEquals('{"key":"value"}', $response->getContent());
     }
 
-    public function testUpdateApiProblemFromService()
+    public function testUpdateApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -125,26 +102,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testUpdateUnexpectedResponse()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('update')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, ['some' => 'data'], 10)
-            ->andReturn('unexpected type')->once();
-
-        $response = $controller->update(10, ['some' => 'data']);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testUpdateUnauthorised()
+    public function testUpdateUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);
@@ -154,12 +112,12 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         $controller->update(10, []);
     }
 
-    public function testDeleteSuccess()
+    public function testDeleteSuccess(): void
     {
         $controller = $this->getController();
 
         $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, 10)
-            ->andReturn(true)->once();
+            ->andReturn(null)->once();
 
         $response = $controller->delete(10);
 
@@ -167,7 +125,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         $this->assertInstanceOf(NoContent::class, $response);
     }
 
-    public function testDeleteApiProblemFromService()
+    public function testDeleteApiProblemFromService(): void
     {
         $controller = $this->getController();
 
@@ -186,26 +144,7 @@ class ReplacementAttorneyControllerTest extends AbstractControllerTestCase
         ], $response->toArray());
     }
 
-    public function testDeleteFailed()
-    {
-        $controller = $this->getController();
-
-        $this->service->shouldReceive('delete')->with($this->lpaId, self::IF_MATCH_VALUE, $this->userId, 10)
-            ->andReturn(false)->once();
-
-        $response = $controller->delete(10);
-
-        $this->assertNotNull($response);
-        $this->assertInstanceOf(ApiProblem::class, $response);
-        $this->assertEquals([
-            'type' => 'http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html',
-            'title' => 'Internal Server Error',
-            'status' => 500,
-            'detail' => 'Unable to process request'
-        ], $response->toArray());
-    }
-
-    public function testDeleteUnauthorised()
+    public function testDeleteUnauthorised(): void
     {
         $this->setAuthorised(false);
         $this->expectException(UnauthorizedException::class);

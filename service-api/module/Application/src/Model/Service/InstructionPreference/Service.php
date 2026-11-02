@@ -2,8 +2,11 @@
 
 namespace Application\Model\Service\InstructionPreference;
 
+use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\InstructionPreference\PreferenceEntity as PreferenceEntity;
 use Application\Model\Service\InstructionPreference\InstructionEntity as InstructionEntity;
@@ -15,9 +18,9 @@ class Service extends AbstractService
     use LoggerTrait;
 
     /**
-     * @return ValidationApiProblem|array<InstructionEntity|PreferenceEntity>
+     * @return ApiProblem|array<InstructionEntity|PreferenceEntity>
      */
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, array $data): ValidationApiProblem|array
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, array $data): ApiProblem|array
     {
         $instruction = ($data['instruction'] ?? null);
         $preference = ($data['preference'] ?? null);
@@ -34,7 +37,11 @@ class Service extends AbstractService
             return new ValidationApiProblem($validation);
         }
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         return [new InstructionEntity($instruction), new PreferenceEntity($preference)];
     }

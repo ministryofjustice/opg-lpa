@@ -242,8 +242,18 @@ async function copyVendorScripts() {
   );
 
   copyFileSync(
+    'node_modules/govuk-frontend/dist/govuk/govuk-frontend.min.js.map',
+    'public/assets/v2/js/govuk-frontend.min.js.map'
+  );
+
+  copyFileSync(
     'node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js',
     'public/assets/v2/js/moj-frontend.min.js'
+  );
+
+  copyFileSync(
+    'node_modules/@ministryofjustice/frontend/moj/moj-frontend.min.js.map',
+    'public/assets/v2/js/moj-frontend.min.js.map'
   );
 
   console.log('✓ Vendor scripts copied');

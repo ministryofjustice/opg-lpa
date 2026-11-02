@@ -701,15 +701,40 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
     public function getAccountsInactiveSince(DateTime $since, ?string $excludeFlag = null): iterable
     {
         $where = [
-            new Operator('last_login', Operator::OPERATOR_LESS_THAN, $since->format('c'))
+            new Operator('users.last_login', Operator::OPERATOR_LESS_THAN, $since->format('c'))
         ];
 
         // Exclude results that have already been actioned
         if (!is_null($excludeFlag)) {
-            $where[] = new Expression("inactivity_flags -> '{$excludeFlag}' IS NULL");
+            $where[] = new Expression("users.inactivity_flags -> '{$excludeFlag}' IS NULL");
         }
 
-        $users = $this->dbWrapper->select(self::USERS_TABLE, $where);
+        $sql = $this->dbWrapper->createSql();
+
+        // A user belongs to at most one shared space (unique index on members.userId),
+        // so these LEFT joins can't duplicate users
+        $select = $sql
+            ->select()
+            ->from(['users' => self::USERS_TABLE])
+            ->join(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive'
+                ],
+                Select::JOIN_LEFT
+            )
+            ->join(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
+                Select::JOIN_LEFT
+            )
+            ->where($where);
+
+        $users = $sql->prepareStatementForSqlObject($select)->execute();
 
         foreach ($users as $user) {
             yield new UserModel($user);

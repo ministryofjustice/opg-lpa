@@ -11,7 +11,9 @@ use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
+use Application\Model\Service\SharedSpace\InviteExpiredException;
 use Application\Model\Service\SharedSpace\InviteNotFoundException;
+use Application\Model\Service\SharedSpace\InviteNotMatchedException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
@@ -252,6 +254,10 @@ class SharedSpaceController extends AbstractRestfulController
             return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'user-already-in-shared-space', null, null, ['sharedSpaceId' => $e->sharedSpaceId]);
         } catch (InviteNotFoundException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'invite-not-found');
+        } catch (InviteNotMatchedException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'invite-not-matched');
+        } catch (InviteExpiredException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_BAD_REQUEST, 'invite-expired', null, null, ['expires' => $e->expires]);
         } catch (Throwable $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
         }

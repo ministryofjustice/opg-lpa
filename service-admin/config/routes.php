@@ -11,6 +11,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->get('/', App\Handler\HomeHandler::class, 'home');
     $app->route('/sign-in', App\Handler\SignInHandler::class, ['GET', 'POST'], 'sign.in')
         ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check', PingHandlerElb::class, 'health-check')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/elb', PingHandlerElb::class, 'ping.elb')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');

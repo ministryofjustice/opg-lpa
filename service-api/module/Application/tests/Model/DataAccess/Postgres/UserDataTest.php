@@ -1278,18 +1278,58 @@ class UserDataTest extends MockeryTestCase
         $resultMock->shouldReceive('next')->andReturn($results[0], $results[1]);
 
         $dbWrapperMock = Mockery::mock(DbWrapper::class);
-        $dbWrapperMock->shouldReceive('select')
-            ->withArgs(function ($tableName, $where) use ($since, $excludeFlag) {
+        $sqlMock = Mockery::mock(Sql::class);
+        $selectMock = Mockery::mock(Select::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('select')->andReturn($selectMock);
+
+        $selectMock->shouldReceive('from')
+            ->with(['users' => UserData::USERS_TABLE])
+            ->andReturnSelf();
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                'members.userId = users.id',
+                [
+                    'sharedSpaceId',
+                    'isSharedSpaceAdmin' => 'isAdmin',
+                    'isActiveInSharedSpace' => 'isActive',
+                ],
+                Select::JOIN_LEFT
+            )
+            ->once()
+            ->andReturnSelf();
+
+        $selectMock->shouldReceive('join')
+            ->with(
+                ['space' => SharedSpaceData::SHARED_SPACE],
+                'space.id = members.sharedSpaceId',
+                ['sharedSpaceName' => 'name'],
+                Select::JOIN_LEFT
+            )
+            ->once()
+            ->andReturnSelf();
+
+        $selectMock->shouldReceive('where')
+            ->withArgs(function ($where) use ($since, $excludeFlag) {
                 $lastLoginClause = $where[0];
                 $excludeClause = $where[1];
 
-                return $tableName === UserData::USERS_TABLE &&
-                    $lastLoginClause->getLeft() === 'last_login' &&
+                return $lastLoginClause->getLeft() === 'users.last_login' &&
                     $lastLoginClause->getOperator() === Operator::OPERATOR_LESS_THAN &&
                     $lastLoginClause->getRight() === $since->format('c') &&
-                    $excludeClause->getExpression() === "inactivity_flags -> '$excludeFlag' IS NULL";
+                    $excludeClause->getExpression() === "users.inactivity_flags -> '$excludeFlag' IS NULL";
             })
-            ->andReturn($resultMock);
+            ->once()
+            ->andReturnSelf();
+
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($selectMock)
+            ->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
 
         // test
         $userData = new UserData($dbWrapperMock);

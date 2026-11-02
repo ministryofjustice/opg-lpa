@@ -3,10 +3,13 @@
 namespace Application\Model\Service\WhoAreYou;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\DataAccess\Repository\Application\WhoRepositoryTrait;
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\EntityInterface;
 use MakeShared\DataModel\WhoAreYou\WhoAreYou;
 use MakeShared\Logging\LoggerTrait;
 
@@ -16,12 +19,7 @@ class Service extends AbstractService
     use WhoRepositoryTrait;
     use LoggerTrait;
 
-    /**
-     * @param $lpaId
-     * @param $data
-     * @return ApiProblem|ValidationApiProblem|Entity
-     */
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
@@ -42,7 +40,11 @@ class Service extends AbstractService
 
         $this->assertLpaValid($lpa, 'after setting whoAreYouAnswered');
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         $this->getWhoRepository()->insert($answer);
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Application\Model\Entity;
 
+use DateTime;
 use DateTimeInterface;
 
 readonly class MemberInvite
@@ -34,5 +35,22 @@ readonly class MemberInvite
         DateTimeInterface $expires,
     ): MemberInvite {
         return new MemberInvite(null, $userId, $sharedSpaceId, $firstNames, $lastName, $email, $isAdmin, $code, $created, $expires);
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expires->getTimestamp() < (new DateTime())->getTimestamp();
+    }
+
+    /**
+     * Member invite data can be deleted after 30 days.
+     *
+     * @return bool
+     */
+    public function canBeDeleted(): bool
+    {
+        $days = $this->created->diff(new DateTime())->days;
+
+        return $days && $days >= 30;
     }
 }

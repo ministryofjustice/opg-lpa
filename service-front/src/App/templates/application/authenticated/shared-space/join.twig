@@ -1,12 +1,15 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Join shared space' -%}
-{% block mainTitle %}{% endblock %}
+{%- set overridePageTitle = 'Join a shared space' -%}
 
 {% set form = formErrorTextExchange(form, {
-    'space-name': {
-        'isEmpty': 'Enter the name of the shared space',
+    'sharedSpaceName': {
+        'isEmpty': 'Enter your shared space name',
+    },
+    'sharedSpaceAccessCode': {
+        'isEmpty': 'Enter your joining code',
+        'regexNotMatch': 'Enter a valid joining code',
     },
 }) %}
 
@@ -27,13 +30,17 @@
       <div class="govuk-error-summary" role="group" aria-labelledby="error-heading" tabindex="-1">
         <h2 class="govuk-heading-m govuk-error-summary__title" id="error-heading" data-cy="error-heading">There is a problem</h2>
         <div class="govuk-error-summary__body">
-          <p class="govuk-body">{{ joinError }}</p>
+          <ul class="govuk-list govuk-error-summary__list">
+            <li>{{ joinError }}</li>
+          </ul>
         </div>
       </div>
     {% endif %}
 
     <div class="govuk-grid-column-two-thirds">
-      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+
+      <p class="govuk-body">You need to enter the shared space name and unique joining code. These are in the email you received, inviting you to join.</p>
 
       {{ form.prepare() ? '' }}
       {{ form().openTag( form )|raw }}
@@ -42,7 +49,7 @@
       {{ macros.formGroup2(sharedSpaceName) }}
       {{ macros.formGroup2(sharedSpaceAccessCode) }}
 
-      <button class="govuk-button" type="submit">Continue</button>
+      <button class="govuk-button" type="submit">Join shared space</button>
       {{ form().closeTag|raw }}
     </div>
   </div>

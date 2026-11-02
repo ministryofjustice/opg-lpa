@@ -1,0 +1,21 @@
+{% import "application/macros.twig" as macros %}
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'You’ve not been able to join the shared space' -%}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+
+      <p class="govuk-body">Invites to join a shared space expire after 7 days.</p>
+      <p class="govuk-body">Your invite expired on {{ inviteExpiry }}.</p>
+      <p class="govuk-body">If you still need access to the shared space ‘{{ sharedSpaceName }}’, speak to a member of your team.</p>
+      <p class="govuk-body">Only members of the shared space who have ‘admin’ access can send a you a new invite.</p>
+
+      <p class="govuk-body">
+        <a class="govuk-button" href="{{ url('shared-space') }}">Return to shared space</a>
+      </p>
+    </div>
+  </div>
+{% endblock content %}
