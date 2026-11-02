@@ -3,10 +3,13 @@
 namespace Application\Model\Service\NotifiedPeople;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Library\ApiProblem\ConflictProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\DataModelEntity;
+use Application\Model\Service\EntityInterface;
 use MakeShared\DataModel\Lpa\Document\NotifiedPerson;
 use MakeShared\Logging\LoggerTrait;
 
@@ -15,12 +18,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    /**
-     * @param $lpaId
-     * @param $data
-     * @return ValidationApiProblem|DataModelEntity
-     */
-    public function create(string $lpaId, ?int $ifMatchVersion, string $userId, $data)
+    public function create(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
@@ -47,18 +45,16 @@ class Service extends AbstractService
 
         $lpa->getDocument()->peopleToNotify[] = $person;
 
-        $this->updateLpa($lpa);
+        try {
+            $this->updateLpa($lpa);
+        } catch (ConflictException $e) {
+            return new ConflictProblem($e);
+        }
 
         return new DataModelEntity($person);
     }
 
-    /**
-     * @param $lpaId
-     * @param $data
-     * @param $id
-     * @return ApiProblem|ValidationApiProblem|DataModelEntity
-     */
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data, $id)
+    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data, mixed $id): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
@@ -78,7 +74,11 @@ class Service extends AbstractService
 
                 $lpa->getDocument()->peopleToNotify[$key] = $person;
 
-                $this->updateLpa($lpa);
+                try {
+                    $this->updateLpa($lpa);
+                } catch (ConflictException $e) {
+                    return new ConflictProblem($e);
+                }
 
                 return new DataModelEntity($person);
             }
@@ -87,12 +87,7 @@ class Service extends AbstractService
         return new ApiProblem(404, 'Document not found');
     }
 
-    /**
-     * @param $lpaId
-     * @param $id
-     * @return ApiProblem|bool
-     */
-    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId, $id)
+    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $id): ?ApiProblem
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
@@ -105,9 +100,13 @@ class Service extends AbstractService
                 // Reset the index sequence. This ensure the value remains an array, not an object, in JSON.
                 $lpa->getDocument()->setPeopleToNotify(array_values($lpa->getDocument()->peopleToNotify));
 
-                $this->updateLpa($lpa);
+                try {
+                    $this->updateLpa($lpa);
+                } catch (ConflictException $e) {
+                    return new ConflictProblem($e);
+                }
 
-                return true;
+                return null;
             }
         }
 

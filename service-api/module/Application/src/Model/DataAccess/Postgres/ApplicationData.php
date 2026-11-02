@@ -290,7 +290,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
                     throw new ConflictException($profile['name']['first'] . ' ' . $profile['name']['last']);
                 }
 
-                throw new ConflictException('Unknown user ' . $inDbLpa->getUpdatedBy());
+                throw new ConflictException('Unknown user');
             }
 
             //------------------------------------------

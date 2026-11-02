@@ -7,7 +7,6 @@ use Application\Library\Http\Response\Json as JsonResponse;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
 use Application\Model\Service\Applications\Service;
 use Application\Model\Service\EntityInterface;
-use Laminas\Paginator\Paginator;
 use MakeShared\DataModel\Lpa\Lpa;
 use Traversable;
 
@@ -36,9 +35,7 @@ class ApplicationController extends AbstractLpaController
             $this->params()->fromRoute('userId')
         );
 
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
+        if ($result instanceof EntityInterface) {
             $resultData = $result->toArray();
 
             if (empty($resultData)) {
@@ -48,12 +45,11 @@ class ApplicationController extends AbstractLpaController
             return new JsonResponse($resultData);
         }
 
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        return $result;
     }
 
     /**
-     * @return JsonResponse|NoContentResponse|Paginator|ApiProblem
+     * @return JsonResponse
      */
     public function getList()
     {
@@ -82,14 +78,6 @@ class ApplicationController extends AbstractLpaController
             $this->params()->fromRoute('userId'),
             $filteredQuery
         );
-
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result === null) {
-            return new NoContentResponse();
-        }
-
-        // The applications collection was a success - it will be a paginator
 
         //  Set the page number and per page count (if valid)
         $result->setCurrentPageNumber($page);
@@ -122,14 +110,7 @@ class ApplicationController extends AbstractLpaController
             $this->params()->fromRoute('userId')
         );
 
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
-            return new JsonResponse($result->toArray(), 201);
-        }
-
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        return new JsonResponse($result->toArray(), 201);
     }
 
     /**
@@ -156,14 +137,11 @@ class ApplicationController extends AbstractLpaController
             $this->params()->fromRoute('userId'),
         );
 
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result instanceof EntityInterface) {
+        if ($result instanceof EntityInterface) {
             return new JsonResponse($result->toArray());
         }
 
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        return $result;
     }
 
     /**
@@ -179,13 +157,10 @@ class ApplicationController extends AbstractLpaController
             $this->params()->fromRoute('userId')
         );
 
-        if ($result instanceof ApiProblem) {
-            return $result;
-        } elseif ($result === true) {
+        if ($result === null) {
             return new NoContentResponse();
         }
 
-        // If we get here...
-        return new ApiProblem(500, 'Unable to process request');
+        return $result;
     }
 }
