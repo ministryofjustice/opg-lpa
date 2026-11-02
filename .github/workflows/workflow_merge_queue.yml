@@ -269,6 +269,19 @@ jobs:
       cypress_tags: "not @RequiresOneLogin"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
+  cypress_smoke_test:
+    name: Run Cypress smoke test
+    continue-on-error: true
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - preprod_terraform_outputs
+    with:
+      admin_url: https://${{ needs.preprod_terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
+      account_id: "987830934591"
+      cypress_tags: "SMOKE"
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
+
   locust_tests:
     name: Run locust tests
     uses: ./.github/workflows/locust_tests.yml
@@ -290,6 +303,7 @@ jobs:
       - cypress_tests_Signup_StitchedHW
       - cypress_tests_SignupIncluded
       - cypress_tests_Remaining
+      - cypress_smoke_test
       - locust_tests
     environment:
       name: "preproduction"

@@ -167,7 +167,7 @@ module.exports = defineConfig({
   chromeWebSecurity: false,
   trashAssetsBeforeRuns: false,
   e2e: {
-    specPattern: "cypress/e2e/**/*.feature",
+    specPattern: ["cypress/e2e/**/*.feature", "cypress/smoke/*.cy.js"],
     supportFile: "cypress/support/e2e.js",
     setupNodeEvents,
     screenshotOnRunFailure: true,
