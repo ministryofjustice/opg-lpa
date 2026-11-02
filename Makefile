@@ -473,9 +473,6 @@ dc-account-cleanup:
 AWS_CLEANUP_PROFILE ?= moj-lpa-dev
 AWS_RUN_CRON_TASK = aws-vault exec ${AWS_CLEANUP_PROFILE} -- ./scripts/run_api_cron_task.sh "${ENV}"
 
-# Sets last_login for a user (matched by identity or One Login email) to now() - INTERVAL.
-AWS_AGE_USER_LOGIN_PHP = $$d = new PDO(sprintf("pgsql:host=%s;port=%s;dbname=%s", getenv("OPG_LPA_POSTGRES_HOSTNAME"), getenv("OPG_LPA_POSTGRES_PORT"), getenv("OPG_LPA_POSTGRES_NAME")), getenv("OPG_LPA_POSTGRES_USERNAME"), getenv("OPG_LPA_POSTGRES_PASSWORD")); $$s = $$d->prepare("UPDATE users SET last_login = now() - CAST(:i AS interval) WHERE identity = :e1 OR one_login_email = :e2"); $$s->execute([":i" => $$argv[1], ":e1" => $$argv[2], ":e2" => $$argv[2]]); echo "rows updated: " . $$s->rowCount() . PHP_EOL;
-
 # Sends warning emails and deletes expired accounts unless DRY_RUN=1 is given.
 # Usage: make aws-account-cleanup ENV=<workspace> [DRY_RUN=1]
 .PHONY: aws-account-cleanup
@@ -487,7 +484,7 @@ aws-account-cleanup:
 .PHONY: aws-age-user-login
 aws-age-user-login:
 	@test -n "${ENV}" -a -n "${EMAIL}" || { echo "Usage: make $@ ENV=<workspace> EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']"; exit 1; }
-	@${AWS_RUN_CRON_TASK} php -r '${AWS_AGE_USER_LOGIN_PHP}' '$(or ${INTERVAL},8 months 3 weeks 5 days)' '${EMAIL}'
+	@${AWS_RUN_CRON_TASK} php -r "$$(cat scripts/age_user_login.php.script)" '$(or ${INTERVAL},8 months 3 weeks 5 days)' '${EMAIL}'
 
 # Usage: make age-user-login EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']
 .PHONY: age-user-login
