@@ -7,18 +7,12 @@ const path = require("path");
 const { PNG } = require("pngjs");
 const pixelmatch = require("pixelmatch").default;
 const { dimensionsMismatchError, pixelsMismatchError } = require('./cypress/support/constants');
-const { freshTotp } = require('./cypress/support/totp');
 
 // This is used to store data between test steps; it's effectively a global
 // variable container. The main purpose is to enable more natural expressions
 // When fetching some content from a page Then checking it has expected
 // properties.
 const testStore = {}
-
-function oneLoginIntegrationSecret(name) {
-  const value = process.env[name];
-  return value && value !== "default" ? value : null;
-}
 
 async function setupNodeEvents(on, config) {
   await addCucumberPreprocessorPlugin(on, config);
@@ -147,18 +141,6 @@ async function setupNodeEvents(on, config) {
         return true;
       }
       return false;
-    },
-
-    oneLoginIntegrationCredentials() {
-      const email = oneLoginIntegrationSecret("ONELOGIN_INTEGRATION_EMAIL");
-      const password = oneLoginIntegrationSecret("ONELOGIN_INTEGRATION_PASSWORD");
-      const totpSecret = oneLoginIntegrationSecret("ONELOGIN_INTEGRATION_TOTP_SECRET");
-
-      return email && password && totpSecret ? { email, password } : null;
-    },
-
-    oneLoginIntegrationCode() {
-      return freshTotp(oneLoginIntegrationSecret("ONELOGIN_INTEGRATION_TOTP_SECRET"));
     },
 
     moveFile({ source, destination }) {
