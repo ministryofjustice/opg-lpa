@@ -28,6 +28,7 @@ variable "environments" {
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
       public_access_enabled                  = bool
+      ecs_resource_alarms                    = bool
       cognito = object({
         admin_cognito_auth_enabled                        = bool
         admin_cognito_user_pool_name                      = string

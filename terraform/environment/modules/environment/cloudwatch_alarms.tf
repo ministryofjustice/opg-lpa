@@ -378,3 +378,134 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
     }
   }
 }
+
+locals {
+  ecs_services = {
+    admin  = aws_ecs_service.front.name
+    api    = aws_ecs_service.api.name
+    viewer = aws_ecs_service.pdf.name
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "high_task_cpu" {
+  for_each            = var.environment.ecs_resource_alarms ? local.ecs_services : {}
+  alarm_name          = "${var.environment_name}-${each.key}-high-task-cpu"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 3
+  threshold           = 90
+  alarm_description   = "${each.key} service task has very high CPU utilisation"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "max_cpu"
+    return_data = true
+    metric {
+      metric_name = "CPUUtilization"
+      namespace   = "AWS/ECS"
+      period      = 60
+      stat        = "Maximum"
+      dimensions = {
+        ServiceName = each.value
+        ClusterName = aws_ecs_cluster.online-lpa.name
+      }
+    }
+  }
+
+}
+
+resource "aws_cloudwatch_metric_alarm" "high_task_memory" {
+  for_each            = var.environment.ecs_resource_alarms ? local.ecs_services : {}
+  alarm_name          = "${var.environment_name}-${each.key}-high-task-memory"
+  comparison_operator = "GreaterThanOrEqualToThreshold"
+  evaluation_periods  = 3
+  threshold           = 90
+  alarm_description   = "${each.key} service task has very high memory utilisation"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "max_mem"
+    return_data = true
+    metric {
+      metric_name = "MemoryUtilization"
+      namespace   = "AWS/ECS"
+      period      = 60
+      stat        = "Maximum"
+      dimensions = {
+        ServiceName = each.value
+        ClusterName = aws_ecs_cluster.online-lpa.name
+      }
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "cpu_usage_anomaly" {
+  for_each            = var.environment.ecs_resource_alarms ? local.ecs_services : {}
+  actions_enabled     = false
+  alarm_name          = "${var.environment_name}-${each.key}-cpu-usage-anomaly"
+  alarm_description   = "Anomaly detection for CPU utilisation of the ${each.key} service in ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 3
+  datapoints_to_alarm = 3
+  threshold_metric_id = "ad1"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "CPU utilisation anomaly detection band"
+    return_data = true
+  }
+  metric_query {
+    id          = "m1"
+    return_data = true
+    metric {
+      metric_name = "CPUUtilization"
+      namespace   = "AWS/ECS"
+      period      = 60
+      stat        = "Average"
+      dimensions = {
+        ServiceName = each.value
+        ClusterName = aws_ecs_cluster.online-lpa.name
+      }
+    }
+  }
+}
+
+resource "aws_cloudwatch_metric_alarm" "memory_usage_anomaly" {
+  for_each            = var.environment.ecs_resource_alarms ? local.ecs_services : {}
+  actions_enabled     = false
+  alarm_name          = "${var.environment_name}-${each.key}-memory-usage-anomaly"
+  alarm_description   = "Anomaly detection for memory utilisation of the ${each.key} service in ${var.environment_name}"
+  comparison_operator = "GreaterThanUpperThreshold"
+  evaluation_periods  = 3
+  datapoints_to_alarm = 3
+  threshold_metric_id = "ad1"
+  treat_missing_data  = "notBreaching"
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+
+  metric_query {
+    id          = "ad1"
+    expression  = "ANOMALY_DETECTION_BAND(m1, 2)"
+    label       = "Memory utilisation anomaly detection band"
+    return_data = true
+  }
+  metric_query {
+    id          = "m1"
+    return_data = true
+    metric {
+      metric_name = "MemoryUtilization"
+      namespace   = "AWS/ECS"
+      period      = 60
+      stat        = "Average"
+      dimensions = {
+        ServiceName = each.value
+        ClusterName = aws_ecs_cluster.online-lpa.name
+      }
+    }
+  }
+}
