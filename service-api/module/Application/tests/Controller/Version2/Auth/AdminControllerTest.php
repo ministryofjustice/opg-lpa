@@ -103,6 +103,9 @@ class AdminControllerTest extends MockeryTestCase
             ->andReturn($headers);
         $this->request->shouldReceive('getContent')
             ->andReturn('{}');
+        $this->request->shouldReceive('getMethod')
+            ->andReturn('GET')
+            ->byDefault();
     }
 
     private function getController(): AdminController
@@ -282,6 +285,74 @@ class AdminControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblemResponse::class, $result);
         $this->assertEquals(404, $result->getStatusCode());
         $this->assertEquals('No user found with supplied user ID', json_decode($result->getContent(), true)['detail']);
+    }
+
+    public function testDeleteDeletionLogAction()
+    {
+        $emailAddress = 'user@name.com';
+
+        $this->request->shouldReceive('getMethod')->andReturn('DELETE');
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('email')
+            ->andReturn($emailAddress)
+            ->once();
+
+        $this->usersService->shouldReceive('deleteDeletionLog')
+            ->with($emailAddress)
+            ->andReturnTrue()
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var Json $result */
+        $result = $controller->deleteDeletionLogAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals('{"deleted":true}', $result->getContent());
+    }
+
+    public function testDeleteDeletionLogActionNotFound()
+    {
+        $this->request->shouldReceive('getMethod')->andReturn('DELETE');
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('email')
+            ->andReturn('user@name.com')
+            ->once();
+
+        $this->usersService->shouldReceive('deleteDeletionLog')
+            ->with('user@name.com')
+            ->andReturnFalse()
+            ->once();
+
+        $controller = $this->getController();
+
+        /** @var ApiProblemResponse $result */
+        $result = $controller->deleteDeletionLogAction();
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(404, $result->getStatusCode());
+    }
+
+    public function testDeleteDeletionLogActionMissingEmail()
+    {
+        $this->request->shouldReceive('getMethod')->andReturn('DELETE');
+
+        $this->params->shouldReceive('fromQuery')
+            ->with('email')
+            ->andReturn(null)
+            ->once();
+
+        $this->usersService->shouldNotReceive('deleteDeletionLog');
+
+        $controller = $this->getController();
+
+        /** @var ApiProblemResponse $result */
+        $result = $controller->deleteDeletionLogAction();
+
+        $this->assertInstanceOf(ApiProblemResponse::class, $result);
+        $this->assertEquals(400, $result->getStatusCode());
     }
 
     public function testMatchUsersAction()

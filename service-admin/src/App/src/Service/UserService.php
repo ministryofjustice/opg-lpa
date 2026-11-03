@@ -135,6 +135,27 @@ class UserService
     }
 
     /**
+     * Delete the deletion log recorded for a deleted account.
+     *
+     * @return bool true if a deletion log was deleted
+     */
+    public function deleteDeletionLog(#[SensitiveParameter] string $email): bool
+    {
+        try {
+            $response = $this->client->httpDelete('/v2/admin/deletion-log', [
+                'email' => $email,
+            ]);
+
+            return is_array($response) && ($response['deleted'] ?? false) === true;
+        } catch (\Throwable $e) {
+            $this->logger->error('Delete deletion log failed', [
+                'exception' => $e,
+            ]);
+            return false;
+        }
+    }
+
+    /**
      * @return array{results: array, total: int}|false
      * @throws ClientExceptionInterface
      */

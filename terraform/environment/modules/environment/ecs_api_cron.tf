@@ -67,7 +67,45 @@ resource "aws_cloudwatch_event_target" "api_ecs_cron_event_account_cleanup" {
         }
       ]
   })
+}
 
+//------------------------------------------------
+// Deletion log cleanup task
+
+resource "aws_cloudwatch_event_target" "api_ecs_cron_event_deletion_log_cleanup" {
+  count = var.account_name == "preproduction" ? 0 : 1
+  # don't run crons on preprod
+
+  target_id = "deletion-log-cleanup"
+  arn       = aws_ecs_cluster.online-lpa.arn
+  rule      = aws_cloudwatch_event_rule.mid_morning.name
+  role_arn  = var.ecs_iam_task_roles.cloudwatch_events.arn
+
+  ecs_target {
+    task_count          = 1
+    task_definition_arn = aws_ecs_task_definition.api_cron.arn
+    launch_type         = "FARGATE"
+    platform_version    = "1.4.0"
+
+    network_configuration {
+      security_groups = [
+        aws_security_group.api_ecs_service.id,
+        aws_security_group.rds_client.id,
+      ]
+      subnets          = [for subnet in data.aws_subnet.application : subnet.id]
+      assign_public_ip = false
+    }
+  }
+
+  input = jsonencode(
+    {
+      containerOverrides = [
+        {
+          name    = "app",
+          command = ["php", "/app/vendor/bin/laminas", "service-api:deletion-log-cleanup"],
+        }
+      ]
+  })
 }
 
 //------------------------------------------------

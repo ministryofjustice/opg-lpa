@@ -4,6 +4,7 @@ namespace Application\Model\DataAccess\Postgres;
 
 use DateMalformedStringException;
 use DateTime;
+use Laminas\Db\Sql\Predicate\Operator;
 use Application\Model\DataAccess\Postgres\AbstractBase;
 use Application\Model\DataAccess\Repository\User as UserRepository;
 
@@ -63,5 +64,41 @@ class LogData extends AbstractBase implements UserRepository\LogRepositoryInterf
         $result['loggedAt'] = new DateTime($result['loggedAt']);
 
         return $result;
+    }
+
+    /**
+     * Delete every log document stored against the identity hash
+     *
+     * @param string $identityHash
+     * @return int Number of log documents deleted
+     */
+    public function deleteLogsByIdentityHash(string $identityHash): int
+    {
+        $sql = $this->dbWrapper->createSql();
+
+        $delete = $sql->delete(self::DELETION_LOG_TABLE);
+        $delete->where(['identity_hash' => $identityHash]);
+
+        return $sql->prepareStatementForSqlObject($delete)->execute()->getAffectedRows();
+    }
+
+    /**
+     * Removes deletion logs older than 3 years from the database
+     *
+     * @return int
+     * @throws DateMalformedStringException
+     */
+    public function deleteExpiredDeletionLogs(): int
+    {
+        $threeYearsAgo = (new DateTime())->modify('-3 years')->format(DbWrapper::TIME_FORMAT);
+
+        $sql = $this->dbWrapper->createSql();
+
+        $delete = $sql->delete(self::DELETION_LOG_TABLE);
+        $delete->where([
+            new Operator('loggedAt', Operator::OPERATOR_LESS_THAN_OR_EQUAL_TO, $threeYearsAgo),
+        ]);
+
+        return $sql->prepareStatementForSqlObject($delete)->execute()->getAffectedRows();
     }
 }

@@ -12,6 +12,7 @@ return [
             'sign.in',
         ],
         'authenticated-user' => [
+            'deletion-log.delete',
             'feedback',
             'home',
             'user.lpas',

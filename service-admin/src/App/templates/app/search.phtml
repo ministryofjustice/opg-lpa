@@ -14,6 +14,8 @@ $this->addErrorMap([
 ]);
 ?>
 
+<?php $this->insert('snippet::flash-messages', ['messages' => $messages ?? []]) ?>
+
 <?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
 
 <form method="get" action="<?= $this->url('search') ?>">
@@ -147,6 +149,15 @@ $this->addErrorMap([
                     </h3>
                     <?php if (!empty($result['sharedSpaceId']) && $result['sharedSpaceId'] !== '') { ?>
                         <span class="app-float-right"><strong class="govuk-tag">Shared Space</strong></span>
+                    <?php } ?>
+                    <?php if (!empty($result['isDeleted']) && !empty($queryParams['searchTerm'])) { ?>
+                        <ul class="govuk-summary-card__actions">
+                            <li class="govuk-summary-card__action">
+                                <a class="govuk-link" data-cy="delete-log-link" href="<?= $this->url('deletion-log.delete', [], ['email' => $queryParams['searchTerm']]) ?>">
+                                    Delete<span class="govuk-visually-hidden"> deletion log for <?= $this->e($queryParams['searchTerm']) ?></span>
+                                </a>
+                            </li>
+                        </ul>
                     <?php } ?>
                 </div>
                 <div class="govuk-summary-card__content">

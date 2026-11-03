@@ -18,4 +18,12 @@ interface LogRepositoryInterface
      * @return array
      */
     public function getLogByIdentityHash(string $identityHash): ?array;
+
+    /**
+     * Delete every log document stored against the identity hash
+     *
+     * @param string $identityHash
+     * @return int Number of log documents deleted
+     */
+    public function deleteLogsByIdentityHash(string $identityHash): int;
 }

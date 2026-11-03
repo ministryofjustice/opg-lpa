@@ -146,6 +146,7 @@ class SearchHandler extends AbstractHandler
             ],
             'secret' => $form->get('secret')->getValue(),
             'paginator' => $this->paginator,
+            'messages' => $this->getFlashMessages($request),
         ]));
     }
 }

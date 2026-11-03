@@ -15,6 +15,8 @@ use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\User\User;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -44,12 +46,19 @@ class SearchHandlerTest extends TestCase
         $this->handler->setLogger($this->mockLogger);
     }
 
-    private function makeRequest(array $queryParams = [], string $adminEmail = null): ServerRequest
-    {
+    private function makeRequest(
+        array $queryParams = [],
+        string $adminEmail = null,
+        array $flashes = []
+    ): ServerRequest {
+        $flash = $this->createMock(FlashMessagesInterface::class);
+        $flash->method('getFlashes')->willReturn($flashes);
+
         $request = (new ServerRequest())
             ->withMethod(RequestMethodInterface::METHOD_GET)
             ->withQueryParams($queryParams)
-            ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN);
+            ->withAttribute(RequestAttributes::CSRF_TOKEN, Common::TEST_CSRF_TOKEN)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $flash);
 
         if ($adminEmail !== null) {
             $request = $request->withAttribute(RequestAttributes::USER_EMAIL, $adminEmail);
@@ -67,6 +76,19 @@ class SearchHandlerTest extends TestCase
             )->willReturn('response');
 
         $this->handler->handle($this->makeRequest());
+    }
+
+    public function testPassesFlashMessagesToTemplate()
+    {
+        $flashes = ['success' => 'Deletion log deleted for user@example.com'];
+
+        $this->mockTemplateRenderer->expects($this->once())->method('render')
+            ->with(
+                'app::search',
+                $this->callback(fn ($args) => $args['messages'] === $flashes)
+            )->willReturn('response');
+
+        $this->handler->handle($this->makeRequest([], null, $flashes));
     }
 
     public function testSubmitsSearchByEmail()
