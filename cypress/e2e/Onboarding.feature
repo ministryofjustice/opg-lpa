@@ -126,7 +126,12 @@ Feature: Onboarding into Make after signing in with GOV.UK One Login
 
   Scenario: A deleted Make account cannot be linked
     Given I create a new user with 1 LPA
-    And the newly created fixture users account has been deleted
+    And I log in as the newly created fixture user
+    And I visit "/user/about-you"
+    And I go to delete my account
+    And I confirm deleting my account
+    And I should be on "/deleted"
+    And I visit "/login"
     When I sign in through mock One Login to keep my existing Make account
     And I link the newly created fixture users Make account
     Then I should be on "/cannot-link-account"
