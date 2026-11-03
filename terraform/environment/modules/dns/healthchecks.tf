@@ -53,9 +53,9 @@ resource "aws_route53_health_check" "service_health_check" {
 }
 
 resource "aws_sns_topic" "service_health_checks" {
-  name = "${var.environment_name}-service-health-checks"
-  # kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
-  provider = aws.us_east_1
+  name              = "${var.environment_name}-service-health-checks"
+  kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
+  provider          = aws.us_east_1
 }
 
 resource "aws_cloudwatch_metric_alarm" "service_health_check" {
@@ -113,9 +113,9 @@ resource "aws_route53_health_check" "dependencies_health_check" {
 }
 
 resource "aws_sns_topic" "dependencies_health_check" {
-  name = "${var.environment_name}-dependencies-health-checks"
-  # kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
-  provider = aws.eu_west_2
+  name              = "${var.environment_name}-dependencies-health-checks"
+  kms_master_key_id = data.aws_kms_alias.sns_kms_key_alias_global.target_key_id
+  provider          = aws.eu_west_2
 }
 
 resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
