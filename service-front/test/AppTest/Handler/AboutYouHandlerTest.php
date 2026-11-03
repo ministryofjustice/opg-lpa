@@ -32,9 +32,13 @@ class AboutYouHandlerTest extends TestCase
     private FormInterface&MockObject $form;
     private FlashMessagesInterface&MockObject $flash;
     private AboutYouHandler $handler;
+    private string|false $oneLoginEnabled;
 
     protected function setUp(): void
     {
+        $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        putenv('ONELOGIN_ENABLED=false');
+
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->userService = $this->createMock(UserService::class);
@@ -51,6 +55,11 @@ class AboutYouHandlerTest extends TestCase
             $this->formElementManager,
             $this->userService,
         );
+    }
+
+    protected function tearDown(): void
+    {
+        putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
     }
 
     private function createUserWithName(): UserModel
@@ -120,6 +129,15 @@ class AboutYouHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $this->assertEquals('/login', $response->getHeaderLine('Location'));
+    }
+
+    public function testWithOneLoginOnAMissingSessionRedirectsToTheOneLoginStartPage(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+
+        $response = $this->handler->handle(new ServerRequest());
+
+        $this->assertEquals('/home', $response->getHeaderLine('Location'));
     }
 
     public function testGetRequestRendersForm(): void

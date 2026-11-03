@@ -126,7 +126,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
 
     $app->get('/', HomeHandler::class, 'root')
         ->setOptions(['unauthenticated_route' => true]);
-    $app->get('/home', HomeHandler::class, 'application.home')
+    $app->get('/home[/{state:(?:timeout|internal-system-error)}]', HomeHandler::class, 'application.home')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/home-redirect', HomeRedirectHandler::class, 'application.home-redirect')
         ->setOptions(['unauthenticated_route' => true]);

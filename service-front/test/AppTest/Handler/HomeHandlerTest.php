@@ -107,4 +107,34 @@ class HomeHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
+
+    /**
+     * @return array<string, array{?string, bool, bool}>
+     */
+    public static function signedOutStates(): array
+    {
+        return [
+            'no state'              => [null, false, false],
+            'timed out'             => ['timeout', true, false],
+            'internal system error' => ['internal-system-error', false, true],
+        ];
+    }
+
+    #[DataProvider('signedOutStates')]
+    public function testTellsASignedOutUserWhyTheyWereSignedOut(?string $state, bool $isTimeout, bool $isInternalSystemError): void
+    {
+        $handler = new HomeHandler($this->renderer, [], $this->at('2026-11-15'));
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                $this->anything(),
+                $this->callback(fn($params) => $params['isTimeout'] === $isTimeout
+                    && $params['isInternalSystemError'] === $isInternalSystemError)
+            )
+            ->willReturn('<html>home</html>');
+
+        $handler->handle(new ServerRequest()->withAttribute('state', $state));
+    }
 }

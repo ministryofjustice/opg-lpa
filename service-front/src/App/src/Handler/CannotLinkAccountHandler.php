@@ -46,7 +46,7 @@ class CannotLinkAccountHandler implements RequestHandlerInterface
         if ($this->sessionManager->getPendingLink($session) === null) {
             $this->logger->warning('auth.onelogin.cannot_link_missing_pending_link');
 
-            return new RedirectResponse('/login');
+            return new RedirectResponse('/home');
         }
 
         return new HtmlResponse($this->renderer->render(

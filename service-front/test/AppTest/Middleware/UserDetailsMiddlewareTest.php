@@ -21,6 +21,7 @@ use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Log\LoggerInterface;
@@ -31,14 +32,21 @@ class UserDetailsMiddlewareTest extends TestCase
     private AuthenticationService&MockObject $authenticationService;
     private UserDetailsHolder $userDetailsHolder;
     private LoggerInterface&MockObject $logger;
+    private string|false $oneLoginEnabled;
 
     protected function setUp(): void
     {
+        $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
         $this->userService           = $this->createMock(Details::class);
         $this->authenticationService = $this->createMock(AuthenticationService::class);
         $this->authenticationService->method('getIdentity')->willReturn($this->createMock(User::class));
         $this->userDetailsHolder     = new UserDetailsHolder();
         $this->logger                = $this->createMock(LoggerInterface::class);
+    }
+
+    protected function tearDown(): void
+    {
+        putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
     }
 
     private function makeMiddleware(): UserDetailsMiddleware
@@ -206,8 +214,22 @@ class UserDetailsMiddlewareTest extends TestCase
         $this->assertEquals('/user/about-you/new', $result->getHeaderLine('Location'));
     }
 
-    public function testProcessWhenUserValidationFails(): void
+    /**
+     * @return array<string, array{string, string}>
+     */
+    public static function signInPageProvider(): array
     {
+        return [
+            'One Login off' => ['false', '/login/timeout'],
+            'One Login on'  => ['true', '/home/timeout'],
+        ];
+    }
+
+    #[DataProvider('signInPageProvider')]
+    public function testProcessWhenUserValidationFails(string $oneLoginEnabled, string $expectedLocation): void
+    {
+        putenv('ONELOGIN_ENABLED=' . $oneLoginEnabled);
+
         $userDetails = $this->getMockBuilder(UserDataModel::class)
             ->setConstructorArgs([[
                 'id'        => str_repeat('a', 32),
@@ -251,6 +273,6 @@ class UserDetailsMiddlewareTest extends TestCase
         $result = $this->makeMiddleware()->process($request, $handler);
 
         $this->assertInstanceOf(RedirectResponse::class, $result);
-        $this->assertEquals('/login?state=timeout', $result->getHeaderLine('Location'));
+        $this->assertEquals($expectedLocation, $result->getHeaderLine('Location'));
     }
 }

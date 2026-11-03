@@ -68,3 +68,24 @@ export function checkSignedIn() {
 export function saveMyDetails() {
   cy.get('[data-cy="save"]').click();
 }
+
+let oneLoginEnabled = null;
+
+export function detectOneLoginEnabled() {
+  if (oneLoginEnabled !== null) {
+    return cy.wrap(oneLoginEnabled, { log: false });
+  }
+
+  // /home renders the same whether or not anyone is signed in, unlike /login.
+  return cy.request({ url: '/home', log: false }).then((response) => {
+    oneLoginEnabled = response.body.includes(
+      'data-cy="onelogin-continue-button"',
+    );
+    return oneLoginEnabled;
+  });
+}
+
+// Where a signed-out user is sent to sign in again: the One Login start page when it is on.
+export function signInPage() {
+  return detectOneLoginEnabled().then((enabled) => (enabled ? '/home' : '/login'));
+}
