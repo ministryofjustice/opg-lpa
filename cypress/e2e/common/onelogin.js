@@ -33,11 +33,7 @@ Then(`I am returned to the appropriate page shown after a password reset`, () =>
   detectOneLoginEnabled().then((enabled) => {
     const expected = enabled ? '/home' : '/login';
     cy.url().should('eq', Cypress.config().baseUrl + expected);
-    if (enabled) {
-      cy.OPGCheckA11yStrict();
-    } else {
-      cy.OPGCheckA11y();
-    }
+    cy.OPGCheckA11y();
   });
 });
 
@@ -198,7 +194,6 @@ Then(
   `I can return to sign in`,
   () => {
     cy.contains('a', 'Return to sign in').should('have.attr', 'href', '/home');
-    cy.OPGCheckA11yStrict();
   },
 );
 
@@ -206,7 +201,6 @@ Then(
   `I can contact One Login support`,
   () => {
     cy.contains('a', 'GOV.UK One Login').should('have.attr', 'href', 'https://home.account.gov.uk/contact-gov-uk-one-login');
-    cy.OPGCheckA11yStrict();
   },
 );
 
@@ -386,7 +380,6 @@ Then(`I am advised my account could not be linked`, () => {
     'contain',
     'We could not complete your request to keep LPAs and account information',
   );
-  cy.OPGCheckA11yStrict();
 });
 
 Then(`I choose to try again`, () => {

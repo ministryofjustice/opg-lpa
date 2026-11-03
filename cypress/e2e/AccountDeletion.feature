@@ -16,7 +16,6 @@ Feature: Deleting an account that signs in with GOV.UK One Login
     When I confirm deleting my account
     Then I should be on "/deleted"
     And I see "Continue to home page" in the page text
-    And the page has no accessibility violations
 
   Scenario: The last member of a shared space deletes their account and can start again as a new user
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

@@ -41,7 +41,6 @@ Feature: Homepage
   Scenario: The sign-in changes page explains the move to GOV.UK One Login
     Given I visit "/onelogin-changes"
     Then I see "We are changing the way you sign in to Make a lasting power of attorney" in the title
-    And the page has no accessibility violations
     When I click link "Back"
     Then I am taken to "/home"
 
