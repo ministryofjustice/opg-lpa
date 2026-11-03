@@ -11,6 +11,7 @@ use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
+use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
@@ -655,7 +656,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
 
-    #[DoesNotPerformAssertions]
     public function testJoin()
     {
         $userId = 'my user';
@@ -667,40 +667,59 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             id: 1,
             firstNames: 'a',
             lastName: 'b',
-            email: 'c',
+            email: $email,
             expires: new DateTime('+1 minute'),
             userId: 'me',
             sharedSpaceId: 'some-space',
             isAdmin: false,
-            code: '',
+            code: $accessCode,
             created: new DateTime(),
         );
 
-        $user = Mockery::mock(UserInterface::class);
-        $user->shouldReceive('oneLoginEmail')
-            ->andReturn($invite->email);
-
-        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction')->once();
         $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
             ->with($userId)
             ->andReturn(null);
         $this->sharedSpaceRepository->shouldReceive('getInvite')
+            ->once()
             ->with($accessCode, $sharedSpaceName, $email)
             ->andReturn($invite);
-        $this->userRepository->shouldReceive('getById')
-            ->with($userId)
-            ->andReturn($user);
-        $this->sharedSpaceRepository->shouldReceive('addMember')
-            ->with($invite->sharedSpaceId, $userId, $invite->isAdmin);
-        $this->sharedSpaceRepository->shouldReceive('deleteInvites')
-            ->with($email);
-        $this->sharedSpaceRepository->shouldReceive('commit');
-
         $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
+            ->once()
             ->with($userId, $invite->sharedSpaceId)
             ->andReturn(5);
+        $this->sharedSpaceRepository->shouldReceive('addMember')
+            ->once()
+            ->with($invite->sharedSpaceId, $userId, $invite->isAdmin);
+        $this->sharedSpaceRepository->shouldReceive('deleteInvites')
+            ->once()
+            ->with($email);
+        $this->sharedSpaceRepository->shouldReceive('commit')->once();
+        $this->sharedSpaceRepository->shouldNotReceive('rollback');
 
-        $this->service->join($userId, $sharedSpaceName, $accessCode, $email);
+        $this->assertSame('some-space', $this->service->join($userId, $sharedSpaceName, $accessCode, $email));
+    }
+
+    // The invite is looked up by the joining user's email, so an invite sent to any other address,
+    // such as the Make email of a user who signs in with a different GOV.UK One Login email, is not found.
+    public function testJoinWhenNoInviteForTheUsersEmail()
+    {
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction')->once();
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->with('my user')
+            ->andReturn(null);
+        $this->sharedSpaceRepository->shouldReceive('getInvite')
+            ->once()
+            ->with('1234', 'My Space', 'onelogin@example.com')
+            ->andThrow(new InviteNotFoundException());
+        $this->sharedSpaceRepository->shouldReceive('rollback')->once();
+        $this->sharedSpaceRepository->shouldNotReceive('commit');
+        $this->sharedSpaceRepository->shouldNotReceive('addMember');
+        $this->sharedSpaceRepository->shouldNotReceive('deleteInvites');
+        $this->applicationRepository->shouldNotReceive('setSharedSpaceOwner');
+
+        $this->expectException(InviteNotFoundException::class);
+        $this->service->join('my user', 'My Space', '1234', 'onelogin@example.com');
     }
 
     public function testJoinWhenAlreadyInSharedSpace()

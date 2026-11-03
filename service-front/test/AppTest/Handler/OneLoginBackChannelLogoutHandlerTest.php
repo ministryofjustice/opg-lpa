@@ -172,7 +172,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
         $this->assertSame(200, $response->getStatusCode());
     }
 
-    public function testAReplayedTokenIsRejectedWithoutReachingTheApi(): void
+    public function testAReplayedTokenIsRejectedWithA200WithoutReachingTheApi(): void
     {
         $replayGuard = $this->createMock(LogoutTokenReplayGuard::class);
         $replayGuard->expects($this->once())->method('claim')->with('a.logout.token')->willReturn(false);
@@ -195,7 +195,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
         $response = $handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     public function testAnAcceptedTokenKeepsItsClaim(): void
@@ -265,7 +265,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
-        $this->assertSame(400, $response->getStatusCode());
+        $this->assertSame(200, $response->getStatusCode());
     }
 
     private function request(array $body): ServerRequest

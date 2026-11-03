@@ -71,7 +71,6 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
             'setAuthenticationService'      => AuthenticationService::class,
             'setSharedSpaceRepository'      => SharedSpaceRepository\SharedSpaceRepositoryInterface::class,
             'setLogoutTokenVerifier'        => OneLogin\LogoutTokenVerifier::class,
-            'setCache'                      => 'OneLoginPsr16Cache',
             'setKeyPairManager'             => OneLogin\KeyPairManager::class,
         ],
     ];

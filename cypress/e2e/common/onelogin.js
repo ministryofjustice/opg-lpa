@@ -15,10 +15,11 @@ function oneLoginMockUrl() {
   return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
 }
 
+// These scenarios drive the mock One Login, so they only run where the mock is deployed.
 Before({ tags: '@RequiresOneLogin' }, function () {
-  detectOneLoginEnabled().then((enabled) => {
-    if (!enabled) {
-      cy.log('GOV.UK One Login is not enabled in this environment, skipping');
+  detectOneLoginMode().then((mode) => {
+    if (mode !== 'mock') {
+      cy.log(`GOV.UK One Login mock is not in use in this environment (${mode}), skipping`);
       this.skip();
     }
   });

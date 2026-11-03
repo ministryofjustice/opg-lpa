@@ -16,7 +16,6 @@ use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeShared\Logging\LoggerTrait;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
-use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 use function Facile\OpenIDClient\base64url_encode;
@@ -32,13 +31,7 @@ class Service extends AbstractService
     private ?AuthenticationService $authenticationService = null;
     private ?SharedSpaceRepositoryInterface $sharedSpaceRepository = null;
     private ?LogoutTokenVerifier $logoutTokenVerifier = null;
-    private ?CacheInterface $cache = null;
     private ?KeyPairManager $keyPairManager = null;
-
-    /**
-     * Must not accept the same jti twice within three minutes.
-     */
-    private const int LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS = 180;
 
     /**
      * The credential trust level we request: medium authentication, no identity proving.
@@ -102,14 +95,6 @@ class Service extends AbstractService
     public function setLogoutTokenVerifier(LogoutTokenVerifier $verifier): void
     {
         $this->logoutTokenVerifier = $verifier;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setCache(CacheInterface $cache): void
-    {
-        $this->cache = $cache;
     }
 
     /**
@@ -596,18 +581,10 @@ class Service extends AbstractService
             throw new RuntimeException('LogoutTokenVerifier must be set');
         }
 
-        if ($this->cache === null) {
-            throw new RuntimeException('Cache must be set');
-        }
-
         try {
-            ['sub' => $sub, 'jti' => $jti, 'iat' => $signedOutAt] = $this->logoutTokenVerifier->verify($logoutToken);
+            ['sub' => $sub, 'iat' => $signedOutAt] = $this->logoutTokenVerifier->verify($logoutToken);
         } catch (LogoutTokenException $e) {
             return $this->rejectLogout($e->getMessage());
-        }
-
-        if ($this->hasSeenLogoutToken($jti)) {
-            return $this->rejectLogout('replayed_jti');
         }
 
         $user = $this->getUserRepository()->getByOneLoginSub($sub);
@@ -616,8 +593,6 @@ class Service extends AbstractService
         if ($userId !== null) {
             $this->getUserRepository()->clearAuthToken($userId);
         }
-
-        $this->rememberLogoutToken($jti);
 
         if ($userId === null) {
             $this->getLogger()->info('auth.onelogin.backchannel_logout_no_user', []);
@@ -640,27 +615,6 @@ class Service extends AbstractService
         ]);
 
         return ['accepted' => false, 'reason' => $reason];
-    }
-
-    private function hasSeenLogoutToken(string $jti): bool
-    {
-        assert($this->cache !== null);
-        return $this->cache->has($this->logoutTokenCacheKey($jti));
-    }
-
-    private function rememberLogoutToken(string $jti): void
-    {
-        assert($this->cache !== null);
-        $this->cache->set(
-            $this->logoutTokenCacheKey($jti),
-            true,
-            self::LOGOUT_TOKEN_REPLAY_WINDOW_SECONDS,
-        );
-    }
-
-    private function logoutTokenCacheKey(string $jti): string
-    {
-        return 'logout_jti_' . hash('sha256', $jti);
     }
 
     /**
