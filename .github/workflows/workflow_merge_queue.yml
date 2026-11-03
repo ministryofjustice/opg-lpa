@@ -266,7 +266,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       onelogin_mock_url: ${{ needs.preprod_terraform_outputs.outputs.mock_onelogin_url }}
       account_id: "987830934591"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @RequiresOneLogin"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   locust_tests:
