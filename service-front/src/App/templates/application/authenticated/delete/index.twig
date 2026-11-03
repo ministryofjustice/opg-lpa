@@ -21,15 +21,7 @@
           <p class="govuk-body">Any completed LPAs you’ve previously downloaded or saved, or sent to OPG for registration, will not be affected.</p>
         {% endif %}
       {% else %}
-        <p class="govuk-body">You are about to delete your account. Doing this will permanently remove {% if memberCount !== null %}your personal details from our system.{% else %}all your LPAs and personal details from our system.{% endif %}</p>
-
-        {% if memberCount !== null %}
-          {%  if memberCount === 1 %}
-            <p class="govuk-body">You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.</p>
-          {% else %}
-            <p class="govuk-body">You are currently part of a shared space. Deleting your account will remove you from the shared space and you will no longer have access to any LPAs that have been created within it.</p>
-          {% endif %}
-        {% endif %}
+        <p class="govuk-body">You are about to delete your account. Doing this will permanently remove all your LPAs and personal details from our system.</p>
       {% endif %}
 
       <form novalidate method="post">
