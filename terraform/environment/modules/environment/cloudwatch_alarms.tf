@@ -137,7 +137,6 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
-  # count               = local.enable_all_alarms || local.test_alarm == "pdf_queue_excess_items" ? 1 : 0
   alarm_name          = "${var.environment_name}-pdf-queue-excess-items"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   alarm_description   = "ApproximateNumberOfMessagesVisible >= 10 for 5 minutes in pdf queue"
