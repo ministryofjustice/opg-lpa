@@ -381,9 +381,10 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
 
 locals {
   ecs_services = {
-    admin  = aws_ecs_service.front.name
-    api    = aws_ecs_service.api.name
-    viewer = aws_ecs_service.pdf.name
+    front = aws_ecs_service.front.name
+    api   = aws_ecs_service.api.name
+    pdf   = aws_ecs_service.pdf.name
+    admin = aws_ecs_service.admin.name
   }
 }
 
