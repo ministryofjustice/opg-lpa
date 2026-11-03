@@ -15,6 +15,17 @@ variable "environment" {
     account_name_short                     = string
     associate_alb_with_waf_web_acl_enabled = bool
     public_access_enabled                  = bool
+    cloudwatch_alarms = object({
+      ecs_resource_alarms_enabled                  = bool
+      front_4xx_anomaly_alarms_enabled             = bool
+      front_ddos_alarms_enabled                    = bool
+      admin_ddos_alarms_enabled                    = bool
+      auth_sign_in_success_alarms_enabled          = bool
+      auth_sign_in_failed_alarms_enabled           = bool
+      auth_account_locked_alarms_enabled           = bool
+      auth_sign_in_account_locked_alarms_enabled   = bool
+      auth_sign_in_inactive_account_alarms_enabled = bool
+    })
     cognito = object({
       admin_cognito_auth_enabled = bool
     })
