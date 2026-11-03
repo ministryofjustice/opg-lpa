@@ -99,7 +99,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@11715bf7e74f8c0429fff4c719462a6f5a5582cd # v3.19.22
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@9b845e5eccece130505a5bf8e717856b1db4c1fe # v3.19.23
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
@@ -108,7 +108,7 @@ jobs:
       snyk_container_options: --severity-threshold=high
       snyk_ecr_registry_id: "311462405659"
       snyk_image: "shared/snyk:main-cli-1.1308.3-v0.3.2"
-      artifact_name: ${{ matrix.artifact_name || '' }}
+      artifact_name: ${{ matrix.artifact_name || matrix.scan_id }}
       build_target: ${{ matrix.build_target || '' }}
       build_targets: ${{ matrix.build_targets || '[{"actions_runner":"ubuntu-latest","platform":"linux/amd64","tag":"AMD64"}]' }}
       build_options: ${{ matrix.build_options }}

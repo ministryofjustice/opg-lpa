@@ -54,43 +54,34 @@ services:
     environment:
       - IMPOSTER_LOG_LEVEL=TRACE
 
-  localstack:
-    container_name: lpa-localstack
-    image: localstack/localstack:4.14.0@sha256:3ebc37595918b8accb852f8048fef2aff047d465167edd655528065b07bc364a
+  ministack:
+    container_name: lpa-ministack
+    image: ministackorg/ministack:1.5@sha256:21dd9d52bd1e3308b55e5205945963eb024398f69e874ecc329f76783da01e62
     depends_on:
       dynamodb:
         condition: service_started
-    privileged: true
     ports:
-      - "127.0.0.1:4566:4566" # To support app.localstack.cloud
+      - "127.0.0.1:4566:4566"
     environment:
       AWS_ACCESS_KEY_ID: "devkey"
       AWS_SECRET_ACCESS_KEY: "secretdevkey"
       DEBUG: 1
       DYNAMODB_URL: http://dynamodb:8000
       FRONT_DOMAIN: localhost:7002
-      HOSTNAME: localstack
-      # Configure lambdas started within localstack so
-      # that they use the external malpadev network.
-      # This enables them to resolve names of containers
-      # within the docker compose environment, providing
-      # they have an alias on this network.
-      LAMBDA_DOCKER_NETWORK: malpadev
-      LAMBDA_EXECUTOR: docker
+      HOSTNAME: ministack
       OPG_LPA_COMMON_PDF_QUEUE_NAME: pdf-queue.fifo
       OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET: "lpacache"
-      OPG_LPA_COMMON_SQS_ENDPOINT: localstack:4566
-      OPG_LPA_COMMON_S3_ENDPOINT: localstack:4566
-      SERVICES: sqs,s3,lambda,secretsmanager
+      OPG_LPA_COMMON_SQS_ENDPOINT: ministack:4566
+      OPG_LPA_COMMON_S3_ENDPOINT: ministack:4566
+      SERVICES: sqs,s3,secretsmanager
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./localstack/:/etc/localstack/init/ready.d/
-    networks:
-      default:
-        aliases:
-          - sqs.eu-west-1.localhost.localstack.cloud
+      - ./ministack/:/etc/localstack/init/ready.d/
     healthcheck:
-      test: ["CMD", "curl", "http://localhost:4566/_localstack/health?reload"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4566/_ministack/health')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
 
   # ---------------------------
   # Front
@@ -125,7 +116,7 @@ services:
     depends_on:
       dynamodb:
         condition: service_started
-      localstack:
+      ministack:
         condition: service_healthy
       mock-pay:
         condition: service_started
@@ -237,7 +228,7 @@ services:
     depends_on:
       dynamodb:
         condition: service_started
-      localstack:
+      ministack:
         condition: service_healthy
       postgres:
         condition: service_healthy
@@ -278,8 +269,8 @@ services:
       OPG_LPA_ADMIN_SERVICE_SECRET: "local-dev-admin-service-secret"
 
       OPG_LPA_COMMON_DYNAMODB_ENDPOINT: http://dynamodb:8000
-      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
-      OPG_LPA_COMMON_PDF_QUEUE_URL: http://localstack:4566/000000000000/pdf-queue.fifo
+      OPG_LPA_COMMON_S3_ENDPOINT: http://ministack:4566
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://ministack:4566/000000000000/pdf-queue.fifo
 
       OPG_LPA_TELEMETRY_HOST: ""
       OPG_LPA_TELEMETRY_PORT: ""
@@ -367,7 +358,7 @@ services:
     depends_on:
       dynamodb:
         condition: service_started
-      localstack:
+      ministack:
         condition: service_healthy
       mock-cognito:
         condition: service_healthy
@@ -443,7 +434,7 @@ services:
     container_name: lpa-pdf-app
     image: lpa-pdf-app
     depends_on:
-      localstack:
+      ministack:
         condition: service_healthy
     volumes:
       - ./service-pdf:/app
@@ -468,8 +459,8 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
       XDEBUG_SESSION: 1
 
-      OPG_LPA_COMMON_S3_ENDPOINT: http://localstack:4566
-      OPG_LPA_COMMON_PDF_QUEUE_URL: http://sqs.eu-west-1.localhost.localstack.cloud:4566/000000000000/pdf-queue.fifo
+      OPG_LPA_COMMON_S3_ENDPOINT: http://ministack:4566
+      OPG_LPA_COMMON_PDF_QUEUE_URL: http://ministack:4566/000000000000/pdf-queue.fifo
 
       PHP_IDE_CONFIG: serverName=lpa-pdf-app
 

@@ -36,8 +36,8 @@ jobs:
             snyk_policy_path: local-development/redis/.snyk
           - image_name: amazon/dynamodb-local
             snyk_policy_path: local-development/dynamodb-local/.snyk
-          - image_name: localstack/localstack:4.14.0
-            snyk_policy_path: local-development/localstack/.snyk
+          - image_name: ministackorg/ministack:1.5
+            snyk_policy_path: local-development/ministack/.snyk
           - image_name: node:24.22.1-alpine3.23
             snyk_policy_path: local-development/node/.snyk
     steps:
