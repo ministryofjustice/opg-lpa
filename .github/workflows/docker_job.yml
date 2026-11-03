@@ -99,7 +99,7 @@ jobs:
 
   docker_build_scan_push:
     name: "Docker build, scan and push ${{ matrix.image_name }}"
-    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@LPAL-2567-add-sbom-generation-and-pushing-for-docker-images # PR BRANCH
+    uses: ministryofjustice/opg-github-workflows/.github/workflows/multi-build-scan-push-workflow.yml@9b845e5eccece130505a5bf8e717856b1db4c1fe # v3.19.23
     with:
       image_name: ${{ format('311462405659.dkr.ecr.eu-west-1.amazonaws.com/{0}', matrix.image_name) }}
       image_tag: ${{ matrix.image_tag || inputs.tag }}
@@ -342,5 +342,3 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: /tmp/images/image.tar
-
-# testing shared workflow sbom generation
