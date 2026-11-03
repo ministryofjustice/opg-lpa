@@ -2,7 +2,7 @@
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description   = "5XX Errors returned to front users for ${var.environment_name}"
+  alarm_description   = "5XX responses logged in Front for ${var.environment_name}"
   alarm_name          = "${var.environment_name} public front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
@@ -25,7 +25,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description   = "5XX Errors returned to admin users for ${var.environment_name}"
+  alarm_description   = "5XX responses logged in Admin for ${var.environment_name}"
   alarm_name          = "${var.environment_name} admin front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
   datapoints_to_alarm = 2
@@ -48,7 +48,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description         = "Applications are logging 500 errors for ${var.environment_name}"
+  alarm_description         = "5xx responses logged for ${var.environment_name} (front, api, pdf or admin)"
   alarm_name                = "${var.environment_name} application 5XX errors"
   comparison_operator       = "GreaterThanThreshold"
   datapoints_to_alarm       = 2
@@ -68,7 +68,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   count                     = var.environment.cloudwatch_alarms.front_4xx_anomaly_alarms_enabled ? 1 : 0
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  alarm_description         = "Applications are logging 40x authentication errors for ${var.environment_name}"
+  alarm_description         = "Anomalies detected for 4xx responses logged on ${var.environment_name} (front, api, pdf or admin)"
   alarm_name                = "${var.environment_name} application 40x errors"
   comparison_operator       = "GreaterThanUpperThreshold"
   datapoints_to_alarm       = 2
@@ -102,7 +102,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
   count             = var.environment.cloudwatch_alarms.front_4xx_anomaly_alarms_enabled ? 1 : 0
   alarm_name        = "${var.environment_name} public front 4XX anomaly"
-  alarm_description = "Anomaly detection in 4XX Errors returned to users for ${var.environment_name}"
+  alarm_description = "Anomalies detected for 4xx responses logged in Front on ${var.environment_name}"
 
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -139,7 +139,7 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   alarm_name          = "${var.environment_name}-pdf-queue-excess-items"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
-  alarm_description   = "ApproximateNumberOfMessagesVisible >= 10 for 5 minutes in pdf queue"
+  alarm_description   = "More than 10 items for 5 minutes in pdf queue"
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
   comparison_operator = "GreaterThanThreshold"
@@ -168,7 +168,7 @@ resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
   period              = "60"
   statistic           = "Average"
   threshold           = "0"
-  alarm_description   = "Triggers when AWS Shield Advanced detects a DDoS attack"
+  alarm_description   = "AWS Shield Advanced has detected a DDoS attack against Front ${var.environment_name}"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   tags                = local.front_component_tag
@@ -187,7 +187,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
   period              = "60"
   statistic           = "Average"
   threshold           = "0"
-  alarm_description   = "Triggers when AWS Shield Advanced detects a DDoS attack"
+  alarm_description   = "AWS Shield Advanced has detected a DDoS attack against Admin ${var.environment_name}"
   treat_missing_data  = "notBreaching"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
   tags                = local.admin_component_tag
@@ -200,7 +200,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
   count               = var.environment.cloudwatch_alarms.auth_sign_in_success_alarms_enabled ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in success anomaly"
-  alarm_description   = "Anomaly detection on successful sign-ins for ${var.environment_name}"
+  alarm_description   = "Anomaly detected on successful sign-ins for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -234,7 +234,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
   count               = var.environment.cloudwatch_alarms.auth_sign_in_failed_alarms_enabled ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in failed anomaly"
-  alarm_description   = "Anomaly detection on failed sign-ins for ${var.environment_name}"
+  alarm_description   = "Anomaly detected on failed sign-ins for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -268,7 +268,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
 resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
   count               = var.environment.cloudwatch_alarms.auth_account_locked_alarms_enabled ? 1 : 0
   alarm_name          = "${var.environment_name} auth account locked anomaly"
-  alarm_description   = "Anomaly detection on account lockouts for ${var.environment_name}"
+  alarm_description   = "Anomaly detected on account lockouts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -302,7 +302,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
   count               = var.environment.cloudwatch_alarms.auth_sign_in_account_locked_alarms_enabled ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in against locked account anomaly"
-  alarm_description   = "Anomaly detection on sign-in attempts against locked accounts for ${var.environment_name}"
+  alarm_description   = "Anomaly detected on sign-in attempts against locked accounts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -336,7 +336,7 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
 resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
   count               = var.environment.cloudwatch_alarms.auth_sign_in_inactive_account_alarms_enabled ? 1 : 0
   alarm_name          = "${var.environment_name} auth sign-in inactive account anomaly"
-  alarm_description   = "Anomaly detection on sign-in attempts against inactive accounts for ${var.environment_name}"
+  alarm_description   = "Anomaly detected on sign-in attempts against inactive accounts for ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 2
   datapoints_to_alarm = 2
@@ -382,7 +382,7 @@ resource "aws_cloudwatch_metric_alarm" "high_task_cpu" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 3
   threshold           = 90
-  alarm_description   = "${each.key} service task has very high CPU utilisation"
+  alarm_description   = "${each.key} service task has very high CPU utilisation on ${var.environment_name}"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
 
@@ -409,7 +409,7 @@ resource "aws_cloudwatch_metric_alarm" "high_task_memory" {
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 3
   threshold           = 90
-  alarm_description   = "${each.key} service task has very high memory utilisation"
+  alarm_description   = "${each.key} service task has very high memory utilisation on ${var.environment_name}"
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
 
@@ -433,7 +433,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu_usage_anomaly" {
   for_each            = var.environment.cloudwatch_alarms.ecs_resource_alarms_enabled ? local.ecs_services : {}
   actions_enabled     = false
   alarm_name          = "${var.environment_name}-${each.key}-cpu-usage-anomaly"
-  alarm_description   = "Anomaly detection for CPU utilisation of the ${each.key} service in ${var.environment_name}"
+  alarm_description   = "Anomaly detected for CPU utilisation of the ${each.key} service in ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 3
   datapoints_to_alarm = 3
@@ -468,7 +468,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_usage_anomaly" {
   for_each            = var.environment.cloudwatch_alarms.ecs_resource_alarms_enabled ? local.ecs_services : {}
   actions_enabled     = false
   alarm_name          = "${var.environment_name}-${each.key}-memory-usage-anomaly"
-  alarm_description   = "Anomaly detection for memory utilisation of the ${each.key} service in ${var.environment_name}"
+  alarm_description   = "Anomaly detected for memory utilisation of the ${each.key} service in ${var.environment_name}"
   comparison_operator = "GreaterThanUpperThreshold"
   evaluation_periods  = 3
   datapoints_to_alarm = 3
