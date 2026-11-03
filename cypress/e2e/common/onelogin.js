@@ -1,4 +1,4 @@
-import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
+import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { openEmailAndVisitLink } from '../../support/reset_link';
 import {
   checkSignedIn,
@@ -36,6 +36,10 @@ Before({ tags: '@RequiresOneLogin' }, function () {
       this.skip();
     }
   });
+});
+
+Given('I check whether One Login is enabled', () => {
+  detectOneLoginEnabled();
 });
 
 Then(`I am returned to the appropriate page shown after a password reset`, () => {
