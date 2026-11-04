@@ -1,4 +1,4 @@
-import { Before, Then, When } from '@badeball/cypress-cucumber-preprocessor';
+import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { openEmailAndVisitLink } from '../../support/reset_link';
 import {
   checkSignedIn,
@@ -38,6 +38,10 @@ Before({ tags: '@RequiresOneLogin' }, function () {
   });
 });
 
+Given('I check whether One Login is enabled', () => {
+  detectOneLoginEnabled();
+});
+
 Then(`I am returned to the appropriate page shown after a password reset`, () => {
   detectOneLoginEnabled().then((enabled) => {
     const expected = enabled ? '/home' : '/login';
@@ -54,7 +58,7 @@ Then(`I am told what deleting my account as the last shared space member does`, 
   detectOneLoginEnabled().then((enabled) => {
     const expected = enabled
       ? 'Deleting your account will permanently remove your LPAs and personal details from our system.'
-      : 'You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space.';
+      : 'You are about to delete your account. Doing this will permanently remove all your LPAs and personal details from our system.';
     cy.contains(expected).should('be.visible');
   });
 });

@@ -225,6 +225,7 @@ Feature: Shared Space
     And I cannot see any links to manage members
 
   Scenario: Deleting the last member of a shared space deletes the shared space
+    Given I check whether One Login is enabled
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
