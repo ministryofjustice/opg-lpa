@@ -34,6 +34,7 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 class ServiceTest extends MockeryTestCase
@@ -54,6 +55,7 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|ClientInterface $oidcClient;
     private MockInterface|LoggerInterface $logger;
     private MockInterface|LogoutTokenVerifier $logoutTokenVerifier;
+    private MockInterface|CacheInterface $cache;
     private KeyPairManager $keyPairManager;
 
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
@@ -87,11 +89,14 @@ class ServiceTest extends MockeryTestCase
 
         $this->logoutTokenVerifier = Mockery::mock(LogoutTokenVerifier::class);
 
+        $this->cache = Mockery::mock(CacheInterface::class);
+
         $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), self::KEY_ID);
 
         $this->service = new Service();
         $this->service->setLogger($this->logger);
         $this->service->setLogoutTokenVerifier($this->logoutTokenVerifier);
+        $this->service->setCache($this->cache);
         $this->service->setAuthorisationClientManager($this->clientManager);
         $this->service->setAuthorizationService($this->authorizationService);
         $this->service->setAuthenticationService($this->authenticationService);
@@ -923,6 +928,8 @@ class ServiceTest extends MockeryTestCase
             ->with('a.logout.token')
             ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
 
+        $this->expectJtiRecorded('jti-1');
+
         $user = Mockery::mock(UserInterface::class);
         $user->shouldReceive('id')->andReturn('user-1');
 
@@ -944,6 +951,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->userRepository->shouldNotReceive('getByOneLoginSub');
         $this->userRepository->shouldNotReceive('clearAuthToken');
+        $this->cache->shouldNotReceive('set');
 
         $result = $this->service->handleBackChannelLogout('forged.logout.token');
 
@@ -957,6 +965,7 @@ class ServiceTest extends MockeryTestCase
             ->once()
             ->andThrow(new RuntimeException('Unable to fetch One Login signing keys'));
 
+        $this->cache->shouldNotReceive('set');
         $this->userRepository->shouldNotReceive('clearAuthToken');
 
         $this->expectException(RuntimeException::class);
@@ -965,11 +974,31 @@ class ServiceTest extends MockeryTestCase
         $this->service->handleBackChannelLogout('a.logout.token');
     }
 
+    public function testBackChannelLogoutRejectsReplayedJti(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
+
+        $this->cache->shouldReceive('has')->once()->andReturn(true);
+        $this->cache->shouldNotReceive('set');
+
+        $this->userRepository->shouldNotReceive('getByOneLoginSub');
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertFalse($result['accepted']);
+        $this->assertSame('replayed_jti', $result['reason']);
+    }
+
     public function testBackChannelLogoutAcceptsValidTokenForUnknownSubject(): void
     {
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
             ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:stranger', 'jti' => 'jti-2', 'iat' => self::SIGNED_OUT_AT]);
+
+        $this->expectJtiRecorded('jti-2');
 
         $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn(null);
         $this->userRepository->shouldNotReceive('clearAuthToken');
@@ -979,12 +1008,14 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:stranger', 'signedOutAt' => self::SIGNED_OUT_AT], $result);
     }
 
-    public function testBackChannelLogoutLetsADatabaseFailureThroughSoOneLoginCanRetry(): void
+    public function testBackChannelLogoutDoesNotRecordJtiWhenTheLogoutFails(): void
     {
         $this->logoutTokenVerifier->shouldReceive('verify')
             ->once()
             ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'jti' => 'jti-1', 'iat' => self::SIGNED_OUT_AT]);
 
+        $this->cache->shouldReceive('has')->once()->andReturn(false);
+        $this->cache->shouldNotReceive('set');
 
         $user = Mockery::mock(UserInterface::class);
         $user->shouldReceive('id')->andReturn('user-1');
@@ -997,6 +1028,14 @@ class ServiceTest extends MockeryTestCase
         $this->expectException(RuntimeException::class);
 
         $this->service->handleBackChannelLogout('a.logout.token');
+    }
+
+    private function expectJtiRecorded(string $jti): void
+    {
+        $expectedKey = 'logout_jti_' . hash('sha256', $jti);
+
+        $this->cache->shouldReceive('has')->once()->with($expectedKey)->andReturn(false);
+        $this->cache->shouldReceive('set')->once()->with($expectedKey, true, 180);
     }
 
     private function makeLinkUser(?string $oneLoginSub): MockInterface|UserInterface

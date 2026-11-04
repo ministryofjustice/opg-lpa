@@ -34,6 +34,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
+use Psr\SimpleCache\CacheInterface;
 
 class ServiceAbstractFactoryTest extends MockeryTestCase
 {
@@ -80,6 +81,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     AuthenticationService::class => Mockery::mock(AuthenticationService::class),
                     SharedSpaceRepositoryInterface::class => Mockery::mock(SharedSpaceRepositoryInterface::class),
                     LogoutTokenVerifier::class => Mockery::mock(LogoutTokenVerifier::class),
+                    'OneLoginPsr16Cache' => Mockery::mock(CacheInterface::class),
                     KeyPairManager::class => Mockery::mock(KeyPairManager::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]

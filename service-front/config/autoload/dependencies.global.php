@@ -35,7 +35,6 @@ use App\Service\OneLogin\OneLoginService;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
-use App\Service\OneLogin\LogoutTokenReplayGuard;
 use App\Service\OneLogin\SignedOutSubjects;
 use App\Service\Payment\AlphagovPayClientFactory;
 use App\Service\Payment\GovPay\Client as GovPayClient;
@@ -235,9 +234,6 @@ return [
             },
             RedisClient::class                          => RedisClientFactory::class,
             SignedOutSubjects::class                    => static fn(ContainerInterface $c) => new SignedOutSubjects(
-                (new RedisClientFactory())($c),
-            ),
-            LogoutTokenReplayGuard::class               => static fn(ContainerInterface $c) => new LogoutTokenReplayGuard(
                 (new RedisClientFactory())($c),
             ),
             FilteringSaveHandler::class                 => SaveHandlerFactory::class,
