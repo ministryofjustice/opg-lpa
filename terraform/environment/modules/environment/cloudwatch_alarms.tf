@@ -498,3 +498,42 @@ resource "aws_cloudwatch_metric_alarm" "memory_usage_anomaly" {
     }
   }
 }
+
+
+resource "aws_cloudwatch_metric_alarm" "rds_readthroughput_anomaly" {
+  count             = var.environment.cloudwatch_alarms.rds_readthroughput_anomaly_alarms_enabled ? 1 : 0
+  alarm_name        = "${var.environment_name} RDS read throughput anomaly"
+  alarm_description = "Anomalies detected for RDS cluster read throughput on ${var.environment_name}"
+
+  evaluation_periods  = 1
+  datapoints_to_alarm = 1
+  threshold_metric_id = "ad1"
+  comparison_operator = "GreaterThanUpperThreshold"
+
+  insufficient_data_actions = []
+  treat_missing_data        = "missing"
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  metric_query {
+    id          = "m1"
+    period      = 0
+    return_data = true
+
+    metric {
+      dimensions = {
+        "DBClusterIdentifier" = module.api_aurora[0].cluster.id
+      }
+      metric_name = "ReadThroughput"
+      namespace   = "AWS/RDS"
+      period      = 300
+      stat        = "Sum"
+    }
+  }
+  metric_query {
+    expression  = "ANOMALY_DETECTION_BAND(m1, 11)"
+    id          = "ad1"
+    label       = "ReadThroughput (expected)"
+    period      = 0
+    return_data = true
+  }
+}
