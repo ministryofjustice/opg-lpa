@@ -9,6 +9,7 @@ ORDNANCESURVEY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-s
 
 # Used for emails sent by service-api's account cleanup CLI script.
 NOTIFY ?= $(shell aws-vault exec moj-lpa-dev -- aws secretsmanager get-secret-value --secret-id local/opg_lpa_api_notify_api_key | jq -r .'SecretString')
+DUMMY_NOTIFY := dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222
 
 COMPOSER_VERSION := 2.8.11
 
@@ -46,11 +47,13 @@ front-composer-update:
 # For a version constraint: make front-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: front-composer-require
 front-composer-require:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker compose run --rm composer-front require $(PACKAGE)
 
 # remove a package, same format for PACKAGE= as above
 .PHONY: front-composer-remove
 front-composer-remove:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker compose run --rm composer-front remove $(PACKAGE) --no-install
 
 #run composer outdated in front container
@@ -61,6 +64,7 @@ front-composer-outdated:
 # use make front-composer-why PACKAGE=symfony\/validator
 .PHONY: front-composer-why
 front-composer-why:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker run --rm -v `pwd`/service-front/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 # ----- Composer api ----- #
@@ -72,6 +76,7 @@ api-composer-install:
 # For a version constraint: make api-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: api-composer-require
 api-composer-require:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker compose run --rm composer-api require $(PACKAGE)
 
 # use make api-composer-update PACKAGE=symfony\/validator\:v5.4.43
@@ -82,6 +87,7 @@ api-composer-update:
 # remove a package, same format for PACKAGE= as above
 .PHONY: api-composer-remove
 api-composer-remove:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer remove $(PACKAGE)  --no-install
 
 #run composer outdated in front container
@@ -92,6 +98,7 @@ api-composer-outdated:
 # use make api-composer-why PACKAGE=symfony\/validator
 .PHONY: api-composer-why
 api-composer-why:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker run --rm -v `pwd`/service-api/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 .PHONY: pdf-composer-install
@@ -112,6 +119,7 @@ admin-composer-update:
 # For a version constraint: make admin-composer-require PACKAGE=vendor\/package\:^1.0
 .PHONY: admin-composer-require
 admin-composer-require:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker compose run --rm composer-admin require $(PACKAGE)
 
 # ----- Composer pdf ----- #
@@ -123,6 +131,7 @@ pdf-composer-update:
 # use make pdf-composer-why PACKAGE=symfony\/validator
 .PHONY: pdf-composer-why
 pdf-composer-why:
+	@test -n "$(PACKAGE)" || { echo "Usage: make $@ PACKAGE=vendor\/package"; exit 1; }
 	@docker run --rm -v `pwd`/service-pdf/:/app/ composer:${COMPOSER_VERSION} composer why $(PACKAGE)
 
 # ------- Composer shared ----- #
@@ -364,6 +373,7 @@ cypress-open: npm-install python-api-venv
 # (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-spec
 cypress-run-spec: _cypress-prepare-dirs
+	@test -n "${SPEC}" || { echo "Usage: make $@ SPEC=<Name>.feature"; exit 1; }
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --spec cypress/e2e/${SPEC} -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
 # Runs the locust load tests headless against the local stack (same invocation as .github/workflows/locust_tests.yml).
@@ -383,6 +393,7 @@ locust-run:
 # (exposing cucumber-preprocessor config overrides), so these need to be positioned exactly as they are
 .PHONY: cypress-run-tags
 cypress-run-tags: _cypress-prepare-dirs
+	@test -n "${tags}" || { echo "Usage: make $@ tags=@Tag"; exit 1; }
 	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${tags}"
 
 # Creates and runs stitched test suites for visual regression testing.
@@ -466,7 +477,11 @@ reset-front-app:
 .PHONY: dc-account-cleanup
 # Add DRY_RUN=1 to log what would happen without deleting, flagging or emailing anything.
 dc-account-cleanup:
-	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-dummy-11111111-1111-4111-8111-111111111111-22222222-2222-4222-8222-222222222222}"; php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run); echo "exit code: $$?"'
+	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-${DUMMY_NOTIFY}}"; php /app/vendor/bin/laminas service-api:account-cleanup $(if ${DRY_RUN},--dry-run); echo "exit code: $$?"'
+
+.PHONY: dc-deletion-log-cleanup
+dc-deletion-log-cleanup:
+	@docker compose exec api-app sh -c 'export OPG_LPA_API_NOTIFY_API_KEY="$${OPG_LPA_API_NOTIFY_API_KEY:-${DUMMY_NOTIFY}}"; php /app/vendor/bin/laminas service-api:deletion-log-cleanup; echo "exit code: $$?"'
 
 # Run one-off jobs as an api-cron ECS task in a development-account environment.
 # Needs aws-vault (profile below); production/preproduction are refused by the script.
@@ -490,7 +505,16 @@ aws-age-user-login:
 .PHONY: age-user-login
 age-user-login:
 	@test -n "${EMAIL}" || { echo "Usage: make $@ EMAIL=<email> [INTERVAL='8 months 3 weeks 5 days']"; exit 1; }
-	@docker compose exec -T postgres psql --username=lpauser --dbname=lpadb --set=interval='$(or ${INTERVAL},8 months 3 weeks 5 days)' --set=email='${EMAIL}' <<< "UPDATE users SET last_login = now() - :'interval'::interval WHERE identity = :'email' OR one_login_email = :'email';"
+	@SQL="UPDATE users SET last_login = now() - :'interval'::interval WHERE identity = :'email' OR one_login_email = :'email';"; \
+	docker compose exec -T postgres psql --username=lpauser --dbname=lpadb --set=interval='$(or ${INTERVAL},8 months 3 weeks 5 days)' --set=email='${EMAIL}' <<< "$$SQL"
+
+# Inserts deletion_log rows older than the 3 year retention period, so that service-api:deletion-log-cleanup has something to delete.
+# Usage: make dc-create-expired-deletion-logs [COUNT=10]
+.PHONY: dc-create-expired-deletion-logs
+dc-create-expired-deletion-logs:
+	@SQL="INSERT INTO deletion_log (identity_hash, type, reason, \"loggedAt\") SELECT encode(sha512(convert_to('expired-log-test-' || n || '@example.com', 'UTF8')), 'hex'), 'account-deleted', 'expired-log-test', now() - interval '3 years 1 day' - (n || ' days')::interval FROM generate_series(1, $(or ${COUNT},10)) AS n;"; \
+	docker compose exec -T postgres psql --username=lpauser --dbname=lpadb --set=count='$(or ${COUNT},10)' <<< "$$SQL"
+	@echo "Created $(or ${COUNT},10) logs. Search for these emails in admin: expired-log-test-N@example.com (N = 1 to $(or ${COUNT},10))"
 
 # Re-run the non-live seeding scripts against the running dev stack, truncating
 # and re-populating the test users/applications/feedback/deletion-log tables.

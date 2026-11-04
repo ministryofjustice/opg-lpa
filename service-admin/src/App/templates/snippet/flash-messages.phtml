@@ -21,5 +21,22 @@ foreach ($messages as $messageKey => $messageValues) { ?>
             </div>
         </div>
 
+    <?php } elseif ($messageKey === 'success') { ?>
+
+        <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner" data-cy="success-banner">
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                    Success
+                </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <?php foreach ($messageValues as $messageValue) { ?>
+                    <h3 class="govuk-notification-banner__heading" style="max-width: none;">
+                        <?= $this->e($messageValue) ?>
+                    </h3>
+                <?php } ?>
+            </div>
+        </div>
+
     <?php } ?>
 <?php } ?>
