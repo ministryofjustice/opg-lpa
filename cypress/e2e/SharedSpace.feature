@@ -26,10 +26,10 @@ Feature: Shared Space
     When I type "Example Organisation" into "space-name"
     When I click element marked "Save"
     Then I should be on "/shared-space/dashboard?created=success"
-    And I see a success notification with content "Example Organisation has been created"
-    When I click element marked "Shared space"
+    And I see a success notification with content "‘Example Organisation’ has been created."
+    When I click element marked "Shared space members"
     Then I should be on "/shared-space"
-    And I see "Manage Shared Space" in the title
+    And I see "Shared space members" in the title
     And element "table" contains "Brand New"
 
   @RequiresOneLogin
@@ -178,7 +178,7 @@ Feature: Shared Space
     And I type the access code into field labelled "Joining code"
     And I click element marked "Join shared space"
     And I should be on "/shared-space/dashboard"
-    And I see a success notification with content "You’ve joined the shared space."
+    And I see a success notification with content "You’ve joined the shared space ‘Example Organisation’."
     And I click element marked "Shared space"
     And I cannot see any invites
 
@@ -221,7 +221,7 @@ Feature: Shared Space
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    And I see "View Shared Space" in the page text
+    And I see "Shared space members" in the page text
     And I cannot see any links to manage members
 
   Scenario: Deleting the last member of a shared space deletes the shared space
