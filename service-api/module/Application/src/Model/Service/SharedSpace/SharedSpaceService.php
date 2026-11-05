@@ -428,18 +428,20 @@ class SharedSpaceService
 
         try {
             $user = $this->userRepository->getById($userId);
-
             if ($user === null) {
                 throw new RuntimeException('User not found');
             }
 
             $memberCount = $this->sharedSpaceRepository->countMembers($sharedSpaceId);
-
             if ($memberCount === 0) {
                 throw new RuntimeException('No members found in shared space');
             }
 
             $isLastMember = $memberCount === 1;
+
+            if (!$isLastMember && !$this->sharedSpaceRepository->hasOtherAdmin($sharedSpaceId, $userId)) {
+                throw new RuntimeException('No other admin');
+            }
 
             // The shared_space_members -> shared_space foreign key does not
             // cascade on delete, so the membership row must always be
