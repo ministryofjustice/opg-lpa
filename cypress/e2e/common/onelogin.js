@@ -1,5 +1,5 @@
 import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
-import { openEmailAndVisitLink } from '../../support/reset_link';
+import { newPassword, openEmailAndVisitLink } from '../../support/reset_link';
 import {
   checkSignedIn,
   enterMyAddressManually,
@@ -138,18 +138,41 @@ When(`I sign in through mock One Login with a new Make account`, () => {
   checkSignedIn();
 });
 
+function continueThroughMockOneLoginAs(email) {
+  cy.origin(oneLoginMockUrl(), { args: { email } }, ({ email }) => {
+    cy.get('input[name="subject"][value="email"]').check();
+    cy.get('#f-email').clear().type(email)
+    cy.contains('Continue').click();
+  });
+
+  repairA11yCheckedPagesAfterOrigin();
+}
+
 When(/I log in through Onelogin as the newly created fixture user/, () => {
   cy.get('@fixtureUser').then(({ email }) => {
     cy.visit('/home')
     cy.contains('Continue').click();
+    continueThroughMockOneLoginAs(email);
+  });
+});
 
-    cy.origin(oneLoginMockUrl(), { args: { email } }, ({ email }) => {
-      cy.get('input[name="subject"][value="email"]').check();
-      cy.get('#f-email').clear().type(email)
-      cy.contains('Continue').click();
-    });
+When(`I continue through mock One Login as the newly created fixture user`, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    continueThroughMockOneLoginAs(email);
+  });
+});
 
-    repairA11yCheckedPagesAfterOrigin();
+Given(`the newly created fixture user has linked their Make account to One Login`, () => {
+  cy.get('@fixtureUser').then(({ email, password }) => {
+    cy.visit('/home');
+    cy.contains('Continue').click();
+    continueThroughMockOneLoginAs(email);
+    sayIMakeLpasFor('myself, family or friends');
+    sayWhetherIHaveAnAccount('Yes, I already have an account');
+    sayWhetherIKeepMyLpas('Yes');
+    fillCredentialsAndSubmit(email, password);
+    // A shared space member's dashboard redirects to the shared space dashboard
+    cy.location('pathname').should('match', /^\/(user|shared-space)\/dashboard$/);
   });
 });
 
@@ -195,6 +218,8 @@ Then(
 );
 
 Then(`I am signed in with my new Make account`, checkSignedIn);
+
+Then(`I am signed in to Make`, checkSignedIn);
 
 const TIMEOUT_PAGE = '/login/timeout';
 
@@ -316,6 +341,16 @@ When(`I link the newly created fixture users Make account`, () => {
   });
 });
 
+When(`I link the newly created fixture users Make account with my new password`, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    fillCredentialsAndSubmit(email, newPassword());
+  });
+});
+
+When(`I link the {string} test users Make account`, (name) => {
+  fillCredentialsAndSubmit(Cypress.env(name + '-user'), Cypress.env(name + '-password'));
+});
+
 When(`I attempt to sign in to my existing Make account with the newly created fixture users incorrect password`, () => {
   cy.get('@fixtureUser').then(({ email }) => {
     fillCredentialsAndSubmit(email, 'this-is-the-wrong-password');
@@ -384,22 +419,88 @@ When(`I use the password reset link for the {string} account`, (account) => {
   openEmailAndVisitLink('passwordreset', oneLoginLinkEmail(account));
 });
 
+// On the link-account page's own reset form, so the reset is asked for while onboarding.
+When(`I ask for a password reset link for the newly created fixture user`, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    cy.get('[data-cy=email]').clear().type(email);
+    cy.get('[data-cy=email_confirm]').clear().type(email);
+    cy.get('[data-cy=email-me-the-link]').click();
+  });
+});
+
+When(`I use the password reset link for the newly created fixture user`, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    openEmailAndVisitLink('passwordreset', email);
+  });
+});
+
+function signInWithIncorrectPassword(email, attempts) {
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
+    cy.visit('/login');
+    cy.get('[data-cy=login-email]').clear().type(email);
+    cy.get('[data-cy=login-password]').clear().type('this-is-the-wrong-password');
+    cy.get('[data-cy=login-submit-button]').click();
+  }
+}
+
 When(
   `I attempt to sign in {int} times with an incorrect password as the {string} account`,
   (attempts, account) => {
-    const email = oneLoginLinkEmail(account);
-
-    for (let attempt = 0; attempt < attempts; attempt += 1) {
-      cy.visit('/login');
-      cy.get('[data-cy=login-email]').clear().type(email);
-      cy.get('[data-cy=login-password]').clear().type('this-is-the-wrong-password');
-      cy.get('[data-cy=login-submit-button]').click();
-    }
+    signInWithIncorrectPassword(oneLoginLinkEmail(account), attempts);
   },
 );
 
+// Five failed attempts lock a password account (Authentication\Service::MAX_ALLOWED_LOGIN_ATTEMPTS),
+// but only the next attempt is told so.
+Given(`the newly created fixture user has locked their account`, () => {
+  cy.get('@fixtureUser').then(({ email }) => {
+    signInWithIncorrectPassword(email, 6);
+    cy.contains('This user account has been locked').should('exist');
+  });
+});
+
+// The mock cannot sign a logout token, so only a token we reject can be sent. One Login retries
+// anything but a 200, so even a rejected token gets one.
+Then(`a back-channel logout request with {string} is answered with a 200`, (description) => {
+  const bodies = {
+    'no logout token': {},
+    'an invalid logout token': { logout_token: 'not-a-logout-token' },
+  };
+
+  cy.request({
+    method: 'POST',
+    url: '/auth/onelogin/backchannel-logout',
+    form: true,
+    body: bodies[description],
+    failOnStatusCode: false,
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.headers['cache-control']).to.include('no-store');
+  });
+});
+
+Then(`the JWKS endpoint publishes our signing key`, () => {
+  cy.request('/.well-known/jwks.json').then((response) => {
+    expect(response.status).to.eq(200);
+    expect(response.body.keys).to.have.length.of.at.least(1);
+
+    response.body.keys.forEach((key) => {
+      expect(key.kty).to.eq('RSA');
+      expect(key.use).to.eq('sig');
+      expect(key.kid).to.not.be.empty;
+      expect(key.n).to.not.be.empty;
+      expect(key.e).to.not.be.empty;
+      expect(key).to.not.have.property('d');
+    });
+  });
+});
+
 Then(`the {string} link goes to {string}`, (dataCy, href) => {
   cy.get(`[data-cy=${dataCy}]`).should('have.attr', 'href', href);
+});
+
+Then(`the service navigation has a sign-out link`, () => {
+  cy.get('[data-cy=service-nav-list] [data-cy=sign-out]').should('be.visible');
 });
 
 // The GOV.UK One Login header carries the sign-out link, so the service navigation must not.

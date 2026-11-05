@@ -1,6 +1,7 @@
 import { Then, When } from '@badeball/cypress-cucumber-preprocessor';
+import { newPassword as resetPassword } from '../../support/reset_link';
 
-var newPassword = 'NewPassword' + Cypress.env('userNumber');
+var newPassword = resetPassword();
 
 When(`I reveal the password I have typed`, () => {
   cy.get('.js-showHidePassword').should('be.visible').click();
