@@ -114,8 +114,8 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->logger->shouldReceive('info')
             ->once()
             ->with('User successfully authenticated with a password', [
-                'userId'    => 'abcde12345',
-                'expiresAt' => 67890,
+                'user_id' => 'abcde12345',
+                'expires_at' => 67890,
             ]);
 
         /** @var AuthenticateController $controller */
@@ -147,8 +147,8 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->logger->shouldReceive('info')
             ->once()
             ->with('User successfully authenticated with a password', [
-                'userId'    => 'abcde12345',
-                'expiresAt' => 67890,
+                'user_id' => 'abcde12345',
+                'expires_at' => 67890,
             ]);
 
         /** @var AuthenticateController $controller */

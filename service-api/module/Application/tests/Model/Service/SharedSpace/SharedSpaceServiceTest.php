@@ -545,6 +545,16 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->with($memberInvite)
             ->andReturn(1234);
 
+        $this->logger->shouldReceive('info')
+            ->once()
+            ->with('Shared space member invited', [
+                'event'           => 'shared_space.member_invited',
+                'shared_space_id' => 'my space',
+                'invite_id'       => 1234,
+                'invited_by'      => 'my user',
+                'is_admin'        => false,
+            ]);
+
         $result = $this->service->invite($memberInvite);
 
         $this->assertEquals([
@@ -817,7 +827,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->shouldReceive('error')
             ->with('Unable to delete shared space member account: User not found', [
                 'shared_space_id' => 'xyz',
-                'user_id'         => '1',
             ]);
 
         $this->expectException(RuntimeException::class);
@@ -847,7 +856,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->shouldReceive('error')
             ->with('Unable to delete shared space member account: No members found in shared space', [
                 'shared_space_id' => 'xyz',
-                'user_id'         => '1',
             ]);
 
         $this->expectException(RuntimeException::class);
@@ -884,7 +892,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->shouldReceive('error')
             ->with('Unable to delete shared space member account: User not deleted', [
                 'shared_space_id' => 'xyz',
-                'user_id'         => '1',
             ]);
 
         $this->expectException(RuntimeException::class);
@@ -929,7 +936,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->shouldReceive('error')
             ->with('Unable to delete shared space member account: User not deleted', [
                 'shared_space_id' => 'xyz',
-                'user_id'         => '1',
             ]);
 
         $this->expectException(RuntimeException::class);

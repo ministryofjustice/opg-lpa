@@ -89,8 +89,8 @@ class IdentityTokenRefreshMiddleware implements MiddlewareInterface
             } else {
                 $this->logger->warning('Token refresh failed, clearing identity', [
                     'success'     => $info['success'],
-                    'failureCode' => $info['failureCode'] ?? null,
-                    'expiresIn'   => $info['expiresIn'] ?? null,
+                    'failure_code' => $info['failureCode'] ?? null,
+                    'expires_in'   => $info['expiresIn'] ?? null,
                 ]);
 
                 $this->authenticationService->clearIdentity();

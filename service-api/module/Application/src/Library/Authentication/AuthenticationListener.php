@@ -9,6 +9,8 @@ use Laminas\Authentication\Result as AuthenticationResult;
 use Laminas\EventManager\AbstractListenerAggregate;
 use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\MvcEvent;
+use Monolog\Logger;
+use Monolog\LogRecord;
 use MakeShared\Logging\LoggerTrait;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -87,6 +89,16 @@ class AuthenticationListener extends AbstractListenerAggregate implements Logger
 
             if (AuthenticationResult::SUCCESS === $resultCode) {
                 $this->getLogger()->info('Authentication success');
+
+                $identity = $authService->getIdentity();
+                $logger = $this->getLogger();
+
+                if ($identity instanceof Identity\User && $logger instanceof Logger) {
+                    $userId = $identity->id();
+                    $logger->pushProcessor(function (LogRecord $record) use ($userId): LogRecord {
+                        return $record->with(extra: array_merge($record->extra, ['logged_in_user_id' => $userId]));
+                    });
+                }
             } elseif (AuthenticationResult::FAILURE_CREDENTIAL_INVALID === $resultCode) {
                 $this->getLogger()->warning('Authentication failed', [
                     'status' => 'INVALID_CREDENTIALS',

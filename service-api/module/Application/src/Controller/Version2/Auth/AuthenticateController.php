@@ -99,8 +99,8 @@ class AuthenticateController extends AbstractAuthController
         }, $result);
 
         $this->getLogger()->info('User successfully authenticated with a password', [
-            'userId'    => $result['userId'],
-            'expiresAt' => $result['expiresAt'],
+            'user_id'   => $result['userId'],
+            'expires_at' => $result['expiresAt'],
         ]);
 
         return new JsonModel($result);
