@@ -241,6 +241,11 @@ return [
                 $c->get(FilteringSaveHandler::class),
                 $c->get('config')['session']['native_settings'] ?? [],
             ),
+            Handler\CookiesHandler::class               => static fn(ContainerInterface $c) => new Handler\CookiesHandler(
+                $c->get(TemplateRendererInterface::class),
+                $c->get(FormElementManager::class),
+                $c->get('config')['session']['native_settings']['name'],
+            ),
             AppMailTransportInterface::class            => MailTransportFactory::class,
             TermsAndConditionsMiddleware::class         => static fn(ContainerInterface $c) => new TermsAndConditionsMiddleware(
                 $c->get('config'),
