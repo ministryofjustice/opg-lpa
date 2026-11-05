@@ -73,8 +73,8 @@ class DownloadCheckHandler implements RequestHandlerInterface
         $status = is_array($result) ? ($result['status'] ?? 'unknown') : 'unknown';
 
         $this->logger->debug('PDF status is ' . $status, [
-            'lpaId' => $lpaId,
-            'pdfType' => $pdfType,
+            'lpa_id' => $lpaId,
+            'pdf_type' => $pdfType,
         ]);
 
         if (!is_array($result)) {

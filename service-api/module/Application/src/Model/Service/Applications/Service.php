@@ -75,6 +75,12 @@ class Service extends AbstractService
             $created = $this->getApplicationRepository()->insert($lpa);
         } while (!$created);
 
+        $this->log('info', 'LPA created', [
+            'lpa_id' => $id,
+            'created_by' => $userId,
+            'shared_space_id' => $sharedSpaceId,
+        ]);
+
         return new DataModelEntity($lpa);
     }
 
@@ -119,7 +125,7 @@ class Service extends AbstractService
         if ($validation->hasErrors()) {
             $this->log('warning', 'LPA validation failed during patch', [
                 'lpaid' => $id,
-                'userId' => $userId,
+                'user_id' => $userId,
                 'validation_errors' => $validation->getArrayCopy(),
                 'patched_keys' => array_keys($data),
             ]);
@@ -296,6 +302,12 @@ class Service extends AbstractService
         }
 
         $this->getApplicationRepository()->deleteById($id, $userId, $sharedSpaceId);
+
+        $this->log('info', 'LPA deleted', [
+            'lpa_id' => $id,
+            'deleted_by' => $userId,
+            'shared_space_id' => $sharedSpaceId,
+        ]);
 
         return null;
     }

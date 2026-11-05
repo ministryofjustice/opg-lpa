@@ -39,7 +39,7 @@ class SqsWorker implements LoggerAwareInterface
 
         if (is_null($pdfFilePath)) {
             $this->getLogger()->error('Empty path returned for generated PDF', [
-                'docId' => $docId,
+                'doc_id' => $docId,
                 'type' => $type,
             ]);
             return;
@@ -100,15 +100,15 @@ class SqsWorker implements LoggerAwareInterface
                     $this->run($lpaMessage['jobId'], $body['type'], $body['lpa']);
 
                     $this->getLogger()->info('Generated PDF', [
-                        'jobId' => $lpaMessage['jobId'],
-                        'lpaId' => $lpaId,
-                        'generationTimeSeconds' => (microtime(true) - $startTime),
+                        'job_id' => $lpaMessage['jobId'],
+                        'lpa_id' => $lpaId,
+                        'generation_time_seconds' => (microtime(true) - $startTime),
                         Constants::TRACE_ID_FIELD_NAME => $lpaMessage['traceId'] ?? 'NOT_SUPPLIED_BY_CLIENT',
                     ]);
                 } catch (Exception $e) {
                     $this->getLogger()->error('Error generating PDF', [
-                        'jobId' => $lpaMessage['jobId'],
-                        'lpaId' => $lpaMessage['lpaId'],
+                        'job_id' => $lpaMessage['jobId'],
+                        'lpa_id' => $lpaMessage['lpaId'],
                         'exception' => $e,
                         'status' => $e->getCode(),
                         Constants::TRACE_ID_FIELD_NAME => $lpaMessage['traceId'] ?? 'NOT_SUPPLIED_BY_CLIENT',

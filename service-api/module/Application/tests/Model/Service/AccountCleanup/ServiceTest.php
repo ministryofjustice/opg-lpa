@@ -415,32 +415,32 @@ class ServiceTest extends AbstractServiceTestCase
         $this->logger->shouldNotReceive('warning');
 
         $this->logger->shouldReceive('info')
-            ->with('Dry run: would delete expired account', ['user-id' => 1])
+            ->with('Dry run: would delete expired account', ['user_id' => 1])
             ->once();
         $this->logger->shouldReceive('info')
-            ->with('Dry run: would delete unactivated account', ['user-id' => 4])
+            ->with('Dry run: would delete unactivated account', ['user_id' => 4])
             ->once();
         $this->logger->shouldReceive('info')
             ->with('Dry run: would send account expiry notification', Mockery::on(function (array $extra) {
-                return $extra['user-id'] == 2
-                    && $extra['warning-type'] === AccountCleanupService::WARNING_1_WEEK_NOTICE
-                    && $extra['template-id'] === '84c0ea7d-1c18-4032-bf17-ee482a536d6e'
+                return $extra['user_id'] == 2
+                    && $extra['warning_type'] === AccountCleanupService::WARNING_1_WEEK_NOTICE
+                    && $extra['template_id'] === '84c0ea7d-1c18-4032-bf17-ee482a536d6e'
                     && $extra['personalisations']['sharedSpaceName'] === 'Example Shared Space';
             }))
             ->once();
         $this->logger->shouldReceive('info')
             ->with('Dry run: would send account expiry notification', Mockery::on(function (array $extra) {
-                return $extra['user-id'] == 3
-                    && $extra['warning-type'] === AccountCleanupService::WARNING_1_MONTH_NOTICE;
+                return $extra['user_id'] == 3
+                    && $extra['warning_type'] === AccountCleanupService::WARNING_1_MONTH_NOTICE;
             }))
             ->once();
         $this->logger->shouldReceive('info')
             ->with('Account cleanup dry run completed', Mockery::on(function (array $extra) {
-                return $extra['dryRun'] === true
-                    && $extra['expiredAccountsDeletedCount'] === 1
-                    && $extra['expiryAccountsWarning1WeekCount'] === 1
-                    && $extra['expiryAccountsWarning1MonthCount'] === 1
-                    && $extra['unactivatedAccountsDeletedCount'] === 1;
+                return $extra['dry_run'] === true
+                    && $extra['expired_accounts_deleted_count'] === 1
+                    && $extra['expiry_accounts_warning_1_week_count'] === 1
+                    && $extra['expiry_accounts_warning_1_month_count'] === 1
+                    && $extra['unactivated_accounts_deleted_count'] === 1;
             }))
             ->once();
 

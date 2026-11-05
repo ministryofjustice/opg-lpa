@@ -44,9 +44,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         $this->logger->shouldReceive('info')
-            ->with('User successfully requested update email token', [
-                'userId' => $userId,
-            ]);
+            ->with('User successfully requested update email token');
 
         /** @var EmailController $controller */
         $controller = $this->getController(EmailController::class, [
@@ -287,7 +285,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
 
         $this->logger->shouldReceive('info')
             ->with('User successfully update email with token', [
-                'userId' => $userId,
+                'user_id' => $userId,
             ]);
 
         /** @var EmailController $controller */

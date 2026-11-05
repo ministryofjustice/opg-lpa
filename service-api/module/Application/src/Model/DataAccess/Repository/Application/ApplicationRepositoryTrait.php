@@ -75,7 +75,7 @@ trait ApplicationRepositoryTrait
 
         $this->getLogger()->info('LPA updated successfully', [
             'lpaid' => $lpa->id,
-            'updatedAt' => $lpa->updatedAt,
+            'updated_at' => $lpa->updatedAt,
         ]);
     }
 }
