@@ -89,13 +89,13 @@ Feature: One Login Sign In
     And the newly created fixture user has linked their Make account to One Login
     And I sign out and am signed out of One Login
     When I visit "/user/about-you" without being logged in
-    And I click "onelogin-signin-button"
+    And I click "onelogin-continue-button"
     And I continue through mock One Login as the newly created fixture user
     Then I am taken to "/user/about-you"
 
   Scenario: A new user who follows a link while signed out is taken back to it after onboarding
     When I visit "/user/about-you" without being logged in
-    And I click "onelogin-signin-button"
+    And I click "onelogin-continue-button"
     And I continue through mock One Login
     And I say I make LPAs for "myself, family or friends"
     And I create a new Make account
