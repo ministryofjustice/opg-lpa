@@ -7,6 +7,7 @@ namespace App\Handler;
 use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
+use App\Service\SignInPage;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
@@ -40,7 +41,7 @@ class AboutYouHandler implements RequestHandlerInterface
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
         if (!$session instanceof SessionInterface || !$session->has('identity')) {
-            return new RedirectResponse('/login');
+            return new RedirectResponse(SignInPage::path());
         }
 
         /** @var FlashMessagesInterface $flash */

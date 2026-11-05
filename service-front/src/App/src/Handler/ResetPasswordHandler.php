@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\SignInPage;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -80,9 +81,7 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     $message = Feature::OneLogin->isEnabled() ? 'You’ve reset the password for your existing account. ' : 'Password successfully reset';
                     $flash->flash(FlashMessenger::SUCCESS, [$message]);
 
-                    $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
-
-                    return new RedirectResponse($destination);
+                    return new RedirectResponse(SignInPage::path());
                 }
 
                 if ($result === 'invalid-token') {

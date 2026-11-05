@@ -2,6 +2,7 @@ import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocess
 import { openEmailAndVisitLink } from '../../support/reset_link';
 import {
   checkSignedIn,
+  detectOneLoginEnabled,
   enterMyAddressManually,
   enterMyDetails,
   saveMyDetails,
@@ -9,21 +10,6 @@ import {
   sayWhetherIHaveAnAccount,
   sayWhetherIKeepMyLpas,
 } from '../../support/onboarding';
-
-let oneLoginEnabled = null;
-
-function detectOneLoginEnabled() {
-  if (oneLoginEnabled !== null) {
-    return cy.wrap(oneLoginEnabled, { log: false });
-  }
-
-  return cy.request({ url: '/login', log: false }).then((response) => {
-    oneLoginEnabled = response.body.includes(
-      'data-cy="onelogin-signin-button"',
-    );
-    return oneLoginEnabled;
-  });
-}
 
 function oneLoginMockUrl() {
   return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
@@ -196,7 +182,7 @@ Then(
 
 Then(`I am signed in with my new Make account`, checkSignedIn);
 
-const TIMEOUT_PAGE = '/login/timeout';
+const TIMEOUT_PAGE = '/home/timeout';
 
 function mockOneLoginLogoutPattern() {
   return oneLoginMockUrl() + '/logout*';

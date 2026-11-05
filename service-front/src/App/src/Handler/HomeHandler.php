@@ -40,6 +40,8 @@ class HomeHandler implements RequestHandlerInterface
                 'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
                 'pageTitle' => 'Make a lasting power of attorney',
                 'showOneLoginChangesBanner' => $showBanner,
+                'isTimeout' => $request->getAttribute('state') === 'timeout',
+                'isInternalSystemError' => $request->getAttribute('state') === 'internal-system-error',
             ])
         );
 

@@ -129,7 +129,7 @@ class LinkAccountHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('GET', [], null));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
+        $this->assertEquals('/home', $response->getHeaderLine('Location'));
     }
 
     public function testUserWhoHasNotSaidWhichBestDescribesThemIsAskedFirst(): void

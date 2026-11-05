@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Authentication\AuthenticationService;
+use App\Service\SignInPage;
 use App\Service\UserDetails as UserService;
 use App\Model\UserDetailsHolder;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -21,8 +22,8 @@ use Psr\Log\LoggerInterface;
 /**
  * Fetches the authenticated user's details from the API and stores them on
  * the request as RequestAttribute::USER_DETAILS. Redirects to /user/about-you/new
- * if the user's profile is incomplete, or to /login?state=timeout if the user
- * record is corrupt/cannot be reconstructed.
+ * if the user's profile is incomplete, or to the sign-in page's timeout state if
+ * the user record is corrupt/cannot be reconstructed.
  * Must run after AuthenticationMiddleware (which ensures the identity is set).
  */
 class UserDetailsMiddleware implements MiddlewareInterface
@@ -84,7 +85,7 @@ class UserDetailsMiddleware implements MiddlewareInterface
                 $session->regenerate();
             }
 
-            return new RedirectResponse('/login?state=timeout');
+            return new RedirectResponse(SignInPage::path('timeout'));
         }
 
         return $handler->handle($request);
