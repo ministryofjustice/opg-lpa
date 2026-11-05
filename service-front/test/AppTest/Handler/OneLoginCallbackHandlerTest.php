@@ -15,6 +15,7 @@ use Laminas\Diactoros\Uri;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -122,6 +123,37 @@ class OneLoginCallbackHandlerTest extends TestCase
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertSame(400, $response->getStatusCode());
+    }
+
+    /**
+     * The error page words each One Login error itself: unauthorized_client is a problem on our
+     * side, so it points to support rather than offering another sign-in.
+     */
+    public static function providerErrors(): array
+    {
+        return [
+            'user cancelled'     => ['access_denied'],
+            'client not allowed' => ['unauthorized_client'],
+            'anything else'      => ['temporarily_unavailable'],
+        ];
+    }
+
+    #[DataProvider('providerErrors')]
+    public function testProviderErrorIsPassedToTheErrorPageWithoutCallingTheApi(string $error): void
+    {
+        $this->oneLoginService->expects($this->never())->method('callback');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with('application/general/auth/onelogin-error.twig', ['errorType' => $error])
+            ->willReturn('<html>error</html>');
+
+        $request = (new ServerRequest())
+            ->withQueryParams(['error' => $error])
+            ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+
+        $this->assertSame(400, $this->handler->handle($request)->getStatusCode());
     }
 
     // ─── Missing code / state ──────────────────────────────────────────────

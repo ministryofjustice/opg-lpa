@@ -349,6 +349,31 @@ class ServiceTest extends MockeryTestCase
         ], $result);
     }
 
+    // The front shows a GOV.UK One Login user's One Login email, so it must travel with the token.
+    public function testWithTokenReturnsTheOneLoginEmail()
+    {
+        $expiresAt = new DateTime('+1 seconds');
+
+        $this->setUserDataSourceGetByAuthTokenExpectation('valid', new User([
+            'id' => 1,
+            'identity' => 'make@test.com',
+            'one_login_email' => 'onelogin@test.com',
+            'auth_token' => json_encode([
+                'token' => 'valid',
+                'expiresAt' => $expiresAt->format(self::TIME_FORMAT),
+                'updatedAt' => (new DateTime('-6 seconds'))->format(self::TIME_FORMAT)
+            ])
+        ]));
+
+        $service = new AuthenticationService($this->sharedSpaceRepository);
+        $service->setUserRepository($this->authUserRepository);
+
+        $result = $service->withToken('valid', false);
+
+        $this->assertSame('make@test.com', $result['username']);
+        $this->assertSame('onelogin@test.com', $result['oneLoginEmail']);
+    }
+
     public function testWithTokenNoUpdateLastUpdated()
     {
         $today = new DateTime('today');
