@@ -28,7 +28,6 @@ class InviteMemberForm extends AbstractForm
             'required'   => true,
             'options' => [
                 'label' => 'First names',
-                'hint' => 'Include any middle names'
             ],
             'attributes' => [
                 'id' => 'firstNames',
