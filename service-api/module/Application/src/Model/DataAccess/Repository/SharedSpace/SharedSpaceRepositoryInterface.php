@@ -166,6 +166,11 @@ interface SharedSpaceRepositoryInterface
     public function countMembers(string $sharedSpaceId): int;
 
     /**
+     * Returns whether an admin user exists that isn't the specified user.
+     */
+    public function hasOtherAdmin(string $sharedSpaceId, string $userId): bool;
+
+    /**
      * Returns shared spaces whose names match the given full or partial name,
      * along with the total number of matching shared spaces (ignoring
      * offset/limit), to support pagination.

@@ -16,6 +16,7 @@ use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\Predicate;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
@@ -600,6 +601,26 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
 
         return $result->count();
+    }
+
+    public function hasOtherAdmin(string $sharedSpaceId, string $userId): bool
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql->select(self::SHARED_SPACE_MEMBERS)
+            ->where((new Predicate())
+                    ->notEqualTo('userId', $userId)
+                    ->equalTo('sharedSpaceId', $sharedSpaceId)
+                    ->equalTo('isAdmin', true))
+            ->columns(['id'])
+            ->limit(1);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult()) {
+            return false;
+        }
+
+        return $result->count() > 0;
     }
 
     /**

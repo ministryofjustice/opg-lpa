@@ -38,6 +38,17 @@ Feature: Deleting an account that signs in with GOV.UK One Login
     Then I should be on "/user/delete"
     And I see "The LPAs belong to the shared space Example Organisation." in the page text
     When I confirm deleting my account
+    Then element "h1" contains "Unknown server error (500 error)"
+
+  Scenario: A shared space member with other admin deletes their account and can start again as a new user
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "admin"
+    And the newly created fixture user has linked their Make account to One Login
+    When I visit "/user/about-you"
+    And I go to delete my account
+    Then I should be on "/user/delete"
+    And I see "The LPAs belong to the shared space Example Organisation." in the page text
+    When I confirm deleting my account
     Then I should be on "/deleted"
     When I log in through Onelogin as the newly created fixture user
     Then I am asked which best describes me
