@@ -11,6 +11,7 @@ use App\Service\Lpa\Application as LpaApplicationService;
 use DateTime;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\User\User as UserDetails;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -50,7 +51,8 @@ class SharedSpaceDashboardHandlerTest extends TestCase
         $request = (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(RouteResult::class, $routeResult)
-            ->withAttribute(RequestAttribute::IDENTITY, $identity);
+            ->withAttribute(RequestAttribute::IDENTITY, $identity)
+            ->withAttribute(RequestAttribute::USER_DETAILS, (new UserDetails())->setIsSharedSpaceAdmin(false));
 
         if ($search !== null) {
             $request = $request->withQueryParams(['search' => $search]);

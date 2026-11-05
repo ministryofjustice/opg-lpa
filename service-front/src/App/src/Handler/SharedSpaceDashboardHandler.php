@@ -10,6 +10,7 @@ use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
+use MakeShared\DataModel\User\User as UserDetails;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -35,6 +36,8 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
 
         /** @var User $identity */
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
+        /** @var UserDetails $userDetails */
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
 
         $queryParams = $request->getQueryParams();
         $search = $queryParams['search'] ?? null;
@@ -62,13 +65,14 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
                 'paginationControlData' => $paginationControlData,
                 'freeText'              => $search,
                 'isSearch'              => (is_string($search) && !empty($search)),
+                'trackingEnabled'       => $lpasSummary['trackingEnabled'],
+                'sharedSpaceName'       => $lpasSummary['name'],
+                'joinedSuccess'         => ($request->getQueryParams()['joined'] ?? null) === 'success',
+                'createdSuccess'        => ($request->getQueryParams()['created'] ?? null) === 'success',
                 'user'                  => [
-                    'lastLogin' => $identity->lastLogin(),
+                    'isSharedSpaceAdmin' => $userDetails->getIsSharedSpaceAdmin(),
+                    'lastLogin'          => $identity->lastLogin(),
                 ],
-                'trackingEnabled' => $lpasSummary['trackingEnabled'],
-                'sharedSpaceName' => $lpasSummary['name'],
-                'joinedSuccess'   => ($request->getQueryParams()['joined'] ?? null) === 'success',
-                'createdSuccess'   => ($request->getQueryParams()['created'] ?? null) === 'success'
             ]
         );
 
