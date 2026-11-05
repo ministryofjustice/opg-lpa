@@ -501,7 +501,7 @@ resource "aws_cloudwatch_metric_alarm" "memory_usage_anomaly" {
 
 
 resource "aws_cloudwatch_metric_alarm" "rds_readthroughput_anomaly" {
-  count             = var.environment.cloudwatch_alarms.rds_readthroughput_anomaly_alarms_enabled ? 1 : 0
+  count             = var.environment.cloudwatch_alarms.rds_throughput_anomaly_alarms_enabled ? 1 : 0
   alarm_name        = "${var.environment_name} RDS read throughput anomaly"
   alarm_description = "Anomalies detected for RDS cluster read throughput on ${var.environment_name}"
 
@@ -539,7 +539,7 @@ resource "aws_cloudwatch_metric_alarm" "rds_readthroughput_anomaly" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "rds_writethroughput_anomaly" {
-  # count             = var.environment.cloudwatch_alarms.rds_readthroughput_anomaly_alarms_enabled ? 1 : 0
+  count             = var.environment.cloudwatch_alarms.rds_throughput_anomaly_alarms_enabled ? 1 : 0
   alarm_name        = "${var.environment_name} RDS write throughput anomaly"
   alarm_description = "Anomalies detected for RDS cluster write throughput on ${var.environment_name}"
 
