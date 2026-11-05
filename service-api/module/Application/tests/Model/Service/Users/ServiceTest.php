@@ -526,6 +526,34 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->assertEquals($expected, $this->service->searchByUsername($username));
     }
 
+    public function testDeleteDeletionLog()
+    {
+        $username = ' Shakespeare ';
+        $hashedUsername = hash('sha512', 'shakespeare');
+
+        $this->authLogRepository
+            ->shouldReceive('deleteLogsByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn(2)
+            ->once();
+
+        $this->assertTrue($this->service->deleteDeletionLog($username));
+    }
+
+    public function testDeleteDeletionLogNoneFound()
+    {
+        $username = 'shakespeare';
+        $hashedUsername = hash('sha512', $username);
+
+        $this->authLogRepository
+            ->shouldReceive('deleteLogsByIdentityHash')
+            ->with($hashedUsername)
+            ->andReturn(0)
+            ->once();
+
+        $this->assertFalse($this->service->deleteDeletionLog($username));
+    }
+
     public function testSearchById()
     {
         $userId = 'abc123def456abc123def456abc12345';

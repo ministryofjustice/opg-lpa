@@ -54,6 +54,36 @@ class Client
     }
 
     /**
+     * Performs a DELETE against the API
+     *
+     * @param string $path
+     * @param array<string, mixed> $query
+     * @return mixed|null
+     * @throw RuntimeException | ApiException
+     */
+    public function httpDelete($path, array $query = [])
+    {
+        $url = new Uri($this->apiBaseUri . $path);
+
+        foreach ($query as $name => $value) {
+            $url = Uri::withQueryValue($url, $name, (string) $value);
+        }
+
+        $request = new Request('DELETE', $url, $this->buildHeaders());
+
+        $response = $this->httpClient->sendRequest($request);
+
+        switch ($response->getStatusCode()) {
+            case 200:
+                return $this->handleResponse($response);
+            case 404:
+                return null;
+            default:
+                return $this->handleErrorResponse($response);
+        }
+    }
+
+    /**
      * Generates the standard set of HTTP headers expected by the API
      *
      * @return array<string, string>

@@ -171,7 +171,7 @@ class Service extends AbstractService
                     continue;
                 }
 
-                // Call the notify to send the reminder email - this will thrown an exception on any errors
+                // Call notify to send the reminder email - this will thrown an exception on any errors
                 $this->notifyClient->sendEmail($user->contactEmail(), $templateId, $personalisations);
 
                 // Flag the account as 'notification sent'...

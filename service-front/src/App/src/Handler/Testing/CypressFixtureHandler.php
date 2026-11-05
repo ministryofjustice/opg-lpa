@@ -46,6 +46,7 @@ class CypressFixtureHandler implements RequestHandlerInterface
             return match ([$method, $entity]) {
                 ['POST', 'user']                => $this->createUser($data),
                 ['DELETE', 'user']              => $this->deleteUser($data),
+                ['POST', 'deletion-log']        => $this->createDeletionLog($data),
                 ['POST', 'shared-space']        => $this->createSpace($data),
                 ['POST', 'shared-space-member'] => $this->addMember($data),
                 ['POST', 'shared-space-invite'] => $this->createInvite($data),
@@ -81,6 +82,19 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $this->fixtureService->deleteUser($email);
 
         return new EmptyResponse(204);
+    }
+
+    private function createDeletionLog(array $data): ResponseInterface
+    {
+        $email = (string) ($data['email'] ?? '');
+
+        if ($email === '') {
+            return new EmptyResponse(400);
+        }
+
+        $this->fixtureService->createDeletionLog($email);
+
+        return new EmptyResponse(201);
     }
 
     private function createSpace(array $data): ResponseInterface

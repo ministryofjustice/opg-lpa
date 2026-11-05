@@ -163,6 +163,27 @@ When('I search for the newly created fixture user', () => {
   });
 });
 
+When('I search for the deletion log email', () => {
+  cy.get('@deletionLogEmail').then((email) => {
+    cy.get('[data-cy=user-search-link]').should('not.be.disabled').click();
+    cy.get('[data-cy=search-type-select]').select('Exact or partial email');
+    cy.get('[data-cy=search-term-input]').should('be.visible').and('be.enabled').clear().type(email);
+    cy.get('[data-cy=submit-button]').should('not.be.disabled').click();
+  });
+});
+
+Then('I see the deletion log email on the delete page', () => {
+  cy.get('@deletionLogEmail').then((email) => {
+    cy.get('[data-cy=deletion-log-email]').should('have.text', email);
+  });
+});
+
+Then('I see a success banner mentioning the deletion log email', () => {
+  cy.get('@deletionLogEmail').then((email) => {
+    cy.get('[data-cy=success-banner]').should('contain', email);
+  });
+});
+
 When('I search for the newly created shared space by name', () => {
   cy.get('@fixtureUser').then(({ sharedSpaceName }) => {
     cy.contains("a", "Search").click();
@@ -233,3 +254,11 @@ When('I click the link containing the name of the newly created shared space', (
     cy.contains('a', sharedSpaceName).should('exist').click()
   })
 })
+
+Then('I see the delete log link', () => {
+  cy.get('[data-cy=delete-log-link]').should('be.visible');
+});
+
+Then('I do not see the delete log link', () => {
+  cy.get('[data-cy=delete-log-link]').should('not.exist');
+});

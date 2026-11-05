@@ -9,6 +9,7 @@ use App\Service\UserService;
 use DateTime;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Prophecy\Prophecy\ObjectProphecy;
 use Psr\Log\LoggerInterface;
@@ -435,5 +436,47 @@ class UserServiceTest extends TestCase
         $userService = new UserService($client->reveal(), $this->logger->reveal());
 
         $this->assertFalse($userService->searchByAReference($aReference));
+    }
+
+    public function testDeleteDeletionLog(): void
+    {
+        $email = 'a@example.org';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpDelete('/v2/admin/deletion-log', ['email' => $email])
+            ->willReturn(['deleted' => true])
+            ->shouldBeCalledOnce();
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertTrue($userService->deleteDeletionLog($email));
+    }
+
+    public function testDeleteDeletionLogNotFound(): void
+    {
+        $email = 'a@example.org';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpDelete('/v2/admin/deletion-log', ['email' => $email])->willReturn(null);
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertFalse($userService->deleteDeletionLog($email));
+    }
+
+    public function testDeleteDeletionLogError(): void
+    {
+        $email = 'a@example.org';
+
+        $client = $this->prophesize(ApiClient::class);
+        $client->httpDelete('/v2/admin/deletion-log', ['email' => $email])
+            ->willThrow(new \RuntimeException('API down'));
+
+        $this->logger->error('Delete deletion log failed', Argument::withEntry('exception', Argument::type(\Throwable::class)))
+            ->shouldBeCalledOnce();
+
+        $userService = new UserService($client->reveal(), $this->logger->reveal());
+
+        $this->assertFalse($userService->deleteDeletionLog($email));
     }
 }
