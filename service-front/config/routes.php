@@ -93,6 +93,7 @@ use App\Handler\OneLoginJwksHandler;
 use App\Handler\OneLoginSignInHandler;
 use App\Handler\PostcodeHandler;
 use App\Handler\PrivacyHandler;
+use App\Handler\RedirectToSignInHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
 use App\Handler\ResetPasswordHandler;
@@ -117,6 +118,9 @@ use Mezzio\MiddlewareFactory;
 use Psr\Container\ContainerInterface;
 
 return static function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+    $passwordSignInEnabled = !App\Feature::OneLogin->isEnabled() || App\Feature::PasswordSignIn->isEnabled();
+    $passwordPage = static fn (string $handler): string => $passwordSignInEnabled ? $handler : RedirectToSignInHandler::class;
+
     $app->get('/health-check', HealthCheckHandler::class, 'health-check')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/health-check/service', HealthCheckServiceHandler::class, 'health-check.service')
@@ -149,17 +153,17 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->get('/stats', StatsHandler::class, 'stats')
         ->setOptions(['unauthenticated_route' => true]);
 
-    $app->route('/login[/{state:(?:timeout|internal-system-error)}]', LoginHandler::class, ['GET', 'POST'], 'application.login')
+    $app->route('/login[/{state:(?:timeout|internal-system-error)}]', $passwordPage(LoginHandler::class), ['GET', 'POST'], 'application.login')
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/logout', LogoutHandler::class, 'application.logout')
         ->setOptions(['unauthenticated_route' => true]);
-    $app->route('/signup', RegisterHandler::class, ['GET', 'POST'], 'register')
+    $app->route('/signup', $passwordPage(RegisterHandler::class), ['GET', 'POST'], 'register')
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->get('/signup/confirm/{token:[a-zA-Z0-9]+}', ConfirmRegistrationHandler::class, 'register/confirm')
         ->setOptions(['unauthenticated_route' => true]);
-    $app->route('/signup/resend-email', ResendActivationEmailHandler::class, ['GET', 'POST'], 'register/resend-email')
+    $app->route('/signup/resend-email', $passwordPage(ResendActivationEmailHandler::class), ['GET', 'POST'], 'register/resend-email')
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
-    $app->route('/forgot-password', ForgotPasswordHandler::class, ['GET', 'POST'], 'forgot-password')
+    $app->route('/forgot-password', $passwordPage(ForgotPasswordHandler::class), ['GET', 'POST'], 'forgot-password')
         ->setOptions(['unauthenticated_route' => true, 'csrf' => true]);
     $app->route(
         '/forgot-password/reset[/{token:[^\r\n]*}]',
@@ -252,7 +256,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
 
     $app->get('/deleted', DeletedAccountHandler::class, 'deleted')
         ->setOptions(['unauthenticated_route' => true]);
-    $app->get('/user/change-email-address/verify/{token:[a-zA-Z0-9]+}', VerifyEmailAddressHandler::class, 'user/change-email-address/verify')
+    $app->get('/user/change-email-address/verify/{token:[a-zA-Z0-9]+}', $passwordPage(VerifyEmailAddressHandler::class), 'user/change-email-address/verify')
         ->setOptions(['unauthenticated_route' => true]);
 
     // Authenticated routes
@@ -261,8 +265,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     $app->route('/user/dashboard/create[/{lpa-id:\d+}]', CreateLpaHandler::class, ['GET', 'POST'], 'user/dashboard/create-lpa');
     $app->route('/user/about-you[/{new}]', AboutYouHandler::class, ['GET', 'POST'], 'user/about-you')
         ->setOptions(['allowIncompleteUser' => true]);
-    $app->route('/user/change-password', ChangePasswordHandler::class, ['GET', 'POST'], 'user/change-password');
-    $app->route('/user/change-email-address', ChangeEmailAddressHandler::class, ['GET', 'POST'], 'user/change-email-address');
+    $app->route('/user/change-password', $passwordPage(ChangePasswordHandler::class), ['GET', 'POST'], 'user/change-password');
+    $app->route('/user/change-email-address', $passwordPage(ChangeEmailAddressHandler::class), ['GET', 'POST'], 'user/change-email-address');
     $app->route('/user/delete', DeleteAccountHandler::class, ['GET', 'POST'], 'user/delete');
     $app->route('/user/delete/confirm', DeleteAccountConfirmHandler::class, ['GET', 'POST'], 'user/delete-confirm');
     $app->route('/user/dashboard/new-terms', TermsChangedHandler::class, ['GET', 'POST'], 'user/dashboard/terms-changed');
