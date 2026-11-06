@@ -56,6 +56,7 @@ variable "environments" {
         onelogin_use_mock        = bool
         shared_spaces_enabled    = bool
         cypress_fixtures_enabled = bool
+        password_signin_enabled  = bool
       })
       database = object({
         cluster_identifier                 = string
