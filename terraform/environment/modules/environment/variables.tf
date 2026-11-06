@@ -26,6 +26,7 @@ variable "environment" {
       auth_sign_in_account_locked_alarms_enabled   = bool
       auth_sign_in_inactive_account_alarms_enabled = bool
       rds_throughput_anomaly_alarms_enabled        = bool
+      pagerduty_healthcheck_alarms_enabled         = bool
     })
     cognito = object({
       admin_cognito_auth_enabled = bool

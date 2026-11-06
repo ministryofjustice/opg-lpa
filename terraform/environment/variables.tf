@@ -29,6 +29,7 @@ variable "environments" {
       associate_alb_with_waf_web_acl_enabled = bool
       public_access_enabled                  = bool
       cloudwatch_alarms = object({
+        http_5xx_alarms_enabled                      = bool
         ecs_resource_alarms_enabled                  = bool
         front_4xx_anomaly_alarms_enabled             = bool
         front_ddos_alarms_enabled                    = bool
