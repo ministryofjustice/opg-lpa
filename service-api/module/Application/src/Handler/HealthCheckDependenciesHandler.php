@@ -10,7 +10,6 @@ use Exception;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Uri;
 use Laminas\Diactoros\Response\JsonResponse;
-use MakeShared\Constants;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -38,21 +37,19 @@ readonly class HealthCheckDependenciesHandler implements RequestHandlerInterface
     {
         $result = [
             'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'oneLogin' => $this->checkOneLogin(),
             'opg-data-lpa' => $this->checkOpgDataLpa(),
         ];
 
-        if ($result['oneLogin']['ok']) {
+        if ($result['oneLogin']['ok'] && $result['opg-data-lpa']['ok']) {
             $result['ok'] = true;
-            $result['status'] = Constants::STATUS_PASS;
         }
 
         return new JsonResponse($result);
     }
 
     /**
-     * @return array{ok: bool, status: string, details?: mixed}
+     * @return array{ok: bool, details?: mixed}
      */
     private function checkOneLogin(): array
     {
@@ -68,7 +65,6 @@ readonly class HealthCheckDependenciesHandler implements RequestHandlerInterface
             $ok = $response->getStatusCode() === 200;
             return [
                 'ok' => $ok,
-                'status' => $ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL,
                 'details' => [
                     'response_code' => $response->getStatusCode(),
                 ],
@@ -77,12 +73,12 @@ readonly class HealthCheckDependenciesHandler implements RequestHandlerInterface
             $this->logger->error(
                 "One Login not available to API at $url: " . $e->getMessage()
             );
-            return ['ok' => false, 'status' => Constants::STATUS_FAIL];
+            return ['ok' => false];
         }
     }
 
     /**
-     * @return array{ok: bool, status: string, details?: mixed}
+     * @return array{ok: bool, details?: mixed}
      */
     private function checkOpgDataLpa(): array
     {
@@ -102,7 +98,6 @@ readonly class HealthCheckDependenciesHandler implements RequestHandlerInterface
             $ok = $response->getStatusCode() === 200;
             return [
                 'ok' => $ok,
-                'status' => $ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL,
                 'details' => [
                     'response_code' => $response->getStatusCode(),
                 ],
@@ -111,7 +106,7 @@ readonly class HealthCheckDependenciesHandler implements RequestHandlerInterface
             $this->logger->error(
                 "Sirius gateway not available to API at $url: " . $e->getMessage()
             );
-            return ['ok' => false, 'status' => Constants::STATUS_FAIL];
+            return ['ok' => false];
         }
     }
 }

@@ -6,6 +6,8 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Authentication\AuthenticationService;
+use App\Middleware\RequestAttribute;
+use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails as UserService;
 use Fig\Http\Message\RequestMethodInterface;
@@ -27,6 +29,7 @@ class DeleteAccountHandler implements RequestHandlerInterface
         private readonly SharedSpaceService $sharedSpaceService,
         private readonly UserService $userService,
         private readonly bool $sharedSpacesEnabled = false,
+        private readonly bool $oneLoginEnabled = false,
     ) {
     }
 
@@ -47,9 +50,22 @@ class DeleteAccountHandler implements RequestHandlerInterface
 
         $memberCount = $this->sharedSpacesEnabled ? $this->sharedSpaceService->getMemberCount() : null;
 
+        $sharedSpaceName = null;
+        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
+        if ($this->oneLoginEnabled && $memberCount > 1 && $identity instanceof User) {
+            $sharedSpaceName = $this->sharedSpaceService->getMember($identity->id())?->getSharedSpaceName();
+        }
+
         $html = $this->renderer->render(
             'application/authenticated/delete/index.twig',
-            array_merge(['memberCount' => $memberCount], $this->getTemplateVariables($request))
+            array_merge(
+                [
+                    'memberCount' => $memberCount,
+                    'oneLoginEnabled' => $this->oneLoginEnabled,
+                    'sharedSpaceName' => $sharedSpaceName,
+                ],
+                $this->getTemplateVariables($request)
+            )
         );
 
         return new HtmlResponse($html);

@@ -72,8 +72,6 @@ class IdentityTokenRefreshMiddlewareTest extends TestCase
     public static function skipProvider(): array
     {
         return [
-            ['https://example.com/ping/elb'],
-            ['https://example.com/ping/json'],
             ['https://example.com/health-check'],
             ['https://example.com/health-check/dependencies'],
             ['https://example.com/health-check/service'],

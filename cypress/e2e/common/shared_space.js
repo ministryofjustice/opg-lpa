@@ -55,6 +55,14 @@ function createInvite(sharedSpaceId, userEmail, inviteEmail) {
     .then((response) => response.body);
 }
 
+function createDeletionLog(email) {
+  return cy.request({
+    method: 'POST',
+    url: '/testing/cypress-fixture/deletion-log',
+    body: { email },
+  });
+}
+
 function login(email, password) {
   cy.visitWithChecks('/login');
 
@@ -109,6 +117,15 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
       }
     },
   );
+});
+
+Given('a deletion log exists for {string}', (emailTemplate) => {
+  const email = emailTemplate.replace('{random}', Math.random().toString(10).substring(2, 10));
+
+  createDeletionLog(email).then(() => {
+    cy.task('log', `Created deletion log for ${email}`);
+    cy.wrap(email).as('deletionLogEmail');
+  });
 });
 
 Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {

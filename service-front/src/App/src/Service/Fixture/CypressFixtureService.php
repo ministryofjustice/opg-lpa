@@ -62,6 +62,20 @@ class CypressFixtureService
         ];
     }
 
+    /**
+     * Creates, activates and then deletes a user with the given email, leaving a deletion log entry behind.
+     */
+    public function createDeletionLog(string $email): void
+    {
+        $userId = $this->createAndActivateUser($email);
+
+        $this->authenticate($email);
+
+        $this->apiClient->httpDelete('/v2/users/' . $userId);
+
+        $this->logger->info('Created Cypress fixture deletion log', ['userId' => $userId]);
+    }
+
     public function deleteUser(string $email): void
     {
         $userId = $this->authenticate($email, allowFailure: true);

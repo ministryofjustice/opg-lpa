@@ -7,6 +7,7 @@ namespace ApplicationTest\Model\Service\OneLogin;
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\LogoutTokenException;
 use Application\Model\Service\OneLogin\LogoutTokenVerifier;
+use Facile\JoseVerifier\Exception\RuntimeException as JoseRuntimeException;
 use Facile\JoseVerifier\JWK\JwksProviderInterface;
 use Facile\OpenIDClient\Client\ClientInterface;
 use Facile\OpenIDClient\Client\Metadata\ClientMetadataInterface;
@@ -22,6 +23,7 @@ use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use RuntimeException;
 
 class LogoutTokenVerifierTest extends MockeryTestCase
 {
@@ -167,6 +169,23 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $this->assertSame('urn:fdc:gov.uk:2022:sub-abc', $result['sub']);
     }
 
+    /**
+     * Failing to fetch One Login's keys is our failure, not a bad token, so One Login can retry.
+     */
+    public function testKeyFetchFailureIsNotReportedAsARejectedToken(): void
+    {
+        $verifier = $this->verifierWithJwks([], jwksError: new JoseRuntimeException('An error occurred fetching JWKSet'));
+
+        $this->expectOurFailure(fn () => $verifier->verify($this->token()));
+    }
+
+    public function testKeyReloadFailureIsNotReportedAsARejectedToken(): void
+    {
+        $verifier = $this->verifierWithJwks([], reloadError: new JoseRuntimeException('Unable to get the key set'));
+
+        $this->expectOurFailure(fn () => $verifier->verify($this->token()));
+    }
+
     public function testAcceptsPopulatedEventObject(): void
     {
         $token = $this->sign(
@@ -227,10 +246,18 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         $this->expectExceptionMessage($reason);
     }
 
-    /**
-     * @param list<array<string, mixed>> $keys
-     * @param list<array<string, mixed>>|null $reloadReturns
-     */
+    private function expectOurFailure(callable $verify): void
+    {
+        try {
+            $verify();
+            $this->fail('Expected a key fetch failure');
+        } catch (RuntimeException $e) {
+            $this->assertNotInstanceOf(LogoutTokenException::class, $e);
+            $this->assertSame('Unable to fetch One Login signing keys', $e->getMessage());
+            $this->assertInstanceOf(JoseRuntimeException::class, $e->getPrevious());
+        }
+    }
+
     /**
      * @param list<array<string, mixed>> $keys
      * @param list<array<string, mixed>>|null $reloadReturns
@@ -239,13 +266,23 @@ class LogoutTokenVerifierTest extends MockeryTestCase
         array $keys,
         ?array $reloadReturns = null,
         string $clientId = self::CLIENT_ID,
+        ?JoseRuntimeException $jwksError = null,
+        ?JoseRuntimeException $reloadError = null,
     ): LogoutTokenVerifier {
         $jwksProvider = Mockery::mock(JwksProviderInterface::class);
         $jwksProvider->shouldReceive('getJwks')->andReturn(['keys' => $keys])->byDefault();
 
         $reloaded = Mockery::mock(JwksProviderInterface::class);
-        $reloaded->shouldReceive('getJwks')->andReturn(['keys' => $reloadReturns ?? $keys]);
+        $reloaded->shouldReceive('getJwks')->andReturn(['keys' => $reloadReturns ?? $keys])->byDefault();
         $jwksProvider->shouldReceive('reload')->andReturn($reloaded)->byDefault();
+
+        if ($jwksError !== null) {
+            $jwksProvider->shouldReceive('getJwks')->andThrow($jwksError);
+        }
+
+        if ($reloadError !== null) {
+            $reloaded->shouldReceive('getJwks')->andThrow($reloadError);
+        }
 
         $issuerMetadata = Mockery::mock(IssuerMetadataInterface::class);
         $issuerMetadata->shouldReceive('toArray')->andReturn([

@@ -124,11 +124,6 @@
       <code><![CDATA[$lpa->document->replacementAttorneys]]></code>
     </InvalidOperand>
   </file>
-  <file src="src/App/src/Service/Mail/Transport/NotifyMailTransport.php">
-    <ImplementedReturnTypeMismatch>
-      <code><![CDATA[array{ok: bool, status: 'fail'|'pass', details: array{smokeTestEmailAddress: null|string, exception?: 'Unable to send email to smoke test address'}}]]></code>
-    </ImplementedReturnTypeMismatch>
-  </file>
   <file src="src/App/src/Service/Payment/GovPay/Client.php">
     <UndefinedPropertyFetch>
       <code><![CDATA[$payment->payment_id]]></code>

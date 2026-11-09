@@ -147,6 +147,6 @@ class CannotLinkAccountHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest(null));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/login', $response->getHeaderLine('Location'));
+        $this->assertEquals('/home', $response->getHeaderLine('Location'));
     }
 }

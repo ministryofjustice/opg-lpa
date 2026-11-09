@@ -17,7 +17,6 @@ use DateTime;
 use Laminas\Diactoros\Response as PSR7Response;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\Route;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionInterface;
@@ -35,7 +34,6 @@ use Psr\Log\NullLogger;
 class AuthenticationMiddlewareTest extends TestCase
 {
     private AuthenticationService&MockObject $authenticationService;
-    private UrlHelper&MockObject $urlHelper;
     private LoggerInterface&MockObject $logger;
     private OneLoginSignOut&MockObject $oneLoginSignOut;
     private AuthenticationMiddleware $middleware;
@@ -47,15 +45,14 @@ class AuthenticationMiddlewareTest extends TestCase
     protected function setUp(): void
     {
         $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        putenv('ONELOGIN_ENABLED=false');
 
         $this->authenticationService = $this->createMock(AuthenticationService::class);
-        $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->oneLoginSignOut = $this->createMock(OneLoginSignOut::class);
 
         $this->middleware = new AuthenticationMiddleware(
             $this->authenticationService,
-            $this->urlHelper,
             $this->logger,
             new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginSignOut,
@@ -202,10 +199,6 @@ class AuthenticationMiddlewareTest extends TestCase
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
 
         $expectedUrl = '/login/' . $expectedState;
-        $this->urlHelper->expects($this->once())
-            ->method('generate')
-            ->with('application.login', ['state' => $expectedState])
-            ->willReturn($expectedUrl);
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->never())->method('handle');
@@ -241,7 +234,6 @@ class AuthenticationMiddlewareTest extends TestCase
             ->withAttribute(RouteResult::class, RouteResult::fromRouteFailure(Route::HTTP_METHOD_ANY))
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
 
-        $this->urlHelper->method('generate')->willReturn('/login/timeout');
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->never())->method('handle');
@@ -287,7 +279,6 @@ class AuthenticationMiddlewareTest extends TestCase
             ->withAttribute(RouteResult::class, $this->makeRouteResult('lpa/checkout'))
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
 
-        $this->urlHelper->method('generate')->willReturn('/login/timeout');
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($this->never())->method('handle');
@@ -309,9 +300,6 @@ class AuthenticationMiddlewareTest extends TestCase
             $unset[] = $key;
         });
 
-        $this->urlHelper->method('generate')->willReturnCallback(
-            fn(string $route, array $params) => '/login/' . $params['state']
-        );
 
         $request = new ServerRequest(uri: '/lpa/12345678/checkout')
             ->withAttribute(RouteResult::class, $this->makeRouteResult('lpa/checkout'))
@@ -322,6 +310,7 @@ class AuthenticationMiddlewareTest extends TestCase
 
     public function testTimedOutOneLoginUserIsSentToOneLoginLogoutAndBackToTheTimeoutPage(): void
     {
+        putenv('ONELOGIN_ENABLED=true');
         $unset   = [];
         $request = $this->unauthenticatedRequest(['onelogin_id_token' => self::ID_TOKEN], $unset);
 
@@ -330,7 +319,7 @@ class AuthenticationMiddlewareTest extends TestCase
             ->method('url')
             ->with(
                 self::ID_TOKEN,
-                'https://front.example.com/login/timeout',
+                'https://front.example.com/home/timeout',
                 'https://front.example.com/auth/redirect',
             )
             ->willReturn(self::ONE_LOGIN_LOGOUT_URL);
@@ -366,6 +355,31 @@ class AuthenticationMiddlewareTest extends TestCase
 
         $this->assertEquals('/login/timeout', $result->getHeaderLine('Location'));
         $this->assertSame([], $unset);
+    }
+
+    public function testWithOneLoginOnASignedOutUserIsSentToTheOneLoginStartPage(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $unset   = [];
+        $request = $this->unauthenticatedRequest([], $unset);
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/home/timeout', $result->getHeaderLine('Location'));
+    }
+
+    public function testWithOneLoginOnAnInternalSystemErrorIsShownOnTheOneLoginStartPage(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $unset   = [];
+        $request = $this->unauthenticatedRequest(
+            [IdentityTokenRefreshMiddleware::SESSION_KEY_AUTH_FAILURE_CODE => 503],
+            $unset,
+        );
+
+        $result = $this->middleware->process($request, $this->createMock(RequestHandlerInterface::class));
+
+        $this->assertEquals('/home/internal-system-error', $result->getHeaderLine('Location'));
     }
 
     public function testTimedOutPasswordUserGoesStraightToTheTimeoutPage(): void
@@ -432,7 +446,6 @@ class AuthenticationMiddlewareTest extends TestCase
             ->withAttribute(RouteResult::class, $routeResult)
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $session);
 
-        $this->urlHelper->method('generate')->willReturn('/login');
 
         $handler = $this->createMock(RequestHandlerInterface::class);
         $handler->expects($allowed ? $this->once() : $this->never())->method('handle')->willReturn(new PSR7Response());

@@ -1,4 +1,5 @@
 import { Given, Then } from '@badeball/cypress-cucumber-preprocessor';
+import { signInPage } from '../../support/onboarding';
 
 Given(`I visit {string}`, (url) => {
   // note that cy.visitWithChecks will follow redirects, and require the status code to be 2xx after that
@@ -13,7 +14,9 @@ Given(`I open {string}`, (url) => {
 
 Given(`I visit {string} without being logged in`, (url) => {
   cy.visit(url, { failOnStatusCode: false });
-  cy.url().should('include', '/login');
+  signInPage().then((page) => {
+    cy.location('pathname').should('match', new RegExp(`^${page}(/|$)`));
+  });
 });
 
 Then(`I visit the login page`, () => {

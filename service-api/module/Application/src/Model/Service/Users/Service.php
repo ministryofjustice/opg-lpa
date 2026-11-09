@@ -331,6 +331,19 @@ class Service extends AbstractService
     }
 
     /**
+     * Delete the deletion log entries recorded for a deleted account.
+     *
+     * @param string $username
+     * @return bool true if any log entries were deleted
+     */
+    public function deleteDeletionLog(#[\SensitiveParameter] string $username): bool
+    {
+        $identityHash = $this->hashIdentity($username);
+
+        return $this->getLogRepository()->deleteLogsByIdentityHash($identityHash) > 0;
+    }
+
+    /**
      * @param string $query to match against username
      * @param array $options See UserData.matchUsers()
      * @return array{results: array, total: int} 'results' is an array of arrays,

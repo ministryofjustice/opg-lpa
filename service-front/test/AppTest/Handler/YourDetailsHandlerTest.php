@@ -121,7 +121,7 @@ class YourDetailsHandlerTest extends TestCase
         $response = $this->handler->handle($this->createRequest('GET', [], null));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/login', $response->getHeaderLine('Location'));
+        $this->assertSame('/home', $response->getHeaderLine('Location'));
     }
 
     /**

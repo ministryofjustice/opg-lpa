@@ -20,12 +20,26 @@
                 {% if joinedSuccess %}
                   <div class="govuk-notification-banner__content">
                     <h3 class="govuk-notification-banner__heading">
-                      You’ve joined the shared space.
+                      You’ve joined the shared space ‘{{ sharedSpaceName }}’.
                     </h3>
+
+                    <p class="govuk-body app-full-width">
+                      {% if user.isSharedSpaceAdmin %}
+                        You can continue making a lasting power of attorney or invite other users to become <a class="govuk-link" href='{{ url('shared-space') }}'>shared space members</a>.
+                      {% else %}
+                        You can continue making a lasting power of attorney or view who else is a <a class="govuk-link" href='{{ url('shared-space') }}'>shared space member</a>.
+                      {% endif %}
+                    </p>
                   </div>
                 {% elseif createdSuccess %}
                   <div class="govuk-notification-banner__content">
-                    <strong>{{ sharedSpaceName }}</strong> has been created
+                    <h3 class="govuk-notification-banner__heading">
+                      ‘{{ sharedSpaceName }}’ has been created.
+                    </h3>
+
+                    <p class="govuk-body app-full-width">
+                      You can continue making a lasting power of attorney or invite other users to become <a class="govuk-link" href='{{ url('shared-space') }}'>shared space members</a>.
+                    </p>
                   </div>
                 {% endif %}
             </div>

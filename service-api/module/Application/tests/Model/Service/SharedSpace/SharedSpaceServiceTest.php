@@ -956,4 +956,18 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->assertEquals($expected, $result);
     }
+
+
+    public function testHasExactlyOneActiveAdmin(): void
+    {
+        foreach ([true, false] as $expected) {
+            $this->sharedSpaceRepository
+                ->shouldReceive('hasExactlyOneActiveAdmin')
+                ->with('shared-space-1')
+                ->once()
+                ->andReturn($expected);
+
+            $this->assertSame($expected, $this->service->hasExactlyOneActiveAdmin('shared-space-1'));
+        }
+    }
 }

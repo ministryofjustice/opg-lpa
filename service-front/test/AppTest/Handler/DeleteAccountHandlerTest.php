@@ -7,13 +7,17 @@ namespace AppTest\Handler;
 use App\Authentication\AuthenticationService;
 use App\Handler\DeleteAccountHandler;
 use App\Middleware\CsrfValidationMiddleware;
+use App\Middleware\RequestAttribute;
+use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails;
 use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use DateTime;
 use Laminas\Diactoros\ServerRequest;
+use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -47,26 +51,38 @@ class DeleteAccountHandlerTest extends TestCase
     public static function featureEnabledProvider(): array
     {
         return [
-            'shared spaces enabled' => [true, 5],
-            'shared spaces disabled' => [false, null],
+            'shared spaces enabled' => [true, 5, false, null],
+            'shared spaces disabled' => [false, null, false, null],
+            'one login, shared space with other members' => [true, 5, true, 'My space'],
+            'one login, last member of a shared space' => [true, 1, true, null],
         ];
     }
 
     #[DataProvider('featureEnabledProvider')]
-    public function testGetRendersDeleteAccountPageWithCommonTemplateVariables(bool $sharedSpacesEnabled, ?int $memberCount): void
-    {
+    public function testGetRendersDeleteAccountPageWithCommonTemplateVariables(
+        bool $sharedSpacesEnabled,
+        ?int $memberCount,
+        bool $oneLoginEnabled,
+        ?string $sharedSpaceName,
+    ): void {
         if ($sharedSpacesEnabled) {
             $this->sharedSpaceService->expects($this->once())
                 ->method('getMemberCount')
                 ->willReturn($memberCount);
         }
 
+        $this->sharedSpaceService->expects($sharedSpaceName === null ? $this->never() : $this->once())
+            ->method('getMember')
+            ->with('1')
+            ->willReturn(new SharedSpaceMember(['sharedSpaceName' => $sharedSpaceName]));
+
         $handler = new DeleteAccountHandler(
             $this->renderer,
             $this->authenticationService,
             $this->sharedSpaceService,
             $this->userService,
-            $sharedSpacesEnabled
+            $sharedSpacesEnabled,
+            $oneLoginEnabled,
         );
 
         $this->renderer
@@ -80,12 +96,15 @@ class DeleteAccountHandlerTest extends TestCase
                     'lpa' => null,
                     'currentRouteName' => null,
                     'csrfToken' => 'test-token',
-                    'memberCount' => $memberCount
+                    'memberCount' => $memberCount,
+                    'oneLoginEnabled' => $oneLoginEnabled,
+                    'sharedSpaceName' => $sharedSpaceName,
                 ]
             )
             ->willReturn('<html>delete account</html>');
 
-        $response = $handler->handle($this->createRequest());
+        $identity = new User('1', '', 1, new DateTime(), sharedSpaceId: '1');
+        $response = $handler->handle($this->createRequest()->withAttribute(RequestAttribute::IDENTITY, $identity));
 
         $this->assertInstanceOf(HtmlResponse::class, $response);
         $this->assertEquals(StatusCodeInterface::STATUS_OK, $response->getStatusCode());

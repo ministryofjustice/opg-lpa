@@ -26,10 +26,10 @@ Feature: Shared Space
     When I type "Example Organisation" into "space-name"
     When I click element marked "Save"
     Then I should be on "/shared-space/dashboard?created=success"
-    And I see a success notification with content "Example Organisation has been created"
-    When I click element marked "Shared space"
+    And I see a success notification with content "‘Example Organisation’ has been created."
+    When I click element marked "Shared space members"
     Then I should be on "/shared-space"
-    And I see "Manage Shared Space" in the title
+    And I see "Shared space members" in the title
     And element "table" contains "Brand New"
 
   @RequiresOneLogin
@@ -175,10 +175,10 @@ Feature: Shared Space
     And I click element marked "Shared space"
     And I should be on "/shared-space/join"
     And I type "Example Organisation" into field labelled "Shared space name"
-    And I type the access code into field labelled "Your shared space access code"
-    And I click element marked "Continue"
+    And I type the access code into field labelled "Joining code"
+    And I click element marked "Join shared space"
     And I should be on "/shared-space/dashboard"
-    And I see a success notification with content "You’ve joined the shared space."
+    And I see a success notification with content "You’ve joined the shared space ‘Example Organisation’."
     And I click element marked "Shared space"
     And I cannot see any invites
 
@@ -221,17 +221,30 @@ Feature: Shared Space
     Then I should be on "/shared-space/dashboard"
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    And I see "View Shared Space" in the page text
+    And I see "Shared space members" in the page text
     And I cannot see any links to manage members
 
   Scenario: Deleting the last member of a shared space deletes the shared space
+    Given I check whether One Login is enabled
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
     Then I should be on "/shared-space/dashboard"
     When I click link "Your details"
     Then I should be on "/user/about-you"
-    When I click link "Delete Account"
+    When I go to delete my account
     Then I should be on "/user/delete"
-    And I see "You are currently the last member of a shared space. Deleting your account will permanently delete the shared space and all LPAs associated with the shared space." in the page text
-    When I click button "Delete account"
+    And I am told what deleting my account as the last shared space member does
+    When I confirm deleting my account
     Then I should be on "/deleted"
+
+  @RequiresOneLogin
+  Scenario: Deleting your account explains that the shared space keeps its LPAs
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the newly created fixture user
+    When I click link "Your details"
+    And I click link "Deleting your account - find out more"
+    Then I should be on "/user/delete"
+    And I see "The LPAs belong to the shared space Example Organisation." in the page text
+    When I click link "Return to your details"
+    Then I should be on "/user/about-you"

@@ -82,3 +82,13 @@ Feature: Change User Personal Details
         And I see "address-address2" prepopulated with "THE AXIS"
         And I see "address-address3" prepopulated with "10 HOLLIDAY STREET, BIRMINGHAM"
         And I see "address-postcode" prepopulated with "B1 1TF"
+
+    @RequiresOneLogin
+    Scenario: Your details explains that sign-in details are changed in GOV.UK One Login
+        Given I create a new user with 1 LPA
+        And I log in as the newly created fixture user
+        When I visit "/user/about-you"
+        When I click element marked "Changing your sign-in details"
+        Then I see "GOV.UK One Login (opens in a new tab)" in the page text
+        And I do not see "What is your name?" in the page text
+        And I see "Deleting your account - find out more" in the page text

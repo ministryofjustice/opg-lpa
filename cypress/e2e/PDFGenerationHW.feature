@@ -14,6 +14,6 @@ Feature: PDF Generation for Health and Welfare LPA
     @focus
     Scenario: Deeplinks work
         Given I visit "/lpa/68582508781/view-docs" without being logged in
-        Then I should be on "/login"
-        When I log in as seeded user on the current page
+        When I visit the login page
+        And I log in as seeded user on the current page
         Then I should be on "/lpa/68582508781/view-docs"

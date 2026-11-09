@@ -74,7 +74,7 @@ Then(`I am asked for my details`, () => {
   cy.url().should('eq', Cypress.config().baseUrl + YOUR_DETAILS);
   cy.contains('h1', 'Your details').should('be.visible');
   cy.get('[data-cy="save"]').should('have.text', 'Save');
-  cy.contains('a', 'Delete Account').should('not.exist');
+  cy.get('a[href="/user/delete"]').should('not.exist');
   // The postcode lookup script adds this link, so wait for it before checking what the script shows
   cy.contains('a', 'Search for UK postcode').should('be.visible');
   cy.contains('a', 'Enter address manually').should('not.be.visible');

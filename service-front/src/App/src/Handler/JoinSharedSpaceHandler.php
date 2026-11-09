@@ -10,6 +10,7 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
+use DateTime;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -67,8 +68,35 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
                             $this->authenticationService->refreshSharedSpaceId($e->getBody('sharedSpaceId'));
                             return new RedirectResponse('/shared-space/dashboard');
 
+                        case 'invite-not-matched':
+                            $joinError = 'The shared space name and joining code must be entered exactly as they appear in the email inviting you to join.';
+                            break;
+
                         case 'invite-not-found':
-                            $joinError = 'No invite found. The shared space name and/or access code are incorrect or there is no invite associated with your email address.';
+                            return new HtmlResponse(
+                                $this->renderer->render(
+                                    'application/authenticated/shared-space/invite-not-found.twig',
+                                    array_merge(
+                                        $this->getTemplateVariables($request),
+                                        ['email' => $userDetails->getEmail()->getAddress()],
+                                    ),
+                                ),
+                            );
+                            break;
+
+                        case 'invite-expired':
+                            return new HtmlResponse(
+                                $this->renderer->render(
+                                    'application/authenticated/shared-space/invite-expired.twig',
+                                    array_merge(
+                                        $this->getTemplateVariables($request),
+                                        [
+                                            'inviteExpiry' => (new DateTime($e->getBody('expires')))->format('j F Y'),
+                                            'sharedSpaceName' => $form->get('sharedSpaceName')->getValue(),
+                                        ],
+                                    ),
+                                ),
+                            );
                             break;
 
                         default:

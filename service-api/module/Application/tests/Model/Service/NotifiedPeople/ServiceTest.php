@@ -169,6 +169,6 @@ final class ServiceTest extends AbstractServiceTestCase
         $id = $lpa->getDocument()->getPeopleToNotify()[0]->id;
         $result = $this->service->delete(strval($lpa->getId()), self::IF_MATCH_VALUE, self::USER_ID_VALUE, $id);
 
-        $this->assertTrue($result);
+        $this->assertNull($result);
     }
 }

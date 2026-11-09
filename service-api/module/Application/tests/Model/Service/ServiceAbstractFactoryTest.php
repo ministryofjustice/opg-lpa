@@ -22,6 +22,7 @@ use Application\Model\Service\Pdfs\Service as PdfsService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
 use Application\Model\Service\Seed\Service as SeedService;
 use Application\Model\Service\ServiceAbstractFactory;
+use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UsersService;
 use Aws\Credentials\CredentialsInterface;
 use Aws\S3\S3Client;
@@ -67,6 +68,7 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'NotifyClient' => Mockery::mock(Client::class),
                     'config' => [],
                     UsersService::class =>  Mockery::mock(UsersService::class),
+                    SharedSpaceService::class => Mockery::mock(SharedSpaceService::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],

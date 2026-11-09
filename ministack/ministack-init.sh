@@ -35,7 +35,7 @@ awslocal dynamodb create-table \
 --endpoint=$DYNAMODB_URL
 
 echo "Waiting for SQS to be available..."
-until awslocal sqs list-queues --endpoint=http://localstack:4566 --region=${REGION} 2>/dev/null; do
+until awslocal sqs list-queues --endpoint=http://ministack:4566 --region=${REGION} 2>/dev/null; do
   echo "SQS not ready, retrying..."
   sleep 2
 done
@@ -54,7 +54,7 @@ awslocal sqs create-queue \
 --endpoint=http://${OPG_LPA_COMMON_SQS_ENDPOINT}
 
 echo "Waiting for S3 to be available..."
-until awslocal s3api list-buckets --endpoint=http://localstack:4566 --region=${REGION} 2>/dev/null; do
+until awslocal s3api list-buckets --endpoint=http://ministack:4566 --region=${REGION} 2>/dev/null; do
   echo "S3 not ready, retrying..."
   sleep 2
 done
@@ -62,9 +62,9 @@ done
 echo 'creating S3 bucket'
 
 awslocal s3api create-bucket \
---endpoint=http://localstack:4566 \
+--endpoint=http://ministack:4566 \
 --region=${REGION} \
 --bucket=${OPG_LPA_COMMON_PDF_CACHE_S3_BUCKET} \
 --create-bucket-configuration LocationConstraint=eu-west-1
 
-echo 'localstack initialisation complete'
+echo 'ministack initialisation complete'

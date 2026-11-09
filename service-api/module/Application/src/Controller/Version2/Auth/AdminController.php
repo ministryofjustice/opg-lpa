@@ -52,6 +52,24 @@ class AdminController extends AbstractRestfulController
     }
 
     /**
+     * Delete the deletion log entries recorded for a deleted account
+     */
+    public function deleteDeletionLogAction(): Json|ApiProblemResponse
+    {
+        $email = $this->params()->fromQuery('email');
+
+        if (!is_string($email) || trim($email) === '') {
+            return new ApiProblemResponse(new ApiProblem(400, 'Missing required parameter: email'));
+        }
+
+        if (!$this->usersService->deleteDeletionLog($email)) {
+            return new ApiProblemResponse(new ApiProblem(404, 'No deletion log found for supplied email address'));
+        }
+
+        return new Json(['deleted' => true]);
+    }
+
+    /**
      * Match action for user details (wildcard/case-insensitive search)
      */
     public function matchUsersAction(): Json

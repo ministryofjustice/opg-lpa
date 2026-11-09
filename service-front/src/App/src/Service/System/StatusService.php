@@ -12,7 +12,6 @@ use Aws\DynamoDb\DynamoDbClient;
 use DateTime;
 use Exception;
 use GuzzleHttp\Psr7\Request;
-use MakeShared\Constants;
 use Psr\Http\Client\ClientInterface;
 
 class StatusService
@@ -35,74 +34,10 @@ class StatusService
     ) {
     }
 
-    /**
-     * @return array{ok: bool, status: string}
-     */
-    public function check(): array
-    {
-        $result = [];
-
-        // Check API (required)
-        $result['api'] = $this->checkApi();
-
-        // Check session save handler (required)
-        $result['sessionSaveHandler'] = $this->checkSession();
-
-        // Check mail transport (required)
-        $result['mail'] = $this->checkMail();
-
-        // Service reports as OK if all required services are OK
-        $result['ok'] = true;
-        foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-            if (!$result[$serviceRequired]['ok']) {
-                $result['ok'] = false;
-                break;
-            }
-        }
-
-        // Check DynamoDB (optional)
-        $result['dynamo'] = $this->checkDynamo();
-
-        // Check Ordnance Survey (optional, rate limited via Redis)
-        $result['ordnanceSurvey'] = $this->checkOrdnanceSurvey();
-
-        // Determine overall status
-        $status = Constants::STATUS_PASS;
-
-        foreach (self::SERVICES_REQUIRED as $serviceRequired) {
-            $requiredStatus = $result[$serviceRequired]['status'];
-
-            if ($requiredStatus === Constants::STATUS_PASS) {
-                continue;
-            }
-
-            $status = $requiredStatus;
-
-            if ($status === Constants::STATUS_FAIL) {
-                break;
-            }
-        }
-
-        // If no required services fail, check optional services for degradation
-        if ($status !== Constants::STATUS_FAIL) {
-            foreach (self::SERVICES_OPTIONAL as $serviceOptional) {
-                if ($result[$serviceOptional]['status'] !== Constants::STATUS_PASS) {
-                    $status = Constants::STATUS_WARN;
-                    break;
-                }
-            }
-        }
-
-        $result['status'] = $status;
-
-        return $result;
-    }
-
     public function checkApi(): array
     {
         $result = [
             'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'details' => [],
         ];
 
@@ -110,14 +45,12 @@ class StatusService
             $api = $this->apiClient->httpGet('/ping');
 
             $result['ok'] = $api['ok'];
-            $result['status'] = $api['status'];
-            unset($api['ok'], $api['status']);
+            unset($api['ok']);
 
             $result['details']['response_code'] = 200;
             $result['details'] += $api;
         } catch (Exception) {
             $result['ok'] = false;
-            $result['status'] = Constants::STATUS_FAIL;
             $result['details']['response_code'] = 500;
         }
 
@@ -127,21 +60,20 @@ class StatusService
     public function checkSession(): array
     {
         if ($this->sessionSaveHandler === null) {
-            return ['ok' => true, 'status' => Constants::STATUS_PASS];
+            return ['ok' => true];
         }
 
         $ok = $this->sessionSaveHandler->open('', '');
 
         return [
             'ok' => $ok,
-            'status' => ($ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
         ];
     }
 
     public function checkMail(): array
     {
         if ($this->mailTransport === null) {
-            return ['ok' => true, 'status' => Constants::STATUS_PASS];
+            return ['ok' => true];
         }
 
         return $this->mailTransport->healthcheck();
@@ -156,7 +88,6 @@ class StatusService
 
         return [
             'ok' => $ok,
-            'status' => $ok ? Constants::STATUS_PASS : Constants::STATUS_FAIL,
             'details' => [
                 'url' => $payUrl,
                 'response_code' => $response->getStatusCode(),
@@ -168,7 +99,6 @@ class StatusService
     {
         $result = [
             'ok' => false,
-            'status' => Constants::STATUS_FAIL,
             'details' => [],
         ];
 
@@ -176,13 +106,11 @@ class StatusService
             $api = $this->apiClient->httpGet('/health-check/dependencies');
 
             $result['ok'] = $api['ok'];
-            $result['status'] = $api['status'];
-            unset($api['ok'], $api['status']);
+            unset($api['ok']);
 
             $result['details'] += $api;
         } catch (Exception) {
             $result['ok'] = false;
-            $result['status'] = Constants::STATUS_FAIL;
         }
 
         return $result;
@@ -191,7 +119,7 @@ class StatusService
     public function checkDynamo(): array
     {
         if ($this->dynamoDbClient === null) {
-            return ['ok' => true, 'status' => Constants::STATUS_PASS];
+            return ['ok' => true];
         }
 
         try {
@@ -204,19 +132,19 @@ class StatusService
                 $details['@metadata']['statusCode'] === 200 &&
                 in_array($details['Table']['TableStatus'], ['ACTIVE', 'UPDATING'])
             ) {
-                return ['ok' => true, 'status' => Constants::STATUS_PASS];
+                return ['ok' => true];
             }
         } catch (Exception) {
             // fall through
         }
 
-        return ['ok' => false, 'status' => Constants::STATUS_FAIL];
+        return ['ok' => false];
     }
 
     public function checkOrdnanceSurvey(): array
     {
         if ($this->ordnanceSurveyClient === null || $this->redisClient === null) {
-            return ['ok' => true, 'status' => Constants::STATUS_PASS];
+            return ['ok' => true];
         }
 
         $this->redisClient->open();
@@ -237,7 +165,6 @@ class StatusService
 
                 return [
                     'ok' => $osLastStatus,
-                    'status' => ($osLastStatus ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
                     'cached' => true,
                     'details' => json_decode($osLastDetails, true),
                 ];
@@ -259,7 +186,6 @@ class StatusService
 
             return [
                 'ok' => false,
-                'status' => Constants::STATUS_FAIL,
                 'cached' => false,
                 'details' => '',
             ];
@@ -282,7 +208,6 @@ class StatusService
 
         return [
             'ok' => $alive,
-            'status' => ($alive ? Constants::STATUS_PASS : Constants::STATUS_FAIL),
             'cached' => false,
             'details' => $details,
         ];

@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
+use App\Service\SignInPage;
 use App\Service\UserDetails as UserService;
 use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -77,11 +78,10 @@ class ResetPasswordHandler implements RequestHandlerInterface
                 if ($result === true) {
                     /** @var FlashMessagesInterface $flash */
                     $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                    $flash->flash(FlashMessenger::SUCCESS, ['Password successfully reset']);
+                    $message = Feature::OneLogin->isEnabled() ? 'You’ve reset the password for your existing account. ' : 'Password successfully reset';
+                    $flash->flash(FlashMessenger::SUCCESS, [$message]);
 
-                    $destination = Feature::OneLogin->isEnabled() ? '/home' : '/login';
-
-                    return new RedirectResponse($destination);
+                    return new RedirectResponse(SignInPage::path());
                 }
 
                 if ($result === 'invalid-token') {
@@ -105,6 +105,8 @@ class ResetPasswordHandler implements RequestHandlerInterface
                     [
                         'form'  => $form,
                         'error' => $error,
+                        'title' => Feature::OneLogin->isEnabled() ?
+                            'Enter a new password for your existing Make a lasting power of attorney account' : 'Reset your password'
                     ],
                 ),
             )

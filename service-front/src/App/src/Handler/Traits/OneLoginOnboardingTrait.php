@@ -33,6 +33,6 @@ trait OneLoginOnboardingTrait
     {
         $this->logger->warning('auth.onelogin.onboarding_missing_pending_link');
 
-        return new RedirectResponse('/login');
+        return new RedirectResponse('/home');
     }
 }

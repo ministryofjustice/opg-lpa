@@ -9,12 +9,12 @@ use App\Authentication\AuthenticationService;
 use App\Feature;
 use App\Handler\Traits\RequestInspectorTrait;
 use App\Service\SafeRedirectPath;
+use App\Service\SignInPage;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Helper\UrlHelper;
 use Mezzio\Router\RouteResult;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Session\SessionInterface;
@@ -26,7 +26,7 @@ use Psr\Log\LoggerInterface;
 
 /**
  * Checks that the user is authenticated before allowing access to protected
- * routes, redirecting to the login page with an appropriate reason if not.
+ * routes, redirecting to the sign-in page with an appropriate reason if not.
  *
  * Must run after IdentityTokenRefreshMiddleware (which populates the auth
  * service storage from the Mezzio session).
@@ -43,7 +43,6 @@ class AuthenticationMiddleware implements MiddlewareInterface
 
     public function __construct(
         private readonly AuthenticationService $authenticationService,
-        private readonly UrlHelper $urlHelper,
         private readonly LoggerInterface $logger,
         private readonly OneLoginSessionManager $oneLoginSessionManager,
         private readonly OneLoginSignOut $oneLoginSignOut,
@@ -91,7 +90,7 @@ class AuthenticationMiddleware implements MiddlewareInterface
         $allowRedirect    = !($routeName === 'user/delete' || str_starts_with($routeName, 'user/dashboard'));
 
         $reason   = $this->getUnauthorisedReason($session, $allowRedirect, $request->getUri()->getPath() ?: '');
-        $loginUrl = $this->urlHelper->generate('application.login', ['state' => $reason]);
+        $loginUrl = SignInPage::path($reason);
 
         if ($reason === self::REASON_TIMEOUT && $session instanceof SessionInterface) {
             $oneLoginUrl = $this->oneLoginLogoutUrl($request, $session, $loginUrl);

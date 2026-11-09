@@ -11,12 +11,15 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->get('/', App\Handler\HomeHandler::class, 'home');
     $app->route('/sign-in', App\Handler\SignInHandler::class, ['GET', 'POST'], 'sign.in')
         ->setOptions(['unauthenticated_route' => true]);
+    $app->get('/health-check', PingHandlerElb::class, 'health-check')
+        ->setOptions(['unauthenticated_route' => true]);
     $app->get('/ping/elb', PingHandlerElb::class, 'ping.elb')
         ->setOptions(['unauthenticated_route' => true]);
     $app->get('/sign-out', App\Handler\SignOutHandler::class, 'sign.out');
     $app->route('/system-message', App\Handler\SystemMessageHandler::class, ['GET', 'POST'], 'system.message');
     $app->route('/feedback', App\Handler\FeedbackHandler::class, ['GET', 'POST'], 'feedback');
     $app->route('/search', App\Handler\SearchHandler::class, ['GET', 'POST'], 'search');
+    $app->route('/deletion-log/delete', App\Handler\DeleteDeletionLogHandler::class, ['GET', 'POST'], 'deletion-log.delete');
     $app->get('/user/{userId}/lpas', App\Handler\LpasHandler::class, 'user.lpas');
     $app->get('/shared-space/{sharedSpaceId}/lpas', App\Handler\LpasHandler::class, 'shared-space.lpas');
     $app->get('/shared-space/{sharedSpaceId}/members', App\Handler\SharedSpaceMembersHandler::class, 'shared-space.members');

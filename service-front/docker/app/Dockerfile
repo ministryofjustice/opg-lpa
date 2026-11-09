@@ -1,6 +1,6 @@
 FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:7dfa8083bb86667b9253a8faadee7da68268a1171fa75c7b061d7feb73935ab8 AS base
+FROM php:8.4-fpm-alpine3.23@sha256:9eb263ac0fa59dfbef3dbaeebeb5f2319e212fc28c168a8c416050f77705b5b4 AS base
 
 ENV OPG_PHP_POOL_CHILDREN_MAX="25"
 
@@ -8,7 +8,7 @@ RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
-RUN apk update && apk add --upgrade "zlib==1.3.2-r1"
+RUN apk update && apk add --upgrade "zlib==1.4-r0"
 
 RUN apk add --no-cache icu fcgi \
     && apk add --no-cache --virtual .build-dependencies $PHPIZE_DEPS icu-dev linux-headers \

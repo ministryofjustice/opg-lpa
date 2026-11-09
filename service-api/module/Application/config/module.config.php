@@ -33,6 +33,17 @@ return [
                 ],
             ],
 
+            'health-check' => [
+                'type' => 'Laminas\Router\Http\Segment',
+                'options' => [
+                    'route' => '/health-check',
+                    'defaults' => [
+                        'controller' => PipeSpec::class,
+                        'middleware' => PingHandlerElb::class,
+                    ],
+                ],
+            ],
+
             'health-check-dependencies' => [
                 'type' => 'Laminas\Router\Http\Segment',
                 'options' => [
@@ -368,6 +379,16 @@ return [
                                     'route'    => '/search-users',
                                     'defaults' => [
                                         'action' => 'searchUsers',
+                                    ],
+                                ],
+                            ],
+
+                            'deletion-log' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'    => '/deletion-log',
+                                    'defaults' => [
+                                        'action' => 'deleteDeletionLog',
                                     ],
                                 ],
                             ],
@@ -749,7 +770,10 @@ return [
         'factories' => [
             'Application\Command\GenerateStatsCommand' => 'Application\Command\GenerateStatsCommand',
             'Application\Command\AccountCleanupCommand' => 'Application\Command\AccountCleanupCommand',
+            'Application\Command\DeletionLogCleanupCommand' => 'Application\Command\DeletionLogCleanupCommand',
             'Application\Command\LockCommand' => 'Application\Command\LockCommand',
+            Application\Model\Service\DeletionLogCleanupService::class =>
+                Application\Model\Service\DeletionLogCleanupServiceFactory::class,
             LoggerInterface::class => LoggerFactory::class,
             'OneLoginPsr16Cache' => static function (): Psr16Cache {
                 if (ApcuAdapter::isSupported()) {
@@ -863,6 +887,7 @@ return [
         'commands' => [
             'service-api:generate-stats' => Application\Command\GenerateStatsCommand::class,
             'service-api:account-cleanup' => Application\Command\AccountCleanupCommand::class,
+            'service-api:deletion-log-cleanup' => Application\Command\DeletionLogCleanupCommand::class,
             'service-api:lock' => Application\Command\LockCommand::class,
         ],
     ],

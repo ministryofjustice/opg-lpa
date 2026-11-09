@@ -1,10 +1,6 @@
 {% extends 'layout/layout.twig' %}
 
-{% if signedInUserIsAdmin %}
-    {%- set pageTitle = 'Manage Shared Space' -%}
-{% else %}
-    {% set pageTitle = 'View Shared Space' %}
-{% endif %}
+{%- set pageTitle = 'Shared space members' -%}
 
 {% block mainTitle %}{% endblock %}
 
@@ -32,8 +28,8 @@
         </div>
       {% endif %}
 
-      <span class="govuk-caption-xl">{{ pageTitle }}</span>
-      <h1 class="govuk-heading-xl">{{ sharedSpaceName }}</h1>
+      <span class="govuk-caption-xl">{{ sharedSpaceName }} </span>
+      <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
 
       {% if signedInUserIsAdmin %}
         <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite member</a>

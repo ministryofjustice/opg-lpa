@@ -1,0 +1,40 @@
+<?php $this->layout('layout::default', ['title' => 'Delete deletion log']); ?>
+
+<?php $this->insert('snippet::error-summary', ['form' => $form]) ?>
+
+<?php if (!empty($error)) { ?>
+    <div class="govuk-error-summary" data-module="govuk-error-summary" data-cy="delete-error">
+        <h2 class="govuk-error-summary__title" id="error-heading">There is a problem</h2>
+        <div class="govuk-error-summary__body">
+            <p class="govuk-body"><?= $this->e($error) ?></p>
+        </div>
+    </div>
+<?php } ?>
+
+<h1 class="govuk-heading-xl">Delete deletion log</h1>
+
+<p class="govuk-body">
+    You are about to delete the deletion log for <strong data-cy="deletion-log-email"><?= $this->e($email) ?></strong>.
+</p>
+
+<div class="govuk-warning-text">
+    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+    <strong class="govuk-warning-text__text">
+        <span class="govuk-visually-hidden">Warning</span>
+        This action cannot be reversed.
+    </strong>
+</div>
+
+<form method="post" action="<?= $this->url('deletion-log.delete') ?>">
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('secret')]) ?>
+    <?php $this->insert('snippet::input-hidden', ['formElement' => $form->get('email')]) ?>
+
+    <div class="govuk-button-group">
+        <button type="submit" class="govuk-button govuk-button--warning" data-module="govuk-button" data-cy="delete-log-button">
+            Delete log
+        </button>
+        <a class="govuk-button govuk-button--secondary" role="button" draggable="false" data-module="govuk-button" href="<?= $this->url('search') ?>" data-cy="cancel-button">
+            Cancel
+        </a>
+    </div>
+</form>

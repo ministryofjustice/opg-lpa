@@ -14,6 +14,6 @@ final class NullMailTransport implements MailTransportInterface
 
     public function healthcheck(): array
     {
-        return ['ok' => true, 'status' => 'ok'];
+        return ['ok' => true];
     }
 }
