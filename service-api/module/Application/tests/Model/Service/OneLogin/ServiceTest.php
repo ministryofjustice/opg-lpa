@@ -28,6 +28,7 @@ use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use MakeShared\DataModel\User\User as ProfileUserModel;
+use MakeShared\Logging\Metrics;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Mockery;
@@ -325,6 +326,12 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
         $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
+
+        $this->logger->shouldHaveReceived('log')->with('info', 'User logged in', [
+            'event' => Metrics::USER_LOGGED_IN,
+            'metric_dimensions' => [],
+            'user_id' => 'user-1',
+        ])->once();
     }
 
     public function testHandleCallbackRefreshesEmailWhenChangedAtOneLogin(): void
@@ -766,6 +773,18 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame($expires->format('c'), $identity['tokenExpiresAt']);
         $this->assertSame($lastLogin->format('c'), $identity['lastLogin']);
         $this->assertSame('shared-space-9', $identity['sharedSpaceId']);
+
+        $this->logger->shouldHaveReceived('log')->with('info', 'User linked existing Make account', [
+            'event' => Metrics::USER_LINKED_EXISTING_MAKE_ACCOUNT,
+            'metric_dimensions' => [],
+            'user_id' => 'user-1',
+        ])->once();
+
+        $this->logger->shouldHaveReceived('log')->with('info', 'User identified as lay', [
+            'event' => Metrics::USER_IDENTIFIED_AS_LAY,
+            'metric_dimensions' => [],
+            'user_id' => 'user-1',
+        ])->once();
     }
 
     public function testLinkExistingAccountReturnsAccountNotFoundWhenNoUserAndNoDeletionLog(): void
@@ -778,6 +797,10 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
+        $this->logger->shouldHaveReceived('log')->with('info', 'User failed to link existing Make account', [
+            'event' => Metrics::USER_FAILED_TO_LINK_EXISTING_MAKE_ACCOUNT,
+            'metric_dimensions' => ['Reason' => LinkReason::ACCOUNT_NOT_FOUND],
+        ])->once();
     }
 
     public function testLinkExistingAccountReturnsAccountDeletedWhenDeletionLogExists(): void
@@ -894,6 +917,18 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame($expires->format('c'), $result['tokenExpiresAt']);
         $this->assertNull($result['sharedSpaceId']);
         $this->assertNotEmpty($result['lastLogin']);
+
+        $this->logger->shouldHaveReceived('log')->with('info', 'User created', [
+            'event' => Metrics::USER_CREATED,
+            'metric_dimensions' => [],
+            'user_id' => $userId,
+        ])->once();
+
+        $this->logger->shouldHaveReceived('log')->with('info', 'User identified as professional', [
+            'event' => Metrics::USER_IDENTIFIED_AS_PROFESSIONAL,
+            'metric_dimensions' => [],
+            'user_id' => $userId,
+        ])->once();
     }
 
     /**
@@ -941,6 +976,31 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->handleBackChannelLogout('a.logout.token');
 
         $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'signedOutAt' => self::SIGNED_OUT_AT], $result);
+        $this->logger->shouldHaveReceived('log')->with('info', 'User session ended by One Login', [
+            'event' => Metrics::USER_SESSION_ENDED_BY_ONE_LOGIN,
+            'metric_dimensions' => [],
+            'user_id' => 'user-1',
+        ])->once();
+    }
+
+    public function testBackChannelLogoutEmitsFailedToLogoutWhenNoUserMatches(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:unknown', 'jti' => 'jti-2', 'iat' => self::SIGNED_OUT_AT]);
+
+        $this->expectJtiRecorded('jti-2');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn(null);
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertTrue($result['accepted']);
+        $this->logger->shouldHaveReceived('log')->with('info', 'User failed to logout', [
+            'event' => Metrics::USER_FAILED_TO_LOGOUT,
+            'metric_dimensions' => ['Reason' => 'no_user'],
+        ])->once();
     }
 
     public function testBackChannelLogoutRejectsInvalidTokenAndEndsNoSession(): void
@@ -990,6 +1050,10 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertFalse($result['accepted']);
         $this->assertSame('replayed_jti', $result['reason']);
+        $this->logger->shouldHaveReceived('log')->with('info', 'User failed to logout', [
+            'event' => Metrics::USER_FAILED_TO_LOGOUT,
+            'metric_dimensions' => ['Reason' => 'replayed_jti'],
+        ])->once();
     }
 
     public function testBackChannelLogoutAcceptsValidTokenForUnknownSubject(): void

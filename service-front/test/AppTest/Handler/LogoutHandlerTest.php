@@ -15,6 +15,7 @@ use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 class LogoutHandlerTest extends TestCase
@@ -26,11 +27,13 @@ class LogoutHandlerTest extends TestCase
 
     private SessionInterface&MockObject $session;
     private OneLoginSignOut&MockObject $oneLoginSignOut;
+    private LoggerInterface&MockObject $logger;
 
     protected function setUp(): void
     {
         $this->session         = $this->createMock(SessionInterface::class);
         $this->oneLoginSignOut = $this->createMock(OneLoginSignOut::class);
+        $this->logger          = $this->createMock(LoggerInterface::class);
     }
 
     private function createHandler(array $config = ['redirects' => ['logout' => self::DONE_URL]]): LogoutHandler
@@ -40,6 +43,7 @@ class LogoutHandlerTest extends TestCase
             new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginSignOut,
             new RedirectUriBuilder('https://front.example.com'),
+            $this->logger,
         );
     }
 
@@ -56,6 +60,26 @@ class LogoutHandlerTest extends TestCase
         return (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+    }
+
+    public function testASignedInUserLoggingOutIsRecorded(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(true);
+        $this->logger->expects($this->once())->method('log')->with(
+            'info',
+            'User logged out',
+            ['event' => 'event.user.logged_out', 'metric_dimensions' => []],
+        );
+
+        $this->createHandler()->handle($this->createRequest());
+    }
+
+    public function testLoggingOutWithoutAnIdentityIsNotRecorded(): void
+    {
+        $this->session->method('has')->willReturn(false);
+        $this->logger->expects($this->never())->method('log');
+
+        $this->createHandler()->handle($this->createRequest());
     }
 
     public function testSessionIsClearedAndRegenerated(): void

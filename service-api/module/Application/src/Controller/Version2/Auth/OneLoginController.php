@@ -8,6 +8,8 @@ use Application\Model\Service\OneLogin\Service as OneLoginService;
 use InvalidArgumentException;
 use Laminas\View\Model\JsonModel;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\Metrics;
+use Psr\Log\LogLevel;
 use MakeShared\OneLogin\UserType;
 use MakeShared\Telemetry\TelemetryEventManager;
 
@@ -91,7 +93,7 @@ class OneLoginController extends AbstractAuthController
                 $redirectUri,
             );
         } catch (OneLoginAuthenticationException $e) {
-            $this->getLogger()->error('auth.onelogin.callback_failed', ['reason' => $e->reason()]);
+            Metrics::userFailedToLogin($this->getLogger(), $e->reason(), [], LogLevel::ERROR);
             return new ApiProblem(401, 'One Login authentication failed');
         } finally {
             TelemetryEventManager::triggerStop();

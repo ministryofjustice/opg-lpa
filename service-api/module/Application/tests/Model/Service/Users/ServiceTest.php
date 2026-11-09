@@ -15,6 +15,7 @@ use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
+use MakeShared\Logging\Metrics;
 use Mockery;
 use Mockery\MockInterface;
 use MakeShared\DataModel\User\User as ProfileUserModel;
@@ -452,9 +453,17 @@ final class ServiceTest extends AbstractServiceTestCase
                     $logDetails['identity_hash'] === $expectedHash;
             });
 
+        $logger = Mockery::spy(\Psr\Log\LoggerInterface::class);
+        $this->service->setLogger($logger);
+
         $result = $this->service->delete($user->getId(), 'some-reason');
 
         $this->assertTrue($result);
+        $logger->shouldHaveReceived('log')->with('info', 'User deleted', [
+            'event' => Metrics::USER_DELETED,
+            'metric_dimensions' => ['Reason' => 'some-reason'],
+            'user_id' => $user->getId(),
+        ])->once();
     }
 
     public function testMatchUsers()

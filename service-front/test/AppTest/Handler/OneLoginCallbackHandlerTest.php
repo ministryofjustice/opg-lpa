@@ -105,8 +105,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->logger
             ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.provider_error', $this->arrayHasKey('error'));
+            ->method('log')
+            ->with('warning', 'User failed to login', $this->callback(
+                fn (array $c) => $c['metric_dimensions'] === ['Reason' => 'provider_error'] && isset($c['error'])
+            ));
 
         $this->renderer
             ->expects($this->once())
@@ -160,6 +162,12 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testMissingCodeReturnsErrorPage(): void
     {
+        $this->logger
+            ->expects($this->once())
+            ->method('log')
+            ->with('warning', 'User failed to login', $this->callback(
+                fn (array $c) => $c['metric_dimensions'] === ['Reason' => 'incomplete_request']
+            ));
         $this->renderer->method('render')->willReturn('<html>error</html>');
 
         $response = $this->handler->handle($this->buildRequest('state=valid-state-abc'));
@@ -184,8 +192,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->logger
             ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.session_missing');
+            ->method('log')
+            ->with('warning', 'User failed to login', $this->callback(
+                fn (array $c) => $c['metric_dimensions'] === ['Reason' => 'session_missing']
+            ));
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
 
@@ -199,8 +209,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->logger
             ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.session_missing');
+            ->method('log')
+            ->with('warning', 'User failed to login', $this->callback(
+                fn (array $c) => $c['metric_dimensions'] === ['Reason' => 'session_missing']
+            ));
 
         $this->oneLoginService->expects($this->never())->method('callback');
         $this->renderer->method('render')->willReturn('<html>error</html>');
@@ -222,8 +234,10 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->logger
             ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.state_mismatch');
+            ->method('log')
+            ->with('warning', 'User failed to login', $this->callback(
+                fn (array $c) => $c['metric_dimensions'] === ['Reason' => 'state_mismatch']
+            ));
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
         $this->session->method('unset');
@@ -244,7 +258,7 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->oneLoginService->expects($this->never())->method('callback');
         $this->renderer->method('render')->willReturn('<html>error</html>');
-        $this->logger->method('warning');
+        $this->logger->method('log');
         $this->session->method('unset');
 
         $this->handler->handle(
@@ -265,7 +279,7 @@ class OneLoginCallbackHandlerTest extends TestCase
             ->with('onelogin_auth');
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
-        $this->logger->method('warning');
+        $this->logger->method('log');
 
         $this->handler->handle(
             $this->buildRequest(

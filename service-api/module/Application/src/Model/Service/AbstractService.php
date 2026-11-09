@@ -33,7 +33,7 @@ abstract class AbstractService implements LoggerAwareInterface
             $validationErrors = $validation->getArrayCopy();
 
             $this->log('debug', 'LPA validation failed: ' . $context, [
-                'lpaid' => $lpa->id,
+                'lpa_id' => $lpa->id,
                 'validation_errors' => $validationErrors,
                 'context' => $context,
                 'lpa_type' => $lpa->getDocument()->getType(),

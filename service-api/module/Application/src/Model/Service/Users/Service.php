@@ -16,6 +16,7 @@ use Application\Model\Service\EntityInterface;
 use Application\Model\Service\PasswordValidatorTrait;
 use Application\Model\Service\TokenGenerationTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
+use MakeShared\Logging\Metrics;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
 use Random\RandomException;
 
@@ -185,6 +186,8 @@ class Service extends AbstractService
                     'reason'        => $reason,
                     'loggedAt'      => new MillisecondDateTime(),
                 ]);
+
+                Metrics::userDeleted($this->getLogger(), $reason, ['user_id' => $id]);
             }
         }
 

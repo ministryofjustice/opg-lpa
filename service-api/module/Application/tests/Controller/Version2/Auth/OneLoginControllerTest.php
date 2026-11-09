@@ -8,6 +8,7 @@ use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Laminas\View\Model\JsonModel;
 use InvalidArgumentException;
+use MakeShared\Logging\Metrics;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Mockery;
@@ -188,8 +189,11 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->andThrow(new OneLoginAuthenticationException($reason))
             ->once();
 
-        $this->logger->shouldReceive('error')
-            ->with('auth.onelogin.callback_failed', ['reason' => $reason])
+        $this->logger->shouldReceive('log')
+            ->with('error', 'User failed to login', [
+                'event' => Metrics::USER_FAILED_TO_LOGIN,
+                'metric_dimensions' => ['Reason' => $reason],
+            ])
             ->once();
 
         /** @var OneLoginController $controller */

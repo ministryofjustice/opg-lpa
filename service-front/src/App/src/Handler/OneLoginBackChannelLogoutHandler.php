@@ -10,7 +10,9 @@ use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use MakeShared\Logging\Metrics;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Throwable;
 
 /**
@@ -39,9 +41,7 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
         $logoutToken = is_array($body) ? ($body[self::LOGOUT_TOKEN_PARAM] ?? null) : null;
 
         if (!is_string($logoutToken) || trim($logoutToken) === '') {
-            $this->logger->info('auth.onelogin.backchannel_logout_rejected', [
-                'reason' => 'missing_logout_token',
-            ]);
+            Metrics::userFailedToLogout($this->logger, 'missing_logout_token');
 
             return $this->response(200);
         }
@@ -49,18 +49,17 @@ class OneLoginBackChannelLogoutHandler implements RequestHandlerInterface
         try {
             $signOut = $this->oneLoginService->backChannelLogout($logoutToken);
         } catch (Throwable $e) {
-            $this->logger->error('auth.onelogin.backchannel_logout_failed', [
-                'message' => $e->getMessage(),
-            ]);
+            Metrics::userFailedToLogout(
+                $this->logger,
+                'backchannel_logout_failed',
+                ['message' => $e->getMessage()],
+                LogLevel::ERROR,
+            );
 
             return $this->response(502);
         }
 
         if ($signOut === null) {
-            $this->logger->warning('auth.onelogin.backchannel_logout_rejected', [
-                'reason' => 'not_accepted',
-            ]);
-
             return $this->response(200);
         }
 

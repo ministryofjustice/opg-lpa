@@ -173,6 +173,7 @@ return [
                 $c->get(OneLoginSessionManager::class),
                 $c->get(OneLoginSignOut::class),
                 $c->get(RedirectUriBuilder::class),
+                $c->get(LoggerInterface::class),
             ),
             OneLoginSignOut::class                      => static fn(ContainerInterface $c) => new OneLoginSignOut(
                 Feature::OneLogin->isEnabled(),

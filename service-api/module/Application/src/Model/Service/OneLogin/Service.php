@@ -14,6 +14,7 @@ use Facile\OpenIDClient\Session\AuthSession;
 use InvalidArgumentException;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\Metrics;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Psr\SimpleCache\CacheInterface;
@@ -383,7 +384,7 @@ class Service extends AbstractService
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
-        $this->getLogger()->info('auth.onelogin.callback_success', [
+        Metrics::userLoggedIn($this->getLogger(), [
             'user_id' => $userId,
         ]);
 
@@ -450,9 +451,11 @@ class Service extends AbstractService
 
         $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType === UserType::Professional);
 
-        $this->getLogger()->info('auth.onelogin.link_success', [
+        Metrics::userLinkedExistingMakeAccount($this->getLogger(), [
             'user_id' => $authResult['userId'],
         ]);
+
+        $this->logUserIdentified($userType, $authResult['userId']);
 
         $lastLogin = $authResult['last_login'] ?? new DateTime();
 
@@ -515,9 +518,11 @@ class Service extends AbstractService
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
-        $this->getLogger()->info('auth.onelogin.create_success', [
+        Metrics::userCreated($this->getLogger(), [
             'user_id' => $userId,
         ]);
+
+        $this->logUserIdentified($userType, $userId);
 
         return [
             'userId'         => $userId,
@@ -620,9 +625,9 @@ class Service extends AbstractService
         $this->rememberLogoutToken($jti);
 
         if ($userId === null) {
-            $this->getLogger()->info('auth.onelogin.backchannel_logout_no_user', []);
+            Metrics::userFailedToLogout($this->getLogger(), 'no_user');
         } else {
-            $this->getLogger()->info('auth.onelogin.backchannel_logout_success', [
+            Metrics::userSessionEndedByOneLogin($this->getLogger(), [
                 'user_id' => $userId,
             ]);
         }
@@ -635,9 +640,7 @@ class Service extends AbstractService
      */
     private function rejectLogout(string $reason): array
     {
-        $this->getLogger()->info('auth.onelogin.backchannel_logout_rejected', [
-            'reason' => $reason,
-        ]);
+        Metrics::userFailedToLogout($this->getLogger(), $reason);
 
         return ['accepted' => false, 'reason' => $reason];
     }
@@ -663,14 +666,22 @@ class Service extends AbstractService
         return 'logout_jti_' . hash('sha256', $jti);
     }
 
+    private function logUserIdentified(UserType $userType, string $userId): void
+    {
+        $context = ['user_id' => $userId];
+
+        match ($userType) {
+            UserType::Lay => Metrics::userIdentifiedAsLay($this->getLogger(), $context),
+            UserType::Professional => Metrics::userIdentifiedAsProfessional($this->getLogger(), $context),
+        };
+    }
+
     /**
      * @return array{linked: false, reason: string}
      */
     private function rejectLink(string $reason): array
     {
-        $this->getLogger()->info('auth.onelogin.link_rejected', [
-            'reason' => $reason,
-        ]);
+        Metrics::userFailedToLinkExistingMakeAccount($this->getLogger(), $reason);
 
         return ['linked' => false, 'reason' => $reason];
     }

@@ -11,6 +11,9 @@ use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
+use Application\Model\Service\SharedSpace\InviteExpiredException;
+use Application\Model\Service\SharedSpace\InviteNotFoundException;
+use Application\Model\Service\SharedSpace\InviteNotMatchedException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
@@ -18,12 +21,15 @@ use DateTime;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\Common\Name;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\Logging\Metrics;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Throwable;
 
 final class SharedSpaceServiceTest extends MockeryTestCase
 {
@@ -45,6 +51,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->logger = Mockery::mock(LoggerInterface::class);
         $this->logger->shouldReceive('info')->byDefault();
+        $this->logger->shouldReceive('log')->byDefault();
         $this->logger->shouldReceive('error')->byDefault();
 
         $this->service = new SharedSpaceService(
@@ -93,6 +100,14 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('addMember')->once()->ordered()->andReturn(true);
         $this->sharedSpaceRepository->shouldReceive('commit')->once()->ordered();
         $this->sharedSpaceRepository->shouldNotReceive('rollback');
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'Shared space created', Mockery::subset([
+                'event'             => Metrics::SHARED_SPACE_CREATED,
+                'metric_dimensions' => [],
+                'lpas_moved'        => 3,
+            ]));
 
         $result = $this->service->create('My Space', $userId);
 
@@ -308,48 +323,103 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->assertNull($result);
     }
 
-    public function testUpdateMemberIsAdmin()
+    private function existingMember(bool $isAdmin, bool $isActive): SharedSpaceMember
     {
-        $sharedSpaceId = 'my-space';
-        $userId = 'user1';
+        return new SharedSpaceMember(['userId' => 'user1', 'isAdmin' => $isAdmin, 'isActive' => $isActive]);
+    }
 
+    /**
+     * @return array<string, array{bool, bool, bool, bool, string[]}>
+     */
+    public static function memberUpdateProvider(): array
+    {
+        return [
+            'promoted'            => [false, true, true, true, [Metrics::SHARED_SPACE_MEMBER_PROMOTED_TO_ADMIN]],
+            'demoted'             => [true, true, false, true, [Metrics::SHARED_SPACE_MEMBER_DEMOTED_FROM_ADMIN]],
+            'suspended'           => [false, true, false, false, [Metrics::SHARED_SPACE_MEMBER_SUSPENDED]],
+            'activated'           => [false, false, false, true, [Metrics::SHARED_SPACE_MEMBER_ACTIVATED]],
+            'promoted and suspended' => [
+                false,
+                true,
+                true,
+                false,
+                [Metrics::SHARED_SPACE_MEMBER_PROMOTED_TO_ADMIN, Metrics::SHARED_SPACE_MEMBER_SUSPENDED],
+            ],
+            'unchanged'           => [true, true, true, true, []],
+        ];
+    }
+
+    /**
+     * @param string[] $expectedEvents
+     */
+    #[DataProvider('memberUpdateProvider')]
+    public function testUpdateMemberEmitsAMetricForEachChange(
+        bool $wasAdmin,
+        bool $wasActive,
+        bool $isAdmin,
+        bool $isActive,
+        array $expectedEvents,
+    ) {
+        $this->sharedSpaceRepository->shouldReceive('getMember')
+            ->with('my-space', 'user1')
+            ->once()
+            ->andReturn($this->existingMember($wasAdmin, $wasActive));
         $this->sharedSpaceRepository->shouldReceive('updateMember')
-            ->with($sharedSpaceId, $userId, true, false)
+            ->with('my-space', 'user1', $isAdmin, $isActive)
             ->once();
 
-        $this->service->updateMember($sharedSpaceId, $userId, true, false);
+        $this->logger->shouldReceive('log')->byDefault();
+        $logged = [];
+        $this->logger->shouldReceive('log')
+            ->andReturnUsing(function ($level, $message, $context) use (&$logged) {
+                $logged[] = $context['event'];
+                $this->assertSame('info', $level);
+                $this->assertSame([], $context['metric_dimensions']);
+                $this->assertSame('my-space', $context['shared_space_id']);
+                $this->assertSame('user1', $context['user_id']);
+            });
 
-        $this->addToAssertionCount(1);
+        $this->service->updateMember('my-space', 'user1', $isAdmin, $isActive);
+
+        $this->assertSame($expectedEvents, $logged);
     }
 
     public function testUpdateMemberIsAdminThrowsWhenMemberNotFound()
     {
-        $sharedSpaceId = 'my-space';
-        $userId = 'user1';
+        $this->sharedSpaceRepository->shouldReceive('getMember')->once()->andReturn(null);
+        $this->sharedSpaceRepository->shouldNotReceive('updateMember');
 
+        $this->expectException(MemberNotInSharedSpaceException::class);
+
+        $this->service->updateMember('my-space', 'user1', true, false);
+    }
+
+    public function testUpdateMemberThrowsWhenUpdateAffectsNoRow()
+    {
+        $this->sharedSpaceRepository->shouldReceive('getMember')
+            ->once()
+            ->andReturn($this->existingMember(false, true));
         $this->sharedSpaceRepository->shouldReceive('updateMember')
-            ->with($sharedSpaceId, $userId, true, false)
             ->once()
             ->andThrow(new MemberNotInSharedSpaceException());
 
         $this->expectException(MemberNotInSharedSpaceException::class);
 
-        $this->service->updateMember($sharedSpaceId, $userId, true, false);
+        $this->service->updateMember('my-space', 'user1', true, false);
     }
 
     public function testUpdateMemberIsAdminRethrowsException()
     {
-        $sharedSpaceId = 'my-space';
-        $userId = 'user1';
-
+        $this->sharedSpaceRepository->shouldReceive('getMember')
+            ->once()
+            ->andReturn($this->existingMember(false, true));
         $this->sharedSpaceRepository->shouldReceive('updateMember')
-            ->with($sharedSpaceId, $userId, true, false)
             ->once()
             ->andThrow(new RuntimeException('boom'));
 
         $this->expectException(RuntimeException::class);
 
-        $this->service->updateMember($sharedSpaceId, $userId, true, false);
+        $this->service->updateMember('my-space', 'user1', true, false);
     }
 
     public function testIsAdminReturnsTrueForAdminMember()
@@ -378,7 +448,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->assertFalse($this->service->isAdmin($sharedSpaceId, $userId));
     }
 
-    #[DoesNotPerformAssertions]
     public function testDeleteMember()
     {
         $sharedSpaceId = 'my-space';
@@ -405,6 +474,24 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('deleteMember')
             ->with($sharedSpaceId, $userToDeleteId);
         $this->sharedSpaceRepository->shouldReceive('commit');
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'Shared space member deleted', [
+                'event'              => Metrics::SHARED_SPACE_MEMBER_DELETED,
+                'metric_dimensions'  => ['DeletedBy' => 'admin'],
+                'shared_space_id'    => $sharedSpaceId,
+                'deleted_by_user_id' => $userId,
+                'deleted_user_id'    => $userToDeleteId,
+            ]);
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'User deleted', [
+                'event'             => Metrics::USER_DELETED,
+                'metric_dimensions' => ['Reason' => 'removed_from_shared_space'],
+                'user_id'           => $userToDeleteId,
+            ]);
 
         $this->service->deleteMember($sharedSpaceId, $userId, $userToDeleteId);
     }
@@ -545,14 +632,15 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->with($memberInvite)
             ->andReturn(1234);
 
-        $this->logger->shouldReceive('info')
+        $this->logger->shouldReceive('log')
             ->once()
-            ->with('Shared space member invited', [
-                'event'           => 'shared_space.member_invited',
-                'shared_space_id' => 'my space',
-                'invite_id'       => 1234,
-                'invited_by'      => 'my user',
-                'is_admin'        => false,
+            ->with('info', 'Shared space member invited', [
+                'event'             => Metrics::SHARED_SPACE_MEMBER_INVITED,
+                'metric_dimensions' => ['IsAdmin' => 'false'],
+                'shared_space_id'   => 'my space',
+                'invite_id'         => 1234,
+                'invited_by'        => 'my user',
+                'is_admin'          => false,
             ]);
 
         $result = $this->service->invite($memberInvite);
@@ -617,7 +705,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->invite($memberInvite);
     }
 
-    #[DoesNotPerformAssertions]
     public function testRevokeInvite()
     {
         $sharedSpaceId = 'space-id';
@@ -627,16 +714,19 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository->shouldReceive('deleteInvite')
             ->with(5);
 
-        $this->logger->shouldReceive('info')
+        $this->logger->shouldReceive('log')
             ->with(
+                'info',
                 'Shared space invite revoked',
                 [
-                    'event'           => 'shared_space.invite_revoked',
-                    'shared_space_id' => $sharedSpaceId,
-                    'invite_id'       => $inviteId,
-                    'revoked_by'      => $revokedByUserId,
+                    'event'             => Metrics::SHARED_SPACE_MEMBER_INVITE_REVOKED,
+                    'metric_dimensions' => [],
+                    'shared_space_id'   => $sharedSpaceId,
+                    'invite_id'         => $inviteId,
+                    'revoked_by'        => $revokedByUserId,
                 ]
-            );
+            )
+            ->once();
 
         $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
@@ -665,7 +755,6 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
 
-    #[DoesNotPerformAssertions]
     public function testJoin()
     {
         $userId = 'my user';
@@ -710,6 +799,15 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->with($userId, $invite->sharedSpaceId)
             ->andReturn(5);
 
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'User joined shared space', Mockery::subset([
+                'event'             => Metrics::SHARED_SPACE_MEMBER_JOINED,
+                'metric_dimensions' => ['IsAdmin' => 'false'],
+                'shared_space_id'   => 'some-space',
+                'lpas_moved'        => 5,
+            ]));
+
         $this->service->join($userId, $sharedSpaceName, $accessCode, $email);
     }
 
@@ -724,7 +822,38 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->join('my user', 'My Space', '1234', 'a@example.com');
     }
 
-    #[DoesNotPerformAssertions]
+    #[DataProvider('joinFailureProvider')]
+    public function testJoinFailureEmitsMetricWithReason(Throwable $exception, string $reason)
+    {
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')
+            ->andThrow($exception);
+        $this->sharedSpaceRepository->shouldReceive('rollback')->once();
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'User failed to join shared space', [
+                'event'             => Metrics::SHARED_SPACE_MEMBER_FAILED_TO_JOIN,
+                'metric_dimensions' => ['Reason' => $reason],
+                'user_id'           => 'my user',
+                'exception'         => $exception::class,
+            ]);
+
+        $this->expectExceptionObject($exception);
+        $this->service->join('my user', 'My Space', '1234', 'a@example.com');
+    }
+
+    public static function joinFailureProvider(): array
+    {
+        return [
+            'already in shared space' => [new UserAlreadyInSharedSpaceException('abc'), 'already_in_shared_space'],
+            'invite not found' => [new InviteNotFoundException(), 'invite_not_found'],
+            'invite not matched' => [new InviteNotMatchedException(), 'invite_not_matched'],
+            'invite expired' => [new InviteExpiredException('2024-01-01T00:00:00+00:00'), 'invite_expired'],
+            'unexpected error' => [new RuntimeException('boom'), 'error'],
+        ];
+    }
+
     public function testDeleteAccount()
     {
         $user = Mockery::mock(UserInterface::class);
@@ -760,7 +889,49 @@ final class SharedSpaceServiceTest extends MockeryTestCase
                     && $args['reason'] === 'User deleted their account';
             }));
 
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'User deleted', [
+                'event'             => Metrics::USER_DELETED,
+                'metric_dimensions' => ['Reason' => 'user-initiated'],
+                'user_id'           => '1',
+            ]);
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'Shared space member deleted', [
+                'event'             => Metrics::SHARED_SPACE_MEMBER_DELETED,
+                'metric_dimensions' => ['DeletedBy' => 'self'],
+                'shared_space_id'   => 'xyz',
+                'user_id'           => '1',
+                'was_last_member'   => false,
+            ]);
+
         $this->service->deleteAccount('xyz', '1');
+    }
+
+    public function testAddMemberEmitsJoinedMetric()
+    {
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpaceIdForUser')->with('new-user')->andReturn(null);
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('addMember')->with('my-space', 'new-user', true);
+        $this->sharedSpaceRepository->shouldReceive('commit');
+        $this->applicationRepository->shouldReceive('setSharedSpaceOwner')
+            ->with('new-user', 'my-space')
+            ->andReturn(3);
+
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'User joined shared space', [
+                'event'             => Metrics::SHARED_SPACE_MEMBER_JOINED,
+                'metric_dimensions' => ['IsAdmin' => 'true'],
+                'shared_space_id'   => 'my-space',
+                'user_id'           => 'new-user',
+                'added_by_user_id'  => 'admin-user',
+                'lpas_moved'        => 3,
+            ]);
+
+        $this->service->addMember('my-space', 'new-user', 'admin-user', true);
     }
 
     #[DoesNotPerformAssertions]
@@ -801,9 +972,10 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->andReturn(true);
 
         $this->logger
-            ->shouldReceive('info')
-            ->with('Shared space deleted', [
-                'event'              => 'shared_space.deleted',
+            ->shouldReceive('log')
+            ->with('info', 'Shared space deleted', [
+                'event'              => Metrics::SHARED_SPACE_DELETED,
+                'metric_dimensions'  => [],
                 'shared_space_id'    => 'xyz',
                 'deleted_by_user_id' => '1',
                 'lpas_deleted'       => 5,

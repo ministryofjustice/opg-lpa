@@ -10,6 +10,7 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Service\SafeRedirectPath;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use MakeShared\Logging\Metrics;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -37,7 +38,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         $queryParams = $request->getQueryParams();
 
         if (isset($queryParams['error'])) {
-            $this->logger->warning('auth.onelogin.provider_error', [
+            Metrics::userFailedToLogin($this->logger, 'provider_error', [
                 'error'             => $queryParams['error'],
                 'error_description' => $queryParams['error_description'] ?? null,
             ]);
@@ -49,6 +50,8 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         $state = $queryParams['state'] ?? null;
 
         if (!is_string($code) || $code === '' || !is_string($state) || $state === '') {
+            Metrics::userFailedToLogin($this->logger, 'incomplete_request');
+
             return $this->renderError('The sign-in request was incomplete. Please try again.');
         }
 
@@ -72,17 +75,14 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
             || !is_string($codeVerifier) || $codeVerifier === ''
             || !is_string($redirectUri) || $redirectUri === ''
         ) {
-            $this->logger->warning('auth.onelogin.session_missing', [
-                'has_code'  => true,
-                'has_state' => true,
-            ]);
+            Metrics::userFailedToLogin($this->logger, 'session_missing');
 
             return $this->renderError('Your sign-in session has expired. Please try again.');
         }
 
         try {
             if (!hash_equals($expectedState, $state)) {
-                $this->logger->warning('auth.onelogin.state_mismatch', [
+                Metrics::userFailedToLogin($this->logger, 'state_mismatch', [
                     'expected_prefix' => substr($expectedState, 0, 8),
                 ]);
 

@@ -7,6 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\Password\Service as PasswordService;
 use Application\Library\Http\Response\Json;
 use Application\Model\Service\Password\Service;
+use MakeShared\Logging\Metrics;
 use Mockery;
 
 class PasswordControllerTest extends AbstractAuthControllerTestCase
@@ -186,9 +187,12 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturnNull()
             ->once();
 
-        $this->logger->shouldReceive('info')
+        $this->logger->shouldReceive('log')
             ->once()
-            ->with('User successfully change their password via a reset');
+            ->with('info', 'User successfully changed their password via a reset', [
+                'event' => Metrics::USER_RESET_LEGACY_ACCOUNT_PASSWORD,
+                'metric_dimensions' => [],
+            ]);
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [
@@ -414,9 +418,11 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturn(PasswordService::ACCOUNT_USES_ONE_LOGIN)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('Password reset refused for a One Login account', [
-                'event' => 'auth.password_reset.refused_one_login',
+        $this->logger->shouldReceive('log')
+            ->once()
+            ->with('info', 'Password reset refused for a One Login account', [
+                'event' => Metrics::USER_REFUSED_PASSWORD_RESET,
+                'metric_dimensions' => [],
             ]);
 
         /** @var PasswordController $controller */

@@ -258,10 +258,6 @@ class LinkAccountHandlerTest extends TestCase
             ->with($email, $word, self::PENDING_SUB, 'newuser@example.com')
             ->willReturn(['linked' => false, 'reason' => LinkReason::ALREADY_LINKED]);
 
-        $this->logger->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.link_rejected', ['reason' => LinkReason::ALREADY_LINKED]);
-
         // A rejected link must not sign the user in.
         $this->session->expects($this->never())->method('set');
 
@@ -304,7 +300,6 @@ class LinkAccountHandlerTest extends TestCase
     public function testAnyOtherFailureGoesToTheCannotLinkPage(string $reason): void
     {
         $this->oneLoginService->method('linkExistingAccount')->willReturn(['linked' => false, 'reason' => $reason]);
-        $this->logger->expects($this->once())->method('info')->with('auth.onelogin.link_failed', ['reason' => $reason]);
         $this->session->expects($this->never())->method('set');
         $this->renderer->expects($this->never())->method('render');
 

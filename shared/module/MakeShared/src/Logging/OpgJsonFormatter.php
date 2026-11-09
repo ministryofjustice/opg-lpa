@@ -19,6 +19,7 @@ class OpgJsonFormatter extends NormalizerFormatter
     public function format(LogRecord $record): string
     {
         $original = parent::format($record);
+        $timestampMs = (int) $record->datetime->format('Uv');
 
         $record = [
             'time' => $original['datetime'],
@@ -37,6 +38,14 @@ class OpgJsonFormatter extends NormalizerFormatter
                 'method' => $this->requestMethod,
                 'path' => $this->requestPath,
             ];
+        }
+
+        $event = $original['context']['event'] ?? null;
+        if (Metrics::isEvent($event)) {
+            $dimensions = $original['context'][Metrics::CONTEXT_DIMENSIONS_KEY] ?? [];
+            unset($original['context'][Metrics::CONTEXT_DIMENSIONS_KEY]);
+
+            $record += Metrics::emfFields($event, $dimensions, $timestampMs);
         }
 
         unset($original['datetime']);

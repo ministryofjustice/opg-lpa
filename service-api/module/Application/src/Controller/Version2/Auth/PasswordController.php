@@ -8,6 +8,7 @@ use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Password\Service;
 use DateTime;
 use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\Metrics;
 use Random\RandomException;
 use SensitiveParameter;
 
@@ -103,7 +104,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(400, "Unknown error: {$result}");
         }
 
-        $this->getLogger()->info('User successfully change their password via a reset');
+        Metrics::userResetLegacyAccountPassword($this->getLogger());
 
         return new NoContent();
     }
@@ -121,9 +122,7 @@ class PasswordController extends AbstractAuthController
         $result = $this->getService()->generateToken($username);
 
         if ($result === Service::ACCOUNT_USES_ONE_LOGIN) {
-            $this->getLogger()->info('Password reset refused for a One Login account', [
-                'event' => 'auth.password_reset.refused_one_login',
-            ]);
+            Metrics::userRefusedPasswordReset($this->getLogger());
 
             return new ApiProblem(403, 'Account uses GOV.UK One Login');
         }
