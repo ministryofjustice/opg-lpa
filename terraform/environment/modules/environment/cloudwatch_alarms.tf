@@ -1,5 +1,6 @@
 #5xx Alarms
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
+  count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   alarm_description   = "5XX responses logged in Front for ${var.environment_name}"
@@ -23,6 +24,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 
 # 5xx Admin Error
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
+  count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled     = true
   alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   alarm_description   = "5XX responses logged in Admin for ${var.environment_name}"
@@ -46,6 +48,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 
 #Application 5xx Alarm
 resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
+  count                     = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled           = true
   alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
   alarm_description         = "5xx responses logged for ${var.environment_name} (front, api, pdf or admin)"
