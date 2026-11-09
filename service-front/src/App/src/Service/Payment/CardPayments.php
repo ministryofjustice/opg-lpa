@@ -61,8 +61,8 @@ class CardPayments
 
             if ($govPayPayment === null) {
                 $this->logger->info('Payment recovery: GOV.UK Pay has no record of this payment', [
-                    'lpaId'            => $lpa->getId(),
-                    'gatewayReference' => $gatewayReference,
+                    'lpa_id'            => $lpa->getId(),
+                    'gateway_reference' => $gatewayReference,
                 ]);
 
                 return [$ifMatchVersion, false];
@@ -70,8 +70,8 @@ class CardPayments
 
             if (!$govPayPayment->isSuccess()) {
                 $this->logger->info('Payment recovery: outstanding payment did not succeed', [
-                    'lpaId'            => $lpa->getId(),
-                    'gatewayReference' => $gatewayReference,
+                    'lpa_id'            => $lpa->getId(),
+                    'gateway_reference' => $gatewayReference,
                     'status'           => $govPayPayment->state->status ?? null,
                     'finished'         => $govPayPayment->state->finished ?? null,
                 ]);
@@ -83,8 +83,8 @@ class CardPayments
 
             if (!is_string($reference) || trim($reference) === '') {
                 $this->logger->warning('Payment recovery: successful payment carries no reference, not recording', [
-                    'lpaId'            => $lpa->getId(),
-                    'gatewayReference' => $gatewayReference,
+                    'lpa_id'            => $lpa->getId(),
+                    'gateway_reference' => $gatewayReference,
                 ]);
 
                 return [$ifMatchVersion, false];
@@ -96,8 +96,8 @@ class CardPayments
             $ifMatchVersion++;
         } catch (Throwable $e) {
             $this->logger->warning('Payment recovery: could not check or record the outstanding payment', [
-                'lpaId'            => $lpa->getId(),
-                'gatewayReference' => $gatewayReference,
+                'lpa_id'            => $lpa->getId(),
+                'gateway_reference' => $gatewayReference,
                 'exception'        => $e,
             ]);
 
@@ -105,9 +105,9 @@ class CardPayments
         }
 
         $this->logger->warning('Payment recovery: recorded a completed GOV.UK Pay payment that was never saved', [
-            'lpaId'            => $lpa->getId(),
-            'gatewayReference' => $gatewayReference,
-            'paymentReference' => $lpa->getPayment()->getReference(),
+            'lpa_id'            => $lpa->getId(),
+            'gateway_reference' => $gatewayReference,
+            'payment_reference' => $lpa->getPayment()->getReference(),
         ]);
 
         return [$ifMatchVersion, true];

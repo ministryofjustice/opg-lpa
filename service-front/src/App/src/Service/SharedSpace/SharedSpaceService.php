@@ -143,8 +143,8 @@ class SharedSpaceService
         } catch (Throwable $e) {
             $this->logger->warning('Adding member to shared space failed', [
                 'exception' => $e,
-                'sharedSpaceId' => $sharedSpaceId,
-                'userIdToAdd' => $userIdToAdd,
+                'shared_space_id' => $sharedSpaceId,
+                'user_id_to_add' => $userIdToAdd,
             ]);
 
             return false;
@@ -202,7 +202,7 @@ class SharedSpaceService
         } catch (Throwable $e) {
             $this->logger->error('Deleting shared space member failed', [
                 'exception' => $e,
-                'memberUserId' => $member->getUserId(),
+                'member_user_id' => $member->getUserId(),
             ]);
 
             return false;
@@ -263,7 +263,7 @@ class SharedSpaceService
             $this->mailTransport->send($params);
         } catch (Exception $e) {
             $this->logger->error('Failed to send invite email', [
-                'inviteId' => $result['id'],
+                'invite_id' => $result['id'],
                 'exception' => $e
             ]);
 
@@ -280,7 +280,7 @@ class SharedSpaceService
         } catch (\Throwable $e) {
             $this->logger->warning('Revoking invite failed', [
                 'exception' => $e,
-                'inviteId' => $inviteId,
+                'invite_id' => $inviteId,
             ]);
 
             return false;

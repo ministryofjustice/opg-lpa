@@ -74,9 +74,7 @@ class PasswordController extends AbstractAuthController
             return new ApiProblem(401, $result);
         }
 
-        $this->getLogger()->info('User successfully changed their password', [
-            'userId' => $userId
-        ]);
+        $this->getLogger()->info('User successfully changed their password');
 
         // Map DateTimes to strings
         $result = array_map(function ($v) {

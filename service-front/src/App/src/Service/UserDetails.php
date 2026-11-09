@@ -349,8 +349,6 @@ class UserDetails implements ApiClientAwareInterface
             return false;
         }
 
-        $this->logger->info('User account deleted');
-
         return true;
     }
 
@@ -415,7 +413,7 @@ class UserDetails implements ApiClientAwareInterface
             $this->mailTransport->send(new MailParameters($email, $templateRef, $data));
         } catch (Exception $ex) {
             $this->logger->error('Failed to send password reset journey email', [
-                'templateRef' => $templateRef,
+                'template_ref' => $templateRef,
                 'exception'   => $ex,
             ]);
 

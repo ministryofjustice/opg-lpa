@@ -147,17 +147,17 @@ class PdfRenderer implements LoggerAwareInterface
             $pdfSizeK = filesize($pdfFilePath) / 1024;
 
             $this->getLogger()->debug('Generated PDF for LPA', [
-                'lpaId' => $lpaId,
-                'docId' => $docId,
+                'lpa_id' => $lpaId,
+                'doc_id' => $docId,
                 'type'  => $type,
-                'filePath' => $pdfFilePath,
-                'pdfSize' => $pdfSizeK
+                'file_path' => $pdfFilePath,
+                'pdf_size' => $pdfSizeK
             ]);
         } catch (Exception $e) {
             $pdfFilePath = null;
             $pdfContent = null;
             $this->getLogger()->error('PDF generation failed', [
-                'docId' => $docId,
+                'doc_id' => $docId,
                 'type'  => $type,
                 'error_code' => 'PDF_GENERATION_FAILED',
                 'exception' => $e->getMessage(),

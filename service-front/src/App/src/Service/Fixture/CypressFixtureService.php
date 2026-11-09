@@ -49,8 +49,8 @@ class CypressFixtureService
         }
 
         $this->logger->info('Created Cypress fixture user', [
-            'userId'   => $userId,
-            'lpaCount' => $lpaCount,
+            'user_id'   => $userId,
+            'lpa_count' => $lpaCount,
         ]);
 
         return [
@@ -73,7 +73,7 @@ class CypressFixtureService
 
         $this->apiClient->httpDelete('/v2/users/' . $userId);
 
-        $this->logger->info('Created Cypress fixture deletion log', ['userId' => $userId]);
+        $this->logger->info('Created Cypress fixture deletion log', ['user_id' => $userId]);
     }
 
     public function deleteUser(string $email): void
@@ -85,7 +85,7 @@ class CypressFixtureService
         } catch (ApiException $ex) {
             $this->logger->error('Cypress fixture cleanup: failed to delete user', [
                 'email'      => $email,
-                'statusCode' => $ex->getStatusCode(),
+                'status_code' => $ex->getStatusCode(),
                 'title'      => $ex->getTitle(),
                 'body'       => $ex->getBody(),
                 'exception'  => $ex,
@@ -106,9 +106,9 @@ class CypressFixtureService
             return $result['sharedSpaceId'] ?? null;
         } catch (ApiException $ex) {
             $this->logger->error('Cypress fixtures: failed to create shared space', [
-                'sharedSpaceName' => $sharedSpaceName,
-                'userEmail'       => $userEmail,
-                'statusCode'      => $ex->getStatusCode(),
+                'shared_space_name' => $sharedSpaceName,
+                'user_email'       => $userEmail,
+                'status_code'      => $ex->getStatusCode(),
                 'title'           => $ex->getTitle(),
                 'body'            => $ex->getBody(),
                 'exception'       => $ex,
@@ -129,11 +129,11 @@ class CypressFixtureService
             );
         } catch (ApiException $ex) {
             $this->logger->error('Cypress fixtures: failed to add member to shared space', [
-                'sharedSpaceId' => $sharedSpaceId,
-                'userToAddId'   => $userToAddId,
-                'userAddingEmail' => $userEmail,
-                'isAdmin'       => $isAdmin,
-                'statusCode'    => $ex->getStatusCode(),
+                'shared_space_id' => $sharedSpaceId,
+                'user_to_add_id'   => $userToAddId,
+                'user_adding_email' => $userEmail,
+                'is_admin'       => $isAdmin,
+                'status_code'    => $ex->getStatusCode(),
                 'title'         => $ex->getTitle(),
                 'body'          => $ex->getBody(),
                 'exception'     => $ex,
@@ -163,10 +163,10 @@ class CypressFixtureService
             );
         } catch (ApiException $ex) {
             $this->logger->error('Cypress fixtures: failed to add member to shared space', [
-                'sharedSpaceId' => $sharedSpaceId,
-                'userEmail'     => $userEmail,
-                'inviteEmail'   => $inviteEmail,
-                'statusCode'    => $ex->getStatusCode(),
+                'shared_space_id' => $sharedSpaceId,
+                'user_email'     => $userEmail,
+                'invite_email'   => $inviteEmail,
+                'status_code'    => $ex->getStatusCode(),
                 'title'         => $ex->getTitle(),
                 'body'          => $ex->getBody(),
                 'exception'     => $ex,

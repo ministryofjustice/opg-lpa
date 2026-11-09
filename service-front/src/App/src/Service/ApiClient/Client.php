@@ -186,10 +186,10 @@ class Client
             'error_code'  => 'API_CLIENT_MALFORMED_JSON',
             'status'      => $response->getStatusCode(),
             'path'        => $request?->getUri()->getPath(),
-            'contentType' => $response->getHeaderLine('Content-Type'),
-            'bodyLength'  => strlen($body),
-            'jsonError'   => json_last_error_msg(),
-            'bodyPreview' => mb_substr($body, 0, 200),
+            'content_type' => $response->getHeaderLine('Content-Type'),
+            'body_length'  => strlen($body),
+            'json_error'   => json_last_error_msg(),
+            'body_preview' => mb_substr($body, 0, 200),
         ]);
 
         throw new ApiException($response, 'Malformed JSON response from server');
