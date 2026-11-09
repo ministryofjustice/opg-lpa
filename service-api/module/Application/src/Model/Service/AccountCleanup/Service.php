@@ -73,6 +73,8 @@ class Service extends AbstractService
      */
     public function cleanup(bool $dryRun = false): int
     {
+        $this->getLogger()->info('Account cleanup started', ['dry_run' => $dryRun]);
+
         //  Delete inactive accounts
         $expiredAccountsDeletedCount = $this->deleteExpiredAccounts($dryRun);
 
@@ -86,6 +88,13 @@ class Service extends AbstractService
         $unactivatedAccountsDeletedCount = $this->deleteUnactivatedAccounts($dryRun);
 
         $result = 0;
+
+        if (
+            !$dryRun &&
+            empty($this->config['admin']['account_cleanup_notification_recipients'])
+        ) {
+            $this->getLogger()->warning('No recipients configured for account cleanup notification');
+        }
 
         // Send Account Cleanup notifications to site admins.
         if (
