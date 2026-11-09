@@ -115,11 +115,11 @@ class Service extends AbstractService
         }
 
         $this->getLogger()->info($dryRun ? 'Account cleanup dry run completed' : 'Account cleanup completed', [
-            'dryRun'                            => $dryRun,
-            'expiredAccountsDeletedCount'       => $expiredAccountsDeletedCount,
-            'expiryAccountsWarning1WeekCount'   => $expiryAccountsWarning1WeekCount,
-            'expiryAccountsWarning1MonthCount'  => $expiryAccountsWarning1MonthCount,
-            'unactivatedAccountsDeletedCount'   => $unactivatedAccountsDeletedCount,
+            'dry_run'                            => $dryRun,
+            'expired_accounts_deleted_count'       => $expiredAccountsDeletedCount,
+            'expiry_accounts_warning_1_week_count'   => $expiryAccountsWarning1WeekCount,
+            'expiry_accounts_warning_1_month_count'  => $expiryAccountsWarning1MonthCount,
+            'unactivated_accounts_deleted_count'   => $unactivatedAccountsDeletedCount,
         ]);
 
         return $result;
@@ -162,9 +162,9 @@ class Service extends AbstractService
 
                 if ($dryRun) {
                     $this->getLogger()->info('Dry run: would send account expiry notification', [
-                        'warning-type' => $warningType,
-                        'template-id' => $templateId,
-                        'user-id' => $user->id(),
+                        'warning_type' => $warningType,
+                        'template_id' => $templateId,
+                        'user_id' => $user->id(),
                         'personalisations' => $personalisations,
                     ]);
                     $counter++;
@@ -182,14 +182,14 @@ class Service extends AbstractService
                 // Notify exceptions aren't too bad, we will just retry tomorrow.
                 $this->getLogger()->warning('Unable to send account expiry notification', [
                     'exception' => $e,
-                    'template-id' => $templateId,
-                    'user-id' => $user->id()
+                    'template_id' => $templateId,
+                    'user_id' => $user->id()
                 ]);
             } catch (Exception $e) {
                 $this->getLogger()->alert('Unable to send account expiry notification', [
                     'exception' => $e,
-                    'template-id' => $templateId,
-                    'user-id' => $user->id()
+                    'template_id' => $templateId,
+                    'user_id' => $user->id()
                 ]);
             }
         }
@@ -243,7 +243,7 @@ class Service extends AbstractService
 
         foreach ($iterator as $user) {
             if ($dryRun) {
-                $this->getLogger()->info('Dry run: would delete expired account', ['user-id' => $user->id()]);
+                $this->getLogger()->info('Dry run: would delete expired account', ['user_id' => $user->id()]);
             } else {
                 //  Delete the user - this will also delete any LPAs
                 $this->usersService->delete($user->id(), 'expired');
@@ -273,7 +273,7 @@ class Service extends AbstractService
 
         foreach ($iterator as $user) {
             if ($dryRun) {
-                $this->getLogger()->info('Dry run: would delete unactivated account', ['user-id' => $user->id()]);
+                $this->getLogger()->info('Dry run: would delete unactivated account', ['user_id' => $user->id()]);
             } else {
                 //  Delete the user account
                 $this->usersService->delete($user->id(), 'unactivated');

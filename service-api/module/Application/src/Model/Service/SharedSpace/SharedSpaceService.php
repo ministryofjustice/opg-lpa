@@ -44,9 +44,7 @@ class SharedSpaceService
     public function create(string $name, string $userId): array
     {
         if ($this->sharedSpaceRepository->getSharedSpaceIdForUser($userId) !== null) {
-            $this->logger->error('User already belongs to a shared space', [
-                'userId' => $userId,
-            ]);
+            $this->logger->error('User already belongs to a shared space');
 
             throw new UserAlreadyInSharedSpaceException();
         }
@@ -77,7 +75,6 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $spaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'user_id'         => $userId,
                 'shared_space_id' => $spaceId,
                 'count'           => $lpasMoved,
             ]);
@@ -104,7 +101,6 @@ class SharedSpaceService
         $this->logger->info('Shared space created', [
             'event'          => 'shared_space.created',
             'shared_space_id' => $spaceId,
-            'user_id'        => $userId,
             'lpas_moved'     => $lpasMoved,
         ]);
 
@@ -340,6 +336,14 @@ class SharedSpaceService
         $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($memberInvite->sharedSpaceId);
         $id = $this->sharedSpaceRepository->createInvite($memberInvite);
 
+        $this->logger->info('Shared space member invited', [
+            'event'           => 'shared_space.member_invited',
+            'shared_space_id' => $memberInvite->sharedSpaceId,
+            'invite_id'       => $id,
+            'invited_by'      => $memberInvite->userId,
+            'is_admin'        => $memberInvite->isAdmin,
+        ]);
+
         return [
             'id' => $id,
             'sharedSpaceName' => $sharedSpaceName,
@@ -386,7 +390,6 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'user_id' => $userId,
                 'shared_space_id' => $invite->sharedSpaceId,
                 'count' => $lpasMoved,
             ]);
@@ -404,7 +407,6 @@ class SharedSpaceService
         $this->logger->info('User joined shared space', [
             'event' => 'shared_space.joined',
             'shared_space_id' => $invite->sharedSpaceId,
-            'user_id' => $userId,
             'lpas_moved' => $lpasMoved,
         ]);
 
@@ -466,7 +468,6 @@ class SharedSpaceService
 
             $this->logger->error('Unable to delete shared space member account: ' . $e->getMessage(), [
                 'shared_space_id' => $sharedSpaceId,
-                'user_id'         => $userId,
             ]);
 
             throw $e;
@@ -484,7 +485,6 @@ class SharedSpaceService
         $this->logger->info('Shared space member account deleted', [
             'event'           => 'shared_space.member_account_deleted',
             'shared_space_id' => $sharedSpaceId,
-            'user_id'         => $userId,
             'was_last_member' => $isLastMember,
         ]);
     }

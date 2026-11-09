@@ -38,9 +38,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
         $this->logger->shouldReceive('info')
             ->once()
-            ->with('User successfully changed their password', [
-                'userId' => $userId,
-            ]);
+            ->with('User successfully changed their password');
 
         /** @var PasswordController $controller */
         $controller = $this->getController(PasswordController::class, [

@@ -68,9 +68,7 @@ class EmailController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        $this->getLogger()->info('User successfully requested update email token', [
-            'userId' => $userId
-        ]);
+        $this->getLogger()->info('User successfully requested update email token');
 
         return new JsonModel($result);
     }
@@ -104,7 +102,7 @@ class EmailController extends AbstractAuthController
 
 
         $this->getLogger()->info('User successfully update email with token', [
-            'userId' => $result->getUser()->id()
+            'user_id' => $result->getUser()->id()
         ]);
 
         // Return 204 - No Content

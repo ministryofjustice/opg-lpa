@@ -45,7 +45,7 @@ class Communication
 
         if (!$user instanceof User) {
             $this->logger->error('sendRegistrationCompleteEmail: no user found, cannot send email', [
-                'lpaId' => $lpa->getId(),
+                'lpa_id' => $lpa->getId(),
             ]);
             return 'failed-sending-email';
         }

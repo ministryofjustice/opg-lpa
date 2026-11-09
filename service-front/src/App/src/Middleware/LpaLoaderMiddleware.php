@@ -64,11 +64,11 @@ class LpaLoaderMiddleware implements MiddlewareInterface
             $isGetRequest = strtoupper($request->getMethod()) === 'GET';
             if ($isGetRequest) {
                 $this->logger->info("User attempted to view another user's LPA", [
-                    'lpaId' => (int) $lpaId,
+                    'lpa_id' => (int) $lpaId,
                 ]);
             } else {
                 $this->logger->info("User attempted to modify another user's LPA", [
-                    'lpaId' => (int) $lpaId,
+                    'lpa_id' => (int) $lpaId,
                 ]);
             }
 
@@ -102,7 +102,7 @@ class LpaLoaderMiddleware implements MiddlewareInterface
 
         if (strtoupper($request->getMethod()) === 'GET') {
             $this->logger->info('User viewed LPA', [
-                'lpaId' => $lpa->id,
+                'lpa_id' => $lpa->id,
             ]);
         }
 
