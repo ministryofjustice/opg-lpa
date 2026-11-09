@@ -49,7 +49,7 @@ trait ApplicationRepositoryTrait
     protected function updateLpa(Lpa $lpa): void
     {
         $this->getLogger()->info('Updating LPA', [
-            'lpaid' => $lpa->id
+            'lpa_id' => $lpa->id
         ]);
 
         // Check LPA is (still) valid.
@@ -59,7 +59,7 @@ trait ApplicationRepositoryTrait
             $validationErrors = $validation->getArrayCopy();
 
             $this->getLogger()->debug('LPA validation failed during update', [
-                'lpaid' => $lpa->id,
+                'lpa_id' => $lpa->id,
                 'validation_errors' => $validationErrors,
                 'lpa_type' => $lpa->getDocument()->getType(),
             ]);
@@ -74,7 +74,7 @@ trait ApplicationRepositoryTrait
         $this->getApplicationRepository()->update($lpa);
 
         $this->getLogger()->info('LPA updated successfully', [
-            'lpaid' => $lpa->id,
+            'lpa_id' => $lpa->id,
             'updated_at' => $lpa->updatedAt,
         ]);
     }

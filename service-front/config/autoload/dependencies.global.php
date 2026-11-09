@@ -55,6 +55,7 @@ use Laminas\EventManager\EventManager;
 use Laminas\Form\FormElementManager;
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\MetricsLogger;
 use MakeShared\Logging\RequestLoggingMiddleware;
 use MakeShared\Logging\RequestLoggingMiddlewareFactory;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
@@ -173,6 +174,7 @@ return [
                 $c->get(OneLoginSessionManager::class),
                 $c->get(OneLoginSignOut::class),
                 $c->get(RedirectUriBuilder::class),
+                $c->get(MetricsLogger::class),
             ),
             OneLoginSignOut::class                      => static fn(ContainerInterface $c) => new OneLoginSignOut(
                 Feature::OneLogin->isEnabled(),

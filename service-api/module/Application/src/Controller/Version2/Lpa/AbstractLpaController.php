@@ -6,6 +6,7 @@ use Application\Library\ApiProblem\ApiProblemException;
 use Application\Library\Authentication\Identity\Guest;
 use Application\Library\Authorization\UnauthorizedException;
 use Application\Model\Service\AbstractService;
+use Application\Model\Service\Users\Service as UsersService;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractRestfulController;
@@ -35,11 +36,11 @@ abstract class AbstractLpaController extends AbstractRestfulController
 
     /**
      * @param AuthenticationService $authenticationService
-     * @param AbstractService $service
+     * @param AbstractService|UsersService $service
      */
     public function __construct(
         AuthenticationService $authenticationService,
-        AbstractService $service,
+        AbstractService|UsersService $service,
         private readonly ?LoggerInterface $abstractLogger = null,
     ) {
         $this->authenticationService = $authenticationService;
@@ -51,7 +52,7 @@ abstract class AbstractLpaController extends AbstractRestfulController
      * Get the service to use
      * Abstract function here so that this can be implemented in the subclass controllers and type hint appropriately
      *
-     * @return AbstractService
+     * @return AbstractService|UsersService
      */
     abstract protected function getService();
 

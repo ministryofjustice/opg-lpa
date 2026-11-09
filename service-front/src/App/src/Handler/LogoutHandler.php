@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Middleware\IdentityTokenRefreshMiddleware;
 use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
 use Laminas\Diactoros\Response\RedirectResponse;
+use MakeShared\Logging\MetricsLogger;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Psr\Http\Message\ResponseInterface;
@@ -21,6 +23,7 @@ class LogoutHandler implements RequestHandlerInterface
         private readonly OneLoginSessionManager $oneLoginSessionManager,
         private readonly OneLoginSignOut $oneLoginSignOut,
         private readonly RedirectUriBuilder $redirectUriBuilder,
+        private readonly MetricsLogger $metrics,
     ) {
     }
 
@@ -31,6 +34,10 @@ class LogoutHandler implements RequestHandlerInterface
         $idToken = null;
 
         if ($session instanceof SessionInterface) {
+            if ($session->has(IdentityTokenRefreshMiddleware::SESSION_KEY_IDENTITY)) {
+                $this->metrics->userLoggedOut();
+            }
+
             $idToken = $this->oneLoginSessionManager->getIdToken($session)
                 ?? $this->oneLoginSessionManager->getPendingLink($session)?->idToken;
 

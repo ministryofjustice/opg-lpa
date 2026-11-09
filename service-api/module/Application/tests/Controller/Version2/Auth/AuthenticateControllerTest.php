@@ -13,6 +13,14 @@ use Mockery;
 
 class AuthenticateControllerTest extends AbstractAuthControllerTestCase
 {
+    private function getAuthenticateController(array $requestContent = []): AuthenticateController
+    {
+        return $this->dispatchController(
+            new AuthenticateController($this->authenticationService, $this->logger),
+            $requestContent,
+        );
+    }
+
     public function testAuthenticateActionWithToken()
     {
         $tokenReturnData = [
@@ -30,7 +38,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->with('User successfully authenticated with a authToken', $tokenReturnData);
 
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'authToken' => 'abcde12345',
         ]);
 
@@ -58,7 +66,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->once()
             ->with('User successfully authenticated with a authToken', $tokenReturnData);
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'authToken' => 'abcde12345',
             'Update'    => 'false',
         ]);
@@ -82,7 +90,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->logger->shouldNotReceive('debug');
 
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'authToken' => 'abcde12345',
         ]);
 
@@ -119,7 +127,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'username' => 'Username',
             'password' => 'P@55word',
         ]);
@@ -152,7 +160,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'username' => 'Username',
             'password' => 'P@55word',
             'Update'   => 'false',
@@ -177,7 +185,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->logger->shouldNotReceive('debug');
 
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class, [
+        $controller = $this->getAuthenticateController([
             'username' => 'Username',
             'password' => 'Wr0ngP@55word',
         ]);
@@ -196,7 +204,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
     public function testAuthenticateActionFailedNoData()
     {
         /** @var AuthenticateController $controller */
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         /** @var ApiProblem $result */
         $result = $controller->authenticateAction();
@@ -221,7 +229,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->withArgs(['asdfgh123456', false])
             ->andReturn(['expiresIn' => 123,  'expiresAt' => new DateTime('2018-2-1 00:00:00')]);
 
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         $result = $controller->sessionExpiryAction();
 
@@ -241,7 +249,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->withArgs(['asdfgh123456', false])
             ->andReturn('token-has-expired');
 
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         $result = $controller->sessionExpiryAction();
 
@@ -261,7 +269,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->withArgs(['asdfgh123456', false])
             ->andReturn('invalid-token');
 
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         $result = $controller->sessionExpiryAction();
 
@@ -273,7 +281,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
     {
         $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn(null);
 
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         $result = $controller->sessionExpiryAction();
 
@@ -297,7 +305,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
             ->withArgs(['asdfgh123456', false])
             ->andReturn('Test problem');
 
-        $controller = $this->getController(AuthenticateController::class);
+        $controller = $this->getAuthenticateController();
 
         $result = $controller->sessionExpiryAction();
 
@@ -308,7 +316,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
     {
         $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn(null);
 
-        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+        $result = $this->getAuthenticateController()->setSessionExpiryAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
 
@@ -322,7 +330,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $header = Mockery::mock(HeaderInterface::class);
         $this->request->shouldReceive('getHeader')->withArgs(['CheckedToken'])->once()->andReturn($header);
 
-        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+        $result = $this->getAuthenticateController()->setSessionExpiryAction();
 
         $this->assertInstanceOf(ApiProblem::class, $result);
 
@@ -345,7 +353,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
              ->withArgs(['asdfgh123456', true, false, Mockery::type('DateTime')])
              ->andReturn('token-has-expired');
 
-        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+        $result = $this->getAuthenticateController()->setSessionExpiryAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
 
@@ -368,7 +376,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
              ->withArgs(['asdfgh123456', true, false, Mockery::type('DateTime')])
              ->andReturn(['expiresIn' => 20]);
 
-        $result = $this->getController(AuthenticateController::class)->setSessionExpiryAction();
+        $result = $this->getAuthenticateController()->setSessionExpiryAction();
 
         $this->assertInstanceOf(JsonModel::class, $result);
 
@@ -399,7 +407,7 @@ class AuthenticateControllerTest extends AbstractAuthControllerTestCase
         $this->authenticationService->shouldReceive('updateToken')
              ->andReturn(['expiresIn' => 20]);
 
-        $result = $this->getController(AuthenticateController::class)->onDispatch($e);
+        $result = $this->getAuthenticateController()->onDispatch($e);
 
         $this->assertInstanceOf(JsonModel::class, $result);
     }

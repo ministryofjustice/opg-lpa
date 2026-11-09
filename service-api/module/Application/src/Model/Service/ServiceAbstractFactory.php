@@ -56,23 +56,11 @@ class ServiceAbstractFactory implements AbstractFactoryInterface
         Seed\Service::class => [
             'setApplicationsService' => ApplicationsService::class,
         ],
-        Users\Service::class => [
-            'setApplicationsService' => ApplicationsService::class,
-        ],
         ProcessingStatus\Service::class => [
             'setClient' => Client::class,
             'setConfig' => 'config',
             'setCredentials' => CredentialsInterface::class,
             'setAwsSignatureV4' => SignatureV4::class,
-        ],
-        OneLogin\Service::class => [
-            'setAuthorisationClientManager' => OneLogin\AuthorisationClientManager::class,
-            'setAuthorizationService'       => OneLogin\FacileAuthorizationServiceAdapter::class,
-            'setAuthenticationService'      => AuthenticationService::class,
-            'setSharedSpaceRepository'      => SharedSpaceRepository\SharedSpaceRepositoryInterface::class,
-            'setLogoutTokenVerifier'        => OneLogin\LogoutTokenVerifier::class,
-            'setCache'                      => 'OneLoginPsr16Cache',
-            'setKeyPairManager'             => OneLogin\KeyPairManager::class,
         ],
     ];
 

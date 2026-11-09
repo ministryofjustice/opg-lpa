@@ -3,23 +3,19 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
-use Application\Model\Service\AbstractService;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use DateTime;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use MakeShared\Logging\LoggerTrait;
 use MakeShared\Telemetry\TelemetryEventManager;
-use RuntimeException;
+use Psr\Log\LoggerInterface;
 
-class AuthenticateController extends AbstractAuthController
+class AuthenticateController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
-    /**
-     * @return AbstractService
-     */
-    protected function getService()
-    {
-        throw new RuntimeException('getService method not implemented for AuthenticateController');
+    public function __construct(
+        private readonly AuthenticationService $authenticationService,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -72,7 +68,7 @@ class AuthenticateController extends AbstractAuthController
             return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info('User successfully authenticated with a authToken', $result);
+        $this->logger->info('User successfully authenticated with a authToken', $result);
 
         return new JsonModel($result);
     }
@@ -98,7 +94,7 @@ class AuthenticateController extends AbstractAuthController
             return ($v instanceof \DateTime ? $v->format('Y-m-d\TH:i:sO') : $v);
         }, $result);
 
-        $this->getLogger()->info('User successfully authenticated with a password', [
+        $this->logger->info('User successfully authenticated with a password', [
             'user_id'   => $result['userId'],
             'expires_at' => $result['expiresAt'],
         ]);
@@ -173,5 +169,24 @@ class AuthenticateController extends AbstractAuthController
         }
 
         return new JsonModel(['valid' => true, 'remainingSeconds' => $result['expiresIn']]);
+    }
+
+    /**
+     * Get data from the body content of the request
+     *
+     * @param null|string $varName
+     *
+     * @return mixed|null
+     */
+    private function getBodyContent(string|null $varName = null)
+    {
+        $data = $this->processBodyContent($this->getRequest());
+
+        if (is_string($varName)) {
+            // Try to get the specific variable from the data
+            return (array_key_exists($varName, $data) ? $data[$varName] : null);
+        }
+
+        return $data;
     }
 }
