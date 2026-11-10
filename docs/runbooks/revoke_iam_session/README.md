@@ -42,5 +42,5 @@ aws-vault exec identity-breakglass -- uv run python ./main.py --revoke_role --na
 ```
 
 ```shell
-aws-vault exec identity-breakglass -- uv run python ./main.py --revoke_role --name test.user
+aws-vault exec identity-breakglass -- uv run python ./main.py --revoke_user --name test.user
 ```
