@@ -36,6 +36,7 @@ class DeletionLogCleanupServiceTest extends MockeryTestCase
 
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->shouldNotReceive('error');
+        $logger->shouldReceive('info', 'warning');
 
         $config = [
             'admin' => ['account_cleanup_notification_recipients' => ['a@example.com', 'b@example.com']],
@@ -59,6 +60,7 @@ class DeletionLogCleanupServiceTest extends MockeryTestCase
 
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->shouldNotReceive('error');
+        $logger->shouldReceive('info', 'warning');
 
         $sut = new DeletionLogCleanupService($logData, $notifyClient, [], $logger);
 
@@ -82,6 +84,7 @@ class DeletionLogCleanupServiceTest extends MockeryTestCase
 
         $logger = Mockery::mock(LoggerInterface::class);
         $logger->shouldNotReceive('error');
+        $logger->shouldReceive('info', 'warning');
 
         $config = [
             'admin' => ['account_cleanup_notification_recipients' => ['a@example.com']],
@@ -113,6 +116,7 @@ class DeletionLogCleanupServiceTest extends MockeryTestCase
         $logger->shouldReceive('error')
             ->with('Failed to send deletion log cleanup notification email', ['exception' => $exception])
             ->once();
+        $logger->shouldReceive('info', 'warning');
 
         $config = [
             'admin' => ['account_cleanup_notification_recipients' => ['a@example.com', 'b@example.com']],
