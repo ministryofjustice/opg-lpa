@@ -18,8 +18,8 @@ return [
             ],
         ],
         'native_settings' => [
-            // Cookie name — must match the legacy app's session cookie name
-            'name' => 'lpa3',
+            // Cookie name, set per environment. Changing it signs everyone out.
+            'name' => getenv('OPG_LPA_FRONT_SESSION_COOKIE_NAME') ?: 'lpa3',
 
             // Only send the cookie over HTTPS
             'cookie_secure' => true,
