@@ -344,6 +344,35 @@ class SharedSpaceDataTest extends MockeryTestCase
         $this->assertSame(0, $actual);
     }
 
+    public function testHasOtherAdmin(): void
+    {
+        $sharedSpaceId = 'shared-space-1';
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(1);
+
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('where')->andReturnSelf();
+        $selectMock->shouldReceive('columns')->andReturnSelf();
+        $selectMock->shouldReceive('limit')->andReturnSelf();
+
+        $statementMock = Mockery::mock(Statement::class);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')->with(SharedSpaceData::SHARED_SPACE_MEMBERS)->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->with($selectMock)->andReturn($statementMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->hasOtherAdmin($sharedSpaceId, 'user-id');
+
+        $this->assertTrue($actual);
+    }
+
     public function testGetMember(): void
     {
         $sharedSpaceId = 'shared-space-1';
