@@ -31,7 +31,7 @@ The following policy will terminate all current sessions. The user or role will 
 }
 ```
 
-If you need to prevent a user from creating new sessions, consider deleting the user instead. See [aws-vault-assumable-roles](../delete_user/README.md)
+If you need to prevent a user from creating new sessions, consider deleting the user instead. See [delete-iam-user](../delete_user/README.md)
 
 ## Using the script
 
