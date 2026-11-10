@@ -213,6 +213,13 @@ services:
       APP_HOST: api-app
       APP_PORT: 9000
 
+  otel-collector:
+    container_name: lpa-otel-collector
+    image: public.ecr.aws/aws-observability/aws-otel-collector:v0.48.0
+    command: ["--config=/etc/otel/config.yaml"]
+    volumes:
+      - ./local-development/otel-collector/config.yaml:/etc/otel/config.yaml:ro
+
   api-app:
     container_name: lpa-api-app
     image: lpa-api-app
@@ -230,6 +237,8 @@ services:
         condition: service_started
       ministack:
         condition: service_healthy
+      otel-collector:
+        condition: service_started
       postgres:
         condition: service_healthy
     environment:
@@ -274,6 +283,16 @@ services:
 
       OPG_LPA_TELEMETRY_HOST: ""
       OPG_LPA_TELEMETRY_PORT: ""
+
+      # OpenTelemetry metrics, exported to the local collector (which just prints them)
+      OTEL_PHP_AUTOLOAD_ENABLED: "true"
+      OTEL_SERVICE_NAME: "opg-lpa-api"
+      OTEL_METRICS_EXPORTER: "otlp"
+      OTEL_TRACES_EXPORTER: "none"
+      OTEL_LOGS_EXPORTER: "none"
+      OTEL_EXPORTER_OTLP_PROTOCOL: "http/protobuf"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otel-collector:4318"
+      OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "delta"
 
       PHP_OPCACHE_VALIDATE_TIMESTAMPS: 1
       PHP_IDE_CONFIG: serverName=lpa-api-app

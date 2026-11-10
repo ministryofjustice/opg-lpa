@@ -4,6 +4,13 @@ locals {
     "rum",
     "monitoring"
   ])
+
+  # The monitoring service's IAM prefix is cloudwatch, and PutMetricData has no resource-level permissions
+  logging_endpoint_policy = {
+    logs       = { action = "logs:*", resource = "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*" }
+    rum        = { action = "rum:*", resource = "arn:aws:rum:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*" }
+    monitoring = { action = "cloudwatch:*", resource = "*" }
+  }
 }
 
 resource "aws_vpc_endpoint" "logging" {
@@ -32,12 +39,8 @@ resource "aws_vpc_endpoint_policy" "logging" {
         Principal = {
           AWS = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:root"
         },
-        Action = [
-          "${each.value}:*"
-        ],
-        Resource = [
-          "arn:aws:${each.value}:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:*",
-        ]
+        Action   = [local.logging_endpoint_policy[each.value].action],
+        Resource = [local.logging_endpoint_policy[each.value].resource]
       }
     ]
   })

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MakeSharedTest\Logging;
 
+use MakeShared\Logging\MetricRecorderInterface;
 use MakeShared\Logging\Metrics;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -11,6 +12,28 @@ use Psr\Log\LoggerInterface;
 
 class MetricsTest extends TestCase
 {
+    protected function tearDown(): void
+    {
+        Metrics::setRecorder(null);
+    }
+
+    public function testUserCreatedRecordsOtelMetric()
+    {
+        $recorder = $this->createMock(MetricRecorderInterface::class);
+        $recorder->expects($this->once())->method('record')->with('event.user.created', []);
+        Metrics::setRecorder($recorder);
+
+        Metrics::userCreated($this->createStub(LoggerInterface::class));
+    }
+
+    public function testUserCreatedWithoutRecorderOnlyLogs()
+    {
+        $logger = $this->createMock(LoggerInterface::class);
+        $logger->expects($this->once())->method('log');
+
+        Metrics::userCreated($logger);
+    }
+
     public function testIsEventAcceptsKnownEvents()
     {
         $this->assertTrue(Metrics::isEvent(Metrics::SHARED_SPACE_CREATED));

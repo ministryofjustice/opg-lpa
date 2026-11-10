@@ -117,6 +117,13 @@ data "aws_iam_policy_document" "api_permissions_role" {
       "xray:GetSamplingStatisticSummaries",
     ]
   }
+  statement {
+    effect = "Allow"
+    sid    = "ApiOtelPutMetricData"
+    #tfsec:ignore:aws-iam-no-policy-wildcards - PutMetricData does not support resource-level permissions
+    resources = ["*"]
+    actions   = ["cloudwatch:PutMetricData"]
+  }
 }
 
 // Admin

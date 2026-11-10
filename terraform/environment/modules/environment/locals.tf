@@ -46,6 +46,50 @@ locals {
     component = "seeding"
   }
 
+  # The ADOT default ECS config, except metrics go to the CloudWatch OTLP endpoint (SigV4 signed with the
+  # task role) instead of EMF. Delta temporality from the PHP SDK is passed through unchanged because this
+  # collector version has no deltatocumulative processor.
+  aws_otel_collector_config = <<-EOT
+    extensions:
+      health_check:
+      sigv4auth:
+        service: monitoring
+        region: ${data.aws_region.current.region}
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      awsxray:
+        endpoint: 0.0.0.0:2000
+        transport: udp
+    processors:
+      batch/traces:
+        timeout: 1s
+        send_batch_size: 50
+      batch/metrics:
+        timeout: 60s
+    exporters:
+      awsxray:
+      otlphttp/cloudwatch:
+        metrics_endpoint: https://monitoring.${data.aws_region.current.region}.amazonaws.com/v1/metrics
+        auth:
+          authenticator: sigv4auth
+    service:
+      extensions: [health_check, sigv4auth]
+      pipelines:
+        traces:
+          receivers: [otlp, awsxray]
+          processors: [batch/traces]
+          exporters: [awsxray]
+        metrics:
+          receivers: [otlp]
+          processors: [batch/metrics]
+          exporters: [otlphttp/cloudwatch]
+  EOT
+
   aws_otel_collector = jsonencode(
     {
       cpu                    = 0,
@@ -56,7 +100,10 @@ locals {
       readonlyRootFilesystem = true,
       user                   = "aoc",
       command = [
-        "--config=/etc/ecs/ecs-default-config.yaml"
+        "--config=env:AOT_CONFIG_CONTENT"
+      ],
+      environment = [
+        { name = "AOT_CONFIG_CONTENT", value = local.aws_otel_collector_config }
       ],
       healthCheck = {
         command     = ["CMD", "/healthcheck"],

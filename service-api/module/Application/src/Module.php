@@ -10,6 +10,7 @@ use Application\Handler\PingHandlerFactory;
 use Application\Library\Authentication\AuthenticationListener;
 use Application\Library\Listener\ContentNegotiationListener;
 use Application\Library\Listener\ErrorListener;
+use Application\Library\Telemetry\OtelMetricRecorder;
 use Application\Model\DataAccess\Postgres;
 use Application\Model\DataAccess\Repository;
 use Application\Model\Service\Authentication\Service as AppAuthenticationService;
@@ -30,8 +31,10 @@ use Laminas\Mvc\ModuleRouteListener;
 use Laminas\Mvc\MvcEvent;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use MakeShared\Logging\LoggerFactory;
+use MakeShared\Logging\Metrics;
 use MakeShared\Telemetry\Exporter\ExporterFactory;
 use MakeShared\Telemetry\Tracer;
+use OpenTelemetry\API\Globals;
 use PDO;
 use Psr\Http\Client\ClientInterface;
 use Psr\Log\LoggerInterface;
@@ -50,6 +53,9 @@ class Module
         $sm->get(ContentNegotiationListener::class)->attach($eventManager);
         $sm->get(AuthenticationListener::class)->attach($eventManager);
         $sm->get(ErrorListener::class)->attach($eventManager);
+
+        // A no-op unless the OTEL_* environment variables configure an exporter
+        Metrics::setRecorder(new OtelMetricRecorder(Globals::meterProvider()->getMeter('opg-lpa-api')));
     }
 
     /**

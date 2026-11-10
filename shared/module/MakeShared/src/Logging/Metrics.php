@@ -38,6 +38,17 @@ class Metrics
 
     public const string CONTEXT_DIMENSIONS_KEY = 'metric_dimensions';
 
+    private static ?MetricRecorderInterface $recorder = null;
+
+    /**
+     * Registers where OpenTelemetry metrics are sent. Only metrics that have been migrated
+     * (see recordOtel()) use it; the rest are still emitted as EMF log lines.
+     */
+    public static function setRecorder(?MetricRecorderInterface $recorder): void
+    {
+        self::$recorder = $recorder;
+    }
+
     public static function isEvent(mixed $name): bool
     {
         return is_string($name)
@@ -51,6 +62,7 @@ class Metrics
     public static function userCreated(LoggerInterface $logger, array $context = []): void
     {
         self::log($logger, 'User created', self::USER_CREATED, [], $context);
+        self::recordOtel(self::USER_CREATED);
     }
 
     /**
@@ -300,6 +312,14 @@ class Metrics
             'event' => $event,
             self::CONTEXT_DIMENSIONS_KEY => $dimensions,
         ] + $context);
+    }
+
+    /**
+     * @param array<string, string|bool|int|float> $attributes
+     */
+    private static function recordOtel(string $event, array $attributes = []): void
+    {
+        self::$recorder?->record($event, $attributes);
     }
 
     /**

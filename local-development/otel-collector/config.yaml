@@ -1,0 +1,26 @@
+# Local stand-in for the ECS sidecar: receives OTLP from the apps and prints it
+# instead of sending it to the CloudWatch OTLP endpoint.
+extensions:
+  health_check:
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch/metrics:
+    timeout: 10s
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  extensions: [health_check]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch/metrics]
+      exporters: [debug]
