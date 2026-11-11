@@ -130,6 +130,138 @@ class DeleteAccountHandlerTest extends TestCase
         $this->assertEquals("/deleted", $response->getHeaderLine('Location'));
     }
 
+    public function testPostRendersCannotDeletePageWhenOnlyAdminOfASharedSpaceWithOtherMembers(): void
+    {
+        $this->sharedSpaceService->expects($this->once())
+            ->method('getMembersAndInvites')
+            ->willReturn([
+                'members' => [
+                    new SharedSpaceMember(['userId' => '1', 'isAdmin' => true]),
+                    new SharedSpaceMember(['userId' => '2', 'isAdmin' => false]),
+                ],
+                'invites' => [],
+                'name' => 'My space',
+            ]);
+
+        $this->userService->expects($this->never())->method('delete');
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/delete/cannot-delete.twig',
+                [
+                    'sharedSpaceName' => 'My space',
+                    'signedInUser' => null,
+                    'secondsUntilSessionExpires' => null,
+                    'lpa' => null,
+                    'currentRouteName' => null,
+                    'csrfToken' => 'test-token',
+                ]
+            )
+            ->willReturn('<html>cannot delete</html>');
+
+        $handler = new DeleteAccountHandler(
+            $this->renderer,
+            $this->authenticationService,
+            $this->sharedSpaceService,
+            $this->userService,
+            true,
+            true,
+        );
+
+        $response = $handler->handle($this->createSharedSpacePostRequest());
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertEquals(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    public static function deletableSharedSpaceMembersProvider(): array
+    {
+        return [
+            'last member of the shared space' => [
+                [new SharedSpaceMember(['userId' => '1', 'isAdmin' => true])],
+            ],
+            'another member is an admin' => [
+                [
+                    new SharedSpaceMember(['userId' => '1', 'isAdmin' => true]),
+                    new SharedSpaceMember(['userId' => '2', 'isAdmin' => true]),
+                ],
+            ],
+            'this user is not an admin and another member is' => [
+                [
+                    new SharedSpaceMember(['userId' => '1', 'isAdmin' => false]),
+                    new SharedSpaceMember(['userId' => '2', 'isAdmin' => true]),
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * @param SharedSpaceMember[] $members
+     */
+    #[DataProvider('deletableSharedSpaceMembersProvider')]
+    public function testPostDeletesAccountWhenTheSharedSpaceDoesNotNeedThisUserAsAdmin(array $members): void
+    {
+        $this->sharedSpaceService->expects($this->once())
+            ->method('getMembersAndInvites')
+            ->willReturn(['members' => $members, 'invites' => [], 'name' => 'My space']);
+
+        $this->userService->expects($this->once())
+            ->method('delete')
+            ->willReturn(true);
+
+        $handler = new DeleteAccountHandler(
+            $this->renderer,
+            $this->authenticationService,
+            $this->sharedSpaceService,
+            $this->userService,
+            true,
+            true,
+        );
+
+        $response = $handler->handle($this->createSharedSpacePostRequest());
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertEquals('/deleted', $response->getHeaderLine('Location'));
+    }
+
+    public function testPostDoesNotCheckSharedSpaceMembersForUserOutsideASharedSpace(): void
+    {
+        $this->sharedSpaceService->expects($this->never())->method('getMembersAndInvites');
+
+        $this->userService->expects($this->once())
+            ->method('delete')
+            ->willReturn(true);
+
+        $handler = new DeleteAccountHandler(
+            $this->renderer,
+            $this->authenticationService,
+            $this->sharedSpaceService,
+            $this->userService,
+            true,
+            true,
+        );
+
+        $identity = new User('1', '', 1, new DateTime());
+        $response = $handler->handle(
+            $this->createRequest()
+                ->withMethod(RequestMethodInterface::METHOD_POST)
+                ->withAttribute(RequestAttribute::IDENTITY, $identity)
+        );
+
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+    }
+
+    private function createSharedSpacePostRequest(): ServerRequest
+    {
+        $identity = new User('1', '', 1, new DateTime(), sharedSpaceId: '1');
+
+        return $this->createRequest()
+            ->withMethod(RequestMethodInterface::METHOD_POST)
+            ->withAttribute(RequestAttribute::IDENTITY, $identity);
+    }
+
     public function testPostRendersErrorOnDeleteFailure(): void
     {
         $this->userService->expects($this->once())

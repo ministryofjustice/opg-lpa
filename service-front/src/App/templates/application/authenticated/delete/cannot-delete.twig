@@ -1,0 +1,17 @@
+{% extends 'layout/layout.twig' %}
+
+{%- set overridePageTitle = 'You’ve not been able to delete your account' -%}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
+
+      <p class="govuk-body">You are currently the only admin member of {{ sharedSpaceName }}.</p>
+      <p class="govuk-body">If you can no longer access your account, nobody else will be able to manage members.</p>
+      <p class="govuk-body">You must make another shared space member an admin before deleting your account.</p>
+
+      <a class="govuk-button" href="{{ url('shared-space') }}" data-cy="go-to-shared-space-members">Go to shared space members</a>
+    </div>
+  </div>
+{% endblock content %}
