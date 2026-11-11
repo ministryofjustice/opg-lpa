@@ -14,7 +14,6 @@ use Fig\Http\Message\RequestMethodInterface;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -37,18 +36,19 @@ class DeleteAccountHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
-            $blockingSharedSpaceName = $this->sharedSpaceNeedingThisUserAsAdmin($request);
-            if ($blockingSharedSpaceName !== null) {
+            $result = $this->userService->delete();
+
+            if ($result === 'no-other-admin') {
                 return new HtmlResponse($this->renderer->render(
                     'application/authenticated/delete/cannot-delete.twig',
                     array_merge(
-                        ['sharedSpaceName' => $blockingSharedSpaceName],
+                        ['sharedSpaceName' => $this->sharedSpaceName($request)],
                         $this->getTemplateVariables($request)
                     )
                 ));
             }
 
-            if (!$this->userService->delete()) {
+            if ($result !== true) {
                 $html = $this->renderer->render(
                     'error/500.twig',
                     $this->getTemplateVariables($request)
@@ -62,11 +62,7 @@ class DeleteAccountHandler implements RequestHandlerInterface
 
         $memberCount = $this->sharedSpacesEnabled ? $this->sharedSpaceService->getMemberCount() : null;
 
-        $sharedSpaceName = null;
-        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
-        if ($this->oneLoginEnabled && $memberCount > 1 && $identity instanceof User) {
-            $sharedSpaceName = $this->sharedSpaceService->getMember($identity->id())?->getSharedSpaceName();
-        }
+        $sharedSpaceName = $this->oneLoginEnabled && $memberCount > 1 ? $this->sharedSpaceName($request) : null;
 
         $html = $this->renderer->render(
             'application/authenticated/delete/index.twig',
@@ -83,25 +79,12 @@ class DeleteAccountHandler implements RequestHandlerInterface
         return new HtmlResponse($html);
     }
 
-    private function sharedSpaceNeedingThisUserAsAdmin(ServerRequestInterface $request): ?string
+    private function sharedSpaceName(ServerRequestInterface $request): ?string
     {
         $identity = $request->getAttribute(RequestAttribute::IDENTITY);
-        if (!$this->sharedSpacesEnabled || !$identity instanceof User || !$identity->inSharedSpace()) {
-            return null;
-        }
 
-        $sharedSpace = $this->sharedSpaceService->getMembersAndInvites();
-        if ($sharedSpace === null) {
-            return null;
-        }
-
-        $otherMembers = array_filter(
-            $sharedSpace['members'],
-            fn (SharedSpaceMember $member) => $member->getUserId() !== $identity->id(),
-        );
-
-        $otherAdmins = array_filter($otherMembers, fn (SharedSpaceMember $member) => $member->isAdmin());
-
-        return $otherMembers !== [] && $otherAdmins === [] ? $sharedSpace['name'] : null;
+        return $identity instanceof User
+            ? $this->sharedSpaceService->getMember($identity->id())?->getSharedSpaceName()
+            : null;
     }
 }

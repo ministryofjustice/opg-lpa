@@ -440,7 +440,7 @@ class SharedSpaceService
             $isLastMember = $memberCount === 1;
 
             if (!$isLastMember && !$this->sharedSpaceRepository->hasOtherAdmin($sharedSpaceId, $userId)) {
-                throw new RuntimeException('No other admin');
+                throw new NoOtherAdminException();
             }
 
             // The shared_space_members -> shared_space foreign key does not
