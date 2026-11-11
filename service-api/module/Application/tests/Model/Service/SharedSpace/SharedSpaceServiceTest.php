@@ -12,6 +12,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
+use Application\Model\Service\SharedSpace\NoOtherAdminException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use DateTime;
@@ -733,6 +734,10 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository
             ->shouldReceive('beginTransaction');
         $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->with('xyz', '1')
+            ->andReturn(true);
+        $this->sharedSpaceRepository
             ->shouldReceive('countMembers')
             ->andReturn(2);
         $this->sharedSpaceRepository
@@ -767,6 +772,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository
             ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->andReturn(false);
         $this->sharedSpaceRepository
             ->shouldReceive('countMembers')
             ->andReturn(1);
@@ -842,6 +850,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->sharedSpaceRepository
             ->shouldReceive('beginTransaction');
         $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->andReturn(false);
+        $this->sharedSpaceRepository
             ->shouldReceive('countMembers')
             ->andReturn(0);
         $this->sharedSpaceRepository
@@ -863,6 +874,31 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->deleteAccount('xyz', '1');
     }
 
+    public function testDeleteAccountWhenLastAdmin()
+    {
+        $user = Mockery::mock(UserInterface::class);
+        $user->shouldReceive('username')->andReturn('xyz');
+
+        $this->sharedSpaceRepository
+            ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('countMembers')
+            ->andReturn(2);
+        $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->andReturn(false);
+        $this->sharedSpaceRepository
+            ->shouldReceive('rollback');
+
+        $this->userRepository
+            ->shouldReceive('getById')
+            ->with('1')
+            ->andReturn($user);
+
+        $this->expectException(NoOtherAdminException::class);
+        $this->service->deleteAccount('xyz', '1');
+    }
+
     public function testDeleteAccountWhenUserNotDeleted()
     {
         $user = Mockery::mock(UserInterface::class);
@@ -870,6 +906,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository
             ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->andReturn(true);
         $this->sharedSpaceRepository
             ->shouldReceive('countMembers')
             ->andReturn(2);
@@ -906,6 +945,9 @@ final class SharedSpaceServiceTest extends MockeryTestCase
 
         $this->sharedSpaceRepository
             ->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository
+            ->shouldReceive('hasOtherAdmin')
+            ->andReturn(true);
         $this->sharedSpaceRepository
             ->shouldReceive('countMembers')
             ->andReturn(1);

@@ -22,9 +22,17 @@ class DeletionLogCleanupService
 
     public function cleanup(): int
     {
+        $this->logger->info('Deletion log cleanup started');
+
         $count = $this->deletionLogRepository->deleteExpiredDeletionLogs();
         $recipients = $this->config['admin']['account_cleanup_notification_recipients'] ?? [];
         $exitCode = 0;
+
+        if (empty($recipients)) {
+            $this->logger->warning('No recipients configured for deletion log cleanup notification', [
+                'expired_deletion_logs_count' => $count,
+            ]);
+        }
 
         foreach ($recipients as $recipient) {
             try {
@@ -39,6 +47,12 @@ class DeletionLogCleanupService
                 $exitCode = 1;
             }
         }
+
+        $this->logger->info('Deletion log cleanup completed', [
+            'expired_deletion_logs_count' => $count,
+            'recipients_count'            => count($recipients),
+            'exit_code'                   => $exitCode,
+        ]);
 
         return $exitCode;
     }

@@ -14,6 +14,7 @@ use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\Common\EmailAddress;
 use MakeShared\DataModel\User\User;
 use Mezzio\Template\TemplateRendererInterface;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -67,14 +68,23 @@ class DeleteAccountConfirmHandlerTest extends TestCase
         $this->assertEquals('/deleted', $response->getHeaderLine('Location'));
     }
 
-    public function testFailedDeleteShowsErrorPage(): void
+    public static function failedDeleteProvider(): array
+    {
+        return [
+            'delete failed' => [false],
+            'no other admin in the shared space' => ['no-other-admin'],
+        ];
+    }
+
+    #[DataProvider('failedDeleteProvider')]
+    public function testFailedDeleteShowsErrorPage(bool|string $deleteResult): void
     {
         $user = $this->createUserWithEmail();
 
         $this->userService
             ->expects($this->once())
             ->method('delete')
-            ->willReturn(false);
+            ->willReturn($deleteResult);
 
         $this->renderer
             ->expects($this->once())

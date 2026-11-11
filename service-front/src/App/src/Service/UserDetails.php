@@ -335,13 +335,20 @@ class UserDetails implements ApiClientAwareInterface
         ];
     }
 
-    public function delete(): bool
+    /**
+     * @return true|'no-other-admin'|false
+     */
+    public function delete(): bool|string
     {
         $this->logger->info('Deleting user and all their LPAs');
 
         try {
             $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
         } catch (ApiException $ex) {
+            if ($ex->getMessage() === 'no-other-admin') {
+                return 'no-other-admin';
+            }
+
             $this->logger->error('Failed to delete user', [
                 'exception' => $ex,
             ]);
