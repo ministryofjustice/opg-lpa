@@ -30,9 +30,13 @@ final class UserDetailsTest extends TestCase
     private LoggerInterface&MockObject $logger;
     private Identity&MockObject $identity;
     private UserDetails $service;
+    private string|false $oneLoginEnabled;
 
     protected function setUp(): void
     {
+        $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        putenv('ONELOGIN_ENABLED=false');
+
         $this->authService    = $this->createMock(AuthenticationService::class);
         $this->apiClient      = $this->createMock(ApiClient::class);
         $this->mailTransport  = $this->createMock(MailTransportInterface::class);
@@ -50,6 +54,11 @@ final class UserDetailsTest extends TestCase
         $this->service->setApiClient($this->apiClient);
         $this->service->setSessionStorage($this->sessionStorage);
         $this->service->setUrlHelper($this->urlHelper);
+    }
+
+    protected function tearDown(): void
+    {
+        putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
     }
 
     // -------------------------------------------------------------------------
@@ -930,5 +939,79 @@ final class UserDetailsTest extends TestCase
         $this->apiClient->method('httpPost')->willReturn(['unexpected' => true]);
 
         $this->assertSame('unknown-error', $this->service->registerAccount('new@example.com', 'Pass@word1'));
+    }
+
+    // -------------------------------------------------------------------------
+    // Password-account emails are not sent once One Login is enabled
+    // -------------------------------------------------------------------------
+
+    public function testRegisterAccountDoesNotSendActivationEmailWhenOneLoginIsEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')->willReturn(['activation_token' => 'act-token-123']);
+
+        $this->mailTransport->expects($this->never())->method('send');
+
+        $this->assertTrue($this->service->registerAccount('new@example.com', 'Pass@word1'));
+    }
+
+    public function testRegisterAccountDoesNotSendDuplicationWarningWhenOneLoginIsEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')
+            ->willThrowException($this->makeApiException(409, 'username-already-exists'));
+
+        $this->mailTransport->expects($this->never())->method('send');
+
+        $this->assertSame(
+            'address-already-registered',
+            $this->service->registerAccount('existing@example.com', 'Pass@word1')
+        );
+    }
+
+    public function testResendActivateEmailDoesNotSendWhenOneLoginIsEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')->willReturn(['activation_token' => 'activate-token']);
+
+        $this->mailTransport->expects($this->never())->method('send');
+
+        $this->assertTrue($this->service->resendActivateEmail('person@example.com'));
+    }
+
+    public function testRequestEmailUpdateDoesNotSendEmailsWhenOneLoginIsEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')->willReturn(['token' => 'email-change-token']);
+
+        $this->mailTransport->expects($this->never())->method('send');
+
+        $this->assertTrue($this->service->requestEmailUpdate('new@example.com', 'old@example.com'));
+    }
+
+    public function testUpdatePasswordDoesNotSendPasswordChangedEmailWhenOneLoginIsEnabled(): void
+    {
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')->willReturn(['token' => 'refreshed-token']);
+        $this->apiClient->method('httpGet')
+            ->willReturn(['id' => 'user-123', 'email' => ['address' => 'user@example.com']]);
+
+        $this->mailTransport->expects($this->never())->method('send');
+
+        $this->assertTrue($this->service->updatePassword('oldPass', 'newPass'));
+    }
+
+    public function testRequestPasswordResetEmailStillSendsActivationEmailWhenOneLoginIsEnabled(): void
+    {
+        // The One Login link-account journey relies on this email for unactivated accounts
+        putenv('ONELOGIN_ENABLED=true');
+        $this->apiClient->method('httpPost')->willReturn(['activation_token' => 'activate-token']);
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with($this->callback(static fn (MailParameters $mailParameters): bool
+                => $mailParameters->getTemplateRef() === UserDetails::EMAIL_ACCOUNT_ACTIVATE));
+
+        $this->assertSame('account-not-activated', $this->service->requestPasswordResetEmail('person@example.com'));
     }
 }
