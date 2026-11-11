@@ -62,15 +62,15 @@ class SharedSpaceHandlerTest extends TestCase
     public static function getShowsMembersAndInvitesProvider(): array
     {
         return [
-            [['invite' => 'sent'], false, true, false, false],
-            [['invite' => 'revoked'], false, false, true, false],
-            [['member' => 'deleted'], false, false, false, true],
-            [[], true, false, false, false],
+            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, false, 'John Smith'],
+            [['invite' => 'revoked'], false, false, true, false, null],
+            [['member' => 'deleted'], false, false, false, true, null],
+            [[], true, false, false, false, null],
         ];
     }
 
     #[DataProvider('getShowsMembersAndInvitesProvider')]
-    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, bool $memberDeleted): void
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, bool $memberDeleted, ?string $invitedMemberName): void
     {
         $response = [
             'members' => [
@@ -101,6 +101,7 @@ class SharedSpaceHandlerTest extends TestCase
                 'lpa' => null,
                 'currentRouteName' => null,
                 'csrfToken' => null,
+                'invitedMemberName' => $invitedMemberName,
             ])
             ->willReturn('<html>manage shared space</html>');
 

@@ -4,7 +4,7 @@
 {%- set pageTitle = 'Invite a member to your shared space' -%}
 {% block mainTitle %}{% endblock %}
 
-{% set firstNames = form.get('firstNames') %}
+{% set firstName = form.get('firstName') %}
 {% set lastName = form.get('lastName') %}
 {% set email = form.get('email') %}
 {% set permissions = form.get('permissions') %}
@@ -24,18 +24,18 @@
       {{ form().openTag( form )|raw }}
       <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-      {{ macros.formGroup2(firstNames) }}
+      {{ macros.formGroup2(firstName) }}
       {{ macros.formGroup2(lastName) }}
       {{ macros.formGroup2(email) }}
 
       <div class="govuk-form-group">
-        <fieldset class="govuk-fieldset" aria-describedby="permissions-hint">
+        <fieldset class="govuk-fieldset" aria-describedby="admin-hint">
           <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-            Set their permissions
+            Admin member
           </legend>
 
-          <div id="permissions-hint" class="govuk-hint">
-            All members can create and edit LPAs.
+          <div class="govuk-body" id="admin-hint">
+            Admin members, or ‘admins’, manage who is a member of the shared space and can make other members admins.
           </div>
 
           <div class="govuk-checkboxes" data-module="govuk-checkboxes">
@@ -44,24 +44,25 @@
               <label class="govuk-label govuk-checkboxes__label" for="permissions">
                 {{ permissions.getOption('label') }}
               </label>
-
-              <div id="permissions-item-hint" class="govuk-hint govuk-checkboxes__hint">
-                Admins can manage members and change the shared space’s details.
-              </div>
             </div>
           </div>
         </fieldset>
       </div>
 
-      <p class="govuk-body">You can change these permissions later.</p>
+      <p class="govuk-body">You can change this at any time.</p>
+
+      <div class="govuk-inset-text">
+        We recommend having more than one admin. If the only admin is no longer able to access their account, nobody else will be able to manage members.
+      </div>
 
       <p class="govuk-body">
-        When you select <strong>Send invite</strong>, we’ll send this person an
-        email inviting them to join your shared space. They’ll have 7 days to
-        join.
+        Selecting <strong>Send invite</strong> automatically sends an email inviting them to join the shared space. They'll have 7 days to join.
       </p>
 
-      <button class="govuk-button" type="submit">Send invite</button>
+      <div class="govuk-button-group">
+        <button class="govuk-button" type="submit">Send invite</button>
+        <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space') }}">Cancel</a>
+      </div>
       {{ form().closeTag|raw }}
     </div>
   </div>

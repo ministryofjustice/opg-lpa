@@ -15,15 +15,21 @@
             </h2>
           </div>
           <div class="govuk-notification-banner__content">
+            {% if revokeSuccess or memberDeleted %}
             <h3 class="govuk-notification-banner__heading">
-              {% if inviteSuccess %}
-                Invite sent
-              {% elseif revokeSuccess %}
+              {% if revokeSuccess %}
                 Invite revoked
               {% elseif memberDeleted %}
                 Member deleted
               {% endif %}
             </h3>
+            {% endif %}
+
+            {% if inviteSuccess %}
+              <p class="govuk-body app-full-width">
+                An invite has been sent to {{ invitedMemberName }}.
+              </p>
+            {% endif %}
           </div>
         </div>
       {% endif %}
@@ -32,7 +38,7 @@
       <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
 
       {% if signedInUserIsAdmin %}
-        <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite member</a>
+        <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite a member</a>
 
         {% if invites|length > 0 %}
           <table class="govuk-table">
