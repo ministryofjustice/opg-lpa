@@ -12,6 +12,7 @@ use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Entity\MemberInvite;
 use Application\Model\Service\SharedSpace\InviteAlreadyExistsException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
+use Application\Model\Service\SharedSpace\NoOtherAdminException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
 use DateTime;
@@ -894,8 +895,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
             ->with('1')
             ->andReturn($user);
 
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('No other admin');
+        $this->expectException(NoOtherAdminException::class);
         $this->service->deleteAccount('xyz', '1');
     }
 

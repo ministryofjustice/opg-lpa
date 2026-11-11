@@ -224,6 +224,18 @@ Feature: Shared Space
     And I see "Shared space members" in the page text
     And I cannot see any links to manage members
 
+  Scenario: A non-admin member can delete their account when the shared space has an admin
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the member added to the shared space
+    Then I should be on "/shared-space/dashboard"
+    When I click link "Your details"
+    Then I should be on "/user/about-you"
+    When I go to delete my account
+    Then I should be on "/user/delete"
+    When I confirm deleting my account
+    Then I should be on "/deleted"
+
   Scenario: Deleting the last member of a shared space deletes the shared space
     Given I check whether One Login is enabled
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -245,6 +257,6 @@ Feature: Shared Space
     When I click link "Your details"
     And I click link "Deleting your account - find out more"
     Then I should be on "/user/delete"
-    And I see "The LPAs belong to the shared space Example Organisation." in the page text
+    And I see "The LPAs belong to the shared space Example Organisation and will still be available to its remaining members." in the page text
     When I click link "Return to your details"
     Then I should be on "/user/about-you"

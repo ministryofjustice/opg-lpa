@@ -27,7 +27,7 @@ class DeleteAccountConfirmHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (!$this->userService->delete()) {
+        if ($this->userService->delete() !== true) {
             $html = $this->renderer->render(
                 'error/500.twig',
                 $this->getTemplateVariables($request)

@@ -329,6 +329,14 @@ final class UserDetailsTest extends TestCase
         $this->assertFalse($this->service->delete());
     }
 
+    public function testDeleteReturnsNoOtherAdminWhenApiRefusesForThatReason(): void
+    {
+        $this->apiClient->method('httpDelete')
+            ->willThrowException($this->makeApiException(409, 'no-other-admin'));
+
+        $this->assertSame('no-other-admin', $this->service->delete());
+    }
+
     // -------------------------------------------------------------------------
     // activateAccount
     // -------------------------------------------------------------------------
