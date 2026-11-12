@@ -107,7 +107,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',
@@ -116,7 +116,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/shared-space?invite=sent', $location);
+        $this->assertEquals('/shared-space?invite=sent&invitedMemberName=a+b', $location);
     }
 
 
@@ -145,7 +145,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',
@@ -171,7 +171,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',

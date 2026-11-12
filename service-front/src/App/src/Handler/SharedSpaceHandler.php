@@ -60,6 +60,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
                     'invites' => $invites,
                     'sharedSpaceName' => $sharedSpaceName,
                     'signedInUserIsAdmin' => $isAdmin,
+                    'invitedMemberName'    => $request->getQueryParams()['invitedMemberName'] ?? null,
                     'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
                     'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
                     'memberDeleted' => ($request->getQueryParams()['member'] ?? null) === 'deleted',

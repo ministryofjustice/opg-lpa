@@ -55,14 +55,14 @@ class InviteMemberHandler implements RequestHandlerInterface
                 try {
                     $ok = $this->sharedSpaceService->invite(
                         $userDetails,
-                        $form->get('firstNames')->getValue(),
+                        $form->get('firstName')->getValue(),
                         $form->get('lastName')->getValue(),
                         $form->get('email')->getValue(),
                         $permissions->isChecked(),
                     );
 
                     if ($ok) {
-                        return new RedirectResponse('/shared-space?invite=sent');
+                        return new RedirectResponse('/shared-space?invite=sent&invitedMemberName=' . urlencode($form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue()));
                     }
                 } catch (Throwable $e) {
                     match ($e->getMessage()) {

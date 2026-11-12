@@ -77,14 +77,14 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
+    And I see a success notification with content "An invite has been sent to John Smith"
 
   Scenario: Can not invite a member to a shared space when already invited or already a member
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -92,23 +92,23 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "Member" into field labelled "First names"
+    When I type "Member" into field labelled "First name"
     And I type "One" into field labelled "Last name"
     And I type the email of the added member into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space/invite"
     And I see "Email address belongs to an active member of this shared space -– enter a different email address" in the page text
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
-    When I click element marked "Invite member"
+    And I see a success notification with content "An invite has been sent to John Smith"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
@@ -120,14 +120,14 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
+    And I see a success notification with content "An invite has been sent to John Smith"
     When I click element marked "Revoke invite"
     Then I should be on "/shared-space/revoke-invite/"
     Then I submit the form
