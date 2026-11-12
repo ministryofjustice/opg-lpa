@@ -47,24 +47,14 @@ data "aws_iam_policy_document" "lambda_iam_role" {
       "ecr:DescribeImages",
       "ecr:DescribeRepositories",
       "ecr:ListImages",
-      "ecr:PutImage",
-      "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
-      "ecr:CompleteLayerUpload",
     ]
   }
 }
 
-data "aws_iam_policy_document" "combined_iam_role_policy" {
-  source_policy_documents = [
-    data.aws_iam_policy_document.lambda_iam_role.json,
-    var.lambda_role_policy_document
-  ]
-}
 resource "aws_iam_role_policy" "lambda" {
   name   = "${var.lambda_name}-policy"
   role   = aws_iam_role.lambda_role.id
-  policy = data.aws_iam_policy_document.combined_iam_role_policy.json
+  policy = data.aws_iam_policy_document.lambda_iam_role.json
 }
 
 resource "aws_iam_role_policy_attachment" "vpc_access_execution_role" {

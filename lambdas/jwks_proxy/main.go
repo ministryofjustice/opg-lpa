@@ -4,44 +4,24 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/aws/aws-sdk-go-v2/config"
 )
 
 func main() {
-	var (
-		ctx         = context.Background()
-		logger      = slog.New(slog.NewJSONHandler(os.Stdout, nil))
-		endpointURL = os.Getenv("AWS_BASE_URL")
-		jwksURL     = os.Getenv("APP_JWKS_URL")
-	)
-
-	cfg, err := config.LoadDefaultConfig(ctx)
-	if err != nil {
-		logger.Error("failed to load aws config", slog.Any("err", err))
-		return
-	}
-
-	if endpointURL != "" {
-		cfg.BaseEndpoint = &endpointURL
-	}
-
 	handler := &Handler{
-		logger:  logger,
-		jwksURL: jwksURL,
+		jwksURL: os.Getenv("APP_JWKS_URL"),
 		client:  &http.Client{Timeout: 10 * time.Second},
 	}
+
 	lambda.Start(handler.handle)
 }
 
 type Handler struct {
-	logger  *slog.Logger
 	jwksURL string
 	client  *http.Client
 }
