@@ -37,6 +37,16 @@ on:
         description: "OIDC role to assume for ingress management permissions"
         required: true
         type: string
+    secrets:
+      test_onelogin_basic_auth:
+        description: 'Test OneLogin basic auth'
+        required: false
+      test_onelogin_totp_key:
+        description: 'Test OneLogin totp key'
+        required: false
+      test_onelogin_password:
+        description: 'Test OneLogin password'
+        required: false
 
 permissions:
   actions: none
@@ -109,6 +119,9 @@ jobs:
           CYPRESS_oneLoginMockUrl: ${{ inputs.onelogin_mock_url }}
           CYPRESS_visualRegressionEnabled: ${{ inputs.visual_regression_enabled }}
           CYPRESS_TAGS: ${{ inputs.cypress_tags }}
+          CYPRESS_TEST_ONELOGIN_BASIC_AUTH: ${{ secrets.test_onelogin_basic_auth }}
+          CYPRESS_TEST_ONELOGIN_TOTP_KEY: ${{ secrets.test_onelogin_totp_key }}
+          CYPRESS_TEST_ONELOGIN_PASSWORD: ${{ secrets.test_onelogin_password }}
         run: |
           pushd cypress ; python3 stitch.py ; popd
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
@@ -117,8 +130,12 @@ jobs:
           CYPRESS_userNumber=`python3 cypress/user_number.py`
           mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
           chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup"
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${CYPRESS_TAGS}"
+          if [ -eq "${CYPRESS_TAGS}" "SMOKE" ]; then
+            docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false -e CI="True" -x filterSpecs="true",GLOB="cypress/smoke/**/*.cy.js"
+          else
+            docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup"
+            docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${CYPRESS_TAGS}
+          fi"
 
       - name: Upload Screenshot Artifact
         if: failure()
