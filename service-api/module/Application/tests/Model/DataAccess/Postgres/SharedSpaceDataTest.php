@@ -1046,6 +1046,149 @@ class SharedSpaceDataTest extends MockeryTestCase
         return $dbWrapperMock;
     }
 
+    public function testGetInviteById(): void
+    {
+        $sharedSpaceName = 'My Space';
+        $invite = new MemberInvite(
+            1,
+            'my user',
+            'my space',
+            'first',
+            'last',
+            'email@example.com',
+            true,
+            '12341234',
+            new DateTime(),
+            new DateTime('-7 days'),
+        );
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(1);
+        $resultMock->shouldReceive('current')->andReturn([
+            'id' => 1,
+            'invitedBy' => $invite->userId,
+            'sharedSpaceId' => $invite->sharedSpaceId,
+            'name' => $sharedSpaceName,
+            'firstNames' => $invite->firstNames,
+            'lastName' => $invite->lastName,
+            'email' => $invite->email,
+            'isAdmin' => $invite->isAdmin,
+            'code' => $invite->code,
+            'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
+            'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
+        ]);
+
+        $dbWrapperMock = $this->mockGetInviteById($invite->id, $invite->sharedSpaceId, $resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getInviteById($invite->id, $invite->sharedSpaceId);
+
+        $this->assertEquals($invite, $actual);
+    }
+
+    #[DataProvider('noResultsProvider')]
+    public function testGetInviteByIdWhenNoResults(bool $isQueryResult, int $count): void
+    {
+        $sharedSpaceName = 'My Space';
+        $invite = new MemberInvite(
+            1,
+            'my user',
+            'my space',
+            'first',
+            'last',
+            'email@example.com',
+            true,
+            '12341234',
+            new DateTime(),
+            new DateTime('+7 days'),
+        );
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn($isQueryResult);
+        $resultMock->shouldReceive('count')->andReturn($count);
+
+        $dbWrapperMock = $this->mockGetInviteById($invite->id, $invite->sharedSpaceId, $resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InviteNotFoundException::class);
+        $sharedSpaceData->getInviteById($invite->id, $invite->sharedSpaceId);
+    }
+
+    public function testGetInviteByIdWhenDeleted(): void
+    {
+        $sharedSpaceName = 'My Space';
+        $invite = new MemberInvite(
+            1,
+            'my user',
+            'my space',
+            'first',
+            'last',
+            'email@example.com',
+            true,
+            '12341234',
+            new DateTime('-30 days'),
+            new DateTime('+7 days'),
+        );
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('count')->andReturn(1);
+        $resultMock->shouldReceive('current')->andReturn([
+            'id' => 1,
+            'invitedBy' => $invite->userId,
+            'sharedSpaceId' => $invite->sharedSpaceId,
+            'name' => $sharedSpaceName,
+            'firstNames' => $invite->firstNames,
+            'lastName' => $invite->lastName,
+            'email' => $invite->email,
+            'isAdmin' => $invite->isAdmin,
+            'code' => $invite->code,
+            'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
+            'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
+        ]);
+
+        $dbWrapperMock = $this->mockGetInviteById($invite->id, $invite->sharedSpaceId, $resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InviteNotFoundException::class);
+        $sharedSpaceData->getInviteById($invite->id, $invite->sharedSpaceId);
+    }
+
+    private function mockGetInviteById(int $inviteId, string $sharedSpaceId, Result|MockInterface $resultMock): DbWrapper|MockInterface
+    {
+        $selectMock = Mockery::mock(Select::class);
+        $selectMock->shouldReceive('from')
+            ->with(['invite' => SharedSpaceData::SHARED_SPACE_INVITES])
+            ->andReturnSelf();
+        $selectMock->shouldReceive('join')
+            ->with(['space' => SharedSpaceData::SHARED_SPACE], 'invite.sharedSpaceId = space.id', ['name'])
+            ->andReturnSelf();
+        $selectMock->shouldReceive('where')
+            ->with(['invite.id' => $inviteId, 'invite.sharedSpaceId' => $sharedSpaceId])
+            ->andReturnSelf();
+        $selectMock->shouldReceive('limit')
+            ->with(1)
+            ->andReturnSelf();
+
+        $sqlMock = Mockery::mock(Sql::class);
+        $sqlMock->shouldReceive('select')
+            ->andReturn($selectMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($selectMock)
+            ->andReturn($sqlMock);
+        $sqlMock->shouldReceive('execute')
+            ->andReturn($resultMock);
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('createSql')
+            ->andReturn($sqlMock);
+
+        return $dbWrapperMock;
+    }
+
     public function testGetInvites(): void
     {
         $invite = new MemberInvite(
@@ -1089,6 +1232,51 @@ class SharedSpaceDataTest extends MockeryTestCase
         $actual = $sharedSpaceData->getInvites($invite->sharedSpaceId);
 
         $this->assertEquals([$invite], $actual);
+    }
+
+    public function testGetInvitesWhenCanBeDeleted(): void
+    {
+        $invite = new MemberInvite(
+            1,
+            'my user',
+            'my space',
+            'first',
+            'last',
+            'email@example.com',
+            true,
+            '12341234',
+            new DateTime('-31 days'),
+            new DateTime('+7 days'),
+        );
+
+        $resultMock = Mockery::mock(Result::class);
+        $resultMock->shouldReceive('isQueryResult')->andReturn(true);
+        $resultMock->shouldReceive('rewind');
+        $resultMock->shouldReceive('valid')->andReturnValues([true, false]);
+        $resultMock->shouldReceive('current')->andReturn([
+            'id' => 1,
+            'invitedBy' => $invite->userId,
+            'sharedSpaceId' => $invite->sharedSpaceId,
+            'firstNames' => $invite->firstNames,
+            'lastName' => $invite->lastName,
+            'email' => $invite->email,
+            'isAdmin' => $invite->isAdmin,
+            'code' => $invite->code,
+            'created' => $invite->created->format(DbWrapper::TIME_FORMAT),
+            'expires' => $invite->expires->format(DbWrapper::TIME_FORMAT),
+        ]);
+        $resultMock->shouldReceive('key')->andReturn(0);
+        $resultMock->shouldReceive('next');
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $dbWrapperMock->shouldReceive('select')
+            ->with(SharedSpaceData::SHARED_SPACE_INVITES, ['sharedSpaceId' => $invite->sharedSpaceId])
+            ->andReturn($resultMock);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $actual = $sharedSpaceData->getInvites($invite->sharedSpaceId);
+
+        $this->assertEquals([], $actual);
     }
 
     #[DataProvider('noResultsProvider')]
@@ -1171,9 +1359,11 @@ class SharedSpaceDataTest extends MockeryTestCase
     public function testDeleteInvite(): void
     {
         $inviteId = 5;
+        $sharedSpaceId = 'space-id';
+
         $deleteMock = Mockery::mock(Delete::class);
         $deleteMock->shouldReceive('where')
-            ->with(['id' => $inviteId])
+            ->with(['id' => $inviteId, 'sharedSpaceId' => $sharedSpaceId])
             ->andReturn($deleteMock);
 
         $statementMock = Mockery::mock(StatementInterface::class);
@@ -1191,7 +1381,7 @@ class SharedSpaceDataTest extends MockeryTestCase
         $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
 
         $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
-        $sharedSpaceData->deleteInvite($inviteId);
+        $sharedSpaceData->deleteInvite($inviteId, $sharedSpaceId);
     }
 
     #[DoesNotPerformAssertions]

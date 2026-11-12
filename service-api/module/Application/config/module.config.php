@@ -285,6 +285,27 @@ return [
                                     ],
                                 ],
                             ],
+                            'resend-invite' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/resend-invite/:memberInviteId',
+                                    'constraints' => [
+                                        'memberInviteId' => '[0-9]+',
+                                    ],
+                                ],
+                                'may_terminate' => false,
+                                'child_routes'  => [
+                                    'post' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'post',
+                                            'defaults' => [
+                                                'action' => 'resendInvite',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                             'join' => [
                                 'type' => 'Segment',
                                 'options' => [

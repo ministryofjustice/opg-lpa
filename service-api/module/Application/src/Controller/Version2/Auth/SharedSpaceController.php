@@ -17,8 +17,6 @@ use Application\Model\Service\SharedSpace\InviteNotMatchedException;
 use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\SharedSpace\UserAlreadyInSharedSpaceException;
-use DateInterval;
-use DateTimeImmutable;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Mvc\Controller\AbstractRestfulController;
 use MakeShared\DataModel\Lpa\Lpa;
@@ -191,9 +189,6 @@ class SharedSpaceController extends AbstractRestfulController
 
         $data = $this->processBodyContent($this->getRequest());
 
-        $code = sprintf('%08d', random_int(0, 99999999));
-        $created = new DateTimeImmutable('now');
-
         try {
             $response = $this->sharedSpaceService->invite(MemberInvite::create(
                 $result['userId'],
@@ -202,9 +197,6 @@ class SharedSpaceController extends AbstractRestfulController
                 $data['lastName'],
                 $data['email'],
                 $data['isAdmin'],
-                $code,
-                $created,
-                $created->add(DateInterval::createFromDateString('7 days')),
             ));
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space');
@@ -237,6 +229,28 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new Json(['success' => true]);
+    }
+
+    public function resendInviteAction(): Json|ApiProblem
+    {
+        $result = $this->checkTokenForSharedSpace();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($result['sharedSpaceId'], $result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $inviteId = (int) $this->params()->fromRoute('memberInviteId');
+
+        try {
+            $response = $this->sharedSpaceService->resendInvite($result['sharedSpaceId'], $inviteId, $result['userId']);
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request ' . $e->getMessage());
+        }
+
+        return new Json($response);
     }
 
     public function joinAction(): Json|ApiProblem

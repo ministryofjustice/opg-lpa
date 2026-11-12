@@ -213,7 +213,7 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
     }
 
     if (App\Feature::SharedSpace->isEnabled()) {
-        $app->get('/shared-space', SharedSpaceHandler::class, 'shared-space')
+        $app->route('/shared-space', SharedSpaceHandler::class, ['GET', 'POST'], 'shared-space')
             ->setOptions(['sharedSpaceAllow' => ['professional', 'member', 'admin']]);
         $app->route('/shared-space/join', JoinSharedSpaceHandler::class, ['GET', 'POST'], 'shared-space.join')
             ->setOptions(['sharedSpaceAllow' => ['professional', 'invited']]);

@@ -16,6 +16,7 @@ class MetricsLogger
     public const string SHARED_SPACE_MEMBER_DELETED = 'event.shared_space.member.deleted';
     public const string SHARED_SPACE_MEMBER_JOINED = 'event.shared_space.member.joined';
     public const string SHARED_SPACE_MEMBER_INVITED = 'event.shared_space.member.invited';
+    public const string SHARED_SPACE_MEMBER_INVITE_RESENT = 'event.shared_space.member.invite_resent';
     public const string SHARED_SPACE_MEMBER_INVITE_REVOKED = 'event.shared_space.member.invite_revoked';
     public const string SHARED_SPACE_MEMBER_PROMOTED_TO_ADMIN = 'event.shared_space.member.promoted_to_admin';
     public const string SHARED_SPACE_MEMBER_DEMOTED_FROM_ADMIN = 'event.shared_space.member.demoted_from_admin';
@@ -266,6 +267,22 @@ class MetricsLogger
         string $invitedByUserId,
     ): void {
         $this->log('Shared space member invited', self::SHARED_SPACE_MEMBER_INVITED, [
+            'IsAdmin' => $isAdmin ? 'true' : 'false',
+        ], [
+            'shared_space_id' => $sharedSpaceId,
+            'invite_id' => $inviteId,
+            'invited_by' => $invitedByUserId,
+            'is_admin' => $isAdmin,
+        ]);
+    }
+
+    public function sharedSpaceMemberInviteResent(
+        bool $isAdmin,
+        string $sharedSpaceId,
+        int $inviteId,
+        string $invitedByUserId,
+    ): void {
+        $this->log('Shared space member invite resent', self::SHARED_SPACE_MEMBER_INVITE_RESENT, [
             'IsAdmin' => $isAdmin ? 'true' : 'false',
         ], [
             'shared_space_id' => $sharedSpaceId,
