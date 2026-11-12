@@ -282,6 +282,7 @@ locals {
         { name = "OPG_LPA_TELEMETRY_REQUESTS_SAMPLED_FRACTION", value = var.environment.telemetry_requests_sampled_fraction },
         { name = "AWS_REGION", value = data.aws_region.current.region },
         { name = "ONELOGIN_ENABLED", value = tostring(var.environment.feature_flags.onelogin_enabled) },
+        { name = "PASSWORD_SIGNIN_ENABLED", value = tostring(var.environment.feature_flags.password_signin_enabled) },
         { name = "ONELOGIN_REDIRECT_BASE_URL", value = "https://${local.front_fqdn}" },
         { name = "OPG_LPA_FRONT_SESSION_COOKIE_NAME", value = var.environment.session_cookie_name },
         { name = "SHARED_SPACES_ENABLED", value = tostring(var.environment.feature_flags.shared_spaces_enabled) },
