@@ -15,8 +15,10 @@ use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Users\Service as UsersService;
 use Application\Model\Service\DataModelEntity;
 use ApplicationTest\Model\Service\AbstractServiceTestCase;
+use MakeShared\Logging\MetricsLogger;
 use Mockery;
 use Mockery\MockInterface;
+use Psr\Log\LoggerInterface;
 use MakeShared\DataModel\User\User as ProfileUserModel;
 use MakeSharedTest\DataModel\FixturesData;
 use DateTime;
@@ -27,6 +29,7 @@ final class ServiceTest extends AbstractServiceTestCase
     private MockInterface|ApplicationRepositoryInterface $applicationRepository;
     private MockInterface|LogRepositoryInterface $authLogRepository;
     private MockInterface|UserRepositoryInterface $authUserRepository;
+    private MockInterface|MetricsLogger $metrics;
     private UsersService $service;
 
     protected function setUp(): void
@@ -39,11 +42,23 @@ final class ServiceTest extends AbstractServiceTestCase
         $this->authLogRepository = Mockery::mock(LogRepositoryInterface::class);
         $this->authUserRepository = Mockery::mock(UserRepositoryInterface::class);
 
-        $this->service = new UsersService();
-        $this->service->setApplicationsService($this->applicationsService);
-        $this->service->setApplicationRepository($this->applicationRepository);
-        $this->service->setLogRepository($this->authLogRepository);
-        $this->service->setUserRepository($this->authUserRepository);
+        $this->metrics = Mockery::mock(MetricsLogger::class);
+        $this->metrics->shouldReceive('userDeleted')->byDefault();
+
+        $this->service = $this->createService();
+    }
+
+    private function createService(bool $useHashTokens = false, ?LoggerInterface $logger = null): UsersService
+    {
+        return new UsersService(
+            $this->metrics,
+            $logger ?? Mockery::spy(LoggerInterface::class),
+            $this->authUserRepository,
+            $this->authLogRepository,
+            $this->applicationRepository,
+            $this->applicationsService,
+            $useHashTokens,
+        );
     }
 
     public function testCreateInvalidEmail()
@@ -141,7 +156,7 @@ final class ServiceTest extends AbstractServiceTestCase
             ->andReturn(false, false, true);
 
         // test
-        $this->service->setUseHashTokens(true);
+        $this->service = $this->createService(useHashTokens: true);
         $result = $this->service->create($email, $password);
 
         // assertions
@@ -204,7 +219,7 @@ final class ServiceTest extends AbstractServiceTestCase
                     && !array_key_exists('activation_token', $context)
                     && !array_key_exists('password', $context);
             });
-        $this->service->setLogger($logger);
+        $this->service = $this->createService(logger: $logger);
 
         $result = $this->service->create($email, $password);
 
@@ -230,7 +245,7 @@ final class ServiceTest extends AbstractServiceTestCase
                     && !array_key_exists('activation_token', $context)
                     && !array_key_exists('token', $context);
             });
-        $this->service->setLogger($logger);
+        $this->service = $this->createService(logger: $logger);
 
         $this->assertTrue($this->service->activate($token));
     }
@@ -451,6 +466,10 @@ final class ServiceTest extends AbstractServiceTestCase
                     $logDetails['loggedAt'] instanceof DateTime &&
                     $logDetails['identity_hash'] === $expectedHash;
             });
+
+        $this->metrics->shouldReceive('userDeleted')
+            ->once()
+            ->with('some-reason', $user->getId());
 
         $result = $this->service->delete($user->getId(), 'some-reason');
 

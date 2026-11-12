@@ -2,7 +2,6 @@
 
 namespace ApplicationTest\Controller\Version2\Auth;
 
-use Application\Controller\Version2\Auth\AbstractAuthController;
 use Application\Model\Service\AbstractService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Mockery;
@@ -11,11 +10,12 @@ use Mockery\MockInterface;
 use Laminas\EventManager\EventManager;
 use Laminas\EventManager\ResponseCollection;
 use Laminas\Http\Header\ContentType;
-use Laminas\Http\Header\HeaderInterface;
 use Laminas\Http\Headers;
 use Laminas\Http\Request;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\PluginManager;
+use MakeShared\Logging\MetricsLogger;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractAuthControllerTestCase extends MockeryTestCase
@@ -34,6 +34,11 @@ abstract class AbstractAuthControllerTestCase extends MockeryTestCase
      * @var MockInterface|LoggerInterface
      */
     protected $logger;
+
+    /**
+     * @var MockInterface|MetricsLogger
+     */
+    protected $metrics;
 
     /**
      * @var MockInterface|PluginManager
@@ -63,6 +68,8 @@ abstract class AbstractAuthControllerTestCase extends MockeryTestCase
         $this->authenticationService = Mockery::mock(AuthenticationService::class);
 
         $this->logger = Mockery::mock(LoggerInterface::class);
+
+        $this->metrics = Mockery::mock(MetricsLogger::class);
 
         //  Mock the params plugin
         $this->params = Mockery::mock(Params::class);
@@ -103,20 +110,17 @@ abstract class AbstractAuthControllerTestCase extends MockeryTestCase
     }
 
     /**
-     * @param string $controllerName
-     * @param array $requestContentForJson
-     * @return AbstractAuthController
+     * Wire the mocked plugins/events/request into a controller and dispatch it
+     *
+     * @template T of AbstractRestfulController
+     * @param T $controller
+     * @return T
      */
-    protected function getController(string $controllerName, array $requestContentForJson = [])
+    protected function dispatchController(AbstractRestfulController $controller, array $requestContentForJson = [])
     {
         //  If request data has been passed (as an array) encode it into JSON and set in the request
         $this->request->shouldReceive('getContent')
             ->andReturn((empty($requestContentForJson) ? '{}' : json_encode($requestContentForJson)));
-
-        /** @var AbstractAuthController $controller */
-        $controller = new $controllerName($this->authenticationService, $this->service);
-
-        $controller->setLogger($this->logger);
 
         $controller->setPluginManager($this->pluginManager);
         $controller->setEventManager($this->eventManager);
@@ -128,21 +132,9 @@ abstract class AbstractAuthControllerTestCase extends MockeryTestCase
 
     protected function setToken($token, $userId, $authSuccess = true)
     {
-        $tokenHeader = Mockery::mock(HeaderInterface::class);
-        $tokenHeader->shouldReceive('getFieldValue')
-            ->andReturn($token)
-            ->once();
-
-        $this->request->shouldReceive('getHeader')
-            ->with('Token')
-            ->andReturn($tokenHeader)
-            ->once();
-
-        $this->authenticationService->shouldReceive('withToken')
-            ->with($token, false)
-            ->andReturn(($authSuccess ? [
-                'userId' => $userId,
-            ] : false))
+        $this->authenticationService->shouldReceive('authenticateUserToken')
+            ->with($this->request, $userId)
+            ->andReturn($authSuccess)
             ->once();
     }
 }

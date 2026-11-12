@@ -124,7 +124,7 @@ class Service extends AbstractService
 
         if ($validation->hasErrors()) {
             $this->log('warning', 'LPA validation failed during patch', [
-                'lpaid' => $id,
+                'lpa_id' => $id,
                 'user_id' => $userId,
                 'validation_errors' => $validation->getArrayCopy(),
                 'patched_keys' => array_keys($data),

@@ -3,23 +3,20 @@
 namespace Application\Controller\Version2\Auth;
 
 use Application\Library\ApiProblem\ApiProblem;
+use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Model\Service\Email\Service;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use MakeShared\Logging\LoggerTrait;
+use Psr\Log\LoggerInterface;
 use Random\RandomException;
 
-class EmailController extends AbstractAuthController
+class EmailController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
-    /**
-     * Get the service to use
-     *
-     * @return Service
-     */
-    protected function getService()
-    {
-        return $this->service;
+    public function __construct(
+        private readonly Service $service,
+        private readonly AuthenticationService $authenticationService,
+        private readonly LoggerInterface $logger,
+    ) {
     }
 
     /**
@@ -41,11 +38,11 @@ class EmailController extends AbstractAuthController
             return new ApiProblem(400, 'Email address must be passed');
         }
 
-        if (!$this->authenticateUserToken($userId)) {
+        if (!$this->authenticationService->authenticateUserToken($this->getRequest(), $userId)) {
             return new ApiProblem(401, 'invalid-token');
         }
 
-        $result = $this->getService()->generateToken($userId, $newEmailAddress);
+        $result = $this->service->generateToken($userId, $newEmailAddress);
 
         if ($result === 'invalid-email') {
             return new ApiProblem(400, 'Invalid email address');
@@ -68,7 +65,7 @@ class EmailController extends AbstractAuthController
             return ($v instanceof \DateTime) ? $v->format('Y-m-d\TH:i:sO') : $v;
         }, $result);
 
-        $this->getLogger()->info('User successfully requested update email token');
+        $this->logger->info('User successfully requested update email token');
 
         return new JsonModel($result);
     }
@@ -86,7 +83,7 @@ class EmailController extends AbstractAuthController
             return new ApiProblem(400, 'Token must be passed');
         }
 
-        $result = $this->getService()->updateEmailUsingToken($emailUpdateToken);
+        $result = $this->service->updateEmailUsingToken($emailUpdateToken);
 
         if ($result->error()) {
             if ($result->message() === 'invalid-token') {
@@ -101,7 +98,7 @@ class EmailController extends AbstractAuthController
         }
 
 
-        $this->getLogger()->info('User successfully update email with token', [
+        $this->logger->info('User successfully update email with token', [
             'user_id' => $result->getUser()->id()
         ]);
 
@@ -114,5 +111,24 @@ class EmailController extends AbstractAuthController
         $this->response->setStatusCode(204);
 
         return new JsonModel();
+    }
+
+    /**
+     * Get data from the body content of the request
+     *
+     * @param null|string $varName
+     *
+     * @return mixed|null
+     */
+    private function getBodyContent(string|null $varName = null)
+    {
+        $data = $this->processBodyContent($this->getRequest());
+
+        if (is_string($varName)) {
+            // Try to get the specific variable from the data
+            return (array_key_exists($varName, $data) ? $data[$varName] : null);
+        }
+
+        return $data;
     }
 }

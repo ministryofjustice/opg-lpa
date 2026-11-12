@@ -19,6 +19,14 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
         parent::setUp();
     }
 
+    private function getEmailController(array $requestContent = []): EmailController
+    {
+        return $this->dispatchController(
+            new EmailController($this->service, $this->authenticationService, $this->logger),
+            $requestContent,
+        );
+    }
+
     public function testChangeAction()
     {
         $userId = 'abcdef123456';
@@ -47,7 +55,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->with('User successfully requested update email token');
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -67,12 +75,12 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->with('userId')
             ->andReturn($userId);
 
-        $this->request->shouldReceive('getHeader')
-            ->with('Token')
+        $this->authenticationService->shouldReceive('authenticateUserToken')
+            ->with($this->request, $userId)
             ->andReturn(false);
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -93,7 +101,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
 
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class);
+        $controller = $this->getEmailController();
 
         /** @var ApiProblem $result */
         $result = $controller->changeAction();
@@ -120,7 +128,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
         $this->setToken('invalidtok', $userId, false);
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -154,7 +162,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -188,7 +196,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -222,7 +230,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -256,7 +264,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'newEmail' => $newEmail,
         ]);
 
@@ -289,7 +297,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'emailUpdateToken' => $emailUpdateToken,
         ]);
 
@@ -304,7 +312,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
         $userId = 'abcdef123456';
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class);
+        $controller = $this->getEmailController();
 
         /** @var ApiProblem $result */
         $result = $controller->verifyAction();
@@ -330,7 +338,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'emailUpdateToken' => $emailUpdateToken,
         ]);
 
@@ -358,7 +366,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'emailUpdateToken' => $emailUpdateToken,
         ]);
 
@@ -386,7 +394,7 @@ class EmailControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var EmailController $controller */
-        $controller = $this->getController(EmailController::class, [
+        $controller = $this->getEmailController([
             'emailUpdateToken' => $emailUpdateToken,
         ]);
 

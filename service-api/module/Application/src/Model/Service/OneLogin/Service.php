@@ -4,37 +4,25 @@ namespace Application\Model\Service\OneLogin;
 
 use Application\Library\MillisecondDateTime;
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
-use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
-use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
-use Application\Model\Service\AbstractService;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use DateTime;
 use Facile\OpenIDClient\Session\AuthSession;
 use InvalidArgumentException;
 use MakeShared\DataModel\User\User as ProfileUserModel;
-use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\MetricsLogger;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
+use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use RuntimeException;
 
 use function Facile\OpenIDClient\base64url_encode;
 
-class Service extends AbstractService
+class Service
 {
-    use LoggerTrait;
-    use LogRepositoryTrait;
-    use UserRepositoryTrait;
-
-    private ?AuthorisationClientManager $clientManager = null;
-    private ?AuthorizationServiceInterface $authorizationService = null;
-    private ?AuthenticationService $authenticationService = null;
-    private ?SharedSpaceRepositoryInterface $sharedSpaceRepository = null;
-    private ?LogoutTokenVerifier $logoutTokenVerifier = null;
-    private ?CacheInterface $cache = null;
-    private ?KeyPairManager $keyPairManager = null;
-
     /**
      * Must not accept the same jti twice within three minutes.
      */
@@ -56,68 +44,20 @@ class Service extends AbstractService
     /** @var callable(positive-int): string */
     private $randomBytes;
 
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function __construct()
-    {
+    public function __construct(
+        private readonly MetricsLogger $metrics,
+        private readonly LoggerInterface $logger,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly LogRepositoryInterface $logRepository,
+        private readonly SharedSpaceRepositoryInterface $sharedSpaceRepository,
+        private readonly AuthenticationService $authenticationService,
+        private readonly AuthorisationClientManager $clientManager,
+        private readonly AuthorizationServiceInterface $authorizationService,
+        private readonly LogoutTokenVerifier $logoutTokenVerifier,
+        private readonly CacheInterface $cache,
+        private readonly KeyPairManager $keyPairManager,
+    ) {
         $this->randomBytes = random_bytes(...);
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setAuthorisationClientManager(AuthorisationClientManager $manager): void
-    {
-        $this->clientManager = $manager;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setAuthorizationService(AuthorizationServiceInterface $authorizationService): void
-    {
-        $this->authorizationService = $authorizationService;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setAuthenticationService(AuthenticationService $authenticationService): void
-    {
-        $this->authenticationService = $authenticationService;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setSharedSpaceRepository(SharedSpaceRepositoryInterface $sharedSpaceRepository): void
-    {
-        $this->sharedSpaceRepository = $sharedSpaceRepository;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setLogoutTokenVerifier(LogoutTokenVerifier $verifier): void
-    {
-        $this->logoutTokenVerifier = $verifier;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setCache(CacheInterface $cache): void
-    {
-        $this->cache = $cache;
-    }
-
-    /**
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setKeyPairManager(KeyPairManager $keyPairManager): void
-    {
-        $this->keyPairManager = $keyPairManager;
     }
 
     /**
@@ -139,18 +79,6 @@ class Service extends AbstractService
      */
     public function createAuthenticationRequest(string $redirectUrl): array
     {
-        if ($this->clientManager === null) {
-            throw new RuntimeException('AuthorisationClientManager must be set');
-        }
-
-        if ($this->authorizationService === null) {
-            throw new RuntimeException('AuthorizationService must be set');
-        }
-
-        if ($this->keyPairManager === null) {
-            throw new RuntimeException('KeyPairManager must be set');
-        }
-
         $generator = $this->randomBytes;
 
         $state        = bin2hex($generator(12));
@@ -183,7 +111,7 @@ class Service extends AbstractService
             'request' => $requestObject,
         ]);
 
-        $this->getLogger()->info('auth.onelogin.request_created', [
+        $this->logger->info('auth.onelogin.request_created', [
             'redirect_host' => parse_url($redirectUrl, PHP_URL_HOST),
         ]);
 
@@ -198,10 +126,6 @@ class Service extends AbstractService
      */
     public function publicJwks(): array
     {
-        if ($this->keyPairManager === null) {
-            throw new RuntimeException('KeyPairManager must be set');
-        }
-
         return $this->keyPairManager->publicJwks();
     }
 
@@ -215,10 +139,6 @@ class Service extends AbstractService
      */
     public function createLogoutRequest(#[\SensitiveParameter] string $idToken, string $postLogoutRedirectUri): string
     {
-        if ($this->clientManager === null) {
-            throw new RuntimeException('AuthorisationClientManager must be set');
-        }
-
         /** @var mixed $endSessionEndpoint */
         $endSessionEndpoint = $this->clientManager->get()->getIssuer()->getMetadata()->get('end_session_endpoint');
 
@@ -266,22 +186,6 @@ class Service extends AbstractService
         #[\SensitiveParameter] string $codeVerifier,
         string $redirectUri,
     ): array {
-        if ($this->clientManager === null) {
-            throw new RuntimeException('AuthorisationClientManager must be set');
-        }
-
-        if ($this->authorizationService === null) {
-            throw new RuntimeException('AuthorizationService must be set');
-        }
-
-        if ($this->authenticationService === null) {
-            throw new RuntimeException('AuthenticationService must be set');
-        }
-
-        if ($this->sharedSpaceRepository === null) {
-            throw new RuntimeException('SharedSpaceRepository must be set');
-        }
-
         $authSession = AuthSession::fromArray([
             'state'         => $state,
             'nonce'         => $nonce,
@@ -330,7 +234,7 @@ class Service extends AbstractService
         }
 
         if ($vot !== self::CREDENTIAL_TRUST_LEVEL) {
-            $this->getLogger()->warning('auth.onelogin.unexpected_vot', ['vot' => $vot]);
+            $this->logger->warning('auth.onelogin.unexpected_vot', ['vot' => $vot]);
 
             throw new OneLoginAuthenticationException('invalid_vot_claim');
         }
@@ -358,7 +262,7 @@ class Service extends AbstractService
             throw new OneLoginAuthenticationException('missing_email_claim');
         }
 
-        $user = $this->getUserRepository()->getByOneLoginSub($sub);
+        $user = $this->userRepository->getByOneLoginSub($sub);
 
         if (!$user instanceof UserInterface) {
             return [
@@ -377,15 +281,13 @@ class Service extends AbstractService
             throw new OneLoginAuthenticationException('missing_user_id');
         }
 
-        $this->getUserRepository()->updateLastLoginTime($userId);
+        $this->userRepository->updateLastLoginTime($userId);
 
         $this->refreshOneLoginEmail($userId, $user->oneLoginEmail(), $email);
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
-        $this->getLogger()->info('auth.onelogin.callback_success', [
-            'user_id' => $userId,
-        ]);
+        $this->metrics->userLoggedIn($userId);
 
         return [
             'linked'     => true,
@@ -420,18 +322,10 @@ class Service extends AbstractService
         string $oneLoginEmail,
         UserType $userType,
     ): array {
-        if ($this->authenticationService === null) {
-            throw new RuntimeException('AuthenticationService must be set');
-        }
-
-        if ($this->sharedSpaceRepository === null) {
-            throw new RuntimeException('SharedSpaceRepository must be set');
-        }
-
-        $user = $this->getUserRepository()->getByUsername($username);
+        $user = $this->userRepository->getByUsername($username);
 
         if (!$user instanceof UserInterface) {
-            $deletionLog = $this->getLogRepository()->getLogByIdentityHash($this->hashIdentity($username));
+            $deletionLog = $this->logRepository->getLogByIdentityHash($this->hashIdentity($username));
 
             return $this->rejectLink(is_array($deletionLog) ? LinkReason::ACCOUNT_DELETED : LinkReason::ACCOUNT_NOT_FOUND);
         }
@@ -448,11 +342,11 @@ class Service extends AbstractService
             return $this->rejectLink($this->mapAuthFailure($authResult));
         }
 
-        $this->getUserRepository()->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType === UserType::Professional);
+        $this->userRepository->setOneLoginSub($authResult['userId'], $oneLoginSub, $oneLoginEmail, $userType === UserType::Professional);
 
-        $this->getLogger()->info('auth.onelogin.link_success', [
-            'user_id' => $authResult['userId'],
-        ]);
+        $this->metrics->userLinkedExistingMakeAccount($authResult['userId']);
+
+        $this->logUserIdentified($userType, $authResult['userId']);
 
         $lastLogin = $authResult['last_login'] ?? new DateTime();
 
@@ -478,10 +372,6 @@ class Service extends AbstractService
      */
     public function createAndLinkAccount(string $sub, string $oneLoginEmail, UserType $userType, array $profile): array
     {
-        if ($this->authenticationService === null) {
-            throw new RuntimeException('AuthenticationService must be set');
-        }
-
         $generator = $this->randomBytes;
         $now       = new MillisecondDateTime();
         $identity  = $this->placeholderIdentity($sub);
@@ -489,7 +379,7 @@ class Service extends AbstractService
         do {
             $userId = bin2hex($generator(16));
 
-            $created = $this->getUserRepository()->create($userId, [
+            $created = $this->userRepository->create($userId, [
                 'is_professional'       => $userType === UserType::Professional,
                 'profile'               => $this->validProfile($userId, $now, $profile),
                 'identity'              => $identity,
@@ -505,9 +395,9 @@ class Service extends AbstractService
             ]);
         } while (!$created);
 
-        $this->getUserRepository()->updateLastLoginTime($userId);
+        $this->userRepository->updateLastLoginTime($userId);
 
-        $user = $this->getUserRepository()->getById($userId);
+        $user = $this->userRepository->getById($userId);
 
         if (!$user instanceof UserInterface) {
             throw new RuntimeException('Failed to load newly created One Login account');
@@ -515,9 +405,9 @@ class Service extends AbstractService
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
-        $this->getLogger()->info('auth.onelogin.create_success', [
-            'user_id' => $userId,
-        ]);
+        $this->metrics->userCreated($userId);
+
+        $this->logUserIdentified($userType, $userId);
 
         return [
             'userId'         => $userId,
@@ -564,9 +454,9 @@ class Service extends AbstractService
         }
 
         try {
-            $this->getUserRepository()->setOneLoginEmail($userId, $incomingEmail);
+            $this->userRepository->setOneLoginEmail($userId, $incomingEmail);
         } catch (\Throwable $e) {
-            $this->getLogger()->warning('auth.onelogin.email_refresh_failed', [
+            $this->logger->warning('auth.onelogin.email_refresh_failed', [
                 'user_id' => $userId,
                 'exception' => $e,
             ]);
@@ -574,7 +464,7 @@ class Service extends AbstractService
             return;
         }
 
-        $this->getLogger()->info('auth.onelogin.email_refreshed', [
+        $this->logger->info('auth.onelogin.email_refreshed', [
             'user_id' => $userId,
         ]);
     }
@@ -592,14 +482,6 @@ class Service extends AbstractService
      */
     public function handleBackChannelLogout(#[\SensitiveParameter] string $logoutToken): array
     {
-        if ($this->logoutTokenVerifier === null) {
-            throw new RuntimeException('LogoutTokenVerifier must be set');
-        }
-
-        if ($this->cache === null) {
-            throw new RuntimeException('Cache must be set');
-        }
-
         try {
             ['sub' => $sub, 'jti' => $jti, 'iat' => $signedOutAt] = $this->logoutTokenVerifier->verify($logoutToken);
         } catch (LogoutTokenException $e) {
@@ -610,21 +492,19 @@ class Service extends AbstractService
             return $this->rejectLogout('replayed_jti');
         }
 
-        $user = $this->getUserRepository()->getByOneLoginSub($sub);
+        $user = $this->userRepository->getByOneLoginSub($sub);
         $userId = $user instanceof UserInterface ? $user->id() : null;
 
         if ($userId !== null) {
-            $this->getUserRepository()->clearAuthToken($userId);
+            $this->userRepository->clearAuthToken($userId);
         }
 
         $this->rememberLogoutToken($jti);
 
         if ($userId === null) {
-            $this->getLogger()->info('auth.onelogin.backchannel_logout_no_user', []);
+            $this->metrics->userFailedToLogout('no_user');
         } else {
-            $this->getLogger()->info('auth.onelogin.backchannel_logout_success', [
-                'user_id' => $userId,
-            ]);
+            $this->metrics->userSessionEndedByOneLogin($userId);
         }
 
         return ['accepted' => true, 'sub' => $sub, 'signedOutAt' => $signedOutAt];
@@ -635,22 +515,18 @@ class Service extends AbstractService
      */
     private function rejectLogout(string $reason): array
     {
-        $this->getLogger()->info('auth.onelogin.backchannel_logout_rejected', [
-            'reason' => $reason,
-        ]);
+        $this->metrics->userFailedToLogout($reason);
 
         return ['accepted' => false, 'reason' => $reason];
     }
 
     private function hasSeenLogoutToken(string $jti): bool
     {
-        assert($this->cache !== null);
         return $this->cache->has($this->logoutTokenCacheKey($jti));
     }
 
     private function rememberLogoutToken(string $jti): void
     {
-        assert($this->cache !== null);
         $this->cache->set(
             $this->logoutTokenCacheKey($jti),
             true,
@@ -663,14 +539,20 @@ class Service extends AbstractService
         return 'logout_jti_' . hash('sha256', $jti);
     }
 
+    private function logUserIdentified(UserType $userType, string $userId): void
+    {
+        match ($userType) {
+            UserType::Lay => $this->metrics->userIdentifiedAsLay($userId),
+            UserType::Professional => $this->metrics->userIdentifiedAsProfessional($userId),
+        };
+    }
+
     /**
      * @return array{linked: false, reason: string}
      */
     private function rejectLink(string $reason): array
     {
-        $this->getLogger()->info('auth.onelogin.link_rejected', [
-            'reason' => $reason,
-        ]);
+        $this->metrics->userFailedToLinkExistingMakeAccount($reason);
 
         return ['linked' => false, 'reason' => $reason];
     }

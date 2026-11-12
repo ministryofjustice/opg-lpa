@@ -755,7 +755,6 @@ return [
                 Application\ControllerFactory\StatusControllerFactory::class,
         ],
         'abstract_factories' => [
-            'Application\ControllerFactory\AuthControllerAbstractFactory',
             'Application\ControllerFactory\LpaControllerAbstractFactory',
             AutowireFactory::class,
         ],
@@ -775,6 +774,9 @@ return [
             Application\Model\Service\DeletionLogCleanupService::class =>
                 Application\Model\Service\DeletionLogCleanupServiceFactory::class,
             LoggerInterface::class => LoggerFactory::class,
+            Application\Model\Service\Users\Service::class =>
+                Application\Model\Service\Users\ServiceFactory::class,
+            OneLoginService\Service::class => OneLoginService\ServiceFactory::class,
             'OneLoginPsr16Cache' => static function (): Psr16Cache {
                 if (ApcuAdapter::isSupported()) {
                     return new Psr16Cache(new ApcuAdapter('onelogin'));

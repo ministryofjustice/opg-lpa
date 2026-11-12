@@ -8,6 +8,8 @@ use Application\Model\DataAccess\Postgres\UserModel as User;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
 use DateInterval;
 use DateTime;
+use Laminas\Http\Header\HeaderInterface;
+use Laminas\Http\Request;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -274,6 +276,54 @@ class ServiceTest extends MockeryTestCase
             'inactivityFlagsCleared' => false,
             'sharedSpaceId' => null,
         ] + $this->tokenDetails, $result);
+    }
+
+    private function makeTokenRequest(?string $token): Request
+    {
+        $request = Mockery::mock(Request::class);
+
+        if ($token === null) {
+            $request->shouldReceive('getHeader')->with('Token')->andReturn(false);
+            return $request;
+        }
+
+        $header = Mockery::mock(HeaderInterface::class);
+        $header->shouldReceive('getFieldValue')->andReturn($token);
+        $request->shouldReceive('getHeader')->with('Token')->andReturn($header);
+
+        return $request;
+    }
+
+    public function testAuthenticateUserTokenNoHeader()
+    {
+        $service = Mockery::mock(AuthenticationService::class)->makePartial();
+        $service->shouldNotReceive('withToken');
+
+        $this->assertFalse($service->authenticateUserToken($this->makeTokenRequest(null), 'user1'));
+    }
+
+    public function testAuthenticateUserTokenInvalidToken()
+    {
+        $service = Mockery::mock(AuthenticationService::class)->makePartial();
+        $service->shouldReceive('withToken')->with('tok', false)->andReturn('invalid-token')->once();
+
+        $this->assertFalse($service->authenticateUserToken($this->makeTokenRequest('tok'), 'user1'));
+    }
+
+    public function testAuthenticateUserTokenUserMismatch()
+    {
+        $service = Mockery::mock(AuthenticationService::class)->makePartial();
+        $service->shouldReceive('withToken')->with('tok', false)->andReturn(['userId' => 'other'])->once();
+
+        $this->assertFalse($service->authenticateUserToken($this->makeTokenRequest('tok'), 'user1'));
+    }
+
+    public function testAuthenticateUserTokenSuccessExtendsToken()
+    {
+        $service = Mockery::mock(AuthenticationService::class)->makePartial();
+        $service->shouldReceive('withToken')->with('tok', true)->andReturn(['userId' => 'user1'])->once();
+
+        $this->assertTrue($service->authenticateUserToken($this->makeTokenRequest('tok'), 'user1', true));
     }
 
     public function testWithTokenNullUser()
