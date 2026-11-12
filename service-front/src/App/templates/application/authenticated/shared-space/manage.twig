@@ -15,13 +15,9 @@
             </h2>
           </div>
           <div class="govuk-notification-banner__content">
-            {% if revokeSuccess or memberDeleted %}
+            {% if revokeSuccess %}
             <h3 class="govuk-notification-banner__heading">
-              {% if revokeSuccess %}
-                Invite revoked
-              {% elseif memberDeleted %}
-                Member deleted
-              {% endif %}
+              Invite revoked
             </h3>
             {% endif %}
 

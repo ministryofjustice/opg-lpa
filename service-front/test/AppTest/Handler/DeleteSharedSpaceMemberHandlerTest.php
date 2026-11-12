@@ -7,10 +7,13 @@ namespace AppTest\Handler;
 use App\Handler\DeleteSharedSpaceMemberHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,6 +23,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 {
     private TemplateRendererInterface&MockObject $renderer;
     private SharedSpaceService&MockObject $sharedSpaceService;
+    private FlashMessagesInterface&MockObject $flash;
     private DeleteSharedSpaceMemberHandler $handler;
     private SharedSpaceMember $member;
 
@@ -40,6 +44,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
 
         $this->handler = new DeleteSharedSpaceMemberHandler(
             $this->renderer,
@@ -54,7 +59,8 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
 
         return (new ServerRequest())
             ->withAttribute(RouteResult::class, $routeResult)
-            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token');
+            ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token')
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash);
     }
 
     public function testGetRequestDisplaysPageForExistingMember(): void
@@ -88,7 +94,7 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
         $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
-    public function testPostDeletesMemberAndRedirects(): void
+    public function testPostRemovesMemberAndRedirectsWithSuccessMessage(): void
     {
         $this->sharedSpaceService->method('getMember')->willReturn($this->member);
 
@@ -97,10 +103,14 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
             ->with($this->member)
             ->willReturn(true);
 
+        $this->flash->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['Member One has been removed.']);
+
         $response = $this->handler->handle($this->createRequest()->withMethod('POST'));
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space?member=deleted', $response->getHeaderLine('Location'));
+        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
     }
 
     public function testPostDeletesMemberWhenError(): void
@@ -111,6 +121,8 @@ class DeleteSharedSpaceMemberHandlerTest extends TestCase
             ->method('deleteMember')
             ->with($this->member)
             ->willReturn(false);
+
+        $this->flash->expects($this->never())->method('flash');
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/delete-member.twig', [
