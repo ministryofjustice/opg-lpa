@@ -356,7 +356,7 @@ class SharedSpaceService
     public function revokeInvite(string $sharedSpaceId, int $inviteId, string $revokedByUserId): void
     {
         try {
-            $this->sharedSpaceRepository->deleteInvite($inviteId);
+            $this->sharedSpaceRepository->deleteInvite($inviteId, $sharedSpaceId);
         } catch (Throwable $e) {
             $this->logger->error('Unable to revoke shared space invite: ' . $e->getMessage(), [
                 'shared_space_id' => $sharedSpaceId,
@@ -367,6 +367,49 @@ class SharedSpaceService
         }
 
         $this->metrics->sharedSpaceMemberInviteRevoked($sharedSpaceId, $inviteId, $revokedByUserId);
+    }
+
+    /**
+     * @return array{id: int, sharedSpaceName: string, inviteCode: string, expires: string, firstNames: string, email: string}
+     * @throws Throwable
+     */
+    public function resendInvite(string $sharedSpaceId, int $inviteId, string $invitedByUserId): array
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+
+        try {
+            $memberInvite = $this->sharedSpaceRepository->getInviteById($inviteId, $sharedSpaceId);
+
+            $this->sharedSpaceRepository->deleteInvite($inviteId, $sharedSpaceId);
+
+            $newInvite = MemberInvite::create(
+                $memberInvite->userId,
+                $memberInvite->sharedSpaceId,
+                $memberInvite->firstNames,
+                $memberInvite->lastName,
+                $memberInvite->email,
+                $memberInvite->isAdmin,
+            );
+
+            $id = $this->sharedSpaceRepository->createInvite($newInvite);
+            $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($newInvite->sharedSpaceId);
+
+            $this->metrics->sharedSpaceMemberInviteResent($newInvite->isAdmin, $sharedSpaceId, $id, $invitedByUserId);
+            $this->sharedSpaceRepository->commit();
+
+            return [
+                'id' => $id,
+                'sharedSpaceName' => $sharedSpaceName,
+                'inviteCode' => $newInvite->code,
+                'expires' => $newInvite->expires->format('Y-m-d\TH:i:s.u0'),
+                'firstNames' => $newInvite->firstNames,
+                'lastName' => $newInvite->lastName,
+                'email' => $newInvite->email,
+            ];
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+            throw $e;
+        }
     }
 
     public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string
