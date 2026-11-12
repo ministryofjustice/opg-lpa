@@ -26,7 +26,7 @@ data "pagerduty_service" "extended_support" {
   name = "Make a LPA - Extended Support"
 }
 
-resource "pagerduty_service_integration" "cloudwatch_integration_ops" {
+resource "pagerduty_service_integration" "extended_support" {
   count   = var.environment.cloudwatch_alarms.pagerduty_extended_support_enabled ? 1 : 0
   name    = "Make a LPA Production - Extended Support"
   service = data.pagerduty_service.extended_support.id
