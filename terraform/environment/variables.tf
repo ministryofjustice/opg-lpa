@@ -49,8 +49,10 @@ variable "environments" {
         admin_cognito_client_supported_identity_providers = list(string)
         front_cognito_auth_enabled                        = bool
       })
-      onelogin_client_id  = string
-      session_cookie_name = string
+      onelogin_client_id         = string
+      onelogin_discovery_url     = string
+      onelogin_redirect_base_url = string
+      session_cookie_name        = string
       feature_flags = object({
         onelogin_enabled         = bool
         onelogin_use_mock        = bool
