@@ -2,7 +2,7 @@
 resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled     = true
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   alarm_description   = "5XX responses logged in Front for ${var.environment_name}"
   alarm_name          = "${var.environment_name} public front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
@@ -14,7 +14,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
   insufficient_data_actions = []
   metric_name               = "HTTPCode_Target_5XX_Count"
   namespace                 = "AWS/ApplicationELB"
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.front_component_tag
@@ -26,7 +26,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled     = true
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   alarm_description   = "5XX responses logged in Admin for ${var.environment_name}"
   alarm_name          = "${var.environment_name} admin front 5XX errors"
   comparison_operator = "GreaterThanThreshold"
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
   insufficient_data_actions = []
   metric_name               = "HTTPCode_Target_5XX_Count"
   namespace                 = "AWS/ApplicationELB"
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   period                    = 60
   statistic                 = "Sum"
   tags                      = local.admin_component_tag
@@ -50,7 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   count                     = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled           = true
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   alarm_description         = "5xx responses logged for ${var.environment_name} (front, api, pdf or admin)"
   alarm_name                = "${var.environment_name} application 5XX errors"
   comparison_operator       = "GreaterThanThreshold"
@@ -59,7 +59,7 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   evaluation_periods        = 2
   insufficient_data_actions = []
   namespace                 = "Make/Monitoring"
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   period                    = 60
   statistic                 = "Sum"
   threshold                 = 0
@@ -70,7 +70,7 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
 resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   count                     = var.environment.cloudwatch_alarms.front_4xx_anomaly_alarms_enabled ? 1 : 0
   actions_enabled           = true
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   alarm_description         = "Anomalies detected for 4xx responses logged on ${var.environment_name} (front, api, pdf or admin)"
   alarm_name                = "${var.environment_name} application 40x errors"
   comparison_operator       = "GreaterThanUpperThreshold"
@@ -78,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "application_4xx_errors" {
   evaluation_periods        = 2
   threshold_metric_id       = "e1"
   insufficient_data_actions = []
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   treat_missing_data        = "notBreaching"
 
   metric_query {
@@ -115,8 +115,8 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
 
-  alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions    = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -211,8 +211,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_success_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -245,8 +245,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_failed_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -279,8 +279,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_account_locked_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -313,8 +313,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_account_locked_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -347,8 +347,8 @@ resource "aws_cloudwatch_metric_alarm" "auth_sign_in_inactive_account_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "notBreaching"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -386,8 +386,8 @@ resource "aws_cloudwatch_metric_alarm" "high_task_cpu" {
   evaluation_periods  = 3
   threshold           = 90
   alarm_description   = "${each.key} service task has very high CPU utilisation on ${var.environment_name}"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "max_cpu"
@@ -413,8 +413,8 @@ resource "aws_cloudwatch_metric_alarm" "high_task_memory" {
   evaluation_periods  = 3
   threshold           = 90
   alarm_description   = "${each.key} service task has very high memory utilisation on ${var.environment_name}"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "max_mem"
@@ -442,8 +442,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_usage_anomaly" {
   datapoints_to_alarm = 3
   threshold_metric_id = "ad1"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -477,8 +477,8 @@ resource "aws_cloudwatch_metric_alarm" "memory_usage_anomaly" {
   datapoints_to_alarm = 3
   threshold_metric_id = "ad1"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
 
   metric_query {
     id          = "ad1"
@@ -515,8 +515,8 @@ resource "aws_cloudwatch_metric_alarm" "rds_readthroughput_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "missing"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   metric_query {
     id          = "m1"
     period      = 0
@@ -553,8 +553,8 @@ resource "aws_cloudwatch_metric_alarm" "rds_writethroughput_anomaly" {
 
   insufficient_data_actions = []
   treat_missing_data        = "missing"
-  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
-  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn]
+  alarm_actions             = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
+  ok_actions                = [aws_sns_topic.cloudwatch_to_pagerduty.arn, data.aws_sns_topic.extended_support.arn]
   metric_query {
     id          = "m1"
     period      = 0
