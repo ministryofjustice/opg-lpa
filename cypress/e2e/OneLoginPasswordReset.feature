@@ -1,4 +1,4 @@
-@OneLoginPasswordReset
+@OneLoginPasswordReset @Remaining2
 Feature: OneLoginPasswordReset
 
   Linking an account to GOV.UK One Login clears its password, but the account is still

@@ -295,8 +295,8 @@ jobs:
 
   # Remaining tests should ultimately just exclude SignUp and anything already done as part of stitched run.
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
-  cypress_tests_Remaining:
-    name: Run Cypress tests - Remaining
+  cypress_tests_Remaining1:
+    name: Run Cypress tests - Remaining 1
     uses: ./.github/workflows/cypress_tests.yml
     needs:
       - terraform_outputs
@@ -305,7 +305,33 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       onelogin_mock_url: ${{ needs.terraform_outputs.outputs.mock_onelogin_url }}
       account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
+      cypress_tags: "(not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping) and (@Onboarding or @SharedSpace)"
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
+
+  cypress_tests_Remaining2:
+    name: Run Cypress tests - Remaining 2
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
+      onelogin_mock_url: ${{ needs.terraform_outputs.outputs.mock_onelogin_url }}
+      account_id: "050256574573"
+      cypress_tags: "(not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping) and @Remaining2"
+      oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
+
+  cypress_tests_Remaining3:
+    name: Run Cypress tests - Remaining 3
+    uses: ./.github/workflows/cypress_tests.yml
+    needs:
+      - terraform_outputs
+    with:
+      admin_url: https://${{ needs.terraform_outputs.outputs.admin_fqdn }}
+      front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
+      onelogin_mock_url: ${{ needs.terraform_outputs.outputs.mock_onelogin_url }}
+      account_id: "050256574573"
+      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Remaining2 and not @Onboarding and not @SharedSpace"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
   end_of_workflow:
@@ -319,7 +345,9 @@ jobs:
       - cypress_tests_Signup_StitchedHW
       - cypress_tests_Signup_StitchedClone
       - cypress_tests_SignupIncluded
-      - cypress_tests_Remaining
+      - cypress_tests_Remaining3
+      - cypress_tests_Remaining2
+      - cypress_tests_Remaining1
 
     environment:
       name: "dev_${{ needs.workflow_variables.outputs.workspace_name }}"
@@ -335,7 +363,9 @@ jobs:
             ${{ contains(needs.cypress_tests_Signup_StitchedHW.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_Signup_StitchedClone.result, 'success')}} &&
             ${{ contains(needs.cypress_tests_SignupIncluded.result, 'success')}} &&
-            ${{ contains(needs.cypress_tests_Remaining.result, 'success')}}; then
+            ${{ contains(needs.cypress_tests_Remaining3.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Remaining2.result, 'success')}} &&
+            ${{ contains(needs.cypress_tests_Remaining1.result, 'success')}}; then
             echo "${WORKSPACE_NAME} PR environment tested, built and deployed"
             echo "Tag Deployed: ${SHORT_SHA}"
             echo "URL: https://${FRONT_URL}/home"
