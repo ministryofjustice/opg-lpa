@@ -257,7 +257,7 @@ jobs:
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
   cypress_tests_Remaining:
     name: Run Cypress tests - Remaining
-    uses: ./.github/workflows/cypress_tests.yml
+    uses: ./.github/workflows/cypress_remaining_tests.yml
     needs:
       - preprod_terraform_outputs
       - run_preproduction_seed_db_task
@@ -266,7 +266,7 @@ jobs:
       front_url: https://${{ needs.preprod_terraform_outputs.outputs.front_fqdn }}
       onelogin_mock_url: ${{ needs.preprod_terraform_outputs.outputs.mock_onelogin_url }}
       account_id: "987830934591"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @RequiresOneLogin"
+      cypress_tags: "not @RequiresOneLogin"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_PREPRODUCTION }}
 
   locust_tests:
