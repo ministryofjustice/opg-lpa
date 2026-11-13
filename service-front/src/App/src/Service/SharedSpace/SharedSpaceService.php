@@ -172,7 +172,6 @@ class SharedSpaceService
         }
 
         if (!$isActive) {
-            $fullName = $member->getName()->getFirst() . ' ' . $member->getName()->getLast();
             $params = new MailParameters(
                 $member->getEmail(),
                 self::EMAIL_SUSPEND_MEMBER,

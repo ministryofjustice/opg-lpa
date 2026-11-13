@@ -15,7 +15,6 @@
         {{ macros.formErrorSummary(error, form) }}
 
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Manage members</span>
             <h1 class="govuk-heading-xl">{{ member.name.first ~ ' ' ~ member.name.last }}</h1>
 
             {{ form.prepare() ? '' }}
@@ -25,11 +24,11 @@
             <div class="govuk-form-group {{ permissions.getMessages|length > 0 ? 'govuk-form-group--error'}}">
                 <fieldset class="govuk-fieldset" aria-describedby="permissions-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-                        Permissions
+                        Admin member
                     </legend>
 
-                    <div id="permissions-hint" class="govuk-hint">
-                        All members can create and edit LPAs.
+                    <div id="permissions-hint" class="govuk-body">
+                      Admin members, or ‘admins’, manage who is a member of the shared space and can make other members admins.
                     </div>
 
                     {{ formElementErrorsV2(permissions) }}
@@ -40,11 +39,11 @@
                             <label class="govuk-label govuk-checkboxes__label" for="{{ permissions.getAttribute('id') }}">
                                 {{ permissions.getOption('label')|raw }}
                             </label>
-
-                            <div id="permissions-item-hint" class="govuk-hint govuk-checkboxes__hint">
-                                Admins can manage members and change the shared space’s details.
-                            </div>
                         </div>
+
+                      <div class="govuk-inset-text">
+                        We recommend having more than one admin. If there’s only one admin and they leave the shared space, nobody else will be able to manage members.
+                      </div>
                     </div>
                 </fieldset>
             </div>
@@ -57,15 +56,27 @@
 
                     {{ formElementErrorsV2(status) }}
 
-                    <div class="govuk-radios" data-module="govuk-radios" data-govuk-radios-init="">
+                    <div class="govuk-radios" data-module="govuk-radios">
                         {{ formRadio(status) }}
+
+                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden app-conditional-flush" id="conditional-suspended">
+                          {% if memberActive %}
+                            <div class="govuk-inset-text">
+                              Selecting <strong>Suspended</strong> automatically sends an email informing them of this change.
+                            </div>
+                          {% endif %}
+                        </div>
                     </div>
                 </fieldset>
             </div>
 
             <div class="govuk-button-group">
                 <button class="govuk-button" type="submit" data-cy="save">Save</button>
-                <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space.members.delete', {'member-id': member.userId}) }}">Delete user</a>
+                <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space') }}">Cancel</a>
+            </div>
+
+            <div class="govuk-body">
+              <a class="govuk-link" href="{{ url('shared-space.members.delete', {'member-id': member.userId}) }}">Remove member - find out more</a>
             </div>
 
             {{ form().closeTag|raw }}

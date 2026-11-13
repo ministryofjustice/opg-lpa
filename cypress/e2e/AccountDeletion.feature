@@ -45,7 +45,7 @@ Feature: Deleting an account that signs in with GOV.UK One Login
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I check checkbox labelled "Admin"
+    When I check checkbox labelled "Make this member an admin"
     And I click element marked "Save"
     Then "Member 1" permissions should be set to "admin"
     When I visit "/user/about-you"
