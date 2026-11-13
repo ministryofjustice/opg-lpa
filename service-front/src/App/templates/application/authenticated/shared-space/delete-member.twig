@@ -1,10 +1,8 @@
 {% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set overridePageTitle = 'Delete Member - Manage members' -%}
-
-{% set permissions = form.get('permissions') %}
-{% set status = form.get('status') %}
+{%- set memberName = member.name.first ~ ' ' ~ member.name.last -%}
+{%- set overridePageTitle = 'Remove user from shared space' -%}
 
 {% block backLink %}
   <a href="{{ url('shared-space.members.manage', {'member-id': member.userId}) }}" class="govuk-back-link">Back</a>
@@ -12,19 +10,26 @@
 
 {% block content %}
   <div class="govuk-grid-row">
-    {{ macros.formErrorSummary(error, form) }}
+    {{ macros.formErrorSummary(error) }}
 
     <div class="govuk-grid-column-two-thirds">
-      <span class="govuk-caption-xl">Manage members</span>
-      <h1 class="govuk-heading-xl">Delete {{ member.name.first ~ ' ' ~ member.name.last }}</h1>
+      <h1 class="govuk-heading-xl">Are you sure you want to remove {{ memberName }}?</h1>
 
-      <p class="govuk-body">Are you sure you want to delete this user, they will lose access to all LPAs in this shared space?</p>
+      <p class="govuk-body">Removing this member from {{ member.sharedSpaceName }} means:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>they will lose access to the lasting powers of attorney (LPAs) currently available to them in their Make an LPA account, including those they’ve worked on themselves</li>
+        <li>their Make an LPA account will be deleted</li>
+      </ul>
+
+      <p class="govuk-body">Any LPAs in the shared space will still be available to its remaining members.</p>
+      <p class="govuk-body">{{ memberName }}’s GOV.UK One Login will not be affected.</p>
+      <p class="govuk-body">Selecting <strong>Yes, remove</strong> automatically sends an email informing them of this change.</p>
 
       <form novalidate method="post">
         <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
         <div class="govuk-button-group">
-          <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Delete</button>
+          <button class="govuk-button govuk-button--warning" type="submit" data-cy="save">Yes, remove</button>
           <a class="govuk-button govuk-button--secondary" href="{{ url('shared-space.members.manage', {'member-id': member.userId}) }}">Cancel</a>
         </div>
       </form>

@@ -194,7 +194,7 @@ Feature: Shared Space
     And I create a new Make account
     Then element "nav" does not contain "Shared space"
 
-  Scenario: Can delete a member from a shared space
+  Scenario: Can remove a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin" with 1 LPA
     And I log in as the newly created fixture user
@@ -206,9 +206,11 @@ Feature: Shared Space
     Then I should be on "/shared-space/members/"
     When I click link "Remove member - find out more"
     Then I should be on page matching "/shared-space/members/.+/delete"
-    Then I click button "Delete"
+    And I see "Are you sure you want to remove Member 1?" in the page text
+    Then I click button "Yes, remove"
     Then I should be on "/shared-space"
-    And I see a success notification with content "Member deleted"
+    And I see a success notification with content "Member 1 has been removed."
+    And element "tr" does not contain "Member 1"
     When I click link "Shared LPAs"
     Then I should be on "/shared-space/dashboard"
     And there are "two" "LPA" elements on the page

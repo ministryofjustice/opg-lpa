@@ -6,9 +6,12 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -39,7 +42,12 @@ class DeleteSharedSpaceMemberHandler implements RequestHandlerInterface
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
             if ($this->sharedSpaceService->deleteMember($member)) {
-                return new RedirectResponse('/shared-space?member=deleted');
+                /** @var FlashMessagesInterface $flash */
+                $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                $name = $member->getName();
+                $flash->flash(FlashMessenger::SUCCESS, [$name->getFirst() . ' ' . $name->getLast() . ' has been removed.']);
+
+                return new RedirectResponse('/shared-space');
             }
 
             $error = 'Failed to delete member. Please try again.';
