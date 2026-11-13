@@ -41,14 +41,3 @@ resource "aws_security_group" "lambda_sg" {
     create_before_destroy = true
   }
 }
-
-resource "aws_security_group_rule" "lambda_egress" {
-  type      = "egress"
-  from_port = 0
-  to_port   = 0
-  protocol  = "-1"
-  #tfsec:ignore:aws-ec2-no-public-egress-sgr - anything out
-  cidr_blocks       = ["0.0.0.0/0"]
-  security_group_id = aws_security_group.lambda_sg.id
-  description       = "Lambda to Anywhere - All Traffic"
-}

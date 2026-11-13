@@ -24,3 +24,14 @@ resource "aws_lambda_function_url" "jwks_proxy" {
   function_name      = module.jwks_proxy[0].lambda_function.function_name
   authorization_type = "NONE"
 }
+
+resource "aws_security_group_rule" "lambda_egress" {
+  count                    = var.environment.proxy_jwks ? 1 : 0
+  type                     = "egress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+  security_group_id        = module.jwks_proxy[0].security_group.id
+  source_security_group_id = aws_security_group.api_ecs_service.id
+  description              = "JWKS Proxy to API ECS - HTTP"
+}
