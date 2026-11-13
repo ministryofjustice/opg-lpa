@@ -794,6 +794,110 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertInstanceOf(ApiProblem::class, $result);
     }
 
+    public function testResendInviteAction()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->andReturn(true);
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberInviteId')
+            ->andReturn('5');
+
+        $this->sharedSpaceService->shouldReceive('resendInvite')
+            ->with(
+                $sharedSpaceId,
+                5,
+                Mockery::on(fn (string $code): bool => preg_match('/^\d{8}$/', $code) === 1),
+                Mockery::on(fn (\DateTimeInterface $expires): bool =>
+                    $expires->getTimestamp() === (new DateTime('+7 days'))->getTimestamp()),
+                $userId,
+            )
+            ->andReturn(['a' => 'b']);
+
+        $this->makeRequest([
+            'userId' => $userId,
+            'sharedSpaceId' => $sharedSpaceId,
+        ]);
+        $result = $this->controller->resendInviteAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+        $this->assertEquals(['a' => 'b'], json_decode($result->getContent(), true));
+    }
+
+    public function testResendInviteActionWhenInvalidToken()
+    {
+        $this->makeRequest(false);
+        $result = $this->controller->resendInviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(StatusCodeInterface::STATUS_UNAUTHORIZED, $result->toArray()['status']);
+    }
+
+    public function testResendInviteActionWhenNotInSharedSpace()
+    {
+        $this->makeRequest(['userId' => 'my-user']);
+        $result = $this->controller->resendInviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(StatusCodeInterface::STATUS_FORBIDDEN, $result->toArray()['status']);
+    }
+
+    public function testResendInviteActionWhenNotAdmin()
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with('my-space', 'my-user')
+            ->andReturn(false);
+
+        $this->makeRequest([
+            'userId' => 'my-user',
+            'sharedSpaceId' => 'my-space',
+        ]);
+        $result = $this->controller->resendInviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals(StatusCodeInterface::STATUS_FORBIDDEN, $result->toArray()['status']);
+    }
+
+    public function testResendInviteActionWhenInviteNotFound()
+    {
+        $this->assertResendInviteActionExceptionMapsToApiProblem(
+            new InviteNotFoundException(),
+            StatusCodeInterface::STATUS_NOT_FOUND,
+        );
+    }
+
+    public function testResendInviteActionWhenServiceException()
+    {
+        $this->assertResendInviteActionExceptionMapsToApiProblem(
+            new RuntimeException('Database error'),
+            StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR,
+        );
+    }
+
+    private function assertResendInviteActionExceptionMapsToApiProblem(\Throwable $exception, int $status): void
+    {
+        $this->sharedSpaceService->shouldReceive('isAdmin')->andReturn(true);
+
+        $this->withParams()->shouldReceive('fromRoute')
+            ->with('memberInviteId')
+            ->andReturn('5');
+
+        $this->sharedSpaceService->shouldReceive('resendInvite')->andThrow($exception);
+
+        $this->makeRequest([
+            'userId' => 'my-user',
+            'sharedSpaceId' => 'my-space',
+        ]);
+        $result = $this->controller->resendInviteAction();
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+        $this->assertEquals($status, $result->toArray()['status']);
+    }
+
     public function testJoinAction()
     {
         $userId = 'my-user';

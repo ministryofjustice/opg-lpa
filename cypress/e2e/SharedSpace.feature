@@ -128,11 +128,32 @@ Feature: Shared Space
     Then I submit the form
     Then I should be on "/shared-space"
     And I see a success notification with content "An invite has been sent to John Smith"
+    And I see "Pending" in the page text
     When I click element marked "Revoke invite"
     Then I should be on "/shared-space/revoke-invite/"
-    Then I submit the form
+    And I see "Do you want to revoke this invite?" in the page text
+    And I see "Revoking the invite sent to John Smith (john.smith@example.com)" in the page text
+    When I click link "Back"
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite revoked"
+    When I click element marked "Revoke invite"
+    Then I should be on "/shared-space/revoke-invite/"
+    When I click button "Yes, revoke invite"
+    Then I should be on "/shared-space"
+    And I see a success notification with content "John Smith’s invite has been revoked."
+    And I do not see "john.smith@example.com" in the page text
+
+  # Uses seeded data (scripts/non_live_seeding/seed_test_shared_space_invites.sql).
+  # Resending makes the invite Pending, so re-running this needs the database re-seeding first.
+  @RequiresOneLogin
+  Scenario: Can resend an expired invite
+    When I log in through Onelogin as "invite-owner@example.com"
+    And I visit "/shared-space"
+    Then the invite to "invite-resend@example.com" has status "Expired"
+    And I see "Details of invited members with an expired status will automatically be removed after 30 days." in the page text
+    When I resend the invite to "invite-resend@example.com"
+    Then I should be on "/shared-space"
+    And I see a success notification with content "The invite has been resent to Resend Me."
+    And the invite to "invite-resend@example.com" has status "Pending"
 
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

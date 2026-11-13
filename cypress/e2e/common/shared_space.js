@@ -238,6 +238,14 @@ When(`I type the email of the added member into field labelled {string}`, (label
   })
 });
 
+When('I resend the invite to {string}', (email) => {
+  cy.contains('tr', email).find('[data-cy=resend-invite]').click();
+});
+
+Then('the invite to {string} has status {string}', (email, status) => {
+  cy.contains('tr', email).should('contain', status);
+});
+
 Then('I cannot see any invites', () => {
   cy.contains('table', 'Invited members').should('not.exist');
 });

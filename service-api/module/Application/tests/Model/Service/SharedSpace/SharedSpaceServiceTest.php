@@ -729,6 +729,85 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
 
+    public function testResendInvite()
+    {
+        $sharedSpaceId = 'space-id';
+        $expires = new DateTime('2026-11-20 10:00:00');
+
+        $this->sharedSpaceRepository->shouldReceive('renewInvite')
+            ->once()
+            ->with(5, $sharedSpaceId, '87654321', $expires);
+
+        $this->sharedSpaceRepository->shouldReceive('getInvites')
+            ->with($sharedSpaceId)
+            ->andReturn([
+                new MemberInvite(
+                    id: 4,
+                    userId: 'admin',
+                    sharedSpaceId: $sharedSpaceId,
+                    firstNames: 'Other',
+                    lastName: 'Person',
+                    email: 'other@example.com',
+                    isAdmin: false,
+                    code: '11111111',
+                    created: new DateTime(),
+                    expires: new DateTime('+1 day'),
+                ),
+                new MemberInvite(
+                    id: 5,
+                    userId: 'admin',
+                    sharedSpaceId: $sharedSpaceId,
+                    firstNames: 'Alt',
+                    lastName: 'Person',
+                    email: 'alt@example.com',
+                    isAdmin: false,
+                    code: '87654321',
+                    created: new DateTime(),
+                    expires: $expires,
+                ),
+            ]);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpace')
+            ->with($sharedSpaceId)
+            ->andReturn('My Space');
+
+        $this->metrics->shouldReceive('sharedSpaceMemberInviteResent')
+            ->once()
+            ->with($sharedSpaceId, 5, 'admin-id');
+
+        $result = $this->service->resendInvite($sharedSpaceId, 5, '87654321', $expires, 'admin-id');
+
+        $this->assertEquals([
+            'firstNames' => 'Alt',
+            'fullName' => 'Alt Person',
+            'email' => 'alt@example.com',
+            'sharedSpaceName' => 'My Space',
+            'inviteCode' => '87654321',
+            'expires' => $expires->format('Y-m-d\TH:i:s.u0'),
+        ], $result);
+    }
+
+    public function testResendInviteWhenInviteIsNotInSharedSpace()
+    {
+        $this->sharedSpaceRepository->shouldReceive('renewInvite')
+            ->andThrow(new InviteNotFoundException());
+
+        $this->logger->shouldReceive('error')
+            ->once()
+            ->with(
+                'Unable to resend shared space invite',
+                Mockery::on(fn (array $context) => $context['shared_space_id'] === 'space-id'
+                    && $context['invite_id'] === 5
+                    && $context['exception'] instanceof InviteNotFoundException),
+            );
+
+        $this->metrics->shouldNotReceive('sharedSpaceMemberInviteResent');
+
+        $this->expectException(InviteNotFoundException::class);
+
+        $this->service->resendInvite('space-id', 5, '87654321', new DateTime(), 'admin-id');
+    }
+
     public function testJoin()
     {
         $userId = 'my user';

@@ -191,7 +191,6 @@ class SharedSpaceController extends AbstractRestfulController
 
         $data = $this->processBodyContent($this->getRequest());
 
-        $code = sprintf('%08d', random_int(0, 99999999));
         $created = new DateTimeImmutable('now');
 
         try {
@@ -202,9 +201,9 @@ class SharedSpaceController extends AbstractRestfulController
                 $data['lastName'],
                 $data['email'],
                 $data['isAdmin'],
-                $code,
+                $this->newInviteCode(),
                 $created,
-                $created->add(DateInterval::createFromDateString('7 days')),
+                $this->inviteExpiry($created),
             ));
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space');
@@ -237,6 +236,36 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return new Json(['success' => true]);
+    }
+
+    public function resendInviteAction(): Json|ApiProblem
+    {
+        $result = $this->checkTokenForSharedSpace();
+        if ($result instanceof ApiProblem) {
+            return $result;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($result['sharedSpaceId'], $result['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $inviteId = (int) $this->params()->fromRoute('memberInviteId');
+
+        try {
+            $response = $this->sharedSpaceService->resendInvite(
+                $result['sharedSpaceId'],
+                $inviteId,
+                $this->newInviteCode(),
+                $this->inviteExpiry(new DateTimeImmutable('now')),
+                $result['userId'],
+            );
+        } catch (InviteNotFoundException $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'invite-not-found');
+        } catch (Throwable $e) {
+            return new ApiProblem(StatusCodeInterface::STATUS_INTERNAL_SERVER_ERROR, 'Unable to process request');
+        }
+
+        return new Json($response);
     }
 
     public function joinAction(): Json|ApiProblem
@@ -388,5 +417,15 @@ class SharedSpaceController extends AbstractRestfulController
         }
 
         return $result;
+    }
+
+    private function newInviteCode(): string
+    {
+        return sprintf('%08d', random_int(0, 99999999));
+    }
+
+    private function inviteExpiry(DateTimeImmutable $from): DateTimeImmutable
+    {
+        return $from->add(DateInterval::createFromDateString('7 days'));
     }
 }

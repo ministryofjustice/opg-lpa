@@ -1194,6 +1194,63 @@ class SharedSpaceDataTest extends MockeryTestCase
         $sharedSpaceData->deleteInvite($inviteId);
     }
 
+    public function testRenewInvite(): void
+    {
+        $inviteId = 5;
+        $sharedSpaceId = 'shared-space-1';
+        $expires = new DateTime('2026-11-20 10:00:00');
+
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('update')
+            ->with(SharedSpaceData::SHARED_SPACE_INVITES)
+            ->andReturn($updateMock);
+        $updateMock->shouldReceive('where')
+            ->with(['id' => $inviteId, 'sharedSpaceId' => $sharedSpaceId])
+            ->once()
+            ->andReturn($updateMock);
+        $updateMock->shouldReceive('set')
+            ->with(['code' => '12345678', 'expires' => $expires->format(DbWrapper::TIME_FORMAT)])
+            ->once()
+            ->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')
+            ->with($updateMock)
+            ->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(1);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+        $sharedSpaceData->renewInvite($inviteId, $sharedSpaceId, '12345678', $expires);
+    }
+
+    public function testRenewInviteThrowsWhenInviteIsNotInSharedSpace(): void
+    {
+        $dbWrapperMock = Mockery::mock(DbWrapper::class);
+        $sqlMock = Mockery::mock(Sql::class);
+        $updateMock = Mockery::mock(Update::class);
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $resultMock = Mockery::mock(Result::class);
+
+        $dbWrapperMock->shouldReceive('createSql')->andReturn($sqlMock);
+        $sqlMock->shouldReceive('update')->andReturn($updateMock);
+        $updateMock->shouldReceive('where')->andReturn($updateMock);
+        $updateMock->shouldReceive('set')->andReturn($updateMock);
+        $sqlMock->shouldReceive('prepareStatementForSqlObject')->andReturn($statementMock);
+        $statementMock->shouldReceive('execute')->andReturn($resultMock);
+        $resultMock->shouldReceive('getAffectedRows')->andReturn(0);
+
+        $sharedSpaceData = new SharedSpaceData($dbWrapperMock, []);
+
+        $this->expectException(InviteNotFoundException::class);
+
+        $sharedSpaceData->renewInvite(5, 'another-shared-space', '12345678', new DateTime());
+    }
+
     #[DoesNotPerformAssertions]
     public function testDeleteInvites(): void
     {

@@ -51,6 +51,8 @@ class SharedSpaceHandler implements RequestHandlerInterface
             }
         }
 
+        $inviteOutcome = $request->getQueryParams()['invite'] ?? null;
+
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/shared-space/manage.twig',
             array_merge(
@@ -61,8 +63,10 @@ class SharedSpaceHandler implements RequestHandlerInterface
                     'sharedSpaceName' => $sharedSpaceName,
                     'signedInUserIsAdmin' => $isAdmin,
                     'invitedMemberName'    => $request->getQueryParams()['invitedMemberName'] ?? null,
-                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
-                    'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
+                    'inviteSuccess' => $inviteOutcome === 'sent',
+                    'revokeSuccess' => $inviteOutcome === 'revoked',
+                    'resendSuccess' => $inviteOutcome === 'resent',
+                    'resendFailed' => $inviteOutcome === 'resend-failed',
                     'memberDeleted' => ($request->getQueryParams()['member'] ?? null) === 'deleted',
                 ],
             ),

@@ -354,6 +354,19 @@ class MetricsLoggerTest extends TestCase
         $this->metrics->sharedSpaceMemberInviteRevoked('abc', 5, 'u1');
     }
 
+    public function testSharedSpaceMemberInviteResent()
+    {
+        $this->expectLog(
+            'info',
+            'Shared space invite resent',
+            'event.shared_space.member.invite_resent',
+            [],
+            ['shared_space_id' => 'abc', 'invite_id' => 5, 'resent_by' => 'u1'],
+        );
+
+        $this->metrics->sharedSpaceMemberInviteResent('abc', 5, 'u1');
+    }
+
     #[DataProvider('isAdminProvider')]
     public function testSharedSpaceMemberInvited(bool $isAdmin, string $expected)
     {

@@ -1,24 +1,25 @@
-{% import "application/macros.twig" as macros %}
 {% extends 'layout/layout.twig' %}
 
-{%- set pageTitle = 'Revoke invite' -%}
+{%- set pageTitle = 'Do you want to revoke this invite?' -%}
 {% block mainTitle %}{% endblock %}
+
+{% block backLink %}
+    <a href="{{ url('shared-space') }}" class="govuk-back-link">Back</a>
+{% endblock %}
 
 {% block content %}
     <div class="govuk-grid-row">
-        {{ macros.formErrorSummary(error, form) }}
-
         <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-xl">Manage members</span>
             <h1 class="govuk-heading-xl">{{ pageTitle }}</h1>
 
             <form action="" method="post" name="revokeMemberInvite" novalidate="novalidate" id="revokeMemberInvite">
                 <input type="hidden" name="__csrf" value="{{ csrfToken }}">
 
-                <p class="govuk-body">Are you sure you want to revoke the invite to <span class="govuk-!-font-weight-bold">{{ email }}</span>?</p>
+                <p class="govuk-body">Revoking the invite sent to {{ inviteeName }} ({{ inviteeEmail }}) means they will no longer be able to join the shared space. Their details will be removed from the list of invited members.</p>
+                <p class="govuk-body">You’ll be able to invite them again in future if you need to.</p>
 
                 <div class="govuk-button-group">
-                    <button class="govuk-button govuk-button--warning" data-module="govuk-button" type="submit">Revoke</button>
+                    <button class="govuk-button govuk-button--warning" data-module="govuk-button" type="submit">Yes, revoke invite</button>
                     <a href="{{ url('shared-space') }}" class="govuk-button govuk-button--secondary" data-module="govuk-button">Cancel</a>
                 </div>
             </form>

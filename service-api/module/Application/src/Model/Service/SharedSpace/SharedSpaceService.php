@@ -11,6 +11,7 @@ use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInt
 use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use DateTime;
+use DateTimeInterface;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use MakeShared\Logging\MetricsLogger;
 use Psr\Log\LoggerInterface;
@@ -367,6 +368,47 @@ class SharedSpaceService
         }
 
         $this->metrics->sharedSpaceMemberInviteRevoked($sharedSpaceId, $inviteId, $revokedByUserId);
+    }
+
+    /**
+     * Gives an invite a new code and expiry date, returning what is needed to email it again.
+     *
+     * @return array{firstNames: string, fullName: string, email: string, sharedSpaceName: ?string, inviteCode: string, expires: string}
+     * @throws InviteNotFoundException|Throwable
+     */
+    public function resendInvite(
+        string $sharedSpaceId,
+        int $inviteId,
+        string $code,
+        DateTimeInterface $expires,
+        string $resentByUserId,
+    ): array {
+        try {
+            $this->sharedSpaceRepository->renewInvite($inviteId, $sharedSpaceId, $code, $expires);
+        } catch (Throwable $e) {
+            $this->logger->error('Unable to resend shared space invite', [
+                'shared_space_id' => $sharedSpaceId,
+                'invite_id' => $inviteId,
+                'exception' => $e,
+            ]);
+
+            throw $e;
+        }
+
+        $invites = $this->sharedSpaceRepository->getInvites($sharedSpaceId);
+        $invite = array_find($invites, fn (MemberInvite $invite) => $invite->id === $inviteId)
+            ?? throw new InviteNotFoundException();
+
+        $this->metrics->sharedSpaceMemberInviteResent($sharedSpaceId, $inviteId, $resentByUserId);
+
+        return [
+            'firstNames' => $invite->firstNames,
+            'fullName' => $invite->firstNames . ' ' . $invite->lastName,
+            'email' => $invite->email,
+            'sharedSpaceName' => $this->sharedSpaceRepository->getSharedSpace($sharedSpaceId),
+            'inviteCode' => $code,
+            'expires' => $expires->format('Y-m-d\TH:i:s.u0'),
+        ];
     }
 
     public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string

@@ -8,7 +8,9 @@ use Exception;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use Application\Model\Entity\MemberInvite;
+use Application\Model\Service\SharedSpace\InviteNotFoundException;
 use Application\Model\Service\SharedSpace\SharedSpaceNotFoundException;
+use DateTimeInterface;
 
 interface SharedSpaceRepositoryInterface
 {
@@ -123,6 +125,13 @@ interface SharedSpaceRepositoryInterface
      * @throws InvalidQueryException
      */
     public function createInvite(MemberInvite $memberInvite): int;
+
+    /**
+     * Give an existing invite in the shared space a new code and expiry date.
+     * @throws InviteNotFoundException If the invite does not exist in that shared space
+     * @throws InvalidQueryException
+     */
+    public function renewInvite(int $inviteId, string $sharedSpaceId, string $code, DateTimeInterface $expires): void;
 
     /**
      * Revoke an unused invite to a shared space.

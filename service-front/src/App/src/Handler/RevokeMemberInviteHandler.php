@@ -29,17 +29,22 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $email = $request->getQueryParams()['email'] ?? '';
+        /** @var RouteResult|null $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $inviteId = (string) ($routeResult?->getMatchedParams()['invite-id'] ?? '');
+
+        $invites = $this->sharedSpaceService->getMembersAndInvites()['invites'] ?? [];
+        $invite = array_find($invites, fn (array $invite) => (string) $invite['id'] === $inviteId);
+
+        if ($invite === null) {
+            return new RedirectResponse('/shared-space');
+        }
 
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            /** @var RouteResult|null $routeResult */
-            $routeResult = $request->getAttribute(RouteResult::class);
-            $inviteId = $routeResult ? $routeResult->getMatchedParams()['invite-id'] ?? null : null;
-
-            $ok = $this->sharedSpaceService->revokeInvite($inviteId);
-
-            if ($ok) {
-                return new RedirectResponse('/shared-space?invite=revoked');
+            if ($this->sharedSpaceService->revokeInvite($inviteId)) {
+                return new RedirectResponse(
+                    '/shared-space?invite=revoked&invitedMemberName=' . urlencode($invite['fullName'])
+                );
             }
         }
 
@@ -48,7 +53,8 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'email' => $email,
+                    'inviteeName' => $invite['fullName'],
+                    'inviteeEmail' => $invite['email'],
                 ],
             ),
         ));

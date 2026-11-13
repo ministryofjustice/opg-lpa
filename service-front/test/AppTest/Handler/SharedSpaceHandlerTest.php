@@ -62,15 +62,17 @@ class SharedSpaceHandlerTest extends TestCase
     public static function getShowsMembersAndInvitesProvider(): array
     {
         return [
-            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, false, 'John Smith'],
-            [['invite' => 'revoked'], false, false, true, false, null],
-            [['member' => 'deleted'], false, false, false, true, null],
-            [[], true, false, false, false, null],
+            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, false, false, false, 'John Smith'],
+            [['invite' => 'revoked', 'invitedMemberName' => 'John Smith'], false, false, true, false, false, false, 'John Smith'],
+            [['invite' => 'resent', 'invitedMemberName' => 'John Smith'], false, false, false, true, false, false, 'John Smith'],
+            [['invite' => 'resend-failed'], false, false, false, false, true, false, null],
+            [['member' => 'deleted'], false, false, false, false, false, true, null],
+            [[], true, false, false, false, false, false, null],
         ];
     }
 
     #[DataProvider('getShowsMembersAndInvitesProvider')]
-    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, bool $memberDeleted, ?string $invitedMemberName): void
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, bool $resendSuccess, bool $resendFailed, bool $memberDeleted, ?string $invitedMemberName): void
     {
         $response = [
             'members' => [
@@ -93,6 +95,8 @@ class SharedSpaceHandlerTest extends TestCase
                 'invites' => $response['invites'],
                 'inviteSuccess' => $inviteSuccess,
                 'revokeSuccess' => $revokeSuccess,
+                'resendSuccess' => $resendSuccess,
+                'resendFailed' => $resendFailed,
                 'memberDeleted' => $memberDeleted,
                 'sharedSpaceName' => 'Example Shared Space',
                 'signedInUserIsAdmin' => $isAdmin,

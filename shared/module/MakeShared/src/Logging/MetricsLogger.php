@@ -17,6 +17,7 @@ class MetricsLogger
     public const string SHARED_SPACE_MEMBER_JOINED = 'event.shared_space.member.joined';
     public const string SHARED_SPACE_MEMBER_INVITED = 'event.shared_space.member.invited';
     public const string SHARED_SPACE_MEMBER_INVITE_REVOKED = 'event.shared_space.member.invite_revoked';
+    public const string SHARED_SPACE_MEMBER_INVITE_RESENT = 'event.shared_space.member.invite_resent';
     public const string SHARED_SPACE_MEMBER_PROMOTED_TO_ADMIN = 'event.shared_space.member.promoted_to_admin';
     public const string SHARED_SPACE_MEMBER_DEMOTED_FROM_ADMIN = 'event.shared_space.member.demoted_from_admin';
     public const string SHARED_SPACE_MEMBER_SUSPENDED = 'event.shared_space.member.suspended';
@@ -256,6 +257,15 @@ class MetricsLogger
             'shared_space_id' => $sharedSpaceId,
             'invite_id' => $inviteId,
             'revoked_by' => $revokedByUserId,
+        ]);
+    }
+
+    public function sharedSpaceMemberInviteResent(string $sharedSpaceId, int $inviteId, string $resentByUserId): void
+    {
+        $this->log('Shared space invite resent', self::SHARED_SPACE_MEMBER_INVITE_RESENT, [], [
+            'shared_space_id' => $sharedSpaceId,
+            'invite_id' => $inviteId,
+            'resent_by' => $resentByUserId,
         ]);
     }
 

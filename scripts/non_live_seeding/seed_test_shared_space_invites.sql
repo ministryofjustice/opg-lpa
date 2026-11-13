@@ -38,4 +38,7 @@ VALUES ( '1234567812345678123456781234567b', '1234567812345678123456781234567a',
        ( '1234567812345678123456781234567b', '1234567812345678123456781234567a', 'Test', 'User'
        , 'invite-deleted2@example.com', TRUE, '12345678', NOW() - INTERVAL '31 days', NOW() - INTERVAL '24 days'),
        ( '1234567812345678123456781234567b', '1234567812345678123456781234567a', 'Test', 'User'
-       , 'invite-expired2@example.com', TRUE, '12345678', NOW() - INTERVAL '8 days', NOW() - INTERVAL '1 days');
+       , 'invite-expired2@example.com', TRUE, '12345678', NOW() - INTERVAL '8 days', NOW() - INTERVAL '1 days'),
+       -- Resent by the "Can resend an expired invite" Cypress scenario, so it is Pending after that runs
+       ( '1234567812345678123456781234567b', '1234567812345678123456781234567a', 'Resend', 'Me'
+       , 'invite-resend@example.com', FALSE, '12345678', NOW() - INTERVAL '8 days', NOW() - INTERVAL '1 days');

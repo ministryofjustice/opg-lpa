@@ -7,7 +7,18 @@
 {% block content %}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-      {% if inviteSuccess or revokeSuccess or memberDeleted %}
+      {% if resendFailed %}
+        <div class="govuk-error-summary" data-module="govuk-error-summary">
+          <div role="alert">
+            <h2 class="govuk-error-summary__title">There is a problem</h2>
+            <div class="govuk-error-summary__body">
+              <p class="govuk-body">The invite could not be resent. Try again later.</p>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      {% if inviteSuccess or revokeSuccess or resendSuccess or memberDeleted %}
         <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -15,19 +26,23 @@
             </h2>
           </div>
           <div class="govuk-notification-banner__content">
-            {% if revokeSuccess or memberDeleted %}
+            {% if memberDeleted %}
             <h3 class="govuk-notification-banner__heading">
-              {% if revokeSuccess %}
-                Invite revoked
-              {% elseif memberDeleted %}
-                Member deleted
-              {% endif %}
+              Member deleted
             </h3>
             {% endif %}
 
             {% if inviteSuccess %}
               <p class="govuk-body app-full-width">
                 An invite has been sent to {{ invitedMemberName }}.
+              </p>
+            {% elseif revokeSuccess %}
+              <p class="govuk-body app-full-width">
+                {{ invitedMemberName }}’s invite has been revoked.
+              </p>
+            {% elseif resendSuccess %}
+              <p class="govuk-body app-full-width">
+                The invite has been resent to {{ invitedMemberName }}.
               </p>
             {% endif %}
           </div>
@@ -61,18 +76,33 @@
                   <td class="govuk-table__cell">{{ invite.email }}</td>
                   <td class="govuk-table__cell">
                     {% if invite.isExpired %}
-                      Invite expired
+                      Expired
                     {% else %}
-                      Invite pending
+                      Pending
                     {% endif %}
                   </td>
                   <td class="govuk-table__cell">
-                    <a class="govuk-link govuk-link--no-visited-state" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
+                    {% if invite.isExpired %}
+                      <form method="post" action="{{ url('shared-space.resend-invite', {'invite-id': invite.id}) }}" novalidate>
+                        <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+                        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" data-module="govuk-button" data-cy="resend-invite" type="submit">
+                          Resend invite<span class="govuk-visually-hidden"> to {{ invite.fullName }}</span>
+                        </button>
+                      </form>
+                    {% else %}
+                      <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" data-module="govuk-button" href="{{ url('shared-space.revoke-invite', {'invite-id': invite.id}) }}">
+                        Revoke invite<span class="govuk-visually-hidden"> to {{ invite.fullName }}</span>
+                      </a>
+                    {% endif %}
                   </td>
                 </tr>
               {% endfor %}
             </tbody>
           </table>
+
+          {% if invites|filter(invite => invite.isExpired)|length > 0 %}
+            <p class="govuk-body">Details of invited members with an expired status will automatically be removed after 30 days.</p>
+          {% endif %}
         {% endif %}
       {% endif %}
 

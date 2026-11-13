@@ -12,6 +12,7 @@ use Application\Model\Service\SharedSpace\MemberNotInSharedSpaceException;
 use Application\Model\Service\SharedSpace\SharedSpaceNotFoundException;
 use Application\Model\Entity\MemberInvite;
 use DateTime;
+use DateTimeInterface;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Like;
@@ -535,6 +536,30 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
 
         return (int) $result->current();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function renewInvite(int $inviteId, string $sharedSpaceId, string $code, DateTimeInterface $expires): void
+    {
+        $sql = $this->dbWrapper->createSql();
+        $update = $sql
+            ->update(self::SHARED_SPACE_INVITES)
+            ->where([
+                'id'            => $inviteId,
+                'sharedSpaceId' => $sharedSpaceId,
+            ])
+            ->set([
+                'code'    => $code,
+                'expires' => $expires->format(DbWrapper::TIME_FORMAT),
+            ]);
+
+        $result = $sql->prepareStatementForSqlObject($update)->execute();
+
+        if ($result->getAffectedRows() !== 1) {
+            throw new InviteNotFoundException();
+        }
     }
 
     /**

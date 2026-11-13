@@ -260,6 +260,72 @@ final class SharedSpaceServiceTest extends TestCase
         $this->assertTrue($result);
     }
 
+    public function testResendInviteEmailsNewCodeAndReturnsInviteeName(): void
+    {
+        $inviter = new User([
+            'id' => 1,
+            'name' => ['first' => 'Inv', 'last' => 'Ite'],
+            'email' => ['address' => 'inv@example.com'],
+        ]);
+
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/resend-invite/5')
+            ->willReturn([
+                'firstNames' => 'Alt',
+                'fullName' => 'Alt Person',
+                'email' => 'alt@example.com',
+                'sharedSpaceName' => 'my space',
+                'inviteCode' => '87654321',
+                'expires' => '2026-11-20T10:00:00',
+            ]);
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with(new MailParameters('alt@example.com', SharedSpaceService::EMAIL_INVITE_MEMBER, [
+                'inviteeFirstName' => 'Alt',
+                'inviteeEmail' => 'alt@example.com',
+                'inviterFullName' => 'Inv Ite',
+                'inviterEmail' => 'inv@example.com',
+                'sharedSpaceName' => 'my space',
+                'joiningCode' => '87654321',
+                'expiryDate' => '20 November 2026',
+            ]));
+
+        $this->assertSame('Alt Person', $this->service->resendInvite($inviter, '5'));
+    }
+
+    public function testResendInviteReturnsNullWhenApiFails(): void
+    {
+        $this->client->method('httpPost')->willThrowException(new \RuntimeException('api down'));
+        $this->mailTransport->expects($this->never())->method('send');
+        $this->logger->expects($this->once())->method('error');
+
+        $this->assertNull($this->service->resendInvite(new User([]), '5'));
+    }
+
+    public function testResendInviteReturnsNullWhenEmailFails(): void
+    {
+        $inviter = new User([
+            'id' => 1,
+            'name' => ['first' => 'Inv', 'last' => 'Ite'],
+            'email' => ['address' => 'inv@example.com'],
+        ]);
+
+        $this->client->method('httpPost')->willReturn([
+            'firstNames' => 'Alt',
+            'fullName' => 'Alt Person',
+            'email' => 'alt@example.com',
+            'sharedSpaceName' => 'my space',
+            'inviteCode' => '87654321',
+            'expires' => '2026-11-20T10:00:00',
+        ]);
+        $this->mailTransport->method('send')->willThrowException(new \Exception('notify down'));
+        $this->logger->expects($this->once())->method('error');
+
+        $this->assertNull($this->service->resendInvite($inviter, '5'));
+    }
+
     public function testJoin(): void
     {
         $this->client->expects($this->once())

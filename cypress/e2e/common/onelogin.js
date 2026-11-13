@@ -143,6 +143,12 @@ When(/I log in through Onelogin as the newly created fixture user/, () => {
   });
 });
 
+When(`I log in through Onelogin as {string}`, (email) => {
+  cy.visit('/home');
+  cy.contains('Continue').click();
+  continueThroughMockOneLoginAs(email);
+});
+
 When(`I continue through mock One Login as the newly created fixture user`, () => {
   cy.get('@fixtureUser').then(({ email }) => {
     continueThroughMockOneLoginAs(email);

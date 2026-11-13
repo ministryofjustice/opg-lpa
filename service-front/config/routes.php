@@ -96,6 +96,7 @@ use App\Handler\PrivacyHandler;
 use App\Handler\RedirectToSignInHandler;
 use App\Handler\RegisterHandler;
 use App\Handler\ResendActivationEmailHandler;
+use App\Handler\ResendMemberInviteHandler;
 use App\Handler\ResetPasswordHandler;
 use App\Handler\RevokeMemberInviteHandler;
 use App\Handler\SessionExpiryHandler;
@@ -238,6 +239,8 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
         $app->route('/shared-space/invite', InviteMemberHandler::class, ['GET', 'POST'], 'shared-space.invite')
             ->setOptions(['sharedSpaceAllow' => ['admin']]);
         $app->route('/shared-space/revoke-invite/{invite-id:[0-9]+}', RevokeMemberInviteHandler::class, ['GET', 'POST'], 'shared-space.revoke-invite')
+            ->setOptions(['sharedSpaceAllow' => ['admin']]);
+        $app->post('/shared-space/resend-invite/{invite-id:[0-9]+}', ResendMemberInviteHandler::class, 'shared-space.resend-invite')
             ->setOptions(['sharedSpaceAllow' => ['admin']]);
     }
 
