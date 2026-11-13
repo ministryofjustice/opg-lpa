@@ -275,4 +275,41 @@ final class SharedSpaceServiceTest extends TestCase
 
         $this->assertEquals('my space', $result);
     }
+
+    public function testResendInvite(): void
+    {
+        $user = new User([
+            'id' => 1,
+            'name' => ['first' => 'Inv', 'last' => 'Ite'],
+            'email' => ['address' => 'inv@example.com'],
+        ]);
+
+        $this->client->expects($this->once())
+            ->method('httpPost')
+            ->with('/v2/shared-space/resend-invite/987')
+            ->willReturn([
+                'sharedSpaceName' => 'my space',
+                'inviteCode' => '12341234',
+                'expires' => '2024-12-11T12:11:10',
+                'firstNames' => 'a',
+                'lastName' => 'b',
+                'email' => 'you@example.com',
+            ]);
+
+        $this->mailTransport->expects($this->once())
+            ->method('send')
+            ->with(new MailParameters('you@example.com', SharedSpaceService::EMAIL_INVITE_MEMBER, [
+                'inviteeFirstName' => 'a',
+                'inviteeEmail' => 'you@example.com',
+                'inviterFullName' => 'Inv Ite',
+                'inviterEmail' => 'inv@example.com',
+                'sharedSpaceName' => 'my space',
+                'joiningCode' => '12341234',
+                'expiryDate' => '11 December 2024',
+            ]));
+
+        $result = $this->service->resendInvite($user, '987');
+
+        $this->assertEquals('a b', $result);
+    }
 }

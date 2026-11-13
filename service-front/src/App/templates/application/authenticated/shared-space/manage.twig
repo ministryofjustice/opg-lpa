@@ -6,6 +6,8 @@
 
 {% block content %}
   <div class="govuk-grid-row">
+    {{ macros.formErrorSummary(error) }}
+
     <div class="govuk-grid-column-full">
       {% if inviteSuccess or revokeSuccess or memberDeleted %}
         <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
@@ -41,38 +43,52 @@
         <a href="{{ url('shared-space.invite') }}" class="govuk-button app-use-standard">Invite a member</a>
 
         {% if invites|length > 0 %}
-          <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--m">Invited members</caption>
-            <thead class="govuk-table__head">
-              <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">Name</th>
-                <th scope="col" class="govuk-table__header">Email address</th>
-                <th scope="col" class="govuk-table__header">Status</th>
-                <th scope="col" class="govuk-table__header"></th>
-              </tr>
-            </thead>
-
-            <tbody class="govuk-table__body">
-              {% for invite in invites %}
+          <form method="post" novalidate>
+            <input type="hidden" name="__csrf" value="{{ csrfToken }}">
+            <table class="govuk-table">
+              <caption class="govuk-table__caption govuk-table__caption--m">Invited members</caption>
+              <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                  <td class="govuk-table__cell">
-                    {{ invite.fullName }}
-                  </td>
-                  <td class="govuk-table__cell">{{ invite.email }}</td>
-                  <td class="govuk-table__cell">
-                    {% if invite.isExpired %}
-                      Invite expired
-                    {% else %}
-                      Invite pending
-                    {% endif %}
-                  </td>
-                  <td class="govuk-table__cell">
-                    <a class="govuk-link govuk-link--no-visited-state" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
-                  </td>
+                  <th scope="col" class="govuk-table__header">Name</th>
+                  <th scope="col" class="govuk-table__header">Email address</th>
+                  <th scope="col" class="govuk-table__header">Status</th>
+                  <th scope="col" class="govuk-table__header"></th>
                 </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+              </thead>
+
+              {% set hasExpiredInvite = false %}
+              <tbody class="govuk-table__body">
+                {% for invite in invites %}
+                  <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                      {{ invite.fullName }}
+                    </td>
+                    <td class="govuk-table__cell">{{ invite.email }}</td>
+                    {% if invite.isExpired %}
+                      {% set hasExpiredInvite = true %}
+                      <td class="govuk-table__cell">
+                        Expired
+                      </td>
+                      <td class="govuk-table__cell">
+                        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" name="resend" value="{{ invite.id }}">Resend invite</button>
+                      </td>
+                    {% else %}
+                      <td class="govuk-table__cell">
+                        Pending
+                      </td>
+                      <td class="govuk-table__cell">
+                        <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
+                      </td>
+                    {% endif %}
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+
+          {% if hasExpiredInvite %}
+            <p class="govuk-body">Details of invited members with an expired status will automatically be removed after 30 days.</p>
+          {% endif %}
         {% endif %}
       {% endif %}
 
@@ -93,9 +109,7 @@
             <tr class="govuk-table__row">
               <td class="govuk-table__cell">
                 {% if member.userId === signedInUser.id %}
-                  <a class="govuk-link--no-visited-state" href="{{ url('user/about-you') }}">
-                    {{ member.name.first }} {{ member.name.last }}
-                  </a> (you)
+                  {{ member.name.first }} {{ member.name.last }} (you)
                 {% else %}
                   {% if signedInUserIsAdmin %}
                     <a class="govuk-link--no-visited-state" href="{{ url('shared-space/members/' ~ member.userId) }}">

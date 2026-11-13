@@ -289,6 +289,47 @@ class SharedSpaceService
         return true;
     }
 
+    public function resendInvite(User $inviter, string $inviteId): ?string
+    {
+        try {
+            $result = $this->client->httpPost('/v2/shared-space/resend-invite/' . $inviteId);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Resend invite failed', [
+                'exception' => $e,
+                'invite_id' => $inviteId,
+            ]);
+
+            throw $e;
+        }
+
+        $params = new MailParameters(
+            $result['email'],
+            self::EMAIL_INVITE_MEMBER,
+            [
+                'inviteeFirstName' => $result['firstNames'],
+                'inviteeEmail' => $result['email'],
+                'inviterFullName' => $inviter->getName()->getFirst() . ' ' . $inviter->getName()->getLast(),
+                'inviterEmail' => $inviter->getEmail()->getAddress(),
+                'sharedSpaceName' => $result['sharedSpaceName'],
+                'joiningCode' => $result['inviteCode'],
+                'expiryDate' => (new DateTime($result['expires']))->format('j F Y'),
+            ],
+        );
+
+        try {
+            $this->mailTransport->send($params);
+        } catch (Exception $e) {
+            $this->logger->error('Failed to send invite email', [
+                'invite_id' => $result['id'],
+                'exception' => $e
+            ]);
+
+            return null;
+        }
+
+        return $result['firstNames'] . ' ' . $result['lastName'];
+    }
+
     public function join(string $sharedSpaceName, string $accessCode, string $userEmail): string
     {
         try {

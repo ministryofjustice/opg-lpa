@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Application\Model\Entity;
 
+use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 
 readonly class MemberInvite
@@ -30,10 +32,11 @@ readonly class MemberInvite
         string $lastName,
         string $email,
         bool $isAdmin,
-        string $code,
-        DateTimeInterface $created,
-        DateTimeInterface $expires,
     ): MemberInvite {
+        $code = sprintf('%08d', random_int(0, 99999999));
+        $created = new DateTimeImmutable('now');
+        $expires = $created->add(DateInterval::createFromDateString('7 days'));
+
         return new MemberInvite(null, $userId, $sharedSpaceId, $firstNames, $lastName, $email, $isAdmin, $code, $created, $expires);
     }
 
