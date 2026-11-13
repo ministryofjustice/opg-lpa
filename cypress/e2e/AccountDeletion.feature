@@ -1,4 +1,4 @@
-@RequiresOneLogin
+@RequiresOneLogin @Remaining2
 Feature: Deleting an account that signs in with GOV.UK One Login
 
   Deleting a Make account leaves the user's GOV.UK One Login account alone: they are not signed

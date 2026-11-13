@@ -412,11 +412,22 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@StitchedHW or @StitchedPF or @StitchedClone"
 
 # Runs the "remaining" cypress tests - everything not covered by stitched suites or signup.
-# Mirrors the exclusion expression used in CI (workflow_merge_queue.yml cypress_tests_Remaining),
-# plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
-.PHONY: cypress-run-remaining
-cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
+# Mirrors the exclusion expression used in CI (workflow_pr.yml cypress_tests_Remaining*).
+# CI splits this into three parallel jobs (the three targets below); the three partitions are
+# disjoint and together equal the full expression, so cypress-run-remaining runs them in turn.
+CYPRESS_REMAINING_BASE_TAGS := not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping
+
+.PHONY: cypress-run-remaining cypress-run-remaining-1 cypress-run-remaining-2 cypress-run-remaining-3
+cypress-run-remaining: cypress-run-remaining-1 cypress-run-remaining-2 cypress-run-remaining-3
+
+cypress-run-remaining-1:
+	@${MAKE} cypress-run-tags tags="($(CYPRESS_REMAINING_BASE_TAGS)) and (@Onboarding or @SharedSpace)"
+
+cypress-run-remaining-2:
+	@${MAKE} cypress-run-tags tags="($(CYPRESS_REMAINING_BASE_TAGS)) and @Remaining2"
+
+cypress-run-remaining-3:
+	@${MAKE} cypress-run-tags tags="$(CYPRESS_REMAINING_BASE_TAGS) and not @Remaining2 and not @Onboarding and not @SharedSpace"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch
