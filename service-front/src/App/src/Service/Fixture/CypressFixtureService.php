@@ -143,7 +143,7 @@ class CypressFixtureService
         }
     }
 
-    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail, ?string $created): mixed
+    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail, ?string $created, bool $isAdmin = false): mixed
     {
         try {
             $userId = $this->authenticate($userEmail);
@@ -158,7 +158,7 @@ class CypressFixtureService
                     'firstNames' => $firstName,
                     'lastName' => $lastname,
                     'email' => $inviteEmail,
-                    'isAdmin' => false,
+                    'isAdmin' => $isAdmin,
                     'created' => $created,
                 ],
             );

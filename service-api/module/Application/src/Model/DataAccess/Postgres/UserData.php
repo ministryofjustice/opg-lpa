@@ -43,8 +43,18 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
                     ['invite_count' => new SqlExpression('COUNT("invites"."id")')],
                     Select::JOIN_LEFT,
                 )
+                ->join(
+                    ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+                    'members.userId = users.id',
+                    [
+                        'sharedSpaceId',
+                        'isSharedSpaceAdmin' => 'isAdmin',
+                        'isActiveInSharedSpace' => 'isActive',
+                    ],
+                    Select::JOIN_LEFT,
+                )
                 ->where($where)
-                ->group(['users.id'])
+                ->group(['users.id', 'members.id'])
                 ->limit(1);
 
             $statement = $sql->prepareStatementForSqlObject($select);
@@ -849,6 +859,9 @@ class UserData extends AbstractBase implements UserRepository\UserRepositoryInte
             'lastLoginAt' => $user['last_login'],
             'isProfessional' => $user['is_professional'],
             'isInvited' => $user['invite_count'] > 0,
+            'sharedSpaceId' => $user['sharedSpaceId'] ?? null,
+            'isSharedSpaceAdmin' => isset($user['isSharedSpaceAdmin']) ? (bool) $user['isSharedSpaceAdmin'] : null,
+            'isActiveInSharedSpace' => isset($user['isActiveInSharedSpace']) ? (bool) $user['isActiveInSharedSpace'] : null,
         ]);
 
         if (!empty($user['one_login_email'])) {
