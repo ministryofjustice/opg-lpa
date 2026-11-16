@@ -461,6 +461,48 @@ class SharedSpaceControllerTest extends MockeryTestCase
         $this->assertEquals(['a' => 'b'], $body);
     }
 
+    public function testInviteActionWithCreatedForCypressFixture()
+    {
+        $userId = 'my-user';
+        $sharedSpaceId = 'my-space';
+        $created = '2024-01-02T12:13:14+00:00';
+
+        $this->sharedSpaceService->shouldReceive('isAdmin')
+            ->with($sharedSpaceId, $userId)
+            ->andReturn(true);
+
+        $this->sharedSpaceService->shouldReceive('invite')
+            ->with(Mockery::on(function (MemberInvite $invite) use ($userId, $sharedSpaceId, $created): bool {
+                return $invite->userId === $userId
+                    && $invite->sharedSpaceId === $sharedSpaceId
+                    && $invite->firstNames === '1'
+                    && $invite->lastName === '2'
+                    && $invite->email === '3'
+                    && $invite->isAdmin
+                    && strlen($invite->code) === 8
+                    && $invite->created->format('c') === $created
+                    && $invite->expires->format('c') === '2024-01-09T12:13:14+00:00';
+            }))
+            ->andReturn(['a' => 'b']);
+
+        $this->makeRequest([
+            'userId' => $userId,
+            'sharedSpaceId' => $sharedSpaceId,
+        ], [
+            'firstNames' => '1',
+            'lastName' => '2',
+            'email' => '3',
+            'isAdmin' => true,
+            'created' => $created,
+        ]);
+        $result = $this->controller->inviteAction();
+
+        $this->assertInstanceOf(Json::class, $result);
+
+        $body = json_decode($result->getContent(), true);
+        $this->assertEquals(['a' => 'b'], $body);
+    }
+
     public function testInviteActionWhenUserAlreadyInSharedSpace()
     {
         $this->assertInviteActionExceptionMapsToApiProblem(

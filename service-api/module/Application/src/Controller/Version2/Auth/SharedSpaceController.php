@@ -190,14 +190,25 @@ class SharedSpaceController extends AbstractRestfulController
         $data = $this->processBodyContent($this->getRequest());
 
         try {
-            $response = $this->sharedSpaceService->invite(MemberInvite::create(
-                $result['userId'],
-                $result['sharedSpaceId'],
-                $data['firstNames'],
-                $data['lastName'],
-                $data['email'],
-                $data['isAdmin'],
-            ));
+            $response = $this->sharedSpaceService->invite(
+                isset($data['created'])
+                    ? MemberInvite::create(
+                        $result['userId'],
+                        $result['sharedSpaceId'],
+                        $data['firstNames'],
+                        $data['lastName'],
+                        $data['email'],
+                        $data['isAdmin'],
+                        $data['created'],
+                    ) : MemberInvite::create(
+                        $result['userId'],
+                        $result['sharedSpaceId'],
+                        $data['firstNames'],
+                        $data['lastName'],
+                        $data['email'],
+                        $data['isAdmin'],
+                    ),
+            );
         } catch (UserAlreadyInSharedSpaceException $e) {
             return new ApiProblem(StatusCodeInterface::STATUS_UNPROCESSABLE_ENTITY, 'user-already-in-shared-space');
         } catch (InviteAlreadyExistsException $e) {

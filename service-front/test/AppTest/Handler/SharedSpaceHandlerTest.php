@@ -192,6 +192,8 @@ class SharedSpaceHandlerTest extends TestCase
                 'currentRouteName' => null,
                 'csrfToken' => null,
                 'invitedMemberName' => null,
+                'memberUpdated' => false,
+                'updatedMemberName' => null,
                 'error' => $expectedError,
             ])
             ->willReturn('<html>manage shared space</html>');

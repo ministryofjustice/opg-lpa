@@ -136,12 +136,13 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $sharedSpaceId = (string) ($data['sharedSpaceId'] ?? '');
         $userEmail = (string) ($data['userEmail'] ?? '');
         $inviteEmail = (string) ($data['inviteEmail'] ?? '');
+        $created = isset($data['created']) ? (string) $data['created'] : null;
 
         if ($sharedSpaceId === '' || $userEmail === '' || $inviteEmail === '') {
             return new EmptyResponse(400);
         }
 
-        $result = $this->fixtureService->createInvite($sharedSpaceId, $userEmail, $inviteEmail);
+        $result = $this->fixtureService->createInvite($sharedSpaceId, $userEmail, $inviteEmail, $created);
 
         return new JsonResponse($result, 200);
     }

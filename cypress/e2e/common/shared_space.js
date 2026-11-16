@@ -55,6 +55,16 @@ function createInvite(sharedSpaceId, userEmail, inviteEmail) {
     .then((response) => response.body);
 }
 
+function createExpiredInvite(sharedSpaceId, userEmail, inviteEmail) {
+  return cy
+    .request({
+      method: 'POST',
+      url: '/testing/cypress-fixture/shared-space-invite',
+      body: { sharedSpaceId, userEmail, inviteEmail, created: '-8 days' },
+    })
+    .then((response) => response.body);
+}
+
 function createDeletionLog(email) {
   return cy.request({
     method: 'POST',
@@ -149,6 +159,12 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
         });
       });
     });
+  });
+});
+
+Given('I have sent an expired invite to {string}', (inviteEmail) => {
+  cy.get('@fixtureUser').then(({ sharedSpaceId, email }) => {
+    createExpiredInvite(sharedSpaceId, email, inviteEmail);
   });
 });
 
@@ -264,4 +280,16 @@ Then('I cannot see any links to manage members', () => {
   cy.contains('a', 'Fixture user').should('not.exist');
   cy.contains('a', 'Invite member').should('not.exist');
   cy.contains('a', 'Import LPAs from existing account').should('not.exist');
+});
+
+Then('I should see an expired invite for {string}', (inviteEmail) => {
+  cy.contains('tr', inviteEmail).within(() => {
+    cy.contains('Expired');
+  });
+});
+
+Then('I should see a pending invite for {string}', (inviteEmail) => {
+  cy.contains('tr', inviteEmail).within(() => {
+    cy.contains('Pending');
+  });
 });
