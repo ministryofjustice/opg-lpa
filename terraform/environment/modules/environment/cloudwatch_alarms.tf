@@ -141,7 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "front_4xx_anomaly" {
 
 resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   alarm_name          = "${var.environment_name}-pdf-queue-excess-items"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  alarm_actions       = compact([aws_sns_topic.cloudwatch_to_pagerduty_ops.arn, local.extended_support_sns_topic_arn])
   alarm_description   = "More than 10 items for 5 minutes in pdf queue"
   namespace           = "AWS/SQS"
   metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -149,7 +149,7 @@ resource "aws_cloudwatch_metric_alarm" "pdf_queue_excess_items" {
   dimensions = {
     QueueName = aws_sqs_queue.pdf_fifo_queue.name
   }
-  ok_actions          = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  ok_actions          = compact([aws_sns_topic.cloudwatch_to_pagerduty_ops.arn, local.extended_support_sns_topic_arn])
   period              = 60
   evaluation_periods  = 5
   datapoints_to_alarm = 5
@@ -173,7 +173,7 @@ resource "aws_cloudwatch_metric_alarm" "front_ddos_attack_external" {
   threshold           = "0"
   alarm_description   = "AWS Shield Advanced has detected a DDoS attack against Front ${var.environment_name}"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  alarm_actions       = compact([aws_sns_topic.cloudwatch_to_pagerduty_ops.arn, local.extended_support_sns_topic_arn])
   tags                = local.front_component_tag
   dimensions = {
     ResourceArn = aws_lb.front.arn
@@ -192,7 +192,7 @@ resource "aws_cloudwatch_metric_alarm" "admin_ddos_attack_external" {
   threshold           = "0"
   alarm_description   = "AWS Shield Advanced has detected a DDoS attack against Admin ${var.environment_name}"
   treat_missing_data  = "notBreaching"
-  alarm_actions       = [aws_sns_topic.cloudwatch_to_pagerduty_ops.arn]
+  alarm_actions       = compact([aws_sns_topic.cloudwatch_to_pagerduty_ops.arn, local.extended_support_sns_topic_arn])
   tags                = local.admin_component_tag
   dimensions = {
     ResourceArn = aws_lb.admin.arn
