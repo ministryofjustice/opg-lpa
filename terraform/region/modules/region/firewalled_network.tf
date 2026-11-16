@@ -10,10 +10,10 @@ module "network" {
   enable_dns_support                              = true
   flow_log_cloudwatch_log_group_retention_in_days = 400
   nat_gateway_egress_alarm_config = {
-    "alarm_actions" : [
+    "alarm_actions" : compact([
       aws_sns_topic.cloudwatch_to_account_ops_alerts.arn,
       local.extended_support_sns_topic_arn
-    ],
+    ]),
     "datapoints_to_alarm" : "5",
     "evaluation_periods" : "5",
     "threshold" : "900000"
