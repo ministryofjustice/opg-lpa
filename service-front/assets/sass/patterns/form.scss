@@ -59,3 +59,11 @@ form.js-PersonForm {
         }
 }
 
+
+// Conditional reveal without the default left border/indent, so its content
+// (e.g. inset text) lines up with the radio items above.
+.govuk-radios__conditional.app-conditional-flush {
+        margin-left: 0;
+        padding-left: 0;
+        border-left: 0;
+}

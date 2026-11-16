@@ -211,9 +211,9 @@ final class ClientTest extends TestCase
                 $this->callback(static function (array $context): bool {
                     return $context['error_code'] === 'API_CLIENT_MALFORMED_JSON'
                         && $context['status'] === 200
-                        && $context['bodyLength'] === 8
-                        && $context['jsonError'] !== 'No error'
-                        && $context['bodyPreview'] === 'not-json';
+                        && $context['body_length'] === 8
+                        && $context['json_error'] !== 'No error'
+                        && $context['body_preview'] === 'not-json';
                 })
             );
 
@@ -233,8 +233,8 @@ final class ClientTest extends TestCase
                 'Malformed JSON response from server',
                 $this->callback(static function (array $context) use ($body): bool {
                     // Truncated so applicant data cannot spill, with the true size kept.
-                    return strlen($context['bodyPreview']) === 200
-                        && $context['bodyLength'] === strlen($body);
+                    return strlen($context['body_preview']) === 200
+                        && $context['body_length'] === strlen($body);
                 })
             );
 

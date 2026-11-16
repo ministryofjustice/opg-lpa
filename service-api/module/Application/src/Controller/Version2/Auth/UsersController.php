@@ -6,6 +6,7 @@ use Application\Model\Service\Authentication\Service as AuthenticationService;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent as NoContentResponse;
+use Application\Model\Service\SharedSpace\NoOtherAdminException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service as UserService;
 use Fig\Http\Message\StatusCodeInterface;
@@ -120,6 +121,8 @@ class UsersController extends AbstractRestfulController
 
             // If we get here...
             return new ApiProblem(500, 'Unable to process request');
+        } catch (NoOtherAdminException) {
+            return new ApiProblem(StatusCodeInterface::STATUS_CONFLICT, 'no-other-admin');
         } catch (\Throwable $e) {
             $this->logger->error('Error deleting user', ['exception' => $e]);
 

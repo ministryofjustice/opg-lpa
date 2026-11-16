@@ -16,6 +16,7 @@ use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Like;
 use Laminas\Db\Sql\Predicate\Operator;
+use Laminas\Db\Sql\Predicate\Predicate;
 use Laminas\Db\Sql\Predicate\PredicateSet;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
@@ -441,6 +442,45 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
+    public function getInviteById(int $inviteId, string $sharedSpaceId): MemberInvite
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql->select()
+            ->from(['invite' => self::SHARED_SPACE_INVITES])
+            ->where(['invite.id' => $inviteId, 'invite.sharedSpaceId' => $sharedSpaceId])
+            ->limit(1);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult() || $result->count() === 0) {
+            throw new InviteNotFoundException();
+        }
+
+        $value = $result->current();
+
+        $invite = new MemberInvite(
+            id: (int) $value['id'],
+            userId: $value['invitedBy'],
+            sharedSpaceId: $value['sharedSpaceId'],
+            firstNames: $value['firstNames'],
+            lastName: $value['lastName'],
+            email: $value['email'],
+            isAdmin: $value['isAdmin'],
+            code: $value['code'],
+            created: new DateTime($value['created']),
+            expires: new DateTime($value['expires']),
+        );
+
+        if ($invite->canBeDeleted()) {
+            throw new InviteNotFoundException();
+        }
+
+        return $invite;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function getInvites(string $sharedSpaceId): array
     {
         $result = $this->dbWrapper->select(self::SHARED_SPACE_INVITES, ['sharedSpaceId' => $sharedSpaceId]);
@@ -451,7 +491,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
 
         $invites = [];
         foreach ($result as $value) {
-            $invites[] = new MemberInvite(
+            $invite = new MemberInvite(
                 id: $value['id'],
                 userId: $value['invitedBy'],
                 sharedSpaceId: $value['sharedSpaceId'],
@@ -463,6 +503,10 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
                 created: new DateTime($value['created']),
                 expires: new DateTime($value['expires']),
             );
+
+            if (!$invite->canBeDeleted()) {
+                $invites[] = $invite;
+            }
         }
 
         return $invites;
@@ -539,12 +583,12 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
     /**
      * @inheritDoc
      */
-    public function deleteInvite(int $inviteId): void
+    public function deleteInvite(int $inviteId, string $sharedSpaceId): void
     {
         $sql = $this->dbWrapper->createSql();
         $delete = $sql
             ->delete(self::SHARED_SPACE_INVITES)
-            ->where(['id' => $inviteId]);
+            ->where(['id' => $inviteId, 'sharedSpaceId' => $sharedSpaceId]);
 
         try {
             $sql->prepareStatementForSqlObject($delete)->execute();
@@ -600,6 +644,26 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
         }
 
         return $result->count();
+    }
+
+    public function hasOtherAdmin(string $sharedSpaceId, string $userId): bool
+    {
+        $sql = $this->dbWrapper->createSql();
+        $select = $sql->select(self::SHARED_SPACE_MEMBERS)
+            ->where((new Predicate())
+                    ->notEqualTo('userId', $userId)
+                    ->equalTo('sharedSpaceId', $sharedSpaceId)
+                    ->equalTo('isAdmin', true))
+            ->columns(['id'])
+            ->limit(1);
+
+        $result = $sql->prepareStatementForSqlObject($select)->execute();
+
+        if (!$result->isQueryResult()) {
+            return false;
+        }
+
+        return $result->count() > 0;
     }
 
     /**

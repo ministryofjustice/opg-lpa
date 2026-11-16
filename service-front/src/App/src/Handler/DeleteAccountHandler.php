@@ -36,7 +36,19 @@ class DeleteAccountHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
-            if (!$this->userService->delete()) {
+            $result = $this->userService->delete();
+
+            if ($result === 'no-other-admin') {
+                return new HtmlResponse($this->renderer->render(
+                    'application/authenticated/delete/cannot-delete.twig',
+                    array_merge(
+                        ['sharedSpaceName' => $this->sharedSpaceName($request)],
+                        $this->getTemplateVariables($request)
+                    )
+                ));
+            }
+
+            if ($result !== true) {
                 $html = $this->renderer->render(
                     'error/500.twig',
                     $this->getTemplateVariables($request)
@@ -50,11 +62,7 @@ class DeleteAccountHandler implements RequestHandlerInterface
 
         $memberCount = $this->sharedSpacesEnabled ? $this->sharedSpaceService->getMemberCount() : null;
 
-        $sharedSpaceName = null;
-        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
-        if ($this->oneLoginEnabled && $memberCount > 1 && $identity instanceof User) {
-            $sharedSpaceName = $this->sharedSpaceService->getMember($identity->id())?->getSharedSpaceName();
-        }
+        $sharedSpaceName = $this->oneLoginEnabled && $memberCount > 1 ? $this->sharedSpaceName($request) : null;
 
         $html = $this->renderer->render(
             'application/authenticated/delete/index.twig',
@@ -69,5 +77,14 @@ class DeleteAccountHandler implements RequestHandlerInterface
         );
 
         return new HtmlResponse($html);
+    }
+
+    private function sharedSpaceName(ServerRequestInterface $request): ?string
+    {
+        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
+
+        return $identity instanceof User
+            ? $this->sharedSpaceService->getMember($identity->id())?->getSharedSpaceName()
+            : null;
     }
 }

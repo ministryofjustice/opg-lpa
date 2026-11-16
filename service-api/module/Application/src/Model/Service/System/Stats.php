@@ -36,6 +36,8 @@ class Stats extends AbstractService
      */
     public function generate(): bool
     {
+        $this->getLogger()->info('Stats generation started');
+
         $stats = [];
 
         $startGeneration = microtime(true);
@@ -120,6 +122,10 @@ class Stats extends AbstractService
 
         // Add the new data
         $this->getStatsRepository()->insert($stats);
+
+        $this->getLogger()->info('Stats generation completed', [
+            'generation_time_ms' => $stats['generationTimeInMs'],
+        ]);
 
         return true;
     }

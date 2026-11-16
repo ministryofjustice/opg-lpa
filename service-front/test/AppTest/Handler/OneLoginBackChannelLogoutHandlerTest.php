@@ -12,13 +12,16 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\ServerRequest;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use MakeShared\Logging\MetricsLogger;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use RuntimeException;
 
 class OneLoginBackChannelLogoutHandlerTest extends TestCase
 {
     private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
+    private MetricsLogger&MockObject $metrics;
     private SignedOutSubjects&MockObject $signedOutSubjects;
     private OneLoginBackChannelLogoutHandler $handler;
 
@@ -34,12 +37,14 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
         $this->oneLoginService   = $this->createMock(OneLoginService::class);
         $this->logger            = $this->createMock(LoggerInterface::class);
+        $this->metrics           = $this->createMock(MetricsLogger::class);
         $this->signedOutSubjects = $this->createMock(SignedOutSubjects::class);
 
         $this->handler = new OneLoginBackChannelLogoutHandler(
             $this->oneLoginService,
             $this->signedOutSubjects,
             $this->logger,
+            $this->metrics,
         );
     }
 
@@ -58,19 +63,16 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
     }
 
     /**
-     * One Login confirmed they expect 200 even for a rejected token, the rejection is still logged.
+     * One Login confirmed they expect 200 even for a rejected token.
      */
-    public function testReturns200AndLogsWhenTheTokenIsRejected(): void
+    public function testReturns200WhenTheTokenIsRejected(): void
     {
         $this->oneLoginService
             ->expects($this->once())
             ->method('backChannelLogout')
             ->willReturn(null);
 
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'not_accepted']);
+        $this->metrics->expects($this->never())->method('userFailedToLogout');
 
         $response = $this->handler->handle($this->request(['logout_token' => 'forged']));
 
@@ -82,8 +84,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
     {
         $this->oneLoginService->method('backChannelLogout')->willReturn(self::SIGN_OUT);
 
-        $this->logger->expects($this->never())->method('info');
-        $this->logger->expects($this->never())->method('warning');
+        $this->metrics->expects($this->never())->method('userFailedToLogout');
 
         $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
     }
@@ -92,10 +93,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
     {
         $this->oneLoginService->expects($this->never())->method('backChannelLogout');
 
-        $this->logger
-            ->expects($this->once())
-            ->method('info')
-            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'missing_logout_token']);
+        $this->metrics->expects($this->once())->method('userFailedToLogout')->with('missing_logout_token');
 
         $response = $this->handler->handle($this->request([]));
 
@@ -107,10 +105,7 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
     {
         $this->oneLoginService->expects($this->never())->method('backChannelLogout');
 
-        $this->logger
-            ->expects($this->once())
-            ->method('info')
-            ->with('auth.onelogin.backchannel_logout_rejected', ['reason' => 'missing_logout_token']);
+        $this->metrics->expects($this->once())->method('userFailedToLogout')->with('missing_logout_token');
 
         $response = $this->handler->handle($this->request(['logout_token' => '   ']));
 
@@ -127,6 +122,11 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
             ->expects($this->once())
             ->method('backChannelLogout')
             ->willThrowException(new ApiException(new JsonResponse(['detail' => 'API unavailable'], 500)));
+
+        $this->metrics
+            ->expects($this->once())
+            ->method('userFailedToLogout')
+            ->with('backchannel_logout_failed', $this->arrayHasKey('message'), LogLevel::ERROR);
 
         $response = $this->handler->handle($this->request(['logout_token' => 'a.logout.token']));
 
@@ -169,12 +169,12 @@ class OneLoginBackChannelLogoutHandlerTest extends TestCase
 
     private function request(array $body): ServerRequest
     {
-        return (new ServerRequest(
+        return new ServerRequest(
             serverParams: [],
             uploadedFiles: [],
             uri: '/auth/onelogin/backchannel-logout',
             method: 'POST',
             headers: ['Content-Type' => 'application/x-www-form-urlencoded'],
-        ))->withParsedBody($body);
+        )->withParsedBody($body);
     }
 }

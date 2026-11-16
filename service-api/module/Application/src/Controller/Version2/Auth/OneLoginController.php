@@ -6,8 +6,10 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Model\Service\OneLogin\OneLoginAuthenticationException;
 use Application\Model\Service\OneLogin\Service as OneLoginService;
 use InvalidArgumentException;
+use Laminas\Mvc\Controller\AbstractRestfulController;
 use Laminas\View\Model\JsonModel;
-use MakeShared\Logging\LoggerTrait;
+use MakeShared\Logging\MetricsLogger;
+use Psr\Log\LogLevel;
 use MakeShared\OneLogin\UserType;
 use MakeShared\Telemetry\TelemetryEventManager;
 
@@ -15,14 +17,12 @@ use MakeShared\Telemetry\TelemetryEventManager;
  * @psalm-suppress PropertyNotSetInConstructor
  * @psalm-suppress DeprecatedClass
  */
-class OneLoginController extends AbstractAuthController
+class OneLoginController extends AbstractRestfulController
 {
-    use LoggerTrait;
-
-    protected function getService(): OneLoginService
-    {
-        /** @var OneLoginService $service */
-        return $this->service;
+    public function __construct(
+        private readonly OneLoginService $oneLoginService,
+        private readonly MetricsLogger $metrics,
+    ) {
     }
 
     /**
@@ -39,7 +39,7 @@ class OneLoginController extends AbstractAuthController
 
         TelemetryEventManager::triggerStart('OneLoginController.startAction');
 
-        $result = $this->getService()->createAuthenticationRequest($redirectUrl);
+        $result = $this->oneLoginService->createAuthenticationRequest($redirectUrl);
 
         TelemetryEventManager::triggerStop();
 
@@ -83,7 +83,7 @@ class OneLoginController extends AbstractAuthController
         TelemetryEventManager::triggerStart('OneLoginController.callbackAction');
 
         try {
-            $result = $this->getService()->handleCallback(
+            $result = $this->oneLoginService->handleCallback(
                 $code,
                 $state,
                 $nonce,
@@ -91,7 +91,7 @@ class OneLoginController extends AbstractAuthController
                 $redirectUri,
             );
         } catch (OneLoginAuthenticationException $e) {
-            $this->getLogger()->error('auth.onelogin.callback_failed', ['reason' => $e->reason()]);
+            $this->metrics->userFailedToLogin($e->reason(), [], LogLevel::ERROR);
             return new ApiProblem(401, 'One Login authentication failed');
         } finally {
             TelemetryEventManager::triggerStop();
@@ -119,7 +119,7 @@ class OneLoginController extends AbstractAuthController
         TelemetryEventManager::triggerStart('OneLoginController.linkAction');
 
         try {
-            $result = $this->getService()->linkExistingAccount(
+            $result = $this->oneLoginService->linkExistingAccount(
                 $body['username'],
                 $body['password'],
                 $body['oneLoginSub'],
@@ -160,7 +160,7 @@ class OneLoginController extends AbstractAuthController
         TelemetryEventManager::triggerStart('OneLoginController.logoutAction');
 
         try {
-            $url = $this->getService()->createLogoutRequest($idToken, $postLogoutRedirectUri);
+            $url = $this->oneLoginService->createLogoutRequest($idToken, $postLogoutRedirectUri);
         } finally {
             TelemetryEventManager::triggerStop();
         }
@@ -185,7 +185,7 @@ class OneLoginController extends AbstractAuthController
         TelemetryEventManager::triggerStart('OneLoginController.backChannelLogoutAction');
 
         try {
-            $result = $this->getService()->handleBackChannelLogout($logoutToken);
+            $result = $this->oneLoginService->handleBackChannelLogout($logoutToken);
         } finally {
             TelemetryEventManager::triggerStop();
         }
@@ -200,7 +200,7 @@ class OneLoginController extends AbstractAuthController
      */
     public function jwksAction(): JsonModel
     {
-        return new JsonModel($this->getService()->publicJwks());
+        return new JsonModel($this->oneLoginService->publicJwks());
     }
 
     /**
@@ -226,7 +226,7 @@ class OneLoginController extends AbstractAuthController
         TelemetryEventManager::triggerStart('OneLoginController.createAction');
 
         try {
-            $result = $this->getService()->createAndLinkAccount(
+            $result = $this->oneLoginService->createAndLinkAccount(
                 $body['oneLoginSub'],
                 $body['oneLoginEmail'],
                 $userType,

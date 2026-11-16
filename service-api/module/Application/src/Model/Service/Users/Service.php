@@ -2,35 +2,37 @@
 
 namespace Application\Model\Service\Users;
 
-use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryTrait;
+use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserInterface;
 use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\ApiProblem\ValidationApiProblem;
 use Application\Library\MillisecondDateTime;
-use Application\Model\DataAccess\Repository\User\LogRepositoryTrait;
-use Application\Model\DataAccess\Repository\User\UserRepositoryTrait;
-use Application\Model\Service\AbstractService;
+use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
+use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\Applications\Service as ApplicationService;
 use Application\Model\Service\DataModelEntity;
 use Application\Model\Service\EntityInterface;
 use Application\Model\Service\PasswordValidatorTrait;
-use Application\Model\Service\TokenGenerationTrait;
 use MakeShared\DataModel\User\User as ProfileUserModel;
+use MakeShared\Logging\MetricsLogger;
 use Laminas\Validator\EmailAddress as EmailAddressValidator;
+use Psr\Log\LoggerInterface;
 use Random\RandomException;
 
-class Service extends AbstractService
+class Service
 {
-    use ApplicationRepositoryTrait;
-    use LogRepositoryTrait;
     use PasswordValidatorTrait;
-    use TokenGenerationTrait;
-    use UserRepositoryTrait;
 
-    /**
-     * @var ApplicationService
-     */
-    private $applicationsService;
+    public function __construct(
+        private readonly MetricsLogger $metrics,
+        private readonly LoggerInterface $logger,
+        private readonly UserRepositoryInterface $userRepository,
+        private readonly LogRepositoryInterface $logRepository,
+        private readonly ApplicationRepositoryInterface $applicationRepository,
+        private readonly ApplicationService $applicationsService,
+        private readonly bool $useHashTokens = false,
+    ) {
+    }
 
     /**
      * @param string $username
@@ -47,7 +49,7 @@ class Service extends AbstractService
         }
 
         //  Check the username isn't already used...
-        $user = $this->getUserRepository()->getByUsername($username);
+        $user = $this->userRepository->getByUsername($username);
 
         if (!is_null($user)) {
             return 'username-already-exists';
@@ -64,9 +66,9 @@ class Service extends AbstractService
             // Create a 32 character user id and activation token.
             $userId = bin2hex(random_bytes(16));
 
-            $activationToken = $this->makeToken($username);
+            $activationToken = ($this->useHashTokens ? sha1($username) : make_token());
 
-            $created = $this->getUserRepository()->create($userId, [
+            $created = $this->userRepository->create($userId, [
                 'identity'              => $username,
                 'active'                => false,
                 'activation_token'      => $activationToken,
@@ -77,7 +79,7 @@ class Service extends AbstractService
             ]);
         } while (!$created);
 
-        $this->log('info', 'User account created', [
+        $this->logger->log('info', 'User account created', [
             'event'   => 'auth.account.created',
             'user_id' => $userId,
         ]);
@@ -94,17 +96,17 @@ class Service extends AbstractService
      */
     public function activate(#[\SensitiveParameter] string $token): bool|string
     {
-        $result = $this->getUserRepository()->activate($token);
+        $result = $this->userRepository->activate($token);
 
         if (is_null($result) || $result === false) {
-            if ($this->getUserRepository()->activationTokenExists($token)) {
+            if ($this->userRepository->activationTokenExists($token)) {
                 return 'account-already-activated';
             }
 
             return 'account-not-found';
         }
 
-        $this->log('info', 'User account activated', [
+        $this->logger->log('info', 'User account activated', [
             'event' => 'auth.account.activated',
         ]);
 
@@ -117,13 +119,13 @@ class Service extends AbstractService
      */
     public function fetch(string $id): ?EntityInterface
     {
-        $user = $this->getUserRepository()->getProfile($id);
+        $user = $this->userRepository->getProfile($id);
 
         if (!$user instanceof ProfileUserModel) {
             return null;
         }
 
-        $lpaCount = $this->getApplicationRepository()->count(['user' => $user->getId()]);
+        $lpaCount = $this->applicationRepository->count(['user' => $user->getId()]);
         $user->setNumberOfLpas($lpaCount);
 
         return new DataModelEntity($user);
@@ -172,19 +174,21 @@ class Service extends AbstractService
         $this->applicationsService->deleteAll($id);
 
         //  Get the user data before we attempt to delete it
-        $user = $this->getUserRepository()->getById($id);
+        $user = $this->userRepository->getById($id);
 
         if (!is_null($user)) {
-            $result = $this->getUserRepository()->delete($id);
+            $result = $this->userRepository->delete($id);
 
             if ($result === true) {
                 //  Record the account deletion in the log
-                $this->getLogRepository()->addLog([
+                $this->logRepository->addLog([
                     'identity_hash' => $this->hashIdentity($user->username()),
                     'type'          => 'account-deleted',
                     'reason'        => $reason,
                     'loggedAt'      => new MillisecondDateTime(),
                 ]);
+
+                $this->metrics->userDeleted($reason, $id);
             }
         }
 
@@ -213,7 +217,7 @@ class Service extends AbstractService
         // Protect these values from the client setting them manually.
         unset($data['id'], $data['email'], $data['createdAt'], $data['updatedAt']);
 
-        $user = $this->getUserRepository()->getProfile($id);
+        $user = $this->userRepository->getProfile($id);
 
         $new = false;
 
@@ -229,7 +233,7 @@ class Service extends AbstractService
             $user = $user->toArray();
         }
 
-        $authUser = $this->getUserRepository()->getById($id);
+        $authUser = $this->userRepository->getById($id);
         if ($authUser instanceof UserInterface) {
             $data['email'] = [
                 'address' => $authUser->contactEmail()
@@ -249,7 +253,7 @@ class Service extends AbstractService
             }
         }
 
-        $this->getUserRepository()->saveProfile($user);
+        $this->userRepository->saveProfile($user);
 
         return $user;
     }
@@ -271,13 +275,13 @@ class Service extends AbstractService
             return false;
         }
 
-        $lpa = $this->getApplicationRepository()->getById($lpaId);
+        $lpa = $this->applicationRepository->getById($lpaId);
 
         if ($lpa === null || empty($lpa['user'])) {
             return false;
         }
 
-        $user = $this->getUserRepository()->getById($lpa['user']);
+        $user = $this->userRepository->getById($lpa['user']);
 
         if ($user === null) {
             return false;
@@ -294,7 +298,7 @@ class Service extends AbstractService
      */
     public function searchById(string $id): bool|array
     {
-        $user = $this->getUserRepository()->getById($id);
+        $user = $this->userRepository->getById($id);
 
         if ($user === null) {
             return false;
@@ -309,12 +313,12 @@ class Service extends AbstractService
      */
     public function searchByUsername(#[\SensitiveParameter] string $username): bool|array
     {
-        $user = $this->getUserRepository()->getByUsername($username);
+        $user = $this->userRepository->getByUsername($username);
 
         if (is_null($user)) {
             //  Check if user has been deleted
             $identityHash = $this->hashIdentity($username);
-            $deletionLog = $this->getLogRepository()->getLogByIdentityHash($identityHash);
+            $deletionLog = $this->logRepository->getLogByIdentityHash($identityHash);
 
             if (is_null($deletionLog)) {
                 return false;
@@ -340,7 +344,7 @@ class Service extends AbstractService
     {
         $identityHash = $this->hashIdentity($username);
 
-        return $this->getLogRepository()->deleteLogsByIdentityHash($identityHash) > 0;
+        return $this->logRepository->deleteLogsByIdentityHash($identityHash) > 0;
     }
 
     /**
@@ -353,20 +357,11 @@ class Service extends AbstractService
      */
     public function matchUsers(string $query, array $options = []): array
     {
-        $matches = $this->getUserRepository()->matchUsers($query, $options);
+        $matches = $this->userRepository->matchUsers($query, $options);
 
         return [
             'results' => array_map(fn ($user) => $user->toArray(), $matches['results']),
             'total' => $matches['total'],
         ];
-    }
-
-    /**
-     * @param ApplicationService $applicationsService
-     * @psalm-suppress PossiblyUnusedMethod
-     */
-    public function setApplicationsService(ApplicationService $applicationsService): void
-    {
-        $this->applicationsService = $applicationsService;
     }
 }

@@ -139,6 +139,11 @@ pdf-composer-why:
 shared-composer-install:
 	@docker compose run -T --rm composer-shared install --prefer-dist --no-interaction --no-scripts
 
+# use make shared-composer-update PACKAGE=phpunit\/phpunit
+.PHONY: shared-composer-update
+shared-composer-update:
+	@docker run --rm -v `pwd`/shared/:/app/ composer:${COMPOSER_VERSION} composer update $(PACKAGE) --prefer-dist --no-interaction --no-scripts
+
 .PHONY: all-composer-install
 all-composer-install:
 	${MAKE} -j front-composer-install pdf-composer-install api-composer-install admin-composer-install shared-composer-install

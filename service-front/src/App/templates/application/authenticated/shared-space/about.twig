@@ -8,26 +8,27 @@
     <div class="govuk-grid-column-two-thirds">
       <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
 
-      <p class="govuk-body">A shared space means that you and other authorised users have access to all the LPAs you’ve each created, both before and after joining it. </p>
-      <p class="govuk-body">This is particularly useful for organisations, such as charities or legal professionals, that create lots of LPAs on behalf of the people they help.</p>
+      <p class="govuk-body">A shared space means that you and other authorised users have access  to view and edit all the LPAs you’ve each made, both before and after joining it.</p>
+      <p class="govuk-body">This is particularly useful for organisations, such as charities or legal professionals, that make lots of LPAs on behalf of the people they help.</p>
       <p class="govuk-body">You can become a member of a shared space by either creating or joining one.</p>
-
-      <h2 class="govuk-heading-m">Creating a shared space</h2>
-
-      <p class="govuk-body">You can create and name a shared space yourself and invite other users to join it. </p>
-      <p class="govuk-body">You also choose the level of access each user is given. As the person creating the shared space, you would automatically have the highest level of access - you’d be an ‘admin’.</p>
-
-      <h2 class="govuk-heading-m">Joining a shared space</h2>
-
-      <p class="govuk-body">You can join a shared space if you’ve received an email inviting you to do so. You’ll need to enter the name of the shared space and the 8 digit code that are included in the email.</p>
 
       <div class="govuk-inset-text">
         <p class="govuk-body">Before creating or joining a shared space, be aware that</p>
         <ul class="govuk-list govuk-list--bullet">
+          <li>any LPAs you’ve already made, and any you make in future, will belong to the shared space</li>
           <li>your account will only let you be a member of one shared space at a time</li>
-          <li>if you choose to leave a shared space you’d need to delete your account.  The LPAs you created or worked on will remain available to the users who still have access to the shared space</li>
+          <li>if you choose to leave a shared space you’d need to delete your account. The LPAs you created or worked on will remain available to the users who still have access to the shared space</li>
         </ul>
       </div>
+
+      <h2 class="govuk-heading-m">Creating a shared space</h2>
+
+      <p class="govuk-body">You can create and name a shared space.</p>
+      <p class="govuk-body">As the person creating the shared space, you'd be an administrator, or 'admin'. Admins manage who is a member of the shared space and can choose which other members can be admins.</p>
+
+      <h2 class="govuk-heading-m">Joining a shared space</h2>
+
+      <p class="govuk-body">You can join a shared space if you’ve received an email inviting you to do so. You’ll need to enter the name of the shared space and the 8-digit code that are included in the email.</p>
 
       <div class="govuk-button-group">
         <a class="govuk-button app-use-standard" href="{{ url('shared-space/make') }}">Create a shared space</a>

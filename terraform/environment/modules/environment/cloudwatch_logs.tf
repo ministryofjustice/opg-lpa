@@ -15,7 +15,7 @@ resource "aws_cloudwatch_query_definition" "error_insight_query" {
   log_group_names = [aws_cloudwatch_log_group.application_logs.name]
 
   query_string = <<-EOF
-  fields @timestamp, service_name, level, msg, trace_id, user_id, http_method
+  fields @timestamp, service_name, level, msg, trace_id, http_method
     |filter level in ['ERROR', 'CRITICAL']
     |filter ispresent (trace_id)
     |stats count() as error_count,
@@ -32,7 +32,7 @@ resource "aws_cloudwatch_query_definition" "all_error_logs_query" {
   log_group_names = [aws_cloudwatch_log_group.application_logs.name]
 
   query_string = <<-EOF
-  fields @timestamp, service_name, level, msg, trace_id, user_id, http_method
+  fields @timestamp, service_name, level, msg, trace_id, extra.logged_in_user_id, http_method
     |filter level in ['ERROR', 'CRITICAL']
     |limit 10000
   EOF

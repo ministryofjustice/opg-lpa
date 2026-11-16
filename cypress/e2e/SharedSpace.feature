@@ -61,30 +61,32 @@ Feature: Shared Space
     And "Member 1" permissions should be set to "admin"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I uncheck checkbox labelled "Admin"
+    When I uncheck checkbox labelled "Make this member an admin"
     And I click element marked "Save"
     Then I should be on "/shared-space"
+    And I see a success notification with content "Member 1 has been updated"
     And "Member 1" permissions should be set to "member"
-    When I click element marked "Member 1"
+    When I click link "Member 1"
     Then I should be on "/shared-space/members/"
-    When I check checkbox labelled "Admin"
+    When I check checkbox labelled "Make this member an admin"
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" permissions should be set to "admin"
+    And I see a success notification with content "Member 1 has been updated"
 
   Scenario: Can invite a member to a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
+    And I see a success notification with content "An invite has been sent to John Smith"
 
   Scenario: Can not invite a member to a shared space when already invited or already a member
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -92,23 +94,23 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "Member" into field labelled "First names"
+    When I type "Member" into field labelled "First name"
     And I type "One" into field labelled "Last name"
     And I type the email of the added member into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space/invite"
     And I see "Email address belongs to an active member of this shared space -– enter a different email address" in the page text
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
-    When I click element marked "Invite member"
+    And I see a success notification with content "An invite has been sent to John Smith"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
@@ -120,19 +122,30 @@ Feature: Shared Space
     And I log in as the newly created fixture user
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
-    When I click element marked "Invite member"
+    When I click element marked "Invite a member"
     Then I should be on "/shared-space/invite"
-    When I type "John" into field labelled "First names"
+    When I type "John" into field labelled "First name"
     And I type "Smith" into field labelled "Last name"
     And I type "john.smith@example.com" into field labelled "Email"
     Then I submit the form
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite sent"
+    And I see a success notification with content "An invite has been sent to John Smith"
     When I click element marked "Revoke invite"
     Then I should be on "/shared-space/revoke-invite/"
     Then I submit the form
     Then I should be on "/shared-space"
     And I see a success notification with content "Invite revoked"
+
+  Scenario: Can resend a members invite
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And I have sent an expired invite to "expired@example.com"
+    And I log in as the newly created fixture user
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    Then I should see an expired invite for "expired@example.com"
+    When I click element marked "Resend invite"
+    Then I should see a pending invite for "expired@example.com"
+    And I see a success notification with content "An invite has been sent to John Smith"
 
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -144,9 +157,10 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I select radio labelled "Suspend access to this shared space"
+    When I select radio labelled "Suspended - member cannot access this shared space"
     And I click element marked "Save"
     Then I should be on "/shared-space"
+    And I see a success notification with content "Member 1 has been updated"
     And "Member 1" status should be "suspended"
     And I log out
 
@@ -160,7 +174,7 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I select radio labelled "Allow access to this shared space"
+    When I select radio labelled "Active - member can access this shared space"
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "active"
@@ -201,7 +215,7 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I click link "Delete user"
+    When I click link "Remove member - find out more"
     Then I should be on page matching "/shared-space/members/.+/delete"
     Then I click button "Delete"
     Then I should be on "/shared-space"
@@ -224,6 +238,18 @@ Feature: Shared Space
     And I see "Shared space members" in the page text
     And I cannot see any links to manage members
 
+  Scenario: A non-admin member can delete their account when the shared space has an admin
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And the shared space has a member called "Member 1" who is a "member"
+    And I log in as the member added to the shared space
+    Then I should be on "/shared-space/dashboard"
+    When I click link "Your details"
+    Then I should be on "/user/about-you"
+    When I go to delete my account
+    Then I should be on "/user/delete"
+    When I confirm deleting my account
+    Then I should be on "/deleted"
+
   Scenario: Deleting the last member of a shared space deletes the shared space
     Given I check whether One Login is enabled
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -245,6 +271,6 @@ Feature: Shared Space
     When I click link "Your details"
     And I click link "Deleting your account - find out more"
     Then I should be on "/user/delete"
-    And I see "The LPAs belong to the shared space Example Organisation." in the page text
+    And I see "The LPAs belong to the shared space Example Organisation and will still be available to its remaining members." in the page text
     When I click link "Return to your details"
     Then I should be on "/user/about-you"

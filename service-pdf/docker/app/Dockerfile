@@ -11,7 +11,7 @@ RUN adduser -D -g '' appuser && \
 RUN apk add --upgrade --no-cache apk-tools
 RUN apk upgrade --no-cache
 # TODO Remove this once alpine upgrade available as it patches a vulnerability
-RUN apk update && apk add --upgrade "glib==2.86.5-r0" "zlib==1.4-r0" "tiff==4.7.2-r0" "libexpat==2.10.0-r0"
+RUN apk update && apk add --upgrade "glib==2.86.5-r0" "zlib==1.4-r0" "tiff==4.7.2-r0" "libexpat==2.10.0-r0" "krb5-libs==1.22.3-r0"
 
 RUN apk update \
     && apk add --no-cache openjdk8-jre libpng \

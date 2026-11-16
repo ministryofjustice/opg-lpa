@@ -85,7 +85,14 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
                 ['status', $statusElement],
             ]);
 
-        $this->renderer->method('render')->willReturn('<html>member</html>');
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/shared-space/manage-member.twig',
+                $this->callback(fn ($params) => $params['memberActive'] === true)
+            )
+            ->willReturn('<html>member</html>');
 
         $response = $this->handler->handle($this->createRequest());
 
@@ -152,7 +159,10 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
+        $this->assertSame(
+            '/shared-space?member=updated&updatedMemberName=Member+One',
+            $response->getHeaderLine('Location')
+        );
     }
 
     public function testPostWithoutPermissionsKeyTreatsMemberAsNotAdmin(): void
@@ -188,7 +198,10 @@ class ManageSharedSpaceMemberHandlerTest extends TestCase
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertSame('/shared-space', $response->getHeaderLine('Location'));
+        $this->assertSame(
+            '/shared-space?member=updated&updatedMemberName=Member+One',
+            $response->getHeaderLine('Location')
+        );
     }
 
     public function testPostWhenUpdateFailsShowsError(): void

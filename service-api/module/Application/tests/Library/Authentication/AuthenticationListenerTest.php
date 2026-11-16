@@ -80,6 +80,7 @@ class AuthenticationListenerTest extends MockeryTestCase
         $authenticationResult->shouldReceive('getCode')->andReturn(Result::SUCCESS)->once();
 
         $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
+        $this->authService->shouldReceive('getIdentity')->andReturn(null)->once();
 
         $this->serviceManager->shouldReceive('get')->with(Service::class)
             ->andReturn(Mockery::mock(Service::class))->once();
@@ -89,6 +90,35 @@ class AuthenticationListenerTest extends MockeryTestCase
         $result = $authenticationListener->authenticate($this->mvcEvent);
 
         $this->assertEquals(null, $result);
+    }
+
+    public function testAuthenticationSuccessAddsLoggedInUserIdToLogs(): void
+    {
+        $header = Mockery::mock();
+        $header->shouldReceive('getFieldValue')->andReturn('value')->once();
+        $this->request->shouldReceive('getHeader')->with('Token')->andReturn($header)->once();
+
+        $authenticationResult = Mockery::mock(Result::class);
+        $authenticationResult->shouldReceive('getCode')->andReturn(Result::SUCCESS)->once();
+
+        $this->authService->shouldReceive('authenticate')->andReturn($authenticationResult)->once();
+        $this->authService->shouldReceive('getIdentity')
+            ->andReturn(new \Application\Library\Authentication\Identity\User('user-1', 'a@b.c'))->once();
+
+        $this->serviceManager->shouldReceive('get')->with(Service::class)
+            ->andReturn(Mockery::mock(Service::class))->once();
+
+        $handler = new \Monolog\Handler\TestHandler();
+        $logger = new \Monolog\Logger('test', [$handler]);
+
+        $authenticationListener = new AuthenticationListener();
+        $authenticationListener->setLogger($logger);
+        $authenticationListener->authenticate($this->mvcEvent);
+
+        $logger->info('later message');
+
+        $records = $handler->getRecords();
+        $this->assertSame('user-1', end($records)->extra['logged_in_user_id']);
     }
 
     #[DataProvider('authenticationFailureDataProvider')]

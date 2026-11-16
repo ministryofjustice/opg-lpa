@@ -20,6 +20,7 @@ class CookiesHandler implements RequestHandlerInterface
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
         private readonly FormElementManager $formElementManager,
+        private readonly string $sessionCookieName,
     ) {
     }
 
@@ -40,7 +41,7 @@ class CookiesHandler implements RequestHandlerInterface
 
         $html = $this->renderer->render(
             'application/general/cookies/index.twig',
-            ['form' => $form]
+            ['form' => $form, 'sessionCookieName' => $this->sessionCookieName]
         );
 
         return new HtmlResponse($html);

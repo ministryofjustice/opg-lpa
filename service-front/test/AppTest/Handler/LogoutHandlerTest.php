@@ -9,6 +9,7 @@ use App\Service\OneLogin\OneLoginSessionManager;
 use App\Service\OneLogin\OneLoginSignOut;
 use App\Service\OneLogin\RedirectUriBuilder;
 use App\Service\OneLogin\SignedOutSubjects;
+use MakeShared\Logging\MetricsLogger;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use Mezzio\Session\SessionInterface;
@@ -26,11 +27,13 @@ class LogoutHandlerTest extends TestCase
 
     private SessionInterface&MockObject $session;
     private OneLoginSignOut&MockObject $oneLoginSignOut;
+    private MetricsLogger&MockObject $metrics;
 
     protected function setUp(): void
     {
         $this->session         = $this->createMock(SessionInterface::class);
         $this->oneLoginSignOut = $this->createMock(OneLoginSignOut::class);
+        $this->metrics         = $this->createMock(MetricsLogger::class);
     }
 
     private function createHandler(array $config = ['redirects' => ['logout' => self::DONE_URL]]): LogoutHandler
@@ -40,6 +43,7 @@ class LogoutHandlerTest extends TestCase
             new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->oneLoginSignOut,
             new RedirectUriBuilder('https://front.example.com'),
+            $this->metrics,
         );
     }
 
@@ -56,6 +60,22 @@ class LogoutHandlerTest extends TestCase
         return (new ServerRequest())
             ->withMethod('GET')
             ->withAttribute(SessionMiddleware::SESSION_ATTRIBUTE, $this->session);
+    }
+
+    public function testASignedInUserLoggingOutIsRecorded(): void
+    {
+        $this->session->method('has')->with('identity')->willReturn(true);
+        $this->metrics->expects($this->once())->method('userLoggedOut');
+
+        $this->createHandler()->handle($this->createRequest());
+    }
+
+    public function testLoggingOutWithoutAnIdentityIsNotRecorded(): void
+    {
+        $this->session->method('has')->willReturn(false);
+        $this->metrics->expects($this->never())->method('userLoggedOut');
+
+        $this->createHandler()->handle($this->createRequest());
     }
 
     public function testSessionIsClearedAndRegenerated(): void

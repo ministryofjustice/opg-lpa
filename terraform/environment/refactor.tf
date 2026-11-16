@@ -48,3 +48,18 @@ moved {
   from = module.eu-west-1.module.rds_proxy.aws_iam_role.rds_proxy_role
   to   = aws_iam_role.rds_proxy
 }
+
+moved {
+  from = module.eu-west-1.aws_cloudwatch_metric_alarm.front_5xx_errors
+  to   = module.eu-west-1.aws_cloudwatch_metric_alarm.front_5xx_errors[0]
+}
+
+moved {
+  from = module.eu-west-1.aws_cloudwatch_metric_alarm.admin_5xx_errors
+  to   = module.eu-west-1.aws_cloudwatch_metric_alarm.admin_5xx_errors[0]
+}
+
+moved {
+  from = module.eu-west-1.aws_cloudwatch_metric_alarm.application_5xx_errors
+  to   = module.eu-west-1.aws_cloudwatch_metric_alarm.application_5xx_errors[0]
+}

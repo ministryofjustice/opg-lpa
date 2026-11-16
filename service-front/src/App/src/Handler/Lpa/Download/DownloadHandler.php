@@ -41,8 +41,8 @@ class DownloadHandler implements RequestHandlerInterface
         $pdfType = $params['pdf-type'] ?? '';
 
         $this->logger->debug('PDF type is ' . $pdfType, [
-            'lpaId' => $lpa->getId(),
-            'pdfType' => $pdfType,
+            'lpa_id' => $lpa->getId(),
+            'pdf_type' => $pdfType,
         ]);
 
         // Check PDF availability; return a 404 if the LPA is not eligible for this PDF type
@@ -52,8 +52,8 @@ class DownloadHandler implements RequestHandlerInterface
             || ($pdfType === 'lp1' && !$lpa->canGenerateLP1())
         ) {
             $this->logger->warning('PDF not available', [
-                'lpaId' => $lpa->getId(),
-                'pdfType' => $pdfType,
+                'lpa_id' => $lpa->getId(),
+                'pdf_type' => $pdfType,
             ]);
 
             $html = $this->renderer->render(
@@ -90,8 +90,8 @@ class DownloadHandler implements RequestHandlerInterface
         $status = is_array($result) ? ($result['status'] ?? 'unknown') : 'unknown';
 
         $this->logger->debug('PDF status is ' . $status, [
-            'lpaId' => $lpaId,
-            'pdfType' => $pdfType,
+            'lpa_id' => $lpaId,
+            'pdf_type' => $pdfType,
         ]);
 
         if (!is_array($result)) {

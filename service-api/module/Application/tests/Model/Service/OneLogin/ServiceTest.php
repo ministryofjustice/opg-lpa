@@ -28,6 +28,7 @@ use Jose\Component\Signature\Algorithm\RS256;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
 use MakeShared\DataModel\User\User as ProfileUserModel;
+use MakeShared\Logging\MetricsLogger;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Mockery;
@@ -54,6 +55,8 @@ class ServiceTest extends MockeryTestCase
     private MockInterface|SharedSpaceRepositoryInterface $sharedSpaceRepository;
     private MockInterface|ClientInterface $oidcClient;
     private MockInterface|LoggerInterface $logger;
+
+    private MockInterface|MetricsLogger $metrics;
     private MockInterface|LogoutTokenVerifier $logoutTokenVerifier;
     private MockInterface|CacheInterface $cache;
     private KeyPairManager $keyPairManager;
@@ -87,23 +90,27 @@ class ServiceTest extends MockeryTestCase
 
         $this->logger = Mockery::spy(LoggerInterface::class);
 
+        $this->metrics = Mockery::spy(MetricsLogger::class);
+
         $this->logoutTokenVerifier = Mockery::mock(LogoutTokenVerifier::class);
 
         $this->cache = Mockery::mock(CacheInterface::class);
 
         $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), self::KEY_ID);
 
-        $this->service = new Service();
-        $this->service->setLogger($this->logger);
-        $this->service->setLogoutTokenVerifier($this->logoutTokenVerifier);
-        $this->service->setCache($this->cache);
-        $this->service->setAuthorisationClientManager($this->clientManager);
-        $this->service->setAuthorizationService($this->authorizationService);
-        $this->service->setAuthenticationService($this->authenticationService);
-        $this->service->setUserRepository($this->userRepository);
-        $this->service->setLogRepository($this->logRepository);
-        $this->service->setSharedSpaceRepository($this->sharedSpaceRepository);
-        $this->service->setKeyPairManager($this->keyPairManager);
+        $this->service = new Service(
+            $this->metrics,
+            $this->logger,
+            $this->userRepository,
+            $this->logRepository,
+            $this->sharedSpaceRepository,
+            $this->authenticationService,
+            $this->clientManager,
+            $this->authorizationService,
+            $this->logoutTokenVerifier,
+            $this->cache,
+            $this->keyPairManager,
+        );
     }
 
     public function testCreateAuthenticationRequestSignsTheParametersIntoARequestObject(): void
@@ -187,19 +194,6 @@ class ServiceTest extends MockeryTestCase
         $this->assertNotSame($first['codeVerifier'], $second['codeVerifier']);
     }
 
-    public function testMissingKeyPairManagerThrows(): void
-    {
-        $service = new Service();
-        $service->setLogger(Mockery::spy(LoggerInterface::class));
-        $service->setAuthorisationClientManager($this->clientManager);
-        $service->setAuthorizationService($this->authorizationService);
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('KeyPairManager must be set');
-
-        $service->createAuthenticationRequest(self::REDIRECT_URI);
-    }
-
     public function testPublicJwksComesFromTheKeyPairManager(): void
     {
         $jwks = $this->service->publicJwks();
@@ -231,43 +225,6 @@ class ServiceTest extends MockeryTestCase
         $this->expectExceptionMessage('end_session_endpoint');
 
         $this->service->createLogoutRequest('header.payload.sig', 'https://www.gov.uk/done/lasting-power-of-attorney');
-    }
-
-    public function testMissingClientManagerThrows(): void
-    {
-        $service = new Service();
-        $service->setLogger(Mockery::spy(LoggerInterface::class));
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('AuthorisationClientManager');
-
-        $service->createAuthenticationRequest(self::REDIRECT_URI);
-    }
-
-    public function testMissingAuthorizationServiceThrows(): void
-    {
-        $service = new Service();
-        $service->setLogger(Mockery::spy(LoggerInterface::class));
-        $service->setAuthorisationClientManager($this->clientManager);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('AuthorizationService');
-
-        $service->createAuthenticationRequest(self::REDIRECT_URI);
-    }
-
-    public function testMissingSharedSpaceRepositoryThrows(): void
-    {
-        $service = new Service();
-        $service->setLogger(Mockery::spy(LoggerInterface::class));
-        $service->setAuthorisationClientManager($this->clientManager);
-        $service->setAuthorizationService($this->authorizationService);
-        $service->setAuthenticationService($this->authenticationService);
-
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('SharedSpaceRepository');
-
-        $service->handleCallback('code', 'state', 'nonce', 'verifier', self::REDIRECT_URI);
     }
 
     public function testHandleCallbackLinkedReturnsIdentity(): void
@@ -325,6 +282,8 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
         $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
+
+        $this->metrics->shouldHaveReceived('userLoggedIn')->with('user-1')->once();
     }
 
     public function testHandleCallbackRefreshesEmailWhenChangedAtOneLogin(): void
@@ -766,6 +725,10 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame($expires->format('c'), $identity['tokenExpiresAt']);
         $this->assertSame($lastLogin->format('c'), $identity['lastLogin']);
         $this->assertSame('shared-space-9', $identity['sharedSpaceId']);
+
+        $this->metrics->shouldHaveReceived('userLinkedExistingMakeAccount')->with('user-1')->once();
+
+        $this->metrics->shouldHaveReceived('userIdentifiedAsLay')->with('user-1')->once();
     }
 
     public function testLinkExistingAccountReturnsAccountNotFoundWhenNoUserAndNoDeletionLog(): void
@@ -778,6 +741,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertFalse($result['linked']);
         $this->assertSame(LinkReason::ACCOUNT_NOT_FOUND, $result['reason'] ?? null);
+        $this->metrics->shouldHaveReceived('userFailedToLinkExistingMakeAccount')->with(LinkReason::ACCOUNT_NOT_FOUND)->once();
     }
 
     public function testLinkExistingAccountReturnsAccountDeletedWhenDeletionLogExists(): void
@@ -894,6 +858,10 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame($expires->format('c'), $result['tokenExpiresAt']);
         $this->assertNull($result['sharedSpaceId']);
         $this->assertNotEmpty($result['lastLogin']);
+
+        $this->metrics->shouldHaveReceived('userCreated')->with($userId)->once();
+
+        $this->metrics->shouldHaveReceived('userIdentifiedAsProfessional')->with($userId)->once();
     }
 
     /**
@@ -941,6 +909,24 @@ class ServiceTest extends MockeryTestCase
         $result = $this->service->handleBackChannelLogout('a.logout.token');
 
         $this->assertSame(['accepted' => true, 'sub' => 'urn:fdc:gov.uk:2022:sub-abc', 'signedOutAt' => self::SIGNED_OUT_AT], $result);
+        $this->metrics->shouldHaveReceived('userSessionEndedByOneLogin')->with('user-1')->once();
+    }
+
+    public function testBackChannelLogoutEmitsFailedToLogoutWhenNoUserMatches(): void
+    {
+        $this->logoutTokenVerifier->shouldReceive('verify')
+            ->once()
+            ->andReturn(['sub' => 'urn:fdc:gov.uk:2022:unknown', 'jti' => 'jti-2', 'iat' => self::SIGNED_OUT_AT]);
+
+        $this->expectJtiRecorded('jti-2');
+
+        $this->userRepository->shouldReceive('getByOneLoginSub')->once()->andReturn(null);
+        $this->userRepository->shouldNotReceive('clearAuthToken');
+
+        $result = $this->service->handleBackChannelLogout('a.logout.token');
+
+        $this->assertTrue($result['accepted']);
+        $this->metrics->shouldHaveReceived('userFailedToLogout')->with('no_user')->once();
     }
 
     public function testBackChannelLogoutRejectsInvalidTokenAndEndsNoSession(): void
@@ -990,6 +976,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->assertFalse($result['accepted']);
         $this->assertSame('replayed_jti', $result['reason']);
+        $this->metrics->shouldHaveReceived('userFailedToLogout')->with('replayed_jti')->once();
     }
 
     public function testBackChannelLogoutAcceptsValidTokenForUnknownSubject(): void

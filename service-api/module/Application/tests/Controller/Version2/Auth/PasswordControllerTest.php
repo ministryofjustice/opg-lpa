@@ -18,6 +18,14 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         parent::setUp();
     }
 
+    private function getPasswordController(array $requestContent = []): PasswordController
+    {
+        return $this->dispatchController(
+            new PasswordController($this->service, $this->authenticationService, $this->metrics, $this->logger),
+            $requestContent,
+        );
+    }
+
     public function testChangeActionWithPassword()
     {
         $userId = 'abcdef123456';
@@ -38,12 +46,10 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
         $this->logger->shouldReceive('info')
             ->once()
-            ->with('User successfully changed their password', [
-                'userId' => $userId,
-            ]);
+            ->with('User successfully changed their password');
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'currentPassword' => $currentPassword,
             'newPassword'     => $newPassword,
         ]);
@@ -64,7 +70,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class);
+        $controller = $this->getPasswordController();
 
         /** @var ApiProblem $result */
         $result = $controller->changeAction();
@@ -89,7 +95,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
         ]);
 
@@ -119,7 +125,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
         $this->setToken('tokenval123', $userId, false);
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'currentPassword' => $currentPassword,
             'newPassword'     => $newPassword,
         ]);
@@ -155,7 +161,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'currentPassword' => $currentPassword,
             'newPassword'     => $newPassword,
         ]);
@@ -188,12 +194,10 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturnNull()
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->once()
-            ->with('User successfully change their password via a reset');
+        $this->metrics->shouldReceive('userResetLegacyAccountPassword')->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
             'passwordToken'   => $passwordToken,
         ]);
@@ -215,7 +219,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
         ]);
 
@@ -248,7 +252,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
             'passwordToken'   => $passwordToken,
         ]);
@@ -282,7 +286,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
             'passwordToken'   => $passwordToken,
         ]);
@@ -316,7 +320,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'newPassword'     => $newPassword,
             'passwordToken'   => $passwordToken,
         ]);
@@ -352,7 +356,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'username' => $username,
         ]);
 
@@ -382,7 +386,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'username' => $username,
         ]);
 
@@ -394,7 +398,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
     public function testResetActionFailedNoUsername()
     {
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class);
+        $controller = $this->getPasswordController();
 
         /** @var ApiProblem $result */
         $result = $controller->resetAction();
@@ -416,13 +420,10 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ->andReturn(PasswordService::ACCOUNT_USES_ONE_LOGIN)
             ->once();
 
-        $this->logger->shouldReceive('info')
-            ->with('Password reset refused for a One Login account', [
-                'event' => 'auth.password_reset.refused_one_login',
-            ]);
+        $this->metrics->shouldReceive('userRefusedPasswordReset')->once();
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'username' => $username,
         ]);
 
@@ -447,7 +448,7 @@ class PasswordControllerTest extends AbstractAuthControllerTestCase
             ]);
 
         /** @var PasswordController $controller */
-        $controller = $this->getController(PasswordController::class, [
+        $controller = $this->getPasswordController([
             'username' => $username,
         ]);
 

@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Mockery;
+use Psr\Log\LogLevel;
 
 class OneLoginControllerTest extends AbstractAuthControllerTestCase
 {
@@ -28,12 +29,9 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->service = Mockery::mock(OneLoginService::class);
     }
 
-    private function getOneLoginController(): OneLoginController
+    private function getOneLoginController(array $requestContent = []): OneLoginController
     {
-        /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class);
-
-        return $controller;
+        return $this->dispatchController(new OneLoginController($this->service, $this->metrics), $requestContent);
     }
 
     /**
@@ -119,7 +117,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         unset($body[$missingField]);
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->callbackAction();
 
@@ -151,7 +149,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->callbackAction();
 
@@ -188,12 +186,12 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->andThrow(new OneLoginAuthenticationException($reason))
             ->once();
 
-        $this->logger->shouldReceive('error')
-            ->with('auth.onelogin.callback_failed', ['reason' => $reason])
+        $this->metrics->shouldReceive('userFailedToLogin')
+            ->with($reason, [], LogLevel::ERROR)
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->callbackAction();
 
@@ -220,7 +218,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->linkAction();
 
@@ -252,7 +250,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->service->shouldNotReceive('createLogoutRequest');
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->logoutAction();
 
@@ -271,7 +269,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->logoutAction();
 
@@ -292,7 +290,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->backChannelLogoutAction();
 
@@ -307,7 +305,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, ['logoutToken' => 'forged']);
+        $controller = $this->getOneLoginController(['logoutToken' => 'forged']);
 
         $result = $controller->backChannelLogoutAction();
 
@@ -320,7 +318,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->service->shouldNotReceive('handleBackChannelLogout');
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, []);
+        $controller = $this->getOneLoginController([]);
 
         $result = $controller->backChannelLogoutAction();
 
@@ -359,7 +357,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->createAction();
 
@@ -395,7 +393,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         ] + $userType;
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->linkAction();
 
@@ -417,7 +415,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         }
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->createAction();
 
@@ -443,7 +441,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $body = ['profile' => $profile] + self::CREATE_BODY;
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, $body);
+        $controller = $this->getOneLoginController($body);
 
         $result = $controller->createAction();
 
@@ -458,7 +456,7 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             ->once();
 
         /** @var OneLoginController $controller */
-        $controller = $this->getController(OneLoginController::class, self::CREATE_BODY);
+        $controller = $this->getOneLoginController(self::CREATE_BODY);
 
         $result = $controller->createAction();
 

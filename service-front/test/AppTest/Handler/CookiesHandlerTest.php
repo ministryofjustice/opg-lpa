@@ -16,6 +16,8 @@ use PHPUnit\Framework\TestCase;
 
 class CookiesHandlerTest extends TestCase
 {
+    private const string SESSION_COOKIE_NAME = 'lpaTest';
+
     private TemplateRendererInterface&MockObject $renderer;
     private FormElementManager&MockObject $formElementManager;
     private FormInterface&MockObject $form;
@@ -34,7 +36,7 @@ class CookiesHandlerTest extends TestCase
 
     public function testRendersCookieFormAndSetsAction(): void
     {
-        $handler = new CookiesHandler($this->renderer, $this->formElementManager);
+        $handler = new CookiesHandler($this->renderer, $this->formElementManager, self::SESSION_COOKIE_NAME);
 
         $this->form
             ->expects($this->once())
@@ -48,7 +50,7 @@ class CookiesHandlerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('application/general/cookies/index.twig', ['form' => $this->form])
+            ->with('application/general/cookies/index.twig', ['form' => $this->form, 'sessionCookieName' => self::SESSION_COOKIE_NAME])
             ->willReturn('<html>cookies</html>');
 
         $response = $handler->handle(new ServerRequest());
@@ -59,7 +61,7 @@ class CookiesHandlerTest extends TestCase
 
     public function testSetsUsageCookiesRadioToYesFromCookiePolicy(): void
     {
-        $handler = new CookiesHandler($this->renderer, $this->formElementManager);
+        $handler = new CookiesHandler($this->renderer, $this->formElementManager, self::SESSION_COOKIE_NAME);
         $radio = $this->createMock(Radio::class);
 
         $this->form
@@ -81,7 +83,7 @@ class CookiesHandlerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('application/general/cookies/index.twig', ['form' => $this->form])
+            ->with('application/general/cookies/index.twig', ['form' => $this->form, 'sessionCookieName' => self::SESSION_COOKIE_NAME])
             ->willReturn('<html>cookies</html>');
 
         $request = new ServerRequest(
@@ -97,7 +99,7 @@ class CookiesHandlerTest extends TestCase
 
     public function testSetsUsageCookiesRadioToNoFromCookiePolicy(): void
     {
-        $handler = new CookiesHandler($this->renderer, $this->formElementManager);
+        $handler = new CookiesHandler($this->renderer, $this->formElementManager, self::SESSION_COOKIE_NAME);
         $radio = $this->createMock(Radio::class);
 
         $this->form
@@ -119,7 +121,7 @@ class CookiesHandlerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('application/general/cookies/index.twig', ['form' => $this->form])
+            ->with('application/general/cookies/index.twig', ['form' => $this->form, 'sessionCookieName' => self::SESSION_COOKIE_NAME])
             ->willReturn('<html>cookies</html>');
 
         $request = new ServerRequest(
@@ -135,7 +137,7 @@ class CookiesHandlerTest extends TestCase
 
     public function testIgnoresInvalidCookiePolicyPayload(): void
     {
-        $handler = new CookiesHandler($this->renderer, $this->formElementManager);
+        $handler = new CookiesHandler($this->renderer, $this->formElementManager, self::SESSION_COOKIE_NAME);
 
         $this->form
             ->expects($this->once())
@@ -149,7 +151,7 @@ class CookiesHandlerTest extends TestCase
         $this->renderer
             ->expects($this->once())
             ->method('render')
-            ->with('application/general/cookies/index.twig', ['form' => $this->form])
+            ->with('application/general/cookies/index.twig', ['form' => $this->form, 'sessionCookieName' => self::SESSION_COOKIE_NAME])
             ->willReturn('<html>cookies</html>');
 
         $request = new ServerRequest(

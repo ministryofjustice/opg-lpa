@@ -29,7 +29,7 @@ class UserIdMiddleware implements MiddlewareInterface
         if ($identity instanceof Identity && $this->logger instanceof Logger) {
             $userId = $identity->id();
             $this->logger->pushProcessor(function (LogRecord $record) use ($userId): LogRecord {
-                return $record->with(extra: array_merge($record->extra, ['user_id' => $userId]));
+                return $record->with(extra: array_merge($record->extra, ['logged_in_user_id' => $userId]));
             });
         }
 

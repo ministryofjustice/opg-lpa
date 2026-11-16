@@ -94,7 +94,7 @@ class ErrorListenerTest extends TestCase
                 return $context['class'] === Exception::class
                     && isset($context['file'])
                     && isset($context['line'])
-                    && isset($context['stackTrace']);
+                    && isset($context['stack_trace']);
             }));
 
         $this->listener->onError($event);
@@ -126,7 +126,7 @@ class ErrorListenerTest extends TestCase
                 return $context['class'] === Exception::class
                     && isset($context['file'])
                     && isset($context['line'])
-                    && isset($context['stackTrace']);
+                    && isset($context['stack_trace']);
             }));
 
         $this->listener->onError($event);

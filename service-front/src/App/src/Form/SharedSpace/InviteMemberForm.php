@@ -23,20 +23,20 @@ class InviteMemberForm extends AbstractForm
         $this->setName('inviteMember');
 
         $this->add([
-            'name'       => 'firstNames',
+            'name'       => 'firstName',
             'type'       => Text::class,
             'required'   => true,
             'options' => [
-                'label' => 'First names',
+                'label' => 'First name',
             ],
             'attributes' => [
-                'id' => 'firstNames',
-                'class' => 'govuk-input govuk-input--width-20',
+                'id' => 'firstName',
+                'class' => 'govuk-input',
             ],
         ]);
 
         $this->addToInputFilter([
-            'name' => 'firstNames',
+            'name' => 'firstName',
             'required' => true,
             'validators' => [
                 [
@@ -67,7 +67,7 @@ class InviteMemberForm extends AbstractForm
             ],
             'attributes' => [
                 'id' => 'lastName',
-                'class' => 'govuk-input govuk-input--width-20',
+                'class' => 'govuk-input',
             ],
         ]);
 
@@ -142,7 +142,7 @@ class InviteMemberForm extends AbstractForm
             'type' => Checkbox::class,
             'required' => false,
             'options' => [
-                'label' => 'Make this person an admin',
+                'label' => 'Make this member an admin',
             ],
             'attributes' => [
                 'id' => 'permissions',

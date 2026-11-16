@@ -10,6 +10,7 @@ use App\Middleware\AuthenticationMiddleware;
 use App\Service\SafeRedirectPath;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use MakeShared\Logging\MetricsLogger;
 use Mezzio\Session\SessionInterface;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
@@ -29,6 +30,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         private readonly OneLoginService $oneLoginService,
         private readonly OneLoginSessionManager $sessionManager,
         private readonly LoggerInterface $logger,
+        private readonly MetricsLogger $metrics,
     ) {
     }
 
@@ -37,7 +39,7 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         $queryParams = $request->getQueryParams();
 
         if (isset($queryParams['error'])) {
-            $this->logger->warning('auth.onelogin.provider_error', [
+            $this->metrics->userFailedToLogin('provider_error', [
                 'error'             => $queryParams['error'],
                 'error_description' => $queryParams['error_description'] ?? null,
             ]);
@@ -49,6 +51,8 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
         $state = $queryParams['state'] ?? null;
 
         if (!is_string($code) || $code === '' || !is_string($state) || $state === '') {
+            $this->metrics->userFailedToLogin('incomplete_request');
+
             return $this->renderError('The sign-in request was incomplete. Please try again.');
         }
 
@@ -72,17 +76,14 @@ class OneLoginCallbackHandler implements RequestHandlerInterface
             || !is_string($codeVerifier) || $codeVerifier === ''
             || !is_string($redirectUri) || $redirectUri === ''
         ) {
-            $this->logger->warning('auth.onelogin.session_missing', [
-                'has_code'  => true,
-                'has_state' => true,
-            ]);
+            $this->metrics->userFailedToLogin('session_missing');
 
             return $this->renderError('Your sign-in session has expired. Please try again.');
         }
 
         try {
             if (!hash_equals($expectedState, $state)) {
-                $this->logger->warning('auth.onelogin.state_mismatch', [
+                $this->metrics->userFailedToLogin('state_mismatch', [
                     'expected_prefix' => substr($expectedState, 0, 8),
                 ]);
 

@@ -50,7 +50,7 @@ class ErrorListener extends AbstractListenerAggregate
                 'class' => $exception::class,
                 'file' => $exception->getFile(),
                 'line' => $exception->getLine(),
-                'stackTrace' => $exception->getTraceAsString(),
+                'stack_trace' => $exception->getTraceAsString(),
             ]);
 
             if ($e->getResponse()->getContent() === '') {

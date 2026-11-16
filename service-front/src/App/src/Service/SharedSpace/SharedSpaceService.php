@@ -143,8 +143,8 @@ class SharedSpaceService
         } catch (Throwable $e) {
             $this->logger->warning('Adding member to shared space failed', [
                 'exception' => $e,
-                'sharedSpaceId' => $sharedSpaceId,
-                'userIdToAdd' => $userIdToAdd,
+                'shared_space_id' => $sharedSpaceId,
+                'user_id_to_add' => $userIdToAdd,
             ]);
 
             return false;
@@ -172,7 +172,6 @@ class SharedSpaceService
         }
 
         if (!$isActive) {
-            $fullName = $member->getName()->getFirst() . ' ' . $member->getName()->getLast();
             $params = new MailParameters(
                 $member->getEmail(),
                 self::EMAIL_SUSPEND_MEMBER,
@@ -202,7 +201,7 @@ class SharedSpaceService
         } catch (Throwable $e) {
             $this->logger->error('Deleting shared space member failed', [
                 'exception' => $e,
-                'memberUserId' => $member->getUserId(),
+                'member_user_id' => $member->getUserId(),
             ]);
 
             return false;
@@ -263,7 +262,7 @@ class SharedSpaceService
             $this->mailTransport->send($params);
         } catch (Exception $e) {
             $this->logger->error('Failed to send invite email', [
-                'inviteId' => $result['id'],
+                'invite_id' => $result['id'],
                 'exception' => $e
             ]);
 
@@ -280,13 +279,54 @@ class SharedSpaceService
         } catch (\Throwable $e) {
             $this->logger->warning('Revoking invite failed', [
                 'exception' => $e,
-                'inviteId' => $inviteId,
+                'invite_id' => $inviteId,
             ]);
 
             return false;
         }
 
         return true;
+    }
+
+    public function resendInvite(User $inviter, string $inviteId): ?string
+    {
+        try {
+            $result = $this->client->httpPost('/v2/shared-space/resend-invite/' . $inviteId);
+        } catch (\Throwable $e) {
+            $this->logger->warning('Resend invite failed', [
+                'exception' => $e,
+                'invite_id' => $inviteId,
+            ]);
+
+            throw $e;
+        }
+
+        $params = new MailParameters(
+            $result['email'],
+            self::EMAIL_INVITE_MEMBER,
+            [
+                'inviteeFirstName' => $result['firstNames'],
+                'inviteeEmail' => $result['email'],
+                'inviterFullName' => $inviter->getName()->getFirst() . ' ' . $inviter->getName()->getLast(),
+                'inviterEmail' => $inviter->getEmail()->getAddress(),
+                'sharedSpaceName' => $result['sharedSpaceName'],
+                'joiningCode' => $result['inviteCode'],
+                'expiryDate' => (new DateTime($result['expires']))->format('j F Y'),
+            ],
+        );
+
+        try {
+            $this->mailTransport->send($params);
+        } catch (Exception $e) {
+            $this->logger->error('Failed to send invite email', [
+                'invite_id' => $result['id'],
+                'exception' => $e
+            ]);
+
+            return null;
+        }
+
+        return $result['firstNames'] . ' ' . $result['lastName'];
     }
 
     public function join(string $sharedSpaceName, string $accessCode, string $userEmail): string

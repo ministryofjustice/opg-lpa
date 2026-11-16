@@ -5,18 +5,10 @@ namespace ApplicationTest\Model\Service;
 use Alphagov\Notifications\Client;
 use Application\Library\ApiProblem\ApiProblemException;
 use Application\Model\DataAccess\Repository\Application\ApplicationRepositoryInterface;
-use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInterface;
-use Application\Model\DataAccess\Repository\User\LogRepositoryInterface;
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use Application\Model\Service\AccountCleanup\Service as AccountCleanupService;
 use Application\Model\Service\Applications\Service as ApplicationsService;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
-use Application\Model\Service\OneLogin\AuthorisationClientManager;
-use Application\Model\Service\OneLogin\AuthorizationServiceInterface;
-use Application\Model\Service\OneLogin\FacileAuthorizationServiceAdapter;
-use Application\Model\Service\OneLogin\KeyPairManager;
-use Application\Model\Service\OneLogin\LogoutTokenVerifier;
-use Application\Model\Service\OneLogin\Service as OneLoginService;
 use Application\Model\Service\Password\Service as PasswordService;
 use Application\Model\Service\Pdfs\Service as PdfsService;
 use Application\Model\Service\ProcessingStatus\Service as ProcessingStatusService;
@@ -34,7 +26,6 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Container\ContainerInterface;
 use Psr\Log\LoggerInterface;
-use Psr\SimpleCache\CacheInterface;
 
 class ServiceAbstractFactoryTest extends MockeryTestCase
 {
@@ -72,20 +63,6 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     'Logger' => Mockery::mock(LoggerInterface::class),
                 ]
             ],
-            'OneLoginService' => [OneLoginService::class,
-                [
-                    UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
-                    LogRepositoryInterface::class => Mockery::mock(LogRepositoryInterface::class),
-                    AuthorisationClientManager::class => Mockery::mock(AuthorisationClientManager::class),
-                    FacileAuthorizationServiceAdapter::class => Mockery::mock(AuthorizationServiceInterface::class),
-                    AuthenticationService::class => Mockery::mock(AuthenticationService::class),
-                    SharedSpaceRepositoryInterface::class => Mockery::mock(SharedSpaceRepositoryInterface::class),
-                    LogoutTokenVerifier::class => Mockery::mock(LogoutTokenVerifier::class),
-                    'OneLoginPsr16Cache' => Mockery::mock(CacheInterface::class),
-                    KeyPairManager::class => Mockery::mock(KeyPairManager::class),
-                    'Logger' => Mockery::mock(LoggerInterface::class),
-                ]
-            ],
             'PasswordService' => [PasswordService::class,
                 [
                     UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
@@ -107,15 +84,6 @@ class ServiceAbstractFactoryTest extends MockeryTestCase
                     ApplicationRepositoryInterface::class =>  Mockery::mock(ApplicationRepositoryInterface::class),
                     ApplicationsService::class => Mockery::mock(ApplicationsService::class),
                     'Logger' => Mockery::mock(LoggerInterface::class),
-                ]
-            ],
-            'UsersService' => [UsersService::class,
-                [
-                    LogRepositoryInterface::class => Mockery::mock(LogRepositoryInterface::class),
-                    UserRepositoryInterface::class => Mockery::mock(UserRepositoryInterface::class),
-                    ApplicationRepositoryInterface::class => Mockery::mock(ApplicationRepositoryInterface::class),
-                    ApplicationsService::class => Mockery::mock(ApplicationsService::class),
-                    'config' => ['authentication_tokens' => ['use_hash_tokens' => false]],
                 ]
             ],
             'ProcessingStatusService' => [ProcessingStatusService::class,

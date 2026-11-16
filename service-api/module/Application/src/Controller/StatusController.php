@@ -80,8 +80,8 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
             $metaData = array_merge($metaData, $newMeta);
             $this->getService()->patch(['metadata' => $metaData], $lpaId, $ifMatchVersion, $userId);
             $this->getLogger()->debug('Updated MetaData for LPA', [
-                'lpaId' => $lpaId,
-                'metaData' => $metaData
+                'lpa_id' => $lpaId,
+                'meta_data' => $metaData
             ]);
         }
     }

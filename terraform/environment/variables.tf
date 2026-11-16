@@ -28,7 +28,9 @@ variable "environments" {
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
       public_access_enabled                  = bool
+      proxy_jwks                             = bool
       cloudwatch_alarms = object({
+        http_5xx_alarms_enabled                      = bool
         ecs_resource_alarms_enabled                  = bool
         front_4xx_anomaly_alarms_enabled             = bool
         front_ddos_alarms_enabled                    = bool
@@ -48,12 +50,14 @@ variable "environments" {
         admin_cognito_client_supported_identity_providers = list(string)
         front_cognito_auth_enabled                        = bool
       })
-      onelogin_client_id = string
+      onelogin_client_id  = string
+      session_cookie_name = string
       feature_flags = object({
         onelogin_enabled         = bool
         onelogin_use_mock        = bool
         shared_spaces_enabled    = bool
         cypress_fixtures_enabled = bool
+        password_signin_enabled  = bool
       })
       database = object({
         cluster_identifier                 = string

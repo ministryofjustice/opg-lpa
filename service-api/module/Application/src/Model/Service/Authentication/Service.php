@@ -9,6 +9,7 @@ use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInt
 use Application\Model\Service\AbstractService;
 use DateMalformedStringException;
 use DateTime;
+use Laminas\Http\Request as HttpRequest;
 
 class Service extends AbstractService
 {
@@ -170,6 +171,24 @@ class Service extends AbstractService
             'expiresIn' => $this->tokenTtl,
             'expiresAt' => $expires,
         ];
+    }
+
+    /**
+     * Checks the request's Token header is valid and belongs to the given user.
+     */
+    public function authenticateUserToken(HttpRequest $request, $userId, bool $extendToken = false): bool
+    {
+        $token = $request->getHeader('Token');
+
+        if ($token === false) {
+            // Header was not passed.
+            return false;
+        }
+
+        $result = $this->withToken($token->getFieldValue(), $extendToken);
+
+        // Token does not match userId
+        return is_array($result) && isset($result['userId']) && $result['userId'] === $userId;
     }
 
     /**

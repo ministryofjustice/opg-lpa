@@ -130,6 +130,57 @@ class DeleteAccountHandlerTest extends TestCase
         $this->assertEquals("/deleted", $response->getHeaderLine('Location'));
     }
 
+    public function testPostRendersCannotDeletePageWhenApiSaysThereIsNoOtherAdmin(): void
+    {
+        $this->userService->expects($this->once())
+            ->method('delete')
+            ->willReturn('no-other-admin');
+
+        $this->sharedSpaceService->expects($this->once())
+            ->method('getMember')
+            ->with('1')
+            ->willReturn(new SharedSpaceMember(['sharedSpaceName' => 'My space']));
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/delete/cannot-delete.twig',
+                [
+                    'sharedSpaceName' => 'My space',
+                    'signedInUser' => null,
+                    'secondsUntilSessionExpires' => null,
+                    'lpa' => null,
+                    'currentRouteName' => null,
+                    'csrfToken' => 'test-token',
+                ]
+            )
+            ->willReturn('<html>cannot delete</html>');
+
+        $handler = new DeleteAccountHandler(
+            $this->renderer,
+            $this->authenticationService,
+            $this->sharedSpaceService,
+            $this->userService,
+            true,
+            true,
+        );
+
+        $response = $handler->handle($this->createSharedSpacePostRequest());
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertEquals(StatusCodeInterface::STATUS_OK, $response->getStatusCode());
+    }
+
+    private function createSharedSpacePostRequest(): ServerRequest
+    {
+        $identity = new User('1', '', 1, new DateTime(), sharedSpaceId: '1');
+
+        return $this->createRequest()
+            ->withMethod(RequestMethodInterface::METHOD_POST)
+            ->withAttribute(RequestAttribute::IDENTITY, $identity);
+    }
+
     public function testPostRendersErrorOnDeleteFailure(): void
     {
         $this->userService->expects($this->once())

@@ -12,6 +12,7 @@ use Application\Model\DataAccess\Repository\SharedSpace\SharedSpaceRepositoryInt
 use Application\Model\DataAccess\Repository\User\UserRepositoryInterface;
 use DateTime;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use MakeShared\Logging\MetricsLogger;
 use Psr\Log\LoggerInterface;
 use RuntimeException;
 use Throwable;
@@ -27,6 +28,7 @@ class SharedSpaceService
         private readonly UserRepositoryInterface $userRepository,
         private readonly LogRepositoryInterface $logRepository,
         private readonly LoggerInterface $logger,
+        private readonly MetricsLogger $metrics,
     ) {
     }
 
@@ -44,9 +46,7 @@ class SharedSpaceService
     public function create(string $name, string $userId): array
     {
         if ($this->sharedSpaceRepository->getSharedSpaceIdForUser($userId) !== null) {
-            $this->logger->error('User already belongs to a shared space', [
-                'userId' => $userId,
-            ]);
+            $this->logger->error('User already belongs to a shared space');
 
             throw new UserAlreadyInSharedSpaceException();
         }
@@ -77,7 +77,6 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $spaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'user_id'         => $userId,
                 'shared_space_id' => $spaceId,
                 'count'           => $lpasMoved,
             ]);
@@ -101,12 +100,7 @@ class SharedSpaceService
             throw $e;
         }
 
-        $this->logger->info('Shared space created', [
-            'event'          => 'shared_space.created',
-            'shared_space_id' => $spaceId,
-            'user_id'        => $userId,
-            'lpas_moved'     => $lpasMoved,
-        ]);
+        $this->metrics->sharedSpaceCreated($spaceId, $lpasMoved);
 
         return [
             'sharedSpaceId' => $spaceId,
@@ -216,13 +210,7 @@ class SharedSpaceService
             throw $e;
         }
 
-        $this->logger->info('Member added to shared space', [
-            'event'            => 'shared_space.member_added',
-            'shared_space_id'  => $sharedSpaceId,
-            'added_user_id'    => $userIdToAdd,
-            'added_by_user_id' => $userIdAddingMember,
-            'is_admin'         => $isAdmin,
-        ]);
+        $this->metrics->sharedSpaceMemberJoined($isAdmin, $sharedSpaceId, $userIdToAdd, $lpasMoved, $userIdAddingMember);
     }
 
     /**
@@ -231,6 +219,12 @@ class SharedSpaceService
     public function updateMember(string $sharedSpaceId, string $userId, bool $isAdmin, bool $isActive): void
     {
         try {
+            $existing = $this->sharedSpaceRepository->getMember($sharedSpaceId, $userId);
+
+            if ($existing === null) {
+                throw new MemberNotInSharedSpaceException();
+            }
+
             $this->sharedSpaceRepository->updateMember($sharedSpaceId, $userId, $isAdmin, $isActive);
         } catch (Throwable $e) {
             $this->logger->error('Unable to update shared space member: ' . $e->getMessage(), [
@@ -240,13 +234,17 @@ class SharedSpaceService
             throw $e;
         }
 
-        $this->logger->info('Shared space member updated', [
-            'event'           => 'shared_space.member_updated',
-            'shared_space_id' => $sharedSpaceId,
-            'user_id'         => $userId,
-            'is_admin'        => $isAdmin,
-            'is_active'       => $isActive,
-        ]);
+        if ($isAdmin !== $existing->isAdmin()) {
+            $isAdmin
+                ? $this->metrics->sharedSpaceMemberPromotedToAdmin($sharedSpaceId, $userId)
+                : $this->metrics->sharedSpaceMemberDemotedFromAdmin($sharedSpaceId, $userId);
+        }
+
+        if ($isActive !== $existing->isActive()) {
+            $isActive
+                ? $this->metrics->sharedSpaceMemberActivated($sharedSpaceId, $userId)
+                : $this->metrics->sharedSpaceMemberSuspended($sharedSpaceId, $userId);
+        }
     }
 
     /**
@@ -283,12 +281,9 @@ class SharedSpaceService
             throw $e;
         }
 
-        $this->logger->info('Shared space member deleted', [
-            'event' => 'shared_space.member_deleted',
-            'shared_space_id' => $sharedSpaceId,
-            'deleted_by_user_id' => $userId,
-            'deleted_user_id' => $userToDeleteId,
-        ]);
+        $this->metrics->userDeleted('removed_from_shared_space', $userToDeleteId);
+
+        $this->metrics->sharedSpaceMemberDeletedByAdmin($sharedSpaceId, $userId, $userToDeleteId);
     }
 
     public function getInvites(string $sharedSpaceId): array
@@ -340,6 +335,13 @@ class SharedSpaceService
         $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($memberInvite->sharedSpaceId);
         $id = $this->sharedSpaceRepository->createInvite($memberInvite);
 
+        $this->metrics->sharedSpaceMemberInvited(
+            $memberInvite->isAdmin,
+            $memberInvite->sharedSpaceId,
+            $id,
+            $memberInvite->userId,
+        );
+
         return [
             'id' => $id,
             'sharedSpaceName' => $sharedSpaceName,
@@ -354,7 +356,7 @@ class SharedSpaceService
     public function revokeInvite(string $sharedSpaceId, int $inviteId, string $revokedByUserId): void
     {
         try {
-            $this->sharedSpaceRepository->deleteInvite($inviteId);
+            $this->sharedSpaceRepository->deleteInvite($inviteId, $sharedSpaceId);
         } catch (Throwable $e) {
             $this->logger->error('Unable to revoke shared space invite: ' . $e->getMessage(), [
                 'shared_space_id' => $sharedSpaceId,
@@ -364,12 +366,50 @@ class SharedSpaceService
             throw $e;
         }
 
-        $this->logger->info('Shared space invite revoked', [
-            'event'           => 'shared_space.invite_revoked',
-            'shared_space_id' => $sharedSpaceId,
-            'invite_id'       => $inviteId,
-            'revoked_by'      => $revokedByUserId,
-        ]);
+        $this->metrics->sharedSpaceMemberInviteRevoked($sharedSpaceId, $inviteId, $revokedByUserId);
+    }
+
+    /**
+     * @return array{id: int, sharedSpaceName: string, inviteCode: string, expires: string, firstNames: string, email: string}
+     * @throws Throwable
+     */
+    public function resendInvite(string $sharedSpaceId, int $inviteId, string $invitedByUserId): array
+    {
+        $this->sharedSpaceRepository->beginTransaction();
+
+        try {
+            $memberInvite = $this->sharedSpaceRepository->getInviteById($inviteId, $sharedSpaceId);
+
+            $this->sharedSpaceRepository->deleteInvite($inviteId, $sharedSpaceId);
+
+            $newInvite = MemberInvite::create(
+                $memberInvite->userId,
+                $memberInvite->sharedSpaceId,
+                $memberInvite->firstNames,
+                $memberInvite->lastName,
+                $memberInvite->email,
+                $memberInvite->isAdmin,
+            );
+
+            $id = $this->sharedSpaceRepository->createInvite($newInvite);
+            $sharedSpaceName = $this->sharedSpaceRepository->getSharedSpace($newInvite->sharedSpaceId);
+
+            $this->metrics->sharedSpaceMemberInviteResent($newInvite->isAdmin, $sharedSpaceId, $id, $invitedByUserId);
+            $this->sharedSpaceRepository->commit();
+
+            return [
+                'id' => $id,
+                'sharedSpaceName' => $sharedSpaceName,
+                'inviteCode' => $newInvite->code,
+                'expires' => $newInvite->expires->format('Y-m-d\TH:i:s.u0'),
+                'firstNames' => $newInvite->firstNames,
+                'lastName' => $newInvite->lastName,
+                'email' => $newInvite->email,
+            ];
+        } catch (Throwable $e) {
+            $this->sharedSpaceRepository->rollback();
+            throw $e;
+        }
     }
 
     public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string
@@ -386,7 +426,6 @@ class SharedSpaceService
             $lpasMoved = $this->applicationRepository->setSharedSpaceOwner($userId, $invite->sharedSpaceId);
 
             $this->logger->info('Reassigned LPA ownership', [
-                'user_id' => $userId,
                 'shared_space_id' => $invite->sharedSpaceId,
                 'count' => $lpasMoved,
             ]);
@@ -398,17 +437,25 @@ class SharedSpaceService
         } catch (Throwable $e) {
             $this->sharedSpaceRepository->rollback();
 
+            $this->metrics->sharedSpaceMemberFailedToJoin($this->joinFailureReason($e), $userId);
+
             throw $e;
         }
 
-        $this->logger->info('User joined shared space', [
-            'event' => 'shared_space.joined',
-            'shared_space_id' => $invite->sharedSpaceId,
-            'user_id' => $userId,
-            'lpas_moved' => $lpasMoved,
-        ]);
+        $this->metrics->sharedSpaceMemberJoined($invite->isAdmin, $invite->sharedSpaceId, $userId, $lpasMoved);
 
         return $invite->sharedSpaceId;
+    }
+
+    private function joinFailureReason(Throwable $e): string
+    {
+        return match (true) {
+            $e instanceof UserAlreadyInSharedSpaceException => 'already_in_shared_space',
+            $e instanceof InviteNotFoundException => 'invite_not_found',
+            $e instanceof InviteNotMatchedException => 'invite_not_matched',
+            $e instanceof InviteExpiredException => 'invite_expired',
+            default => 'error',
+        };
     }
 
     public function countMembers(string $sharedSpaceId): int
@@ -426,18 +473,20 @@ class SharedSpaceService
 
         try {
             $user = $this->userRepository->getById($userId);
-
             if ($user === null) {
                 throw new RuntimeException('User not found');
             }
 
             $memberCount = $this->sharedSpaceRepository->countMembers($sharedSpaceId);
-
             if ($memberCount === 0) {
                 throw new RuntimeException('No members found in shared space');
             }
 
             $isLastMember = $memberCount === 1;
+
+            if (!$isLastMember && !$this->sharedSpaceRepository->hasOtherAdmin($sharedSpaceId, $userId)) {
+                throw new NoOtherAdminException();
+            }
 
             // The shared_space_members -> shared_space foreign key does not
             // cascade on delete, so the membership row must always be
@@ -466,27 +515,18 @@ class SharedSpaceService
 
             $this->logger->error('Unable to delete shared space member account: ' . $e->getMessage(), [
                 'shared_space_id' => $sharedSpaceId,
-                'user_id'         => $userId,
             ]);
 
             throw $e;
         }
 
+        $this->metrics->userDeleted('user-initiated', $userId);
+
         if ($isLastMember) {
-            $this->logger->info('Shared space deleted', [
-                'event'              => 'shared_space.deleted',
-                'shared_space_id'    => $sharedSpaceId,
-                'deleted_by_user_id' => $userId,
-                'lpas_deleted'       => $lpasDeleted,
-            ]);
+            $this->metrics->sharedSpaceDeleted($sharedSpaceId, $userId, $lpasDeleted);
         }
 
-        $this->logger->info('Shared space member account deleted', [
-            'event'           => 'shared_space.member_account_deleted',
-            'shared_space_id' => $sharedSpaceId,
-            'user_id'         => $userId,
-            'was_last_member' => $isLastMember,
-        ]);
+        $this->metrics->sharedSpaceMemberDeletedBySelf($sharedSpaceId, $userId, $isLastMember);
     }
 
     /**

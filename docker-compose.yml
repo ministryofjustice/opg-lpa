@@ -156,6 +156,7 @@ services:
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 
       ONELOGIN_ENABLED: true
+      PASSWORD_SIGNIN_ENABLED: true
       ONELOGIN_MOCK_AUTHORIZATION_URLS: '{"https://localhost:7002/auth/redirect":"http://localhost:4549/authorize","https://front-ssl/auth/redirect":"http://mock-onelogin:8080/authorize"}'
       MEZZIO_DEBUG: "1"
       SHARED_SPACES_ENABLED: true

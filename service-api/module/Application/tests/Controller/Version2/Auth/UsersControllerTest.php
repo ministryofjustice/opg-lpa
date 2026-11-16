@@ -7,6 +7,7 @@ use Application\Library\ApiProblem\ApiProblem;
 use Application\Library\Http\Response\Json;
 use Application\Library\Http\Response\NoContent;
 use Application\Model\Service\Authentication\Service as AuthenticationService;
+use Application\Model\Service\SharedSpace\NoOtherAdminException;
 use Application\Model\Service\SharedSpace\SharedSpaceService;
 use Application\Model\Service\Users\Service;
 use Laminas\Http\Request as HttpRequest;
@@ -374,5 +375,32 @@ class UsersControllerTest extends MockeryTestCase
         $data = $result->toArray();
         $this->assertEquals(500, $data['status']);
         $this->assertEquals('Unable to process request', $data['detail']);
+    }
+
+    public function testDeleteReturnsConflictWhenNoOtherAdmin()
+    {
+        $controller = $this->getController();
+        $this->setRequestToken($controller, 'a-token');
+
+        $this->authenticationService->shouldReceive('withToken')
+            ->with('a-token', false)
+            ->once()
+            ->andReturn(['userId' => 'user-1', 'sharedSpaceId' => 'shared-space-1']);
+
+        $this->sharedSpaceService->shouldReceive('deleteAccount')
+            ->with('shared-space-1', 'user-1')
+            ->once()
+            ->andThrow(new NoOtherAdminException());
+
+        $this->logger->shouldNotReceive('error');
+
+        /** @var ApiProblem $result */
+        $result = $controller->delete('user-1');
+
+        $this->assertInstanceOf(ApiProblem::class, $result);
+
+        $data = $result->toArray();
+        $this->assertEquals(409, $data['status']);
+        $this->assertEquals('no-other-admin', $data['detail']);
     }
 }

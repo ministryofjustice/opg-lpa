@@ -22,7 +22,7 @@ class SharedSpaceMemberForm extends AbstractForm
             'name'       => 'permissions',
             'type'       => Checkbox::class,
             'options'    => [
-                'label'           => 'Admin',
+                'label'           => 'Make this member an admin',
             ],
             'attributes' => [
                 'id'      => 'permissions',
@@ -42,15 +42,15 @@ class SharedSpaceMemberForm extends AbstractForm
             'options' => [
                 'value_options' => [
                     'allow' => [
-                        'label'      => 'Allow access to this shared space',
+                        'label'      => 'Active - member can access this shared space',
                         'value'      => 'active',
                         'attributes' => ['data-cy' => 'active'],
                     ],
                     'suspend' => [
-                        'label'      => 'Suspend access to this shared space',
+                        'label'      => 'Suspended - member cannot access this shared space',
                         'value'      => 'inactive',
-                        'attributes' => ['data-cy' => 'inactive'],
-                        'hint'       => 'Allow access to this shared space',
+                        'attributes' => ['data-cy' => 'inactive', 'data-aria-controls' => 'conditional-suspended'],
+                        'hint'       => 'For example, for extended leave',
                     ],
                 ],
             ],

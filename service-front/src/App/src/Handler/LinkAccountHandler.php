@@ -81,18 +81,12 @@ class LinkAccountHandler implements RequestHandlerInterface
                 }
 
                 if ($result['linked'] === true) {
-                    $this->logger->info('auth.onelogin.link_success');
-
                     return new RedirectResponse(
                         $this->sessionManager->finishOnboarding($session, $result['identity'], $pendingLink->idToken, 'linked'),
                     );
                 }
 
-                if ($result['reason'] === LinkReason::ALREADY_LINKED) {
-                    $this->logger->warning('auth.onelogin.link_rejected', ['reason' => $result['reason']]);
-                } else {
-                    $this->logger->info('auth.onelogin.link_failed', ['reason' => $result['reason']]);
-
+                if ($result['reason'] !== LinkReason::ALREADY_LINKED) {
                     // Throttle brute-force attempts, mirroring LoginHandler.
                     sleep(1);
                 }

@@ -107,7 +107,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',
@@ -116,14 +116,14 @@ class InviteMemberHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/shared-space?invite=sent', $location);
+        $this->assertEquals('/shared-space?invite=sent&invitedMemberName=a+b', $location);
     }
 
 
     public static function sharedServiceErrorProvider(): array
     {
         return [
-            ['user-already-in-shared-space', 'Email address belongs to an active member of this shared space -– enter a different email address   '],
+            ['user-already-in-shared-space', 'Email address belongs to an active member of this shared space -– enter a different email address'],
             ['invite-already-exists', 'Email address is for a pending member of this shared space – enter a different one or cancel the previous invite'],
         ];
     }
@@ -145,7 +145,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',
@@ -171,7 +171,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
-                'firstNames' => 'a',
+                'firstName' => 'a',
                 'lastName' => 'b',
                 'email' => 'me@example.com',
                 'permissions' => '1',

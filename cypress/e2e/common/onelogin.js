@@ -44,7 +44,7 @@ When(`I go to delete my account`, () => {
 Then(`I am told what deleting my account as the last shared space member does`, () => {
   detectOneLoginEnabled().then((enabled) => {
     const expected = enabled
-      ? 'Deleting your account will permanently remove your LPAs and personal details from our system.'
+      ? 'Deleting your account will permanently remove your LPAs and personal details from this service.'
       : 'You are about to delete your account. Doing this will permanently remove all your LPAs and personal details from our system.';
     cy.contains(expected).should('be.visible');
   });

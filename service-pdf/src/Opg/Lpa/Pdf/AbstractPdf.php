@@ -128,7 +128,7 @@ abstract class AbstractPdf extends PdftkPdf implements JsonSerializable, LoggerA
 
             //  Log a message for this PDF creation
             $this->getLogger()->info('Creating ' . $pdfFileName . ' for ' . $this->formattedLpaRef, [
-                'lpaId' => $lpa->id
+                'lpa_id' => $lpa->id
             ]);
 
             //  Trigger the create now - this will trigger in the child class

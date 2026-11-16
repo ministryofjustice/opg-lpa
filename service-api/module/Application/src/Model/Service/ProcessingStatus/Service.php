@@ -193,8 +193,8 @@ class Service extends AbstractService
 
         if (count($failedStatuses) > 0) {
             $this->getLogger()->error('Bad response from Sirius Gateway', [
-                'failedCount'  => count($failedStatuses),
-                'requestCount' => count($results),
+                'failed_count'  => count($failedStatuses),
+                'request_count' => count($results),
                 'statuses'     => array_count_values($failedStatuses),
             ]);
         }

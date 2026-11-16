@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Service;
 
 use App\Authentication\AuthenticationService;
+use App\Feature;
 use App\Service\ApiClient\ApiClientAwareInterface;
 use App\Service\ApiClient\ApiClientTrait;
 use App\Service\ApiClient\Exception\ApiException;
@@ -171,6 +172,10 @@ class UserDetails implements ApiClientAwareInterface
             );
 
             if (is_array($result) && isset($result['token'])) {
+                if ($this->passwordAccountEmailsRetired(self::EMAIL_NEW_EMAIL_ADDRESS_VERIFY)) {
+                    return true;
+                }
+
                 $mailParameters = new MailParameters(
                     $currentAddress,
                     self::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY,
@@ -268,7 +273,7 @@ class UserDetails implements ApiClientAwareInterface
                     ? (string) $liveUser->email->address
                     : '';
 
-                if ($email !== '') {
+                if ($email !== '' && !$this->passwordAccountEmailsRetired(self::EMAIL_PASSWORD_CHANGED)) {
                     $mailParameters = new MailParameters(
                         $email,
                         self::EMAIL_PASSWORD_CHANGED,
@@ -335,21 +340,26 @@ class UserDetails implements ApiClientAwareInterface
         ];
     }
 
-    public function delete(): bool
+    /**
+     * @return true|'no-other-admin'|false
+     */
+    public function delete(): bool|string
     {
         $this->logger->info('Deleting user and all their LPAs');
 
         try {
             $this->apiClient->httpDelete('/v2/users/' . $this->getUserId());
         } catch (ApiException $ex) {
+            if ($ex->getMessage() === 'no-other-admin') {
+                return 'no-other-admin';
+            }
+
             $this->logger->error('Failed to delete user', [
                 'exception' => $ex,
             ]);
 
             return false;
         }
-
-        $this->logger->info('User account deleted');
 
         return true;
     }
@@ -403,6 +413,22 @@ class UserDetails implements ApiClientAwareInterface
     }
 
     /**
+     * Emails for password-account journeys stop once One Login is live.
+     */
+    private function passwordAccountEmailsRetired(string $templateRef): bool
+    {
+        if (!Feature::OneLogin->isEnabled()) {
+            return false;
+        }
+
+        $this->logger->info('Not sending password account email as One Login is enabled', [
+            'template_ref' => $templateRef,
+        ]);
+
+        return true;
+    }
+
+    /**
      * @param array<string, string> $data
      * @return true|'failed-sending-email'
      */
@@ -415,7 +441,7 @@ class UserDetails implements ApiClientAwareInterface
             $this->mailTransport->send(new MailParameters($email, $templateRef, $data));
         } catch (Exception $ex) {
             $this->logger->error('Failed to send password reset journey email', [
-                'templateRef' => $templateRef,
+                'template_ref' => $templateRef,
                 'exception'   => $ex,
             ]);
 
@@ -502,6 +528,10 @@ class UserDetails implements ApiClientAwareInterface
             ]);
 
             if (isset($result['activation_token'])) {
+                if ($this->passwordAccountEmailsRetired(self::EMAIL_ACCOUNT_ACTIVATE)) {
+                    return true;
+                }
+
                 $activateAccountUrl = $this->url(
                     'register/confirm',
                     ['token' => $result['activation_token']],
@@ -527,6 +557,10 @@ class UserDetails implements ApiClientAwareInterface
             }
         } catch (ApiException $ex2) {
             if ($ex2->getMessage() == 'username-already-exists') {
+                if ($this->passwordAccountEmailsRetired(self::EMAIL_ACCOUNT_DUPLICATION_WARNING)) {
+                    return 'address-already-registered';
+                }
+
                 $mailParameters = new MailParameters(
                     $email,
                     self::EMAIL_ACCOUNT_DUPLICATION_WARNING
@@ -563,6 +597,10 @@ class UserDetails implements ApiClientAwareInterface
             ]);
 
             if (isset($result['activation_token'])) {
+                if ($this->passwordAccountEmailsRetired(self::EMAIL_ACCOUNT_ACTIVATE)) {
+                    return true;
+                }
+
                 return $this->sendAccountActivateEmail($email, $result['activation_token']);
             }
         } catch (ApiException $ex) {

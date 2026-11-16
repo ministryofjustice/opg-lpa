@@ -18,6 +18,7 @@ use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use MakeShared\Logging\MetricsLogger;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use RuntimeException;
@@ -27,6 +28,7 @@ class OneLoginCallbackHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private OneLoginService&MockObject $oneLoginService;
     private LoggerInterface&MockObject $logger;
+    private MetricsLogger&MockObject $metrics;
     private SessionInterface&MockObject $session;
     private OneLoginCallbackHandler $handler;
 
@@ -65,12 +67,14 @@ class OneLoginCallbackHandlerTest extends TestCase
         $this->renderer        = $this->createMock(TemplateRendererInterface::class);
         $this->oneLoginService = $this->createMock(OneLoginService::class);
         $this->logger          = $this->createMock(LoggerInterface::class);
+        $this->metrics         = $this->createMock(MetricsLogger::class);
         $this->session         = $this->createMock(SessionInterface::class);
         $this->handler         = new OneLoginCallbackHandler(
             $this->renderer,
             $this->oneLoginService,
             new OneLoginSessionManager($this->createStub(SignedOutSubjects::class), new NullLogger()),
             $this->logger,
+            $this->metrics,
         );
     }
 
@@ -103,10 +107,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testProviderErrorParameterLogsAndRendersError(): void
     {
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.provider_error', $this->arrayHasKey('error'));
+        $this->metrics->expects($this->once())->method('userFailedToLogin')->with('provider_error', ['error' => 'access_denied', 'error_description' => 'User denied']);
 
         $this->renderer
             ->expects($this->once())
@@ -160,6 +161,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testMissingCodeReturnsErrorPage(): void
     {
+        $this->metrics->expects($this->once())->method('userFailedToLogin')->with('incomplete_request');
         $this->renderer->method('render')->willReturn('<html>error</html>');
 
         $response = $this->handler->handle($this->buildRequest('state=valid-state-abc'));
@@ -182,10 +184,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testMissingSessionDataLogsAndRendersError(): void
     {
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.session_missing');
+        $this->metrics->expects($this->once())->method('userFailedToLogin')->with('session_missing');
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
 
@@ -197,10 +196,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testSessionWithoutCodeVerifierLogsAndRendersError(): void
     {
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.session_missing');
+        $this->metrics->expects($this->once())->method('userFailedToLogin')->with('session_missing');
 
         $this->oneLoginService->expects($this->never())->method('callback');
         $this->renderer->method('render')->willReturn('<html>error</html>');
@@ -220,10 +216,7 @@ class OneLoginCallbackHandlerTest extends TestCase
 
     public function testStateMismatchLogsWarningAndRendersError(): void
     {
-        $this->logger
-            ->expects($this->once())
-            ->method('warning')
-            ->with('auth.onelogin.state_mismatch');
+        $this->metrics->expects($this->once())->method('userFailedToLogin')->with('state_mismatch', ['expected_prefix' => 'valid-st']);
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
         $this->session->method('unset');
@@ -244,7 +237,6 @@ class OneLoginCallbackHandlerTest extends TestCase
     {
         $this->oneLoginService->expects($this->never())->method('callback');
         $this->renderer->method('render')->willReturn('<html>error</html>');
-        $this->logger->method('warning');
         $this->session->method('unset');
 
         $this->handler->handle(
@@ -265,7 +257,6 @@ class OneLoginCallbackHandlerTest extends TestCase
             ->with('onelogin_auth');
 
         $this->renderer->method('render')->willReturn('<html>error</html>');
-        $this->logger->method('warning');
 
         $this->handler->handle(
             $this->buildRequest(

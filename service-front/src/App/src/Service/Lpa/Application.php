@@ -73,7 +73,7 @@ class Application implements ApiClientAwareInterface
             }
 
             $this->logger->info('LPA not found for user', [
-                'lpaId'  => $lpaId,
+                'lpa_id'  => $lpaId,
                 'status' => $ex->getStatusCode(),
             ]);
         }
@@ -136,10 +136,10 @@ class Application implements ApiClientAwareInterface
             return new Lpa($this->apiClient->httpPatch($target, $data, ['If-Match' => $ifMatchVersion]));
         } catch (ApiException $ex) {
             $this->logger->error('Failed to update application', [
-                'lpaId'            => $lpaId,
+                'lpa_id'            => $lpaId,
                 'status'           => $ex->getStatusCode(),
-                'validationErrors' => $ex->getBody('validation'),
-                'dataKeys'         => array_keys($data),
+                'validation_errors' => $ex->getBody('validation'),
+                'data_keys'         => array_keys($data),
                 'exception'        => $ex,
             ]);
         }
@@ -213,7 +213,7 @@ class Application implements ApiClientAwareInterface
             }
         } catch (ApiException $ex) {
             $this->logger->error('Failed to fetch LPA Application summaries', [
-                'queryParams' => $queryParams,
+                'query_params' => $queryParams,
                 'status'      => $ex->getStatusCode(),
                 'exception'   => $ex,
             ]);

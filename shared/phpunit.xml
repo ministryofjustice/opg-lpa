@@ -3,7 +3,7 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="./module/MakeShared/tests/Bootstrap.php"
          colors="true"
-         cacheResultFile="/tmp/.phpunit.result.cache">
+         cacheDirectory="/tmp/.phpunit.cache">
 
 
     <testsuite name="MakeSharedTest">
@@ -11,10 +11,13 @@
     </testsuite>
 
 
-    <coverage processUncoveredFiles="true">
+    <source>
         <include>
             <directory suffix=".php">module/MakeShared/src</directory>
         </include>
+    </source>
+
+    <coverage>
         <report>
             <html outputDirectory="./build/coverage"/>
         </report>

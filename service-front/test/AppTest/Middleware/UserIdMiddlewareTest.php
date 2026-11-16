@@ -74,7 +74,7 @@ class UserIdMiddlewareTest extends TestCase
         );
 
         $processed = ($pushedProcessor)($record);
-        $this->assertSame('user-123', $processed->extra['user_id']);
+        $this->assertSame('user-123', $processed->extra['logged_in_user_id']);
     }
 
     public function testDoesNotPushProcessorWhenNoIdentity(): void
@@ -129,7 +129,7 @@ class UserIdMiddlewareTest extends TestCase
         );
 
         $processed = ($pushedProcessor)($record);
-        $this->assertSame('user-456', $processed->extra['user_id']);
+        $this->assertSame('user-456', $processed->extra['logged_in_user_id']);
         $this->assertSame('abc-trace', $processed->extra['trace_id']);
         $this->assertSame('/some/path', $processed->extra['request_path']);
     }
