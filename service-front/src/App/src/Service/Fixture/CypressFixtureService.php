@@ -290,7 +290,7 @@ class CypressFixtureService
         $lpaId        = (string) $createResult['id'];
         $lpaPath      = $applicationsPath . '/' . $lpaId;
 
-        $this->apiClient->httpPut($lpaPath . '/type', ['type' => $lpaType]);
+        $this->apiClient->httpPut($lpaPath . '/type', ['type' => $lpaType], ['If-Match' => '1']);
 
         $this->apiClient->httpPut($lpaPath . '/donor', [
             'name'       => ['title' => 'Mrs', 'first' => 'Nancy', 'last' => 'Garrison'],
@@ -304,7 +304,7 @@ class CypressFixtureService
             'dob'        => ['date' => '1988-10-22T00:00:00.000000+0000'],
             'email'      => ['address' => 'opglpademo+nancygarrison@example.org'],
             'canSign'    => false,
-        ]);
+        ], ['If-Match' => '2']);
 
         return $lpaId;
     }

@@ -16,7 +16,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    public function create(string $lpaId, ?int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
+    public function create(string $lpaId, int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);

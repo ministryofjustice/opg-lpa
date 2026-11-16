@@ -102,7 +102,7 @@ class Service extends AbstractService
      * @param array[] $data
      * @psalm-param array{metadata: array} $data
      */
-    public function patch(array $data, string $id, ?int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
+    public function patch(array $data, string $id, int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
     {
         $fetched = $this->fetch($id, $userId);
         if ($fetched instanceof ApiProblem) {
