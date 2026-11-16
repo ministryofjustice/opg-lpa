@@ -24,7 +24,7 @@ resource "aws_cloudwatch_metric_alarm" "front_5xx_errors" {
 
 # 5xx Admin Error
 resource "aws_cloudwatch_metric_alarm" "admin_5xx_errors" {
-  count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 1
+  count               = var.environment.cloudwatch_alarms.http_5xx_alarms_enabled ? 1 : 0
   actions_enabled     = true
   alarm_actions       = compact([aws_sns_topic.cloudwatch_to_pagerduty.arn, local.extended_support_sns_topic_arn])
   alarm_description   = "5XX responses logged in Admin for ${var.environment_name}"
