@@ -30,5 +30,5 @@ data "aws_sns_topic" "extended_support" {
 }
 
 locals {
-  extended_support_sns_topic_arn = var.environment.cloudwatch_alarms.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support.arn : ""
+  extended_support_sns_topic_arn = var.environment.cloudwatch_alarms.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support.arn : null
 }
