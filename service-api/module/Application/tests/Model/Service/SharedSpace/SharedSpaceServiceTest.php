@@ -696,7 +696,7 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $revokedByUserId = 'user-id';
 
         $this->sharedSpaceRepository->shouldReceive('deleteInvite')
-            ->with(5);
+            ->with(5, 'space-id');
 
         $this->metrics->shouldReceive('sharedSpaceMemberInviteRevoked')
             ->once()
@@ -729,6 +729,107 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->revokeInvite($sharedSpaceId, $inviteId, $revokedByUserId);
     }
 
+    public function testResend()
+    {
+        $memberInvite = new MemberInvite(
+            id: 1,
+            userId: 'my user',
+            sharedSpaceId: 'my space',
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'c',
+            isAdmin: false,
+            code: '12341234',
+            created: new DateTime(),
+            expires: new DateTime(),
+        );
+
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('commit');
+
+        $this->sharedSpaceRepository->shouldReceive('getInviteById')
+            ->with($memberInvite->id, $memberInvite->sharedSpaceId)
+            ->andReturn($memberInvite);
+
+        $this->sharedSpaceRepository->shouldReceive('deleteInvite')
+            ->with($memberInvite->id, $memberInvite->sharedSpaceId)
+            ->andReturn(false);
+
+        $this->sharedSpaceRepository->shouldReceive('getSharedSpace')
+            ->with($memberInvite->sharedSpaceId)
+            ->andReturn('my space');
+
+        $this->sharedSpaceRepository->shouldReceive('createInvite')
+            ->with($this->callback(function (MemberInvite $i) use ($memberInvite): bool {
+                $this->assertEquals($memberInvite->userId, $i->userId);
+                $this->assertEquals($memberInvite->sharedSpaceId, $i->sharedSpaceId);
+                $this->assertEquals($memberInvite->firstNames, $i->firstNames);
+                $this->assertEquals($memberInvite->lastName, $i->lastName);
+                $this->assertEquals($memberInvite->email, $i->email);
+                $this->assertEquals($memberInvite->isAdmin, $i->isAdmin);
+
+                $this->assertNotEquals($memberInvite->id, $i->id);
+                $this->assertNotEquals($memberInvite->code, $i->code);
+                $this->assertNotEquals($memberInvite->created, $i->created);
+                $this->assertNotEquals($memberInvite->expires, $i->expires);
+
+                return true;
+            }))
+            ->andReturn(1234);
+
+        $this->metrics->shouldReceive('sharedSpaceMemberInviteResent')
+            ->once()
+            ->with(false, 'my space', 1234, 'inviter-id');
+
+        $result = $this->service->resendInvite($memberInvite->sharedSpaceId, $memberInvite->id, 'inviter-id');
+
+        $this->assertGreaterThan($result['expires'], $memberInvite->expires);
+        $this->assertNotEquals($result['inviteCode'], $memberInvite->code);
+        unset($result['expires']);
+        unset($result['inviteCode']);
+
+        $this->assertEquals([
+            'id' => 1234,
+            'sharedSpaceName' => 'my space',
+            'firstNames' => 'a',
+            'lastName' => 'b',
+            'email' => 'c',
+        ], $result);
+    }
+
+    public function testResendWhenError()
+    {
+        $memberInvite = new MemberInvite(
+            id: 1,
+            userId: 'my user',
+            sharedSpaceId: 'my space',
+            firstNames: 'a',
+            lastName: 'b',
+            email: 'c',
+            isAdmin: false,
+            code: '12341234',
+            created: new DateTime(),
+            expires: new DateTime('-1 minute'),
+        );
+
+        $this->sharedSpaceRepository->shouldReceive('beginTransaction');
+        $this->sharedSpaceRepository->shouldReceive('rollback');
+
+        $this->sharedSpaceRepository->shouldReceive('getInviteById')
+            ->andReturn($memberInvite);
+
+        $this->sharedSpaceRepository->shouldReceive('deleteInvite')
+            ->andReturn(false);
+
+        $this->sharedSpaceRepository->shouldReceive('createInvite')
+            ->andThrows(new UserAlreadyInSharedSpaceException());
+
+        $this->expectException(UserAlreadyInSharedSpaceException::class);
+
+        $this->service->resendInvite($memberInvite->sharedSpaceId, $memberInvite->id, 'inviter-id');
+    }
+
+    #[DoesNotPerformAssertions]
     public function testJoin()
     {
         $userId = 'my user';

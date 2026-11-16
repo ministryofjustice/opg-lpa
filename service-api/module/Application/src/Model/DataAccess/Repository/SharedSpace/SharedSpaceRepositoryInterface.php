@@ -105,6 +105,8 @@ interface SharedSpaceRepositoryInterface
 
     public function getInvite(string $accessCode, string $sharedSpaceName, string $userEmail): ?MemberInvite;
 
+    public function getInviteById(int $inviteId, string $sharedSpaceId): ?MemberInvite;
+
     /**
      * @return array<MemberInvite>
      */
@@ -128,7 +130,7 @@ interface SharedSpaceRepositoryInterface
      * Revoke an unused invite to a shared space.
      * @throws InvalidQueryException
      */
-    public function deleteInvite(int $inviteId): void;
+    public function deleteInvite(int $inviteId, string $sharedSpaceId): void;
 
     /**
      * Deletes all invites associated with email address
