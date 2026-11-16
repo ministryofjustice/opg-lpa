@@ -26,6 +26,9 @@ resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription_ops" {
 
 # created in opg-org-infra/services/make-a-lasting-power-of-attorney/pagerduty_extended_support.tf
 data "aws_sns_topic" "extended_support" {
-  count = 0
-  name  = "extended-support-sns-topic"
+  name = "extended-support-sns-topic"
+}
+
+locals {
+  extended_support_sns_topic_arn = var.environment.cloudwatch_alarms.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support.arn : ""
 }
