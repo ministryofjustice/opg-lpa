@@ -1,14 +1,23 @@
 
 
 module "network" {
-  source                              = "github.com/ministryofjustice/opg-terraform-aws-firewalled-network?ref=v1.5.0"
-  aws_networkfirewall_firewall_policy = aws_networkfirewall_firewall_policy.main
-  cidr                                = var.firewalled_vpc_cidr_range
-  default_security_group_egress       = []
-  default_security_group_ingress      = []
-  enable_dns_hostnames                = true
-  enable_dns_support                  = true
-  network_firewall_enabled            = var.account.network_firewall.enabled
+  source                                          = "github.com/ministryofjustice/opg-terraform-aws-firewalled-network?ref=v1.5.0"
+  aws_networkfirewall_firewall_policy             = aws_networkfirewall_firewall_policy.main
+  cidr                                            = var.firewalled_vpc_cidr_range
+  default_security_group_egress                   = []
+  default_security_group_ingress                  = []
+  enable_dns_hostnames                            = true
+  enable_dns_support                              = true
+  flow_log_cloudwatch_log_group_retention_in_days = 400
+  nat_gateway_egress_alarm_config = {
+    "alarm_actions" : [
+      aws_sns_topic.cloudwatch_to_account_ops_alerts.arn
+    ],
+    "datapoints_to_alarm" : "5",
+    "evaluation_periods" : "5",
+    "threshold" : "900000"
+  }
+  network_firewall_enabled = var.account.network_firewall.enabled
   shared_firewall_configuration = var.account.network_firewall.shared_firewall_configuration.enabled != true ? null : {
     account_id   = var.account.network_firewall.shared_firewall_configuration.account_id
     account_name = var.account.network_firewall.shared_firewall_configuration.account_name
