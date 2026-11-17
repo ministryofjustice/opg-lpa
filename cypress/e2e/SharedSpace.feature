@@ -136,6 +136,17 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     And I see a success notification with content "Invite revoked"
 
+  Scenario: Can resend a members invite
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And I have sent an expired invite to "expired@example.com"
+    And I log in as the newly created fixture user
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    Then I should see an expired invite for "expired@example.com"
+    When I click element marked "Resend invite"
+    Then I should see a pending invite for "expired@example.com"
+    And I see a success notification with content "An invite has been sent to John Smith"
+
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin"
