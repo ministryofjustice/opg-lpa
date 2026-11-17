@@ -45,12 +45,12 @@ function addMemberToSharedSpace(sharedSpaceId, userToAddId, userAddingEmail, isA
     .then((response) => response.body);
 }
 
-function createInvite(sharedSpaceId, userEmail, inviteEmail) {
+function createInvite(sharedSpaceId, userEmail, inviteEmail, isAdmin = false) {
   return cy
     .request({
       method: 'POST',
       url: '/testing/cypress-fixture/shared-space-invite',
-      body: { sharedSpaceId, userEmail, inviteEmail },
+      body: { sharedSpaceId, userEmail, inviteEmail, isAdmin },
     })
     .then((response) => response.body);
 }
@@ -138,7 +138,7 @@ Given('a deletion log exists for {string}', (emailTemplate) => {
   });
 });
 
-Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {
+function inviteUserToSharedSpace(sharedSpaceName, lpaCountString, isAdmin) {
   const lpaCount = parseInt(lpaCountString, 10);
 
   if (sharedSpaceName.toLowerCase() === 'random') {
@@ -154,12 +154,20 @@ Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$
         cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
         cy.wrap({ email, password, lpaIds, sharedSpaceId, sharedSpaceName, spaceEmail, userFullName }).as('fixtureUser');
 
-        createInvite(sharedSpaceId, spaceEmail, email).then(({ accessCode, fullName, inviteEmail }) => {
+        createInvite(sharedSpaceId, spaceEmail, email, isAdmin).then(({ accessCode, fullName, inviteEmail }) => {
           cy.wrap({ accessCode, fullName, inviteEmail, lpaIds }).as('invitedUser');
         });
       });
     });
   });
+}
+
+Given(/^I have been invited to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {
+  inviteUserToSharedSpace(sharedSpaceName, lpaCountString, false);
+});
+
+Given(/^I have been invited as an admin to a shared space called "([^"]*)" with (\d+) LPAs?$/, (sharedSpaceName, lpaCountString) => {
+  inviteUserToSharedSpace(sharedSpaceName, lpaCountString, true);
 });
 
 Given('I have sent an expired invite to {string}', (inviteEmail) => {

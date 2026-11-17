@@ -1602,8 +1602,18 @@ class UserDataTest extends MockeryTestCase
             ['invite_count' => new SqlExpression('COUNT("invites"."id")')],
             Select::JOIN_LEFT,
         )->andReturnSelf();
+        $select->shouldReceive('join')->with(
+            ['members' => SharedSpaceData::SHARED_SPACE_MEMBERS],
+            'members.userId = users.id',
+            [
+                'sharedSpaceId',
+                'isSharedSpaceAdmin' => 'isAdmin',
+                'isActiveInSharedSpace' => 'isActive',
+            ],
+            Select::JOIN_LEFT,
+        )->andReturnSelf();
         $select->shouldReceive('where')->with($where)->andReturnSelf();
-        $select->shouldReceive('group')->with(['users.id'])->andReturnSelf();
+        $select->shouldReceive('group')->with(['users.id', 'members.id'])->andReturnSelf();
         $select->shouldReceive('limit')->with(1)->andReturnSelf();
 
         $statement = Mockery::mock(Statement::class);
