@@ -127,6 +127,17 @@ resource "aws_security_group_rule" "api_ecs_service_admin_ingress" {
   description              = "Admin ECS to API ECS - HTTP"
 }
 
+resource "aws_security_group_rule" "api_ecs_service_jwks_proxy_ingress" {
+  count                    = var.environment.proxy_jwks ? 1 : 0
+  type                     = "ingress"
+  from_port                = 8080
+  to_port                  = 8080
+  protocol                 = "tcp"
+  security_group_id        = aws_security_group.api_ecs_service.id
+  source_security_group_id = module.jwks_proxy[0].security_group.id
+  description              = "JWKS Proxy to API ECS - HTTP"
+}
+
 resource "aws_security_group_rule" "api_ecs_service_egress" {
   type      = "egress"
   from_port = 0

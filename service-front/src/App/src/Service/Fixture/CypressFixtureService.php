@@ -143,7 +143,7 @@ class CypressFixtureService
         }
     }
 
-    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail): mixed
+    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail, ?string $created): mixed
     {
         try {
             $userId = $this->authenticate($userEmail);
@@ -159,6 +159,7 @@ class CypressFixtureService
                     'lastName' => $lastname,
                     'email' => $inviteEmail,
                     'isAdmin' => false,
+                    'created' => $created,
                 ],
             );
         } catch (ApiException $ex) {

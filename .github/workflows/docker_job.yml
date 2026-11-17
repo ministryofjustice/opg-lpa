@@ -183,6 +183,13 @@ jobs:
             image_tag: latest
             scan_id: aurora_scheduler
 
+          - image_name: online-lpa/jwks_proxy
+            snyk_policy_path: lambdas/jwks_proxy/.snyk
+            build_options: "--file ./lambdas/jwks_proxy/Dockerfile --provenance=false"
+            dockerfile_path: ./lambdas/jwks_proxy/Dockerfile
+            image_tag: latest
+            scan_id: jwks_proxy
+
 # separate job for building and scanning test images - saving cache but not pushing images
   docker_build_and_scan_test_images:
     name: "Build and scan test image / ${{ matrix.image_name }}"

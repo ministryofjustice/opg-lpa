@@ -28,6 +28,7 @@ variable "environments" {
       account_name_short                     = string
       associate_alb_with_waf_web_acl_enabled = bool
       public_access_enabled                  = bool
+      proxy_jwks                             = bool
       cloudwatch_alarms = object({
         http_5xx_alarms_enabled                      = bool
         ecs_resource_alarms_enabled                  = bool

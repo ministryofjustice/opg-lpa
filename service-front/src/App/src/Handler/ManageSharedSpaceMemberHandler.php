@@ -67,7 +67,7 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
                         $status->getValue() === 'active'
                     )
                 ) {
-                    return new RedirectResponse('/shared-space');
+                    return new RedirectResponse('/shared-space?member=updated&updatedMemberName=' . urlencode($member->getName()->getFirst() . ' ' . $member->getName()->getLast()));
                 }
 
                 $error = 'Failed to update member. Please try again.';
@@ -87,9 +87,10 @@ class ManageSharedSpaceMemberHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'member'    => $member,
-                    'form'      => $form,
-                    'error'     => $error,
+                    'member'       => $member,
+                    'form'         => $form,
+                    'error'        => $error,
+                    'memberActive' => $member->isActive(),
                 ],
             ),
         ));

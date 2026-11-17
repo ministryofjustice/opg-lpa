@@ -139,10 +139,10 @@ $this->addErrorMap([
             <div class="govuk-summary-card" data-cy="user-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
                     <h3 class="govuk-summary-card__title">
-                        <?php if (array_key_exists('username', $result) && $result['username']) { ?>
-                            <?= htmlspecialchars($result['username']); ?>
-                        <?php } elseif (array_key_exists('oneLoginEmail', $result) && $result['oneLoginEmail']) { ?>
-                            <?= htmlspecialchars($result['oneLoginEmail']); ?>
+                        <?php if (array_key_exists('oneLoginEmail', $result) && $result['oneLoginEmail']) { ?>
+                            <span class="govuk-!-margin-right-2"><strong class="govuk-tag govuk-tag--green">One Login</strong> </span> <?= htmlspecialchars($result['oneLoginEmail']); ?>
+                        <?php } elseif (array_key_exists('username', $result) && $result['username']) { ?>
+                            <span class="govuk-!-margin-right-2"><strong class="govuk-tag govuk-tag--yellow ">Legacy</strong> </span> <?= htmlspecialchars($result['username']); ?>
                         <?php } elseif (array_key_exists('isDeleted', $result) && $result['isDeleted']) { ?>
                             Deleted user
                         <?php } ?>
@@ -167,13 +167,13 @@ $this->addErrorMap([
                                 Account status
                             </dt>
                             <dd class="govuk-summary-list__value">
-                        <span data-role="user-account-status">
-                            <?php if (array_key_exists('isActive', $result)) { ?>
-                                <?= ($result['isActive'] ? 'Activated' : 'Not activated'); ?>
-                            <?php } elseif (array_key_exists('isDeleted', $result) && $result['isDeleted']) { ?>
-                                Deleted
-                            <?php } ?>
-                        </span>
+                                <span data-role="user-account-status">
+                                    <?php if (array_key_exists('isActive', $result)) { ?>
+                                        <?= ($result['isActive'] ? 'Activated' : 'Not activated'); ?>
+                                    <?php } elseif (array_key_exists('isDeleted', $result) && $result['isDeleted']) { ?>
+                                        Deleted
+                                    <?php } ?>
+                                </span>
                             </dd>
                         </div>
 

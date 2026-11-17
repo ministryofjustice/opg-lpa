@@ -61,16 +61,18 @@ Feature: Shared Space
     And "Member 1" permissions should be set to "admin"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I uncheck checkbox labelled "Admin"
+    When I uncheck checkbox labelled "Make this member an admin"
     And I click element marked "Save"
     Then I should be on "/shared-space"
+    And I see a success notification with content "Member 1 has been updated"
     And "Member 1" permissions should be set to "member"
-    When I click element marked "Member 1"
+    When I click link "Member 1"
     Then I should be on "/shared-space/members/"
-    When I check checkbox labelled "Admin"
+    When I check checkbox labelled "Make this member an admin"
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" permissions should be set to "admin"
+    And I see a success notification with content "Member 1 has been updated"
 
   Scenario: Can invite a member to a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -134,6 +136,17 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     And I see a success notification with content "Invite revoked"
 
+  Scenario: Can resend a members invite
+    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And I have sent an expired invite to "expired@example.com"
+    And I log in as the newly created fixture user
+    When I click element marked "Shared space"
+    Then I should be on "/shared-space"
+    Then I should see an expired invite for "expired@example.com"
+    When I click element marked "Resend invite"
+    Then I should see a pending invite for "expired@example.com"
+    And I see a success notification with content "An invite has been sent to John Smith"
+
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
     And the shared space has a member called "Member 1" who is an "admin"
@@ -144,9 +157,10 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I select radio labelled "Suspend access to this shared space"
+    When I select radio labelled "Suspended - member cannot access this shared space"
     And I click element marked "Save"
     Then I should be on "/shared-space"
+    And I see a success notification with content "Member 1 has been updated"
     And "Member 1" status should be "suspended"
     And I log out
 
@@ -160,7 +174,7 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I select radio labelled "Allow access to this shared space"
+    When I select radio labelled "Active - member can access this shared space"
     And I click element marked "Save"
     Then I should be on "/shared-space"
     And "Member 1" status should be "active"
@@ -201,7 +215,7 @@ Feature: Shared Space
     Then I should be on "/shared-space"
     When I click element marked "Member 1"
     Then I should be on "/shared-space/members/"
-    When I click link "Delete user"
+    When I click link "Remove member - find out more"
     Then I should be on page matching "/shared-space/members/.+/delete"
     Then I click button "Delete"
     Then I should be on "/shared-space"
