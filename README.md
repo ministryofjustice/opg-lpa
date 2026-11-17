@@ -138,39 +138,18 @@ make dc-unit-tests
 
 ### Load tests
 
-The load tests are located in `tests/load`. They are written using [locust](https://locust.io/).
+The load tests are located in `locust`. They are written using [locust](https://locust.io/).
 
 To run the load tests:
 
 1. Start the stack (see above).
 2. Install dependencies:
 ```bash
-cd tests/load
-uv sync --locked
-```
-
-3. Run the test suite: `uv run bin/run_load_tests.sh tests/suite.py` or `PYTHONPATH="." uv run bin/run_load_tests.sh tests/suite.py` if no environment variable is set.
-The tests run indefinitely until you interrupt them. Reports are written to `build/load_tests`.
-Running `run_load_tests.sh` without arguments shows the available switches.
-
-When working on the tests, it can be useful to debug HTTP requests made by the requests library.
-To enable this, edit the `tests/load/load-test-config.json` file and set `"requests_debugging": true`.
-The output is very verbose but can be useful for a low-level view of the HTTP layer.
-
-Alternatively, to run locust itself independently as is done by CI:
-```bash
 cd locust
 uv sync --locked
-uv run locust -f locustfile.py
-uv run locust -f locustfile.py --host=https://localhost:7002
 ```
 
-You can see a web interface for locust at http://0.0.0.0:8089 where you can experiment with different loads
-
-Or you can run it headless:
-```bash
-uv run locust -f locustfile.py --headless -u 1 -r 1 -t 10s --host=https://localhost:7002
-```
+3. Run locust: `DISABLE_SSL_VERIFY=1 uv run locust -f ./locustfile.py --host https://localhost:7002` and open <http://localhost:8089>. Alternatively, run headlessly with: `DISABLE_SSL_VERIFY=1 uv run locust --headless -f ./locustfile.py -r 1 --host https://localhost:7002 -u 5 --run-time 2m`.
 
 
 ### Cypress functional tests

@@ -35,7 +35,6 @@ jobs:
           - directory: scripts/call_api_gateway
           - directory: tests/python-api-client
           - directory: tests/sirius-gateway-mock/scripts
-          - directory: tests/load
           - directory: locust
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
