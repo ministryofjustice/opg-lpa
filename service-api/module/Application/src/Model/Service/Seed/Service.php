@@ -40,7 +40,7 @@ class Service extends AbstractService
         return new Entity($seedLpa);
     }
 
-    public function update(string $lpaId, $data, ?int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
+    public function update(string $lpaId, $data, int $ifMatchVersion, string $userId): ApiProblem|EntityInterface
     {
         if (!isset($data['seed']) || !is_numeric($data['seed'])) {
             return new ApiProblem(400, 'Invalid LPA identifier to seed from');

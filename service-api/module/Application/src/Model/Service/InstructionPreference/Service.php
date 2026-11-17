@@ -20,7 +20,7 @@ class Service extends AbstractService
     /**
      * @return ApiProblem|array<InstructionEntity|PreferenceEntity>
      */
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, array $data): ApiProblem|array
+    public function update(string $lpaId, int $ifMatchVersion, string $userId, array $data): ApiProblem|array
     {
         $instruction = ($data['instruction'] ?? null);
         $preference = ($data['preference'] ?? null);

@@ -19,7 +19,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    public function create(string $lpaId, ?int $ifMatchVersion, string $userId, $data): ApiProblem|EntityInterface
+    public function create(string $lpaId, int $ifMatchVersion, string $userId, $data): ApiProblem|EntityInterface
     {
         switch ($data['type']) {
             case 'trust':
@@ -65,7 +65,7 @@ class Service extends AbstractService
         return new DataModelEntity($attorney);
     }
 
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data, mixed $id): ApiProblem|EntityInterface
+    public function update(string $lpaId, int $ifMatchVersion, string $userId, mixed $data, mixed $id): ApiProblem|EntityInterface
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
@@ -108,7 +108,7 @@ class Service extends AbstractService
         return new ApiProblem(404, 'Document not found');
     }
 
-    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $id): ?ApiProblem
+    public function delete(string $lpaId, int $ifMatchVersion, string $userId, mixed $id): ?ApiProblem
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);

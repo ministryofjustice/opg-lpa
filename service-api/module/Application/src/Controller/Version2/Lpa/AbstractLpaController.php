@@ -10,7 +10,6 @@ use Application\Model\Service\Users\Service as UsersService;
 use Laminas\Authentication\AuthenticationService;
 use Laminas\Http\Request;
 use Laminas\Mvc\Controller\AbstractRestfulController;
-use Psr\Log\LoggerInterface;
 
 abstract class AbstractLpaController extends AbstractRestfulController
 {
@@ -32,8 +31,6 @@ abstract class AbstractLpaController extends AbstractRestfulController
      */
     protected $service;
 
-    private bool $enforceConflictEnabled;
-
     /**
      * @param AuthenticationService $authenticationService
      * @param AbstractService|UsersService $service
@@ -41,11 +38,9 @@ abstract class AbstractLpaController extends AbstractRestfulController
     public function __construct(
         AuthenticationService $authenticationService,
         AbstractService|UsersService $service,
-        private readonly ?LoggerInterface $abstractLogger = null,
     ) {
         $this->authenticationService = $authenticationService;
         $this->service = $service;
-        $this->enforceConflictEnabled = getenv('ENFORCE_CONFLICT_ENABLED') === 'true';
     }
 
     /**
@@ -78,37 +73,19 @@ abstract class AbstractLpaController extends AbstractRestfulController
         }
     }
 
-    protected function ifMatch(): ?int
+    protected function ifMatch(): int
     {
         /** @var Request $request */
         $request = $this->getRequest();
         $header = $request->getHeader('If-Match');
 
         if (!$header) {
-            if ($this->enforceConflictEnabled) {
-                throw new ApiProblemException('If-Match header required', 400);
-            } else {
-                $this->abstractLogger?->warning('If-Match header required', [
-                    'uri' => $request->getUriString(),
-                    'method' => $request->getMethod(),
-                ]);
-
-                return null;
-            }
+            throw new ApiProblemException('If-Match header required', 400);
         }
 
         $version = (int) $header->getFieldValue();
         if ($version === 0) {
-            if ($this->enforceConflictEnabled) {
-                throw new ApiProblemException('If-Match header value required', 400);
-            } else {
-                $this->abstractLogger?->warning('If-Match header value required', [
-                    'uri' => $request->getUriString(),
-                    'method' => $request->getMethod(),
-                ]);
-
-                return null;
-            }
+            throw new ApiProblemException('If-Match header value required', 400);
         }
 
         return $version;

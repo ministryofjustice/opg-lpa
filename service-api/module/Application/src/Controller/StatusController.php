@@ -62,7 +62,7 @@ class StatusController extends AbstractRestfulController implements LoggerAwareI
     // $lpaId: ID of LPA to update
     // $metaData: existing metadata for the LPA; [] if no metadata exists yet
     // $data: data to use to update the existing metadata
-    private function updateMetadata(string $lpaId, ?int $ifMatchVersion, string $userId, $metaData, array $data): void
+    private function updateMetadata(string $lpaId, int $ifMatchVersion, string $userId, $metaData, array $data): void
     {
         // Update metadata in DB
         $newMeta[LPA::SIRIUS_PROCESSING_STATUS] = $data['status'];

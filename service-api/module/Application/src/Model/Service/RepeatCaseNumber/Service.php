@@ -16,7 +16,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
+    public function update(string $lpaId, int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
     {
         $repeatCaseNumber = (isset($data['repeatCaseNumber']) ? $data['repeatCaseNumber'] : null);
 
@@ -44,7 +44,7 @@ class Service extends AbstractService
         return new Entity($repeatCaseNumber);
     }
 
-    public function delete(string $lpaId, ?int $ifMatchVersion, string $userId): ?ApiProblem
+    public function delete(string $lpaId, int $ifMatchVersion, string $userId): ?ApiProblem
     {
         $lpa = $this->getLpa($lpaId);
         $lpa->setVersion($ifMatchVersion);
