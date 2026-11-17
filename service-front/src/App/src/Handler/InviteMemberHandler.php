@@ -13,6 +13,8 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\FormElementManager;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -62,7 +64,14 @@ class InviteMemberHandler implements RequestHandlerInterface
                     );
 
                     if ($ok) {
-                        return new RedirectResponse('/shared-space?invite=sent&invitedMemberName=' . urlencode($form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue()));
+                        /** @var FlashMessagesInterface $flash */
+                        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                        $flash->flash(SharedSpaceHandler::INVITE_OUTCOME_FLASH, [
+                            'outcome' => 'sent',
+                            'name' => $form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue(),
+                        ]);
+
+                        return new RedirectResponse('/shared-space');
                     }
                 } catch (Throwable $e) {
                     match ($e->getMessage()) {
