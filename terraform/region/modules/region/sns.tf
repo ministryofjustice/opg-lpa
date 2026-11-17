@@ -70,3 +70,11 @@ resource "aws_db_event_subscription" "rds_events_db_cluster_snapshot" {
     "notification",
   ]
 }
+
+data "aws_sns_topic" "extended_support" {
+  name = "extended-support-sns-topic"
+}
+
+locals {
+  extended_support_sns_topic_arn = var.account.cloudwatch_alarms.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support.arn : null
+}
