@@ -23,3 +23,12 @@ resource "aws_sns_topic_subscription" "cloudwatch_sns_subscription_ops" {
   endpoint_auto_confirms = true
   endpoint               = "https://events.pagerduty.com/integration/${pagerduty_service_integration.cloudwatch_integration_ops.integration_key}/enqueue"
 }
+
+# created in opg-org-infra/services/make-a-lasting-power-of-attorney/pagerduty_extended_support.tf
+data "aws_sns_topic" "extended_support" {
+  name = "extended-support-sns-topic"
+}
+
+locals {
+  extended_support_sns_topic_arn = var.environment.cloudwatch_alarms.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support.arn : null
+}
