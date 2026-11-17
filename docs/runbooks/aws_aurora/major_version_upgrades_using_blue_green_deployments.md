@@ -29,6 +29,7 @@ Production requires the `data-access` role.
     - select the postgres15 db cluster parameter group terraform created
     - choose the default db parameter group for postgresql15
     - tick the box to fix the blue parameter group
+    - click `Next`
 
 1. Confirm the reboot and click `Continue`
 
