@@ -64,15 +64,16 @@ class SharedSpaceHandlerTest extends TestCase
     public static function getShowsMembersAndInvitesProvider(): array
     {
         return [
-            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, 'John Smith', false, null],
-            [['invite' => 'revoked'], false, false, true, null, false, null],
-            [['member' => 'updated', 'updatedMemberName' => 'Jane Doe'], false, false, false, null, true, 'Jane Doe'],
-            [[], true, false, false, null, false, null],
+            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, 'John Smith', false, null, false],
+            [['invite' => 'revoked'], false, false, true, null, false, null, false],
+            [['member' => 'updated', 'updatedMemberName' => 'Jane Doe'], false, false, false, null, true, 'Jane Doe', false],
+            [['member' => 'deleted'], false, false, false, null, false, null, true],
+            [[], true, false, false, null, false, null, false],
         ];
     }
 
     #[DataProvider('getShowsMembersAndInvitesProvider')]
-    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, ?string $invitedMemberName, bool $memberUpdated, ?string $updatedMemberName): void
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, ?string $invitedMemberName, bool $memberUpdated, ?string $updatedMemberName, bool $memberDeleted): void
     {
         $response = [
             'members' => [
@@ -97,6 +98,7 @@ class SharedSpaceHandlerTest extends TestCase
                 'revokeSuccess' => $revokeSuccess,
                 'memberUpdated' => $memberUpdated,
                 'updatedMemberName' => $updatedMemberName,
+                'memberDeleted' => $memberDeleted,
                 'sharedSpaceName' => 'Example Shared Space',
                 'signedInUserIsAdmin' => $isAdmin,
                 'signedInUser' => null,
