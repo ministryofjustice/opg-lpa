@@ -31,7 +31,7 @@ While there are alternatives to locust, it is implemented in Python
 members of the team have experience with it already (and can reuse
 previously-written code).
 
-Load tests will be added to the tests/load directory in the project,
+Load tests will be added to the `locust` directory in the project,
 as they are not component-specific and apply to the whole stack.
 
 Doing the above has the happy side effect of opening up the possibility of
