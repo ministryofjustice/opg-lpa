@@ -411,12 +411,31 @@ cypress-run-stitched-suites: _cypress-prepare-dirs
 	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup" && \
 	docker compose run --rm -v $${PWD}/cypress/screenshots:/app/cypress/screenshots -v $${PWD}/cypress/regressions:/app/cypress/regressions -e CYPRESS_userNumber=$$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --expose visualRegressionEnabled=true -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@StitchedHW or @StitchedPF or @StitchedClone"
 
-# Runs the "remaining" cypress tests - everything not covered by stitched suites or signup.
-# Mirrors the exclusion expression used in CI (workflow_merge_queue.yml cypress_tests_Remaining),
-# plus @Admin which requires cross-origin admin-ssl navigation not supported locally.
-.PHONY: cypress-run-remaining
-cypress-run-remaining:
-	@${MAKE} cypress-run-tags tags="not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping and not @Admin"
+# Runs the "remaining" cypress tests, split into three groups of feature files. The groups are read from the
+# suite_name jobs in .github/workflows/cypress_remaining_tests.yml (the single source of truth) by scripts/cypress-partion-check.
+CYPRESS_REMAINING_1_SPECS = $(shell cd scripts/cypress-partion-check && go run . specs "Remaining 1")
+CYPRESS_REMAINING_2_SPECS = $(shell cd scripts/cypress-partion-check && go run . specs "Remaining 2")
+CYPRESS_REMAINING_3_SPECS = $(shell cd scripts/cypress-partion-check && go run . specs "Remaining 3")
+
+# Required for use in subcommands below
+comma := ,
+space := $(subst ,, )
+
+.PHONY: cypress-run-remaining cypress-run-remaining-1 cypress-run-remaining-2 cypress-run-remaining-3 _cypress-run-specs
+cypress-run-remaining: cypress-run-remaining-1 cypress-run-remaining-2 cypress-run-remaining-3
+
+cypress-run-remaining-1:
+	@${MAKE} _cypress-run-specs SPECS="$(CYPRESS_REMAINING_1_SPECS)"
+
+cypress-run-remaining-2:
+	@${MAKE} _cypress-run-specs SPECS="$(CYPRESS_REMAINING_2_SPECS)"
+
+cypress-run-remaining-3:
+	@${MAKE} _cypress-run-specs SPECS="$(CYPRESS_REMAINING_3_SPECS)"
+
+_cypress-run-specs: _cypress-prepare-dirs
+	@test -n "${SPECS}" || { echo "Usage: make $@ SPECS='A.feature B.feature'"; exit 1; }
+	docker compose run --rm -v $(CURDIR)/cypress/screenshots:/app/cypress/screenshots -e CYPRESS_userNumber=`python3 cypress/user_number.py` -e CYPRESS_screenshotOnRunFailure=true cypress --headless --config video=false --spec "$(subst $(space),$(comma),$(addprefix cypress/e2e/,${SPECS}))" -x stepDefinitions="/app/cypress/e2e/common/*.js"
 
 .PHONY: cypress-update-baselines-hw cypress-update-baselines-pf cypress-update-baselines-clone
 cypress-update-baselines-hw: _cypress-stitch

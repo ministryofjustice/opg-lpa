@@ -1,3 +1,4 @@
+@Onboarding
 @RequiresOneLogin
 Feature: Onboarding into Make after signing in with GOV.UK One Login
 

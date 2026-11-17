@@ -137,6 +137,25 @@ jobs:
     name: Lambda unit tests
     uses: ./.github/workflows/lambda_unit_tests.yml
 
+  cypress_partition_check:
+    name: Check all Cypress feature files are run in CI
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+        with:
+          go-version-file: scripts/cypress-partion-check/go.mod
+      - name: Check Cypress partitions
+        working-directory: scripts/cypress-partion-check
+        run: |
+          if ! go run .; then
+            echo "::warning title=Cypress partition check::Some Cypress feature files are not run by any CI job. See the step log for details."
+          fi
+
   terraform_region_development:
     name: TF Development - Region
     uses: ministryofjustice/opg-github-workflows/.github/workflows/build-infrastructure-terraform-oidc.yml@84a762ecab4a2d6217be908505351fd1f9312319 # v3.19.19
@@ -297,7 +316,7 @@ jobs:
   # TODO CorrespondentReuse needs refactoring so that it can be included as part of the stitchedClone run.
   cypress_tests_Remaining:
     name: Run Cypress tests - Remaining
-    uses: ./.github/workflows/cypress_tests.yml
+    uses: ./.github/workflows/cypress_remaining_tests.yml
     needs:
       - terraform_outputs
     with:
@@ -305,7 +324,6 @@ jobs:
       front_url: https://${{ needs.terraform_outputs.outputs.front_fqdn }}
       onelogin_mock_url: ${{ needs.terraform_outputs.outputs.mock_onelogin_url }}
       account_id: "050256574573"
-      cypress_tags: "not @Signup and not @PartOfStitchedRun and not @StitchedHW and not @StitchedPF and not @StitchedClone and not @CorrespondentReuse and not @SignupIncluded and not @AdminSystemMessage and not @CheckoutPaymentGateway and not @Ping"
       oidc_ingress_management_role: ${{ vars.OIDC_INGRESS_MANAGEMENT_DEVELOPMENT }}
 
   end_of_workflow:
