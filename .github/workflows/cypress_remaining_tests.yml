@@ -1,0 +1,118 @@
+name: "[Workflow] Cypress Remaining Tests"
+
+# Single source of truth for how the "remaining" Cypress feature files (everything not covered by the
+# signup/stitched suites) are split across parallel jobs. scripts/cypress-partion-check checks that every
+# feature file is run somewhere.
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  workflow_call:
+    inputs:
+      account_id:
+        description: "AWS account ID containing the role to assume for boto commands"
+        required: true
+        type: string
+      admin_url:
+        description: "URL of the admin frontend"
+        required: true
+        type: string
+      front_url:
+        description: "URL of the frontend"
+        required: true
+        type: string
+      onelogin_mock_url:
+        description: "URL of the deployed mock One Login service for this environment, if any"
+        required: false
+        type: string
+        default: ""
+      cypress_tags:
+        description: "Tag expression filtering scenarios within the listed feature files (e.g. 'not @Tag')"
+        required: false
+        type: string
+        default: ""
+      oidc_ingress_management_role:
+        description: "OIDC role to assume for ingress management permissions"
+        required: true
+        type: string
+
+permissions:
+  actions: none
+  checks: none
+  contents: read
+  deployments: none
+  id-token: write
+  issues: none
+  packages: none
+  pull-requests: read
+  repository-projects: none
+  security-events: none
+  statuses: none
+
+jobs:
+  cypress_tests_Remaining1:
+    name: Run Cypress tests - Remaining 1
+    uses: ./.github/workflows/cypress_tests.yml
+    with:
+      admin_url: ${{ inputs.admin_url }}
+      front_url: ${{ inputs.front_url }}
+      onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      account_id: ${{ inputs.account_id }}
+      suite_name: "Remaining 1"
+      cypress_specs: |
+        Onboarding.feature
+        OneLoginPasswordReset.feature
+        OneLoginSignIn.feature
+        UserPersonalDetails.feature
+      cypress_tags: ${{ inputs.cypress_tags }}
+      oidc_ingress_management_role: ${{ inputs.oidc_ingress_management_role }}
+
+  cypress_tests_Remaining2:
+    name: Run Cypress tests - Remaining 2
+    uses: ./.github/workflows/cypress_tests.yml
+    with:
+      admin_url: ${{ inputs.admin_url }}
+      front_url: ${{ inputs.front_url }}
+      onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      account_id: ${{ inputs.account_id }}
+      suite_name: "Remaining 2"
+      cypress_specs: |
+        SharedSpace.feature
+        Admin.feature
+        AdminDeletionLog.feature
+      cypress_tags: ${{ inputs.cypress_tags }}
+      oidc_ingress_management_role: ${{ inputs.oidc_ingress_management_role }}
+
+  cypress_tests_Remaining3:
+    name: Run Cypress tests - Remaining 3
+    uses: ./.github/workflows/cypress_tests.yml
+    with:
+      admin_url: ${{ inputs.admin_url }}
+      front_url: ${{ inputs.front_url }}
+      onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      account_id: ${{ inputs.account_id }}
+      suite_name: "Remaining 3"
+      cypress_specs: |
+        AccessibleLpaFlow.feature
+        AccountDeletion.feature
+        Cookies.feature
+        CreateLpaButton.feature
+        Dashboard.feature
+        DateCheck.feature
+        Errors.feature
+        Feedback.feature
+        HomePage.feature
+        PDFGenerationHW.feature
+        PDFGenerationPF.feature
+        Password.feature
+        Security.feature
+        Session.feature
+        SignOut.feature
+        SignUpWithFixtures.feature
+        StatsPage.feature
+        Statuses.feature
+        UseMyDetails.feature
+      cypress_tags: ${{ inputs.cypress_tags }}
+      oidc_ingress_management_role: ${{ inputs.oidc_ingress_management_role }}
