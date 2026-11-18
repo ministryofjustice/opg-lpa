@@ -313,6 +313,7 @@ locals {
       environment = [
         { name = "OPG_NGINX_SERVER_NAMES", value = "api api-${var.environment_name}.${var.account_name} localhost 127.0.0.1" },
         { name = "OPG_LPA_POSTGRES_HOSTNAME", value = module.rds_proxy.endpoint },
+        { name = "OPG_LPA_POSTGRES_RO_HOSTNAME", value = module.rds_proxy.read_only_endpoint },
         { name = "OPG_LPA_POSTGRES_PORT", value = "5432" },
         { name = "OPG_LPA_POSTGRES_NAME", value = module.api_aurora[0].database_name },
         { name = "OPG_LPA_PROCESSING_STATUS_ENDPOINT", value = var.environment.sirius_api_gateway_endpoint },

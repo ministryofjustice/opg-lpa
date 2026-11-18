@@ -117,3 +117,11 @@ resource "aws_security_group_rule" "rds_proxy_secrets_manager" {
   security_group_id        = aws_security_group.rds_proxy.id
   description              = "Egress For Secrets Manager"
 }
+
+# RDS Proxy read-only endpoint for routing read requests
+resource "aws_db_proxy_endpoint" "rds_read_only" {
+  db_proxy_name          = aws_db_proxy.rds_proxy.name
+  db_proxy_endpoint_name = "rds-read-only"
+  target_role            = "READ_ONLY"
+  vpc_subnet_ids         = var.vpc_subnet_ids
+}
