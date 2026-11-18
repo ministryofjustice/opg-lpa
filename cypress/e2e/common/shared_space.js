@@ -248,7 +248,7 @@ When(`I type the access code into field labelled {string}`, (label) => {
       .invoke('attr', 'for')
       .then((id) => cy.get('#' + id))
       .clear({ force: true })
-      .type(accessCode);
+      .type(`  ${accessCode}  `);
   })
 });
 

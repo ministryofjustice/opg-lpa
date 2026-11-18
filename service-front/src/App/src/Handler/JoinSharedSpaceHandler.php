@@ -54,8 +54,8 @@ class JoinSharedSpaceHandler implements RequestHandlerInterface
             if ($form->isValid()) {
                 try {
                     $sharedSpaceId = $this->sharedSpaceService->join(
-                        $form->get('sharedSpaceName')->getValue(),
-                        $form->get('sharedSpaceAccessCode')->getValue(),
+                        trim($form->get('sharedSpaceName')->getValue()),
+                        trim($form->get('sharedSpaceAccessCode')->getValue()),
                         $userDetails?->getEmail()->getAddress()
                     );
 
