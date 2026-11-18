@@ -20,3 +20,12 @@ data "pagerduty_vendor" "cloudwatch" {
 data "pagerduty_service" "main" {
   name = var.pagerduty_service_name
 }
+
+data "aws_sns_topic" "uptime_notifications" {
+  name     = "Make a LPA - Uptime Notifications"
+  provider = aws.us_east_1
+}
+
+locals {
+  uptime_notifications_sns_topic_arn = var.pagerduty_integration_enabled ? data.aws_sns_topic.uptime_notifications.arn : null
+}
