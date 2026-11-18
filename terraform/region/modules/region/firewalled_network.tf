@@ -16,7 +16,7 @@ module "network" {
     ]),
     "datapoints_to_alarm" : "5",
     "evaluation_periods" : "5",
-    "threshold" : "900000"
+    "threshold" : "1900000"
   }
   network_firewall_enabled = var.account.network_firewall.enabled
   shared_firewall_configuration = var.account.network_firewall.shared_firewall_configuration.enabled != true ? null : {

@@ -18,7 +18,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, $data): ApiProblem|EntityInterface
+    public function update(string $lpaId, int $ifMatchVersion, string $userId, $data): ApiProblem|EntityInterface
     {
         $donor = new Donor($data);
 
