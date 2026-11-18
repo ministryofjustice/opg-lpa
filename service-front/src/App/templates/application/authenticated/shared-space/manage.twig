@@ -9,7 +9,7 @@
     {{ macros.formErrorSummary(error) }}
 
     <div class="govuk-grid-column-full">
-      {% if inviteSuccess or revokeSuccess or resendSuccess or memberDeleted or memberUpdated %}
+      {% if inviteSuccess or revokeSuccess or memberUpdated %}
         <div class="govuk-notification-banner govuk-notification-banner--success" role="alert" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
           <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
@@ -17,23 +17,15 @@
             </h2>
           </div>
           <div class="govuk-notification-banner__content">
-            {% if memberDeleted %}
+            {% if revokeSuccess %}
             <h3 class="govuk-notification-banner__heading">
-              Member deleted
+              Invite revoked
             </h3>
             {% endif %}
 
             {% if inviteSuccess %}
               <p class="govuk-body app-full-width">
                 An invite has been sent to {{ invitedMemberName }}.
-              </p>
-            {% elseif revokeSuccess %}
-              <p class="govuk-body app-full-width">
-                {{ invitedMemberName }}’s invite has been revoked.
-              </p>
-            {% elseif resendSuccess %}
-              <p class="govuk-body app-full-width">
-                The invite has been resent to {{ invitedMemberName }}.
               </p>
             {% endif %}
 
@@ -80,14 +72,14 @@
                         Expired
                       </td>
                       <td class="govuk-table__cell">
-                        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" name="resend" value="{{ invite.id }}">Resend invite<span class="govuk-visually-hidden"> to {{ invite.fullName }}</span></button>
+                        <button class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" name="resend" value="{{ invite.id }}">Resend invite</button>
                       </td>
                     {% else %}
                       <td class="govuk-table__cell">
                         Pending
                       </td>
                       <td class="govuk-table__cell">
-                        <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" href="{{ url('shared-space.revoke-invite', {'invite-id': invite.id}) }}">Revoke invite<span class="govuk-visually-hidden"> to {{ invite.fullName }}</span></a>
+                        <a class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" href="{{ url('shared-space/revoke-invite/' ~ invite.id ~ '?email=' ~ invite.email) }}">Revoke invite</a>
                       </td>
                     {% endif %}
                   </tr>

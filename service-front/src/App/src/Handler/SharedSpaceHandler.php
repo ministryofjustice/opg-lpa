@@ -13,8 +13,6 @@ use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use MakeShared\DataModel\User\User as SharedUser;
-use Mezzio\Flash\FlashMessageMiddleware;
-use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,12 +22,6 @@ use Throwable;
 class SharedSpaceHandler implements RequestHandlerInterface
 {
     use CommonTemplateVariablesTrait;
-
-    /**
-     * Flash key for the outcome of an invite action, shaped ['outcome' => string, 'name' => string].
-     * Flashed rather than put in the redirect URL so the invitee's name doesn't end up in logs or history.
-     */
-    public const string INVITE_OUTCOME_FLASH = 'shared_space_invite_outcome';
 
     public function __construct(
         private readonly TemplateRendererInterface $renderer,
@@ -53,14 +45,8 @@ class SharedSpaceHandler implements RequestHandlerInterface
 
                     $invitedName = $this->sharedSpaceService->resendInvite($userDetails, $postData['resend']);
 
-                    if ($invitedName === null) {
-                        $error = 'An error occurred while sending the invitation. Please try again later.';
-                    } else {
-                        /** @var FlashMessagesInterface $flash */
-                        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                        $flash->flash(self::INVITE_OUTCOME_FLASH, ['outcome' => 'resent', 'name' => $invitedName]);
-
-                        return new RedirectResponse('/shared-space');
+                    if ($invitedName !== null) {
+                        return new RedirectResponse('/shared-space?invite=sent&invitedMemberName=' . urlencode($invitedName));
                     }
                 } catch (Throwable $e) {
                     $error = match ($e->getMessage()) {
@@ -93,10 +79,6 @@ class SharedSpaceHandler implements RequestHandlerInterface
             }
         }
 
-        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-        $inviteFlash = $flash instanceof FlashMessagesInterface ? $flash->getFlash(self::INVITE_OUTCOME_FLASH) : null;
-        $inviteOutcome = is_array($inviteFlash) ? ($inviteFlash['outcome'] ?? null) : null;
-
         return new HtmlResponse($this->renderer->render(
             'application/authenticated/shared-space/manage.twig',
             array_merge(
@@ -107,12 +89,10 @@ class SharedSpaceHandler implements RequestHandlerInterface
                     'invites' => $invites,
                     'sharedSpaceName' => $sharedSpaceName,
                     'signedInUserIsAdmin' => $isAdmin,
-                    'invitedMemberName' => is_array($inviteFlash) ? ($inviteFlash['name'] ?? null) : null,
+                    'invitedMemberName'    => $request->getQueryParams()['invitedMemberName'] ?? null,
                     'updatedMemberName'    => $request->getQueryParams()['updatedMemberName'] ?? null,
-                    'inviteSuccess' => $inviteOutcome === 'sent',
-                    'revokeSuccess' => $inviteOutcome === 'revoked',
-                    'resendSuccess' => $inviteOutcome === 'resent',
-                    'memberDeleted' => ($request->getQueryParams()['member'] ?? null) === 'deleted',
+                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
+                    'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
                     'memberUpdated' => ($request->getQueryParams()['member'] ?? null) === 'updated',
                 ],
             ),

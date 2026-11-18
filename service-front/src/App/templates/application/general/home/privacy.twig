@@ -99,7 +99,13 @@
 
 	<p class="govuk-body">Before you click to confirm your LPA application is complete, you can change or delete the information you’ve provided.  Once you’ve confirmed your LPA is complete, you cannot make any further changes to it, but you can delete it.</p>
 
+	{% if oneLoginEnabled %}
+	<p class="govuk-body">You can also delete your account, along with all the information you provided when using it, by signing in to the service, going to the ‘Your details’ page and selecting ‘Deleting your account - find out more’.</p>
+
+	<p class="govuk-body">We keep a record of your email address for 3 years after you delete your account. This helps us confirm that you previously had an account if you contact us in the future. We may also share information we hold with other public authorities where we are required or permitted to do so by law.</p>
+	{% else %}
 	<p class="govuk-body">You can also delete your own account, and all information in it, by signing in to the service, going to the ‘Your details’ page and selecting ‘Delete account’.</p>
+	{% endif %}
 
 	<p class="govuk-body">If you delete your account or a particular LPA after you have posted a paper LPA application to us, OPG will still hold the information in that paper application. Visit OPG’s <a class="govuk-link" href="https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/732473/opg20-privacy-notice-lpa-and-epa.pdf" rel="noopener noreferrer" target="_blank">lasting power of attorney privacy notice<span class="govuk-visually-hidden"> (opens in new tab)</span></a> to find out when and how you can request that we delete this information.</p>
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use App\Feature;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -19,7 +20,9 @@ class PrivacyHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $html = $this->renderer->render('application/general/home/privacy.twig');
+        $html = $this->renderer->render('application/general/home/privacy.twig', [
+            'oneLoginEnabled' => Feature::OneLogin->isEnabled(),
+        ]);
 
         return new HtmlResponse($html);
     }
