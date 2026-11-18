@@ -183,6 +183,20 @@ class CypressFixtureService
         ];
     }
 
+    /**
+     * Creates a user with a single property-and-financial LPA completed up to payment.
+     *
+     * @return array{email: string, password: string, userId: string, lpaIds: array<int, string>, userFullName: string}
+     */
+    public function createUserAndReadyToPayLPA(): array
+    {
+        $userData = $this->createUserWithLpas(0, 'property-and-financial');
+
+        $userData['lpaIds'] = [$this->createReadyToPayLpa($userData['userId'])];
+
+        return $userData;
+    }
+
     private function createAndActivateUser(string $email): string
     {
         $result = $this->assertArrayResult($this->apiClient->httpPost('/v2/users', [
@@ -314,5 +328,78 @@ class CypressFixtureService
         $identifier = (string) (int) (microtime(true) * 1000.0) . (string) random_int(100000000, 999999999);
 
         return $identifier . '@example.org';
+    }
+
+    private function createReadyToPayLpa(string $userId): string
+    {
+        $applicationsPath = '/v2/user/' . $userId . '/applications';
+
+        $lpaData = [
+            'document' => [
+                'type' => 'property-and-financial',
+                'donor' => [
+                    'name' => ['title' => 'Mrs', 'first' => 'Nancy', 'last' => 'Garrison'],
+                    'otherNames' => '',
+                    'address' => [
+                        'address1' => 'Bank End Farm House',
+                        'address2' => 'Undercliff Drive',
+                        'postcode' => 'PO38 1UL',
+                    ],
+                    'dob' => ['date' => '1988-10-22T00:00:00.000000+0000'],
+                    'canSign' => false,
+                ],
+                'primaryAttorneyDecisions' => ['when' => 'now'],
+                'primaryAttorneys' => [[
+                    'id' => 1,
+                    'type' => 'human',
+                    'name' => ['title' => 'Mrs', 'first' => 'Amy', 'last' => 'Wheeler'],
+                    'dob' => ['date' => '1988-10-22T00:00:00.000000+0000'],
+                    'address' => [
+                        'address1' => 'Brickhill Cottage',
+                        'address2' => 'Birch Cross',
+                        'postcode' => 'ST14 8NX',
+                    ],
+                ]],
+                'certificateProvider' => [
+                    'name' => ['title' => 'Mr', 'first' => 'Reece', 'last' => 'Richards'],
+                    'address' => [
+                        'address1' => '11 Brookside',
+                        'address2' => 'Cholsey',
+                        'postcode' => 'OX10 9NN',
+                    ],
+                ],
+                'instruction' => '',
+                'preference' => '',
+                'whoIsRegistering' => 'donor',
+                'correspondent' => [
+                    'who' => 'donor',
+                    'name' => ['title' => 'Mrs', 'first' => 'Nancy', 'last' => 'Garrison'],
+                    'address' => [
+                        'address1' => 'Bank End Farm House',
+                        'address2' => 'Undercliff Drive',
+                        'postcode' => 'PO38 1UL',
+                    ],
+                    'contactByPost' => false,
+                    'contactInWelsh' => false,
+                ],
+            ],
+            'metadata' => [
+                'replacement-attorneys-confirmed' => true,
+                'people-to-notify-confirmed' => true,
+                'repeat-application-confirmed' => true,
+            ],
+            'payment' => ['amount' => 92],
+        ];
+
+        $createResult = $this->assertArrayResult($this->apiClient->httpPost($applicationsPath, $lpaData));
+        $lpaId        = (string) $createResult['id'];
+
+        $this->apiClient->httpPut(
+            $applicationsPath . '/' . $lpaId . '/who-are-you',
+            ['who' => 'donor', 'qualifier' => null],
+            ['If-Match' => '1']
+        );
+
+        return $lpaId;
     }
 }

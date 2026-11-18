@@ -1,7 +1,7 @@
 const {
   Then,
   After,
-  Before,
+  Before, Given,
 } = require('@badeball/cypress-cucumber-preprocessor');
 
 // For tagged Scenarios, clean up lpa test fixture used by the scenario
@@ -422,23 +422,6 @@ Then(
 );
 
 Then(
-  `I create PF LPA test fixture with a card payment that was never recorded`,
-  () => {
-    cy.runPythonApiCommand(
-      'createLpa.py -d -a -r -cp -pn -i -w donor -co donor -y -ra false -pa card-started-not-recorded',
-    )
-      .its('stdout')
-      .as('lpaId')
-      .then((lpaId) => {
-        cy.log(
-          'Created PF LPA test fixture with an unrecorded card payment through the API with id ' +
-          lpaId,
-        );
-      });
-  },
-);
-
-Then(
   `I create PF LPA test fixture with donor, attorneys, replacement attorneys, cert provider, people to notify, instructions, preferences, applicant, correspondent, who are you, repeat application, fee reduction`,
   () => {
     cy.runPythonApiCommand(
@@ -505,5 +488,19 @@ Then(`an existing user has the email {string}`, (email) => {
       } else {
         cy.log('Unable to get or create user with email ' + email);
       }
+    });
+});
+
+Given('I create a new user with an LPA that is ready to pay', () => {
+  cy.request({
+    method: 'POST',
+    url: '/testing/cypress-fixture/user-and-ready-to-pay-lpa',
+  })
+    .then((response) => response.body)
+    .then(({ email, password, userId, lpaIds, userFullName }) => {
+      cy.task('log', `Created fixture user ${email} with ready-to-pay LPA ${lpaIds[0]}`);
+      cy.wrap({ email, password, userId, lpaIds, userFullName }).as('fixtureUser');
+      // existing steps (e.g. "I am taken to the complete page") read the LPA id from @lpaId
+      cy.wrap(lpaIds[0]).as('lpaId');
     });
 });
