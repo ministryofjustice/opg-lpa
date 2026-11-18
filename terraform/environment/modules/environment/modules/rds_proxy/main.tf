@@ -124,4 +124,7 @@ resource "aws_db_proxy_endpoint" "rds_read_only" {
   db_proxy_endpoint_name = "rds-read-only"
   target_role            = "READ_ONLY"
   vpc_subnet_ids         = var.vpc_subnet_ids
+  vpc_security_group_ids = [
+    aws_security_group.rds_proxy.id,
+  ]
 }
