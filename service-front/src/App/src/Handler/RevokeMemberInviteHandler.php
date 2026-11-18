@@ -35,8 +35,7 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
         $routeResult = $request->getAttribute(RouteResult::class);
         $inviteId = (string) ($routeResult?->getMatchedParams()['invite-id'] ?? '');
 
-        $invites = $this->sharedSpaceService->getMembersAndInvites()['invites'] ?? [];
-        $invite = array_find($invites, fn (array $invite) => (string) $invite['id'] === $inviteId);
+        $invite = $this->sharedSpaceService->getInvite($inviteId);
 
         if ($invite === null) {
             return new RedirectResponse('/shared-space');

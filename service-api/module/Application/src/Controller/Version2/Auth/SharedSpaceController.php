@@ -176,6 +176,27 @@ class SharedSpaceController extends AbstractRestfulController
         return new Json($response);
     }
 
+    public function memberInviteAction(): Json|ApiProblem
+    {
+        $token = $this->checkTokenForSharedSpace();
+        if ($token instanceof ApiProblem) {
+            return $token;
+        }
+
+        if (!$this->sharedSpaceService->isAdmin($token['sharedSpaceId'], $token['userId'])) {
+            return new ApiProblem(StatusCodeInterface::STATUS_FORBIDDEN, 'Access Denied');
+        }
+
+        $inviteId = (int) $this->params()->fromRoute('memberInviteId');
+
+        $invite = $this->sharedSpaceService->getInvite($token['sharedSpaceId'], $inviteId);
+        if ($invite === null) {
+            return new ApiProblem(StatusCodeInterface::STATUS_NOT_FOUND, 'Invite not found');
+        }
+
+        return new Json(['invite' => $invite]);
+    }
+
     public function inviteAction(): Json|ApiProblem
     {
         $result = $this->checkTokenForSharedSpace();

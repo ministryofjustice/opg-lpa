@@ -32,13 +32,9 @@ class RevokeMemberInviteHandlerTest extends TestCase
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
         $this->flash = $this->createMock(FlashMessagesInterface::class);
 
-        $this->sharedSpaceService->method('getMembersAndInvites')->willReturn([
-            'members' => [],
-            'invites' => [
-                ['id' => 4, 'fullName' => 'Other Person', 'email' => 'other@example.com', 'isExpired' => false],
-                ['id' => 5, 'fullName' => 'Alt Person', 'email' => 'alt@example.com', 'isExpired' => false],
-            ],
-            'name' => 'My Space',
+        $this->sharedSpaceService->method('getInvite')->willReturnMap([
+            ['5', ['id' => 5, 'fullName' => 'Alt Person', 'email' => 'alt@example.com', 'isExpired' => false]],
+            ['99', null],
         ]);
 
         $this->handler = new RevokeMemberInviteHandler(
