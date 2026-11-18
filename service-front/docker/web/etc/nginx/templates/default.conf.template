@@ -106,6 +106,7 @@ server {
 
     root /web;
 
+    http2 off;
 
     # security headers
     add_header X-XSS-Protection $xxssp;
