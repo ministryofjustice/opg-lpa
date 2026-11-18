@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace AppTest\Handler;
 
 use App\Handler\RevokeMemberInviteHandler;
-use App\Handler\SharedSpaceHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
@@ -95,7 +95,7 @@ class RevokeMemberInviteHandlerTest extends TestCase
 
         $this->flash->expects($this->once())
             ->method('flash')
-            ->with(SharedSpaceHandler::INVITE_OUTCOME_FLASH, ['outcome' => 'revoked', 'name' => 'Alt Person']);
+            ->with(FlashMessenger::SUCCESS, ['Alt Person’s invite has been revoked.']);
 
         $response = $this->handler->handle($this->createRequest('POST'));
 

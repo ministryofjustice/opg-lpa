@@ -8,6 +8,7 @@ use App\Form\SharedSpace\InviteMemberForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -66,9 +67,8 @@ class InviteMemberHandler implements RequestHandlerInterface
                     if ($ok) {
                         /** @var FlashMessagesInterface $flash */
                         $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                        $flash->flash(SharedSpaceHandler::INVITE_OUTCOME_FLASH, [
-                            'outcome' => 'sent',
-                            'name' => $form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue(),
+                        $flash->flash(FlashMessenger::SUCCESS, [
+                            'An invite has been sent to ' . $form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue() . '.',
                         ]);
 
                         return new RedirectResponse('/shared-space');

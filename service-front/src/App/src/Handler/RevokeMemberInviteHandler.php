@@ -6,6 +6,7 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -45,10 +46,7 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
             if ($this->sharedSpaceService->revokeInvite($inviteId)) {
                 /** @var FlashMessagesInterface $flash */
                 $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
-                $flash->flash(
-                    SharedSpaceHandler::INVITE_OUTCOME_FLASH,
-                    ['outcome' => 'revoked', 'name' => $invite['fullName']],
-                );
+                $flash->flash(FlashMessenger::SUCCESS, [$invite['fullName'] . '’s invite has been revoked.']);
 
                 return new RedirectResponse('/shared-space');
             }

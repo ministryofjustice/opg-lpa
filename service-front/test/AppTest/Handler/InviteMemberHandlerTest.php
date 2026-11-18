@@ -6,11 +6,11 @@ namespace AppTest\Handler\Lpa;
 
 use App\Form\SharedSpace\InviteMemberForm;
 use App\Handler\InviteMemberHandler;
-use App\Handler\SharedSpaceHandler;
 use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -113,7 +113,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $this->flash->expects($this->once())
             ->method('flash')
-            ->with(SharedSpaceHandler::INVITE_OUTCOME_FLASH, ['outcome' => 'sent', 'name' => 'a b']);
+            ->with(FlashMessenger::SUCCESS, ['An invite has been sent to a b.']);
 
         $response = $this->handler->handle(
             $this->createRequest('POST', [
