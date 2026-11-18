@@ -16,7 +16,7 @@ def get_csrf_token(client, url):
             url,
             response.status_code,
         )
-        return
+        return None, None
 
     soup = BeautifulSoup(response.text, "html.parser")
     hidden_tags = soup.find_all("input", type="hidden")
@@ -35,7 +35,7 @@ def get_csrf_token(client, url):
 
     if csrf_token is None:
         logger.warning("Could not find csrf token for %s", url)
-        return
+        return None, None
 
 
 def get_form_version(client):

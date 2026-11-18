@@ -143,7 +143,7 @@ class CypressFixtureService
         }
     }
 
-    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail, ?string $created): mixed
+    public function createInvite(string $sharedSpaceId, string $userEmail, string $inviteEmail, ?string $created, bool $isAdmin = false): mixed
     {
         try {
             $userId = $this->authenticate($userEmail);
@@ -158,7 +158,7 @@ class CypressFixtureService
                     'firstNames' => $firstName,
                     'lastName' => $lastname,
                     'email' => $inviteEmail,
-                    'isAdmin' => false,
+                    'isAdmin' => $isAdmin,
                     'created' => $created,
                 ],
             );
@@ -290,7 +290,7 @@ class CypressFixtureService
         $lpaId        = (string) $createResult['id'];
         $lpaPath      = $applicationsPath . '/' . $lpaId;
 
-        $this->apiClient->httpPut($lpaPath . '/type', ['type' => $lpaType]);
+        $this->apiClient->httpPut($lpaPath . '/type', ['type' => $lpaType], ['If-Match' => '1']);
 
         $this->apiClient->httpPut($lpaPath . '/donor', [
             'name'       => ['title' => 'Mrs', 'first' => 'Nancy', 'last' => 'Garrison'],
@@ -304,7 +304,7 @@ class CypressFixtureService
             'dob'        => ['date' => '1988-10-22T00:00:00.000000+0000'],
             'email'      => ['address' => 'opglpademo+nancygarrison@example.org'],
             'canSign'    => false,
-        ]);
+        ], ['If-Match' => '2']);
 
         return $lpaId;
     }

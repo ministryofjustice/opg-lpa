@@ -25,9 +25,20 @@ on:
         type: string
         default: ""
       cypress_tags:
-        description: "Cypress tags to run"
-        required: true
+        description: "Cypress tags to run. When cypress_specs is set, only filters scenarios within those files (e.g. 'not @Tag')"
+        required: false
         type: string
+        default: ""
+      cypress_specs:
+        description: "Newline separated feature file names (relative to cypress/e2e) to run. An alternative to cypress_tags, or combine with it to filter scenarios within the files"
+        required: false
+        type: string
+        default: ""
+      suite_name:
+        description: "Name used in the step title and artifact names. Defaults to cypress_tags"
+        required: false
+        type: string
+        default: ""
       visual_regression_enabled:
         description: "Toggle visual regression testing"
         required: false
@@ -102,13 +113,14 @@ jobs:
         with:
           node-version-file: ".nvmrc"
 
-      - name: Run Cypress Tests - ${{ inputs.cypress_tags }}
+      - name: Run Cypress Tests - ${{ inputs.suite_name || inputs.cypress_tags }}
         env:
           CYPRESS_adminUrl: ${{ inputs.admin_url }}
           CYPRESS_baseUrl: ${{ inputs.front_url }}
           CYPRESS_oneLoginMockUrl: ${{ inputs.onelogin_mock_url }}
           CYPRESS_visualRegressionEnabled: ${{ inputs.visual_regression_enabled }}
           CYPRESS_TAGS: ${{ inputs.cypress_tags }}
+          CYPRESS_SPECS: ${{ inputs.cypress_specs }}
         run: |
           pushd cypress ; python3 stitch.py ; popd
           sed -i -e "s|https://front-ssl|${CYPRESS_baseUrl}|g" docker-compose.yml
@@ -118,20 +130,31 @@ jobs:
           mkdir -p cypress/screenshots cypress/regressions/diff cypress/regressions/baseline cypress/downloads
           chmod -R a+w cypress/screenshots cypress/regressions cypress/downloads
           docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="@Signup"
-          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" -x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${CYPRESS_TAGS}"
+          if [ -n "${CYPRESS_SPECS}" ]; then
+            SPEC_LIST=$(printf 'cypress/e2e/%s\n' ${CYPRESS_SPECS} | paste --serial --delimiters=, -)
+            EXPOSE_ARGS="stepDefinitions=/app/cypress/e2e/common/*.js"
+            # filterSpecs is deliberately not set as with --spec it fails when every scenario in a file is excluded
+            if [ -n "${CYPRESS_TAGS}" ]; then
+              EXPOSE_ARGS+=",tags=${CYPRESS_TAGS}"
+            fi
+            SPEC_ARGS=(--spec "${SPEC_LIST}" -x "${EXPOSE_ARGS}")
+          else
+            SPEC_ARGS=(-x stepDefinitions="/app/cypress/e2e/common/*.js",filterSpecs="true",GLOB="cypress/e2e/**/*.feature",tags="${CYPRESS_TAGS}")
+          fi
+          docker compose run --rm -e CYPRESS_userNumber=$CYPRESS_userNumber -e CYPRESS_NO_COMMAND_LOG=1 -e CYPRESS_numTestsKeptInMemory=1 cypress --headless --config video=false --expose visualRegressionEnabled="${CYPRESS_visualRegressionEnabled}" -e CI="True" "${SPEC_ARGS[@]}"
 
       - name: Upload Screenshot Artifact
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: cypress-screenshots (${{ inputs.cypress_tags }})
+          name: cypress-screenshots (${{ inputs.suite_name || inputs.cypress_tags }})
           path: cypress/screenshots/
 
       - name: Upload Diff Artifact
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: cypress-diffs (${{ inputs.cypress_tags }})
+          name: cypress-diffs (${{ inputs.suite_name || inputs.cypress_tags }})
           path: cypress/regressions/diff
 
       - name: Configure AWS Credentials - Ingress Management

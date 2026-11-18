@@ -193,8 +193,25 @@ Feature: Shared Space
     And I click element marked "Join shared space"
     And I should be on "/shared-space/dashboard"
     And I see a success notification with content "You’ve joined the shared space ‘Example Organisation’."
+    And I see a success notification with content "view who else is a shared space member"
     And I click element marked "Shared space"
     And I cannot see any invites
+
+  @RequiresOneLogin
+  Scenario: Admin users joining a shared space are told they can invite members
+    Given I have been invited as an admin to a shared space called "Example Organisation" with 1 LPA
+    When I log in through Onelogin as the newly created fixture user
+    And I say I make LPAs for "myself, family or friends"
+    And I create a new Make account
+    Then I should be on "/user/dashboard"
+    And I click element marked "Shared space"
+    And I should be on "/shared-space/join"
+    And I type "Example Organisation" into field labelled "Shared space name"
+    And I type the access code into field labelled "Joining code"
+    And I click element marked "Join shared space"
+    And I should be on "/shared-space/dashboard"
+    And I see a success notification with content "You’ve joined the shared space ‘Example Organisation’."
+    And I see a success notification with content "invite other users to become shared space members"
 
   @RequiresOneLogin
   Scenario: Cannot join a shared space when invite email does not match one login email

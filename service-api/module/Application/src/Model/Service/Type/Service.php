@@ -16,7 +16,7 @@ class Service extends AbstractService
     use ApplicationRepositoryTrait;
     use LoggerTrait;
 
-    public function update(string $lpaId, ?int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
+    public function update(string $lpaId, int $ifMatchVersion, string $userId, mixed $data): ApiProblem|EntityInterface
     {
         $type = (isset($data['type']) ? $data['type'] : null);
 

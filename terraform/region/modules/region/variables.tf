@@ -15,6 +15,9 @@ variable "account" {
         elasticache_node_type          = string
         codecatalyst_endpoints_enabled = bool
     }))
+    cloudwatch_alarms = object({
+      extended_support_alerts_enabled = bool
+    })
     dns_firewall = object({
       enabled         = bool
       domains_allowed = list(string)
