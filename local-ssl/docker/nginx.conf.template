@@ -32,6 +32,8 @@ http {
         ssl_ciphers HIGH:!aNULL:!eNULL:!EXPORT:!CAMELLIA:!DES:!MD5:!PSK:!RC4;
         ssl_prefer_server_ciphers on;
 
+        http2 off;
+
         location / {
             proxy_pass  ${TARGET_SCHEME}://${TARGET_HOST}:${TARGET_PORT};
 
