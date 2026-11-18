@@ -14,7 +14,7 @@
 
 {% import "application/macros.twig" as macros %}
 
-{{ form.setAttribute('class', 'form js-single-use') ? '' }}
+{{ form.setAttribute('class', 'form') ? '' }}
 
 {% set details = form.get('details') %}
 {% set email = form.get('email') %}
@@ -94,7 +94,7 @@
             {{ formElement(phone) }}
         </div>
 
-        <input type="submit" name="send" id="send" class="govuk-button" data-cy="feedback-submit-button" value="Send feedback">
+        <input type="submit" name="send" id="send" class="govuk-button" data-cy="feedback-submit-button" data-module="govuk-button" data-prevent-double-click="true" value="Send feedback">
     </fieldset>
 
 {{ form().closeTag|raw }}

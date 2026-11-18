@@ -8,25 +8,21 @@ Feature: Recovering a card payment that GOV.UK Pay took but never confirmed back
   Returning to the LPA should repair it without the user having to do anything, and
   without ever showing them a "pay" button they have every reason to refuse to press.
 
-  Tagged @CheckoutPaymentGateway because it needs the mock-pay container to answer the
-  GOV.UK Pay lookup; like the other gateway test it is excluded from the CI runs that
-  execute against deployed environments.
-
   Background:
-    Given I ignore application exceptions
-    And I create PF LPA test fixture with a card payment that was never recorded
+    Given I create a new user with an LPA that is ready to pay
+    And I log in as the newly created fixture user
+    And I visit the checkout page for the fixture LPA
+    And I pay by card but never return to the service
 
-  @CheckoutPaymentGateway @CleanupFixtures
+  @CheckoutPaymentGateway
   Scenario: The stranded payment is recovered when the user opens the checkout page
-    Given I log in as appropriate test user
-    And I visit the checkout page for the test fixture lpa
+    When I visit the checkout page for the fixture LPA
     Then I am taken to the complete page
     And I see "Payment received" in the page text
 
-  @CheckoutPaymentGateway @CleanupFixtures
+  @CheckoutPaymentGateway
   Scenario: The stranded payment is recovered when the user clicks Continue on the dashboard
-    Given I log in as appropriate test user
-    And I visit the dashboard
+    When I visit the dashboard
     When I click continue on the dashboard for the test fixture lpa
     Then I am taken to the complete page
     And I see "Payment received" in the page text

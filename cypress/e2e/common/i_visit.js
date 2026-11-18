@@ -1,4 +1,4 @@
-import { Given, Then } from '@badeball/cypress-cucumber-preprocessor';
+import {Given, Then, When} from '@badeball/cypress-cucumber-preprocessor';
 import { signInPage } from '../../support/onboarding';
 
 Given(`I visit {string}`, (url) => {
@@ -129,3 +129,16 @@ function visitPageForTestFixture(urlPart, options) {
     cy.visitWithChecks('/lpa/' + lpaId + '/' + urlPart, options);
   });
 }
+
+When('I visit the checkout page for the fixture LPA', () => {
+  cy.get('@fixtureUser').then(({ lpaIds }) => {
+    cy.visit(`/lpa/${lpaIds[0]}/checkout`);
+  });
+});
+
+Then('I am on the checkout page for the fixture LPA', () => {
+  cy.get('@fixtureUser').then(({ lpaIds }) => {
+    cy.url().should('include', `/lpa/${lpaIds[0]}/checkout`);
+    cy.contains('Final check: LPA details');
+  });
+});

@@ -147,7 +147,7 @@ services:
       PHP_IDE_CONFIG: serverName=lpa-front-app
 
       OPG_LPA_FRONT_EMAIL_NOTIFY_API_KEY: "${OPG_LPA_API_NOTIFY_API_KEY}"
-      OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY}"
+      OPG_LPA_FRONT_GOV_PAY_KEY: "${OPG_LPA_FRONT_GOV_PAY_KEY:-mock-pay-api-key}"
       OPG_LPA_FRONT_GOV_PAY_URL: "http://mock-pay:8080"
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
@@ -541,6 +541,7 @@ services:
       CYPRESS_adminUrl: https://admin-ssl
       CYPRESS_cognitoMockUrl: "http://mock-cognito:8080"
       CYPRESS_oneLoginMockUrl: "http://mock-onelogin:8080"
+      CYPRESS_govukPayUrl: "http://mock-pay:8080"
     volumes:
       - ./cypress:/app/cypress
       - ./cypress.config.js:/app/cypress.config.js
