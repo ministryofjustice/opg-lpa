@@ -22,7 +22,7 @@ data "pagerduty_service" "main" {
 }
 
 data "aws_sns_topic" "uptime_notifications" {
-  name     = "Make a LPA - Uptime Notifications"
+  name     = "uptime-notifications"
   provider = aws.us_east_1
 }
 
