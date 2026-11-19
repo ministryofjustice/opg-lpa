@@ -49,8 +49,6 @@ var ignoredSpecs = []string{
 	"Ping.feature",
 	"CorrespondentReuse.feature",
 	"AdminSystemMessage.feature",
-	"CheckoutPaymentGateway.feature",
-	"CheckoutPaymentRecovery.feature",
 }
 
 // Scans feature files line by line and collects all tags found

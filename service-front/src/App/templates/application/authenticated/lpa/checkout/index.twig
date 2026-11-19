@@ -26,8 +26,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
           <h1 class="govuk-heading-xl">{{ overridePageTitle }}</h1>
-
-            <p class="govuk-body">Check all the details on this page are correct and everyone has agreed to be part of this lasting power of attorney before continuing.</p>
+          <p class="govuk-body">Check all the details on this page are correct and everyone has agreed to be part of this lasting power of attorney before continuing.</p>
         </div>
     </div>
 
@@ -146,25 +145,25 @@
 
             <div class="govuk-warning-text govuk-!-margin-top-4">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <span class="govuk-visually-hidden">Warning</span>
-                    <p class="govuk-body">You will not be able to change anything in the LPA once you have clicked confirm.</p>
-                </strong>
+                <span class="govuk-visually-hidden">Warning</span>
+                <p class="govuk-body">
+                  <strong class="govuk-warning-text__text">You will not be able to change anything in the LPA once you have clicked confirm.</strong>
+                </p>
             </div>
 
             {# -- GDS Pay -- #}
-            <p class="govuk-body divorced">
+            <div class="govuk-body divorced">
               {{ form.prepare() ? '' }}
               {{ form().openTag( form )|raw }}
               <input type="hidden" name="__csrf" value="{{ csrfToken }}">
               <input type="hidden" name="version" value="{{ lpa.version }}">
 
               <div class="govuk-button-group">
-                <button type="submit" class="govuk-button" name="action" value="card" data-cy="confirm-and-pay-by-card">Confirm and pay by card</button>
-                <button class="govuk-button govuk-button--secondary" data-cy="confirm-and-pay-by-cheque" name="action" value="cheque">Confirm and pay by cheque</button>
+                <button type="submit" class="govuk-button" name="action" value="card" data-cy="confirm-and-pay-by-card" data-prevent-double-click="true" data-module="govuk-button">Confirm and pay by card</button>
+                <button class="govuk-button govuk-button--secondary" data-cy="confirm-and-pay-by-cheque" data-prevent-double-click="true" data-module="govuk-button" name="action" value="cheque">Confirm and pay by cheque</button>
               </div>
               {{ form().closeTag|raw }}
-            </p>
+            </div>
 
         {% endif %}
 
@@ -176,10 +175,10 @@
 
         <div class="govuk-warning-text govuk-!-margin-top-4">
             <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-visually-hidden">Warning</span>
-                <p class="govuk-body">When you have chosen a certificate provider, you'll be able to continue.</p>
-            </strong>
+            <span class="govuk-visually-hidden">Warning</span>
+            <p class="govuk-body">
+              <strong class="govuk-warning-text__text">When you have chosen a certificate provider, you'll be able to continue.</strong>
+            </p>
         </div>
 
         <div class="govuk-button-group">

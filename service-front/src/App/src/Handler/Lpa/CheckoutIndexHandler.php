@@ -100,8 +100,6 @@ class CheckoutIndexHandler implements RequestHandlerInterface
             'lpa' => $lpa,
         ]);
 
-        $form->setAttribute('class', 'js-single-use');
-
         $html = $this->renderer->render(
             'application/authenticated/lpa/checkout/index.twig',
             array_merge(
