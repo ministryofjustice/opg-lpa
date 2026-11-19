@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Service\Payment\Helper;
 
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
+use App\Service\Lpa\PaymentCommunication;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use GuzzleHttp\Psr7\Uri;
@@ -25,7 +25,7 @@ class CheckoutHelper
 
     public function __construct(
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly Communication $communicationService,
+        private readonly PaymentCommunication $paymentCommunication,
         private readonly UrlHelper $urlHelper,
         private readonly GovPayClient $paymentClient,
         private readonly CardPayments $cardPayments,
@@ -45,7 +45,7 @@ class CheckoutHelper
     public function finishCheckout(Lpa $lpa, ServerRequestInterface $request, int $ifMatchVersion): ResponseInterface
     {
         $this->lpaApplicationService->lockLpa($lpa, $ifMatchVersion);
-        $this->communicationService->sendRegistrationCompleteEmail($lpa);
+        $this->paymentCommunication->sendRegistrationCompleteEmail($lpa);
 
         return new RedirectResponse(
             $this->urlHelper->generate('lpa/complete', ['lpa-id' => $lpa->getId()])
