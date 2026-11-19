@@ -29,7 +29,7 @@ data "aws_sns_topic" "uptime_notifications" {
 
 data "aws_sns_topic" "extended_support" {
   count    = var.pagerduty_integration_enabled ? 1 : 0
-  name     = "uptime-notifications"
+  name     = "extended-support-sns-topic"
   provider = aws.us_east_1
 }
 
