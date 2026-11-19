@@ -43,10 +43,12 @@ final class LegacyCompatExtensionTest extends TestCase
     private FlashMessagesHolder&MockObject $flashMessagesHolder;
     private SystemMessage&MockObject $systemMessage;
     private string|false $oneLoginEnabled;
+    private string|false $sharedSpacesEnabled;
 
     protected function setUp(): void
     {
         $this->oneLoginEnabled = getenv('ONELOGIN_ENABLED');
+        $this->sharedSpacesEnabled = getenv('SHARED_SPACES_ENABLED');
 
         $this->urlHelper           = $this->createMock(UrlHelper::class);
         $this->sessionStorage      = $this->createMock(MezzioSessionStorage::class);
@@ -73,6 +75,9 @@ final class LegacyCompatExtensionTest extends TestCase
     protected function tearDown(): void
     {
         putenv($this->oneLoginEnabled === false ? 'ONELOGIN_ENABLED' : 'ONELOGIN_ENABLED=' . $this->oneLoginEnabled);
+        putenv($this->sharedSpacesEnabled === false
+                ? 'SHARED_SPACES_ENABLED'
+                : 'SHARED_SPACES_ENABLED=' . $this->sharedSpacesEnabled);
     }
 
     // -------------------------------------------------------------------------
@@ -160,6 +165,34 @@ final class LegacyCompatExtensionTest extends TestCase
             ->willReturn('');
 
         $this->extension->renderNavigation($twig);
+    }
+
+    #[DataProvider('sharedSpaceDashboardRoutes')]
+    public function testRenderNavigationHighlightsYourLpasOnEverySharedSpaceDashboardPage(string $route): void
+    {
+        putenv('SHARED_SPACES_ENABLED=true');
+        $this->sessionStorage->method('read')
+            ->willReturn(new User('user-1', 'token', 10000, new DateTime('2026-01-01'), false, 'space-1'));
+
+        $twig = $this->createMock(Environment::class);
+        $twig->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/partials/nav.twig',
+                $this->callback(fn (array $vars): bool => $vars['nav']->parentRoute === 'shared-space.dashboard'),
+            )
+            ->willReturn('');
+
+        $this->extension->renderNavigation($twig, $route);
+    }
+
+    /** @return array<string, array{string}> */
+    public static function sharedSpaceDashboardRoutes(): array
+    {
+        return [
+            'first page' => ['shared-space.dashboard'],
+            'later page' => ['shared-space.dashboard.pagination'],
+        ];
     }
 
     private function session(bool $hasIdToken = false, bool $pendingLink = false): SessionInterface

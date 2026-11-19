@@ -221,6 +221,12 @@ return static function (Application $app, MiddlewareFactory $factory, ContainerI
             ->setOptions(['sharedSpaceAllow' => ['professional']]);
         $app->get('/shared-space/dashboard', SharedSpaceDashboardHandler::class, 'shared-space.dashboard')
             ->setOptions(['sharedSpaceAllow' => ['member', 'admin']]);
+        $app->get(
+            '/shared-space/dashboard/page/{page:\d+}',
+            SharedSpaceDashboardHandler::class,
+            'shared-space.dashboard.pagination'
+        )
+            ->setOptions(['sharedSpaceAllow' => ['member', 'admin']]);
         $app->route(
             '/shared-space/members/{member-id:[a-zA-Z0-9]+}',
             ManageSharedSpaceMemberHandler::class,
