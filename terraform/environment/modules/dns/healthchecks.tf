@@ -17,8 +17,8 @@ resource "aws_cloudwatch_metric_alarm" "public_facing_lastingpowerofattorney" {
   alarm_description   = "${var.environment_name} LPA health check"
   alarm_name          = "${var.environment_name}-lpa-healthcheck-alarm"
   actions_enabled     = true
-  alarm_actions       = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn])
-  ok_actions          = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn])
+  alarm_actions       = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
+  ok_actions          = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
   treat_missing_data  = "notBreaching"
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 1
@@ -61,8 +61,8 @@ resource "aws_sns_topic" "service_health_checks" {
 resource "aws_cloudwatch_metric_alarm" "service_health_check" {
   alarm_description   = "${var.environment_name} service health check"
   alarm_name          = "${var.environment_name}-service-health-check-alarm"
-  alarm_actions       = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn])
-  ok_actions          = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn])
+  alarm_actions       = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
+  ok_actions          = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
   actions_enabled     = true
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 1
@@ -121,8 +121,8 @@ resource "aws_sns_topic" "dependencies_health_check" {
 resource "aws_cloudwatch_metric_alarm" "dependencies_health_check" {
   alarm_description   = "${var.environment_name} dependencies health check"
   alarm_name          = "${var.environment_name}-dependencies-health-check-alarm"
-  alarm_actions       = [aws_sns_topic.dependencies_health_check.arn]
-  ok_actions          = [aws_sns_topic.dependencies_health_check.arn]
+  alarm_actions       = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
+  ok_actions          = compact([aws_sns_topic.service_health_checks.arn, local.uptime_notifications_sns_topic_arn, local.extended_support_sns_topic_arn])
   actions_enabled     = true
   comparison_operator = "LessThanThreshold"
   datapoints_to_alarm = 2

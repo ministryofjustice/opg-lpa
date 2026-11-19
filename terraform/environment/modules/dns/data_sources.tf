@@ -22,10 +22,18 @@ data "pagerduty_service" "main" {
 }
 
 data "aws_sns_topic" "uptime_notifications" {
+  count    = var.pagerduty_integration_enabled ? 1 : 0
+  name     = "uptime-notifications"
+  provider = aws.us_east_1
+}
+
+data "aws_sns_topic" "extended_support" {
+  count    = var.pagerduty_integration_enabled ? 1 : 0
   name     = "uptime-notifications"
   provider = aws.us_east_1
 }
 
 locals {
-  uptime_notifications_sns_topic_arn = var.pagerduty_integration_enabled ? data.aws_sns_topic.uptime_notifications.arn : null
+  uptime_notifications_sns_topic_arn = var.pagerduty_integration_enabled ? data.aws_sns_topic.uptime_notifications[0].arn : null
+  extended_support_sns_topic_arn     = var.pagerduty_integration_enabled ? data.aws_sns_topic.extended_support[0].arn : null
 }
