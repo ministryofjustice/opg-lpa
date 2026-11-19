@@ -217,3 +217,78 @@ VALUES ( 3142871, 'a7b10000000000000000000000000000', NOW(), NOW(), NOW(), NOW()
        , '{"type": "health-and-welfare", "donor": {"dob": {"date": "1962-11-02T00:00:00.000000+0000"}, "name": {"last": "Doe", "first": "Jill", "title": "Miss"}, "email": {"address": "jill.doe@example.com"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "canSign": true, "otherNames": ""}, "preference": "", "instruction": "", "correspondent": {"who": "attorney", "name": {"last": "Doe", "first": "John", "title": "Mr"}, "email": {"address": "ur-s7@example.com"}, "phone": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "company": null, "contactByPost": false, "contactInWelsh": false, "contactDetailsEnteredManually": null}, "peopleToNotify": [], "primaryAttorneys": [{"id": 1, "dob": {"date": "1980-01-07T00:00:00.000000+0000"}, "name": {"last": "Doe", "first": "John", "title": "Mr"}, "type": "human", "email": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}], "whoIsRegistering": "attorney", "certificateProvider": {"name": {"last": "Smith", "first": "Alan", "title": "Dr"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}, "replacementAttorneys": [], "primaryAttorneyDecisions": {"how": null, "when": "life-sustaining-treatment", "howDetails": null, "canSustainLife": true}, "replacementAttorneyDecisions": null}'
        , '{"date": null, "email": null, "amount": 82, "method": "cheque", "reference": null, "gatewayReference": null, "reducedFeeLowIncome": null, "reducedFeeAwardedDamages": null, "reducedFeeUniversalCredit": null, "reducedFeeReceivesBenefits": null}'
        , '{"instruction-confirmed": true, "people-to-notify-confirmed": true, "repeat-application-confirmed": true, "replacement-attorneys-confirmed": true}');
+
+-- Scenario 8
+--
+-- Professional user who is admin of a shared space, not linked to One Login
+-- (seeded_professional_admin@example.com / Pass1234). The space has 55 LPAs: one each
+-- Received, Checking and Processed, plus 52 in progress, and one expired invite.
+
+INSERT INTO public.users
+       ( id, identity, active, created, updated, activated
+       , password_hash, is_professional
+       , profile)
+VALUES ( 'a8b10000000000000000000000000000', 'seeded_professional_admin@example.com', true, NOW(), NOW(), NOW()
+       , '$2y$10$C9QCpqBK/9xP7x04nUemhO.OvRc.AWCHOb/N0w8Z2SxOMfSnoNIMO', TRUE
+       , '{"dob": {"date": "1982-11-28T00:00:00.000000+0000"}, "name": {"last": "Carter", "first": "Sam", "title": "Mx"}, "email": {"address": "seeded_professional_admin@example.com"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}');
+
+INSERT INTO public.shared_space
+       ( id, name, created, updated)
+VALUES ( 'c8000000000000000000000000000000', 'Professional Team', NOW(), NOW() );
+
+INSERT INTO public.shared_space_members
+       ( "sharedSpaceId", "userId", created, "isAdmin", "isActive")
+VALUES ( 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000', NOW(), TRUE, TRUE);
+
+INSERT INTO public.shared_space_invites
+       ( "sharedSpaceId", "invitedBy", "firstNames", "lastName"
+       , email, "isAdmin", code, created, expires)
+VALUES ( 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000', 'Test', 'User'
+       , 'professional-invite-expired@example.com', FALSE, 'EFGH5678', NOW() - INTERVAL '8 days', NOW() - INTERVAL '1 days');
+
+-- Statuses are read from metadata because Sirius won't know these LPAs
+INSERT INTO public.applications
+       ( id, "user", "updatedAt", "startedAt", "createdAt", "completedAt", "lockedAt"
+       , locked, "whoAreYouAnswered", seed, "repeatCaseNumber", search
+       , "sharedSpaceId", "updatedBy"
+       , document
+       , payment
+       , metadata)
+VALUES ( 3142881, 'a8b10000000000000000000000000000', NOW(), NOW(), NOW(), NOW(), NOW()
+       , true, true, NULL, NULL, 'Mrs Ada Moss'
+       , 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000'
+       , '{"type": "property-and-financial", "donor": {"dob": {"date": "1950-03-14T00:00:00.000000+0000"}, "name": {"last": "Moss", "first": "Ada", "title": "Mrs"}, "email": {"address": "ada.moss@example.com"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "canSign": true, "otherNames": ""}, "preference": "", "instruction": "", "correspondent": {"who": "attorney", "name": {"last": "Doe", "first": "John", "title": "Mr"}, "email": {"address": "seeded_professional_admin@example.com"}, "phone": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "company": null, "contactByPost": false, "contactInWelsh": false, "contactDetailsEnteredManually": null}, "peopleToNotify": [], "primaryAttorneys": [{"id": 1, "dob": {"date": "1980-01-07T00:00:00.000000+0000"}, "name": {"last": "Doe", "first": "John", "title": "Mr"}, "type": "human", "email": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}], "whoIsRegistering": "attorney", "certificateProvider": {"name": {"last": "Smith", "first": "Alan", "title": "Dr"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}, "replacementAttorneys": [], "primaryAttorneyDecisions": {"how": null, "when": "now", "howDetails": null, "canSustainLife": null}, "replacementAttorneyDecisions": null}'
+       , '{"date": null, "email": null, "amount": 82, "method": "cheque", "reference": null, "gatewayReference": null, "reducedFeeLowIncome": null, "reducedFeeAwardedDamages": null, "reducedFeeUniversalCredit": null, "reducedFeeReceivesBenefits": null}'
+       , '{"instruction-confirmed": true, "people-to-notify-confirmed": true, "repeat-application-confirmed": true, "replacement-attorneys-confirmed": true, "sirius-processing-status": "Received", "application-receipt-date": "2026-10-01"}'),
+       ( 3142882, 'a8b10000000000000000000000000000', NOW(), NOW(), NOW(), NOW(), NOW()
+       , true, true, NULL, NULL, 'Mr Ben Moss'
+       , 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000'
+       , '{"type": "property-and-financial", "donor": {"dob": {"date": "1950-03-14T00:00:00.000000+0000"}, "name": {"last": "Moss", "first": "Ben", "title": "Mr"}, "email": {"address": "ben.moss@example.com"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "canSign": true, "otherNames": ""}, "preference": "", "instruction": "", "correspondent": {"who": "attorney", "name": {"last": "Doe", "first": "John", "title": "Mr"}, "email": {"address": "seeded_professional_admin@example.com"}, "phone": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "company": null, "contactByPost": false, "contactInWelsh": false, "contactDetailsEnteredManually": null}, "peopleToNotify": [], "primaryAttorneys": [{"id": 1, "dob": {"date": "1980-01-07T00:00:00.000000+0000"}, "name": {"last": "Doe", "first": "John", "title": "Mr"}, "type": "human", "email": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}], "whoIsRegistering": "attorney", "certificateProvider": {"name": {"last": "Smith", "first": "Alan", "title": "Dr"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}, "replacementAttorneys": [], "primaryAttorneyDecisions": {"how": null, "when": "now", "howDetails": null, "canSustainLife": null}, "replacementAttorneyDecisions": null}'
+       , '{"date": null, "email": null, "amount": 82, "method": "cheque", "reference": null, "gatewayReference": null, "reducedFeeLowIncome": null, "reducedFeeAwardedDamages": null, "reducedFeeUniversalCredit": null, "reducedFeeReceivesBenefits": null}'
+       , '{"instruction-confirmed": true, "people-to-notify-confirmed": true, "repeat-application-confirmed": true, "replacement-attorneys-confirmed": true, "sirius-processing-status": "Checking", "application-receipt-date": "2026-09-01"}'),
+       ( 3142883, 'a8b10000000000000000000000000000', NOW(), NOW(), NOW(), NOW(), NOW()
+       , true, true, NULL, NULL, 'Miss Cara Moss'
+       , 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000'
+       , '{"type": "property-and-financial", "donor": {"dob": {"date": "1950-03-14T00:00:00.000000+0000"}, "name": {"last": "Moss", "first": "Cara", "title": "Miss"}, "email": {"address": "cara.moss@example.com"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "canSign": true, "otherNames": ""}, "preference": "", "instruction": "", "correspondent": {"who": "attorney", "name": {"last": "Doe", "first": "John", "title": "Mr"}, "email": {"address": "seeded_professional_admin@example.com"}, "phone": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}, "company": null, "contactByPost": false, "contactInWelsh": false, "contactDetailsEnteredManually": null}, "peopleToNotify": [], "primaryAttorneys": [{"id": 1, "dob": {"date": "1980-01-07T00:00:00.000000+0000"}, "name": {"last": "Doe", "first": "John", "title": "Mr"}, "type": "human", "email": null, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}], "whoIsRegistering": "attorney", "certificateProvider": {"name": {"last": "Smith", "first": "Alan", "title": "Dr"}, "address": {"address1": "THE OFFICE OF THE PUBLIC GUARDIAN", "address2": "THE AXIS", "address3": "10 HOLLIDAY STREET, BIRMINGHAM", "postcode": "B1 1TF"}}, "replacementAttorneys": [], "primaryAttorneyDecisions": {"how": null, "when": "now", "howDetails": null, "canSustainLife": null}, "replacementAttorneyDecisions": null}'
+       , '{"date": null, "email": null, "amount": 82, "method": "cheque", "reference": null, "gatewayReference": null, "reducedFeeLowIncome": null, "reducedFeeAwardedDamages": null, "reducedFeeUniversalCredit": null, "reducedFeeReceivesBenefits": null}'
+       , '{"instruction-confirmed": true, "people-to-notify-confirmed": true, "repeat-application-confirmed": true, "replacement-attorneys-confirmed": true, "sirius-processing-status": "Processed", "application-receipt-date": "2026-08-01", "application-registration-date": "2026-09-15", "application-dispatch-date": "2026-09-16"}');
+
+INSERT INTO public.applications
+       ( id, "user", "updatedAt", "startedAt", "createdAt"
+       , locked, "whoAreYouAnswered", search
+       , "sharedSpaceId", "updatedBy"
+       , document
+       , metadata)
+SELECT 3142900 + g, 'a8b10000000000000000000000000000', NOW(), NOW(), NOW()
+     , false, true, 'Mr Test Donor' || g
+     , 'c8000000000000000000000000000000', 'a8b10000000000000000000000000000'
+     , jsonb_build_object(
+           'type', 'property-and-financial',
+           'donor', jsonb_build_object(
+               'name', jsonb_build_object('title', 'Mr', 'first', 'Test', 'last', 'Donor' || g),
+               'dob', jsonb_build_object('date', '1950-01-01T00:00:00.000000+0000'),
+               'address', jsonb_build_object('address1', '1 Test Street', 'postcode', 'AB1 2CD')
+           )
+       )
+     , '{}'
+FROM generate_series(1, 52) AS g;
