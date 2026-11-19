@@ -125,15 +125,23 @@ class JoinSharedSpaceHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
-    public function testPostWithValidFormRedirectsToCorrectUrl(): void
+    public static function validFormProvider(): array
+    {
+        return [
+            'valid' => ['My Space', '12345678', '12345678', 'My Space'],
+            'valid leading whitespace' => [' My Space', ' 12345678', '12345678', 'My Space'],
+            'valid trailing whitespace' => ['My Space ', '12345678 ', '12345678', 'My Space'],
+        ];
+    }
+
+    #[DataProvider('validFormProvider')]
+    public function testPostWithValidFormRedirectsToCorrectUrl(string $sharedSpaceName, string $formAccessCode, string $expectedAccessCode, string $expectedSpaceName): void
     {
         $sharedSpaceId = 'my-space';
-        $sharedSpaceName = 'My Space';
-        $accessCode = '12345678';
         $email = 'user@example.com';
 
         $this->sharedSpaceService->method('join')
-            ->with($sharedSpaceName, $accessCode, $email)
+            ->with($expectedSpaceName, $expectedAccessCode, $email)
             ->willReturn($sharedSpaceId);
 
         $this->authenticationService->method('refreshSharedSpaceId')
@@ -141,7 +149,7 @@ class JoinSharedSpaceHandlerTest extends TestCase
 
         $request = $this->createRequest('POST', [
             'sharedSpaceName' => $sharedSpaceName,
-            'sharedSpaceAccessCode' => $accessCode,
+            'sharedSpaceAccessCode' => $formAccessCode,
         ])
             ->withAttribute(
                 RequestAttribute::USER_DETAILS,
