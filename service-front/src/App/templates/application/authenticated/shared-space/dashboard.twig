@@ -113,7 +113,7 @@
                 {% endif %}
             </div>
             <div class="govuk-grid-column-one-half">
-                <form action="{{ url('user/dashboard') }}" method="GET" class="search-form">
+                <form action="{{ url('shared-space.dashboard') }}" method="GET" class="search-form">
                     <fieldset>
                         <legend class="govuk-visually-hidden">Search for LPAs</legend>
                         <label for="search" class="search-label">Search for an LPA or donor</label>
@@ -156,7 +156,7 @@
 {% else %}
     {{ macros.listLpas(lpas, 'all', paginationControlData['page'], trackingEnabled, true) }}
 {% endif %}
-    {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'user/dashboard/pagination'} %}
+    {% include 'application/authenticated/dashboard/pagination.twig' with {data: paginationControlData, route: 'shared-space.dashboard.pagination'} %}
 {% endif %}
 
 {% endblock %}

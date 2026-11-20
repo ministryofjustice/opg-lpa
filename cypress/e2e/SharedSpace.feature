@@ -197,7 +197,7 @@ Feature: Shared Space
     Then I should be on "/user/dashboard"
     And I click element marked "Shared space"
     And I should be on "/shared-space/join"
-    And I type "Example Organisation" into field labelled "Shared space name"
+    And I type "  Example Organisation  " into field labelled "Shared space name"
     And I type the access code into field labelled "Joining code"
     And I click element marked "Join shared space"
     And I should be on "/shared-space/dashboard"
