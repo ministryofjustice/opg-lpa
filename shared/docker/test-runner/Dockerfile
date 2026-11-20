@@ -1,6 +1,6 @@
 FROM composer:2.10.3@sha256:af98f42dfff7c68ba8d53c2164fd9fde1087b7d449514baa38c418b1f6bc4bac AS composer
 
-FROM php:8.4-fpm-alpine3.23@sha256:9eb263ac0fa59dfbef3dbaeebeb5f2319e212fc28c168a8c416050f77705b5b4 AS base
+FROM php:8.4-fpm-alpine3.23@sha256:c83f71367cd5c109727a8b544a0a8450e5c58eb87b1f7ce024955962eea54ba0 AS base
 
 RUN adduser -D -g '' appuser && chown appuser:appuser /tmp
 COPY --chown=root:root shared/docker/php-mitigations.ini /usr/local/etc/php/conf.d/
