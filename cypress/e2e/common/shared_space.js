@@ -301,3 +301,15 @@ Then('I should see a pending invite for {string}', (inviteEmail) => {
     cy.contains('Pending');
   });
 });
+
+function lpaReference(lpaId) {
+  const digits = String(lpaId).padStart(11, '0');
+  return `A${digits.slice(0, 3)} ${digits.slice(3, 7)} ${digits.slice(7)}`;
+}
+
+When('I search the dashboard for the first fixture LPA by its reference', () => {
+  cy.get('@fixtureUser').then(({ lpaIds }) => {
+    cy.get('[data-cy=dashboard-search-box]').clear().type(lpaReference(lpaIds[0]));
+    cy.get('[data-cy=dashboard-search-icon]').click();
+  });
+});

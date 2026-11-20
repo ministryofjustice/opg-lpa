@@ -10,6 +10,7 @@ use Application\Model\DataAccess\Repository\Application\ConflictException;
 use Laminas\Db\Adapter\Driver\Pdo\Result;
 use Laminas\Db\Adapter\Driver\ResultInterface;
 use Laminas\Db\Adapter\Driver\StatementInterface;
+use Laminas\Db\Adapter\Platform\Postgresql;
 use Laminas\Db\Sql\Predicate\In as InPredicate;
 use Laminas\Db\Sql\Predicate\IsNull;
 use Laminas\Db\Sql\Predicate\Operator;
@@ -167,6 +168,44 @@ class ApplicationDataTest extends MockeryTestCase
             new Operator('sharedSpaceId', Operator::OPERATOR_EQUAL_TO, 'space-1'),
             $predicate
         );
+    }
+
+    public function testFetchForSharedSpaceQualifiesLpaIdSoTheUsersJoinIsNotAmbiguous(): void
+    {
+        $captured = null;
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('execute')->andReturn([]);
+
+        $sql = Mockery::mock(Sql::class);
+        $sql->shouldReceive('select')->andReturn(new Select(ApplicationData::APPLICATIONS_TABLE));
+        $sql->shouldReceive('prepareStatementForSqlObject')
+            ->andReturnUsing(function (Select $select) use (&$captured, $statement) {
+                $captured = $select;
+                return $statement;
+            });
+
+        // Real buildSelect(), so the test sees the SQL that would run
+        $dbWrapper = Mockery::mock(DbWrapper::class)->makePartial();
+        $dbWrapper->shouldReceive('createSql')->andReturn($sql);
+
+        $applicationData = new ApplicationData($dbWrapper, []);
+        iterator_to_array($applicationData->fetchForSharedSpace([
+            $applicationData->sharedSpacePredicate('space-1'),
+            'id' => 68754625068,
+        ]));
+
+        // Quotes values without a database connection, so the SQL can be rendered
+        $platform = new class extends Postgresql {
+            public function quoteValue($value)
+            {
+                return $this->quoteTrustedValue($value);
+            }
+        };
+        $sqlString = $captured->getSqlString($platform);
+
+        $this->assertStringContainsString('LEFT JOIN "users"', $sqlString);
+        $this->assertStringContainsString('"applications"."id" = E\'68754625068\'', $sqlString);
+        $this->assertStringNotContainsString(' "id" = ', $sqlString);
     }
 
     public function testOwnerPredicateForIndividualOwner(): void
