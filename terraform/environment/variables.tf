@@ -43,6 +43,7 @@ variable "environments" {
         pagerduty_healthcheck_alarms_enabled         = bool
         rds_throughput_anomaly_alarms_enabled        = bool
         extended_support_alerts_enabled              = bool
+        uptime_notification_alerts_enabled           = bool
       })
       cognito = object({
         admin_cognito_auth_enabled                        = bool

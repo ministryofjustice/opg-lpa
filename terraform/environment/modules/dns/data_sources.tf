@@ -20,3 +20,20 @@ data "pagerduty_vendor" "cloudwatch" {
 data "pagerduty_service" "main" {
   name = var.pagerduty_service_name
 }
+
+data "aws_sns_topic" "uptime_notifications" {
+  count    = var.uptime_notification_alerts_enabled ? 1 : 0
+  name     = "uptime-notifications"
+  provider = aws.us_east_1
+}
+
+data "aws_sns_topic" "extended_support" {
+  count    = var.extended_support_alerts_enabled ? 1 : 0
+  name     = "extended-support-sns-topic"
+  provider = aws.us_east_1
+}
+
+locals {
+  uptime_notifications_sns_topic_arn = var.uptime_notification_alerts_enabled ? data.aws_sns_topic.uptime_notifications[0].arn : null
+  extended_support_sns_topic_arn     = var.extended_support_alerts_enabled ? data.aws_sns_topic.extended_support[0].arn : null
+}
