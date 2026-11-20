@@ -175,6 +175,32 @@ final class SharedSpaceServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
+    public function testGetInviteReturnsInviteOnSuccess(): void
+    {
+        $invite = ['id' => 5, 'fullName' => 'John Smith', 'email' => 'john@example.com', 'isExpired' => false];
+
+        $this->client->expects($this->once())
+            ->method('httpGet')
+            ->with('/v2/shared-space/invites/5')
+            ->willReturn(['invite' => $invite]);
+
+        $this->assertSame($invite, $this->service->getInvite('5'));
+    }
+
+    public function testGetInviteReturnsNullWhenResponseMissingInviteKey(): void
+    {
+        $this->client->method('httpGet')->willReturn(['success' => true]);
+
+        $this->assertNull($this->service->getInvite('5'));
+    }
+
+    public function testGetInviteReturnsNullOnAnyException(): void
+    {
+        $this->client->method('httpGet')->willThrowException(new \RuntimeException('api-error'));
+
+        $this->assertNull($this->service->getInvite('5'));
+    }
+
     public function testGetMembersAndInvites(): void
     {
         $this->client->expects($this->once())

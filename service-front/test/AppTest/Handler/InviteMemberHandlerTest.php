@@ -10,6 +10,7 @@ use App\Middleware\CsrfValidationMiddleware;
 use App\Middleware\RequestAttribute;
 use App\Service\ApiClient\Exception\ApiException;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\StatusCodeInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -20,6 +21,8 @@ use Laminas\Diactoros\Uri;
 use Laminas\Form\FormElementManager;
 use MakeShared\DataModel\User\User;
 use MakeShared\DataModel\Common\EmailAddress;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -33,12 +36,14 @@ class InviteMemberHandlerTest extends TestCase
     private User $user;
     private InviteMemberForm $form;
     private InviteMemberHandler $handler;
+    private MockObject&FlashMessagesInterface $flash;
 
     protected function setUp(): void
     {
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->formElementManager = $this->createMock(FormElementManager::class);
         $this->sharedSpaceService = $this->createMock(SharedSpaceService::class);
+        $this->flash = $this->createMock(FlashMessagesInterface::class);
         $this->user = new User([
             'email' => new EmailAddress(['address' => 'me@example.com']),
         ]);
@@ -63,7 +68,8 @@ class InviteMemberHandlerTest extends TestCase
             ->withMethod($method)
             ->withUri(new Uri('/invite-member'))
             ->withAttribute(CsrfValidationMiddleware::TOKEN_ATTRIBUTE, 'test-token')
-            ->withAttribute(RequestAttribute::USER_DETAILS, $this->user);
+            ->withAttribute(RequestAttribute::USER_DETAILS, $this->user)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $this->flash);
 
         if ($method === 'POST') {
             $request = $request->withParsedBody($postData);
@@ -105,6 +111,10 @@ class InviteMemberHandlerTest extends TestCase
             ->with($this->user, 'a', 'b', 'me@example.com', true)
             ->willReturn(true);
 
+        $this->flash->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['An invite has been sent to a b.']);
+
         $response = $this->handler->handle(
             $this->createRequest('POST', [
                 'firstName' => 'a',
@@ -116,7 +126,7 @@ class InviteMemberHandlerTest extends TestCase
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('/shared-space?invite=sent&invitedMemberName=a+b', $location);
+        $this->assertEquals('/shared-space', $location);
     }
 
 
