@@ -1,5 +1,5 @@
-resource "aws_security_group" "new_front_cache" {
-  name_prefix = "${local.account_name_short}-${local.region_name}-new-front-cache"
+resource "aws_security_group" "front_cache" {
+  name_prefix = "${local.account_name_short}-${local.region_name}-front-cache"
   description = "Cache network access"
   vpc_id      = module.network.vpc.id
   tags        = local.front_component_tag
@@ -12,32 +12,6 @@ resource "aws_security_group" "new_front_cache" {
 resource "aws_elasticache_subnet_group" "application_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-application-subnets"
   subnet_ids = module.network.application_subnets[*].id
-}
-
-resource "aws_elasticache_replication_group" "new_front_cache" {
-  replication_group_id = "${local.account_name_short}-${local.region_name}-new-front-cache-rg"
-  description          = "front cache replication group"
-  parameter_group_name = "default.redis6.x"
-  engine               = "redis"
-  engine_version       = "6.2"
-  # cache.t2.micro is an invalid node type for the london eu-west-2 region
-  node_type                  = local.account.regions[data.aws_region.current.region].elasticache_node_type
-  num_cache_clusters         = local.cache_cluster_count
-  at_rest_encryption_enabled = true
-  automatic_failover_enabled = true
-  transit_encryption_enabled = true
-  maintenance_window         = "wed:05:00-wed:09:00"
-  snapshot_window            = "02:00-04:50"
-  notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
-  subnet_group_name          = aws_elasticache_subnet_group.application_subnets.name
-  security_group_ids         = [aws_security_group.new_front_cache.id]
-
-  tags = local.front_component_tag
-  lifecycle {
-    ignore_changes = [
-      engine_version
-    ]
-  }
 }
 
 # new elasticache replication group so that we can rotate the auth token without downtime
@@ -61,7 +35,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   snapshot_window            = "02:00-04:50"
   notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
   subnet_group_name          = aws_elasticache_subnet_group.application_subnets.name
-  security_group_ids         = [aws_security_group.new_front_cache.id]
+  security_group_ids         = [aws_security_group.front_cache.id]
 
   tags = local.front_component_tag
   lifecycle {
@@ -73,5 +47,5 @@ resource "aws_elasticache_replication_group" "front_cache" {
 
 locals {
   cache_cluster_count   = 2
-  cache_member_clusters = tolist(aws_elasticache_replication_group.new_front_cache.member_clusters)
+  cache_member_clusters = tolist(aws_elasticache_replication_group.front_cache.member_clusters)
 }
