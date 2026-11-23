@@ -7,7 +7,7 @@ namespace App\Handler\Lpa\Traits;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
+use App\Service\Lpa\PaymentCommunication;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\Lpa\Lpa;
 use MakeShared\DataModel\Lpa\Payment\Calculator;
@@ -20,7 +20,7 @@ use RuntimeException;
 trait CheckoutTrait
 {
     private LpaApplicationService $lpaApplicationService;
-    private Communication $communicationService;
+    private PaymentCommunication $paymentCommunication;
     private UrlHelper $urlHelper;
 
     private function isLpaComplete(Lpa $lpa, ServerRequestInterface $request): bool
@@ -50,7 +50,7 @@ trait CheckoutTrait
     private function finishCheckout(Lpa $lpa, ServerRequestInterface $request): ResponseInterface
     {
         $this->lpaApplicationService->lockLpa($lpa, $ifMatchVersion);
-        $this->communicationService->sendRegistrationCompleteEmail($lpa);
+        $this->paymentCommunication->sendRegistrationCompleteEmail($lpa);
 
         return new RedirectResponse(
             $this->urlHelper->generate('lpa/complete', ['lpa-id' => $lpa->id])
