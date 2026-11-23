@@ -33,7 +33,7 @@ class RedisClient
                 return false;
             }
 
-            return $this->redisClient->auth(['pass' => $this->authToken]);
+            return $this->redisClient->auth($this->authToken);
         } catch (RedisException $e) {
             $this->logger->error('Unable to connect to Redis Server', [
                 'exception' => $e,
