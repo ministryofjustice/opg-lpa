@@ -91,6 +91,13 @@
         this.$popup[0].close();
       }
 
+      // Let govuk-frontend initialise components (e.g. buttons) in the freshly injected content
+      document.dispatchEvent(
+        new CustomEvent('popup:content-rendered', {
+          detail: { element: this.$popup[0] },
+        }),
+      );
+
       // Open as a modal – browser handles backdrop, focus trap and scroll lock
       this.$popup[0].showModal();
 

@@ -1,5 +1,6 @@
 import { Before, Given, Then, When } from '@badeball/cypress-cucumber-preprocessor';
 import { newPassword, openEmailAndVisitLink } from '../../support/reset_link';
+import { repairA11yCheckedPagesAfterOrigin } from '../../support/a11y_checked_pages';
 import {
   checkSignedIn,
   detectOneLoginEnabled,
@@ -58,14 +59,6 @@ When(`I confirm deleting my account`, () => {
 function checkOnMockOneLoginPage() {
   cy.url().should('include', new URL(oneLoginMockUrl()).host);
   cy.contains('Continue').should('be.visible');
-}
-
-function repairA11yCheckedPagesAfterOrigin() {
-  cy.then(() => {
-    if (!(Cypress.env('a11yCheckedPages') instanceof Set)) {
-      Cypress.env('a11yCheckedPages', new Set());
-    }
-  });
 }
 
 function continueThroughMockOneLogin() {

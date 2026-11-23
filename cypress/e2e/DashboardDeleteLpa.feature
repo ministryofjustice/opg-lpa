@@ -35,21 +35,12 @@ Feature: DashboardDeleteLpa
 
         When I click "delete-lpa"
         Then I can see popup
+        Then I double click "delete" and the second click is prevented
 
-        # Double-click on LPA delete button (LPAL-840);
-        # should not see a 500 error or a warning flash message
-    When I double click "delete"
+        And I do not see "LPA could not be deleted" in the page text
 
-        # Check we don't get multiple delete attempts (i.e. the
-        # SingleUse JS module is doing its job)
-    And I do not see "LPA could not be deleted" in the page text
+        And If I am on dashboard I click to create lpa
+        Then I am taken to the lpa type page
 
-        # Check we don't get a 500 error (i.e. we should see a flash
-        # message if the SingleUse JS module is not working)
-    And I do not see "Unknown server error" in the page text
-
-    And If I am on dashboard I click to create lpa
-    Then I am taken to the lpa type page
-
-    Given I click element marked "Your LPAs"
-    Then there are "zero" "LPA" elements on the page
+        Given I click element marked "Your LPAs"
+        Then there are "zero" "LPA" elements on the page

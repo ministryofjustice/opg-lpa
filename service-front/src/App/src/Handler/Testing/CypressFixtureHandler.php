@@ -44,13 +44,14 @@ class CypressFixtureHandler implements RequestHandlerInterface
 
         try {
             return match ([$method, $entity]) {
-                ['POST', 'user']                => $this->createUser($data),
-                ['DELETE', 'user']              => $this->deleteUser($data),
-                ['POST', 'deletion-log']        => $this->createDeletionLog($data),
-                ['POST', 'shared-space']        => $this->createSpace($data),
-                ['POST', 'shared-space-member'] => $this->addMember($data),
-                ['POST', 'shared-space-invite'] => $this->createInvite($data),
-                default                         => new EmptyResponse(405),
+                ['POST', 'user']                      => $this->createUser($data),
+                ['DELETE', 'user']                    => $this->deleteUser($data),
+                ['POST', 'deletion-log']              => $this->createDeletionLog($data),
+                ['POST', 'shared-space']              => $this->createSpace($data),
+                ['POST', 'shared-space-member']       => $this->addMember($data),
+                ['POST', 'shared-space-invite']       => $this->createInvite($data),
+                ['POST', 'user-and-ready-to-pay-lpa'] => $this->createUserAndReadyToPayLPA(),
+                default                               => new EmptyResponse(405),
             };
         } catch (ApiException $ex) {
             return new JsonResponse(
@@ -146,5 +147,12 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $result = $this->fixtureService->createInvite($sharedSpaceId, $userEmail, $inviteEmail, $created, $isAdmin);
 
         return new JsonResponse($result, 200);
+    }
+
+    private function createUserAndReadyToPayLPA(): ResponseInterface
+    {
+        $result = $this->fixtureService->createUserAndReadyToPayLPA();
+
+        return new JsonResponse($result, 201);
     }
 }

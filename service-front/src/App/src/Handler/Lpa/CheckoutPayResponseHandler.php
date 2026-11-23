@@ -92,7 +92,6 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
                 'action',
                 $this->urlHelper->generate('lpa/checkout', ['lpa-id' => $lpa->getId()])
             );
-            $form->setAttribute('class', 'js-single-use');
 
             $template = ($paymentResponse->state->code ?? null) === 'P0030'
                 ? 'application/authenticated/lpa/checkout/govpay-cancel.twig'
