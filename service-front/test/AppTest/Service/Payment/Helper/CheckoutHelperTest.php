@@ -7,7 +7,7 @@ namespace AppTest\Service\Payment\Helper;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
+use App\Service\Lpa\PaymentCommunication;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\GovPay\Response\Payment as GovPayPayment;
@@ -33,7 +33,7 @@ class CheckoutHelperTest extends TestCase
     private const int IF_MATCH_VERSION = 5;
 
     private MockObject&LpaApplicationService $lpaApplicationService;
-    private MockObject&Communication $communicationService;
+    private MockObject&PaymentCommunication $paymentCommunication;
     private MockObject&UrlHelper $urlHelper;
     private MockObject&GovPayClient $paymentClient;
     private MockObject&LoggerInterface $logger;
@@ -43,7 +43,7 @@ class CheckoutHelperTest extends TestCase
     protected function setUp(): void
     {
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->communicationService = $this->createMock(Communication::class);
+        $this->paymentCommunication = $this->createMock(PaymentCommunication::class);
         $this->urlHelper = $this->createMock(UrlHelper::class);
         $this->paymentClient = $this->createMock(GovPayClient::class);
         $this->cardPayments = $this->createMock(CardPayments::class);
@@ -51,7 +51,7 @@ class CheckoutHelperTest extends TestCase
 
         $this->helper = new CheckoutHelper(
             $this->lpaApplicationService,
-            $this->communicationService,
+            $this->paymentCommunication,
             $this->urlHelper,
             $this->paymentClient,
             $this->cardPayments,
@@ -65,7 +65,7 @@ class CheckoutHelperTest extends TestCase
         $request = $this->createRequest($lpa, 'lpa/checkout');
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -132,7 +132,7 @@ class CheckoutHelperTest extends TestCase
         $this->lpaApplicationService->method('setPayment')->willReturn(true);
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION + 1);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -242,7 +242,7 @@ class CheckoutHelperTest extends TestCase
         ]);
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION + 1);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -297,7 +297,7 @@ class CheckoutHelperTest extends TestCase
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION + 1);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -353,7 +353,7 @@ class CheckoutHelperTest extends TestCase
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION + 1);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -397,7 +397,7 @@ class CheckoutHelperTest extends TestCase
         $this->paymentClient->method('getPayment')->willReturn($govPayPayment);
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION + 1);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
@@ -491,7 +491,7 @@ class CheckoutHelperTest extends TestCase
         $lpa->payment->reducedFeeUniversalCredit = true;
 
         $this->lpaApplicationService->expects($this->once())->method('lockLpa')->with($lpa, self::IF_MATCH_VERSION);
-        $this->communicationService->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
+        $this->paymentCommunication->expects($this->once())->method('sendRegistrationCompleteEmail')->with($lpa);
         $this->urlHelper->expects($this->once())
             ->method('generate')
             ->with('lpa/complete', ['lpa-id' => $lpa->getId()])
