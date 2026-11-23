@@ -35,3 +35,11 @@ variable "pagerduty_service_name" {
 variable "pagerduty_integration_enabled" {
   type = bool
 }
+
+variable "extended_support_alerts_enabled" {
+  type = bool
+}
+
+variable "uptime_notification_alerts_enabled" {
+  type = bool
+}

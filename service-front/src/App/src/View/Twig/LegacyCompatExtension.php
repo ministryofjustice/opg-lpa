@@ -213,7 +213,7 @@ class LegacyCompatExtension extends AbstractExtension
         }
 
         $parentRoute = match (true) {
-            ( $currentRoute == 'shared-space.dashboard'
+            ( $currentRoute == 'shared-space.dashboard' || $currentRoute == 'shared-space.dashboard.pagination'
               || $currentRoute == 'user/dashboard' || str_starts_with($currentRoute, 'user/dashboard/')
               || $currentRoute === 'lpa-type-no-id' || str_starts_with($currentRoute, 'lpa/')
             ) => $inSharedSpace ? 'shared-space.dashboard' : 'user/dashboard',
