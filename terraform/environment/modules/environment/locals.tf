@@ -51,7 +51,7 @@ locals {
     {
       cpu                    = 0,
       essential              = true,
-      image                  = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.48.0",
+      image                  = "311462405659.dkr.ecr.${data.aws_region.current.region}.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.51.0",
       mountPoints            = [],
       name                   = "aws-otel-collector",
       readonlyRootFilesystem = true,
