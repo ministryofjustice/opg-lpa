@@ -37,7 +37,7 @@ readonly class MemberInvite
         $code = sprintf('%08d', random_int(0, 99999999));
         $created = new DateTimeImmutable($created);
         $expires = $created->add(DateInterval::createFromDateString('7 days'));
-
+        $email = strtolower(trim($email));
         return new MemberInvite(null, $userId, $sharedSpaceId, $firstNames, $lastName, $email, $isAdmin, $code, $created, $expires);
     }
 
