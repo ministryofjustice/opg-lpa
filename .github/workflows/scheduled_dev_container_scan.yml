@@ -8,6 +8,7 @@ on:
   schedule:
     # Run Hourly
     - cron: "0 6 * * 1"
+  workflow_dispatch:
 
 permissions:
   actions: none
@@ -40,6 +41,8 @@ jobs:
             snyk_policy_path: local-development/ministack/.snyk
           - image_name: node:24.22.1-alpine3.23
             snyk_policy_path: local-development/node/.snyk
+          - image_name: 311462405659.dkr.ecr.eu-west-1.amazonaws.com/aws-otel-collector-public-ecr/aws-observability/aws-otel-collector:v0.50.0
+            snyk_policy_path: local-development/aws-otel-collector/.snyk
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
