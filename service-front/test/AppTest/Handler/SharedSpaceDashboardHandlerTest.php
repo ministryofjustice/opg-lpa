@@ -165,6 +165,43 @@ class SharedSpaceDashboardHandlerTest extends TestCase
         $this->assertInstanceOf(HtmlResponse::class, $response);
     }
 
+    public function testRendersInsteadOfFailingWhenTheLpasCannotBeFetched(): void
+    {
+        $identity = $this->createMock(User::class);
+        $identity->method('lastLogin')->willReturn(new DateTime('2026-06-01 10:00:00'));
+
+        $this->lpaApplicationService
+            ->expects($this->once())
+            ->method('getSharedSpaceLpaSummaries')
+            ->with('A687 5462 5068', 1, 50)
+            ->willReturn([
+                'applications'    => [],
+                'trackingEnabled' => true,
+            ]);
+
+        $this->renderer
+            ->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/shared-space/dashboard.twig',
+                $this->callback(fn(array $params): bool => $params['sharedSpaceName'] === 'Professional Team'
+                    && $params['lpas'] === []
+                    && $params['lpaTotalCount'] === 0)
+            )
+            ->willReturn('<html>dashboard</html>');
+
+        $request = $this->createRequest(search: 'A687 5462 5068', identity: $identity)
+            ->withAttribute(
+                RequestAttribute::USER_DETAILS,
+                (new UserDetails())->setIsSharedSpaceAdmin(true)->setSharedSpaceName('Professional Team'),
+            );
+
+        $response = $this->handler->handle($request);
+
+        $this->assertInstanceOf(HtmlResponse::class, $response);
+        $this->assertEquals(200, $response->getStatusCode());
+    }
+
     public function testCalculatesPaginationCorrectly(): void
     {
         $identity = $this->createMock(User::class);

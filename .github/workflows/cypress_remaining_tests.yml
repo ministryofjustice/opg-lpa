@@ -28,6 +28,11 @@ on:
         required: false
         type: string
         default: ""
+      govuk_pay_url:
+        description: "URL of the GOV.UK Pay hosted card payment pages that Cypress is redirected to"
+        required: false
+        type: string
+        default: "https://card.payments.service.gov.uk"
       cypress_tags:
         description: "Tag expression filtering scenarios within the listed feature files (e.g. 'not @Tag')"
         required: false
@@ -59,6 +64,7 @@ jobs:
       admin_url: ${{ inputs.admin_url }}
       front_url: ${{ inputs.front_url }}
       onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      govuk_pay_url: ${{ inputs.govuk_pay_url }}
       account_id: ${{ inputs.account_id }}
       suite_name: "Remaining 1"
       cypress_specs: |
@@ -76,12 +82,13 @@ jobs:
       admin_url: ${{ inputs.admin_url }}
       front_url: ${{ inputs.front_url }}
       onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      govuk_pay_url: ${{ inputs.govuk_pay_url }}
       account_id: ${{ inputs.account_id }}
       suite_name: "Remaining 2"
       cypress_specs: |
-        SharedSpace.feature
         Admin.feature
         AdminDeletionLog.feature
+        SharedSpace.feature
       cypress_tags: ${{ inputs.cypress_tags }}
       oidc_ingress_management_role: ${{ inputs.oidc_ingress_management_role }}
 
@@ -92,6 +99,7 @@ jobs:
       admin_url: ${{ inputs.admin_url }}
       front_url: ${{ inputs.front_url }}
       onelogin_mock_url: ${{ inputs.onelogin_mock_url }}
+      govuk_pay_url: ${{ inputs.govuk_pay_url }}
       account_id: ${{ inputs.account_id }}
       suite_name: "Remaining 3"
       cypress_specs: |
@@ -99,6 +107,8 @@ jobs:
         AccountDeletion.feature
         Cookies.feature
         CreateLpaButton.feature
+        CheckoutPaymentGateway.feature
+        CheckoutPaymentRecovery.feature
         Dashboard.feature
         DateCheck.feature
         Errors.feature

@@ -12,12 +12,6 @@ Then(`I click {string}`, (clickable) => {
   cy.get(selector).should('not.be.disabled').click();
 });
 
-Then(`I double click {string}`, (clickable) => {
-  cy.get('[data-cy=' + clickable + ']')
-    .should('not.be.disabled')
-    .dblclick();
-});
-
 Then(`I click occurrence {int} of {string}`, (number, clickable) => {
   cy.get('[data-cy=' + clickable + ']')
     .eq(number)

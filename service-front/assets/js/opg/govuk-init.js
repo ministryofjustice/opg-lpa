@@ -70,6 +70,11 @@ if (!window.__govukInited) {
 
     initCrossServiceHeader();
 
+    // Popup content is injected after page load so isn't covered by the createAll() calls above
+    document.addEventListener('popup:content-rendered', (event) => {
+      createAll(Button, undefined, event.detail.element);
+    });
+
     document.documentElement.dataset.govukInit = 'done';
     document.dispatchEvent(new CustomEvent('govuk:init'));
     MOJFrontend.initAll();

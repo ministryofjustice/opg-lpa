@@ -14,7 +14,7 @@ COPY --link service-admin/public/.htaccess public/.htaccess
 COPY --link service-admin/public/robots.txt public/robots.txt
 RUN npm run build
 
-FROM nginx:1.31.8-alpine3.24@sha256:a3554c0d0b48177b1413c26e01f695334428020d9df01243fbae3e11cfd17417
+FROM nginx:1.31.9-alpine3.24@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7
 
 # Remove unused packages
 RUN apk del freetype nginx-module-image-filter

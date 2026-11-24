@@ -292,3 +292,13 @@ SELECT 3142900 + g, 'a8b10000000000000000000000000000', NOW(), NOW(), NOW()
        )
      , '{}'
 FROM generate_series(1, 52) AS g;
+
+--
+-- Ideally, this can be at end of the last seed file, so it covers every seeded LPA.
+--
+UPDATE public.applications
+SET search = NULLIF(concat_ws(' ',
+    NULLIF(document -> 'donor' -> 'name' ->> 'title', ''),
+    NULLIF(document -> 'donor' -> 'name' ->> 'first', ''),
+    NULLIF(document -> 'donor' -> 'name' ->> 'last', '')
+), '');

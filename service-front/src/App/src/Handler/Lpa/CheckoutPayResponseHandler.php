@@ -7,7 +7,7 @@ namespace App\Handler\Lpa;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
+use App\Service\Lpa\PaymentCommunication;
 use App\Service\Payment\GovPay\Client as GovPayClient;
 use App\Service\Payment\Helper\CheckoutHelper;
 use App\Service\Payment\CardPayments;
@@ -33,7 +33,7 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
     public function __construct(
         private readonly FormElementManager $formElementManager,
         private readonly LpaApplicationService $lpaApplicationService,
-        private readonly Communication $communicationService,
+        private readonly PaymentCommunication $paymentCommunication,
         private readonly GovPayClient $paymentClient,
         private readonly UrlHelper $urlHelper,
         private readonly TemplateRendererInterface $renderer,
@@ -92,7 +92,6 @@ class CheckoutPayResponseHandler implements RequestHandlerInterface
                 'action',
                 $this->urlHelper->generate('lpa/checkout', ['lpa-id' => $lpa->getId()])
             );
-            $form->setAttribute('class', 'js-single-use');
 
             $template = ($paymentResponse->state->code ?? null) === 'P0030'
                 ? 'application/authenticated/lpa/checkout/govpay-cancel.twig'
