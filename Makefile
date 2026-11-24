@@ -202,48 +202,23 @@ dc-build-clean:
 	rm -fr ./service-pdf/vendor; \
 	COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker compose build --no-cache
 
-# standard reset only the front app container - useful for quick reset when only been working on front component
-# compared to soft reset, this currently cleans up volumes too. this may turn out not to be needed , we
-# may be able to go to always soft reset
-.PHONY: reset-front
-reset-front:
-	@${MAKE} dc-down
-	@docker system prune -f --volumes; \
-	docker rmi lpa-front-app || true; \
-	docker compose build --no-cache front-app
+# Use after Dockerfile changes or when env vars aren't being picked up.
+.PHONY: reset-admin
+reset-admin:
+	docker compose up -d --force-recreate --renew-anon-volumes admin-app
+	@${MAKE} dc-restart-web
 
-# hard reset only the front app container - cleaning up vendor folders too, useful when changing versions of deps
-.PHONY: hard-reset-front
-hard-reset-front:
-	@${MAKE} dc-down
-	@docker system prune -f --volumes; \
-	docker rmi lpa-front-app || true; \
-	rm -fr ./service-front/node_modules/parse-json/vendor; \
-	rm -fr ./service-front/public/assets/v2/js/vendor; \
-	rm -fr ./service-front/vendor; \
-	docker compose build --no-cache front-app
+# Use after Dockerfile changes or when env vars aren't being picked up.
+.PHONY: reset-front-app
+reset-front-app:
+	docker compose up -d --force-recreate --renew-anon-volumes front-app
+	@${MAKE} dc-restart-web
 
-.PHONY: soft-reset-front
-# soft reset only the front app container without no-cache option.
-# quickest rebuild but runs risk of some staleness if not every change is picked up
-soft-reset-front:
-	@${MAKE} dc-down
-	docker compose build front-app
-
-# only reset the front web container - uesful for quick reset after nginx.conf tweak
-.PHONY: reset-front-web
-reset-front-web:
-	@${MAKE} dc-down
-	@docker rmi lpa-front-web || true
-	docker compose build --no-cache front-web
-
-# hard reset only the api app container
-.PHONY: reset-api
-reset-api:
-	@${MAKE} dc-down
-	docker rmi lpa-api-app || true; \
-	rm -fr ./service-api/vendor; \
-	docker compose build --no-cache api-app
+# Use after Dockerfile changes or when env vars aren't being picked up.
+.PHONY: reset-api-app
+reset-api-app:
+	docker compose up -d --force-recreate --renew-anon-volumes api-app
+	@${MAKE} dc-restart-web
 
 # To account for DNS changes, we need to restart the web containers so that nginx picks up the new IP addresses. This is particularly relevant when using docker-desktop on MacOS, where the IP address of the host can change.
 .PHONY: dc-restart-web
@@ -485,18 +460,6 @@ dc-clear-cache:
 	docker compose exec front-app rm -f /tmp/config-cache.php
 	docker compose exec front-app rm -rf /tmp/twig_cache
 	docker compose exec api-app rm -f /app/tmp/config-cache-opg-lpa-api.php
-
-# Use after Dockerfile changes or when env vars aren't being picked up.
-.PHONY: reset-admin
-reset-admin:
-	docker compose up -d --force-recreate --renew-anon-volumes admin-app
-	@${MAKE} dc-restart-web
-
-# Use after Dockerfile changes or when env vars aren't being picked up.
-.PHONY: reset-front-app
-reset-front-app:
-	docker compose up -d --force-recreate --renew-anon-volumes front-app
-	@${MAKE} dc-restart-web
 
 .PHONY: dc-account-cleanup
 # Add DRY_RUN=1 to log what would happen without deleting, flagging or emailing anything.

@@ -199,10 +199,13 @@ final class ApplicationTest extends TestCase
      */
     public function testGetPersonalLpaSummariesMultipleApplications(): void
     {
+        $lpa1 = FixturesData::getHwLpaJson();
+        $lpa2 = $this->modifiedLPA();
+
         $this->apiClient->expects($this->once())
             ->method('httpGet')
             ->with('/v2/user/4321/applications', ['search' => null])
-            ->willReturn(['applications' => [FixturesData::getHwLpaJson(), $this->modifiedLPA()]]);
+            ->willReturn(['applications' => [$lpa1, $lpa2]]);
 
         $result = $this->service->getPersonalLpaSummaries();
 
@@ -218,6 +221,7 @@ final class ApplicationTest extends TestCase
                 'refreshId' => null,
                 'isReusable' => true,
                 'updatedBy' => null,
+                'lpa' => new Lpa($lpa1),
             ]),
             new ArrayObject([
                 'id' => 5531003157,
@@ -230,29 +234,54 @@ final class ApplicationTest extends TestCase
                 'refreshId' => null,
                 'isReusable' => true,
                 'updatedBy' => null,
+                'lpa' => new Lpa($lpa2),
             ]),
         ], 'trackingEnabled' => true], $result);
     }
 
     /**
-     * getSharedSpaceLpaSummaries() must always call the dedicated
-     * (unparameterised) shared-space endpoint, which resolves the shared
-     * space from the auth token server-side, regardless of the identity's
-     * own shared space state - the caller (SharedSpaceDashboardHandler)
-     * decides when this is the right scope to use, not this method.
-     *
      * @throws Exception
      */
     public function testGetSharedSpaceLpaSummaries(): void
     {
+        $lpa1 = FixturesData::getHwLpaJson();
+        $lpa2 = $this->modifiedLPA();
+
         $this->apiClient->expects($this->once())
             ->method('httpGet')
             ->with('/v2/shared-space/lpas', ['search' => null])
-            ->willReturn(['applications' => []]);
+            ->willReturn(['applications' => [$lpa1, $lpa2]]);
 
         $result = $this->service->getSharedSpaceLpaSummaries();
 
-        $this->assertEquals(['applications' => [], 'trackingEnabled' => true], $result);
+        $this->assertEquals(['applications' => [
+            new ArrayObject([
+                'id' => 5531003156,
+                'version' => 2,
+                'donor' => 'Hon Ayden Armstrong',
+                'type' => 'health-and-welfare',
+                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
+                'progress' => 'Completed',
+                'rejectedDate' => null,
+                'refreshId' => null,
+                'isReusable' => true,
+                'updatedBy' => null,
+                'lpa' => new Lpa($lpa1),
+            ]),
+            new ArrayObject([
+                'id' => 5531003157,
+                'version' => 2,
+                'donor' => 'Hon Ayden Armstrong',
+                'type' => 'health-and-welfare',
+                'updatedAt' => new DateTime('2017-03-24T16:21:52.804000+0000'),
+                'progress' => 'Completed',
+                'rejectedDate' => null,
+                'refreshId' => null,
+                'isReusable' => true,
+                'updatedBy' => null,
+                'lpa' => new Lpa($lpa2),
+            ]),
+        ], 'trackingEnabled' => true], $result);
     }
 
     public function testAttorneyOverflowGetContinuationNoteKeys(): void

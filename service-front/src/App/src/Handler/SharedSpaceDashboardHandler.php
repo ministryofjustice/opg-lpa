@@ -7,6 +7,7 @@ namespace App\Handler;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PaginationTrait;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -27,6 +28,7 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly LoggerInterface $logger,
+        private readonly FormFlowChecker $formFlowChecker,
     ) {
     }
 
@@ -66,6 +68,7 @@ class SharedSpaceDashboardHandler implements RequestHandlerInterface
                 'freeText'              => $search,
                 'isSearch'              => (is_string($search) && !empty($search)),
                 'trackingEnabled'       => $lpasSummary['trackingEnabled'],
+                'flowChecker'           => $this->formFlowChecker,
                 'sharedSpaceName'       => $lpasSummary['name'] ?? $userDetails->getSharedSpaceName(),
                 'joinedSuccess'         => ($request->getQueryParams()['joined'] ?? null) === 'success',
                 'createdSuccess'        => ($request->getQueryParams()['created'] ?? null) === 'success',

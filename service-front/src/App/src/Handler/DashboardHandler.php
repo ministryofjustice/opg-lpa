@@ -8,6 +8,7 @@ use App\Feature;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Handler\Traits\PaginationTrait;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -29,6 +30,7 @@ class DashboardHandler implements RequestHandlerInterface
         private readonly TemplateRendererInterface $renderer,
         private readonly LpaApplicationService $lpaApplicationService,
         private readonly LoggerInterface $logger,
+        private readonly FormFlowChecker $formFlowChecker,
     ) {
     }
 
@@ -82,6 +84,7 @@ class DashboardHandler implements RequestHandlerInterface
                 'trackingEnabled' => $lpasSummary['trackingEnabled'],
                 'accountCreated'  => ($request->getQueryParams()['account'] ?? null) === 'created',
                 'accountLinked'  => ($request->getQueryParams()['account'] ?? null) === 'linked',
+                'flowChecker' => $this->formFlowChecker,
             ]
         );
 

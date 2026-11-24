@@ -58,9 +58,9 @@ class FormFlowChecker
         'lpa/checkout/confirm'                          => 'isPaymentAccessible',
         'lpa/complete'                                  => 'isCompleteAccessible',
         'lpa/more-info-required'                        => 'isMoreInfoRequiredAccessible',
-        'lpa/date-check'                                => 'isApplicantAccessible',
+        'lpa/date-check'                                => 'isDateCheckAccessible',
         'lpa/date-check/complete'                       => 'isCompleteAccessible',
-        'lpa/date-check/valid'                          => 'isApplicantAccessible',
+        'lpa/date-check/valid'                          => 'isDateCheckAccessible',
         'lpa/summary'                                   => 'isInstructionsAccessible',
         'lpa/view-docs'                                 => 'isViewDocsAccessible',
         'lpa/reuse-details'                             => 'isReuseDetailsAccessible',
@@ -298,6 +298,15 @@ class FormFlowChecker
     public function getRouteOptions(/** @noinspection PhpUnusedParameterInspection */string|bool $route): array
     {
         return [];
+    }
+
+    public function canAccess(string $route, ?string $param = null, ?Lpa $lpa = null): bool
+    {
+        if ($lpa !== null) {
+            $this->lpa = $lpa;
+        }
+
+        return $this->getNearestAccessibleRoute($route, $param) === $route;
     }
 
     /**
@@ -1506,5 +1515,15 @@ class FormFlowChecker
     private function lpaHasApplicant(): bool
     {
         return ($this->lpaHasInstructionOrPreference() && $this->lpa->hasApplicant());
+    }
+
+    private function isDateCheckAccessible(): bool
+    {
+        return $this->isApplicantAccessible() &&
+            ($this->lpa->isStateCreated() ||
+            $this->lpa->isStateCompleted() ||
+            $this->lpa->hasSiriusStatus(Lpa::SIRIUS_PROCESSING_STATUS_RECEIVED) ||
+            $this->lpa->hasSiriusStatus(Lpa::SIRIUS_PROCESSING_STATUS_CHECKING) ||
+            $this->lpa->hasSiriusStatus(Lpa::SIRIUS_PROCESSING_STATUS_RETURNED));
     }
 }

@@ -13,6 +13,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function array_map;
+use function array_values;
 use function json_decode;
 
 /**
@@ -51,6 +53,7 @@ class CypressFixtureHandler implements RequestHandlerInterface
                 ['POST', 'shared-space-member']       => $this->addMember($data),
                 ['POST', 'shared-space-invite']       => $this->createInvite($data),
                 ['POST', 'user-and-ready-to-pay-lpa'] => $this->createUserAndReadyToPayLPA(),
+                ['POST', 'user-with-lpa-statuses']    => $this->createUserWithLpaStatuses($data),
                 default                               => new EmptyResponse(405),
             };
         } catch (ApiException $ex) {
@@ -154,5 +157,16 @@ class CypressFixtureHandler implements RequestHandlerInterface
         $result = $this->fixtureService->createUserAndReadyToPayLPA();
 
         return new JsonResponse($result, 201);
+    }
+
+    private function createUserWithLpaStatuses(array $data): ResponseInterface
+    {
+        $statuses = array_values(array_map('strval', (array) ($data['statuses'] ?? [])));
+
+        if ($statuses === []) {
+            return new EmptyResponse(400);
+        }
+
+        return new JsonResponse($this->fixtureService->createUserWithLpasInStatuses($statuses), 201);
     }
 }
