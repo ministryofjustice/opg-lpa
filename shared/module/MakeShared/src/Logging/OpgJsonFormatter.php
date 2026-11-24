@@ -10,8 +10,15 @@ use Monolog\LogRecord;
 
 class OpgJsonFormatter extends NormalizerFormatter
 {
+    public const string DEFAULT_METRIC_NAMESPACE = 'mlpa';
+
     public ?string $requestMethod = null;
     public ?string $requestPath = null;
+
+    public function __construct(private readonly string $metricNamespace = self::DEFAULT_METRIC_NAMESPACE)
+    {
+        parent::__construct();
+    }
 
     /**
      * {@inheritDoc}
@@ -45,7 +52,7 @@ class OpgJsonFormatter extends NormalizerFormatter
             $dimensions = $original['context'][MetricsLogger::CONTEXT_DIMENSIONS_KEY] ?? [];
             unset($original['context'][MetricsLogger::CONTEXT_DIMENSIONS_KEY]);
 
-            $record += MetricsLogger::emfFields($event, $dimensions, $timestampMs);
+            $record += MetricsLogger::emfFields($event, $dimensions, $timestampMs, $this->metricNamespace);
         }
 
         unset($original['datetime']);

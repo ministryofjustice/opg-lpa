@@ -337,5 +337,6 @@ return [
     'logging'           => [
         'serviceName' => 'opg-lpa/front',
         'minLevel'    => Level::Info,
+        'metricNamespace' => getenv('OPG_LPA_STACK_NAME') ?: 'mlpa',
     ],
 ];
