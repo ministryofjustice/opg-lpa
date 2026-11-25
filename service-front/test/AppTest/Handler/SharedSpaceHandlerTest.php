@@ -6,7 +6,6 @@ namespace AppTest\Handler;
 
 use App\Handler\SharedSpaceHandler;
 use App\Middleware\RequestAttribute;
-use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -38,16 +37,23 @@ class SharedSpaceHandlerTest extends TestCase
         );
     }
 
+    private function userDetails(?string $sharedSpaceId): SharedUser
+    {
+        return (new SharedUser())->setId('my-user')->setSharedSpaceId($sharedSpaceId);
+    }
+
     public function testGetShowsAboutWhenNotInSpace(): void
     {
+        $userDetails = $this->userDetails(null);
+
         $this->sharedSpaceService
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('getMembersAndInvites')
             ->willReturn(null);
 
         $this->renderer->method('render')
             ->with('application/authenticated/shared-space/about.twig', [
-                'signedInUser' => null,
+                'signedInUser' => $userDetails,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,
                 'currentRouteName' => null,
@@ -55,8 +61,8 @@ class SharedSpaceHandlerTest extends TestCase
             ])
             ->willReturn('<html>manage shared space</html>');
 
-        $request = (new ServerRequest())
-            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+        $request = new ServerRequest()
+            ->withAttribute(RequestAttribute::USER_DETAILS, $userDetails)
             ->withMethod('GET');
 
         $response = $this->handler->handle($request);
@@ -75,6 +81,8 @@ class SharedSpaceHandlerTest extends TestCase
     #[DataProvider('getShowsMembersAndInvitesProvider')]
     public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $memberUpdated, ?string $updatedMemberName): void
     {
+        $userDetails = $this->userDetails('shared-space-id');
+
         $response = [
             'members' => [
                 new SharedSpaceMember(['userId' => 'a-user', 'isAdmin' => false]),
@@ -98,7 +106,7 @@ class SharedSpaceHandlerTest extends TestCase
                 'updatedMemberName' => $updatedMemberName,
                 'sharedSpaceName' => 'Example Shared Space',
                 'signedInUserIsAdmin' => $isAdmin,
-                'signedInUser' => null,
+                'signedInUser' => $userDetails,
                 'secondsUntilSessionExpires' => null,
                 'lpa' => null,
                 'currentRouteName' => null,
@@ -107,8 +115,8 @@ class SharedSpaceHandlerTest extends TestCase
             ])
             ->willReturn('<html>manage shared space</html>');
 
-        $request = (new ServerRequest())
-            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+        $request = new ServerRequest()
+            ->withAttribute(RequestAttribute::USER_DETAILS, $userDetails)
             ->withMethod('GET')
             ->withQueryParams($query);
 
@@ -119,7 +127,7 @@ class SharedSpaceHandlerTest extends TestCase
 
     public function testPostResendsInvite(): void
     {
-        $user = new SharedUser();
+        $user = $this->userDetails('shared-space-id');
 
         $this->sharedSpaceService
             ->expects($this->once())
@@ -132,8 +140,7 @@ class SharedSpaceHandlerTest extends TestCase
             ->method('flash')
             ->with(FlashMessenger::SUCCESS, ['The invite has been resent to a b.']);
 
-        $request = (new ServerRequest())
-            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+        $request = new ServerRequest()
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $flash)
             ->withMethod('POST')
@@ -147,7 +154,7 @@ class SharedSpaceHandlerTest extends TestCase
 
     public function testPostShowsErrorWhenResentInviteEmailFails(): void
     {
-        $user = new SharedUser();
+        $user = $this->userDetails('shared-space-id');
 
         $this->sharedSpaceService->method('resendInvite')->willReturn(null);
         $this->sharedSpaceService->method('getMembersAndInvites')->willReturn([
@@ -164,8 +171,7 @@ class SharedSpaceHandlerTest extends TestCase
             )
             ->willReturn('<html>manage shared space</html>');
 
-        $request = (new ServerRequest())
-            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+        $request = new ServerRequest()
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withMethod('POST')
             ->withParsedBody(['resend' => '5']);
@@ -185,7 +191,7 @@ class SharedSpaceHandlerTest extends TestCase
     #[DataProvider('postWhenResendErrorsProvider')]
     public function testPostWhenResendErrors(string $errorCode, string $expectedError): void
     {
-        $user = new SharedUser();
+        $user = $this->userDetails('shared-space-id');
 
         $response = [
             'members' => [
@@ -224,8 +230,7 @@ class SharedSpaceHandlerTest extends TestCase
             ])
             ->willReturn('<html>manage shared space</html>');
 
-        $request = (new ServerRequest())
-            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+        $request = new ServerRequest()
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
             ->withMethod('POST')
             ->withParsedBody(['resend' => '5']);

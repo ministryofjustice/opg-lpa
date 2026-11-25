@@ -6,7 +6,6 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
-use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
@@ -34,8 +33,9 @@ class SharedSpaceHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        /** @var User $identity */
-        $identity = $request->getAttribute(RequestAttribute::IDENTITY);
+
+        /** @var ?SharedUser $userDetails */
+        $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
         $error = null;
 
         if (strtoupper($request->getMethod()) === RequestMethodInterface::METHOD_POST) {
@@ -43,9 +43,6 @@ class SharedSpaceHandler implements RequestHandlerInterface
 
             if (is_array($postData) && isset($postData['resend'])) {
                 try {
-                    /** @var SharedUser|null $userDetails */
-                    $userDetails = $request->getAttribute(RequestAttribute::USER_DETAILS);
-
                     $invitedName = $this->sharedSpaceService->resendInvite($userDetails, $postData['resend']);
 
                     if ($invitedName === null) {
@@ -67,13 +64,14 @@ class SharedSpaceHandler implements RequestHandlerInterface
             }
         }
 
-        $result = $this->sharedSpaceService->getMembersAndInvites();
-        if ($result === null) {
+        if ($userDetails->getSharedSpaceId() === null) {
             return new HtmlResponse($this->renderer->render(
                 'application/authenticated/shared-space/about.twig',
                 $this->getTemplateVariables($request),
             ));
         }
+
+        $result = $this->sharedSpaceService->getMembersAndInvites();
 
         /** @var array<int, SharedSpaceMember> $members */
         $members = $result['members'] ?? [];
@@ -82,7 +80,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
         $isAdmin = false;
 
         foreach ($members as $member) {
-            if ($member->getUserId() === $identity->id()) {
+            if ($member->getUserId() === $userDetails->getId()) {
                 $isAdmin = $member->isAdmin();
                 break;
             }
