@@ -511,6 +511,42 @@ final class SharedSpaceServiceTest extends MockeryTestCase
         $this->service->deleteMember($sharedSpaceId, $userId, $userToDeleteId);
     }
 
+    public function testGetInvite()
+    {
+        $this->sharedSpaceRepository->shouldReceive('getInviteById')
+            ->with(5, 'my-space')
+            ->andReturn(new MemberInvite(
+                id: 5,
+                userId: 'user1',
+                sharedSpaceId: 'my-space',
+                firstNames: 'John',
+                lastName: 'Smith',
+                email: 'john@example.com',
+                isAdmin: false,
+                code: '12345678',
+                created: new DateTime('-8 days'),
+                expires: new DateTime('-1 day'),
+            ));
+
+        $result = $this->service->getInvite('my-space', 5);
+
+        $this->assertNotNull($result);
+        $this->assertEquals(5, $result['id']);
+        $this->assertEquals('John Smith', $result['fullName']);
+        $this->assertEquals('john@example.com', $result['email']);
+        $this->assertTrue($result['isExpired']);
+        $this->assertArrayHasKey('createdAt', $result);
+    }
+
+    public function testGetInviteReturnsNullWhenInviteNotInSharedSpace()
+    {
+        $this->sharedSpaceRepository->shouldReceive('getInviteById')
+            ->with(99, 'my-space')
+            ->andThrow(new InviteNotFoundException());
+
+        $this->assertNull($this->service->getInvite('my-space', 99));
+    }
+
     public function testGetInvites()
     {
         $sharedSpaceId = 'my-space';

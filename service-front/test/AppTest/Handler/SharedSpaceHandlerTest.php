@@ -8,10 +8,13 @@ use App\Handler\SharedSpaceHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Diactoros\ServerRequest;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use MakeShared\DataModel\User\User as SharedUser;
 use Mezzio\Template\TemplateRendererInterface;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -64,15 +67,13 @@ class SharedSpaceHandlerTest extends TestCase
     public static function getShowsMembersAndInvitesProvider(): array
     {
         return [
-            [['invite' => 'sent', 'invitedMemberName' => 'John Smith'], false, true, false, 'John Smith', false, null],
-            [['invite' => 'revoked'], false, false, true, null, false, null],
-            [['member' => 'updated', 'updatedMemberName' => 'Jane Doe'], false, false, false, null, true, 'Jane Doe'],
-            [[], true, false, false, null, false, null],
+            [['member' => 'updated', 'updatedMemberName' => 'Jane Doe'], false, true, 'Jane Doe'],
+            [[], true, false, null],
         ];
     }
 
     #[DataProvider('getShowsMembersAndInvitesProvider')]
-    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $inviteSuccess, bool $revokeSuccess, ?string $invitedMemberName, bool $memberUpdated, ?string $updatedMemberName): void
+    public function testGetShowsMembersAndInvites(array $query, bool $isAdmin, bool $memberUpdated, ?string $updatedMemberName): void
     {
         $response = [
             'members' => [
@@ -93,8 +94,6 @@ class SharedSpaceHandlerTest extends TestCase
             ->with('application/authenticated/shared-space/manage.twig', [
                 'members' => $response['members'],
                 'invites' => $response['invites'],
-                'inviteSuccess' => $inviteSuccess,
-                'revokeSuccess' => $revokeSuccess,
                 'memberUpdated' => $memberUpdated,
                 'updatedMemberName' => $updatedMemberName,
                 'sharedSpaceName' => 'Example Shared Space',
@@ -104,7 +103,6 @@ class SharedSpaceHandlerTest extends TestCase
                 'lpa' => null,
                 'currentRouteName' => null,
                 'csrfToken' => null,
-                'invitedMemberName' => $invitedMemberName,
                 'error' => null,
             ])
             ->willReturn('<html>manage shared space</html>');
@@ -129,16 +127,50 @@ class SharedSpaceHandlerTest extends TestCase
             ->with($user, 5)
             ->willReturn('a b');
 
+        $flash = $this->createMock(FlashMessagesInterface::class);
+        $flash->expects($this->once())
+            ->method('flash')
+            ->with(FlashMessenger::SUCCESS, ['The invite has been resent to a b.']);
+
         $request = (new ServerRequest())
             ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
             ->withAttribute(RequestAttribute::USER_DETAILS, $user)
+            ->withAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE, $flash)
             ->withMethod('POST')
             ->withParsedBody(['resend' => '5']);
 
         $response = $this->handler->handle($request);
 
         $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertEquals('/shared-space?invite=sent&invitedMemberName=a+b', $response->getHeaderLine('location'));
+        $this->assertEquals('/shared-space', $response->getHeaderLine('location'));
+    }
+
+    public function testPostShowsErrorWhenResentInviteEmailFails(): void
+    {
+        $user = new SharedUser();
+
+        $this->sharedSpaceService->method('resendInvite')->willReturn(null);
+        $this->sharedSpaceService->method('getMembersAndInvites')->willReturn([
+            'members' => [new SharedSpaceMember(['userId' => 'my-user', 'isAdmin' => true])],
+            'invites' => [],
+            'name' => 'Example Shared Space',
+        ]);
+
+        $this->renderer->expects($this->once())
+            ->method('render')
+            ->with(
+                'application/authenticated/shared-space/manage.twig',
+                $this->callback(fn (array $vars) => $vars['error'] === 'An error occurred while sending the invitation. Please try again later.'),
+            )
+            ->willReturn('<html>manage shared space</html>');
+
+        $request = (new ServerRequest())
+            ->withAttribute(RequestAttribute::IDENTITY, new User('my-user', 'my-token', null, null))
+            ->withAttribute(RequestAttribute::USER_DETAILS, $user)
+            ->withMethod('POST')
+            ->withParsedBody(['resend' => '5']);
+
+        $this->assertInstanceOf(HtmlResponse::class, $this->handler->handle($request));
     }
 
     public static function postWhenResendErrorsProvider(): array
@@ -179,8 +211,6 @@ class SharedSpaceHandlerTest extends TestCase
             ->with('application/authenticated/shared-space/manage.twig', [
                 'members' => $response['members'],
                 'invites' => $response['invites'],
-                'inviteSuccess' => false,
-                'revokeSuccess' => false,
                 'sharedSpaceName' => 'Example Shared Space',
                 'signedInUserIsAdmin' => true,
                 'signedInUser' => $user,
@@ -188,7 +218,6 @@ class SharedSpaceHandlerTest extends TestCase
                 'lpa' => null,
                 'currentRouteName' => null,
                 'csrfToken' => null,
-                'invitedMemberName' => null,
                 'memberUpdated' => false,
                 'updatedMemberName' => null,
                 'error' => $expectedError,

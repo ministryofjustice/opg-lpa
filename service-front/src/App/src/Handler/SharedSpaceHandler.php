@@ -8,11 +8,14 @@ use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 use MakeShared\DataModel\User\User as SharedUser;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -45,8 +48,14 @@ class SharedSpaceHandler implements RequestHandlerInterface
 
                     $invitedName = $this->sharedSpaceService->resendInvite($userDetails, $postData['resend']);
 
-                    if ($invitedName !== null) {
-                        return new RedirectResponse('/shared-space?invite=sent&invitedMemberName=' . urlencode($invitedName));
+                    if ($invitedName === null) {
+                        $error = 'An error occurred while sending the invitation. Please try again later.';
+                    } else {
+                        /** @var FlashMessagesInterface $flash */
+                        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                        $flash->flash(FlashMessenger::SUCCESS, ['The invite has been resent to ' . $invitedName . '.']);
+
+                        return new RedirectResponse('/shared-space');
                     }
                 } catch (Throwable $e) {
                     $error = match ($e->getMessage()) {
@@ -89,10 +98,7 @@ class SharedSpaceHandler implements RequestHandlerInterface
                     'invites' => $invites,
                     'sharedSpaceName' => $sharedSpaceName,
                     'signedInUserIsAdmin' => $isAdmin,
-                    'invitedMemberName'    => $request->getQueryParams()['invitedMemberName'] ?? null,
                     'updatedMemberName'    => $request->getQueryParams()['updatedMemberName'] ?? null,
-                    'inviteSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'sent',
-                    'revokeSuccess' => ($request->getQueryParams()['invite'] ?? null) === 'revoked',
                     'memberUpdated' => ($request->getQueryParams()['member'] ?? null) === 'updated',
                 ],
             ),
