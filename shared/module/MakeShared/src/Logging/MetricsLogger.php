@@ -349,10 +349,15 @@ class MetricsLogger
      * @param array<string, string> $dimensions Extra dimensions to split the metric by, as name => value
      *     (e.g. 'IsAdmin' => 'true'). Values must be low-cardinality strings (e.g. values with few possible values,
      *     never IDs), as every distinct value creates a separate billable metric.
+     * @param string $namespace The CloudWatch metric namespace
      * @return array<string, mixed>
      */
-    public static function emfFields(string $event, array $dimensions, int $timestampMs): array
-    {
+    public static function emfFields(
+        string $event,
+        array $dimensions,
+        int $timestampMs,
+        string $namespace = 'opg-lpa',
+    ): array {
         $names = array_keys($dimensions);
         $dimensionSets = [['Event']];
 
@@ -364,7 +369,7 @@ class MetricsLogger
                 '_aws' => [
                     'Timestamp' => $timestampMs,
                     'CloudWatchMetrics' => [[
-                        'Namespace' => 'opg-lpa',
+                        'Namespace' => $namespace,
                         'Dimensions' => $dimensionSets,
                         'Metrics' => [['Name' => 'EventCount', 'Unit' => 'Count']],
                     ]],

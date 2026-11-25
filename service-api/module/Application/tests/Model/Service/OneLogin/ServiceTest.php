@@ -282,8 +282,6 @@ class ServiceTest extends MockeryTestCase
         $this->assertSame('tok-xyz', $result['identity']['token']);
         $this->assertSame($expires->format('c'), $result['identity']['tokenExpiresAt']);
         $this->assertSame('shared-space-9', $result['identity']['sharedSpaceId']);
-
-        $this->metrics->shouldHaveReceived('userLoggedIn')->with('user-1')->once();
     }
 
     public function testHandleCallbackRefreshesEmailWhenChangedAtOneLogin(): void

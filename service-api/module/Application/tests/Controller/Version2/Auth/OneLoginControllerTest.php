@@ -11,6 +11,7 @@ use InvalidArgumentException;
 use MakeShared\OneLogin\LinkReason;
 use MakeShared\OneLogin\UserType;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Log\LogLevel;
 
 class OneLoginControllerTest extends AbstractAuthControllerTestCase
@@ -126,7 +127,16 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
         $this->assertStringContainsString($missingField, $result->detail);
     }
 
-    public function testCallbackActionReturnsJsonModelWithServiceResult(): void
+    public static function identityProvider(): array
+    {
+        return [
+            'existing-user' => [['userId' => 'user-1'], 'user-1'],
+            'first-time-user' => [null, 'not-created-yet'],
+        ];
+    }
+
+    #[DataProvider('identityProvider')]
+    public function testCallbackActionReturnsJsonModelWithServiceResult(?array $identity, string $expectedUserId): void
     {
         $body = [
             'code'          => 'auth-code-123',
@@ -140,12 +150,16 @@ class OneLoginControllerTest extends AbstractAuthControllerTestCase
             'linked'   => false,
             'sub'      => 'urn:fdc:gov.uk:2022:abc',
             'email'    => 'user@example.com',
-            'identity' => null,
+            'identity' => $identity,
         ];
 
         $this->service->shouldReceive('handleCallback')
             ->with($body['code'], $body['state'], $body['nonce'], $body['code_verifier'], $body['redirect_uri'])
             ->andReturn($serviceResult)
+            ->once();
+
+        $this->metrics->shouldReceive('userLoggedIn')
+            ->with($expectedUserId)
             ->once();
 
         /** @var OneLoginController $controller */

@@ -17,8 +17,10 @@ class LoggerFactory implements FactoryInterface
         $loggerChannel = $loggerConfig['serviceName'] ?? 'MakeAnLPALogger';
         $loggerMinLevel = $loggerConfig['minLevel'] ?? Level::Debug;
 
+        $metricNamespace = $loggerConfig['metricNamespace'] ?? OpgJsonFormatter::DEFAULT_METRIC_NAMESPACE;
+
         $logger = new Logger($loggerChannel);
-        $formatter = new OpgJsonFormatter();
+        $formatter = new OpgJsonFormatter($metricNamespace);
 
         $streamHandler = new StreamHandler('php://stderr', $loggerMinLevel);
         $streamHandler->setFormatter($formatter);

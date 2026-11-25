@@ -425,6 +425,8 @@ class SharedSpaceService
 
     public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string
     {
+        $userEmail = strtolower(trim($userEmail));
+
         $this->sharedSpaceRepository->beginTransaction();
 
         try {

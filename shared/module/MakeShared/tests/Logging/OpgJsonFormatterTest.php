@@ -63,7 +63,7 @@ class OpgJsonFormatterTest extends TestCase
 
     public function testFormatEmitsEmfFieldsForMetricEvents()
     {
-        $formatter = new OpgJsonFormatter();
+        $formatter = new OpgJsonFormatter('test-stack');
 
         $record = new LogRecord(
             new DateTimeImmutable('2025-04-16T16:25:17Z'),
@@ -90,7 +90,7 @@ class OpgJsonFormatterTest extends TestCase
         $this->assertSame(1744820717000, $formattedRecord['_aws']['Timestamp']);
 
         $metric = $formattedRecord['_aws']['CloudWatchMetrics'][0];
-        $this->assertEquals('opg-lpa', $metric['Namespace']);
+        $this->assertEquals('test-stack', $metric['Namespace']);
         $this->assertEquals([['Event'], ['Event', 'IsAdmin']], $metric['Dimensions']);
         $this->assertEquals([['Name' => 'EventCount', 'Unit' => 'Count']], $metric['Metrics']);
     }
