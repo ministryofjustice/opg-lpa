@@ -287,8 +287,6 @@ class Service
 
         $tokenDetails = $this->authenticationService->issueAuthToken($user);
 
-        $this->metrics->userLoggedIn($userId);
-
         return [
             'linked'     => true,
             'sub'        => $sub,
