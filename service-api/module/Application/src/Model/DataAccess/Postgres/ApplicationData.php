@@ -459,7 +459,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $update->set([
             'sharedSpaceId' => $sharedSpaceId,
-            'updatedAt'       => gmdate(DbWrapper::TIME_FORMAT),
         ]);
 
         $statement = $sql->prepareStatementForSqlObject($update);

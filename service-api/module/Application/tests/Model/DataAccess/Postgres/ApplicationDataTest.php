@@ -396,4 +396,32 @@ class ApplicationDataTest extends MockeryTestCase
         $this->expectExceptionObject(new ConflictException('Unknown user'));
         $applicationData->update($lpa);
     }
+
+    public function testSetSharedSpaceOwnerKeepsTheLastUpdatedTime(): void
+    {
+        $sql = Mockery::mock(Sql::class);
+        $update = Mockery::mock(Update::class);
+        $statement = Mockery::mock(StatementInterface::class);
+        $result = Mockery::mock(ResultInterface::class);
+
+        $dbWrapper = Mockery::mock(DbWrapper::class);
+        $dbWrapper->shouldReceive('createSql')->andReturn($sql);
+
+        $sql->shouldReceive('update')->with(ApplicationData::APPLICATIONS_TABLE)->andReturn($update);
+        $sql->shouldReceive('prepareStatementForSqlObject')->with($update)->andReturn($statement);
+
+        $update->shouldReceive('where')->once()->with(Mockery::on(function (array $where) {
+            return $where['user'] === 'user-1'
+                && $where[0] instanceof IsNull
+                && $where[0]->getIdentifier() === 'sharedSpaceId';
+        }));
+        $update->shouldReceive('set')->once()->with(['sharedSpaceId' => 'space-1']);
+
+        $statement->shouldReceive('execute')->andReturn($result);
+        $result->shouldReceive('getAffectedRows')->andReturn(2);
+
+        $applicationData = new ApplicationData($dbWrapper, []);
+
+        $this->assertSame(2, $applicationData->setSharedSpaceOwner('user-1', 'space-1'));
+    }
 }
