@@ -459,7 +459,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $update->set([
             'sharedSpaceId' => $sharedSpaceId,
-            'updatedAt'       => gmdate(DbWrapper::TIME_FORMAT),
+            'updatedBy'     => $userId,
         ]);
 
         $statement = $sql->prepareStatementForSqlObject($update);
@@ -467,7 +467,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         return $result->getAffectedRows();
     }
-
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided
