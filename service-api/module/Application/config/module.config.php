@@ -264,6 +264,27 @@ return [
                                     ],
                                 ],
                             ],
+                            'invites' => [
+                                'type'    => 'Segment',
+                                'options' => [
+                                    'route'       => '/invites/:memberInviteId',
+                                    'constraints' => [
+                                        'memberInviteId' => '[0-9]+',
+                                    ],
+                                ],
+                                'may_terminate' => false,
+                                'child_routes'  => [
+                                    'get' => [
+                                        'type'    => 'Method',
+                                        'options' => [
+                                            'verb'     => 'get',
+                                            'defaults' => [
+                                                'action' => 'memberInvite',
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
                             'revoke-invite' => [
                                 'type'    => 'Segment',
                                 'options' => [

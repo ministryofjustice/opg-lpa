@@ -6,10 +6,13 @@ namespace App\Handler;
 
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\FormElementManager;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Router\RouteResult;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -29,17 +32,23 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $email = $request->getQueryParams()['email'] ?? '';
+        /** @var RouteResult|null $routeResult */
+        $routeResult = $request->getAttribute(RouteResult::class);
+        $inviteId = (string) ($routeResult?->getMatchedParams()['invite-id'] ?? '');
+
+        $invite = $this->sharedSpaceService->getInvite($inviteId);
+
+        if ($invite === null) {
+            return new RedirectResponse('/shared-space');
+        }
 
         if ($request->getMethod() === RequestMethodInterface::METHOD_POST) {
-            /** @var RouteResult|null $routeResult */
-            $routeResult = $request->getAttribute(RouteResult::class);
-            $inviteId = $routeResult ? $routeResult->getMatchedParams()['invite-id'] ?? null : null;
+            if ($this->sharedSpaceService->revokeInvite($inviteId)) {
+                /** @var FlashMessagesInterface $flash */
+                $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                $flash->flash(FlashMessenger::SUCCESS, [$invite['fullName'] . '’s invite has been revoked.']);
 
-            $ok = $this->sharedSpaceService->revokeInvite($inviteId);
-
-            if ($ok) {
-                return new RedirectResponse('/shared-space?invite=revoked');
+                return new RedirectResponse('/shared-space');
             }
         }
 
@@ -48,7 +57,8 @@ class RevokeMemberInviteHandler implements RequestHandlerInterface
             array_merge(
                 $this->getTemplateVariables($request),
                 [
-                    'email' => $email,
+                    'inviteeName' => $invite['fullName'],
+                    'inviteeEmail' => $invite['email'],
                 ],
             ),
         ));

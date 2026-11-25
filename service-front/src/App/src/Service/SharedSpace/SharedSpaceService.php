@@ -107,6 +107,29 @@ class SharedSpaceService
         return $result['count'];
     }
 
+    /**
+     * @return array{id: int, fullName: string, email: string, createdAt: string, isExpired: bool}|null
+     */
+    public function getInvite(string $inviteId): ?array
+    {
+        try {
+            $result = $this->client->httpGet('/v2/shared-space/invites/' . $inviteId);
+        } catch (Throwable $e) {
+            $this->logger->error('Retrieve shared space invite failed', [
+                'invite_id' => $inviteId,
+                'exception' => $e,
+            ]);
+
+            return null;
+        }
+
+        if (!is_array($result) || !isset($result['invite']) || !is_array($result['invite'])) {
+            return null;
+        }
+
+        return $result['invite'];
+    }
+
     public function getMembersAndInvites(): ?array
     {
         try {
