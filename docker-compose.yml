@@ -20,7 +20,10 @@ services:
 
   redis:
     container_name: lpa-redis
-    image: library/redis:8.10-alpine@sha256:3811787313eba226a2ef38658c6ccb91cd5e110edc89c37767de373120a0e5a0
+    build:
+      dockerfile: redis/docker/Dockerfile
+    environment:
+      OPG_LPA_COMMON_REDIS_AUTH_TOKEN: "a-fake-redis-auth-token-for-local-dev" # keep aligned with front-app
   #    ports:
   #      - 6379:6379
 
@@ -152,6 +155,8 @@ services:
       OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY: "${OPG_LPA_FRONT_OS_PLACES_HUB_LICENSE_KEY}"
       OPG_LPA_COMMON_REDIS_CACHE_URL: tcp://redis:6379
       OPG_LPA_OS_PLACES_HUB_ENDPOINT: "https://api.os.uk/search/places/v1/postcode"
+      OPG_LPA_COMMON_REDIS_AUTH_TOKEN: "a-fake-redis-auth-token-for-local-dev"
+
       # Note: XDEBUG_CONFIG is deliberately NOT set here. See api-app comment for details.
       XDEBUG_MODE: ${XDEBUG_MODE:-develop,debug,coverage}
 

@@ -1,12 +1,12 @@
-data "aws_security_group" "new_front_cache_region" {
+data "aws_security_group" "front_cache_region" {
   filter {
     name   = "group-name"
-    values = ["${local.account_name_short}-${local.region_name}-new-front-cache*"]
+    values = ["${local.account_name_short}-${local.region_name}-front-cache*"]
   }
 }
 
-data "aws_elasticache_replication_group" "new_front_cache_region" {
-  replication_group_id = "${local.account_name_short}-${local.region_name}-new-front-cache-rg"
+data "aws_elasticache_replication_group" "front_cache_region" {
+  replication_group_id = "${local.account_name_short}-${local.region_name}-front-cache-rg"
 }
 
 data "aws_s3_bucket" "access_log" {

@@ -328,8 +328,9 @@ return [
         ],
     ],
     'redis'             => [
+        'authToken'             => getenv('OPG_LPA_COMMON_REDIS_AUTH_TOKEN') ?: null,
         'url'             => getenv('OPG_LPA_COMMON_REDIS_CACHE_URL') ?: null,
-        'ttlMs'           => (int) (getenv('OPG_LPA_COMMON_REDIS_CACHE_TTL_MS') ?: 10800000), // 3 hours, matching legacy app
+        'keyTtlSeconds'           => 10800, // 3 hours, matching legacy app
         'ordnance_survey' => [
             'max_call_per_min' => 6,
         ],

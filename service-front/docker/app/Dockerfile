@@ -19,7 +19,7 @@ RUN apk add --no-cache icu fcgi \
 
 COPY --from=ghcr.io/php/pie:bin@sha256:65d91cecb73cb1fd03ae2a892d8ec76b25d34468532c0c2032afa9c412cf8b43 /pie /usr/bin/pie
 
-RUN pie install --no-cache phpredis/phpredis:^6.0
+RUN pie install --no-cache phpredis/phpredis:^6.3
 
 # Default for AWS. Should be set to 1 for local development.
 ENV PHP_OPCACHE_VALIDATE_TIMESTAMPS="0"
