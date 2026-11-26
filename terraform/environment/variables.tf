@@ -64,22 +64,26 @@ variable "environments" {
         password_signin_enabled  = bool
       })
       database = object({
-        cluster_identifier                 = string
-        aurora_cross_region_backup_enabled = bool
-        cross_account_backup_enabled       = bool
-        aurora_restore_testing_enabled     = bool
-        enable_backup_vault_lock           = bool
-        daily_backup_deletion              = number
-        daily_backup_cold_storage          = number
-        monthly_backup_deletion            = number
-        monthly_backup_cold_storage        = number
-        aurora_instance_count              = number
-        aurora_serverless                  = bool
-        deletion_protection                = bool
-        psql_engine_version                = string
-        psql_parameter_group_family        = string
-        rds_instance_type                  = string
-        skip_final_snapshot                = bool
+        cluster_identifier                    = string
+        aurora_cross_region_backup_enabled    = bool
+        cross_account_backup_enabled          = bool
+        aurora_restore_testing_enabled        = bool
+        enable_backup_vault_lock              = bool
+        daily_backup_deletion                 = number
+        daily_backup_cold_storage             = number
+        monthly_backup_deletion               = number
+        monthly_backup_cold_storage           = number
+        aurora_instance_count                 = number
+        aurora_serverless                     = bool
+        deletion_protection                   = bool
+        psql_engine_version                   = string
+        psql_parameter_group_family           = string
+        rds_instance_type                     = string
+        skip_final_snapshot                   = bool
+        database_insights_mode                = string
+        monitoring_interval                   = number
+        performance_insights_enabled          = bool
+        performance_insights_retention_period = number
       })
       regions = map(
         object({

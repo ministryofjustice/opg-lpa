@@ -146,3 +146,21 @@ variable "ca_cert_identifier" {
   description = "Specifies the identifier of the CA certificate for the DB instance"
   type        = string
 }
+
+variable "database_insights_mode" {
+  default = "standard"
+  type    = string
+}
+variable "monitoring_interval" {
+  default = 0
+  type    = number
+}
+
+variable "performance_insights_enabled" {
+  type    = bool
+  default = false
+}
+variable "performance_insights_retention_period" {
+  type    = number
+  default = 0
+}
