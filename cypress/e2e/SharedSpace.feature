@@ -89,9 +89,9 @@ Feature: Shared Space
     And I see a success notification with content "An invite has been sent to John Smith"
 
   Scenario: Can not invite a member to a shared space when already invited or already a member
-    Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
-    And the shared space has a member called "Member 1" who is an "admin"
-    And I log in as the newly created fixture user
+    Given I create a new One Login user stored as "addedMember" with 1 LPA
+    Given I create a new One Login user with 1 LPA that belongs to a shared space called "Example Organisation"
+    And user "addedMember" is a member of the shared space
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     When I click element marked "Invite a member"

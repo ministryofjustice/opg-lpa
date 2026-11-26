@@ -20,8 +20,6 @@ use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Delete;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Insert;
-use Laminas\Db\Sql\Predicate\Operator;
-use Laminas\Db\Sql\Predicate\PredicateSet;
 use Laminas\Db\Sql\Select;
 use Laminas\Db\Sql\Sql;
 use Laminas\Db\Sql\Update;
@@ -1421,28 +1419,10 @@ class SharedSpaceDataTest extends MockeryTestCase
             ->with(['user' => UserData::USERS_TABLE], 'members.userId = user.id', [])
             ->andReturn($selectMock);
         $selectMock->shouldReceive('where')
-            ->with(Mockery::on(function ($criteria) {
-                if (!is_array($criteria) || ($criteria['members.sharedSpaceId'] ?? null) !== 'space-id') {
-                    return false;
-                }
-
-                $predicateSet = $criteria[0] ?? null;
-                if (!$predicateSet instanceof PredicateSet) {
-                    return false;
-                }
-
-                $predicates = $predicateSet->getPredicates();
-
-                return count($predicates) === 2
-                    && $predicates[0][0] === PredicateSet::OP_OR
-                    && $predicates[0][1] instanceof Operator
-                    && $predicates[0][1]->getLeft() === 'user.one_login_email'
-                    && $predicates[0][1]->getRight() === 'a@example.com'
-                    && $predicates[1][0] === PredicateSet::OP_OR
-                    && $predicates[1][1] instanceof Operator
-                    && $predicates[1][1]->getLeft() === 'user.identity'
-                    && $predicates[1][1]->getRight() === 'a@example.com';
-            }))
+            ->with([
+                'members.sharedSpaceId' => 'space-id',
+                'user.one_login_email'  => 'a@example.com',
+            ])
             ->andReturn($selectMock);
         $selectMock->shouldReceive('columns')
             ->with(['id'])
