@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\DashboardHandler;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use DateTime;
@@ -24,6 +25,7 @@ class DashboardHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private LoggerInterface&MockObject $logger;
+    private FormFlowChecker&MockObject $flowChecker;
     private DashboardHandler $handler;
     private string|false $originalOneLoginEnabled;
 
@@ -37,11 +39,13 @@ class DashboardHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->flowChecker = $this->createMock(FormFlowChecker::class);
 
         $this->handler = new DashboardHandler(
             $this->renderer,
             $this->lpaApplicationService,
             $this->logger,
+            $this->flowChecker,
         );
     }
 
@@ -258,7 +262,8 @@ class DashboardHandlerTest extends TestCase
                         && $params['user']['isProfessional'] === true
                         && $params['paginationControlData']['page'] === 1
                         && $params['paginationControlData']['pageCount'] === 1
-                        && $params['paginationControlData']['pagesInRange'] === [1];
+                        && $params['paginationControlData']['pagesInRange'] === [1]
+                        && $params['flowChecker'] === $this->flowChecker;
                 })
             )
             ->willReturn('<html>dashboard</html>');

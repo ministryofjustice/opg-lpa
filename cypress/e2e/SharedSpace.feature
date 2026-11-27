@@ -316,3 +316,9 @@ Feature: Shared Space
     And I see "The LPAs belong to the shared space Example Organisation and will still be available to its remaining members." in the page text
     When I click link "Return to your details"
     Then I should be on "/user/about-you"
+
+  Scenario: Check signing dates link is only shown on shared space LPA cards that are not Started
+    Given I create a new user with one LPA for each of the statuses "Started, Created, Waiting, Received, Checking, Processed" that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+    And each LPA card shows the check signing dates link unless its status is Started

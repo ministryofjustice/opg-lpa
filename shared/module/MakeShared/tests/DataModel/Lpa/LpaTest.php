@@ -431,4 +431,25 @@ class LpaTest extends TestCase
         $this->assertFalse($lpa->hasTrustCorporation('primary'));
         $this->assertTrue($lpa->hasTrustCorporation('replacement'));
     }
+
+    public function testHasSiriusStatusFalseWhenNoMetadata()
+    {
+        $lpa = new Lpa();
+        $this->assertFalse($lpa->hasSiriusStatus('Received'));
+    }
+
+    public function testHasSiriusStatusFalseWhenStatusNull()
+    {
+        $lpa = new Lpa();
+        $lpa->setMetadata([Lpa::SIRIUS_PROCESSING_STATUS => null]);
+        $this->assertFalse($lpa->hasSiriusStatus('Received'));
+    }
+
+    public function testHasSiriusStatusMatchesOnlyCurrentStatus()
+    {
+        $lpa = new Lpa();
+        $lpa->setMetadata([Lpa::SIRIUS_PROCESSING_STATUS => 'Received']);
+        $this->assertTrue($lpa->hasSiriusStatus('Received'));
+        $this->assertFalse($lpa->hasSiriusStatus('Checking'));
+    }
 }

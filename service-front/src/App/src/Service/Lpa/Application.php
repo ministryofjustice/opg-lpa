@@ -281,6 +281,7 @@ class Application implements ApiClientAwareInterface
                 'rejectedDate' => $rejectedDate,
                 'refreshId'    => $refreshTracking ? $lpa->getId() : null,
                 'updatedBy'    => $lpa->getUpdatedBy(),
+                'lpa'          => $lpa,
             ]);
         }
 

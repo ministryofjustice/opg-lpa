@@ -6,6 +6,7 @@ namespace AppTest\Handler;
 
 use App\Handler\SharedSpaceDashboardHandler;
 use App\Middleware\RequestAttribute;
+use App\Model\FormFlowChecker;
 use App\Model\Service\Authentication\Identity\User;
 use App\Service\Lpa\Application as LpaApplicationService;
 use DateTime;
@@ -23,6 +24,7 @@ class SharedSpaceDashboardHandlerTest extends TestCase
     private TemplateRendererInterface&MockObject $renderer;
     private LpaApplicationService&MockObject $lpaApplicationService;
     private LoggerInterface&MockObject $logger;
+    private FormFlowChecker&MockObject $flowChecker;
     private SharedSpaceDashboardHandler $handler;
 
     protected function setUp(): void
@@ -30,11 +32,13 @@ class SharedSpaceDashboardHandlerTest extends TestCase
         $this->renderer = $this->createMock(TemplateRendererInterface::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->flowChecker = $this->createMock(FormFlowChecker::class);
 
         $this->handler = new SharedSpaceDashboardHandler(
             $this->renderer,
             $this->lpaApplicationService,
             $this->logger,
+            $this->flowChecker,
         );
     }
 
@@ -122,7 +126,8 @@ class SharedSpaceDashboardHandlerTest extends TestCase
                         && $params['paginationControlData']['page'] === 1
                         && $params['paginationControlData']['pageCount'] === 1
                         && $params['paginationControlData']['pagesInRange'] === [1]
-                        && $params['sharedSpaceName'] == 'My space';
+                        && $params['sharedSpaceName'] == 'My space'
+                        && $params['flowChecker'] === $this->flowChecker;
                 })
             )
             ->willReturn('<html>dashboard</html>');

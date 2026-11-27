@@ -1161,4 +1161,14 @@ class Lpa extends AbstractData
 
         return $this;
     }
+
+    public function hasSiriusStatus(string $status): bool
+    {
+        $siriusProcessingStatus = $this->getMetadata()[self::SIRIUS_PROCESSING_STATUS] ?? null;
+        if (is_null($siriusProcessingStatus)) {
+            return false;
+        }
+
+        return $siriusProcessingStatus === $status;
+    }
 }

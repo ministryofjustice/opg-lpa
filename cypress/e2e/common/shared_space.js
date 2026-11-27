@@ -313,3 +313,50 @@ When('I search the dashboard for the first fixture LPA by its reference', () => 
     cy.get('[data-cy=dashboard-search-icon]').click();
   });
 });
+
+function createUserWithLpaStatuses(statusesString, sharedSpaceName) {
+  const statuses = statusesString.split(',').map((status) => status.trim());
+
+  cy.request({
+    method: 'POST',
+    url: '/testing/cypress-fixture/user-with-lpa-statuses',
+    body: { statuses },
+  })
+    .then((response) => response.body)
+    .then(({ email, password, lpaIds, userFullName }) => {
+      cy.task('log', `Created fixture user ${email} with LPAs ${lpaIds.join(', ')} for statuses ${statuses.join(', ')}`);
+      cy.wrap({ email, password, lpaIds, userFullName, statuses }).as('fixtureUser');
+
+      if (sharedSpaceName) {
+        createSharedSpace(sharedSpaceName, email).then(({ sharedSpaceId }) => {
+          cy.wrap({ email, password, lpaIds, userFullName, statuses, sharedSpaceId, sharedSpaceName }).as('fixtureUser');
+          cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
+        });
+      }
+    });
+}
+
+Given('I create a new user with one LPA for each of the statuses {string}', (statusesString) => {
+  createUserWithLpaStatuses(statusesString);
+});
+
+Given(
+  /^I create a new user with one LPA for each of the statuses "([^"]*)" that belongs to a shared space called "([^"]*)"$/,
+  (statusesString, sharedSpaceName) => {
+    createUserWithLpaStatuses(statusesString, sharedSpaceName);
+  },
+);
+
+Then('each LPA card shows the check signing dates link unless its status is Started', () => {
+  cy.get('@fixtureUser').then(({ lpaIds, statuses }) => {
+    lpaIds.forEach((lpaId, index) => {
+      const card = () => cy.get(`li[data-cy=lpa-${lpaId}]`);
+
+      if (statuses[index] === 'Started') {
+        card().find('[data-cy=check-signing-dates]').should('not.exist');
+      } else {
+        card().find('[data-cy=check-signing-dates]').should('exist');
+      }
+    });
+  });
+});

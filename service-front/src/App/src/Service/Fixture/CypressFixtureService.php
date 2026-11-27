@@ -334,7 +334,91 @@ class CypressFixtureService
     {
         $applicationsPath = '/v2/user/' . $userId . '/applications';
 
-        $lpaData = [
+        $createResult = $this->assertArrayResult(
+            $this->apiClient->httpPost($applicationsPath, $this->buildCompleteLpaData(92))
+        );
+        $lpaId        = (string) $createResult['id'];
+
+        $this->apiClient->httpPut(
+            $applicationsPath . '/' . $lpaId . '/who-are-you',
+            ['who' => 'donor', 'qualifier' => null],
+            ['If-Match' => '1']
+        );
+
+        return $lpaId;
+    }
+
+    /**
+     * Supported statuses: Started, Created, Waiting, Received, Checking, Processed.
+     *
+     * @param string[] $statuses
+     * @return array{email: string, password: string, userId: string, lpaIds: array<int, string>, userFullName: string}
+     */
+    public function createUserWithLpasInStatuses(array $statuses): array
+    {
+        $userData = $this->createUserWithLpas(0, 'property-and-financial');
+
+        $lpaIds = [];
+        foreach ($statuses as $status) {
+            $lpaIds[] = $this->createLpaInStatus($userData['userId'], $status);
+        }
+
+        $userData['lpaIds'] = $lpaIds;
+
+        return $userData;
+    }
+
+    private function createLpaInStatus(string $userId, string $status): string
+    {
+        $applicationsPath = '/v2/user/' . $userId . '/applications';
+
+        if ($status === 'Started') {
+            $lpaData = $this->buildCompleteLpaData(92);
+            unset($lpaData['document']['certificateProvider'], $lpaData['document']['primaryAttorneys']);
+            $result = $this->assertArrayResult($this->apiClient->httpPost($applicationsPath, $lpaData));
+
+            return (string) $result['id'];
+        }
+
+        $result = $this->assertArrayResult($this->apiClient->httpPost(
+            $applicationsPath,
+            $this->buildCompleteLpaData($status === 'Created' ? 92 : 0),
+        ));
+        $lpaId   = (string) $result['id'];
+        $version = (int) $result['version'];
+
+        $lpaPath = $applicationsPath . '/' . $lpaId;
+
+        // Created date is only recorded on update
+        if ($status === 'Created') {
+            $this->apiClient->httpPut(
+                $lpaPath . '/who-are-you',
+                ['who' => 'donor', 'qualifier' => null],
+                ['If-Match' => (string) $version]
+            );
+
+            return $lpaId;
+        }
+
+        $this->apiClient->httpPost($lpaPath . '/lock', [], ['If-Match' => (string) $version]);
+
+        if ($status !== 'Waiting') {
+            $this->apiClient->httpPatch(
+                $lpaPath,
+                ['metadata' => array_merge($result['metadata'], ['sirius-processing-status' => $status])],
+                ['If-Match' => (string) ($version + 1)],
+            );
+        }
+
+        return $lpaId;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function buildCompleteLpaData(int $paymentAmount): array
+    {
+        return [
             'document' => [
                 'type' => 'property-and-financial',
                 'donor' => [
@@ -388,18 +472,7 @@ class CypressFixtureService
                 'people-to-notify-confirmed' => true,
                 'repeat-application-confirmed' => true,
             ],
-            'payment' => ['amount' => 92],
+            'payment' => ['amount' => $paymentAmount],
         ];
-
-        $createResult = $this->assertArrayResult($this->apiClient->httpPost($applicationsPath, $lpaData));
-        $lpaId        = (string) $createResult['id'];
-
-        $this->apiClient->httpPut(
-            $applicationsPath . '/' . $lpaId . '/who-are-you',
-            ['who' => 'donor', 'qualifier' => null],
-            ['If-Match' => '1']
-        );
-
-        return $lpaId;
     }
 }
