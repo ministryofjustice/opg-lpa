@@ -88,6 +88,6 @@ data "aws_secretsmanager_secret" "mock_onelogin_client_id" {
   name = "${var.account_name}/mock-onelogin-client-id"
 }
 
-data "aws_secretsmanager_secret" "onelogin_private_key" {
-  name = "${var.account_name}/onelogin-private-key"
+data "aws_secretsmanager_secret" "onelogin_signing_keys" {
+  name = "${var.account_name}/onelogin-signing-keys"
 }

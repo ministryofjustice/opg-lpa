@@ -64,7 +64,6 @@ class ServiceTest extends MockeryTestCase
     private const REDIRECT_URI = 'https://front.example.com/auth/redirect';
 
     private const string CLIENT_ID              = 'test-client-id';
-    private const string KEY_ID                 = 'test-kid';
     private const string AUTHORIZATION_ENDPOINT = 'https://oidc.integration.account.gov.uk/authorize';
 
     private const int SIGNED_IN_AT  = 1791280000;
@@ -96,7 +95,7 @@ class ServiceTest extends MockeryTestCase
 
         $this->cache = Mockery::mock(CacheInterface::class);
 
-        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), self::KEY_ID);
+        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey());
 
         $this->service = new Service(
             $this->metrics,
@@ -143,7 +142,7 @@ class ServiceTest extends MockeryTestCase
 
         $jws = (new CompactSerializer())->unserialize($requestObject);
 
-        $this->assertSame(['alg' => 'RS256', 'kid' => self::KEY_ID], $jws->getSignature(0)->getProtectedHeader());
+        $this->assertSame(['alg' => 'RS256', 'kid' => $this->keyPairManager->jwk()->get('kid')], $jws->getSignature(0)->getProtectedHeader());
         $this->assertTrue(
             (new JWSVerifier(new AlgorithmManager([new RS256()])))
                 ->verifyWithKey($jws, $this->keyPairManager->jwk()->toPublic(), 0),
@@ -199,7 +198,7 @@ class ServiceTest extends MockeryTestCase
         $jwks = $this->service->publicJwks();
 
         $this->assertCount(1, $jwks['keys']);
-        $this->assertSame(self::KEY_ID, $jwks['keys'][0]['kid']);
+        $this->assertSame($this->keyPairManager->jwk()->get('kid'), $jwks['keys'][0]['kid']);
         $this->assertArrayNotHasKey('d', $jwks['keys'][0]);
     }
 

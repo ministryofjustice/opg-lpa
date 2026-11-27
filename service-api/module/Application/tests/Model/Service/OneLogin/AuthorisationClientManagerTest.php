@@ -47,7 +47,10 @@ class AuthorisationClientManagerTest extends TestCase
         $jwks = $this->makeManager()->get()->getJwksProvider()->getJwks();
 
         $this->assertCount(1, $jwks['keys']);
-        $this->assertSame('test-kid', $jwks['keys'][0]['kid']);
+        $this->assertSame(
+            (new KeyPairManager(KeyPairManagerTest::rsaPrivateKey()))->jwk()->get('kid'),
+            $jwks['keys'][0]['kid'],
+        );
         $this->assertSame('sig', $jwks['keys'][0]['use']);
     }
 
@@ -64,7 +67,7 @@ class AuthorisationClientManagerTest extends TestCase
         return new AuthorisationClientManager(
             'test-client-id',
             self::DISCOVERY_URL,
-            new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid'),
+            new KeyPairManager(KeyPairManagerTest::rsaPrivateKey()),
             $this->createMock(ClientInterface::class),
             $this->cacheReturningDiscoveryDocument(),
         );

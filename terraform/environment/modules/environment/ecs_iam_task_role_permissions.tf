@@ -104,6 +104,26 @@ data "aws_iam_policy_document" "api_permissions_role" {
     ]
   }
   statement {
+    sid    = "oneLoginSigningKeysRead"
+    effect = "Allow"
+    actions = [
+      "secretsmanager:GetSecretValue",
+    ]
+    resources = [
+      data.aws_secretsmanager_secret.onelogin_signing_keys.arn,
+    ]
+  }
+  statement {
+    sid    = "oneLoginSigningKeysDecrypt"
+    effect = "Allow"
+    actions = [
+      "kms:Decrypt",
+    ]
+    resources = [
+      data.aws_kms_alias.multi_region_secrets_encryption_alias.target_key_arn,
+    ]
+  }
+  statement {
     effect = "Allow"
     sid    = "ApiXrayDaemon"
     #tfsec:ignore:aws-iam-no-policy-wildcards - Wildcard required for Xray

@@ -2,6 +2,7 @@
 
 use Application\Handler;
 use Application\Model\Service\OneLogin as OneLoginService;
+use Aws\SecretsManager\SecretsManagerClient;
 use Facile\OpenIDClient\Service\Builder\AuthorizationServiceBuilder;
 use Facile\OpenIDClient\Service\Builder\UserInfoServiceBuilder;
 use GuzzleHttp\Client as GuzzleClient;
@@ -828,20 +829,23 @@ return [
             },
 
             OneLoginService\KeyPairManager::class => static function (ServiceLocatorInterface $container): OneLoginService\KeyPairManager {
+                return $container->get(OneLoginService\SigningKeySecret::class)->keyPairManager();
+            },
+
+            OneLoginService\SigningKeySecret::class => static function (ServiceLocatorInterface $container): OneLoginService\SigningKeySecret {
                 $config = $container->get('config');
 
-                $privateKey = $config['onelogin']['private_key'] ?? null;
-                $keyId      = $config['onelogin']['key_id'] ?? null;
+                $secretName = $config['onelogin']['signing_keys_secret'] ?? null;
 
-                if (!is_string($privateKey) || $privateKey === '') {
-                    throw new \RuntimeException('Missing required config: onelogin.private_key');
+                if (!is_string($secretName) || $secretName === '') {
+                    throw new \RuntimeException('Missing required config: onelogin.signing_keys_secret');
                 }
 
-                if (!is_string($keyId) || $keyId === '') {
-                    throw new \RuntimeException('Missing required config: onelogin.key_id');
-                }
-
-                return new OneLoginService\KeyPairManager($privateKey, $keyId);
+                return new OneLoginService\SigningKeySecret(
+                    new SecretsManagerClient($config['onelogin']['secrets_manager']),
+                    $container->get('OneLoginPsr16Cache'),
+                    $secretName,
+                );
             },
 
             OneLoginService\AuthorisationClientManager::class => static function (ServiceLocatorInterface $container): OneLoginService\AuthorisationClientManager {

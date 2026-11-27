@@ -19,27 +19,65 @@ class KeyPairManager
 
     private const ALGORITHM = 'RS256';
 
+    private readonly JWK $signingKey;
+
+    /** @var list<JWK> */
+    private readonly array $publishedKeys;
+
+    /**
+     * Each key is a PEM, or a base64-encoded PEM.
+     *
+     * @param string      $current  the key we sign with
+     * @param string|null $next     published, ready to become the current key
+     * @param string|null $previous published until One Login can no longer have it cached
+     */
     public function __construct(
-        #[\SensitiveParameter] private readonly string $privateKey,
-        private readonly string $keyId,
+        #[\SensitiveParameter] string $current,
+        #[\SensitiveParameter] ?string $next = null,
+        #[\SensitiveParameter] ?string $previous = null,
     ) {
-        if ($this->privateKey === '') {
-            throw new RuntimeException('OneLogin private key must not be empty');
+        $this->signingKey = $this->load($current);
+
+        $publishedKeys = [$this->signingKey];
+
+        foreach ([$next, $previous] as $key) {
+            if ($key !== null) {
+                $publishedKeys[] = $this->load($key);
+            }
         }
 
-        if ($this->keyId === '') {
-            throw new RuntimeException('OneLogin key ID must not be empty');
+        $keyIds = array_map(static fn (JWK $key): mixed => $key->get('kid'), $publishedKeys);
+
+        if (count(array_unique($keyIds)) !== count($keyIds)) {
+            throw new RuntimeException('OneLogin signing keys must all be different');
         }
+
+        $this->publishedKeys = $publishedKeys;
     }
 
     public function jwk(): JWK
     {
+        return $this->signingKey;
+    }
+
+    /**
+     * @return array{keys: list<array<string, mixed>>}
+     */
+    public function publicJwks(): array
+    {
+        return [
+            'keys' => array_map(static fn (JWK $key): array => $key->toPublic()->all(), $this->publishedKeys),
+        ];
+    }
+
+    private function load(#[\SensitiveParameter] string $key): JWK
+    {
+        if ($key === '') {
+            throw new RuntimeException('OneLogin private key must not be empty');
+        }
+
         try {
-            $jwk = JWKFactory::createFromKey(
-                $this->resolvePem($this->privateKey),
-                null,
-                ['use' => 'sig', 'kid' => $this->keyId],
-            );
+            $jwk = JWKFactory::createFromKey($this->resolvePem($key), null, ['use' => 'sig']);
         } catch (\Throwable $e) {
             throw new RuntimeException(
                 'Failed to load OneLogin private key: ' . $e->getMessage(),
@@ -58,15 +96,7 @@ class KeyPairManager
             ));
         }
 
-        return new JWK($jwk->all() + ['alg' => self::ALGORITHM]);
-    }
-
-    /**
-     * @return array{keys: list<array<string, mixed>>}
-     */
-    public function publicJwks(): array
-    {
-        return ['keys' => [$this->jwk()->toPublic()->all()]];
+        return new JWK($jwk->all() + ['alg' => self::ALGORITHM, 'kid' => $jwk->thumbprint('sha256')]);
     }
 
     private function resolvePem(string $key): string
