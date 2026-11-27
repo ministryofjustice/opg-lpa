@@ -17,7 +17,7 @@ RUN npm run build
 FROM nginx:1.31.9-alpine3.24@sha256:fb4658584bd9a916ffb6f6e365f97c25cfdb2923801f551ea08356e695f14ff7
 
 # Remove unused packages
-RUN apk del freetype nginx-module-image-filter
+RUN apk del freetype nginx-module-image-filter nginx-module-njs nginx-module-xslt libxslt libxml2
 
 # Upgrade vulnerable packages
 RUN apk upgrade --no-cache
