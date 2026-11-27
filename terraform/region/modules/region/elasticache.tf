@@ -9,6 +9,17 @@ resource "aws_security_group" "new_front_cache" {
   }
 }
 
+resource "aws_security_group" "front_cache" {
+  name_prefix = "${local.account_name_short}-${local.region_name}-front-cache"
+  description = "Cache network access"
+  vpc_id      = module.network.vpc.id
+  tags        = local.front_component_tag
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
 resource "aws_elasticache_subnet_group" "application_subnets" {
   name       = "${local.account_name_short}-${local.region_name}-elasticache-application-subnets"
   subnet_ids = module.network.application_subnets[*].id
@@ -61,7 +72,7 @@ resource "aws_elasticache_replication_group" "front_cache" {
   snapshot_window            = "02:00-04:50"
   notification_topic_arn     = aws_sns_topic.cloudwatch_to_slack_elasticache_alerts.arn
   subnet_group_name          = aws_elasticache_subnet_group.application_subnets.name
-  security_group_ids         = [aws_security_group.new_front_cache.id]
+  security_group_ids         = [aws_security_group.front_cache.id]
 
   tags = local.front_component_tag
   lifecycle {
