@@ -35,6 +35,8 @@ class SigningKeySecret
     /**
      * The secret is only cached once it is valid, so a bad value is fetched again on the
      * next request.
+     *
+     * @psalm-suppress PossiblyUnusedMethod Called by the KeyPairManager factory in module.config.php
      */
     public function keyPairManager(): KeyPairManager
     {
