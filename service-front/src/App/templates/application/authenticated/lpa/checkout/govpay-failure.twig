@@ -17,8 +17,8 @@
         <input type="hidden" name="version" value="{{ lpa.version }}">
 
         <div class="govuk-button-group">
-          <button type="submit" class="govuk-button" name="action" value="card">Retry online payment</button>
-          <button class="govuk-button govuk-button--secondary" name="action" value="cheque">Pay by cheque</button>
+          <button type="submit" class="govuk-button" name="action" value="card" data-cy="retry-online-payment" data-prevent-double-click="true" data-module="govuk-button">Retry online payment</button>
+          <button class="govuk-button govuk-button--secondary" name="action" value="cheque" data-cy="pay-by-cheque" data-prevent-double-click="true" data-module="govuk-button">Pay by cheque</button>
         </div>
 
         {{ form().closeTag|raw }}

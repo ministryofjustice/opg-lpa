@@ -293,6 +293,17 @@ class SharedSpaceService
         return array_map($this->mapInvite(...), $invites);
     }
 
+    public function getInvite(string $sharedSpaceId, int $inviteId): ?array
+    {
+        try {
+            $invite = $this->sharedSpaceRepository->getInviteById($inviteId, $sharedSpaceId);
+        } catch (InviteNotFoundException) {
+            return null;
+        }
+
+        return $invite === null ? null : $this->mapInvite($invite);
+    }
+
     /**
      * @return array{results: array, total: int}
      */
@@ -414,6 +425,8 @@ class SharedSpaceService
 
     public function join(string $userId, string $sharedSpaceName, string $accessCode, string $userEmail): string
     {
+        $userEmail = strtolower(trim($userEmail));
+
         $this->sharedSpaceRepository->beginTransaction();
 
         try {

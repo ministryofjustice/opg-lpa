@@ -10,7 +10,7 @@ use App\Handler\Lpa\CheckoutPayResponseHandler;
 use App\Middleware\RequestAttribute;
 use App\Model\FormFlowChecker;
 use App\Service\Lpa\Application as LpaApplicationService;
-use App\Service\Lpa\Communication;
+use App\Service\Lpa\PaymentCommunication;
 use App\Service\Payment\CardPayments;
 use App\Service\Payment\Helper\CheckoutHelper;
 use Laminas\Diactoros\Response\HtmlResponse;
@@ -35,7 +35,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
 {
     private FormElementManager&MockObject $formElementManager;
     private LpaApplicationService&MockObject $lpaApplicationService;
-    private Communication&MockObject $communicationService;
+    private PaymentCommunication&MockObject $paymentCommunication;
     private GovPayClient&MockObject $paymentClient;
     private UrlHelper&MockObject $urlHelper;
     private TemplateRendererInterface&MockObject $renderer;
@@ -48,7 +48,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
     {
         $this->formElementManager    = $this->createMock(FormElementManager::class);
         $this->lpaApplicationService = $this->createMock(LpaApplicationService::class);
-        $this->communicationService  = $this->createMock(Communication::class);
+        $this->paymentCommunication  = $this->createMock(PaymentCommunication::class);
         $this->paymentClient         = $this->createMock(GovPayClient::class);
         $this->urlHelper             = $this->createMock(UrlHelper::class);
         $this->renderer              = $this->createMock(TemplateRendererInterface::class);
@@ -59,7 +59,7 @@ class CheckoutPayResponseHandlerTest extends TestCase
         $this->handler = new CheckoutPayResponseHandler(
             $this->formElementManager,
             $this->lpaApplicationService,
-            $this->communicationService,
+            $this->paymentCommunication,
             $this->paymentClient,
             $this->urlHelper,
             $this->renderer,

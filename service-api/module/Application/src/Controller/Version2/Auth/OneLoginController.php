@@ -97,6 +97,8 @@ class OneLoginController extends AbstractRestfulController
             TelemetryEventManager::triggerStop();
         }
 
+        $this->metrics->userLoggedIn($result['identity']['userId'] ?? 'not-created-yet');
+
         return new JsonModel($result);
     }
 

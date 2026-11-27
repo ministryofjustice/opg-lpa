@@ -8,11 +8,14 @@ use App\Form\SharedSpace\InviteMemberForm;
 use App\Handler\Traits\CommonTemplateVariablesTrait;
 use App\Middleware\RequestAttribute;
 use App\Service\SharedSpace\SharedSpaceService;
+use App\View\Twig\FlashMessenger;
 use Fig\Http\Message\RequestMethodInterface;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Laminas\Form\Element\Checkbox;
 use Laminas\Form\FormElementManager;
+use Mezzio\Flash\FlashMessageMiddleware;
+use Mezzio\Flash\FlashMessagesInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -62,7 +65,13 @@ class InviteMemberHandler implements RequestHandlerInterface
                     );
 
                     if ($ok) {
-                        return new RedirectResponse('/shared-space?invite=sent&invitedMemberName=' . urlencode($form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue()));
+                        /** @var FlashMessagesInterface $flash */
+                        $flash = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+                        $flash->flash(FlashMessenger::SUCCESS, [
+                            'An invite has been sent to ' . $form->get('firstName')->getValue() . ' ' . $form->get('lastName')->getValue() . '.',
+                        ]);
+
+                        return new RedirectResponse('/shared-space');
                     }
                 } catch (Throwable $e) {
                     match ($e->getMessage()) {

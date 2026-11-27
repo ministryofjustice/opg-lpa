@@ -130,11 +130,19 @@ Feature: Shared Space
     Then I submit the form
     Then I should be on "/shared-space"
     And I see a success notification with content "An invite has been sent to John Smith"
+    And I see "Pending" in the page text
     When I click element marked "Revoke invite"
     Then I should be on "/shared-space/revoke-invite/"
-    Then I submit the form
+    And I see "Do you want to revoke this invite?" in the page text
+    And I see "Revoking the invite sent to John Smith (john.smith@example.com)" in the page text
+    When I click link "Back"
     Then I should be on "/shared-space"
-    And I see a success notification with content "Invite revoked"
+    When I click element marked "Revoke invite"
+    Then I should be on "/shared-space/revoke-invite/"
+    When I click button "Yes, revoke invite"
+    Then I should be on "/shared-space"
+    And I see a success notification with content "John Smith’s invite has been revoked."
+    And I do not see "john.smith@example.com" in the page text
 
   Scenario: Can resend a members invite
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"
@@ -143,9 +151,24 @@ Feature: Shared Space
     When I click element marked "Shared space"
     Then I should be on "/shared-space"
     Then I should see an expired invite for "expired@example.com"
+    And I see "Details of invited members with an expired status will automatically be removed after 30 days." in the page text
     When I click element marked "Resend invite"
     Then I should see a pending invite for "expired@example.com"
-    And I see a success notification with content "An invite has been sent to John Smith"
+    And I see a success notification with content "The invite has been resent to John Smith."
+
+  Scenario: Can search the shared space LPAs by reference and by donor name
+    Given I create a new user with 7 LPAs that belongs to a shared space called "Example Organisation"
+    When I log in as the newly created fixture user
+    Then I should be on "/shared-space/dashboard"
+
+    When I search the dashboard for the first fixture LPA by its reference
+    Then I see "Your search has found 1 results" in the page text
+    And there is "one" "LPA" element on the page
+
+    When I type "nancy" into "dashboard-search-box"
+    And I click "dashboard-search-icon"
+    Then I see "Your search has found 7 results" in the page text
+    And there are "seven" "LPA" elements on the page
 
   Scenario: Can suspend a member from a shared space
     Given I create a new user with 1 LPA that belongs to a shared space called "Example Organisation"

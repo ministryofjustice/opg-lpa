@@ -94,6 +94,11 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
      */
     public function fetchForSharedSpace(array $criteria, array $options = []): Traversable
     {
+        if (array_key_exists('id', $criteria)) {
+            $criteria[self::APPLICATIONS_TABLE . '.id'] = $criteria['id'];
+            unset($criteria['id']);
+        }
+
         $sql = $this->dbWrapper->createSql();
         $select = $this->dbWrapper->buildSelect($sql, self::APPLICATIONS_TABLE, $criteria, $options);
         $select->join(['users' => UserData::USERS_TABLE], 'updatedBy = users.id', ['profile'], Select::JOIN_LEFT);
@@ -454,7 +459,7 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         $update->set([
             'sharedSpaceId' => $sharedSpaceId,
-            'updatedAt'       => gmdate(DbWrapper::TIME_FORMAT),
+            'updatedBy'     => $userId,
         ]);
 
         $statement = $sql->prepareStatementForSqlObject($update);
@@ -462,7 +467,6 @@ class ApplicationData extends AbstractBase implements ApplicationRepository\Appl
 
         return $result->getAffectedRows();
     }
-
 
     /**
      * Get the count of LPAs between two dates for the timestamp field name provided

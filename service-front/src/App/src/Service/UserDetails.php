@@ -27,9 +27,6 @@ class UserDetails implements ApiClientAwareInterface
     // Email template identifiers (mirrored from AbstractEmailService)
     public const EMAIL_ACCOUNT_ACTIVATE                      = 'email-account-activate';
     public const EMAIL_FEEDBACK                              = 'email-feedback';
-    public const EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        = 'email-lpa-registration-with-payment1';
-    public const EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 = 'email-lpa-registration-with-cheque-payment2';
-    public const EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     = 'email-lpa-registration-with-no-payment3';
     public const EMAIL_NEW_EMAIL_ADDRESS_NOTIFY              = 'email-new-email-address-notify';
     public const EMAIL_NEW_EMAIL_ADDRESS_VERIFY              = 'email-new-email-address-verify';
     public const EMAIL_PASSWORD_CHANGED                      = 'email-password-changed';

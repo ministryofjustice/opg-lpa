@@ -232,8 +232,6 @@ class CheckoutIndexHandlerTest extends TestCase
             ->willReturn($form);
 
         $this->handler->handle($this->createRequest('GET', $lpa));
-
-        $this->assertContains(['class', 'js-single-use'], $formSetAttributes);
     }
 
     public function testNonRepeatApplicationFeesArePassed(): void

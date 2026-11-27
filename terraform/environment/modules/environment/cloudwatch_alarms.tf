@@ -54,9 +54,9 @@ resource "aws_cloudwatch_metric_alarm" "application_5xx_errors" {
   alarm_description         = "5xx responses logged for ${var.environment_name} (front, api, pdf or admin)"
   alarm_name                = "${var.environment_name} application 5XX errors"
   comparison_operator       = "GreaterThanThreshold"
-  datapoints_to_alarm       = 2
+  datapoints_to_alarm       = 5
   metric_name               = "${var.environment_name}-5xx-errors"
-  evaluation_periods        = 2
+  evaluation_periods        = 5
   insufficient_data_actions = []
   namespace                 = "Make/Monitoring"
   ok_actions                = compact([aws_sns_topic.cloudwatch_to_pagerduty.arn, local.extended_support_sns_topic_arn])

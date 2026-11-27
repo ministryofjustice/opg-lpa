@@ -723,16 +723,16 @@
         },
         {
             "name": "laminas/laminas-authentication",
-            "version": "2.19.0",
+            "version": "2.20.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-authentication.git",
-                "reference": "717b7a26e55f65a7c97325e49fa0b6fa2ea4c79a"
+                "reference": "c988c726da63662b946b7010d83a6f5cde3978e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-authentication/zipball/717b7a26e55f65a7c97325e49fa0b6fa2ea4c79a",
-                "reference": "717b7a26e55f65a7c97325e49fa0b6fa2ea4c79a",
+                "url": "https://api.github.com/repos/laminas/laminas-authentication/zipball/c988c726da63662b946b7010d83a6f5cde3978e1",
+                "reference": "c988c726da63662b946b7010d83a6f5cde3978e1",
                 "shasum": ""
             },
             "require": {
@@ -744,6 +744,7 @@
                 "zendframework/zend-authentication": "*"
             },
             "require-dev": {
+                "boundwize/structarmed": "^0.21.0",
                 "laminas/laminas-coding-standard": "~3.1.0",
                 "laminas/laminas-db": "^2.20.0",
                 "laminas/laminas-http": "^2.19.0",
@@ -752,7 +753,7 @@
                 "laminas/laminas-uri": "^2.12.0",
                 "laminas/laminas-validator": "^2.64.1",
                 "phpunit/phpunit": "^11.5.42",
-                "psalm/plugin-phpunit": "^0.19.5",
+                "psalm/plugin-phpunit": "^0.22.0",
                 "vimeo/psalm": "^6.13.1"
             },
             "suggest": {
@@ -789,11 +790,12 @@
             },
             "funding": [
                 {
-                    "url": "https://funding.communitybridge.org/projects/laminas-project",
-                    "type": "community_bridge"
+                    "url": "https://crowdfunding.linuxfoundation.org/initiatives/laminas-project",
+                    "type": "custom"
                 }
             ],
-            "time": "2025-10-17T15:08:49+00:00"
+            "time": "2026-11-10T04:07:00+00:00",
+            "published-time": "2026-11-23T10:11:28+00:00"
         },
         {
             "name": "laminas/laminas-cache",
@@ -4079,16 +4081,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v8.1.0",
+            "version": "v8.1.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "99aec13b82b4967ec5088222c4a3ecca955949c2"
+                "reference": "a8f7a3cf9d3140902eaee85baf1f8e98666d336a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/99aec13b82b4967ec5088222c4a3ecca955949c2",
-                "reference": "99aec13b82b4967ec5088222c4a3ecca955949c2",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/a8f7a3cf9d3140902eaee85baf1f8e98666d336a",
+                "reference": "a8f7a3cf9d3140902eaee85baf1f8e98666d336a",
                 "shasum": ""
             },
             "require": {
@@ -4126,7 +4128,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v8.1.0"
+                "source": "https://github.com/symfony/filesystem/tree/v8.1.12"
             },
             "funding": [
                 {
@@ -4146,7 +4148,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T05:06:50+00:00"
+            "time": "2026-11-24T15:59:55+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
@@ -10225,5 +10227,5 @@
     "platform-overrides": {
         "php": "8.4.28"
     },
-    "plugin-api-version": "2.9.0"
+    "plugin-api-version": "2.11.0"
 }

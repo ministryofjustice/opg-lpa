@@ -11,26 +11,30 @@ use App\Service\Mail\Exception\InvalidArgumentException;
 use App\Service\Mail\MailParameters;
 use App\Service\SharedSpace\SharedSpaceService;
 use App\Service\UserDetails;
+use App\Service\Lpa\PaymentCommunication;
 use Psr\Log\LoggerInterface;
 
 class NotifyMailTransport implements MailTransportInterface
 {
     private array $defaultTemplateMap = [
-        UserDetails::EMAIL_FEEDBACK                              => '3fb12879-7665-4ffe-a76f-ed90cde7a35d',
-        UserDetails::EMAIL_ACCOUNT_ACTIVATE                      => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
-        UserDetails::EMAIL_LPA_REGISTRATION_WITH_PAYMENT1        => 'e462a4f3-db4a-4748-aecb-7b1b5c653e58',
-        UserDetails::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT2 => '6779a351-b53e-4267-8eb7-7f24193e3026',
-        UserDetails::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT3     => 'b84aa41d-c94e-4bb7-8747-28b9d6ed0d6c',
-        UserDetails::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY              => '85a14f80-813e-4e72-8dc5-5549d958a592',
-        UserDetails::EMAIL_NEW_EMAIL_ADDRESS_VERIFY              => '1dd980a2-deab-4a5b-802b-61566188496d',
-        UserDetails::EMAIL_PASSWORD_CHANGED                      => '856f6b93-a248-42ae-9580-5d0ff24b595e',
-        UserDetails::EMAIL_PASSWORD_RESET                        => 'a4f2c358-0484-431f-8148-6d1280d79f44',
-        UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT             => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
-        UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD               => 'aedd38b2-111f-4aa3-897d-b8c036f53131',
-        UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING           => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
-        SharedSpaceService::EMAIL_INVITE_MEMBER                  => '9c62363d-549f-435c-a99d-5ae7a2fb646c',
-        SharedSpaceService::EMAIL_SUSPEND_MEMBER                 => '9a0c93a8-fbdf-485f-a9cc-123af872bbed',
-        SharedSpaceService::EMAIL_DELETE_MEMBER                  => '1f864b05-d0b7-4419-a82d-f5013962d45c',
+        PaymentCommunication::EMAIL_LPA_REGISTRATION_WITH_PAYMENT        => 'e462a4f3-db4a-4748-aecb-7b1b5c653e58',
+        PaymentCommunication::EMAIL_LPA_REGISTRATION_WITH_CHEQUE_PAYMENT => '6779a351-b53e-4267-8eb7-7f24193e3026',
+        PaymentCommunication::EMAIL_LPA_REGISTRATION_WITH_NO_PAYMENT     => 'b84aa41d-c94e-4bb7-8747-28b9d6ed0d6c',
+        PaymentCommunication::EMAIL_LPA_REGISTRATION_WITH_PAYMENT_PAYER  => 'c722fd68-b363-44f6-8b6c-f3071ac5a6c5',
+
+        SharedSpaceService::EMAIL_INVITE_MEMBER  => '9c62363d-549f-435c-a99d-5ae7a2fb646c',
+        SharedSpaceService::EMAIL_SUSPEND_MEMBER => '9a0c93a8-fbdf-485f-a9cc-123af872bbed',
+        SharedSpaceService::EMAIL_DELETE_MEMBER  => '1f864b05-d0b7-4419-a82d-f5013962d45c',
+
+        UserDetails::EMAIL_FEEDBACK                    => '3fb12879-7665-4ffe-a76f-ed90cde7a35d',
+        UserDetails::EMAIL_ACCOUNT_ACTIVATE            => '32aea199-3b82-4e2d-8228-f2cd8b58c40a',
+        UserDetails::EMAIL_NEW_EMAIL_ADDRESS_NOTIFY    => '85a14f80-813e-4e72-8dc5-5549d958a592',
+        UserDetails::EMAIL_NEW_EMAIL_ADDRESS_VERIFY    => '1dd980a2-deab-4a5b-802b-61566188496d',
+        UserDetails::EMAIL_PASSWORD_CHANGED            => '856f6b93-a248-42ae-9580-5d0ff24b595e',
+        UserDetails::EMAIL_PASSWORD_RESET              => 'a4f2c358-0484-431f-8148-6d1280d79f44',
+        UserDetails::EMAIL_PASSWORD_RESET_NO_ACCOUNT   => '4f57dea9-5433-4c49-9a69-365ab60a3b95',
+        UserDetails::EMAIL_ACCOUNT_HAS_NO_PASSWORD     => 'aedd38b2-111f-4aa3-897d-b8c036f53131',
+        UserDetails::EMAIL_ACCOUNT_DUPLICATION_WARNING => '4c99eeff-6af9-4753-aae1-a5d46ea06815',
     ];
 
     // Template IDs to use instead of that specified defaultTemplateMap if One Login is enabled.
