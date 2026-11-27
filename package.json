@@ -30,7 +30,8 @@
     "pixelmatch": "^7.1.0",
     "pngjs": "^7.0.0",
     "prettier": "^3.6.2",
-    "strip-ansi": "^7.0.0"
+    "strip-ansi": "^7.0.0",
+    "totp-generator": "^2.0.1"
   },
   "overrides": {
     "mocha": {
