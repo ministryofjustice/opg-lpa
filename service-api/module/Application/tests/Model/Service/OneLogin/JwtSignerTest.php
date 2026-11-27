@@ -16,14 +16,14 @@ class JwtSignerTest extends TestCase
 {
     public function testSignsTheClaimsWithRs256AndNamesTheKey(): void
     {
-        $keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid');
+        $keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey());
 
         $jwt = JwtSigner::sign($keyPairManager->jwk(), ['iss' => 'client-id', 'jti' => 'abc']);
 
         $jws = (new CompactSerializer())->unserialize($jwt);
 
         // One Login picks the public key from our JWKS by this kid
-        $this->assertSame(['alg' => 'RS256', 'kid' => 'test-kid'], $jws->getSignature(0)->getProtectedHeader());
+        $this->assertSame(['alg' => 'RS256', 'kid' => $keyPairManager->jwk()->get('kid')], $jws->getSignature(0)->getProtectedHeader());
         $this->assertSame(['iss' => 'client-id', 'jti' => 'abc'], json_decode((string) $jws->getPayload(), true));
         $this->assertTrue(
             (new JWSVerifier(new AlgorithmManager([new RS256()])))

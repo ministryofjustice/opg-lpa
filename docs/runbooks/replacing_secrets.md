@@ -8,6 +8,8 @@ To replace a secret on an environment, update the secret value then force a rede
 
 These instructions show how to do that.
 
+The One Login signing keys (`<account>/onelogin-signing-keys`) must not be replaced this way, as replacing the key in one step breaks sign-in. Follow [Rotating the One Login signing key](onelogin/rotating_the_signing_key.md) instead.
+
 ## Requirements
 
 please see [Setting up AWS Credentials](setting_up_aws_credentials/setting_up_credentials.md) for details of how to set up aws cli and aws-vault on your local machine.

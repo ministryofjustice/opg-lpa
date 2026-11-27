@@ -27,7 +27,7 @@ class ClientAssertionTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey(), 'test-kid-rsa');
+        $this->keyPairManager = new KeyPairManager(KeyPairManagerTest::rsaPrivateKey());
     }
 
     public function testRsaKeyProducesAVerifiableRs256Assertion(): void
@@ -37,7 +37,7 @@ class ClientAssertionTest extends TestCase
         $header = $this->protectedHeaderOf($assertion);
 
         $this->assertSame('RS256', $header['alg']);
-        $this->assertSame('test-kid-rsa', $header['kid']);
+        $this->assertSame($this->keyPairManager->jwk()->get('kid'), $header['kid']);
 
         $this->assertTrue(
             $this->verify($assertion, $this->keyPairManager->jwk()->toPublic(), new RS256()),

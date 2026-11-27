@@ -167,12 +167,16 @@ return [
     ],
 
     'onelogin' => [
-        'enabled'       => getenv('ONELOGIN_ENABLED') === 'true',
-        'client_id'     => getenv('ONELOGIN_CLIENT_ID') ?: null,
-        'discovery_url' => getenv('ONELOGIN_DISCOVERY_URL') ?: null,
-        'private_key'   => getenv('ONELOGIN_PRIVATE_KEY') ?: null,
-        'key_id'        => getenv('ONELOGIN_KEY_ID') ?: null,
-        'user_agent'    => sprintf(
+        'enabled'             => getenv('ONELOGIN_ENABLED') === 'true',
+        'client_id'           => getenv('ONELOGIN_CLIENT_ID') ?: null,
+        'discovery_url'       => getenv('ONELOGIN_DISCOVERY_URL') ?: null,
+        'signing_keys_secret' => getenv('ONELOGIN_SIGNING_KEYS_SECRET') ?: null,
+        'secrets_manager'     => [
+            'endpoint' => getenv('OPG_LPA_COMMON_SECRETS_MANAGER_ENDPOINT') ?: null,
+            'region'   => getenv('AWS_REGION') ?: 'eu-west-1',
+            'version'  => '2017-10-17',
+        ],
+        'user_agent'          => sprintf(
             'opg-lpa/%s (https://www.lastingpowerofattorney.service.gov.uk)',
             getenv('OPG_DOCKER_TAG') ?: 'dev',
         ),

@@ -6,6 +6,7 @@ namespace ApplicationTest\Model\Service\OneLogin;
 
 use Application\Model\Service\OneLogin\AuthorisationClientManager;
 use Application\Model\Service\OneLogin\FacileAuthorizationServiceAdapter;
+use Application\Model\Service\OneLogin\KeyPairManager;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
@@ -104,8 +105,6 @@ class UserAgentTest extends TestCase
             'onelogin' => [
                 'client_id'     => 'test-client-id',
                 'discovery_url' => 'https://oidc.example.com/.well-known/openid-configuration',
-                'private_key'   => KeyPairManagerTest::rsaPrivateKey(),
-                'key_id'        => 'test-kid',
                 'user_agent'    => self::CONFIGURED_USER_AGENT,
             ],
         ]);
@@ -120,6 +119,8 @@ class UserAgentTest extends TestCase
         $container = new ServiceManager($moduleConfig['service_manager']);
         $container->setAllowOverride(true);
         $container->setService('config', $config);
+        // The real one fetches our keys from Secrets Manager
+        $container->setService(KeyPairManager::class, new KeyPairManager(KeyPairManagerTest::rsaPrivateKey()));
 
         return $container->get($service);
     }
