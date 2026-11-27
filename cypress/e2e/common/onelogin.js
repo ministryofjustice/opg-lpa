@@ -12,7 +12,7 @@ import {
   sayWhetherIKeepMyLpas,
 } from '../../support/onboarding';
 
-function oneLoginMockUrl() {
+export function oneLoginMockUrl() {
   return Cypress.env('oneLoginMockUrl') || 'http://localhost:4549';
 }
 

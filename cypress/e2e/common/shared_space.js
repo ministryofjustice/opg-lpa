@@ -1,10 +1,11 @@
-const {
+import {
   Given,
   When,
   Then,
   Before,
   After,
-} = require('@badeball/cypress-cucumber-preprocessor');
+} from '@badeball/cypress-cucumber-preprocessor';
+import { oneLoginMockUrl } from './onelogin';
 
 function createUserWithLpas(lpaCount, lpaType, name = '') {
   return cy
@@ -144,9 +145,12 @@ Given(/^I create a new One Login user( stored as "([^"]+)")? with (\d+) LPAs?( t
 
     cy.contains('a', 'Continue').click();
 
-    cy.contains('label', 'Email').click();
-    cy.get('input[name=email]').type(email);
-    cy.get('form').submit();
+    cy.url().should('include', oneLoginMockUrl());
+    cy.origin(oneLoginMockUrl(), {args: {email}}, ({email}) => {
+      cy.contains('label', 'Email').click();
+      cy.get('input[name=email]').type(email);
+      cy.get('form').submit();
+    });
 
     cy.contains('label', 'I will be making LPAs for other people as part of my work').click();
     cy.get('form').submit();
