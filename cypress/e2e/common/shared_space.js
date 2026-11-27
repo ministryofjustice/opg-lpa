@@ -129,6 +129,64 @@ Given(/^I create a new user( stored as "([^"]+)")? with (\d+) LPAs?(?: that belo
   );
 });
 
+Given(/^I create a new One Login user( stored as "([^"]+)")? with (\d+) LPAs?( that belongs to a shared space called "([^"]*)")?$/, (storedAs, lpaCountString, sharedSpaceName) => {
+  const lpaCount = parseInt(lpaCountString, 10);
+
+  const loginAndOnboard = (email) => {
+    cy.visit('/home');
+
+    cy.get('body').then(($body) => {
+      if ($body.find('[data-cy=sign-out]').length > 0) {
+        cy.get('[data-cy=sign-out]').click();
+      }
+      cy.visit('/home');
+    });
+
+    cy.contains('a', 'Continue').click();
+
+    cy.contains('label', 'Email').click();
+    cy.get('input[name=email]').type(email);
+    cy.get('form').submit();
+
+    cy.contains('label', 'I will be making LPAs for other people as part of my work').click();
+    cy.get('form').submit();
+
+    cy.contains('label', 'Yes, I already have an account').click();
+    cy.get('form').submit();
+
+    cy.contains('label', 'Yes').click();
+    cy.get('form').submit();
+
+    cy.get('input[name=email]').type(email);
+    cy.get('input[name=password]').type('Password1234!');
+    cy.get('form').submit();
+  };
+
+  createUserWithLpas(lpaCount, 'property-and-financial').then(
+    ({ userId, email, password, lpaIds, userFullName }) => {
+      cy.task('log', `Created fixture user ${email} with ${lpaIds.length} LPA(s)`);
+
+      if (sharedSpaceName) {
+        if (sharedSpaceName.toLowerCase() === 'random') {
+          sharedSpaceName = `Shared Space ${Math.random().toString(10).substring(2, 10)}`;
+        }
+
+        createSharedSpace(sharedSpaceName, email).then(
+          ({ sharedSpaceId }) => {
+            cy.wrap({ userId, email, password, lpaIds, sharedSpaceId, sharedSpaceName, lpaCount, userFullName }).as(storedAs ?? 'fixtureUser');
+
+            loginAndOnboard(email);
+            cy.task('log', `Created shared space ${sharedSpaceName} with ID ${sharedSpaceId} for fixture user ${email}`);
+          },
+        );
+      } else {
+        cy.wrap({ userId, email, password, lpaIds, userFullName }).as(storedAs ?? 'fixtureUser');
+        loginAndOnboard(email);
+      }
+    },
+  );
+});
+
 Given('a deletion log exists for {string}', (emailTemplate) => {
   const email = emailTemplate.replace('{random}', Math.random().toString(10).substring(2, 10));
 
@@ -219,6 +277,14 @@ Given(/the shared space has a member called "([^"]+)" who is an? "(admin|member)
         );
       },
     );
+  });
+});
+
+Given('user {string} is a member of the shared space', (storedAs) => {
+  cy.get('@fixtureUser').then(({ email: userAddingEmail, sharedSpaceId }) => {
+    cy.get(`@${storedAs}`).then(({ userId }) => {
+      addMemberToSharedSpace(sharedSpaceId, userId, userAddingEmail, false);
+    });
   });
 });
 

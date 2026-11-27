@@ -121,7 +121,7 @@ class CypressFixtureService
     public function addMember(string $sharedSpaceId, string $userToAddId, string $userEmail, bool $isAdmin): void
     {
         try {
-            $this->authenticate($userEmail);
+            $this->authenticate($userEmail, true);
 
             $this->apiClient->httpPost(
                 '/v2/shared-space/members',

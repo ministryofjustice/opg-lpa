@@ -15,9 +15,7 @@ use DateTime;
 use Laminas\Db\Adapter\Exception\InvalidQueryException;
 use Laminas\Db\Sql\Expression;
 use Laminas\Db\Sql\Predicate\Like;
-use Laminas\Db\Sql\Predicate\Operator;
 use Laminas\Db\Sql\Predicate\Predicate;
-use Laminas\Db\Sql\Predicate\PredicateSet;
 use MakeShared\DataModel\SharedSpace\SharedSpaceMember;
 
 class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInterface
@@ -291,10 +289,7 @@ class SharedSpaceData extends AbstractBase implements SharedSpaceRepositoryInter
             )
             ->where([
                 'members.sharedSpaceId' => $sharedSpaceId,
-                new PredicateSet([
-                    new Operator('user.one_login_email', Operator::OPERATOR_EQUAL_TO, $email),
-                    new Operator('user.identity', Operator::OPERATOR_EQUAL_TO, $email),
-                ], PredicateSet::COMBINED_BY_OR),
+                'user.one_login_email'  => $email,
             ])
             ->columns(['id'])
             ->limit(1);
